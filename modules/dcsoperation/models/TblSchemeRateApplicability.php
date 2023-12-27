@@ -115,13 +115,7 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
         // $appendDcs = false; 
         if ($this->applicable_for == 'DCS') {
             $generateSentbox = true;
-            if ($this->is_member_rate == 0) {
-                $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
-            } else {
-                $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
-                // $dcs_code = $this->applicable_code;
-                // $appendDcs = true;
-            }
+            $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
         } else {
             $generateSentbox = true;
             $bmc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'bmc_code');
@@ -130,7 +124,7 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
         if ($generateSentbox) {
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $bmc_code, '', '', false);
             // $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $bmc_code, '', $dcs_code, $appendDcs);
-            if ($this->applicable_for == 'DCS') {
+            if ($this->applicable_for == 'DCS' && $this->is_member_rate == 1) {
                 $sentboxArray[] = [
                     'code' => $this->applicable_code,
                     'type' => 'VLC'
