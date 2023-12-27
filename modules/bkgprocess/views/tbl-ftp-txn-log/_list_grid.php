@@ -19,7 +19,8 @@ $attribute = [
     ['label' => Yii::t('app', 'Ref. Code'), 'attribute' => 'module_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
         }, 'filter' => false],
-    ['label' => Yii::t('app', 'DCS'), 'attribute' => 'module_code', 'value' => function($model) {
+    ['attribute' => 'txn_type', 'filter' => true],
+    ['label' => Yii::t('app', 'DCS'), 'attribute' => 'module_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],
     ['label' => Yii::t('app', 'Date'), 'value' => function($model) {
@@ -39,9 +40,9 @@ $attribute = [
     ['attribute' => 'error_count',],
     ['attribute' => 'file_name',],
     ['attribute' => 'file_status',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('file_status', $searchModel, 'file_status'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('file_status', $searchModel, 'status'),
         'value' => function ($model) {
-            return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->file_status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->file_status] : '';
+            return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '';
         },],
 ];
 

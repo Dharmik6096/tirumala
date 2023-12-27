@@ -1145,7 +1145,7 @@ class DropDown extends Component {
             'file_status' => [
                 'name' => 'file_status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error')],
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error'), 5 => Yii::t('app', 'Archive')],
             ],
             'is_dispatch_mandate' => [
                 'name' => 'is_dispatch_mandate',
