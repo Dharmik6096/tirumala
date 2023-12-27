@@ -113,16 +113,15 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
 //        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->applicable_code);
         $sentboxArray = [];
         $array = [];
-        $array['code'] = $this->applicable_code;
-        $array['type'] = 'VLC';
-        $sentboxArray[] = $array;
-
         $dcsDetails = $this->dcsCode;
-        if (!empty($dcsDetails) && !empty($dcsDetails->is_bmc) && $dcsDetails->is_bmc == 1) {
+        if (!empty($dcsDetails) && ((!empty($dcsDetails->is_bmc) && $dcsDetails->is_bmc == 1) || $this->is_member_rate == 0)) {
             $bmcCode = $dcsDetails->bmc_code;
-            $array = [];
             $array['code'] = $bmcCode;
             $array['type'] = 'BMC';
+            $sentboxArray[] = $array;
+        } else {
+            $array['code'] = $this->applicable_code;
+            $array['type'] = 'VLC';
             $sentboxArray[] = $array;
         }
         foreach ($sentboxArray as $sent) {
