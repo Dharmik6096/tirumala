@@ -52,7 +52,7 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
             'query' => $query,
         ]);
 
-
+        
         if (Yii::$app->session->get('Unions') !== '')
             $query->andFilterWhere(['tbl_ftp_txn_log.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         if (!empty($this->f_union_code))
@@ -101,7 +101,7 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
             'query' => $query,
             'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]],
         ]);
-
+        
         $query->joinWith(['dcsCode', 'creatorId']);
 
         $this->load($params);
@@ -130,7 +130,9 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
                 ->andFilterWhere(['like', 'tbl_ftp_txn_log.success_count', $this->success_count])
                 ->andFilterWhere(['like', 'tbl_ftp_txn_log.error_count', $this->error_count])
                 ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_name', $this->file_name])
-                ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_status', $this->file_status]);
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_status', $this->file_status])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.status', $this->status])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.txn_type', $this->txn_type]);
         return $dataProvider;
     }
 
@@ -155,5 +157,5 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
 
         return $dataProvider;
     }
-
+   
 }
