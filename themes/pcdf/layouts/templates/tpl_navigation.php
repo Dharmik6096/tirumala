@@ -738,6 +738,7 @@ echo GhostMenu::widget([
                             ['label' => '913-' . Yii::t('app', 'Rate Applicability Detail History'), 'url' => ['/misreports/reports/rate-applicability-details-history']],
                             ['label' => '914-' . Yii::t('app', 'File Generate Status'), 'url' => ['/misreports/reports/file-generate-status']],
                             ['label' => '915-' . Yii::t('app', 'Society Wise Rate Difference Report'), 'url' => ['/misreports/reports/society-wise-rate-difference-report']],
+                            ['label' => '916-' . Yii::t('app', 'Tally Report'), 'url' => ['/misreports/reports/tally-report']],
                     ]
                 ],
                     [
