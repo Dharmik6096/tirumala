@@ -6,6 +6,7 @@ use Yii;
 use app\modules\dcsoperation\models\TblSchemeRate;
 use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_scheme_rate_applicability".
@@ -194,6 +195,14 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
                         ->andWhere(['<=', 'cast(from_date as date)', $date])
                         ->andWhere(['>=', 'cast(to_date as date)', $date])
                         ->one();
+    }
+
+    public function getCustomerMasterCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
     }
 
 }
