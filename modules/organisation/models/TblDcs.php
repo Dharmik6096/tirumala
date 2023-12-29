@@ -284,9 +284,6 @@ class TblDcs extends ChildModel {
                     }
                     Yii::$app->general->validateExCodes($this, 'tbl_dcs', 'dcs_code_ex', 'tbl_customer_master', 'customer_code_ex', 'TblCustomerMaster', $this->union_code, $update);
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv', 'createDcs']],
-                [['aadhaar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['password'], 'string', 'min' => 8, 'max' => 8],
                 [['antibiotic_check'], function ($attribute, $params) {

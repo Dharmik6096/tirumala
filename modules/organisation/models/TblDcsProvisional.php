@@ -292,9 +292,6 @@ class TblDcsProvisional extends ChildModel {
                 [['default_milk_type'], 'default', 'value' => 8],
 //                [['route'], 'required', 'on' => ['importCsv']],
 //                [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
-                [['aadhaar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
                 [['voter_id'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],

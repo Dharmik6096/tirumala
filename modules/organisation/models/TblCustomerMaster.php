@@ -67,7 +67,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
                 [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
                 [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc'], 'safe'],
@@ -133,13 +133,13 @@ class TblCustomerMaster extends \app\models\ChildModel {
                     }
                     Yii::$app->general->validateExCodes($this, 'tbl_customer_master', 'customer_code_ex', 'tbl_dcs', 'dcs_code_ex', 'TblDcs', $this->union_code, $update);
                 }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv', 'createFront']],
-                [['aadhaar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping']],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
                 [['ts_code_m', 'ts_code_e'], 'number']
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblCustomerMaster', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
