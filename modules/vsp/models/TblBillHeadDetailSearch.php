@@ -117,7 +117,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             return $dataProvider;
         }
 
-        Yii::$app->general->filterByOrg($query, $this);
+        // Yii::$app->general->filterByOrg($query, $this);
 
 //        $query->andWhere(['tbl_bill_head_detail.payment_cycle_code' => $this->payment_cycle_code]);
         $query->andWhere(['tbl_bill_head_detail.bmc_code' => $this->bmc_code]);
