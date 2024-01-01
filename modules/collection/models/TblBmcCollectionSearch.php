@@ -27,7 +27,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
                 [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
                 [['can_no', 'no_of_can', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no', 'bmc_silos_info_code', 'route_code'], 'safe'],
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-                [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code'], 'safe'],
+                [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code', 'converted_amount'], 'safe'],
                 [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
                 [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
