@@ -28,12 +28,12 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         },],
         ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
-        ['attribute' => 'customer_ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
-        }],
-        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->customer_type);
-        }],
+//        ['attribute' => 'customer_ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+//            return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
+//        }],
+//        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+//            return Yii::$app->general->getCustomer($model, $model->customer_type);
+//        }],
         ['attribute' => 'from_datetime', 'label' => Yii::t('app', 'Period'),
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);

@@ -70,7 +70,7 @@ class TblTransporter extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['transporter_name', 'address', 'union_code', 'hamlet_code', 'vendor_code', 'billing_type_code'], 'required', 'except' => ['importCsv', 'activation']],
                 [['transporter_name', 'address', 'hamlet_code', 'vendor_code', 'union_code', 'billing_type_code'], 'required', 'on' => 'importCsv'],
                 [['transporter_name', 'local_name', 'address', 'phone_no', 'mobile_no', 'email', 'contact_person', 'local_contact_person', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'gstin', 'pan_no', 'beneficiary_name', 'agreement_no', 'declaration', 'security_cheque_no', 'union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'created_by', 'updated_by'], 'string', 'except' => ['activation']],
@@ -91,8 +91,6 @@ class TblTransporter extends \app\models\ChildModel {
                 [['phone_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['activation']],
-                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['activation']],
-                [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['activation']],
                 [['registration_no'], 'string', 'max' => 20],
                 [['created_at', 'updated_at', 'security_amount', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'department', 'vendor_code', 'beneficiary_name', 'vendor_name', 'transporter_type', 'agreement_from_date', 'agreement_to_date', 'billing_type_code'], 'safe'],
                 ['bank_account_no', 'unique', 'when' => function($model) {
@@ -145,6 +143,9 @@ class TblTransporter extends \app\models\ChildModel {
                 }, 'except' => ['activation']],
                 [['vendor_code'], 'unique', 'except' => ['activation']]
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblTransporter', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

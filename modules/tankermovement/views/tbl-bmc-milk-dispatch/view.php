@@ -17,8 +17,13 @@ $this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
             <div class="table-responsive">
                 <?php
                 $rel = Yii::$app->general->getDestRelation($model->destination_type);
-                $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
-
+                $att = strtolower($model->destination_type) == 'bmc' 
+                    ? 'bmc_name' 
+                    : (strtolower($model->destination_type) == 'vendor' 
+                        ? 'customer_name' 
+                        : (strtolower($model->destination_type) == 'party'
+                            ? 'party_name'
+                            : 'name'));
                 $attributes = [
                         [
                         'columns' => [

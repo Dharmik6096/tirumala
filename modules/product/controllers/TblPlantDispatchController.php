@@ -206,4 +206,15 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionCheckUniqueSapNo() {
+        $sapNo = Yii::$app->request->post('sapNo');
+        $Model = new TblPlantDispatchTxn();
+        $data = $Model->find()->where(['sap_batch_no' => $sapNo])->one();
+        if (empty($data)) {
+            return Json::encode(['status' => 'success']);
+        } else {
+            return Json::encode(['status' => 'error']);
+        }
+    }
+
 }

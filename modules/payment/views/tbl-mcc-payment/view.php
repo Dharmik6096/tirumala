@@ -95,6 +95,19 @@ $this->title = Yii::$app->label->title('view', 'MCC Payment');
                             ],
                         ],
                     ],
+     
+                      [
+                        'columns' => [
+                            [
+                                'attribute' => 'minimum_qty',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'minimum_qty_amount',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
                     [
                         'columns' => [
                             [
@@ -102,7 +115,7 @@ $this->title = Yii::$app->label->title('view', 'MCC Payment');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'amount',
+                                'attribute' => 'total_qty_amount',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -157,6 +170,10 @@ $this->title = Yii::$app->label->title('view', 'MCC Payment');
                     ],
                     [
                         'columns' => [
+                              [
+                                'attribute' => 'amount',
+                                'valueColOptions' => ['style' => 'width:30%']
+                              ],
                             [
                                 'attribute' => 'status',
                                 'value' => $model->status == 'sent' ? 'disbursed' : $model->status,

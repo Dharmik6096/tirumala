@@ -142,8 +142,6 @@ class TblMemberProvisional extends ChildModel {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => ['androidsync']],
                 [['mobile_no', 'religion_code'], 'integer', 'except' => ['androidsync']],
-                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
-                [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                 [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
                 }, 'except' => ['androidsync']],
@@ -167,9 +165,6 @@ class TblMemberProvisional extends ChildModel {
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
-                [['adhar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
                 [['ifsc'], function ($attribute, $params) {
                     Yii::$app->general->validateIfsc($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'when' => function() {

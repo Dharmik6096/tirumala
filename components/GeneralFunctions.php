@@ -52,6 +52,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use Exception;
 use app\modules\general\models\TblProcessApproval;
 use yii\db\Expression;
+use app\modules\tankermovement\models\TblBmcDispatchStock;
 
 class GeneralFunctions extends Component {
 
@@ -1244,6 +1245,9 @@ class GeneralFunctions extends Component {
             case 'dcs':
                 $rel = 'dcsCode';
                 break;
+            case 'party':
+                $rel = 'partyMasterCode';
+                break;
             default :
                 $rel = '';
         }
@@ -1744,6 +1748,7 @@ class GeneralFunctions extends Component {
             $ftp->ftp_username = $ftpData->ftp_username;
             $ftp->ftp_password = $ftpData->ftp_password;
             $ftp->ftp_port = $ftpData->ftp_port;
+            $ftp->isPassiveFtp = !empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active' ? false : true;
             $ftpDir = $this->getFTPDirStructure($cp_code);
             foreach ($ftpDir as $dir) {
                 $ftp->ftp_path = $ftpData->ftp_path . $dir;
@@ -2382,5 +2387,32 @@ class GeneralFunctions extends Component {
             return false;
         }
     }
+    
+    public function setCode($model) {
+        $plants = !empty(Yii::$app->session->get('Plant')) ? count(explode(',', Yii::$app->session->get('Plant'))) : 0;
+        $mccs = !empty(Yii::$app->session->get('MCC')) ? count(explode(',', Yii::$app->session->get('MCC'))) : 0;
+        $bmcs = !empty(Yii::$app->session->get('BMC')) ? count(explode(',', Yii::$app->session->get('BMC'))) : 0;
+        $plants == 1 ? $model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0] : NULL;
+        $mccs == 1 ? $model->mcc_plant_code = explode(',', Yii::$app->session->get('MCC'))[0] : NULL;
+        if ($bmcs == 1) {
+            $model->bmc_code = explode(',', Yii::$app->session->get('BMC'))[0];
+        }
+    }
 
+    public function validateCargillAadharcard($model, $attribute, $params) {
+        $aadharNumber = $model->$attribute;    
+        if (!empty($aadharNumber)) {
+            if (strlen($aadharNumber) == 10 || strlen($aadharNumber) == 12) {
+                if (strlen($aadharNumber) == 10) {
+                    if (!preg_match('/^[0-9]{9}[vx]$/i', $aadharNumber)) {
+                        $model->addError($attribute, Yii::t('app/validation', $attribute . ' can only contain exactly 9 digits and 1 character.'));
+                    }
+                } elseif (!preg_match('/^[0-9]{12}$/', $aadharNumber)) {
+                    $model->addError($attribute, Yii::t('app/validation', $attribute . ' can only contain exactly 12 digits.'));
+                }
+            } else {
+                $model->addError($attribute, Yii::t('app/validation', $attribute . ' can only contain exactly 10 or 12 digits.'));
+            }
+        }
+    }
 }

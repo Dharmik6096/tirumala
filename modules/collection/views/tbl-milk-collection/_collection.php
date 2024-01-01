@@ -42,10 +42,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-2  create_fields">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollection-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
         </div>
-        <div class="col-sm-1 rtpl_validate create_fields">
+        <div class="col-sm-1 rtpl_validate create_fields scheme_rate">
             <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'), false, $readonly, true); ?>
         </div>
-        <div class="col-sm-1 shift rtpl_validate create_fields">
+        <div class="col-sm-1 shift rtpl_validate create_fields scheme_rate">
             <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
         </div>
         <div class="col-sm-1 Button disabled mb25 ml15 padding_top_20">
@@ -59,13 +59,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Collection Details</h4>
         </div>
-        <div class="col-sm-1  reset_field create_fields no_padding_input">
-            <?= $form->field($model, 'member_code')->textInput()->label('Code') ?>
+        <div class="col-sm-2 reset_field type_hide">
+            <?= Yii::$app->dropdown->activate_member_code($model, $form, 'tblmilkcollection-union_code,tblmilkcollection-dcs_code,tblmilkcollection-date_time_of_collection', 'member_code', $model->getAttributeLabel('member_code'), FALSE); ?>
         </div>
-        <div class="col-sm-2  reset_field">
-            <?= $form->field($model, 'member')->textInput(['readonly' => true])->label('Name') ?>
-        </div>
-
         <div class="col-sm-1  rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', $model->getAttributeLabel('milk_type_code'), $readonly, 'milk_type_code'); ?>
         </div>
@@ -85,16 +81,24 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
         </div>
         <div class="col-sm-1 reset_field">
+            <?= $form->field($model, 'scheme_rate')->textInput(['readOnly' => true]) ?>
+            <?= $form->field($model, 'scheme_rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
+        </div>
+        <div class="col-sm-1 reset_field">
+            <?= $form->field($model, 'actual_rate')->textInput(['readOnly' => true]) ?>
+        </div>
+        <div class="col-sm-1 reset_field">
             <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
             <?= $form->field($model, 'purchase_rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
         </div>
         <div class="col-sm-1 reset_field">
             <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
         </div>
+        <div class="clearfix"></div>
         <div class="col-sm-1 reset_field">
             <?= Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, 'form-group', $model->getAttributeLabel('antibiotic'), false, 'antibiotic', false); ?>
         </div>
-        <div class="clearfix"></div>
+        <!--<div class="clearfix"></div>-->
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <div class="row">
@@ -128,7 +132,7 @@ $form = ActiveForm::begin([
                                                                     reloadGrid();
                                                                     milkQualityType();
                                                                     $("#milk-collection-from .reset_field input").val("");
-                                                                    $("#milk-collection-from .reset_field select").val("");
+                                                                    $("#milk-collection-from .reset_field select").val("").trigger("change");
                                                                     $("#milk-collection-from .reset_field textarea").val("");
 
                                                                     $(".panel-body").scrollTop(0);

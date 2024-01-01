@@ -10,38 +10,36 @@ $this->title = $title;
 ?>
 <?php
 $array = $dataProvider->getModels();
-$tot_amt = array_sum(array_map(function($array) {
+$tot_amt = array_sum(array_map(function ($array) {
             return $array['net_payable'] + $array['adjust_recovery'] - $array['recovery'];
         }, $array));
-$final_amt = array_sum(array_map(function($array) {
+$final_amt = array_sum(array_map(function ($array) {
             return $array['net_payable'] + $array['adjust_recovery'] - $array['recovery'] + $array['adjust_amount'] - $array['hold_amount'];
         }, $array));
-
-
 
 $bmc_info = Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime)
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">      
         <div class="panel-heading">
-            <?= $this->title . ' (' . $bmc_info . ')' ?>  
+<?= $this->title . ' (' . $bmc_info . ')' ?>  
             <div id="total-payment">
                 Total Payable :: <?= $final_amt; ?>
             </div>
         </div>     
-        <?php
-        $form = ActiveForm::begin([
-                    'id' => 'payment-adjust',
-                    'validateOnBlur' => TRUE,
-                    'validateOnChange' => TRUE,
-                    'enableClientValidation' => true,
-                    'validateOnSubmit' => true,
+<?php
+$form = ActiveForm::begin([
+            'id' => 'payment-adjust',
+            'validateOnBlur' => TRUE,
+            'validateOnChange' => TRUE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
         ]);
-        ?>
+?>
         <?php
         $attribute = [
             ['attribute' => 'mcc_plant_code', 'label' => Yii::t('app', 'MCC Code'), 'filter' => false],
-            ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
                 }, 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'bmc_code',
@@ -49,12 +47,21 @@ $bmc_info = Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii
                 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'bmc_name',
                 'label' => Yii::t('app', 'BMC Name'),
-                'value' => function($model) {
+                'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
                 }, 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'kg_fat'],
             ['attribute' => 'kg_snf'],
             ['attribute' => 'total_qty', 'value' => 'total_qty',
+                'pageSummary' => true
+            ],
+            ['attribute' => 'total_qty_amount', 'value' => 'total_qty_amount',
+                'pageSummary' => true
+            ],
+            ['attribute' => 'minimum_qty', 'value' => 'minimum_qty',
+                'pageSummary' => true
+            ],
+            ['attribute' => 'minimum_qty_amount', 'value' => 'minimum_qty_amount',
                 'pageSummary' => true
             ],
             ['attribute' => 'amount', 'value' => 'amount',

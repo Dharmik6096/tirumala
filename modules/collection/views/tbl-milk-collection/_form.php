@@ -25,10 +25,6 @@ use kartik\grid\GridView;
 <?php
 $script = "
     gridChange();
-    $(document).on('change', '#tblmilkcollection-member_code', function() {  
-           $('#tblmilkcollection-member').val('');
-          setMemberCode();
-    });
     $(document).on('change', '#tblmilkcollection-plant_code', function() {  
         gridChange();
     });
@@ -71,36 +67,6 @@ $script = "
         }
     }
 
-    function setMemberCode(){
-        var dcs = $('#tblmilkcollection-dcs_code').val();
-        var member = $('#tblmilkcollection-member_code').val();
-        if(dcs != '' && dcs != null && dcs != undefined && member != ''){
-            var member_code = dcs.concat(member);
-//            $('#tblmilkcollection-member_code').val(member_code);
-             $.ajax({
-            type: 'post',
-            url:'" . Url::to(['validate-member']) . "',
-            data: {'member_code':member_code},
-            success: function(data) {                                        
-                var obj = $.parseJSON(data);
-                if (obj.status == 'success')
-                {
-                    $('#tblmilkcollection-member').val(obj.member_details.member_name);
-                }else{
-                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Please enter valid Member Code(Last 4 digit).') . "</span></div></div>', function(result){
-                 setTimeout(function(){
-                 $('#tblmilkcollection-member_code').focus();},100);
-                    }); 
-                    $('#tblmilkcollection-member_code').val('');
-                    $('#tblmilkcollection-member').val('');
-                }
-            },
-            error:function(data){
-		
-	    }
-	});
-        }
-    }
     amount();
     $('#tblmilkcollection-rtpl').change(function(){
         amount();
@@ -192,25 +158,35 @@ $script = "
         var fat = $('#tblmilkcollection-fat').val();
         var snf = $('#tblmilkcollection-snf').val();
         var milk_quality_type = $('#tblmilkcollection-milk_quality_type_code').val();
-
-        var member = $('#tblmilkcollection-member_code').val();
-        var member_code = dcs.concat(member);
+        var member_code = $('#tblmilkcollection-member_code').val();
+        
         if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && milk_quality_type != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
                 data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift_code':shift,'fat':fat,'snf':snf,'member':member_code},
                 success: function(data) {   
-                      var obj = $.parseJSON(data);
-                      if (obj.status == 'success')
-                      {
-                            $('#tblmilkcollection-rtpl').val(obj.data.list.rtpl);
-                            $('#tblmilkcollection-purchase_rate_code').val(obj.data.list.purchase_rate_code);
-                            $('#tblmilkcollection-rtpl').trigger('change');
-                      }else{
-                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
-                            $('#tblmilkcollection-rtpl').val('');
-                            $('#tblmilkcollection-rate_code').val('');
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success')
+                    {
+                        var rtpl = parseFloat(obj.data.list.rtpl);
+                        $('#tblmilkcollection-actual_rate').val(rtpl.toFixed(2));
+                        if(obj.data.list.scheme_rate_rtpl != '' && obj.data.list.scheme_rate_rtpl != null){
+                            var scheme_rate_rtpl = parseFloat(obj.data.list.scheme_rate_rtpl);
+                            rtpl = rtpl + scheme_rate_rtpl;
+                            $('#tblmilkcollection-scheme_rate').val(scheme_rate_rtpl);
+                            $('#tblmilkcollection-scheme_rate_code').val(obj.data.list.scheme_rate_code);
+                        }
+                        $('#tblmilkcollection-rtpl').val(rtpl);
+                        $('#tblmilkcollection-purchase_rate_code').val(obj.data.list.purchase_rate_code);
+                        $('#tblmilkcollection-rtpl').trigger('change');
+                    } else {
+                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
+                        $('#tblmilkcollection-rtpl').val('');
+                        $('#tblmilkcollection-scheme_rate').val('');
+                        $('#tblmilkcollection-scheme_rate_code').val('');
+                        $('#tblmilkcollection-actual_rate').val('');
+                        $('#tblmilkcollection-rate_code').val('');
                       }
                 },
                 error:function(data){

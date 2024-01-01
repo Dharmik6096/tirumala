@@ -415,8 +415,8 @@ $script = "
         $('#checkAll').prop('checked', false);
         var checkFilter = filter_type.toLowerCase();
         var setClass = 'col-sm-2';
-        if(checkFilter == 'bulkven' || checkFilter == 'vlccven' || checkFilter == 'dcs') {
-$('.selectMccArea').show();
+        if(checkFilter == 'bulkven' || checkFilter == 'vlccven' || checkFilter == 'dcs'  || checkFilter == 'farm') {
+            $('.selectMccArea').show();
             $('.selectBmcArea').show();
             $('.selectRouteArea').show();
             $('.applicableCodeArea').removeClass('col-sm-12');

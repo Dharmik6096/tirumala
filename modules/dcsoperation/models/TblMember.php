@@ -24,6 +24,7 @@ use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
 use yii\db\Query;
 use app\modules\organisation\models\TblDcsVendorStatus;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_member".
@@ -134,8 +135,6 @@ class TblMember extends ChildModel {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => ['androidsync', 'verification']],
                 [['mobile_no', 'religion_code'], 'integer', 'except' => ['androidsync']],
-                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
-                [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                 [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
                 }, 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
@@ -159,9 +158,6 @@ class TblMember extends ChildModel {
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
-                [['adhar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                 [['ifsc'], function ($attribute, $params) {
                     Yii::$app->general->validateIfsc($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'when' => function() {
@@ -665,6 +661,21 @@ class TblMember extends ChildModel {
 
     public function getActiveStatus() {
         return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'member_code'])->andOnCondition(['customer_type' => 'Member']);
+    }
+    
+    public function getActivateMemberCode($union_code, $dcs, $dateFilter) {
+        $deactivateList = new TblMemberDeactive();
+        $deactivatedMember = $deactivateList->getDeactiveMember($union_code, $dcs, $dateFilter);
+
+        $value = $this->find()
+                ->where(['is_active' => 1])
+                ->andFilterWhere(['dcs_code' => $dcs, 'union_code' => $union_code])
+                ->andWhere(['not in', 'member_code', $deactivatedMember])
+                ->all();
+
+        return ArrayHelper::map($value, 'member_code', function($value) {
+                    return $value->member_name . ' - ' . $value->ref_code;
+                });
     }
 
 }

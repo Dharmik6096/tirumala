@@ -11,6 +11,7 @@ $this->title = Yii::$app->label->title('create', 'Milk Receipt');
             'type' => 'create',
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'bmc_user' => $bmc_user,
         ])
         ?>
     </div>

@@ -61,7 +61,7 @@ class TblMccPayment extends \app\models\ChildModel {
             [['bmc_code'], 'required', 'on' => ['mccremuneration']],
             [['payment_cycle_code'], 'required', 'on' => ['processpayment']],
             [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
-            [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name'], 'safe'],
+            [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name','minimum_qty','minimum_qty_amount','total_qty_amount','transfered_qty','billing_qty','received_qty','bmc_collection_qty','received_amount','transfered_amount','billing_qty_amount'], 'safe'],
             [['pin_code', 'aadhaar_no', 'contact_person_name', 'mobile_no', 'beneficiary_name', ' pan_no', 'gst_no', 'bmc_collection_amount', 'state_code', 'sub_district_code', 'village_code', 'hamlet_code', 'district_code'], 'safe'],
         ];
     }
@@ -107,6 +107,10 @@ class TblMccPayment extends \app\models\ChildModel {
             'p_bmc_code' => Yii::t('app', 'BMC'),
             'p_customer_type' => Yii::t('app', 'Type'),
             'p_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
+            'total_qty_amount' => Yii::t('app', 'Total Qty Amount'),
+            'minimum_qty' => Yii::t('app', 'Min Qty'),
+            'minimum_qty_amount' => Yii::t('app', 'Min Qty Amount'),
+
         ];
     }
 

@@ -1,15 +1,4 @@
 <?php
-//use yii\helpers\Html;
-//use yii\widgets\DetailView;
-//
-///* @var $this yii\web\View */
-///* @var $model app\modules\tankermovement\models\TblPartyMaster */
-//
-//$this->title = $model->party_master_code;
-//$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Party Masters'), 'url' => ['index']];
-//$this->params['breadcrumbs'][] = $this->title;
-?>
-<?php
 
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
@@ -30,7 +19,7 @@ $this->title = Yii::$app->label->title('view', 'party master');
                     'columns' => [
                         [
                             'attribute' => 'union_code',
-                            'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
@@ -79,7 +68,7 @@ $this->title = Yii::$app->label->title('view', 'party master');
                         ],
                         [
                             'attribute' => 'state_code',
-                            'value' => !empty($model->stateCode) ? $model->stateCode->state_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->stateCode, 'state_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -88,12 +77,12 @@ $this->title = Yii::$app->label->title('view', 'party master');
                     'columns' => [
                         [
                             'attribute' => 'district_code',
-                            'value' => !empty($model->districtCode) ? $model->districtCode->district_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
                             'attribute' => 'sub_district_code',
-                            'value' => !empty($model->subDistrictCode) ? $model->subDistrictCode->sub_district_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->subDistrictCode, 'sub_district_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -102,12 +91,12 @@ $this->title = Yii::$app->label->title('view', 'party master');
                     'columns' => [
                         [
                             'attribute' => 'village_code',
-                            'value' => !empty($model->villageCode) ? $model->villageCode->village_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->villageCode, 'village_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
                             'attribute' => 'hamlet_code',
-                            'value' => !empty($model->hamletCode) ? $model->hamletCode->hamlet_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->hamletCode, 'hamlet_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -116,12 +105,12 @@ $this->title = Yii::$app->label->title('view', 'party master');
                     'columns' => [
                         [
                             'attribute' => 'bank_code',
-                            'value' => !empty($model->bankCode) ? $model->bankCode->bank_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->bankCode, 'bank_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
                             'attribute' => 'branch_code',
-                            'value' => !empty($model->branchCode) ? $model->branchCode->branch_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->branchCode, 'branch_name'),                            
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],

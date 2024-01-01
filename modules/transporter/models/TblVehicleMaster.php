@@ -54,7 +54,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['billing_with_capacity'], 'default', 'value' => 0],
                 [['pollution_certificate'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
@@ -116,10 +116,6 @@ class TblVehicleMaster extends \app\models\ChildModel {
               return $('#billing_type_code').val() == '3'; 
           }", 'except' => ['activation']],
                 [['transporter_code'], 'parsingNoValidate', 'on' => ['importCsv']],
-                [['parsing_no'], function ($attribute, $params) {
-                    Yii::$app->general->validVehicleNumber($this, $attribute, $params);
-                }, 'except' => ['activation']],
-                [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
                 [['transporter_code'], 'pastDateValidate', 'on' => ['importCsv', 'customImport']],
                 [['flag_wef_date', 'billing_qty_flag'], 'required', 'on' => ['vehicleWiseFlag']],
                 [['capacity_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblCapacity::className(), 'targetAttribute' => ['capacity_code' => 'capacity_code'], 'on' => ['importCsv']],
@@ -127,11 +123,10 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 [['wef_date', 'expiry_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
                 [['wef_date', 'expiry_date'], 'convertDate', 'on' => ['importCsv']],
                 [['transporter_code'], 'importFieldSet', 'on' => ['importCsv']],
-//            [['parsing_no'], function ($attribute, $params) {
-//                    Yii::$app->general->validVehicleNumber($this, $attribute, $params);
-//                }],
-//            [['parsing_no'], 'string', 'min' => 8, 'max' => 11],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblVehicleMaster', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

@@ -113,15 +113,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                     $this->validateGstNo($attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'from_mcc']],
             [['address'], 'string', 'max' => 500],
-            [['aadhaar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
             [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['importCsv']],
-            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['post_sap_data', 'from_mcc']],
-            [
-                ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['post_sap_data', 'from_mcc']
-            ],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

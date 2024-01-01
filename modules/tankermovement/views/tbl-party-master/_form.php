@@ -92,10 +92,6 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-   $('#tblpartymaster-district_code').on('change',function(){
-        $('#tblpartymaster-ifsc').val('');
-    });
-    
     $('#tblpartymaster-branch_code').on('change',function(){
             var id = $('#tblpartymaster-branch_code').val();
             $.ajax({

@@ -1444,6 +1444,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'CpliabilityReport';
         return $this->actionIndex();
     }
+
     public function actionBonusReport() {
         $this->report = 'BonusReport';
         return $this->actionIndex();
@@ -1453,6 +1454,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MemberPaymentBankFormat';
         return $this->actionIndex();
     }
+
     public function actionMemberDailyCollectionRegion() {
         $this->report = 'MemberPassbookRegion';
         if (Yii::$app->request->queryParams) {
@@ -1465,6 +1467,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+
     public function actionDcsCollDateShiftSummaryRegion() {
         $this->report = 'DcsCollDateShiftSummaryRegion';
         if (Yii::$app->request->queryParams) {
@@ -1477,6 +1480,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+
     public function actionAgentWiseReconciliationRegion() {
         $this->report = 'AgentWiseReconciliationRegion';
         if (Yii::$app->request->queryParams) {
@@ -1489,6 +1493,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+
     public function actionCenterLossGainReportRegion() {
         $this->report = 'CenterLossGainReportRegion';
         if (Yii::$app->request->queryParams) {
@@ -1498,12 +1503,29 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+
     public function actionMilkCollectionProcDetailRegion() {
         $this->report = 'MilkCollectionProcDetailRegion';
         return $this->actionIndex();
     }
+
     public function actionMilkShortageRecovery() {
         $this->report = 'MilkShortageRecovery';
+        return $this->actionIndex();
+    }
+
+    public function actionCdaReport() {
+        $this->report = 'CdaReport';
+        return $this->actionIndex();
+    }
+
+    public function actionVehicleMasterHistory() {
+        $this->report = 'VehicleMasterHistory';
+        return $this->actionIndex();
+    }
+
+    public function actionTallyReport() {
+        $this->report = 'TallyReport';
         return $this->actionIndex();
     }
 
@@ -2763,16 +2785,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Stock At DCS',
             ],
             'SaleReportFarmer' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,product_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,product_code,from_date:string,to_date:string,report_type',
                 'sp_name' => 'mis_farmer_product_sale_report',
                 'scenario' => 'SaleReportFarmer',
                 'title' => 'Farmer Sale Report',
+                'report_type' => ['2' => Yii::t('app', 'All'), '0' => Yii::t('app', 'Unlock'), '1' => Yii::t('app', 'Lock')],
             ],
             'SaleReportVendor' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,product_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,product_code,from_date:string,to_date:string,report_type',
                 'sp_name' => 'mis_vendor_product_sale_report',
                 'scenario' => 'SaleReportVendor',
                 'title' => 'Vendor Sale Report',
+                'report_type' => ['2' => Yii::t('app', 'All'), '0' => Yii::t('app', 'Unlock'), '1' => Yii::t('app', 'Lock')],
             ],
             'SummaryReportMcc' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
@@ -3115,6 +3139,24 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_milk_shortage_recovery',
                 'scenario' => 'MilkShortageRecovery',
                 'title' => '626 - Milk Shortage Recovery',
+            ],
+            'CdaReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_cda_date_shift_wise_shivprasad',
+                'scenario' => 'CDAReport',
+                'title' => '626 - CDA Report',
+            ],
+            'TallyReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_milk_collection_bill_shivprasad',
+                'scenario' => 'TallyReport',
+                'title' => '916 - TallyReport',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection')],
+            ],
+            'VehicleMasterHistory' => [
+                'param' => 'transporter_code',
+                'sp_name' => 'portal_history_tbl_vehicle_master',
+                'title' => 'Vehicle Master History',
             ],
         ];
         return $label[$l];

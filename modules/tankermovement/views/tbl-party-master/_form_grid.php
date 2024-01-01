@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+
 use yii\helpers\Url;
 use yii\web\View;
 use kartik\grid\GridView;
@@ -20,8 +20,12 @@ $attribute = [
     ['attribute' => 'owner_email'],
     ['attribute' => 'pan_no', 'filter' => false],
     ['attribute' => 'adhar_no', 'filter' => false],
-    ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'bank_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bankCode, 'bank_name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'branch_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->branchCode, 'branch_name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
     ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
     ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
@@ -42,8 +46,8 @@ $grid_option = [
         'deactive' => function ($url, $model) {
             $name = $model->party_name;
             $class = $model->is_active == 0 ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-master ' . $class, 'data-val' => $model->party_master_code, 'data-name' => $name];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-party-master/deactivate-user'], $options);
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-party ' . $class, 'data-val' => $model->party_master_code, 'data-name' => $name];
+            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-party-master/deactivate-party'], $options);
         },
     ]
 ];
@@ -54,7 +58,7 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 
 $script = "
 $(document).ready(function(){
-    $(document).on('click','.deact-master',function(e){
+    $(document).on('click','.deact-party',function(e){
     var id= $(this).attr('data-val');
     var name = $(this).attr('data-name');
     bootbox.confirm({
@@ -74,7 +78,7 @@ $(document).ready(function(){
               $('#loader').show();
                  $.ajax({
                         type: 'get',
-                        url: '" . Url::to(['deactivate-user']) . "',
+                        url: '" . Url::to(['deactivate-party']) . "',
                         data:{'id':id},
                         success: function(data) {
                             var obj1 = $.parseJSON(data);

@@ -706,6 +706,10 @@ class V1 extends \yii\base\Module {
                 'main_table' => 'TblIndentMaster',
                 'save_child_other' => true,
             ],
+            'bulk/notification' => [
+                'param' => 'union#plant#mcc#bmc#dcs#notification_type',
+                'sp' => 'sp_app_eipl_v1_bulk_notification',
+            ],
         ];
         return $label;
     }

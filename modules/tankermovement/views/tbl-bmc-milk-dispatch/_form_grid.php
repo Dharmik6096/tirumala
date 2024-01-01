@@ -37,7 +37,7 @@ $attribute = [
     ['attribute' => 'destination_code',],
     ['attribute' => 'destination_type', 'value' => function($model) {
             $rel = Yii::$app->general->getDestRelation($model->destination_type);
-            $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
+            $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : strtolower($model->destination_type) == 'party' ? 'party_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
             if (!empty($rel))
                 return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
         },],
@@ -60,26 +60,26 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->fromShiftCode, 'shift');
         }],
-    ['attribute' => 'qty', 'label' => 'QTY',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'dispatch_qty');
-        }],
-    ['attribute' => 'fat', 'label' => 'FAT',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'fat');
-        }],
-    ['attribute' => 'snf', 'label' => 'SNF',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'snf');
-        }],
-    ['attribute' => 'balance_qty', 'label' => 'Balance Qty',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'balance_qty');
-        }],
-    ['attribute' => 'milk_type_code', 'label' => 'Milk Type',
-        'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->bmcMilkDispatchTxn, ['milkType'], 'animal_type_name');
-        }],
+    // ['attribute' => 'qty', 'label' => 'QTY',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'dispatch_qty');
+    //     }],
+    // ['attribute' => 'fat', 'label' => 'FAT',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'fat');
+    //     }],
+    // ['attribute' => 'snf', 'label' => 'SNF',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'snf');
+    //     }],
+    // ['attribute' => 'balance_qty', 'label' => 'Balance Qty',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'balance_qty');
+    //     }],
+    // ['attribute' => 'milk_type_code', 'label' => 'Milk Type',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getmultiforeignkey($model->bmcMilkDispatchTxn, ['milkType'], 'animal_type_name');
+    //     }],
     [
         'attribute' => 'to_date',
         'value' => function($model) {
@@ -108,8 +108,8 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_time($model->vehicle_out_time);
         }],
-    ['attribute' => 'gross_weight'],
-    ['attribute' => 'tare_weight'],
+    // ['attribute' => 'gross_weight'],
+    // ['attribute' => 'tare_weight'],
     ['attribute' => 'remarks'],
     [
         'attribute' => 'is_last_destination',

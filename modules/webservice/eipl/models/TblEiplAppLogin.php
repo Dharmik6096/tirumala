@@ -50,10 +50,10 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
      */
     public function rules() {
         return [
-            [['app_type', 'otp_code', 'sms_sent', 'is_active', 'is_expired', 'device_detail'], 'safe'],
-            [['eipl_code', 'mobile_no', 'master_type', 'master_code', 'login_type', 'module_type', 'module_code', 'imei_no', 'device_id', 'lat_long', 'access_token', 'auth_key', 'version_no', 'sms_log'], 'safe'],
-            [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at', 'department'], 'safe'],
-            [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at'], 'default', 'value' => date('Y-m-d H:i:s')],
+                [['app_type', 'otp_code', 'sms_sent', 'is_active', 'is_expired', 'device_detail'], 'safe'],
+                [['eipl_code', 'mobile_no', 'master_type', 'master_code', 'login_type', 'module_type', 'module_code', 'imei_no', 'device_id', 'lat_long', 'access_token', 'auth_key', 'version_no', 'sms_log'], 'safe'],
+                [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at', 'department'], 'safe'],
+                [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at'], 'default', 'value' => date('Y-m-d H:i:s')],
         ];
     }
 
@@ -157,8 +157,8 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
     public function getLogin() {
         $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
         $query = $this->find()->where(['or',
-                    ['mobile_no' => $encryptedmobile],
-                    ['mobile_no' => $this->mobile_no]
+                        ['mobile_no' => $encryptedmobile],
+                        ['mobile_no' => $this->mobile_no]
                 ])
                 ->andWhere(['app_type' => $this->app_type]);
         if ($this->login_type == 'MEMBER') {
@@ -175,8 +175,8 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                                 //'device_id' => $this->device_id
                         ])
                         ->andWhere(['or',
-                            ['mobile_no' => $encryptedmobile],
-                            ['mobile_no' => $this->mobile_no]
+                                ['mobile_no' => $encryptedmobile],
+                                ['mobile_no' => $this->mobile_no]
                         ])
                         ->one();
     }
@@ -205,8 +205,8 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                             'module_name' => 'firstname',
                         ])
                         ->where(['or',
-                            ['mobile_no' => $encryptedmobile],
-                            ['mobile_no' => $this->mobile_no]
+                                ['mobile_no' => $encryptedmobile],
+                                ['mobile_no' => $this->mobile_no]
                         ])->andWhere(['module_name' => $module_name, 'is_active' => 1]);
     }
 
@@ -226,8 +226,8 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                             'module_name' => 'member_name',
                         ])
                         ->where(['or',
-                            ['mobile_no' => $encryptedmobile],
-                            ['mobile_no' => $this->mobile_no]
+                                ['mobile_no' => $encryptedmobile],
+                                ['mobile_no' => $this->mobile_no]
                         ])->andWhere(['is_active' => 1])->andFilterWhere(['member_code' => $this->module_code]);
     }
 
@@ -270,8 +270,8 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
         $encryptedmobile = Yii::$app->general->encryptData($data->mobile_no);
         return $query = $this->find()
                         ->where(['or',
-                            ['mobile_no' => $encryptedmobile],
-                            ['mobile_no' => $data->mobile_no]
+                                ['mobile_no' => $encryptedmobile],
+                                ['mobile_no' => $data->mobile_no]
                         ])->andWhere(['master_code' => $data->member_code, 'login_type' => 'MEMBER'])->one();
     }
 
@@ -279,8 +279,8 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
         $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
         return $query = $this->find()
                         ->where(['or',
-                            ['mobile_no' => $encryptedmobile],
-                            ['mobile_no' => $this->mobile_no]
+                                ['mobile_no' => $encryptedmobile],
+                                ['mobile_no' => $this->mobile_no]
                         ])->andWhere(['master_code' => $user])->one();
     }
 
@@ -288,8 +288,8 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
         $encryptedmobile = Yii::$app->general->encryptData($data->mobile_no);
         return $query = $this->find()
                         ->where(['or',
-                            ['mobile_no' => $encryptedmobile],
-                            ['mobile_no' => $data->mobile_no]
+                                ['mobile_no' => $encryptedmobile],
+                                ['mobile_no' => $data->mobile_no]
                         ])->andWhere(['master_code' => $data->id, 'login_type' => $data->login_type])->one();
     }
 

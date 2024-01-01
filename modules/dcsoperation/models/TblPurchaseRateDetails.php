@@ -494,10 +494,19 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
             $where = ['fat' => bcdiv($sum, 1, 1)];
         }
 
-        return $this->find()
-                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type'], 'rate_class' => $data['rate_class']])
+        return $this->find()->alias('prd')
+                        ->select(['prd.*', 'sra.rtpl as scheme_rate_rtpl', 'sra.scheme_rate_code'])
+                        ->leftJoin('tbl_scheme_rate_applicability sra', [
+                            'and',
+                            ['<=', 'sra.from_date', $data['dt_date']],
+                            ['>=', 'sra.to_date', $data['dt_date']],
+                            ['=', 'sra.is_active', 1],
+                            ['=', 'sra.applicable_code', $data['dcs_code']]
+                        ])
+                        ->leftJoin('tbl_scheme_rate sr', 'sra.scheme_rate_code = sr.scheme_rate_code')
+                        ->where(['prd.purchase_rate_code' => $this->purchase_rate_code, 'prd.milk_type_code' => $data['milk_type'], 'prd.milk_quality_type_code' => $data['milk_quality_type'], 'prd.rate_class' => $data['rate_class']])
                         ->andWhere($where)
-                        ->one();
+                        ->asArray()->one();
     }
 
     public function getDispatchPurchasseRateDetailData($data, $rate_type) {

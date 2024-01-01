@@ -14,6 +14,7 @@ use app\modules\tankermovement\models\TblSampleBottleTesting;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblDcs;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 /**
  * This is the model class for table "tbl_milk_vehicle_entry".
@@ -58,20 +59,31 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-                [['trip_code', 'union_code', 'plant_code', 'vehicle_entry_date', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'vehicle_code'], 'required', 'except' => ['androidsync', 'importCsv']],
-                [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at'], 'safe'],
-                [['gross_weight', 'tare_weight'], 'number'],
-                [['originating_type'], 'integer'],
-                [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
+        return [    
+            [['union_code', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code'], 'required', 'except' => ['androidsync', 'importCsv']],[['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+            [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code'], 'safe'],
+            [['gross_weight', 'tare_weight'], 'number'],
+            [['originating_type'], 'integer'],
+            [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
                     return $model->receipt_at == 'VENDOR';
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblmilkvehicleentry-receipt_at').val() == 'VENDOR';
           }", 'except' => ['androidsync', 'importCsv']],
-                [['trip_code'], 'validateBottle', 'except' => ['androidsync', 'importCsv']],
-                [['tare_weight_time'], 'validateTime', 'except' => ['androidsync', 'importCsv']],
-                [['plant_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['trip_code'], 'validateBottle', 'except' => ['androidsync', 'importCsv']],
+            [['tare_weight_time'], 'validateTime', 'except' => ['androidsync', 'importCsv']],
+            [['plant_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['vehicle_code'], 'validateTrip', 'skipOnError' => true],
+            [['receipt_at'], 'AddBmcCode'],
+            [['tanker_no'], 'required', 'when' => function ($model) {
+                    return $model->dispatch_from == 'PARTY';
+                }],
+            [['vehicle_code'], 'required', 'when' => function ($model) {
+                    return !($model->dispatch_from == 'PARTY');
+                }],
+            [['tanker_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
+            [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true],
         ];
     }
 
@@ -83,7 +95,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             'milk_vehicle_entry_code' => Yii::t('app', 'Milk Vehicle Entry Code'),
             'trip_code' => Yii::t('app', 'Trip Code'),
             'grn_no' => Yii::t('app', 'Grn No.'),
-            'receipt_at' => Yii::t('app', 'Receipt At'),
+            'receipt_at' => Yii::t('app', 'Destination Type'),
             'vehicle_entry_date' => Yii::t('app', 'Vehicle Entry Date'),
             'vehicle_code' => Yii::t('app', 'Vehicle'),
             'arrival_time' => Yii::t('app', 'Arrival Time'),
@@ -104,6 +116,12 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'receipt_at_code' => Yii::t('app', 'Destination Name'),
+            'dispatch_from' => Yii::t('app', 'Source Type'),
+            'dispatch_from_code' => Yii::t('app', 'Source Name'),
+            'receipt_datetime' => Yii::t('app', 'Receipt Datetime'),
+            'receipt_shift_code' => Yii::t('app', 'Receipt Shift'),
+            'tanker_no' => Yii::t('app', 'Tanker No'),
         ];
     }
 
@@ -135,6 +153,46 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code'])->andOnCondition(['IN', 'trip_status', ['open', 'tankerfull']]);
     }
 
+    public function getCustomerCodeSource() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'dispatch_from_code']);
+    }
+    
+    public function getCustomerCodeDest() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'receipt_at_code']);
+    }
+
+    public function getBmcCodeSource() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'dispatch_from_code']);
+    }
+    
+    public function getBmcCodeDest() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'receipt_at_code']);
+    }
+
+    public function getMccPlantCodeSource() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'dispatch_from_code']);
+    }
+    
+     public function getMccPlantCodeDest() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'receipt_at_code']);
+    }
+
+    public function getPlantCodeSource() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'dispatch_from_code']);
+    }
+
+    public function getPlantCodeDest() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'receipt_at_code']);
+    }
+    
+    public function getPartyMasterCodeSource() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'dispatch_from_code']);
+    }
+    
+    public function getPartyMasterCodeDest() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'receipt_at_code']);
+    }
+    
     public function validateBottle($attribute, $params) {
         $bottleCount = Yii::$app->general->getUnionConfiguration($this->union_code, 'receipt_sample_testing_count', 'PORTAL');
         $sampleBottle = TblSampleBottleTesting::find()->where(['trip_code' => $this->trip_code])->count();
@@ -213,6 +271,60 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
 
     public function getTripCodeAll() {
         return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
+    }
+
+    public function validateTrip($attribute) {
+        $attribute = 'trip_code';
+        $requiredConditions = [
+            ($this->dispatch_from == 'BMC' && $this->receipt_at == 'PLANT'),
+            ($this->dispatch_from == 'BMC' && $this->receipt_at == 'BMC'),
+            ($this->dispatch_from == 'BMC' && $this->receipt_at == 'PARTY'),
+        ];
+        if (in_array(true, $requiredConditions)) {
+            if (empty($this->trip_code)) {
+                $this->addError($attribute, 'Trip Code required for selected Source & Destination .');
+            }
+        }
+    }
+
+    public function AddBmcCode($attribute, $params) {
+        if (!empty($this->receipt_at_code)) {
+            if ($this->receipt_at == 'BMC') {
+                $Plant_code = TblPlant::find()
+                        ->innerJoin('tbl_mcc_plant', 'tbl_plant.plant_code = tbl_mcc_plant.plant_code')
+                        ->innerJoin('tbl_bmc', 'tbl_mcc_plant.mcc_plant_code = tbl_bmc.mcc_plant_code')
+                        ->where(['tbl_bmc.bmc_code' => $this->receipt_at_code])
+                        ->one();
+
+                $Mcc_Plant_code = TblMccPlant::find()
+                        ->where(['mcc_plant_code' => TblDcsBmc::findOne(['bmc_code' => $this->receipt_at_code])->mcc_plant_code])
+                        ->one();
+
+                if (!empty($Plant_code)) {
+                    $this->plant_code = $Plant_code->plant_code;
+                }
+                if (!empty($Mcc_Plant_code)) {
+                    $this->mcc_plant_code = $Mcc_Plant_code->mcc_plant_code;
+                }
+                $this->bmc_code = $this->receipt_at_code;
+            } elseif ($this->receipt_at == 'PLANT') {
+                $this->plant_code = $this->receipt_at_code;
+            }
+        }
+    }
+
+    public function CheckDateValidation($attribute, $params) {
+        $this->receipt_datetime = date('Y-m-d', strtotime($this->receipt_datetime)) . ' ' . \Yii::$app->general->getshift($this->receipt_shift_code) . '.000000';
+        $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
+        if (!empty($stock_date) && $this->receipt_at == 'BMC') {
+            $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
+            $dispatch_date .= '.000000';
+            if ($this->receipt_datetime < $dispatch_date) {
+                $this->addError($attribute, Yii::t('app/validation', 'Receipt Datetime & shift must be greater than last stock entry.'));
+                return FALSE;
+            }
+        } 
+        return TRUE;
     }
 
 }
