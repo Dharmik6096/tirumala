@@ -9,6 +9,7 @@ use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
 use app\modules\document\models\TblAttachment;
 use yii\data\ActiveDataProvider;
+use app\modules\tms\models\TblUserAttendanceDetail;
 
 /**
  * TblUserAttendanceController implements the CRUD actions for TblUserAttendance model.
@@ -33,22 +34,27 @@ class TblUserAttendanceController extends ChildController {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($attendance_code, $user_code, $attendance_date) {
         $searchModel = new TblUserAttendanceSearch();
-        $user_attachment = new TblAttachment();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $attachmentDataProvider = new ActiveDataProvider([
-            'query' => $user_attachment->find()
-                    ->where([
-                        'module_code' => $id,
-                        'module_name' => ['tbl_user_attendance_in', 'tbl_user_attendance_out']
-                    ]),
+        $user_detail = new TblUserAttendanceDetail();
+        $userDetailDataProvider = new ActiveDataProvider([
+            'query' => $user_detail->find()->where(['user_code' => $user_code, 'attendance_date' => $attendance_date]),
         ]);
+
+        $UserDetailId = $user_detail->getUserAttendanceDetailList($user_code, $attendance_date);
+        $user_attachment = new TblAttachment();
+        $attachmentDataProvider = new ActiveDataProvider([
+            'query' => $user_attachment->find()->where(['module_code' => $UserDetailId, 'module_name' => ['tbl_user_attendance_detail_in', 'tbl_user_attendance_detail_out']]),
+        ]);
+
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $this->findModel($attendance_code),
                     'dataProvider' => $dataProvider,
                     'user_attachment' => $user_attachment,
                     'attachmentDataProvider' => $attachmentDataProvider,
+                    'user_detail' => $user_detail,
+                    'userDetailDataProvider' => $userDetailDataProvider
         ]);
     }
 

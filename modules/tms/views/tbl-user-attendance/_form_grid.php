@@ -2,6 +2,8 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
+use yii\helpers\Url;
+use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 <?php
 $attribute = [
@@ -43,7 +45,10 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'view' => true,
+        'view-detail' => function ($url, $model) {
+            $url = Url::to(['tbl-user-attendance/view', 'attendance_code' => $model->attendance_code, 'user_code' => $model->user_code, 'attendance_date' => $model->attendance_date]);
+            return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
+        },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
