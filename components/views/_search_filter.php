@@ -334,6 +334,15 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, ''); ?>
                                         </div>
                                     <?php } ?>
+                                            <?php
+                                    if (in_array($value, array('txn_type'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdownStatic('txn_type', $model, $form, ''); ?> 
+
+                                        </div>
+                                    <?php } ?>
                                 <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">

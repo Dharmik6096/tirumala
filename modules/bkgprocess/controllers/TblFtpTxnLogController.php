@@ -16,7 +16,7 @@ use yii\web\Response;
  */
 class TblFtpTxnLogController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['import-file','import-zip-file'];
+    public $freeAccessActions = ['import-file', 'import-zip-file'];
 
     /**
      * Lists all TblFtpTxnLog models.
@@ -133,16 +133,12 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
         Yii::$app->general->checkDirectory($path, '0777');
         try {
             $file = \yii\web\UploadedFile::getInstanceByName('file');
-            if (strtolower($file->name) == strtolower('EKOMILK.zip')) {
-                $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-                $name = date('YmdHis') . $user.'.zip';
-                if ($file->saveAs($path . $name)) {
-                    $record = ['status' => 'success', 'filename' => $name, 'msg' => $name, 'datefile' => $file->name];
-                } else {
-                    $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
-                }
+            $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+            $name = $user . '_' . $file->name;
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name, 'datefile' => $file->name];
             } else {
-                $record = ['status' => 'error', 'filename' => $file->name, 'msg' => 'File Name must be EKOMILK.zip'];
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
             }
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             return Json::encode($record);
@@ -215,6 +211,7 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
                         $file_path = $CollectionData . $value;
                         if (copy($old_path, $file_path)) {
                             $ftp_txn_model = new TblFtpTxnLog();
+                            $ftp_txn_model->scenario = 'EKOMILKZIP';
                             $ftp_txn_model->txn_type = 'BIPLZIP';
                             $ftp_txn_model->local_path = $file_path;
                             $ftp_txn_model->file_path = NULL;
@@ -224,13 +221,20 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
                             $ftp_txn_model->success_count = 0;
                             $ftp_txn_model->error_count = 0;
                             $ftp_txn_model->file_name = $value;
+                            $ftp_txn_model->zip_filename = $value;
                             $ftp_txn_model->file_status = 1;
                             $ftp_txn_model->status = 0;
-                            if ($ftp_txn_model->save(FALSE)) {
+                            if ($ftp_txn_model->save()) {
                                 $cnt++;
                                 unlink($old_path);
                             } else {
-                                $error_file[] = $value;
+                                $errormsg = $value .': ';
+                                foreach ($ftp_txn_model->errors as $attributeErrors) {
+                                    foreach ($attributeErrors as $error) {
+                                        $errormsg .= $error;
+                                    }
+                                }
+                                $error_file[] = $errormsg;
                             }
                         } else {
                             $error_file[] = $value;
@@ -241,7 +245,7 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
                 }
                 $msg = $cnt . ' Files Uploaded Successfully<br/>';
                 if (!empty($error_file)) {
-                    $msg .= 'Following files not uploaded' . implode('<br/>', $error_file);
+                    $msg =  implode('<br/>', $error_file);
                 }
             } else {
                 $status = 'error';
@@ -250,7 +254,7 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
             $result = ['status' => $status, 'data' => $msg];
             return (Json::encode($result));
         } else {
-            if ($matchingRecordsExist > 10) {
+            if ($matchingRecordsExist > 20) {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => Yii::t('app', 'Your previous uploaded file is in processing try after some time.')]);
             }
