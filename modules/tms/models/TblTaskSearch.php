@@ -12,7 +12,7 @@ use app\modules\tms\models\TblTask;
  */
 class TblTaskSearch extends TblTask {
 
-    public $from_date, $to_date, $id;
+    public $from_date, $to_date;
 
     /**
      * @inheritdoc

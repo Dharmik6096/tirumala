@@ -215,7 +215,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('user'))) {
+                                    if (in_array($value, array('user_code'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
