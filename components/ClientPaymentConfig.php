@@ -89,7 +89,7 @@ class ClientPaymentConfig extends Component {
                     'param' => 'mcc_plant_code,bmc_code,applicable_for,from_datetime,to_datetime,user_code',
                     'sp_name' => 'sp_disburse_remuneration_payment',
                 ],
-                 'bonus_payment_disburse' => [
+                'bonus_payment_disburse' => [
                     'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
                     'sp_name' => 'sp_bonus_payment_disburse',
                 ]
@@ -301,7 +301,7 @@ class ClientPaymentConfig extends Component {
                 ],
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
-                    'sp_name' => 'sp_vsp_payment_vrs_newasa',
+                    'sp_name' => 'sp_vsp_payment_vrs_sbd',
                 ],
                 'remuneration_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',

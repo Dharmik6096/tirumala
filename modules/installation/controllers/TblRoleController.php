@@ -208,14 +208,14 @@ class TblRoleController extends \app\controllers\ChildController {
     public function setDownldAck($ackModel, &$saveModel, $usrData) {
         $dest_org_type = $usrData->getOrgType($usrData, 'type');
         $dest_org_id = $usrData->getOrgType($usrData, 'code');
-        $androidInstallationDetail =  new TblAndroidInstallationDetails();
+        $androidInstallationDetail = new TblAndroidInstallationDetails();
         $activeDevice = $androidInstallationDetail->getActiveDeviceData($dest_org_id, $dest_org_type);
-        if(!empty($activeDevice)){
-            foreach($activeDevice as $value) {
+        if (!empty($activeDevice)) {
+            foreach ($activeDevice as $value) {
                 $usrAckModel = new TblUserDownloadAck();
 //                $usrAckModel->attributes = $ackModel->attributes;
                 $usrAckModel->device_id = $value->device_id;
-                $usrAckModel->hash_key = $value->hash_key;               
+                $usrAckModel->hash_key = NULL; //$hashKeys['hash_key'];               
                 $usrAckModel->union_code = $ackModel->union_code;
                 $usrAckModel->plant_code = $ackModel->plant_code;
                 $usrAckModel->mcc_plant_code = $ackModel->mcc_plant_code;
@@ -225,7 +225,7 @@ class TblRoleController extends \app\controllers\ChildController {
                 $usrAckModel->download_pending = 1;
                 $saveModel[] = $usrAckModel;
             }
-        }        
+        }
     }
 
 }

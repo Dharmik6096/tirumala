@@ -149,11 +149,13 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
     }
 
     public function actionExportProductSale($id) {
+        $model = $this->findModel($id);
         $controls = [];
         $controls['ref_code'] = $id;
+        $controls['lock_date'] = $model->locking_date;
         $output = \Yii::$app->general->getSpData('Portal_download_product_sale_lock_data', $controls);
-
-
+        
+        
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',

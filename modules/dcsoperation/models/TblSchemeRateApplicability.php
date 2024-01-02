@@ -6,6 +6,7 @@ use Yii;
 use app\modules\dcsoperation\models\TblSchemeRate;
 use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_scheme_rate_applicability".
@@ -110,30 +111,36 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
-//        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->applicable_code);
-        $sentboxArray = [];
-        $array = [];
-        $array['code'] = $this->applicable_code;
-        $array['type'] = 'VLC';
-        $sentboxArray[] = $array;
-
-        $dcsDetails = $this->dcsCode;
-        if (!empty($dcsDetails) && !empty($dcsDetails->is_bmc) && $dcsDetails->is_bmc == 1) {
-            $bmcCode = $dcsDetails->bmc_code;
-            $array = [];
-            $array['code'] = $bmcCode;
-            $array['type'] = 'BMC';
-            $sentboxArray[] = $array;
+        $generateSentbox = false;
+        // $dcs_code = '';
+        // $appendDcs = false; 
+        if ($this->applicable_for == 'DCS') {
+            $generateSentbox = true;
+            $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+        } else {
+            $generateSentbox = true;
+            $bmc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'bmc_code');
+            // $mcc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'mcc_plant_code');
         }
-        foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-            if ($this->is_active == 0) {
-                $flag = 'DELETE';
+        if ($generateSentbox) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $bmc_code, '', '', false);
+            // $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $bmc_code, '', $dcs_code, $appendDcs);
+            if ($this->applicable_for == 'DCS' && $this->is_member_rate == 1) {
+                $sentboxArray[] = [
+                    'code' => $this->applicable_code,
+                    'type' => 'VLC'
+                ];
             }
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            foreach ($sentboxArray as $sent) {
+                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+                if ($this->is_active == 0) {
+                    $flag = 'DELETE';
+                }
+                $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                    if (!($sentbox->setSentbox($this, $flag))) {
+                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                    }
                 }
             }
         }
@@ -188,6 +195,14 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
                         ->andWhere(['<=', 'cast(from_date as date)', $date])
                         ->andWhere(['>=', 'cast(to_date as date)', $date])
                         ->one();
+    }
+
+    public function getCustomerMasterCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
     }
 
 }
