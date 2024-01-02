@@ -163,7 +163,7 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
         if($eipl_code == 'ITC'){
             $bill_head_code = 4;
         } else if($eipl_code == 'VRS_NEWASA'){
-            $bill_head_code = 8;
+            $bill_head_code = 3;
         }
         return $this->hasOne(TblMemberPaymentHeadSummary::className(), ['dcs_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['bill_head_code' => $bill_head_code]);
     }

@@ -5344,3 +5344,9 @@ tr.highlightRow {
     left: auto;
     right: 0px;
 }
+.create-trip-modal .modal-dialog {
+    width: 90% !important;
+}
+.addTripButtonDiv {
+    margin: 17px 0px 0px 0px !important;
+}
