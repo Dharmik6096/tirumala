@@ -30,13 +30,13 @@ $attribute = [
         }, 'filter' => false],
         ['attribute' => 'user_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
-        }],
+        }, 'filter' => false],
         ['attribute' => 'task_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->taskTypeCode, 'task_type');
-        }],
+        }, 'filter' => false],
         ['attribute' => 'form_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->formTypeCode, 'form_name');
-        }],
+        }, 'filter' => false],
     'title',
     'description',
     'status',
