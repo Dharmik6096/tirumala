@@ -26,7 +26,7 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
-    <div class="single_entry_area col-sm-12 padding_10_0 DisableAferAdd">
+    <div class="row single_entry_area col-sm-12 padding_10_0 DisableAferAdd">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Plant Dispatch') ?></h4>
         </div>
@@ -147,7 +147,7 @@ $form = ActiveForm::begin([
                                                                 }
                                                  }'),
             ],
-            'options' => ['class' => 'btn btn-default btn-save-txn disabled no_pointer',
+            'options' => ['class' => 'btn-login btn btn-default btn-save-txn disabled no_pointer',
                 'type' => 'submit'],
         ]);
         AjaxSubmitButton::end();

@@ -2,7 +2,7 @@
 
 use yii\helpers\Url;
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = !empty($title) ? $title : Yii::t('app', 'Payment Detail');
 ?>

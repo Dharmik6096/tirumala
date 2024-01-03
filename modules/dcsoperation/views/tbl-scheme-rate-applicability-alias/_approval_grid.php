@@ -1,12 +1,11 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\globalmaster\models\TblAnimalType;
-use webvimark\modules\UserManagement\components\GhostHtml;
 
 $visible = !empty($searchModel->status) ? FALSE : TRUE;
 ?>

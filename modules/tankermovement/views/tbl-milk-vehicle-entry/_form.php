@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
 <?= Html::hiddenInput('entry_type', '', ['id' => 'entry_type']); ?>
 <div class="micro_form">
     <div class="row">
-        <div class="col-lg-10 master_fields <?= $disabled ?>">
+        <div class="row col-lg-10 master_fields <?= $disabled ?>">
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
@@ -64,7 +64,6 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?> 
             </div>
-            <div class="col-sm-12">
             <div class="col-sm-2 number-validate"> 
                 <?= $form->field($model, 'gross_weight')->textInput() ?>
             </div>
@@ -76,7 +75,6 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
-            </div>
             </div>
         </div>
         <div class="col-lg-12">
@@ -157,19 +155,19 @@ $form = ActiveForm::begin([
                     <?= $form->field($txn_model, 'density')->textInput() ?>
                 </div>
                 <div class="col-sm-12">
-                <div class="col-sm-1 number-validate"> 
-                    <?= $form->field($txn_model, 'lactose')->textInput() ?>
-                </div>
-                <div class="col-sm-1 number-validate"> 
-                    <?= $form->field($txn_model, 'freezing_point')->textInput() ?>
-                </div>
-                <div class="col-sm-1"> 
-                    <?= $form->field($txn_model, 'mbrt')->textInput() ?>
-                </div>
-                <div class="col-sm-1"> 
-                    <?= Html::activeHiddenInput($txn_model, 'milk_vehicle_entry_transaction_code'); ?>
-                    <?= $form->field($txn_model, 'acidity')->textInput() ?>
-                </div>
+                    <div class="col-sm-1 number-validate"> 
+                        <?= $form->field($txn_model, 'lactose')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 number-validate"> 
+                        <?= $form->field($txn_model, 'freezing_point')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1"> 
+                        <?= $form->field($txn_model, 'mbrt')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1"> 
+                        <?= Html::activeHiddenInput($txn_model, 'milk_vehicle_entry_transaction_code'); ?>
+                        <?= $form->field($txn_model, 'acidity')->textInput() ?>
+                    </div>
                 </div>
             </div>
             <div id="transactions-from">             
@@ -236,7 +234,7 @@ $form = ActiveForm::begin([
                 AjaxSubmitButton::end();
                 ?>
                 <?= Yii::$app->controls->reset(); ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
+                <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
             </div>
         </div>
     </div>

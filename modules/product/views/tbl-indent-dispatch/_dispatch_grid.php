@@ -1,11 +1,10 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
-use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Indent Dispatch');
 ?>
@@ -76,7 +75,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
 //                echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval', '', 'btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>

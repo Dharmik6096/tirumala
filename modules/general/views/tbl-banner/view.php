@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
-use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\widgets\ListView;
 

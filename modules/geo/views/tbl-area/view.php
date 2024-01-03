@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::$app->label->title('view', 'Area');
 $this->params['menu'][] = Yii::$app->controls->update($model->area_code);

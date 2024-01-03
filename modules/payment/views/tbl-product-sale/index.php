@@ -1,6 +1,5 @@
 
 <?php
-use webvimark\modules\UserManagement\components\GhostHtml;
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Product Sale'));
 $this->params['menu'][] = Yii::$app->controls->add('Product Sale', 'create-product-sale');
 $this->params['menu'][] = Yii::$app->controls->add('Product Sale to Member', 'create-product-sale-to-member');

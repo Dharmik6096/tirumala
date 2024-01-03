@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
-use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\web\View;
 
 /* @var $this yii\web\View */

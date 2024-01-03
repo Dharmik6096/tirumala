@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 
@@ -70,7 +70,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
     <div class="col-sm-2  mt25">
-        <?= $form->field($model, 'is_member_rate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_member_rate'); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

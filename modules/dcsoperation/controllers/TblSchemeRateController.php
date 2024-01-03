@@ -14,7 +14,7 @@ use app\modules\dcsoperation\models\TblSchemeRateApplicabilityHistory;
 use yii\helpers\Json;
 use yii\web\Response;
 use app\modules\dcsoperation\models\TblSchemeRateHistory;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\dcsoperation\models\TblSchemeRateApplicabilitySearch;

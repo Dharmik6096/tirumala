@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -97,7 +97,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                                      bootbox.alert("You have error in your file");
                      }'),
                 ],
-                'options' => ['class' => 'btn btn-primary',
+                'options' => ['class' => 'btn-login btn btn-primary',
                     'type' => 'submit'],
             ]);
             AjaxSubmitButton::end();

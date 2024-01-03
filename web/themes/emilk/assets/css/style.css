@@ -1918,7 +1918,7 @@ input[type="checkbox"][disabled] + label, input[type="radio"][disabled] + label 
     position: fixed;
     z-index: 9;
     box-shadow:0 0 10px rgba(0,0,0,0.15);
-    overflow: hidden;
+    overflow: visible;
     padding-bottom: 42px;
 }
 
@@ -2422,7 +2422,7 @@ div.crystalstyle{
 .panel.panel-default{
     /* min-height: calc(100vH - 100px); */
     min-height: calc(100vH - 200px);
-    overflow: auto;
+    overflow: hidden;
     padding-bottom: 18px;
 }
 .actionButtons{
@@ -4382,6 +4382,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 
 .custom_width_dup_modal{
     width: calc(100% - 100px) !important;
+    display: table;
 }
 
 .max_h_100-100{
@@ -4498,7 +4499,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }*/ 
 
 .custom_grid_header {
-    background-color: #7a231c;
+    background-color: #7a231c !important;
     border: 1px solid #ddd;
     color: #ffffff;
     font-weight: 500;
@@ -4621,12 +4622,12 @@ td.custom_grid_normal.dynamic_value {
 }
 
 .widget_table_search_btn_right_margin{
-    max-width: 20px;
+    max-width: 40px;
     position: absolute;
     right: 34px;
     cursor: pointer;
     color: #fff;
-    top: 7px;
+    top: 12px;
     background: transparent;
     border: none !important;
     box-shadow: none;

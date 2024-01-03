@@ -6,7 +6,6 @@
  */
 
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 ?>
 

@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
 
 $button = Yii::$app->label->button('create');
 $this->title = Yii::t('app', 'Document Mapping');

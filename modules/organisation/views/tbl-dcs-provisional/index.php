@@ -1,7 +1,5 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
-
 if ($pending_approval) {
     $this->title = Yii::t('app', Yii::$app->label->title('list', 'Provisional Society Pending Approval'));
 } else {

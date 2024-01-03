@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\web\View;
 use yii\helpers\Url;
 

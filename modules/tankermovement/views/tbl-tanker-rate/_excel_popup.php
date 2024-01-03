@@ -1,5 +1,5 @@
 <?php 
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>

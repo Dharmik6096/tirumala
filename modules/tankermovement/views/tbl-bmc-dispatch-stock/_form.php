@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
@@ -79,7 +79,7 @@ $form = ActiveForm::begin([
 
     <div class="clearfix"></div>
     <div class="col-sm-1"></div>
-    <div class="col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
+    <div class="row col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Physical Stock Punching Details</h4>
         </div>
@@ -168,12 +168,12 @@ $form = ActiveForm::begin([
                                                                 }
                                                  }'),
                 ],
-                'options' => ['class' => 'btn btn-default btn-raised',
+                'options' => ['class' => 'btn-login btn btn-default btn-raised',
                     'type' => 'submit'],
             ]);
             AjaxSubmitButton::end();
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
         </div>
     </div>
 </div>

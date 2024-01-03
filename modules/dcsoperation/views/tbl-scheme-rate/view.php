@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
-use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::$app->label->title('view', 'Deleted Scheme Rate');
 ?>

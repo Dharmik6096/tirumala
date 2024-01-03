@@ -5,7 +5,7 @@ use yii\web\View;
 use kartik\grid\GridView;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 ?>
 <?php
 $form = ActiveForm::begin(['options' => [
