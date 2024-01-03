@@ -9,6 +9,7 @@ use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
 use app\modules\document\models\TblAttachment;
 use yii\data\ActiveDataProvider;
+use app\modules\tms\models\TblUserAttendanceDetail;
 
 /**
  * TblUserAttendanceController implements the CRUD actions for TblUserAttendance model.
@@ -34,21 +35,27 @@ class TblUserAttendanceController extends ChildController {
      * @return mixed
      */
     public function actionView($id) {
-        $searchModel = new TblUserAttendanceSearch();
-        $user_attachment = new TblAttachment();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $attachmentDataProvider = new ActiveDataProvider([
-            'query' => $user_attachment->find()
-                    ->where([
-                        'module_code' => $id,
-                        'module_name' => ['tbl_user_attendance_in', 'tbl_user_attendance_out']
-                    ]),
+        $model = $this->findModel($id);
+        $user_detail = new TblUserAttendanceDetail();
+        $userDetailDataProvider = new ActiveDataProvider([
+            'query' => $user_detail->find()->where(['user_code' => $model->user_code, 'attendance_date' => $model->attendance_date]),
         ]);
+
+        $UserDetailIds = array_map(function($e) {
+            return $e->attendance_detail_code;
+        }, $userDetailDataProvider->getModels());
+
+        $user_attachment = new TblAttachment();
+        $attachmentDataProvider = new ActiveDataProvider([
+            'query' => $user_attachment->find()->where(['module_code' => $UserDetailIds, 'module_name' => ['tbl_user_attendance_detail_in', 'tbl_user_attendance_detail_out']]),
+        ]);
+
         return $this->render('view', [
-                    'model' => $this->findModel($id),
-                    'dataProvider' => $dataProvider,
+                    'model' => $model,
                     'user_attachment' => $user_attachment,
                     'attachmentDataProvider' => $attachmentDataProvider,
+                    'user_detail' => $user_detail,
+                    'userDetailDataProvider' => $userDetailDataProvider
         ]);
     }
 

@@ -3,7 +3,7 @@
 $attribute = [
     ['attribute' => 'module_name', 'label' => 'Image Type',
         'value' => function($model) {
-            return ($model->module_name == 'tbl_user_attendance_in') ? 'IN' : 'OUT';
+            return ($model->module_name == 'tbl_user_attendance_detail_in') ? 'IN' : 'OUT';
         }, 'filter' => false],
     ['attribute' => 'attachment_type', 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],

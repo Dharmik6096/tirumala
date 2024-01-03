@@ -1,9 +1,5 @@
 <?php
-use kartik\grid\GridView;
-use yii\helpers\Html;
-use app\components\GeneralFunctions;
-?>
-<?php
+
 $attribute = [
     ['attribute' => 'union_code', 'value' => function ($model) {
         return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');

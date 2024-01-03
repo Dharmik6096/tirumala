@@ -151,13 +151,26 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
         </div>
         <div class="col-md-12 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading mt_0">User Attendances Detail List</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-grid center_text">
+                <?=
+                $this->render('_attendance_detail_list', [
+                    'user_detail' => $user_detail,
+                    'userDetailDataProvider' => $userDetailDataProvider,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading mt_0">User Attachment</h4>
             </div>
             <div class="clearfix"></div>
             <div class="form-grid center_text">
                 <?=
                 $this->render('_attachment_list', [
-                    'model' => $model,
                     'user_attachment' => $user_attachment,
                     'attachmentDataProvider' => $attachmentDataProvider,
                 ])
