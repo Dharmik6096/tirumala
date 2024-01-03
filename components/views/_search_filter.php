@@ -196,7 +196,33 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, $field_class . '-f_bmc_code', 'customer_code', FALSE); ?>
                                         </div>
                                     <?php } ?>
-
+                                    <?php
+                                    if (in_array($value, array('task_type'))) {
+                                        $depend_str = $field_class . '-f_union_code';
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-2">
+                                            <?= Yii::$app->dropdown->depend_dropdown('task_type', $model, $form, $depend_str, 'form-group'); ?>
+                                        </div>
+                                    <?php } ?>
+                                         <?php
+                                    if (in_array($value, array('form_type'))) {
+                                        $depend_str = $field_class . '-task_type_code';
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-2">
+                                            <?= Yii::$app->dropdown->depend_dropdown('form_type', $model, $form, $depend_str, 'form-group'); ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('user_code'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('user_code', $model, $form, 'form-group col-sm-2 padding-right-5'); ?>
+        
+                                        </div>
+                                    <?php } ?>
                                     <?php
                                     if (in_array($value, array('route_code'))) {
                                         $depend_str = $field_class . '-f_plant_code' . ',' . $field_class . '-f_mcc_code' . ',' . $field_class . '-f_bmc_code';
