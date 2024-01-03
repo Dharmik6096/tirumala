@@ -34,23 +34,24 @@ class TblUserAttendanceController extends ChildController {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($attendance_code, $user_code, $attendance_date) {
-        $searchModel = new TblUserAttendanceSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+    public function actionView($id) {
+        $model = $this->findModel($id);
         $user_detail = new TblUserAttendanceDetail();
         $userDetailDataProvider = new ActiveDataProvider([
-            'query' => $user_detail->find()->where(['user_code' => $user_code, 'attendance_date' => $attendance_date]),
+            'query' => $user_detail->find()->where(['user_code' => $model->user_code, 'attendance_date' => $model->attendance_date]),
         ]);
 
-        $UserDetailId = $user_detail->getUserAttendanceDetailList($user_code, $attendance_date);
+        $UserDetailIds = array_map(function($e) {
+            return $e->attendance_detail_code;
+        }, $userDetailDataProvider->getModels());
+
         $user_attachment = new TblAttachment();
         $attachmentDataProvider = new ActiveDataProvider([
-            'query' => $user_attachment->find()->where(['module_code' => $UserDetailId, 'module_name' => ['tbl_user_attendance_detail_in', 'tbl_user_attendance_detail_out']]),
+            'query' => $user_attachment->find()->where(['module_code' => $UserDetailIds, 'module_name' => ['tbl_user_attendance_detail_in', 'tbl_user_attendance_detail_out']]),
         ]);
 
         return $this->render('view', [
-                    'model' => $this->findModel($attendance_code),
-                    'dataProvider' => $dataProvider,
+                    'model' => $model,
                     'user_attachment' => $user_attachment,
                     'attachmentDataProvider' => $attachmentDataProvider,
                     'user_detail' => $user_detail,

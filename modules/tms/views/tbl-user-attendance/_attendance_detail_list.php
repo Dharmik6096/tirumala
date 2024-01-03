@@ -3,11 +3,6 @@
 $attribute = [
     ['attribute' => 'attendance_detail_code', 'filter' => false],
     ['attribute' => 'attendance_date', 'filter' => false],
-    ['attribute' => 'reference_type',
-        'value' => function($model) {
-            return ($model->reference_type == 'Atten_In') ? 'Atten In' : 'Atten Out';
-        }, 'filter' => false],
-    ['attribute' => 'reference_code', 'filter' => false],
     ['attribute' => 'in_time', 'value' => function($model) {
             return Yii::$app->controls->view_time($model->in_time);
         }, 'filter' => false],
