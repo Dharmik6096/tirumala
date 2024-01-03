@@ -285,9 +285,13 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/depend-vehicles', 'Select Vehicle', $multiple, $model->$name);
     }
 
-    public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
+    public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
+        if ($multiselect) {
+            $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-plant/plant-list');
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
+        }
     }
 
     public function plant_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {

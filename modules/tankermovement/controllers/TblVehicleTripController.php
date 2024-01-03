@@ -73,18 +73,19 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $bmc_array[$bmc_index[0]] = $bmc_index[1];
                 }
                 ksort($bmc_array);
-                $bmc_array_sort = [];
-                foreach ($bmc_array as $a) {
-                    $bmc_array_sort[] = $a;
+                if (!empty($bmc_array)) {
+                    foreach ($bmc_array as $index => $value) {
+                        if (strpos($value, '-plant') !== false) {
+                            continue;
+                        }
+                        $this->model->bmc_code = $value;
+                        $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+                        break;
+                    }
                 }
-                $this->model->bmc_code = $bmc_array_sort;
+                $this->model->plant_code = $this->model->plant_code[0];
             } else {
                 $this->model->bmc_code = NULL;
-            }
-            $bmc_array = $this->model->bmc_code;
-            if (!empty($bmc_array)) {
-                $this->model->bmc_code = $bmc_array[0];
-                $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
             }
             $this->model->trip_mode = 'offline';
             if ($this->model->validate()) {
@@ -92,18 +93,28 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 if ($result[0]) {
                     $validate = TRUE;
                     $save_model = $result[1];
+                    array_shift($bmc_array);
                     foreach ($bmc_array as $key => $bmc) {
                         $trip_detai = new TblVehicleTripDetail();
-                        if ($key == count($bmc_array) - 1) {
-                            $trip_detai->source_org_code = $bmc;
-                            $trip_detai->source_org_type = 'bmc';
-                            $trip_detai->destination_code = $this->model->dest_plant_code;
-                            $trip_detai->destination_type = 'plant';
+                        if (strpos($bmc, '-plant') !== false) {
+                            $trip_detai->source_org_type = 'plant';
+                            $bmc = rtrim($bmc, '-plant');
                         } else {
-                            $trip_detai->source_org_code = $bmc;
                             $trip_detai->source_org_type = 'bmc';
-                            $trip_detai->destination_code = $bmc_array[$key + 1];
-                            $trip_detai->destination_type = 'bmc';
+                        }
+                        $trip_detai->source_org_code = $bmc;
+
+                        if ($key < count($bmc_array) - 1) {
+                            $next_bmc = ($key == count($bmc_array) - 1) ? $bmc_array[0] : $bmc_array[$key + 1];                    
+                            if (strpos($next_bmc, '-plant') !== false) {
+                                $trip_detai->destination_type = 'plant';
+                                $next_bmc = rtrim($next_bmc, '-plant');
+                            } else {
+                                $trip_detai->destination_type = 'bmc';
+                            }
+                            $trip_detai->destination_code = $next_bmc;
+                        } else {
+                            continue;
                         }
                         $trip_detai->originating_org_code = $this->model->union_code;
                         $trip_detai->vehicle_trip_code = $this->model->vehicle_trip_code;

@@ -310,7 +310,7 @@ class TblDcsBmc extends \app\models\ChildModel {
     public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = [], $plant_bmc = []) {
         $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode, $plant_bmc);
         $value = ArrayHelper::map($value, 'bmc_code', function($value) use ($invert) {
-                    return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code;
+                    return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code . ' - ' . 'BMC';
                 });
         return $value;
     }
