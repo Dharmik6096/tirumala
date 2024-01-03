@@ -140,7 +140,7 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
             $query->orFilterWhere([
                 'and',
                 ['like', 'tbl_ftp_txn_log.created_by', $user],
-                ['like', 'tbl_ftp_txn_log.statuss', $this->status],
+                ['like', 'tbl_ftp_txn_log.status', $this->status],
                 ['=', 'tbl_ftp_txn_log.txn_type', $this->txn_type],
                 ['like', 'tbl_ftp_txn_log.total_count', $this->total_count],
                 ['like', 'tbl_ftp_txn_log.success_count', $this->success_count],
