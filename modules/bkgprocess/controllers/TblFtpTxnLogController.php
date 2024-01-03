@@ -206,46 +206,49 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
                 $files = array_filter(explode(',', $model->file_name));
                 $cnt = 0;
                 foreach ($files as $key => $value) {
-                    try {
                         $old_path = $path . $value;
                         $file_path = $CollectionData . $value;
-                        if (copy($old_path, $file_path)) {
-                            $ftp_txn_model = new TblFtpTxnLog();
-                            $ftp_txn_model->scenario = 'EKOMILKZIP';
-                            $ftp_txn_model->txn_type = 'BIPLZIP';
-                            $ftp_txn_model->local_path = $file_path;
-                            $ftp_txn_model->file_path = NULL;
-                            $ftp_txn_model->module_name = 'TblMilkCollection';
-                            $ftp_txn_model->union_code = $model->union_code;
-                            $ftp_txn_model->total_count = 0;
-                            $ftp_txn_model->success_count = 0;
-                            $ftp_txn_model->error_count = 0;
-                            $ftp_txn_model->file_name = $value;
-                            $ftp_txn_model->zip_filename = $value;
-                            $ftp_txn_model->file_status = 1;
-                            $ftp_txn_model->status = 0;
-                            if ($ftp_txn_model->save()) {
-                                $cnt++;
-                                unlink($old_path);
-                            } else {
-                                $errormsg = $value .': ';
+                        $ftp_txn_model = new TblFtpTxnLog();
+                        $ftp_txn_model->scenario = 'EKOMILKZIP';
+                        $ftp_txn_model->txn_type = 'BIPLZIP';
+                        $ftp_txn_model->local_path = $file_path;
+                        $ftp_txn_model->file_path = NULL;
+                        $ftp_txn_model->module_name = 'TblMilkCollection';
+                        $ftp_txn_model->union_code = $model->union_code;
+                        $ftp_txn_model->total_count = 0;
+                        $ftp_txn_model->success_count = 0;
+                        $ftp_txn_model->error_count = 0;
+                        $ftp_txn_model->file_name = $value;
+                        $ftp_txn_model->zip_filename = $value;
+                        $ftp_txn_model->file_status = 1;
+                        $ftp_txn_model->status = 0;
+                        $ftp_txn_model->file_date = date('Y-m-d');
+                        $transaction = Yii::$app->db->beginTransaction();
+                        try {
+                            if (!$ftp_txn_model->validate()) {
+                                $errormsg = $value . ': ';
                                 foreach ($ftp_txn_model->errors as $attributeErrors) {
                                     foreach ($attributeErrors as $error) {
                                         $errormsg .= $error;
                                     }
                                 }
                                 $error_file[] = $errormsg;
+                            } elseif ($ftp_txn_model->save() && copy($old_path, $file_path)) {
+                                $cnt++;
+                                unlink($old_path);
+                                $transaction->commit();
+                            } else {
+                                $transaction->rollBack();
+                                $error_file[] = 'Following file not uploaded : ' . $value;
                             }
-                        } else {
-                            $error_file[] = $value;
+                        } catch (\Throwable $ex) {
+                            $transaction->rollBack();
+                            $error_file[] = 'An error occurred: ' . $ex->getMessage();
                         }
-                    } catch (\Throwable $ex) {
-                        
-                    }
                 }
                 $msg = $cnt . ' Files Uploaded Successfully<br/>';
                 if (!empty($error_file)) {
-                    $msg =  implode('<br/>', $error_file);
+                    $msg = implode('<br/>', $error_file);
                 }
             } else {
                 $status = 'error';

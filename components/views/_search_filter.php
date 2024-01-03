@@ -365,8 +365,7 @@ if (!empty($filter_data)) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic('txn_type', $model, $form, ''); ?> 
-
+                                           <?= $form->field($model, 'txn_type')->dropDownList(['BIPL' => 'BIPL', 'BIPLZIP' => 'BIPLZIP'],['prompt' => 'Select txn type'])->label(false); ?>
                                         </div>
                                     <?php } ?>
                                 <?php } ?>

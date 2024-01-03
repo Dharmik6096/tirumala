@@ -110,15 +110,11 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
             // $query->where('0=1');
             return $dataProvider;
         }
-        if (!empty($this->from_date)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+          $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');   
             $query->andFilterWhere(['>=', 'cast(tbl_ftp_txn_log.file_date as date)', $from_date]);
-        }
-
-        if (!empty($this->to_date)) {
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
             $query->andFilterWhere(['<=', 'cast(tbl_ftp_txn_log.file_date as date)', $to_date]);
-        }
+
         // grid filtering conditions
 //        $query->andFilterWhere([
 //            'module_code' => $this->dcs_code,
@@ -145,8 +141,11 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
                 ['like', 'tbl_ftp_txn_log.error_count', $this->error_count],
                 ['like', 'tbl_ftp_txn_log.file_name', $this->file_name],
                 ['like', 'tbl_ftp_txn_log.zip_filename', $this->zip_filename],
-                ['like', 'tbl_ftp_txn_log.file_status', $this->file_status]
+                ['like', 'tbl_ftp_txn_log.file_status', $this->file_status],
+                ['>=', 'cast(tbl_ftp_txn_log.file_date as date)', $from_date],
+                ['<=', 'cast(tbl_ftp_txn_log.file_date as date)', $to_date]
             ]);
+            
         }
         return $dataProvider;
     }

@@ -1808,11 +1808,6 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['QTY' => Yii::t('app', 'QTY'), 'TS' => Yii::t('app', 'TS')],
             ],
-             'txn_type' => [
-                'name' => 'txn_type',
-                'prompt' => Yii::t('app', 'Select txn type'),
-                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'BIPLZIP' => Yii::t('app', 'BIPLZIP')],
-            ],
         ];
         return $records[$l];
     }
