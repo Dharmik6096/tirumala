@@ -114,11 +114,11 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
           $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d'); 
           if(!empty($this->from_date))
           {
-            $query->andFilterWhere(['>=', 'cast(tbl_ftp_txn_log.file_date as date)', $from_date]);
+            $query->andFilterWhere(['>=', 'tbl_ftp_txn_log.file_date', $from_date]);
           }
           if(!empty($this->to_date))
           {
-            $query->andFilterWhere(['<=', 'cast(tbl_ftp_txn_log.file_date as date)', $to_date]);
+            $query->andFilterWhere(['<=', 'tbl_ftp_txn_log.file_date', $to_date]);
           }
 
         // grid filtering conditions
@@ -131,7 +131,7 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
                 ->andFilterWhere(['like', 'tbl_ftp_txn_log.success_count', $this->success_count])
                 ->andFilterWhere(['like', 'tbl_ftp_txn_log.error_count', $this->error_count])
                 ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_name', $this->file_name])
-                ->andFilterWhere(['like', 'tbl_ftp_txn_log.zip_filenames', $this->zip_filename])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.zip_filename', $this->zip_filename])
                 ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_status', $this->file_status])
                 ->andFilterWhere(['like', 'tbl_ftp_txn_log.status', $this->status])
                 ->andFilterWhere(['=', 'tbl_ftp_txn_log.txn_type', $this->txn_type]);
@@ -140,16 +140,16 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
             $query->orFilterWhere([
                 'and',
                 ['like', 'tbl_ftp_txn_log.created_by', $user],
-                ['like', 'tbl_ftp_txn_log.status', $this->status],
+                ['like', 'tbl_ftp_txn_log.statuss', $this->status],
                 ['=', 'tbl_ftp_txn_log.txn_type', $this->txn_type],
                 ['like', 'tbl_ftp_txn_log.total_count', $this->total_count],
                 ['like', 'tbl_ftp_txn_log.success_count', $this->success_count],
                 ['like', 'tbl_ftp_txn_log.error_count', $this->error_count],
                 ['like', 'tbl_ftp_txn_log.file_name', $this->file_name],
-                ['like', 'tbl_ftp_txn_log.zip_filenames', $this->zip_filename],
+                ['like', 'tbl_ftp_txn_log.zip_filename', $this->zip_filename],
                 ['like', 'tbl_ftp_txn_log.file_status', $this->file_status],
-                ['>=', 'cast(tbl_ftp_txn_log.file_date as date)', $from_date],
-                ['<=', 'cast(tbl_ftp_txn_log.file_date as date)', $to_date]
+                ['>=', 'tbl_ftp_txn_log.file_date', $from_date],
+                ['<=', 'tbl_ftp_txn_log.file_date', $to_date]
             ]);
             
         }
