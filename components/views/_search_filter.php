@@ -329,7 +329,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status','txn_type'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
@@ -358,14 +358,6 @@ if (!empty($filter_data)) {
                                         ?>
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, ''); ?>
-                                        </div>
-                                    <?php } ?>
-                                            <?php
-                                    if (in_array($value, array('txn_type'))) {
-                                        $f_cnt++;
-                                        ?>
-                                        <div class="col-sm-3">
-                                           <?= $form->field($model, 'txn_type')->dropDownList(['BIPL' => 'BIPL', 'BIPLZIP' => 'BIPLZIP'],['prompt' => 'Select txn type'])->label(false); ?>
                                         </div>
                                     <?php } ?>
                                 <?php } ?>
