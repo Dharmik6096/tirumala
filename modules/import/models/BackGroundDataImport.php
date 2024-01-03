@@ -54,6 +54,10 @@ class BackGroundDataImport extends Model {
               [['deduction_start_date'], 'required', 'on' => ['product_sale', 'product_sale_member'], 'when' => function () {
                     return $this->payment_mode == 1;
                 }],
+            [['deduction_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter deduction date in valid format e.g. 01.12.2018'), 'on' => ['product_sale', 'product_sale_member'], 'when' => function () {
+                    return $this->payment_mode == 1;
+                }],
+            
 //            [['sap_batch_no'], 'required', 'on' => ['product_sale_batch', 'product_sale_member_batch']]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('BackGroundDataImport', $this->form_validation_type);
