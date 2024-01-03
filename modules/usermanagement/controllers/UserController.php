@@ -12,6 +12,7 @@ use app\models\TblUserOrganizationMapping;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\widgets\ActiveForm;
+use \app\modules\details\models\TblContactDetailsHistory;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -242,9 +243,21 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $model->load(Yii::$app->request->post());
             $model->scenario = 'DeactiveUser';
             if ($model->validate()) {
-//                $model->is_active = 0;
+                $model->is_active = 0;
                 $model->wef_date = !empty(Yii::$app->request->post()['User']['wef_date']) ? Yii::$app->formatter->asDate(Yii::$app->request->post()['User']['wef_date'], DATE_FORMAT) : '';
                 $saveModel[] = $model;
+                $contactModel = new TblContactDetails();
+                $contactModel->module_code = $model->id;
+                $contactModelData = $contactModel->getAllContactData(1);
+                if (!empty($contactModelData)) {
+                    foreach ($contactModelData as $contactdetail) {
+                        $historyModel = new TblContactDetailsHistory();
+                        Yii::$app->operation->history($contactdetail, $historyModel, UPDATE);
+                        $saveModel[] = $historyModel;
+                        $contactdetail->is_active = 0;
+                        $saveModel[] = $contactdetail;
+                    }
+                }
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['User Deactivated', 'create']);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -274,10 +287,24 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         $this->model = $this->findModel($id);
         $historyModel = new UserHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $saveModel[] = $historyModel;
 //        $this->model->scenario = 'deactivate';
         $this->model->is_active = 1;
         $this->model->wef_date = NULL;
-        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['User', 'edit']);
+        $saveModel[] = $this->model;
+        $contactModel = new TblContactDetails();
+        $contactModel->module_code = $this->model->id;
+        $contactModelData = $contactModel->getAllContactData(0);
+        if (!empty($contactModelData)) {
+            foreach ($contactModelData as $contactdetail) {
+                $historyModel = new TblContactDetailsHistory();
+                Yii::$app->operation->history($contactdetail, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $contactdetail->is_active = 1;
+                $saveModel[] = $contactdetail;
+            }
+        }
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['User', 'edit']);
         if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'User Activated Successfully.'];
         } else {

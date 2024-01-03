@@ -167,6 +167,31 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         $this->redirect(Url::previous());
     }
 
+    public function actionActivate($id) {
+        $this->model = $this->findModel($id);
+        $contactModel = new TblContactDetailsHistory();
+        Yii::$app->operation->history($this->model, $contactModel, UPDATE);
+        $this->model->is_active = 1;
+        $RouteContactData = $this->model->getRouteContactData();
+        $ContactDetailsRecord = $this->model->getContactDetailsRecord();
+        if (empty($RouteContactData)) {
+            $transaction = $this->generalModel->saveTransaction([$this->model, $contactModel], ['Contact Details', 'edit']);
+            if ($transaction == 'customRedirect') {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Contact activated successfully.']);
+            } else if (!empty($ContactDetailsRecord)) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $ContactDetailsRecord->module_name . ' - ' . $ContactDetailsRecord->module_code . '.']);
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Could not Activate. Please try again.']);
+            }
+        } else {
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'error',
+                'message' => 'User Already Activated In ' . $this->model->module_name . ' - ' . $RouteContactData->module_code . '.'
+            ]);
+        }
+        $this->redirect(Url::previous());
+    }
+
     public function actionSetDefault($id) {
         $this->model = $this->findModel($id);
         $historyModel = new TblContactDetailsHistory();
