@@ -230,13 +230,13 @@ class TblUserAndroidController extends \app\controllers\ChildController {
     public function setDownldAck($ackModel, &$saveModel, $usrData) {
         $dest_org_type = $usrData->getOrgType($usrData, 'type');
         $dest_org_id = $usrData->getOrgType($usrData, 'code');
-        $androidInstallationDetail =  new TblAndroidInstallationDetails();
+        $androidInstallationDetail = new TblAndroidInstallationDetails();
         $activeDevice = $androidInstallationDetail->getActiveDeviceData($dest_org_id, $dest_org_type);
-        if(!empty($activeDevice)){
-            foreach($activeDevice as $value) {
+        if (!empty($activeDevice)) {
+            foreach ($activeDevice as $value) {
                 $usrAckModel = new TblUserDownloadAck();
-        //        $usrAckModel->attributes = $ackModel->attributes;
-                $usrAckModel->hash_key = $value->hash_key;
+                //        $usrAckModel->attributes = $ackModel->attributes;
+                $usrAckModel->hash_key = NULL; //$value->hash_key;
                 $usrAckModel->device_id = $value->device_id;
                 $usrAckModel->union_code = $ackModel->union_code;
                 $usrAckModel->plant_code = $ackModel->plant_code;
