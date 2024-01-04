@@ -60,6 +60,7 @@ $eipl_code = \Yii::$app->session->get('eiplCode') == 'PRABHAT' ? TRUE : FALSE;
                 return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
             },],
             ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'converted_amount', 'value' => 'converted_amount', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'can_no', 'filter' => FALSE, 'visible' => $allowCanSelection],
