@@ -10,7 +10,7 @@ class BackGroundDataImport extends Model {
     public $form_validation_type = 'default';
     public $dcs_code, $ex_member_code, $ref_code, $member_name, $local_name, $father_name, $local_father_name, $surname, $local_surname, $nominee_name, $local_nominee_name, $nominee_relation, $dob, $bloodgroup_code, $gender_code, $qualification_code, $caste_category_code, $religion_code, $total_land, $animal_type_code, $no_of_buffalo, $no_of_cow_cross, $no_of_cow_ind, $member_type_code, $branch_code, $bank_account_no, $beneficiary_name, $mobile_no, $email, $address, $local_address, $pincode, $pan_no, $adhar_no, $annual_income, $hamlet_code, $voter_id, $member_class, $registration_date, $max_allowed_qty;
     public $bmc_code, $applicable_code, $applicable_for, $purchase_rate_code, $dcs_purchase_rate_code, $wef_date, $shift_code;
-    public $customer_type, $customer_code, $invoice_date, $payment_mode, $product_code, $quantity, $discount, $no_of_installment;
+    public $customer_type, $customer_code, $invoice_date, $payment_mode, $product_code, $quantity, $discount, $no_of_installment,$deduction_start_date;
     public $member_code, $product_sale_rate_code, $product_group_code, $product_name, $tax_code, $is_dpu_product, $dpu_product_code, $is_inhouse, $is_inclusive_tax, $is_saleable, $is_indent;
     public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code, $sap_farmer_code, $product_type, $remarks, $sap_batch_no, $rate_wharehouse;
 
@@ -51,6 +51,13 @@ class BackGroundDataImport extends Model {
                 }, 'on' => ['product_sale_rate','product_sale_rate_gyan']
             ],
             ['rate_class', 'in', 'range' => ['A', 'B', 'C'], 'on' => ['member_rateclass']],
+              [['deduction_start_date'], 'required', 'on' => ['product_sale', 'product_sale_member'], 'when' => function () {
+                    return $this->payment_mode == 1;
+                }],
+            [['deduction_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter deduction date in valid format e.g. 01.12.2018'), 'on' => ['product_sale', 'product_sale_member'], 'when' => function () {
+                    return $this->payment_mode == 1;
+                }],
+            
 //            [['sap_batch_no'], 'required', 'on' => ['product_sale_batch', 'product_sale_member_batch']]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('BackGroundDataImport', $this->form_validation_type);

@@ -26,7 +26,7 @@ use app\modules\organisation\models\TblBmcMilkType;
  */
 class TblBmcCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid', 'poured-bmc-config', 'check-fat-range', 'get-converted'];
+    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid', 'poured-bmc-config', 'check-fat-range'];
 
     /**
      * Lists all TblBmcCollection models.
@@ -364,6 +364,10 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             Model::loadMultiple($detailModel, Yii::$app->request->post());
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
+                $detail->qty_mode = Yii::$app->general->getUnionConfiguration($detail->union_code, 'collection_qty_mode', 'BMC');
+                $conversion_const = Yii::$app->general->getUnionConfiguration($detail->union_code, 'ltr_to_kg_constant', 'BMC');
+                $detail->converted_qty_mode = $detail->qty_mode == 1 ? 0 : 1;
+                $detail->converted_qty = $detail->qty_mode == 1 ? $detail->qty / $conversion_const : $detail->qty * $conversion_const;
                 $modelData[] = $detail;
             }
             if (Model::validateMultiple($modelData)) {
@@ -875,29 +879,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
-    }
-
-    public function actionGetConverted() {
-        $response = [];
-        $response['status'] = 'error';
-        $response['data'] = '';
-        $qty = Yii::$app->request->post('qty');
-        $rtpl = Yii::$app->request->post('rtpl');
-        $union_code = Yii::$app->request->post('union_code');
-        $qty_mode = Yii::$app->general->getUnionConfiguration($union_code, 'collection_qty_mode', 'BMC');
-        $conversion_const = Yii::$app->general->getUnionConfiguration($union_code, 'ltr_to_kg_constant', 'BMC');
-        $converted_qty = $qty_mode == 1 ? $qty / $conversion_const : $qty * $conversion_const;
-        $converted_amount = $converted_qty * $rtpl;
-        if (!empty($converted_amount) && !empty($converted_qty)) {
-            $response['status'] = 'success';
-            $data = [];
-            $data['converted_qty'] = $converted_qty;
-            $data['converted_amount'] = $converted_amount;
-            $response['data'] = $data;
-        }
-
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($response);
     }
 
 }
