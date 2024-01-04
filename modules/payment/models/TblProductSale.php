@@ -146,8 +146,10 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsale-payment_mode').val() == 1; 
             }"],
-            [['deduction_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],           
-        ];
+            [['deduction_start_date'], 'convertDateDot', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            [['deduction_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            [['deduction_start_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            ];
     }
 
     public function validateDisccount($attribute, $param) {
@@ -542,12 +544,16 @@ class TblProductSale extends \app\models\ChildModel {
     public function convertDate() {
         if (empty($this->getErrors())) {
             $this->invoice_date = !empty($this->invoice_date) ? Yii::$app->controls->view_date($this->invoice_date, 'php:Y-m-d') : NULL;
+            $this->deduction_start_date = !empty($this->deduction_start_date) ? Yii::$app->controls->view_date($this->deduction_start_date, 'php:Y-m-d') : NULL;
         }
     }
 
     public function convertDateDot() {
         try {
             $this->invoice_date = Yii::$app->controls->view_date($this->invoice_date, 'php:d.m.Y');
+            if(!empty($this->deduction_start_date)){
+            $this->deduction_start_date = Yii::$app->controls->view_date($this->deduction_start_date, 'php:d.m.Y');
+            }
         } catch (\Exception $e) {
             $this->invoice_date = '-';
         }
