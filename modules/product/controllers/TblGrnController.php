@@ -20,6 +20,9 @@ use app\modules\product\models\TblPlantDispatch;
 use app\modules\product\models\TblPlantDispatchHistory;
 use app\modules\product\models\TblPlantDispatchTxn;
 use app\modules\product\models\TblPlantDispatchTxnHistory;
+use app\modules\product\models\TblGrnInstallment;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\product\models\TblGrnInstallmentSearch;
 
 /**
  * TblGrnController implements the CRUD actions for TblGrn model.
@@ -243,9 +246,16 @@ class TblGrnController extends \app\controllers\ChildController {
             $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : date('Y-m-d');
             $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : $dispatchData->document_date;
             $this->model->invoice_no = !empty($this->model->invoice_no) ? $this->model->invoice_no : $dispatchData->document_no;
+            $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
+            if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
+                $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
+                $this->model->deduction_start_date = $dedStartDate;
+            }
             $this->model->scenario = 'batchcreate';
             $modelSave[] = $this->model;
+
             $i = 1;
+            $totalGrossAmount = 0;
             foreach ($txnData as $txn) {
                 $txModel = new TblGrnTxn();
                 $txModel->setAttributes($txn);
@@ -308,6 +318,31 @@ class TblGrnController extends \app\controllers\ChildController {
 //                if ($txModel->missing_qty > 0) {
 //                    $updateDispatch = FALSE;
 //                }
+                $totalGrossAmount += $txModel->gross_amount;
+            }
+            $this->model->amount = $totalGrossAmount;
+            $modelSave[] = $this->model;
+
+            if (!empty($this->model->payment_mode)) {
+                $no = !empty($this->model->no_of_installment) ? ($this->model->no_of_installment) : 1;
+                $instAmount = floatval($this->model->amount / $no);
+                $ai = 1;
+                $bmcData = TblDcsBmc::find()->select('bmc_code')->where(['mcc_plant_code' => $this->model->mcc_plant_code, 'is_active' => 1])->one();
+                for ($i = 0; $i < $no; $i++) {
+                    $installmentModel = new TblGrnInstallment();
+                    $installmentModel->grn_code = $this->model->grn_code;
+                    $installmentModel->union_code = $this->model->union_code;
+                    $installmentModel->plant_code = $this->model->plant_code;
+                    $installmentModel->mcc_plant_code = $this->model->mcc_plant_code;
+                    $installmentModel->bmc_code = $bmcData->bmc_code;
+                    $installmentModel->main_amount = $this->model->amount;
+                    $installmentModel->installment_amount = $instAmount;
+                    $installmentModel->installment_status = 0;
+                    $installmentModel->grn_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $this->model->grn_code, $ai);
+                    $installmentModel->installment_date = NULL;
+                    $modelSave[] = $installmentModel;
+                    $ai++;
+                }
             }
             if ($updateDispatch) {
                 $dispatchModel = new TblPlantDispatch();
@@ -387,6 +422,17 @@ class TblGrnController extends \app\controllers\ChildController {
         } else {
             return Json::encode(['status' => 'error']);
         }
+    }
+
+    public function actionGrnInstallments($id) {
+        $searchModel = new TblGrnInstallmentSearch();
+        $searchModel->grn_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('_installment_grid', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

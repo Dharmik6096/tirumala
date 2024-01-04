@@ -70,6 +70,10 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
+        'installment' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Installments'];
+            return GhostHtml::a('<i class="fa fa-money"></i>', ['/product/tbl-grn/grn-installments', 'id' => $model->grn_code], $options);
+        },
     ]
 ];
 

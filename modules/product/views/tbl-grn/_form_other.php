@@ -81,8 +81,28 @@ $script = "
             reloadGrid(ref_no);
         }
     });
-   
     
+    $('#tblgrn-payment_mode').on('change', function(){
+        var ref_no = $('#tblgrn-ref_no').val();
+        if(setData(ref_no)){
+            reloadGrid(ref_no);
+        }
+    });
+    
+    $('#tblgrn-no_of_installment').on('change', function(){
+        var ref_no = $('#tblgrn-ref_no').val();
+        if(setData(ref_no)){
+            reloadGrid(ref_no);
+        }
+    });
+    
+    $('#tblgrn-deduction_start_date').on('change', function(){
+        var ref_no = $('#tblgrn-ref_no').val();
+        if(setData(ref_no)){
+            reloadGrid(ref_no);
+        }
+    });
+   
 //    $(document).on('change','span.received_qty_change input', function() { 
 //        $('tr').removeClass('changeTr');
 //         var tr_key = $(this).closest('tr').addClass('changeTr');
@@ -273,6 +293,20 @@ $script = "
                 });
         } 
     
+    }
+
+    setNoOfInstallment($('#tblgrn-payment_mode').prop('checked'));	
+    $('#tblgrn-payment_mode').on('change', function() {
+        setNoOfInstallment($(this).prop('checked'));
+    });
+    
+   function setNoOfInstallment(check_value) {
+        $('.noOfInstallment').hide();
+        $('.dedStartDate').hide();
+        if(check_value == true){
+            $('.noOfInstallment').show();
+            $('.dedStartDate').show();
+        }
     }
     
 ";
