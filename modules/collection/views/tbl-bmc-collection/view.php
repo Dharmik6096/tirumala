@@ -174,124 +174,136 @@ $client_code = \Yii::$app->session->get('eiplCode');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
-                            'attribute' => 'amount',
+                            'attribute' => 'converted_amount',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'amount',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'sample_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'type_of_data_receive',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
                     ],
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'type_of_data_receive',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'transporter_code',
                             'value' => isset($model->transporter) ? $model->transporter->transporter_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'vehicle_code',
                             'value' => isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'collection_type',
                             'value' => !empty($model->collection_type) ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'route_arrival_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'remarks',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
                     [
                     'columns' => [
-                            [
-                            'attribute' => 'remarks',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
                             [
                             'attribute' => 'created_at',
                             'value' => Yii::$app->controls->view_datetime($model->created_at, 'php:H:i:s'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'tag_1',
                             'value' => Yii::$app->general->getSapStatus($model->tag_1 . $model->tag_2),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'error_desc',
                             'value' => $model->error_desc,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'adt_param',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'adt_value',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'originating_org_type',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            ['attribute' => 'originating_type',
-                            'value' => Yii::$app->general->getStaticDropdownVal('originating_type', $model, 'originating_type'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
                     ],
                 ],
                     [
                     'columns' => [
+                            ['attribute' => 'originating_type',
+                            'value' => Yii::$app->general->getStaticDropdownVal('originating_type', $model, 'originating_type'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'dcs_incharge_name',
                             'value' => !empty(Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')) ? Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->firstname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->lastname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->surname : 'N/A',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'qlty_time',
                             'value' => !empty(Yii::$app->controls->view_datetime($model->qlty_time)) ? Yii::$app->controls->view_datetime($model->qlty_time) : 'N/A',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'qty_time',
                             'value' => !empty(Yii::$app->controls->view_datetime($model->qty_time)) ? Yii::$app->controls->view_datetime($model->qty_time) : 'N/A',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'can_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'no_of_can',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -299,12 +311,8 @@ $client_code = \Yii::$app->session->get('eiplCode');
                     [
                     'columns' => [
                             [
-                            'attribute' => 'no_of_can',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
                             'attribute' => 'antibiotic',
-                            'valueColOptions' => ['style' => 'width:30%']
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
