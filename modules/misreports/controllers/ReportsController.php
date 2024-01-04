@@ -3148,6 +3148,11 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'CDAReport',
                 'title' => '626 - CDA Report',
             ],
+            'VehicleMasterHistory' => [
+                'param' => 'transporter_code',
+                'sp_name' => 'portal_history_tbl_vehicle_master',
+                'title' => 'Vehicle Master History',
+            ],
             'TallyReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,report_type',
                 'sp_name' => 'mis_milk_collection_bill_shivprasad',

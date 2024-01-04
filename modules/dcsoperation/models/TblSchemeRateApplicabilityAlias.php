@@ -48,7 +48,7 @@ class TblSchemeRateApplicabilityAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'status'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'status', 'is_member_rate'], 'safe'],
             [['from_shift', 'to_shift', 'is_active'], 'integer'],
             [['rtpl'], 'number'],
             [['scheme_rate_code', 'applicable_for', 'applicable_code'], 'string', 'max' => 20],
@@ -87,6 +87,7 @@ class TblSchemeRateApplicabilityAlias extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'is_member_rate' => Yii::t('app', 'Is Member Rate'),
         ];
     }
 

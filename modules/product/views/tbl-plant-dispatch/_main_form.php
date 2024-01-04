@@ -11,6 +11,8 @@ use yii\web\JsExpression;
 $readonly = $type == 'create' ? FALSE : TRUE;
 $disable = $readonly ? 'disabled' : '';
 $list = array('0' => 'No', '1' => 'Yes');
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;
+$sapBatchDisable=$batchNoWiseInventory==1?'':'disp_none';
 ?>
 
 <?php
@@ -63,9 +65,13 @@ $form = ActiveForm::begin([
             <?= Html::hiddenInput('x_col3', '2', ['id' => 'x_col3']); ?>
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblplantdispatch-union_code,x_col3', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product', 'product_code', FALSE); ?>
         </div>
+        <?php
+         if ($batchNoWiseInventory == 1) { 
+        ?>
         <div class="col-sm-2 sap_batch_no">
             <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
         </div>
+         <?php } ?>
         <div class=" col-sm-1 reset_field unit disabledDiv">
             <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
         </div>
@@ -102,7 +108,8 @@ $form = ActiveForm::begin([
                 <th><?= Yii::t('app', 'Product Code') ?></th>
                 <th><?= $txModel->getAttributeLabel('product_code') ?></th>
                 <th><?= $txModel->getAttributeLabel('unit_code') ?></th>
-                <th><?= $txModel->getAttributeLabel('sap_batch_no') ?></th>
+                <th><?php if($batchNoWiseInventory){
+                echo $txModel->getAttributeLabel('sap_batch_no'); }?></th>
                 <th><?= $txModel->getAttributeLabel('rate') ?></th>
                 <th><?= $txModel->getAttributeLabel('qty') ?></th>
                 <th><?= $txModel->getAttributeLabel('amount') ?></th>

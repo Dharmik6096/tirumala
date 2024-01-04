@@ -7,6 +7,8 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 
 $action = Url::to(['create']);
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+$visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
 ?>
 <div class=""></div>
 
@@ -41,7 +43,7 @@ $form = ActiveForm::begin([
         ['attribute' => 'code_ex', 'filter' => FALSE],
         ['attribute' => 'invoice_date', 'filter' => FALSE],
         ['attribute' => 'product', 'filter' => FALSE],
-        ['attribute' => 'sap_batch_no', 'filter' => FALSE],
+        ['attribute' => 'sap_batch_no','visible'=>$visible, 'filter' => FALSE],
         ['attribute' => 'quantity', 'filter' => FALSE],
         ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
         ['attribute' => 'rate', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],

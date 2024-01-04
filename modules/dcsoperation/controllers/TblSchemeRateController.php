@@ -19,6 +19,7 @@ use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\dcsoperation\models\TblSchemeRateApplicabilitySearch;
 use app\modules\dcsoperation\models\TblSchemeRateApplicabilityAlias;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * TblSchemeRateController implements the CRUD actions for TblSchemeRate model.
@@ -113,11 +114,16 @@ class TblSchemeRateController extends \app\controllers\ChildController {
     }
 
     public function actionSchemeRateApplicability($id) {
-        $model = $this->findModel($id);
+        $model = $this->findModel($id);        
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblSchemeRateApplicability();
-        $value = [];
-        $value['DCS'] = 'DCS';
+        $customerType = new TblCustomerType();
+        if ($model->is_member_rate == 1) {
+            $value = ['DCS' => Yii::t('app', 'DCS')];
+        } else {
+            $customerType->union_code = $model->union_code;
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
+        }
         $appModel->is_union = false;
         $appModel->union_code = $model->union_code;
         $appModel->field_name = 'scheme_rate_code';
@@ -125,12 +131,14 @@ class TblSchemeRateController extends \app\controllers\ChildController {
         $appModel->trans_label = 'scheme rate applicability';
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
+//        $appModel->options = ['dcs'];
         $appModel->model->from_date = $model->from_date;
         $appModel->model->to_date = $model->to_date;
         $appModel->model->from_shift = $model->from_shift;
         $appModel->model->to_shift = $model->to_shift;
         $appModel->model->rtpl = $model->rtpl;
         $appModel->model->rate_class = $model->rate_class;
+        $appModel->model->is_member_rate = $model->is_member_rate;
         $fromDate = $model->from_date;
         $toDate = $model->to_date;
         $fromShift = $model->from_shift;

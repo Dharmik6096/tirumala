@@ -71,7 +71,7 @@ $script = "
             });
         }else{
             $('.milk_quality_type_div').hide();
-            $('#tblmilkcollection-milk_quality_type_code').val(1);
+            $('#tblbmccollection-milk_quality_type_code').val(1);
         }
     }
 
@@ -252,18 +252,31 @@ $script = "
                 url:'" . Url::to(['validate-rtpl']) . "',
                 data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc},
                 success: function(data) {   
-                      var obj = $.parseJSON(data);
-                      if (obj.status == 'success')
-                      {
-                            $('#tblbmccollection-rtpl').val(obj.data.list.rtpl);
-                            $('#tblbmccollection-rate_code').val(obj.data.list.purchase_rate_code);
-                            amount();
-                      }else{
-                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
-                            $('#tblbmccollection-rtpl').val('');
-                            $('#tblbmccollection-rate_code').val('');
-                            $('#tblbmccollection-amount').val('');
-                      }
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success')
+                    {
+                        var rtpl = parseFloat(obj.data.list.rtpl);
+                        $('#tblbmccollection-actual_rate').val(rtpl.toFixed(2));
+                        $('#tblbmccollection-scheme_rate').val('');
+                        $('#tblbmccollection-scheme_rate_code').val('');
+                        if(obj.data.list.scheme_rate_rtpl != '' && obj.data.list.scheme_rate_rtpl != null){
+                            var scheme_rate_rtpl = parseFloat(obj.data.list.scheme_rate_rtpl);
+                            rtpl = rtpl + scheme_rate_rtpl;
+                            $('#tblbmccollection-scheme_rate').val(scheme_rate_rtpl);
+                            $('#tblbmccollection-scheme_rate_code').val(obj.data.list.scheme_rate_code);
+                        }
+                        $('#tblbmccollection-rtpl').val(rtpl);
+                        $('#tblbmccollection-rate_code').val(obj.data.list.purchase_rate_code);
+                        amount();
+                    }else{
+                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
+                        $('#tblbmccollection-rtpl').val('');
+                        $('#tblbmccollection-rate_code').val('');
+                        $('#tblbmccollection-amount').val('');
+                        $('#tblbmccollection-scheme_rate').val('');
+                        $('#tblbmccollection-scheme_rate_code').val('');
+                        $('#tblbmccollection-actual_rate').val('');
+                    }
                 },
                 error:function(data){
 

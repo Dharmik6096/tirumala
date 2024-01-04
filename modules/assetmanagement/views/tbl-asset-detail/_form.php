@@ -90,6 +90,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'verification_date', '', FALSE); ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'other_info')->textInput() ?>
+    </div>
 </div>   
 <?= Html::activeHiddenInput($model, 'is_serial_number', ['id' => 'is_serial_number']) ?>
 <div class="row">

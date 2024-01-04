@@ -8,6 +8,7 @@ use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
 $this->title = Yii::$app->label->title('create', 'Plant Dispatch');
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -23,6 +24,7 @@ $this->title = Yii::$app->label->title('create', 'Plant Dispatch');
 </div>
 <?php
 $script = "
+    var batchNoWiseInventory = '".$batchNoWiseInventory."';
     $('#tblplantdispatch-dispatch_date').on('change', function(){
         addBtnEnable();
     });
@@ -59,7 +61,7 @@ $script = "
     
     $('#tblplantdispatchtxn-sap_batch_no').on('change', function(){
         checkPlantBatchNoExist();
-        addBtnEnable();
+         addBtnEnable();
     });
    
     function setUnit(){
@@ -130,8 +132,15 @@ $script = "
         var amount = $('#tblplantdispatchtxn-amount').val();
         var sap_batch_no = $('#tblplantdispatchtxn-sap_batch_no').val();
         
-        if(dispatch_date != '' && plant_code != '' && mcc_plant_code != '' && document_no != '' && document_date != '' && product_code != '' && unit_code != '' && qty != '' && rate != '' && amount != '' && sap_batch_no != '') {
-            $('.add-asset-record').removeClass('disabled no_pointer');
+        if(dispatch_date != '' && plant_code != '' && mcc_plant_code != '' && document_no != '' && document_date != '' && product_code != '' && unit_code != '' && qty != '' && rate != '' && amount != '') {
+            if(batchNoWiseInventory == '1' && sap_batch_no != '') 
+            {
+                $('.add-asset-record').removeClass('disabled no_pointer');
+            }
+            else if(batchNoWiseInventory == '0')
+            {
+                 $('.add-asset-record').removeClass('disabled no_pointer');
+            }
         } else {
             $('.add-asset-record').addClass('disabled no_pointer');
         }
@@ -157,7 +166,7 @@ $script = "
             }
         }
         var flag=true;
-        if(sap_batch_no != ''){
+        if(sap_batch_no != '' && batchNoWiseInventory=='1'){
             $('.added_sap_batch_no').each(function (index, field){
                 if(field.value == sap_batch_no){
                     var msg = '" . Yii::t('app', 'SAP batch no already exists for another product') . "';
@@ -191,7 +200,8 @@ $script = "
             $('#tblplantdispatchtxn-rate').val('');
             $('#tblplantdispatchtxn-qty').val('');
             $('#tblplantdispatchtxn-amount').val('');
-            $('#tblplantdispatchtxn-sap_batch_no').val('');
+            if(batchNoWiseInventory=='1'){
+            $('#tblplantdispatchtxn-sap_batch_no').val('');}
             $('#tblplantdispatchtxn-lr_no').val('');
             $('tbody tr.edit_product').remove();
             $('.single_entry_area').addClass('disabled no_pointer');

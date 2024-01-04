@@ -64,15 +64,11 @@ class TblIndentMasterSearch extends TblIndentMaster {
         Yii::$app->general->filterByOrg($query, $this, 'tbl_indent_master', 'tbl_indent_master', 'tbl_indent_master');
 
         // grid filtering conditions
-        if (!empty($this->from_date)) {
-            $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['>=', 'indent_date', $from_date]);
-        }
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'indent_date', $from_date]);
 
-        if (!empty($this->to_date)) {
-            $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andFilterWhere(['<=', 'indent_date', $to_date]);
-        }
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'indent_date', $to_date]);
 
         if (!empty($this->indent_date)) {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), indent_date, 126)', date('Y-m-d', strtotime($this->indent_date))]);
@@ -263,7 +259,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->groupBy(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code','tbl_indent_master.indent_code']);
+        $query->groupBy(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code']);
         // $query->andWhere('tbl_product_requisition.status="2" OR tbl_product_requisition.status="6" OR tbl_product_requisition.status="7"');
         return $dataProvider;
     }
