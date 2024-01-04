@@ -1808,6 +1808,12 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['QTY' => Yii::t('app', 'QTY'), 'TS' => Yii::t('app', 'TS')],
             ],
+            'txn_type' => [
+                'name' => 'txn_type',
+                'prompt' => Yii::t('app', 'Select txn type'),
+                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'BIPLZIP' => Yii::t('app', 'BIPLZIP')],
+            ],
+
         ];
         return $records[$l];
     }
@@ -1944,6 +1950,7 @@ class DropDown extends Component {
             'payment_head_code' => ['name' => 'payment_head_code', 'fields' => 'payment_head_code,payment_head_name', 'prompt' => 'Payment Head Name', 'model' => 'TblPaymentHead'],
             'party_master_code' => ['name' => 'party_name', 'fields' => 'party_master_code,party_name', 'prompt' => 'Applicable Name', 'model' => 'TblPartyMaster'],
             'party_master' => ['name' => 'party_master_code', 'fields' => 'party_master_code,party_name,owner_name', 'prompt' => 'Select Party', 'model' => 'TblPartyMaster'],
+            'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
         ];
         return $label[$l];
     }
