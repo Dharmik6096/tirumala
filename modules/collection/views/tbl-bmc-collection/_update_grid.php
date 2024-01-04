@@ -31,9 +31,6 @@ $form = ActiveForm::begin([
                 echo Html::activeHiddenInput($model, '[' . $index . ']bmc_code', ['value' => $model->bmc_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']plant_code', ['value' => $model->plant_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']mcc_plant_code', ['value' => $model->mcc_plant_code]);
-                echo Html::activeHiddenInput($model, '[' . $index . ']converted_qty', ['value' => $model->converted_qty]);
-                echo Html::activeHiddenInput($model, '[' . $index . ']converted_amount', ['value' => $model->converted_amount]);
-
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE],
             ['attribute' => 'customer_code', 'label' => Yii::t('app', 'SAP Vendor Code'), 'value' => function($model) {
@@ -99,7 +96,7 @@ $form = ActiveForm::begin([
         ['attribute' => 'qty',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'qty_change converted_qty\'>' . $form->field($model, '[' . $index . ']qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
+                return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
             ['attribute' => 'fat',
@@ -366,38 +363,7 @@ $script = "
                 });
             }
     };
-    
-    $(document).on('change','span.converted_qty input', function() { 
-        var tr_key = $(this).closest('tr').attr('data-key');
-         convertedQty(tr_key);
-    });
-  
-    function convertedQty(tr_key){
-        var qty = $('#tblbmccollection-'+tr_key+'-qty').val();
-        var union = $('#tblbmccollection-'+tr_key+'-union_code').val();
-        var rtpl = parseFloat($('#tblbmccollection-'+tr_key+'-rtpl').val());
-            if(qty !='' && union !='' && rtpl !=''){
-                $.ajax({
-                    type: 'post',
-                    url:'" . Url::to(['get-converted']) . "',
-                    data: {'union_code':union,'qty':qty,'rtpl':rtpl},
-                    success: function(data) {                                        
-                        var obj = $.parseJSON(data);
-                        if (obj.status == 'success')
-                        {
-                        console.log(obj.data.converted_qty);
-                         console.log(obj.data.converted_amount);
-                            $('#tblbmccollection-'+tr_key+'-converted_qty').val(obj.data.converted_qty);
-                            $('#tblbmccollection-'+tr_key+'-converted_amount').val(obj.data.converted_amount);
-                        }
-                    },
-                    error:function(data){
 
-                    }
-                });
-            }
-     
-    }
       ";
 $this->registerJs($script, View::POS_END, 'update-bmc-collection');
 ?>
