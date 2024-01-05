@@ -37,9 +37,7 @@ class TblGrnInstallmentSearch extends TblGrnInstallment {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblGrnInstallment::find();
-
-        // add conditions that should always apply here
+        $query = TblGrnInstallment::find()->where(['grn_code' => $this->grn_code]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -48,18 +46,8 @@ class TblGrnInstallmentSearch extends TblGrnInstallment {
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'main_amount' => $this->main_amount,
-            'installment_amount' => $this->installment_amount,
-        ]);
-
-        $query->andFilterWhere(['like', 'grn_code', $this->grn_code]);
 
         return $dataProvider;
     }

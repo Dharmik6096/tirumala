@@ -8,6 +8,9 @@ use yii\web\View;
 use yii\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
+
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+$visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -39,7 +42,7 @@ $form = ActiveForm::begin([
                 echo Html::activeHiddenInput($model, '[' . $index . ']sap_batch_no', ['value' => $model->sap_batch_no]);
                 return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
             }, 'filter' => FALSE],
-            ['attribute' => 'sap_batch_no', 'visible' => TRUE, 'filter' => false],
+            ['attribute' => 'sap_batch_no', 'visible' => $visible, 'filter' => false],
             ['attribute' => 'unit_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->unitCode, 'unit_name');
             }, 'visible' => TRUE, 'filter' => false],

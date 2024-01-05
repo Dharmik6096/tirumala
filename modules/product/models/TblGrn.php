@@ -13,6 +13,7 @@ use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblProductStockTransaction;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\product\models\TblGrnInstallment;
 
 /**
  * This is the model class for table "tbl_grn".
@@ -70,9 +71,9 @@ class TblGrn extends \app\models\ChildModel {
                 [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
-                [['grn_date', 'invoice_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['grn_date', 'invoice_date', 'deduction_start_date'], 'convertDateDot', 'on' => ['importCsv']],
                 [['grn_date', 'invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['grn_date', 'invoice_date'], 'convertDate', 'on' => ['importCsv']],
+                [['grn_date', 'invoice_date', 'deduction_start_date'], 'convertDate', 'on' => ['importCsv']],
                 [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'amount', 'payment_mode', 'no_of_installment', 'deduction_start_date'], 'safe'],
                 [['deduction_start_date', 'no_of_installment'], 'required', 'when' => function ($model) {
@@ -80,6 +81,7 @@ class TblGrn extends \app\models\ChildModel {
                 },
                 'whenClient' => "function (attribute, value) { return $('#tblgrn-payment_mode').is(':checked') }", 'on' => ['batchcreate', 'importCsv']
             ],
+                [['deduction_start_date'], 'dateValidate', 'on' => ['importCsv', 'batchcreate']],
         ];
     }
 
@@ -109,6 +111,8 @@ class TblGrn extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'plant_code' => Yii::t('app', 'Plant'),
+            'payment_mode' => Yii::t('app', 'is Credit Sale?'),
+            'deduction_start_date' => Yii::t('app', 'Deduction Start Date *'),
         ];
     }
 
@@ -170,25 +174,7 @@ class TblGrn extends \app\models\ChildModel {
                 array_push($saveModel, $txn_model);
 
                 if (!empty($this->payment_mode)) {
-                    $no = !empty($this->no_of_installment) ? ($this->no_of_installment) : 1;
-                    $instAmount = floatval($this->amount / $no);
-                    $ai = 1;
-                    $bmcData = TblDcsBmc::find()->select('plant_code,bmc_code')->where(['mcc_plant_code' => $this->mcc_plant_code, 'is_active' => 1])->one();
-                    for ($i = 0; $i < $no; $i++) {
-                        $installmentModel = new TblGrnInstallment();
-                        $installmentModel->grn_code = $this->grn_code;
-                        $installmentModel->union_code = $this->union_code;
-                        $installmentModel->mcc_plant_code = $this->mcc_plant_code;
-                        $installmentModel->plant_code = $bmcData->plant_code;
-                        $installmentModel->bmc_code = $bmcData->bmc_code;
-                        $installmentModel->main_amount = $this->amount;
-                        $installmentModel->installment_amount = $instAmount;
-                        $installmentModel->installment_status = 0;
-                        $installmentModel->grn_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $this->grn_code, $ai);
-                        $installmentModel->installment_date = NULL;
-                        array_push($saveModel, $installmentModel);
-                        $ai++;
-                    }
+                    $this->installment($saveModel);
                 }
                 $stockModel = new TblProductStock();
                 $stockModel->attributes = $this->attributes;
@@ -236,12 +222,18 @@ class TblGrn extends \app\models\ChildModel {
         } catch (\Exception $e) {
             $this->invoice_date = '-';
         }
+        try {
+            $this->deduction_start_date = Yii::$app->controls->view_date($this->deduction_start_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->deduction_start_date = '-';
+        }
     }
 
     public function convertDate() {
         if (empty($this->getErrors())) {
             $this->grn_date = !empty($this->grn_date) ? Yii::$app->controls->view_date($this->grn_date, 'php:Y-m-d') : NULL;
             $this->invoice_date = !empty($this->invoice_date) ? Yii::$app->controls->view_date($this->invoice_date, 'php:Y-m-d') : NULL;
+            $this->deduction_start_date = !empty($this->deduction_start_date) ? Yii::$app->controls->view_date($this->deduction_start_date, 'php:Y-m-d') : NULL;
         }
     }
 
@@ -257,6 +249,43 @@ class TblGrn extends \app\models\ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    public function installment(&$modelSave) {
+        $no = !empty($this->no_of_installment) ? ($this->no_of_installment) : 1;
+        $instAmount = floatval($this->amount / $no);
+        $ai = 1;
+
+        $bmcDatas = TblDcsBmc::find()->select('union_code,plant_code,mcc_plant_code, bmc_code')->where(['mcc_plant_code' => $this->mcc_plant_code, 'is_active' => 1, 'is_mcc' => 1])->one();
+
+        if (!empty($bmcDatas)) {
+
+            for ($i = 0; $i < $no; $i++) {
+                $installmentModel = new TblGrnInstallment();
+                $installmentModel->grn_code = $this->grn_code;
+                $installmentModel->union_code = $bmcDatas->union_code;
+                $installmentModel->plant_code = $bmcDatas->plant_code;
+                $installmentModel->mcc_plant_code = $bmcDatas->mcc_plant_code;
+                $installmentModel->bmc_code = $bmcDatas->bmc_code;
+                $installmentModel->main_amount = $this->amount;
+                $installmentModel->installment_amount = $instAmount;
+                $installmentModel->installment_status = 0;
+                $installmentModel->grn_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $this->grn_code, $ai);
+                $installmentModel->installment_date = NULL;
+                $modelSave[] = $installmentModel;
+                $ai++;
+            }
+        } else {
+            $this->addError('plant_code', Yii::t('app/validation', 'BMC Not Found for Installment Adjustment.'));
+        }
+    }
+
+    public function dateValidate() {
+        if (empty($this->getErrors())) {
+            if ($this->deduction_start_date < $this->invoice_date) {
+                $this->addError('deduction_start_date', Yii::t('app/validation', 'Deduction Start Date must be greater than or equal to Invoice Date'));
+            }
+        }
     }
 
 }

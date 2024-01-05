@@ -54,10 +54,16 @@ class TblGrnController extends \app\controllers\ChildController {
         $searchModel = new TblGrnTxnSearch();
         $searchModel->grn_code = $id;
         $dataProvider = $searchModel->createsearch(Yii::$app->request->queryParams);
+        $grnInstallmentSearchModel = new TblGrnInstallmentSearch();
+        $grnInstallmentSearchModel->grn_code = $id;
+        $grnInstallmentdataProvider = $grnInstallmentSearchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'grnInstallmentSearchModel' => $grnInstallmentSearchModel,
+                    'grnInstallmentdataProvider' => $grnInstallmentdataProvider,
         ]);
     }
 
@@ -324,25 +330,7 @@ class TblGrnController extends \app\controllers\ChildController {
             $modelSave[] = $this->model;
 
             if (!empty($this->model->payment_mode)) {
-                $no = !empty($this->model->no_of_installment) ? ($this->model->no_of_installment) : 1;
-                $instAmount = floatval($this->model->amount / $no);
-                $ai = 1;
-                $bmcData = TblDcsBmc::find()->select('bmc_code')->where(['mcc_plant_code' => $this->model->mcc_plant_code, 'is_active' => 1])->one();
-                for ($i = 0; $i < $no; $i++) {
-                    $installmentModel = new TblGrnInstallment();
-                    $installmentModel->grn_code = $this->model->grn_code;
-                    $installmentModel->union_code = $this->model->union_code;
-                    $installmentModel->plant_code = $this->model->plant_code;
-                    $installmentModel->mcc_plant_code = $this->model->mcc_plant_code;
-                    $installmentModel->bmc_code = $bmcData->bmc_code;
-                    $installmentModel->main_amount = $this->model->amount;
-                    $installmentModel->installment_amount = $instAmount;
-                    $installmentModel->installment_status = 0;
-                    $installmentModel->grn_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $this->model->grn_code, $ai);
-                    $installmentModel->installment_date = NULL;
-                    $modelSave[] = $installmentModel;
-                    $ai++;
-                }
+                $this->model->installment($modelSave);
             }
             if ($updateDispatch) {
                 $dispatchModel = new TblPlantDispatch();
@@ -422,17 +410,6 @@ class TblGrnController extends \app\controllers\ChildController {
         } else {
             return Json::encode(['status' => 'error']);
         }
-    }
-
-    public function actionGrnInstallments($id) {
-        $searchModel = new TblGrnInstallmentSearch();
-        $searchModel->grn_code = $id;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('_installment_grid', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-        ]);
     }
 
 }

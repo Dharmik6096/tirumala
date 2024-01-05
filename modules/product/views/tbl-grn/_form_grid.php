@@ -48,6 +48,16 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->invoice_date);
         }],
+        ['attribute' => 'payment_mode',
+        'value' => function($model) {
+            return ($model->payment_mode == 1) ? 'Yes' : 'No';
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'deduction_start_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->deduction_start_date);
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'no_of_installment', 'visible' => false, 'filter' => false],
+        ['attribute' => 'amount', 'visible' => true, 'filter' => false],
         ['label' => Yii::t('app', 'Created date'), 'attribute' => 'created_at',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -70,10 +80,6 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
-        'installment' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Installments'];
-            return GhostHtml::a('<i class="fa fa-money"></i>', ['/product/tbl-grn/grn-installments', 'id' => $model->grn_code], $options);
-        },
     ]
 ];
 
