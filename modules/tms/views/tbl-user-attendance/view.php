@@ -93,7 +93,7 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
                         ],
                         [
                             'attribute' => 'Attendance_hours',
-                            'value' => Yii::$app->controls->timeDifference($model->in_time, $model->out_time),
+                            'value' => Yii::$app->controls->calculateTimeDifference($model->in_time, $model->out_time,FALSE),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],

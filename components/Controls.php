@@ -362,16 +362,16 @@ class Controls extends Component {
         }
     }
 
-    public function timeDifference($inTime, $outTime) {
+    public function calculateTimeDifference($inTime, $outTime, $array = false) {
+        $hours = $minutes = 0;
         $in_time = Yii::$app->controls->view_time($inTime);
         $out_time = Yii::$app->controls->view_time($outTime);
         if (!empty($in_time) && !empty($out_time) && ($in_time < $out_time)) {
             $timeDifference = strtotime($out_time) - strtotime($in_time);
             $hours = floor($timeDifference / 3600);
             $minutes = floor(($timeDifference % 3600) / 60);
-            return "$hours hour $minutes min";
         }
-        return "0 hour 0 min";
+        return $array ? ['hours' => $hours, 'minutes' => $minutes] : "$hours Hours $minutes Minutes";
     }
 
 }

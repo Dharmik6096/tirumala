@@ -86,17 +86,15 @@ class TblUserAttendanceDetail extends \app\models\ChildModel {
                 $inTime = $attendanceDetail->in_time;
                 $outTime = $attendanceDetail->out_time;
                 if (!empty($inTime) && !empty($outTime)) {
-                    $timeDifference = Yii::$app->controls->timeDifference($attendanceDetail->in_time, $attendanceDetail->out_time);
-                    list($hours, $minutes) = sscanf($timeDifference, "%d hour %d min");
-                    $totalDifferenceHours += $hours;
-                    $totalDifferenceMinutes += $minutes;
+                    $timeDetails = Yii::$app->controls->calculateTimeDifference($inTime, $outTime, TRUE);
+                    $totalDifferenceHours += $timeDetails['hours'];
+                    $totalDifferenceMinutes += $timeDetails['minutes'];
                 }
             }
         }
         $totalDifferenceHours += floor($totalDifferenceMinutes / 60);
         $totalDifferenceMinutes %= 60;
-
-        return "$totalDifferenceHours hours $totalDifferenceMinutes min";
+        return "$totalDifferenceHours Hours $totalDifferenceMinutes Minutes";
     }
 
 }
