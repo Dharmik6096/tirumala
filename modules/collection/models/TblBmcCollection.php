@@ -113,17 +113,17 @@ class TblBmcCollection extends \app\models\ChildModel {
 //                    return $this->shift_code;
 //                }, 'except' => ['androidsync']],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData', 'androidsync', 'importCsv']],
-            [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync', 'rejectRespMap', 'DataTransfer']],
-            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'purchase_rate_code', 'bmc_silos_info_code', 'response_datetime'], 'safe'],
-            [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
-            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code', 'own_bmc_code'], 'required', 'on' => ['create', 'update', 'create_allow', 'update_allow']],
-            [['bmc_silos_info_code'], 'required', 'on' => ['create', 'create_allow']],
-            [['customer_code', 'bmc_code', 'sample_no'], 'required', 'on' => ['importCsv']],
-            [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv', 'create_allow', 'update_allow']],
-            [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
+                [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync', 'rejectRespMap', 'DataTransfer']],
+                [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'purchase_rate_code', 'bmc_silos_info_code', 'response_datetime'], 'safe'],
+                [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type', 'converted_amount'], 'safe'],
+                [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
+                [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code', 'own_bmc_code'], 'required', 'on' => ['create', 'update', 'create_allow', 'update_allow']],
+                [['bmc_silos_info_code'], 'required', 'on' => ['create', 'create_allow']],
+                [['customer_code', 'bmc_code', 'sample_no'], 'required', 'on' => ['importCsv']],
+                [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv', 'create_allow', 'update_allow']],
+                [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
+                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
 //            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
 //                    return empty($this->getErrors());
 //                }, 'on' => ['create', 'update', 'importCsv']],
@@ -185,6 +185,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                     return Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1;
                 }, 'on' => ['create']],
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
+                [['bmc_code'], 'convertedAmount'],
         ];
     }
 
@@ -251,6 +252,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'scheme_rate' => Yii::t('app', 'Scheme Rate'),
             'scheme_rate_code' => Yii::t('app', 'Scheme Rate'),
             'actual_rate' => Yii::t('app', 'Actual Rate'),
+            'converted_amount' => Yii::t('app', 'Converted Amount'),
         ];
     }
 
@@ -556,7 +558,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getExistingCollection($data) {
-        return $this->find()->where(['bmc_code' => $data->bmc_code, 'customer_code' => $data->old_customer_code, 'customer_type' => $data->customer_type, 'date_time_of_collection' => $data->date_time_of_collection, 'shift_code' => $data->shift_code, 'milk_type_code' => $data->old_milk_type_code, 'milk_quality_type_code' => $data->old_milk_quality_type_code, 'qty' => $data->old_qty, 'fat' => $data->old_fat, 'snf' => $data->old_snf,'sample_no'=> $data->sample_no])->one();
+        return $this->find()->where(['bmc_code' => $data->bmc_code, 'customer_code' => $data->old_customer_code, 'customer_type' => $data->customer_type, 'date_time_of_collection' => $data->date_time_of_collection, 'shift_code' => $data->shift_code, 'milk_type_code' => $data->old_milk_type_code, 'milk_quality_type_code' => $data->old_milk_quality_type_code, 'qty' => $data->old_qty, 'fat' => $data->old_fat, 'snf' => $data->old_snf, 'sample_no' => $data->sample_no])->one();
     }
 
     public function getRateRange() {
@@ -745,6 +747,12 @@ class TblBmcCollection extends \app\models\ChildModel {
         TblMilkCollection::updateAll(['route_code' => $model->route_code], ['date_time_of_collection' => $model->date_time_of_collection, 'dcs_code' => $model->customer_code]);
 
         TblDcsMilkDispatch::updateAll(['route_code' => $model->route_code], ['date_time_of_dispatch' => $model->date_time_of_collection, 'dcs_code' => $model->customer_code]);
+    }
+
+    public function convertedAmount($attribute, $params) {
+        if (!empty($this->converted_qty) && !empty($this->rtpl)) {
+            $this->converted_amount = $this->converted_qty * $this->rtpl;
+        }
     }
 
 }

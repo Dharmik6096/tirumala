@@ -154,6 +154,9 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 <div class="col-sm-1 noOfInstallment reset_field">
                     <?= $form->field($model, 'no_of_installment')->textInput() ?>
                 </div>  
+                <div class="col-sm-2 dedStartDate reset_field">
+                    <?= Yii::$app->controls->date($model, $form, 'deduction_start_date','', date('Y-m-d'), false, false); ?>
+                </div>  
                 <?php if ($cashSale) { ?>
                     <div class="col-sm-1 reset_field">
                         <?= $form->field($detailModel, 'transaction_no')->textInput() ?>
@@ -259,6 +262,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
 $script = "
     $(document).on('change','#tblproductsale-invoice_date',function(){
         setRate();
+        setDeductionStartDate();
         if($('#tblproductsale-ex_code').val() != '') {
           reloadGrid('show_loader');
         }
@@ -432,9 +436,11 @@ $script = "
     function setNoOfInstallment(){
         $('.avlCredit').hide();
         $('.noOfInstallment').hide();
+         $('.dedStartDate').hide();
         if($('#tblproductsale-payment_mode').val() == 1) {
             $('.noOfInstallment').show();
             $('.avlCredit').show();
+            $('.dedStartDate').show();
         }
     }
     function setRate(){
@@ -705,7 +711,19 @@ $script = "
         }else {
             return false;
         }
-    }    
+    }  
+    
+    function setDeductionStartDate()
+    {
+        var invoice_date=$('#tblproductsale-invoice_date').val();
+        $('#tblproductsale-deduction_start_date').kvDatepicker({
+                        format: 'dd-mm-yyyy', // Set your desired date format
+                        todayHighlight: true,
+                        autoclose: true,
+                        startDate: invoice_date
+                    });
+                   
+    }
 ";
 $this->registerJs($script, View::POS_END, 'create-product-sale-form');
 ?>
