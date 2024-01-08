@@ -22,7 +22,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <?= Html::hiddenInput('warning', $nameWarning, ['id' => 'warning']); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-6 padding_10_0 theme-box theme_border_right">
+    <div class="row col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Provisional Customer Details') ?></h4>
         </div>
@@ -98,8 +98,10 @@ $form = ActiveForm::begin([
         </div>
         <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
-            <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <?= $form->field($model, 'diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+            <div class="col-sm-4">
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type'); ?>
+            </div>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'diff_milk_type'); ?>
         </div>
     </div>
     <div class="col-md-6 padding_10_0 theme-box ">
@@ -191,7 +193,7 @@ $form = ActiveForm::begin([
     <div class="row">
         <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
-                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
                 <?= Yii::$app->controls->reset(); ?>
                 <?= Yii::$app->controls->cancel($model); ?>
             </div>
