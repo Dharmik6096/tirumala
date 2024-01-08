@@ -52,13 +52,22 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblgrn-union_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', false, false, false, true); ?>
+            <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', date('Y-m-d'), false, false, true); ?>
         </div>
         <div class="col-sm-2 create_fields">
             <?= $form->field($model, 'invoice_no')->textInput() ?>
         </div>
         <div class="col-sm-4 create_fields">
             <?= $form->field($model, 'remarks')->textInput() ?>
+        </div>
+        <div class="col-sm-1 mt15 create_fields">
+            <?= $form->field($model, 'payment_mode', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-1 noOfInstallment create_fields number-validate">
+            <?= $form->field($model, 'no_of_installment')->textInput() ?>
+        </div>  
+        <div class="col-sm-2 dedStartDate create_fields">
+            <?= Yii::$app->controls->date($model, $form, 'deduction_start_date', '', false, false, false); ?>
         </div>
     </div>
     <div class="clearfix"></div>

@@ -40,17 +40,7 @@ class TblGrnInstallment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['grn_installment_code'], 'required'],
-                [['main_amount', 'installment_amount'], 'number'],
-                [['installment_status', 'originating_type'], 'integer'],
-                [['installment_date', 'created_at', 'updated_at'], 'safe'],
-                [['grn_installment_code'], 'string', 'max' => 50],
-                [['grn_code'], 'string', 'max' => 30],
-                [['union_code'], 'string', 'max' => 3],
-                [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-                [['bmc_code'], 'string', 'max' => 12],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_type', 'originating_org_code'], 'string', 'max' => 25],
+                [['grn_installment_code', 'grn_code', 'main_amount', 'installment_amount', 'installment_date', 'created_at', 'updated_at', 'installment_status', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_type', 'originating_org_code'], 'safe'],
         ];
     }
 

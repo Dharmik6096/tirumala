@@ -79,9 +79,9 @@ class TblGrn extends \app\models\ChildModel {
                 [['deduction_start_date', 'no_of_installment'], 'required', 'when' => function ($model) {
                     return $this->payment_mode == 1;
                 },
-                'whenClient' => "function (attribute, value) { return $('#tblgrn-payment_mode').is(':checked') }", 'on' => ['batchcreate', 'importCsv']
+                'whenClient' => "function (attribute, value) { return $('#tblgrn-payment_mode').is(':checked') }"
             ],
-                [['deduction_start_date'], 'dateValidate', 'on' => ['importCsv', 'batchcreate']],
+                [['deduction_start_date'], 'dateValidate'],
         ];
     }
 

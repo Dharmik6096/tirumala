@@ -2,15 +2,11 @@
 
 use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
-
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Grn installments'));
 ?>
 
 <div class="tbl-product-sale-index">
     <div class="panel panel-default panel-grid panel-main hide-grid-settings">
-        <div class="panel-heading">
-            <?= $this->title; ?>
-        </div>
+        <h5 class="panel-heading"><?= Yii::t('app', 'Grn installments') ?></h5>
         <div class="panel-body">
             <?php
             $attribute = [
