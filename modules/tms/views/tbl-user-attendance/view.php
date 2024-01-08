@@ -130,6 +130,16 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
                         ]
                     ],
                 ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'details_total_hours',
+                            'label' => 'User Attendances Details List Total Hours',
+                            'value' => $total_hours,
+                            'valueColOptions' => ['style' => 'width:100%']
+                        ]
+                    ],
+                ],
             ];
 
             // View file rendering the widget

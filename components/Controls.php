@@ -363,18 +363,15 @@ class Controls extends Component {
     }
 
     public function timeDifference($inTime, $outTime) {
-        if (empty($inTime) || empty($outTime)) {
-            return "0 hour 0 min";
-        }
-
         $in_time = Yii::$app->controls->view_time($inTime);
         $out_time = Yii::$app->controls->view_time($outTime);
-
-        $timeDifference = strtotime($out_time) - strtotime($in_time);
-
-        $hours = floor($timeDifference / 3600);
-        $minutes = floor(($timeDifference % 3600) / 60);
-
-        return "$hours hour $minutes min";
+        if (!empty($in_time) && !empty($out_time) && ($in_time < $out_time)) {
+            $timeDifference = strtotime($out_time) - strtotime($in_time);
+            $hours = floor($timeDifference / 3600);
+            $minutes = floor(($timeDifference % 3600) / 60);
+            return "$hours hour $minutes min";
+        }
+        return "0 hour 0 min";
     }
+
 }

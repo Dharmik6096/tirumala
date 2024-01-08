@@ -9,6 +9,9 @@ $attribute = [
     ['attribute' => 'out_time', 'value' => function($model) {
             return Yii::$app->controls->view_time($model->out_time);
         }, 'filter' => false],
+    ['attribute' => 'Attendance_hours', 'label' => Yii::t('app', 'Attendance Hours'), 'value' => function($model) {
+            return Yii::$app->controls->timeDifference($model->in_time, $model->out_time);
+        }, 'filter' => false],
     ['attribute' => 'in_desc', 'filter' => false],
     ['attribute' => 'out_desc', 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],
