@@ -32,6 +32,7 @@ $attribute = [
         ['attribute' => 'capacity', 'value' => 'capacity0.value'],
         ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
         ['attribute' => 'gst_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'fssi', 'visible' => false, 'filter' => false],
         [
         'attribute' => 'valid_from',
         'value' => function($model) {

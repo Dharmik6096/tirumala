@@ -118,6 +118,18 @@ $form = ActiveForm::begin([
                 return $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
             },
         ],
+                    ['attribute' => 'scheme_rate',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+            },
+        ],
+            ['attribute' => 'actual_rate',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+            },
+        ],
             ['attribute' => 'rtpl',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
@@ -245,17 +257,27 @@ $script = "
                 url:'" . Url::to(['validate-rtpl']) . "',
                 data: {'dcs_code':code,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc,'valid_code':valid_code},
                 success: function(data) {   
-                      var obj = $.parseJSON(data);
-                      if (obj.status == 'success')
-                      {
-                            $('#tblbmccollection-'+tr_key+'-rtpl').val(obj.data.list.rtpl);
-                            $('#tblbmccollection-'+tr_key+'-rate_code').val(obj.data.list.purchase_rate_code);
-                            $('#tblbmccollection-'+tr_key+'-rtpl').trigger('change');
-                        }else{
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success')
+                    {
+                        var rtpl = parseFloat(obj.data.list.rtpl);
+                        $('#tblbmccollection-'+tr_key+'-actual_rate').val(rtpl.toFixed(2));
+                        if(obj.data.list.scheme_rate_rtpl != '' && obj.data.list.scheme_rate_rtpl != null){
+                            var scheme_rate_rtpl = parseFloat(obj.data.list.scheme_rate_rtpl);
+                            rtpl = rtpl + scheme_rate_rtpl;
+                            $('#tblbmccollection-'+tr_key+'-scheme_rate').val(scheme_rate_rtpl.toFixed(2));
+                            $('#tblbmccollection-'+tr_key+'-scheme_rate_code').val(obj.data.list.scheme_rate_code);
+                        }
+                        $('#tblbmccollection-'+tr_key+'-rtpl').val(rtpl);
+                        $('#tblbmccollection-'+tr_key+'-rate_code').val(obj.data.list.purchase_rate_code);
+                        $('#tblbmccollection-'+tr_key+'-rtpl').trigger('change');
+                    }else{
                             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
                             $('#tblbmccollection-'+tr_key+'-rtpl').val('');
                             $('#tblbmccollection-'+tr_key+'-rate_code').val('');
-                      }
+                            $('#tblbmccollection-'+tr_key+'-actual_rate').val('');
+                            $('#tblbmccollection-'+tr_key+'-scheme_rate').val('');
+                    }
                 },
                 error:function(data){
 
@@ -264,6 +286,7 @@ $script = "
         }else{
             $('#tblbmccollection-'+tr_key+'-rtpl').val('');
             $('#tblbmccollection-'+tr_key+'-rate_code').val('');
+            $('#tblbmccollection-'+tr_key+'-actual_rate').val('');
         }
     }
 

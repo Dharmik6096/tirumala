@@ -42,10 +42,15 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group', 'Shift Applicability'); ?>
     </div>
-    <div class="col-sm-2 number-validate">
+    <div class="col-sm-1 number-validate">
         <?= $form->field($model, 'ts_rate')->textInput() ?>
     </div>
-    <div class="clearfix"></div>
+    <div class="col-sm-1 number-validate">
+        <?= $form->field($model, 'kg_fat_rate')->textInput() ?>
+    </div>
+    <div class="col-sm-1 number-validate">
+        <?= $form->field($model, 'kg_snf_rate')->textInput() ?>
+    </div>
     <?php
 //    $config = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['member_collection_check']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['member_collection_check'] : '';
 //    if (!empty($config == 1)) {

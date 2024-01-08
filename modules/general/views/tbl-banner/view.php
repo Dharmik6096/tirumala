@@ -52,11 +52,11 @@ $this->title = Yii::$app->label->title('view', 'Banner');
                         [
                         'columns' => [
                                 [
-                                'attribute' => 'title',
+                                'attribute' => 'seq_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
-                                'attribute' => 'description',
+                                'attribute' => 'banner_for',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -68,7 +68,7 @@ $this->title = Yii::$app->label->title('view', 'Banner');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
-                                'attribute' => 'tap_event',
+                                'attribute' => 'title',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -76,12 +76,16 @@ $this->title = Yii::$app->label->title('view', 'Banner');
                         [
                         'columns' => [
                                 [
-                                'attribute' => 'seq_no',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'attribute' => 'tap_event',
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
-                                'attribute' => 'banner_for',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'attribute' => 'description',
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],

@@ -39,6 +39,7 @@ $attribute = [
     ['attribute' => 'success_count',],
     ['attribute' => 'error_count',],
     ['attribute' => 'file_name',],
+    ['attribute' => 'zip_filename',],
     ['attribute' => 'file_status',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('file_status', $searchModel, 'status'),
         'value' => function ($model) {

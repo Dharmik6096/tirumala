@@ -171,6 +171,8 @@ $script = "
                     {
                         var rtpl = parseFloat(obj.data.list.rtpl);
                         $('#tblmilkcollection-actual_rate').val(rtpl.toFixed(2));
+                        $('#tblmilkcollection-scheme_rate').val('');
+                        $('#tblmilkcollection-scheme_rate_code').val('');
                         if(obj.data.list.scheme_rate_rtpl != '' && obj.data.list.scheme_rate_rtpl != null){
                             var scheme_rate_rtpl = parseFloat(obj.data.list.scheme_rate_rtpl);
                             rtpl = rtpl + scheme_rate_rtpl;

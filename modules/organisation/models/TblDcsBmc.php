@@ -71,7 +71,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
             [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
             [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type'], 'safe'],
+            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type', 'fssi'], 'safe'],
             [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
@@ -160,6 +160,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             'pincode' => Yii::t('app', 'Pincode'),
             'address' => Yii::t('app', 'Address'),
             'aadhaar_no' => Yii::t('app', 'Aadhaar No'),
+            'fssi' => Yii::t('app', 'FSSAI'),
         ];
     }
 

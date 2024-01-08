@@ -163,6 +163,13 @@ $grid_option = [
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload-alt"></i>', $url, $options);
         },
+        'document-upload' => function ($url, $model) {
+            $id = $model->customer_code;
+            $name = $model->customer_name;
+            $url = ['/organisation/tbl-customer-master/customer-document-upload', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $id, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
+        },
     ]
 ];
 

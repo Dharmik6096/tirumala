@@ -17,6 +17,7 @@ use app\modules\details\models\TblBankDetailsSearch;
 use app\modules\details\models\TblContactDetailsSearch;
 use app\modules\organisation\models\TblCustomerDeactiveSearch;
 use yii\web\Response;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblCustomerMasterController implements the CRUD actions for TblCustomerMaster model.
@@ -223,7 +224,7 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
-    
+
     public function actionActivateCustomerCodeList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
@@ -351,6 +352,14 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             return Json::encode($record);
         }
+    }
+
+    public function actionCustomerDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->customer_code;
+        $module_name = 'tbl_customer_master';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('customer', $id, $model, $module_code, $module_name);
     }
 
 }

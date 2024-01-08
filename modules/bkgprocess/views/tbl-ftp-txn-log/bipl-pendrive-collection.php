@@ -13,7 +13,7 @@ $maxfiles = strtolower($type)=='ekomilk' ? 1 : 50;
 $maxsize = strtolower($type)=='ekomilk' ? 10 : 2;
 $url = strtolower($type)=='ekomilk' ? 'ekomilk-pendrive-collection' : 'bipl-pendrive-collection';
 $importurl = strtolower($type)=='ekomilk' ? 'import-zip-file' : 'import-file';
-$countrestriction = strtolower($type)=='ekomilk' ? 10 : 0;
+$countrestriction = strtolower($type)=='ekomilk' ? 20 : 0;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

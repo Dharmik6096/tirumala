@@ -233,9 +233,9 @@ class TblIndentMasterController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
-                $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'approve' ? 2 : 3) : 0;
+                $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'approve' ? 1 : 2) : 0;
                 $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
-                $msg = $status == 2 ? 'Approved' : 'Rejected';
+                $msg = $status == 1 ? 'Approved' : 'Rejected';
                 $where = [];
 
                 $approvalFlag = true;
@@ -248,16 +248,48 @@ class TblIndentMasterController extends \app\controllers\ChildController {
                         Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                         $saveModel[] = $historyModel;
                         $existData->status = $status;
+                        $existData->status_date = date('Y-m-d H:i:s');
+                        $existData->status_by = \Yii::$app->user->identity->user_code;
                         $saveModel[] = $existData;
 
+                        if ($existData->approval_mode == 'flexi') {
+
+                            $all_level = TblProcessApproval::find()
+                                            ->where(['process_code' => $existData->process_code, 'status' => 0])
+                                            ->andWhere(['<>', 'process_approval_code', $existData->process_approval_code])
+                                            ->andWhere(['level' => $existData->level])->all();
+
+                            foreach ($all_level as $level) {
+                                $approvalHistoryModel = new TblProcessApprovalHistory();
+                                Yii::$app->operation->history($level, $approvalHistoryModel, 'UPDATE');
+                                $saveModel[] = $approvalHistoryModel;
+                                $level->status_date = date('Y-m-d H:i:s');
+                                $level->status_by = \Yii::$app->user->identity->user_code;
+                                $level->status = $existData->status;
+                                $saveModel[] = $level;
+                            }
+                        }
                         $existIndentData = TblIndentMaster::find()->where(['indent_code' => $existData->process_code])->one();
                         if (!empty($existIndentData)) {
                             $existIndentData->scenario = 'approve';
-                            $existApprovalLevel = TblProcessApproval::find()->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0])->count();
+                            $existApprovalLevel = TblProcessApproval::find()->select(['COUNT(*) as cnt'])
+                                    ->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0])
+                                    ->groupBy(['level', 'approval_mode'])
+                                    ->count();
+
+                            if ($existApprovalLevel == '1') {
+                                $approval_flag = TblProcessApproval::find()
+                                        ->select(['COUNT(*) as cnt', 'approval_mode', 'level'])
+                                        ->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0,])
+                                        ->groupBy(['level', 'approval_mode'])
+                                        ->asArray()
+                                        ->one();
+                            }
                             $historyModel = new TblIndentMasterHistory();
                             Yii::$app->operation->history($existIndentData, $historyModel, 'UPDATE');
                             $saveModel[] = $historyModel;
-                            $existIndentData->status = $status == 3 ? 3 : ($existApprovalLevel == 1 ? 2 : 1);
+
+                            $existIndentData->status = $status == 2 ? 3 : ($existApprovalLevel == 1 ? 2 : 1);
                             $existIndentData->status_by = \Yii::$app->user->identity->user_code;
                             $existIndentData->status_date = date('Y-m-d H:i:s');
                             $level = $indentMaster->getApprovalLevel($existIndentData->indent_code);
