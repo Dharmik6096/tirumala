@@ -233,7 +233,7 @@ $form = ActiveForm::begin([
                 <h4 class="theme-box-heading">Address Details</h4>
             </div>
             <!--    <div class="col-sm-2">
-                    <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
                 </div>-->
             <div class="col-sm-2">
                 <div class="col-sm-12">
@@ -306,7 +306,7 @@ $form = ActiveForm::begin([
                     <?= $form->field($model, 'email')->textInput() ?>
                 </div>
                 <!--<div class="col-sm-2">
-                    <? = $form->field($model, 'local_contact_person')->textInput() ?>
+                    <?= $form->field($model, 'local_contact_person')->textInput() ?>
                 </div>-->
                 <div class="col-sm-2">
                     <?= $form->field($model, 'local_firstname')->textInput() ?>
@@ -428,6 +428,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 mt10">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
+<<<<<<< HEAD
         <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
         <div class="row">
             <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -436,6 +437,33 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->controls->reset(); ?>
                     <?= Yii::$app->controls->cancel($model); ?>
                 </div>
+=======
+    </div>
+    <div class="col-sm-2 mt10">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_security_cheque'); ?>
+    </div>
+    <div class="col-sm-2 mt10 security_cheque">
+        <?= $form->field($model, 'cheque_number')->textInput() ?>   
+    </div>
+    <div class="col-sm-2 mt10 number-validate security_cheque">
+        <?= $form->field($model, 'cheque_amount')->textInput() ?>   
+    </div>
+    <div class="col-sm-2 mt10">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
+    </div>
+    <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
+    <div class="row">
+        <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+            <div class="form-group">
+<<<<<<< HEAD
+                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+                <?php //Yii::$app->controls->save(Yii::$app->label->button($btn_name), $model); ?>
+=======
+                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+>>>>>>> origin/production_v5
+                <?= Yii::$app->controls->reset(); ?>
+                <?= Yii::$app->controls->cancel($model); ?>
+>>>>>>> origin/production_php82
             </div>
         </div>
         <?php ActiveForm::end(); ?>
@@ -576,5 +604,5 @@ $form = ActiveForm::begin([
         $('#tbldcsprovisional-ifsc').val('');
     });
 ";
-        $this->registerJs($script, View::POS_END, 'union-select');
-        
+$this->registerJs($script, View::POS_END, 'union-select');
+$this->registerJs($script, View::POS_END, 'bank-select');
