@@ -66,7 +66,7 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['bmc_dispatch_stock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'from_shift_code', 'to_date', 'to_shift_code', 'from_shift_code', 'from_date', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'fat', 'snf', 'opening_bal', 'purchase_qty', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync']],
+                [['bmc_dispatch_stock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'from_shift_code', 'to_date', 'to_shift_code', 'from_shift_code', 'from_date', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'fat', 'snf', 'opening_bal', 'purchase_qty', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync', 'createPlantDispatch']],
                 [['bmc_dispatch_stock_code', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_shift_code', 'from_date'], 'safe'],
                 [['transaction_date', 'to_date', 'created_at', 'updated_at', 'from_date', 'from_shift_code'], 'safe'],
                 [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
@@ -78,6 +78,7 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
                 [['to_date'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
                 [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
                 [['qty_diff'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
+                [['bmc_dispatch_stock_code', 'union_code', 'plant_code', 'from_date', 'from_shift_code', 'to_date', 'to_shift_code', 'from_shift_code', 'from_date', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf'], 'required', 'on' => ['createPlantDispatch']],
         ];
     }
 

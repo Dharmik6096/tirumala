@@ -34,7 +34,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Source Plant'), '', '', '', true); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Source Plant'), true); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 megaSizeDualList">

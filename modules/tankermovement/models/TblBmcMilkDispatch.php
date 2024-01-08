@@ -57,7 +57,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
  */
 class TblBmcMilkDispatch extends \app\models\ChildModel {
 
-    public $transporter_code;
+    public $transporter_code, $dest_plant_code;
 
     /**
      * @inheritdoc
@@ -71,15 +71,16 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv']],
-            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch']],
+            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type'], 'safe'],
             [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
             [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
             //  [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
             [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
             [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date', 'dest_plant_code'], 'required', 'except' => ['androidsync', 'importCsv'], 'on' => 'createPlantDispatch'],
         ];
     }
 
@@ -128,6 +129,8 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             'f_plant_code' => Yii::t('app', 'Plant'),
             'f_mcc_code' => Yii::t('app', 'MCC'),
             'f_bmc_code' => Yii::t('app', 'BMC'),
+            'source_org_code' => Yii::t('app', 'Source Org Code'),
+            'source_org_type' => Yii::t('app', 'Source Org Type'),
         ];
     }
 
@@ -298,7 +301,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
 
     public function getChallanNo() {
         $primaryKey = 'challan_no';
-        $orgCode = $this->trip_code . '/' . $this->bmc_code . '/';
+        $orgCode = ($this->bmc_code) ? $this->trip_code . '/' . $this->bmc_code . '/' : $this->trip_code . '/' . $this->plant_code . '/';
         $len = strlen($orgCode);
         $val = $this->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])

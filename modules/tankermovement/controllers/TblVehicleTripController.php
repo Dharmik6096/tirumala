@@ -75,12 +75,19 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 ksort($bmc_array);
                 if (!empty($bmc_array)) {
                     foreach ($bmc_array as $index => $value) {
-                        if (strpos($value, '-plant') !== false) {
-                            continue;
+                        if($index < count($bmc_array)-1){
+                            if (strpos($value, '-plant') !== false && strpos($bmc_array[$index + 1], '-plant') !== false) {
+                                $this->model->bmc_code = $bmc_array[$index + 1];
+                                $this->model->mcc_plant_code = null;
+                            }else{
+                                if (strpos($value, '-plant') !== false) {
+                                    continue;
+                                }
+                                $this->model->bmc_code = $value;
+                                $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+                                break;
+                            }
                         }
-                        $this->model->bmc_code = $value;
-                        $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
-                        break;
                     }
                 }
                 $this->model->plant_code = $this->model->plant_code[0];
@@ -131,6 +138,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             }
                         }
                         $save_model[] = $trip_detai;
+                    }
+                    if (strpos($save_model[0]->bmc_code, '-plant') !== false) {
+                        $save_model[0]->bmc_code = null;
                     }
                     if ($validate) {
                         $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
