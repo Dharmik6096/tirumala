@@ -21,23 +21,23 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
             <div class="table-responsive">
                 <?php
                 $attributes = [
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'union_code',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'vendor_master_code',
                                 'label' => $batchNoWiseInventory == 1 ? 'Plant' : 'Vendor',
                                 'value' => $batchNoWiseInventory == 1 ? Yii::$app->general->getforeignkey($model->plantCode, 'name') : Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name'),
@@ -45,13 +45,13 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'grn_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'grn_date',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->grn_date)),
@@ -59,23 +59,23 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'invoice_date',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->invoice_date)),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'invoice_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'remarks',
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
@@ -116,5 +116,24 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 ?>
             </div> 
         </div>
+        <?php
+        if ($model->payment_mode == 1) {
+            ?>
+            <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                    <h4 class="theme-box-heading">Installment Details</h4>
+                </div>
+                <div class="form-grid">
+                    <?=
+                    $this->render('_installment_grid', [
+                        'grnInstallmentdataProvider' => $grnInstallmentdataProvider,
+                        'grnInstallmentSearchModel' => $grnInstallmentSearchModel,
+                    ])
+                    ?>
+                </div> 
+            </div>
+            <?php
+        }
+        ?>
     </div>
 </div>

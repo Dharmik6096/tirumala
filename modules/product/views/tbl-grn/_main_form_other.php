@@ -56,6 +56,15 @@ $form = ActiveForm::begin([
         <div class="col-sm-4 create_fields">
             <?= $form->field($model, 'remarks')->textInput() ?>
         </div>
+        <div class="col-sm-1 mt15 create_fields">
+            <?= $form->field($model, 'payment_mode', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-1 noOfInstallment create_fields number-validate">
+            <?= $form->field($model, 'no_of_installment')->textInput() ?>
+        </div>  
+        <div class="col-sm-2 dedStartDate create_fields">
+            <?= Yii::$app->controls->date($model, $form, 'deduction_start_date', '', false, false, false); ?>
+        </div>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-1"></div>
