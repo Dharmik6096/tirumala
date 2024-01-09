@@ -31,7 +31,6 @@ $form = ActiveForm::begin([
                 echo Html::activeHiddenInput($model, '[' . $index . ']bmc_code', ['value' => $model->bmc_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']plant_code', ['value' => $model->plant_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']mcc_plant_code', ['value' => $model->mcc_plant_code]);
-
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE],
             ['attribute' => 'customer_code', 'label' => Yii::t('app', 'SAP Vendor Code'), 'value' => function($model) {
@@ -118,7 +117,7 @@ $form = ActiveForm::begin([
                 return $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-                    ['attribute' => 'scheme_rate',
+            ['attribute' => 'scheme_rate',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
@@ -149,11 +148,11 @@ $form = ActiveForm::begin([
                 return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'antibiotic',
-                'format' => 'raw',
-                'value' => function ($model, $key, $index) use ($form) {
-                        return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
-                }, 'visible' => $antibiotic
+            ['attribute' => 'antibiotic',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
+            }, 'visible' => $antibiotic
         ],
     ];
 
@@ -364,5 +363,7 @@ $script = "
                 });
             }
     };
+
       ";
 $this->registerJs($script, View::POS_END, 'update-bmc-collection');
+?>

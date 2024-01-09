@@ -287,7 +287,7 @@ class SearchFilter {
                 'filter' => ['state', 'district'],
             ],
             'TblFtpTxnLogSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code','from_date','to_date','txn_type'],
                 'action' => ['list']
             ],
             'TblUserAndroidSearch' => [
@@ -446,7 +446,7 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblTaskSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'task_type', 'form_type', 'user_code', 'from_date', 'to_date'],
             ],
             'TblTaskTypeSearch' => [
                 'filter' => ['f_union_code'],

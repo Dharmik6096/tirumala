@@ -292,25 +292,25 @@ $script = "
         var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
         var entryTypeField = $('#tblmilkvehicleentrytransaction-entry_type');
         var EntryType = document.querySelector('.col-sm-1.entry_type');
-        
+
         if (receipt_at !== '' && dispatch_from !== '') {
-            if ((dispatch_from == 'BMC' && receipt_at == 'PLANT') || (dispatch_from == 'BMC' && receipt_at == 'BMC') || (dispatch_from == 'BMC' && receipt_at == 'PARTY')) {
-                $('.vehicle_code_hide').css('display', 'block');
-                 $('.tanker_no_hide').css('display', 'none');
-                $('#dispatch-detail').css('display', 'block');                
-                entryTypeField.val('').prop('readonly', false).trigger('change');
-            } else if(dispatch_from == 'PARTY') {
+            if (dispatch_from == 'PARTY') {
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
                $('#dispatch-detail').css('display', 'none');
                $('.trip-code-hide').css('display', 'none');
                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
+               $('#tblmilkvehicleentry-trip_code').val('').trigger('change');
+               $('#tblmilkvehicleentry-vehicle_code').val('').trigger('change');
                EntryType.classList.add('no_pointer');
             } else {
                 $('.vehicle_code_hide').css('display', 'block');
-                $('#dispatch-detail').css('display', 'none');
-                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
-                EntryType.classList.add('no_pointer');
+                $('.tanker_no_hide').css('display', 'none');
+                $('.trip-code-hide').css('display', 'block');
+                $('#dispatch-detail').css('display', 'block');
+                entryTypeField.val('').prop('readonly', false).trigger('change');
+                $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
+                EntryType.classList.remove('no_pointer');
             }
         } else {
             $('.vehicle_code_hide').css('display', 'block');

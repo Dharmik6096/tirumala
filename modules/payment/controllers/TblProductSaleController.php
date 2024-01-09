@@ -743,7 +743,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $model->product_code = $detailModel->product_code;
 //            $model->sale_type = 'DCS';
             $saleDate = date('Y-m-d', strtotime($model->invoice_date));
-            $model->invoice_date = $saleDate;
+            $model->invoice_date = $saleDate;              
             if ($model->validate() && $detailModel->validate()) {
                 $master = [];
                 $child = [];
@@ -756,6 +756,11 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $model->paid_amount = $model->payment_mode == 1 ? 0 : $model->amount_due;
                 $model->is_installment = $model->payment_mode == 1 ? 1 : 0;
                 $model->no_of_installment = $model->payment_mode == 1 ? $model->no_of_installment : 0;
+                if($model->payment_mode==1 && !empty($model->deduction_start_date))
+                {
+                    $dedStartDate =  date('Y-m-d', strtotime($model->deduction_start_date));
+                    $model->deduction_start_date = $dedStartDate;
+                }
                 $detailModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($detailModel, $detailModel->product_sale_code);
                 $detailModel->amount = $model->amount;
                 $detailModel->discount = $model->discount;
