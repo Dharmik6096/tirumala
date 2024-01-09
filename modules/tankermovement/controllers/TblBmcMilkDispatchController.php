@@ -228,9 +228,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             if (isset($data['bmcValue'])) {
                 $config_text = 'BMC';
                 $bmc_plant_value = $data['bmcValue'];
-            } elseif (isset($data['destPlantValue'])) {
+            } else {
                 $config_text = 'PLANT';
-                $bmc_plant_value = rtrim($data['destPlantValue'], '-plant');
+                $bmc_plant_value = $data['plantValue'];
             }
             $bmcDispatchInspectionModel = new TblBmcDispatchInspection();
             $config = new TblConfig();
@@ -256,12 +256,12 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $this->model->vehicle_code = $data['vehicle_code'];
             $this->model->union_code = $data['union_code'];
             $this->model->plant_code = $data['plant_code'];
-            if (isset($data['dest_plant_code'])){
-                $this->model->bmc_code = $data['dest_plant_code'];
-                $this->model->mcc_plant_code = null;
-            } else {
+            if (isset($data['bmc_code']) && isset($data['mcc_plant_code'])) {
                 $this->model->bmc_code = $data['bmc_code'];
                 $this->model->mcc_plant_code = $data['mcc_plant_code'];
+            } else {
+                $this->model->bmc_code = NULL;
+                $this->model->mcc_plant_code = NULL;
             }
             $this->model->trip_mode = 'offline';
             $this->model->trip_status = 'generated';
@@ -272,7 +272,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $save_model = $result[1];
 
             $dispatch_inspection = new TblBmcDispatchInspection();
-            if (isset($data['dest_plant_code'])){
+            if (!isset($data['bmc_code'])) {
                 $dispatch_inspection->scenario = 'generate_auto_trip';
             }
             $dispatch_inspection->attributes = $this->model->attributes;
@@ -293,13 +293,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 $config_detail = $config_model->configCode;
                 $save_model[] = $config_model;
                 $cnt++;
-            }
-            if (isset($data['dest_plant_code'])){
-                foreach ($save_model as $save_model_data) {
-                    if (isset($save_model_data['bmc_code'])) {
-                        $save_model_data['bmc_code'] = null;
-                    }
-                }
             }
             $transaction = $this->generalModel->saveTransaction($save_model, ['Trip', 'create']);
             if ($transaction == 'customRedirect') {
@@ -581,9 +574,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $auto_trip_detail->vehicle_code = $tripModel->vehicle_code;
                         $auto_trip_detail->trip_code = $tripModel->trip_code;
                         $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-                        $auto_trip_detail->destination_code = $model->dest_plant_code;
+                        $auto_trip_detail->destination_code = $model->plant_code;
                         $auto_trip_detail->destination_type = 'plant';
-                        $auto_trip_detail->source_org_code = $model->plant_code;
+                        $auto_trip_detail->source_org_code = $exist_auto_trip_detail->destination_code;
                         $auto_trip_detail->source_org_type = 'plant';
                         $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
                         $auto_trip_detail->challan_no = $model->challan_no;

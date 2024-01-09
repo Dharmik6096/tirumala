@@ -33,9 +33,6 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', Yii::t('app', 'Source Plant'), FALSE, '', $readonly); ?>
             </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'dest_plant_code', Yii::t('app', 'Destination Plant'), FALSE, '', $readonly); ?>
-            </div>
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $readonly, true); ?>
             </div>
@@ -199,8 +196,6 @@ $(document).ready(function(){
                 dispatchDate: $('#tblbmcmilkdispatch-transaction_date').val(),
                 plantValue: $('#tblbmcmilkdispatch-plant_code').val(), 
                 plantName: $('#tblbmcmilkdispatch-plant_code option:selected').text(),
-                destPlantValue: $('#tblbmcmilkdispatch-dest_plant_code').val() + '-plant',
-                destPlantName: $('#tblbmcmilkdispatch-dest_plant_code option:selected').text(),
                 unionValue: $('#tblbmcmilkdispatch-union_code').val(),
                 unionName: $('#tblbmcmilkdispatch-union_code option:selected').text(),
             };
@@ -373,27 +368,4 @@ $script = "$(document).ready(function(){
     });
 });";
 $this->registerJs($script, View::POS_END, 'to-date-from-date');
-?>
-<?php
-$script = "
-    $(document).ready(function(){
-        $(document).on('change', '#tblbmcmilkdispatch-plant_code, #tblbmcmilkdispatch-dest_plant_code', function() {
-            var plant_value = $('#tblbmcmilkdispatch-plant_code').val();
-            var dest_plant_value = $('#tblbmcmilkdispatch-dest_plant_code').val();
-            if (plant_value !== '' && dest_plant_value !== '') {
-                if (plant_value == dest_plant_value) {
-                    var errorMessage = 'Source and destination are the same';
-                    var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
-                    $('.field-tblbmcmilkdispatch-dest_plant_code .error-message').remove();
-                    $('.field-tblbmcmilkdispatch-dest_plant_code').append(errorElement);
-                    
-                    $('#tblbmcmilkdispatch-dest_plant_code').val('').trigger('change');
-                } else {
-                    $('.field-tblbmcmilkdispatch-dest_plant_code .error-message').remove();
-                }
-            }
-        });
-    });
-";
-$this->registerJs($script, View::POS_END, 'source-plant-dest-plant');
 ?>

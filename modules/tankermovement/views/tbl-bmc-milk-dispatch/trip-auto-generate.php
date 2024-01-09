@@ -39,10 +39,10 @@ $this->title = Yii::t('app', 'Create Trip');
                                     <input type="text" class="form-control" id="bmc_code" value="<?= isset($data['bmcName']) ? $data['bmcName'] : null; ?>" readonly>
                                 </div>
                             <?php endif; ?>
-                            <?php if (isset($data['destPlantValue'])) : ?>
+                            <?php if (isset($data['plantValue'])) : ?>
                                 <div class="col-sm-2 hide_help_block">
-                                    <?= $form->field($bmcDispatchInspectionModel, 'dest_plant_code')->hiddenInput(['value' => $data['destPlantValue']]); ?>
-                                    <input type="text" class="form-control" id="dest_plant_code" value="<?= isset($data['destPlantName']) ? $data['destPlantName'] : null; ?>" readonly>
+                                    <?= $form->field($bmcDispatchInspectionModel, 'plant_code')->hiddenInput(['value' => $data['plantValue']]); ?>
+                                    <input type="text" class="form-control" id="plant_code" value="<?= isset($data['plantName']) ? $data['plantName'] : null; ?>" readonly>
                                 </div>
                             <?php endif; ?>
                             <div class="col-sm-2 hide_help_block">

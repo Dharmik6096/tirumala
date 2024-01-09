@@ -57,7 +57,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
  */
 class TblBmcMilkDispatch extends \app\models\ChildModel {
 
-    public $transporter_code, $dest_plant_code;
+    public $transporter_code;
 
     /**
      * @inheritdoc
@@ -80,7 +80,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
             [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
             [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date', 'dest_plant_code'], 'required', 'except' => ['androidsync', 'importCsv'], 'on' => 'createPlantDispatch'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv'], 'on' => 'createPlantDispatch'],
         ];
     }
 
