@@ -82,10 +82,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $this->model->bmc_code = NULL;
             }
             $bmc_array = $this->model->bmc_code;
-            echo '<pre>';
-            print_r($bmc_array);
-            echo '<pre/>';
-            //  die;
             $is_valid_trip = FALSE;
             if (count($bmc_array) > 2) {
                 $sl_detail = explode('-', $bmc_array[0]);
