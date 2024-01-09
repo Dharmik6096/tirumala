@@ -73,61 +73,63 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $bmc_array[$bmc_index[0]] = $bmc_index[1];
                 }
                 ksort($bmc_array);
-                if (!empty($bmc_array)) {
-                    foreach ($bmc_array as $index => $value) {
-                        if (strpos($value, '-plant') !== false) {
-                            $this->model->plant_code = rtrim($value, '-plant');
-                            break;
-                        }
-                    }
-                    foreach ($bmc_array as $index => $value) {
-                        if($index < count($bmc_array)-1){
-                            if (strpos($value, '-plant') !== false && strpos($bmc_array[$index + 1], '-plant') !== false) {
-                                $this->model->bmc_code = $bmc_array[$index + 1];
-                                $this->model->mcc_plant_code = null;
-                            }else{
-                                if (strpos($value, '-plant') !== false) {
-                                    continue;
-                                }
-                                $this->model->bmc_code = $value;
-                                $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
-                                break;
-                            }
-                        }
-                    }
+                $bmc_array_sort = [];
+                foreach ($bmc_array as $a) {
+                    $bmc_array_sort[] = $a;
                 }
+                $this->model->bmc_code = $bmc_array_sort;
             } else {
                 $this->model->bmc_code = NULL;
             }
+            $bmc_array = $this->model->bmc_code;
+            echo '<pre>';
+            print_r($bmc_array);
+            echo '<pre/>';
+            //  die;
+            $is_valid_trip = FALSE;
+            if (count($bmc_array) > 2) {
+                $sl_detail = explode('-', $bmc_array[0]);
+                $sl_code = $sl_detail[0];
+                $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
+
+                $el_detail = explode('-', $bmc_array[count($bmc_array) - 1]);
+                $el_code = $el_detail[0];
+                $el_type = !empty($el_detail[1]) ? $el_detail[1] : 'bmc';
+
+                $is_valid_trip = ($sl_type == 'plant' && $el_type == 'plant') ? TRUE : FALSE;
+                if ($is_valid_trip) {
+                    $this->model->plant_code = $sl_code;
+                    $fl_detail = explode('-', $bmc_array[1]);
+                    $this->model->fl_code = $fl_detail[0];
+                    $this->model->fl_type = !empty($fl_detail[1]) ? $fl_detail[1] : 'bmc';
+                    if ($this->model->fl_type == 'bmc') {
+                        $this->model->bmc_code = $this->model->fl_code;
+                        $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+                    } else {
+                        $this->model->bmc_code = NULL;
+                        $this->model->mcc_plant_code = NULL;
+                    }
+                }
+            }
             $this->model->trip_mode = 'offline';
-            if ($this->model->validate()) {
+            if ($this->model->validate() && $is_valid_trip) {
                 $result = $this->model->setModel();
                 if ($result[0]) {
                     $validate = TRUE;
                     $save_model = $result[1];
-                    array_shift($bmc_array);
                     foreach ($bmc_array as $key => $bmc) {
                         $trip_detai = new TblVehicleTripDetail();
-                        if (strpos($bmc, '-plant') !== false) {
-                            $trip_detai->source_org_type = 'plant';
-                            $bmc = rtrim($bmc, '-plant');
-                        } else {
-                            $trip_detai->source_org_type = 'bmc';
-                        }
-                        $trip_detai->source_org_code = $bmc;
-
-                        if ($key < count($bmc_array) - 1) {
-                            $next_bmc = ($key == count($bmc_array) - 1) ? $bmc_array[0] : $bmc_array[$key + 1];                    
-                            if (strpos($next_bmc, '-plant') !== false) {
-                                $trip_detai->destination_type = 'plant';
-                                $next_bmc = rtrim($next_bmc, '-plant');
-                            } else {
-                                $trip_detai->destination_type = 'bmc';
-                            }
-                            $trip_detai->destination_code = $next_bmc;
-                        } else {
+                        if ($key == 0 || $key == count($bmc_array) - 1) {
                             continue;
                         }
+                        $sloc_detail = explode('-', $bmc);
+                        $dloc_detail = explode('-', $bmc_array[$key + 1]);
+
+                        $trip_detai->source_org_code = $sloc_detail[0];
+                        $trip_detai->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                        $trip_detai->destination_code = $dloc_detail[0];
+                        $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
+
                         $trip_detai->originating_org_code = $this->model->union_code;
                         $trip_detai->vehicle_trip_code = $this->model->vehicle_trip_code;
                         $trip_detai->vehicle_code = $this->model->vehicle_code;
@@ -143,9 +145,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             }
                         }
                         $save_model[] = $trip_detai;
-                    }
-                    if (strpos($save_model[0]->bmc_code, '-plant') !== false) {
-                        $save_model[0]->bmc_code = null;
                     }
                     if ($validate) {
                         $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
@@ -291,8 +290,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
                 $tripCode = isset($parents[3]) ? $parents[3] : '';
 
-                $trip = new TblVehicleTripDetail();                
-                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);            
+                $trip = new TblVehicleTripDetail();
+                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -301,4 +300,5 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
+
 }

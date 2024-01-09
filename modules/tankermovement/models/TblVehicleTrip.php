@@ -41,6 +41,7 @@ use app\modules\syncutility\models\TblSentbox;
 class TblVehicleTrip extends \app\models\ChildModel {
 
     public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $filter_plant_code;
+    public $fl_type, $fl_code;
 
     /**
      * @inheritdoc
@@ -54,7 +55,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip','autogeneratetrip']],
+                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
@@ -191,18 +192,8 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 $trip_detai->source_org_type = 'plant';
             }
             $trip_detai->originating_org_code = $this->union_code;
-            if (isset($this->bmc_code)) {
-                if (strpos($this->bmc_code, '-plant') !== false) {
-                    $trip_detai->destination_code = rtrim($this->bmc_code, '-plant');
-                    $trip_detai->destination_type = 'plant';
-                } else {
-                    $trip_detai->destination_code = $this->bmc_code;
-                    $trip_detai->destination_type = 'bmc';
-                }
-            } else {
-                $trip_detai->destination_code = $this->plant_code;
-                $trip_detai->destination_type = 'plant';
-            }
+            $trip_detai->destination_code = !empty($this->fl_code) ? $this->fl_code : $this->bmc_code;
+            $trip_detai->destination_type = !empty($this->fl_type) ? $this->fl_type : 'bmc';
             $trip_detai->vehicle_trip_code = $model->vehicle_trip_code;
             $trip_detai->vehicle_code = $model->vehicle_code;
             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
@@ -232,12 +223,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
     }
 
     public function generateTripCode() {
-        
-        if (strpos($this->bmc_code, '-plant') !== false) {
-            $bmc_plant_code = rtrim($this->bmc_code, '-plant');
-        } else {
-            $bmc_plant_code = $this->bmc_code;
-        }
+        $bmc_plant_code = !empty($this->fl_code) ? $this->fl_code : $this->bmc_code;
         $primaryKey = 'trip_code';
         $prefix = substr($this->vehicleCode->parsing_no, -4) . substr($bmc_plant_code, -2);
         $len = strlen($prefix);
@@ -299,17 +285,17 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return $sentbox;
     }
 
-    public function checkVehicleStatus($attribute, $params)
-    {
+    public function checkVehicleStatus($attribute, $params) {
         if ($this->hasErrors()) {
             return;
         }
         $existingTrip = $this->find()
-            ->where(['vehicle_code' => $this->vehicle_code])
-            ->andWhere(['NOT', ['trip_status' => 'closed']])
-            ->one();
+                ->where(['vehicle_code' => $this->vehicle_code])
+                ->andWhere(['NOT', ['trip_status' => 'closed']])
+                ->one();
         if ($existingTrip) {
             $this->addError($attribute, 'A trip for this vehicle already exists and is not closed.');
         }
     }
+
 }
