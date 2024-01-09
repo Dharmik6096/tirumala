@@ -66,7 +66,7 @@ class TblGrnSearch extends TblGrn {
             $query->andFilterWhere(['like', 'cast(tbl_grn.invoice_date as date)', date('Y-m-d', strtotime($this->invoice_date))]);
         }
         if (!empty($this->from_date)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d', strtotime('-15 DAYS'));
             $query->andFilterWhere(['>=', 'cast(tbl_grn.grn_date as date)', $from_date]);
         }
 

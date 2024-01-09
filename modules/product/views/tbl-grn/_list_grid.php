@@ -6,7 +6,7 @@ use kartik\grid\GridView;
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 $visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
 ?>
-<div class="col-sm-12 padding-left-0 padding-right-0 ">
+<div class="col-sm-12 padding-left-0 padding-right-0 hide-grid-settings ">
     <h5 class="panel-heading"><?= Yii::t('app', 'Product Details') ?></h5>
 
 
