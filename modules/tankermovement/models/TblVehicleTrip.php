@@ -192,8 +192,13 @@ class TblVehicleTrip extends \app\models\ChildModel {
             }
             $trip_detai->originating_org_code = $this->union_code;
             if (isset($this->bmc_code)) {
-                $trip_detai->destination_code = $this->bmc_code;
-                $trip_detai->destination_type = 'bmc';
+                if (strpos($this->bmc_code, '-plant') !== false) {
+                    $trip_detai->destination_code = rtrim($this->bmc_code, '-plant');
+                    $trip_detai->destination_type = 'plant';
+                } else {
+                    $trip_detai->destination_code = $this->bmc_code;
+                    $trip_detai->destination_type = 'bmc';
+                }
             } else {
                 $trip_detai->destination_code = $this->plant_code;
                 $trip_detai->destination_type = 'plant';

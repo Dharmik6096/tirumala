@@ -75,6 +75,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 ksort($bmc_array);
                 if (!empty($bmc_array)) {
                     foreach ($bmc_array as $index => $value) {
+                        if (strpos($value, '-plant') !== false) {
+                            $this->model->plant_code = rtrim($value, '-plant');
+                            break;
+                        }
+                    }
+                    foreach ($bmc_array as $index => $value) {
                         if($index < count($bmc_array)-1){
                             if (strpos($value, '-plant') !== false && strpos($bmc_array[$index + 1], '-plant') !== false) {
                                 $this->model->bmc_code = $bmc_array[$index + 1];
@@ -90,7 +96,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                $this->model->plant_code = $this->model->plant_code[0];
             } else {
                 $this->model->bmc_code = NULL;
             }
