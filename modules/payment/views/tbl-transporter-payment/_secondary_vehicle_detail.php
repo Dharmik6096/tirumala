@@ -161,6 +161,12 @@ use kartik\grid\GridView;
                 if (!empty($rel))
                     return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
             }, 'filter' => false],
+            ['attribute' => 'return_dest', 'value' => function($model) {
+                $rel = Yii::$app->general->getDestRelation($model->return_type);
+                $att = strtolower($model->return_type) == 'bmc' ? 'bmc_name' : (strtolower($model->return_type) == 'vendor' ? 'customer_name' : 'name');
+                if (!empty($rel))
+                    return Yii::$app->general->getforeignkey($model->{$rel . 'Return'}, $att);
+            }, 'filter' => false],
             ['attribute' => 'disp_qty', 'label' => Yii::t('app', 'Disp.Qty'), 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'rec_qty', 'label' => Yii::t('app', 'Rec.Qty'), 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'total_kms', 'label' => Yii::t('app', 'KM'), 'filter' => false, 'pageSummary' => true],
