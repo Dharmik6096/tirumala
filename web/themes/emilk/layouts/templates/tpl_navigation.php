@@ -678,6 +678,7 @@ echo GhostMenu::widget([
                             ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                             ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
                             ['label' => '408-' . Yii::t('app', 'CP liability Report'), 'url' => ['/misreports/reports/cpliability-report']],
+                            ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/default/sap-wq-file']],
                     ]
                 ],
                     [
