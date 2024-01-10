@@ -122,7 +122,19 @@ $script = "
         $('#tblgrntxn-gross_amount').val(amount.toFixed(2));
     }
     
-
+    setNoOfInstallment($('#tblgrn-payment_mode').prop('checked'));	
+    $('#tblgrn-payment_mode').on('change', function() {
+        setNoOfInstallment($(this).prop('checked'));
+    });
+    
+   function setNoOfInstallment(check_value) {
+        $('.noOfInstallment').hide();
+        $('.dedStartDate').hide();
+        if(check_value == true){
+            $('.noOfInstallment').show();
+            $('.dedStartDate').show();
+        }
+    }
 
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');

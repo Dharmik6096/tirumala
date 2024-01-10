@@ -8,6 +8,9 @@ use yii\web\View;
 use yii\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
+
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+$visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -27,61 +30,64 @@ $form = ActiveForm::begin([
     echo Html::activeHiddenInput($model, 'invoice_no', ['id' => 'set_invoice_no']);
     echo Html::activeHiddenInput($model, 'ref_no', ['id' => 'set_ref_no']);
     echo Html::activeHiddenInput($model, 'remarks', ['id' => 'set_remarks']);
+    echo Html::activeHiddenInput($model, 'payment_mode', ['id' => 'set_payment_mode']);
+    echo Html::activeHiddenInput($model, 'no_of_installment', ['id' => 'set_no_of_installment']);
+    echo Html::activeHiddenInput($model, 'deduction_start_date', ['id' => 'set_deduction_start_date']);
 
     $attribute = [
-        ['attribute' => 'product_code', 'value' => function ($model, $key, $index) {
+            ['attribute' => 'product_code', 'value' => function ($model, $key, $index) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']plant_dispatch_txn_code', ['value' => $model->plant_dispatch_txn_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']product_code', ['value' => $model->product_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']unit_code', ['value' => $model->unit_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']sap_batch_no', ['value' => $model->sap_batch_no]);
                 return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
             }, 'filter' => FALSE],
-        ['attribute' => 'sap_batch_no', 'visible' => TRUE, 'filter' => false],
-        ['attribute' => 'unit_code', 'value' => function($model) {
+            ['attribute' => 'sap_batch_no', 'visible' => $visible, 'filter' => false],
+            ['attribute' => 'unit_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->unitCode, 'unit_name');
             }, 'visible' => TRUE, 'filter' => false],
-        ['attribute' => 'rate', 'filter' => false],
-        ['attribute' => 'dispatch_qty',
+            ['attribute' => 'rate', 'filter' => false],
+            ['attribute' => 'dispatch_qty',
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'dispatch_qty_change\'>' . $form->field($model, '[' . $index . ']dispatch_qty')->textInput(['value' => $model->grn_missing_qty, 'class' => 'form-control number-validate-js', 'readonly' => TRUE])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'received_qty',
+            ['attribute' => 'received_qty',
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
                 return Html::activeHiddenInput($model, '[' . $index . ']rate', ['value' => $model->rate, 'class' => 'rateField']) . '<span class=\'received_qty_change\'>' . $form->field($model, '[' . $index . ']received_qty')->textInput(['value' => $model->grn_missing_qty, 'class' => 'form-control number-validate-js', 'readonly' => TRUE])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'rejected_qty',
+            ['attribute' => 'rejected_qty',
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'rejected_qty_change\'>' . $form->field($model, '[' . $index . ']rejected_qty')->textInput(['value' => $model->rejected_qty, 'class' => 'form-control number-validate-js',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'missing_qty',
+            ['attribute' => 'missing_qty',
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'missing_qty_change\'>' . $form->field($model, '[' . $index . ']missing_qty')->textInput(['value' => $model->missing_qty, 'class' => 'form-control number-validate-js'])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'amount',
+            ['attribute' => 'amount',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control amountField', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'rejection_remarks',
+            ['attribute' => 'rejection_remarks',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']rejection_remarks')->textInput(['class' => 'form-control'])->label(FALSE);
             },
         ],
-        ['attribute' => 'missing_remarks',
+            ['attribute' => 'missing_remarks',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']missing_remarks')->textInput(['class' => 'form-control'])->label(FALSE);
