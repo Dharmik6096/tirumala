@@ -201,10 +201,12 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     }
 
     public function setCode($model) {
-        $bmcs = explode(',', $_SESSION['BMC']);
-        if (count($bmcs) == 1) {
-            $model->receipt_at = 'BMC';
-            $this->model->receipt_at_code = $bmcs[0];
+        if (!empty($_SESSION['BMC'])) {
+            $bmcs = explode(',', $_SESSION['BMC']);
+            if (count($bmcs) == 1) {
+                $model->receipt_at = 'BMC';
+                $this->model->receipt_at_code = $bmcs[0];
+            }
         }
     }
 
