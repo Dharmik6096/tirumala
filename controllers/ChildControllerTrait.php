@@ -27,6 +27,7 @@ trait ChildControllerTrait {
         if (!file_exists($path)) {
             \Yii::$app->language = Yii::$app->session->get('LanguageCode');
         }
+        \Yii::$app->language = empty(\Yii::$app->language) ? 'en' : \Yii::$app->language;
 
         if (!defined('DATE_FORMAT'))
             define('DATE_FORMAT', 'php:Y-m-d');
@@ -52,7 +53,7 @@ trait ChildControllerTrait {
             'access' => [
                 'class' => 'yii\filters\AccessControl',
                 'rules' => [
-                    [
+                        [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
