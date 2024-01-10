@@ -20,6 +20,11 @@ use app\modules\product\models\TblPlantDispatch;
 use app\modules\product\models\TblPlantDispatchHistory;
 use app\modules\product\models\TblPlantDispatchTxn;
 use app\modules\product\models\TblPlantDispatchTxnHistory;
+use app\modules\product\models\TblGrnInstallment;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\product\models\TblGrnInstallmentSearch;
+use app\modules\product\models\TblGrnInstallmentHistory;
+use app\modules\product\models\TblGrnHistory;
 
 /**
  * TblGrnController implements the CRUD actions for TblGrn model.
@@ -51,10 +56,16 @@ class TblGrnController extends \app\controllers\ChildController {
         $searchModel = new TblGrnTxnSearch();
         $searchModel->grn_code = $id;
         $dataProvider = $searchModel->createsearch(Yii::$app->request->queryParams);
+        $grnInstallmentSearchModel = new TblGrnInstallmentSearch();
+        $grnInstallmentSearchModel->grn_code = $id;
+        $grnInstallmentdataProvider = $grnInstallmentSearchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'grnInstallmentSearchModel' => $grnInstallmentSearchModel,
+                    'grnInstallmentdataProvider' => $grnInstallmentdataProvider,
         ]);
     }
 
@@ -86,17 +97,49 @@ class TblGrnController extends \app\controllers\ChildController {
                 $this->model->grn_code = Yii::$app->general->getPrimaryCode($this->model, 1);
                 $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : '';
                 $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : '';
+                $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
+                if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
+                    $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
+                    $this->model->deduction_start_date = $dedStartDate;
+                    $this->model->amount = $txnData['gross_amount'];
+                }
+                $modelSave[] = $this->model;
+            } else {
+                $this->model = TblGrn::find()->where(['grn_code' => $this->model->grn_code])->one();
+                $grnHistoryModel = new TblGrnHistory();
+                Yii::$app->operation->history($this->model, $grnHistoryModel, UPDATE);
+                $modelSave[] = $grnHistoryModel;
+                $this->model->amount = $txnData['gross_amount'] + $this->model->amount;
                 $modelSave[] = $this->model;
             }
+
             $txModel->setAttributes($txnData);
             $txModel->grn_code = $this->model->grn_code;
             $txModel->union_code = $this->model->union_code;
             $txModel->grn_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->grn_code);
 
-
             if (empty($this->model->getErrors()) && empty($txModel->getErrors()) && $this->model->validate() && $txModel->validate()) {
                 $modelSave[] = $txModel;
+                $installmentModel = new TblGrnInstallment();
+                $existGrnInstallment = $installmentModel->find()->where(['grn_code' => $this->model->grn_code])->all();
 
+                if (!empty($existGrnInstallment)) {
+                    foreach ($existGrnInstallment as $txn) {
+                        $historyTxnModel = new TblGrnInstallmentHistory();
+                        Yii::$app->operation->history($txn, $historyTxnModel, 'UPDATE');
+                        $modelSave[] = $historyTxnModel;
+                        $txn->main_amount = $this->model->amount;
+                        $no = !empty($this->model->no_of_installment) ? ($this->model->no_of_installment) : 1;
+                        $instAmount = floatval($this->model->amount / $no);
+                        $txn->installment_amount = $instAmount;
+                        $modelSave[] = $txn;
+                    }
+                }
+                if (empty(Yii::$app->request->post()['TblGrn']['grn_code'])) {
+                    if (!empty($this->model->payment_mode)) {
+                        $this->model->installment($modelSave);
+                    }
+                }
                 $stockModel = new TblProductStock();
                 $stockModel->attributes = $this->model->attributes;
                 $stockModel->attributes = $txModel->attributes;
@@ -243,9 +286,16 @@ class TblGrnController extends \app\controllers\ChildController {
             $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : date('Y-m-d');
             $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : $dispatchData->document_date;
             $this->model->invoice_no = !empty($this->model->invoice_no) ? $this->model->invoice_no : $dispatchData->document_no;
+            $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
+            if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
+                $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
+                $this->model->deduction_start_date = $dedStartDate;
+            }
             $this->model->scenario = 'batchcreate';
             $modelSave[] = $this->model;
+
             $i = 1;
+            $totalGrossAmount = 0;
             foreach ($txnData as $txn) {
                 $txModel = new TblGrnTxn();
                 $txModel->setAttributes($txn);
@@ -308,6 +358,13 @@ class TblGrnController extends \app\controllers\ChildController {
 //                if ($txModel->missing_qty > 0) {
 //                    $updateDispatch = FALSE;
 //                }
+                $totalGrossAmount += $txModel->gross_amount;
+            }
+            $this->model->amount = $totalGrossAmount;
+            $modelSave[] = $this->model;
+
+            if (!empty($this->model->payment_mode)) {
+                $this->model->installment($modelSave);
             }
             if ($updateDispatch) {
                 $dispatchModel = new TblPlantDispatch();
