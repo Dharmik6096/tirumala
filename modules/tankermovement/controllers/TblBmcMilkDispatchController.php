@@ -125,6 +125,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                                     ->where(['trip_code' => $model->trip_code])
                                     ->andWhere(['lower(source_org_type)' => 'bmc', 'source_org_code' => $model->bmc_code])
                                     ->andWhere(['IS', 'challan_no', NULL])
+                                    ->andWhere(['!=', 'vehicle_trip_detail_code', new \yii\db\Expression("CONCAT(vehicle_trip_code,'T1')")])
                                     ->orderBy(['created_at' => SORT_ASC])->one();
                     if (!empty($trip_detail)) {
                         $trip_detail->challan_no = $model->challan_no;
@@ -144,8 +145,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $auto_trip_detail->vehicle_code = $tripModel->vehicle_code;
                         $auto_trip_detail->trip_code = $tripModel->trip_code;
                         $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-                        $auto_trip_detail->destination_code = $model->bmc_code;
-                        $auto_trip_detail->destination_type = 'bmc';
+                        $auto_trip_detail->destination_code = $model->destination_code;
+                        $auto_trip_detail->destination_type = strtolower($model->destination_type);
                         $auto_trip_detail->source_org_code = $exist_auto_trip_detail->destination_code;
                         $auto_trip_detail->source_org_type = $exist_auto_trip_detail->destination_type;
                         $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
@@ -169,7 +170,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
                 $stock_model->from_date = $model->from_date;
                 $stock_model->from_shift_code = $model->from_shift_code;
-
 
                 $stock_model->transaction_date = $model->transaction_date;
                 $stock_model->closing_bal = $txn_model->dispatch_qty;
@@ -260,6 +260,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 $this->model->bmc_code = $data['bmc_code'];
                 $this->model->mcc_plant_code = $data['mcc_plant_code'];
             } else {
+                $this->model->fl_code = $this->model->plant_code;
+                $this->model->fl_type = 'plant';
                 $this->model->bmc_code = NULL;
                 $this->model->mcc_plant_code = NULL;
             }
@@ -555,6 +557,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                                     ->where(['trip_code' => $model->trip_code])
                                     ->andWhere(['lower(source_org_type)' => 'plant', 'source_org_code' => $model->plant_code])
                                     ->andWhere(['IS', 'challan_no', NULL])
+                                    ->andWhere(['!=', 'vehicle_trip_detail_code', new \yii\db\Expression("CONCAT(vehicle_trip_code,'T1')")])
                                     ->orderBy(['created_at' => SORT_ASC])->one();
                     if (!empty($trip_detail)) {
                         $trip_detail->challan_no = $model->challan_no;
@@ -574,10 +577,10 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $auto_trip_detail->vehicle_code = $tripModel->vehicle_code;
                         $auto_trip_detail->trip_code = $tripModel->trip_code;
                         $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-                        $auto_trip_detail->destination_code = $model->plant_code;
-                        $auto_trip_detail->destination_type = 'plant';
+                        $auto_trip_detail->destination_code = $model->destination_code;
+                        $auto_trip_detail->destination_type = strtolower($model->destination_type);
                         $auto_trip_detail->source_org_code = $exist_auto_trip_detail->destination_code;
-                        $auto_trip_detail->source_org_type = 'plant';
+                        $auto_trip_detail->source_org_type = $exist_auto_trip_detail->destination_type;
                         $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
                         $auto_trip_detail->challan_no = $model->challan_no;
                         $saveModel[] = $auto_trip_detail;
@@ -645,8 +648,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             }
         }
         return $this->render('plant_create', [
-            'model' => $model,
-            'txn_model' => $txn_model,
+                    'model' => $model,
+                    'txn_model' => $txn_model,
         ]);
     }
 }
