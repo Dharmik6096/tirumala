@@ -339,6 +339,16 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkReceiptForMember() {
+        $this->report = 'MilkReceiptForMember';
+        return $this->actionIndex();
+    }
+    
+    public function actionMilkReceiptForBmc() {
+        $this->report = 'MilkReceiptForBMC';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -807,6 +817,18 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VendorMilkPaymentAnig',
                 'scenario' => 'VendorMilkPayment',
                 'title' => '604 - Vendor Milk Payment',
+            ],
+            'MilkReceiptForMember' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_member_code:p_dcs_code,p_from_date:string,p_to_date:string,p_report_name',
+                'path' => 'milkcollection/MilkReceiptForMember',
+                'scenario' => 'MilkReceiptForMember',
+                'title' => 'Milk Receipt For Member',
+            ],
+            'MilkReceiptForBMC' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcsc_code,p_from_date:string,p_to_date:string,p_report_name',
+                'path' => 'milkcollection/MilkReceiptForBMC',
+                'scenario' => 'MilkReceiptForBMC',
+                'title' => 'Milk Receipt For BMC',
             ],
         ];
         return $label[$l];
