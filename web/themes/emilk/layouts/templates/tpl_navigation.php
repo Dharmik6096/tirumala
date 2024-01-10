@@ -598,6 +598,14 @@ echo GhostMenu::widget([
                                     ['label' => '117 -' . Yii::t('app', 'MCC comparison summary'), 'url' => ['/misreports/reports/bmc-milk-collection-proc']],
                                     ['label' => '118 -' . Yii::t('app', 'MCC comparison details'), 'url' => ['/misreports/reports/bmc-milk-collection-proc-detail']],
                                     ['label' => '113 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
+                                    [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Customer receipt') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                        ['label' => Yii::t('app', 'Milk Receipt For Member'), 'url' => ['/jasperreports/default/milk-receipt-for-member']],
+                                        ['label' => Yii::t('app', 'Milk Receipt For BMC'), 'url' => ['/jasperreports/default/milk-receipt-for-bmc']],
+                                    ]
+                                ],
                             ]
                         ],
                             [
