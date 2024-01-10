@@ -267,6 +267,7 @@ endif;
 
 <?php
 $script = "
+    $('#dispatch-detail').css('display', 'none');
     $('.tanker_no_hide').css('display', 'none');
     $('#tblmilkvehicleentry-vehicle_code, #tblmilkvehicleentry-receipt_datetime').on('change', function() {
         var vehicleCode = $('#tblmilkvehicleentry-vehicle_code').val();
