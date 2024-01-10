@@ -30,6 +30,7 @@ use Yii;
  */
 class TblUserAttendanceDetail extends \app\models\ChildModel {
 
+    public $Attendance_hours, $Total_hours;
     /**
      * @inheritdoc
      */
@@ -73,6 +74,27 @@ class TblUserAttendanceDetail extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
+    }
+
+   
+    public function calculateTotalTimeDifference($Ids) {
+        $totalDifferenceHours = 0;
+        $totalDifferenceMinutes = 0;
+        foreach ($Ids as $UserDetailId) {
+            $attendanceDetail = $this->find()->where(['attendance_detail_code' => $UserDetailId])->one();
+            if ($attendanceDetail !== null) {
+                $inTime = $attendanceDetail->in_time;
+                $outTime = $attendanceDetail->out_time;
+                if (!empty($inTime) && !empty($outTime)) {
+                    $timeDetails = Yii::$app->controls->calculateTimeDifference($inTime, $outTime, TRUE);
+                    $totalDifferenceHours += $timeDetails['hours'];
+                    $totalDifferenceMinutes += $timeDetails['minutes'];
+                }
+            }
+        }
+        $totalDifferenceHours += floor($totalDifferenceMinutes / 60);
+        $totalDifferenceMinutes %= 60;
+        return "$totalDifferenceHours Hours $totalDifferenceMinutes Minutes";
     }
 
 }
