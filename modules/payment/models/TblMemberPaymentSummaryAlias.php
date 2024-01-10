@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\payment\models\TblPaymentCycle;
 use app\modules\payment\models\TblMilkShortageRecovery;
 use app\modules\payment\models\TblMemberPaymentHeadSummary;
+use app\modules\vsp\models\TblBillHead;
 //tbl_member_payment_head_summary
 
 /**
@@ -158,14 +159,12 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
     }
     
     public function getShortageRecoveredMember() {
-        $eipl_code = \Yii::$app->session->get('eiplCode');
-        $bill_head_code = '';
-        if($eipl_code == 'ITC'){
-            $bill_head_code = 4;
-        } else if($eipl_code == 'VRS_NEWASA'){
-            $bill_head_code = 3;
-        }
+        $bill_head_code = $this->getBillHead();
         return $this->hasOne(TblMemberPaymentHeadSummary::className(), ['dcs_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['bill_head_code' => $bill_head_code]);
     }
     
+    public function getBillHead() {
+        $bill_head = TblBillHead::find()->where(['default_bill_head_code' => 16])->one();
+        return !empty($bill_head) ? $bill_head->bill_head_code : '';
+    }    
 }
