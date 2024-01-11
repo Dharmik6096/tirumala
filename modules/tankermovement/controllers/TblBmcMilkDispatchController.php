@@ -590,6 +590,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 $txn_model->bmc_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($txn_model, $model->bmc_milk_dispatch_code);
                 $txn_model->qty_mode = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'dispatch_qty_mode', 'PLANT');
                 $conversion_const = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'ltr_to_kg_constant', 'PLANT');
+                $conversion_const = !empty($conversion_const) ? $conversion_const : 1;
                 $txn_model->converted_qty_mode = $txn_model->qty_mode == 1 ? 0 : 1;
                 $txn_model->converted_qty = $txn_model->qty_mode == 1 ? $txn_model->dispatch_qty / $conversion_const : $txn_model->dispatch_qty * $conversion_const;
                 $saveModel[] = $txn_model;
