@@ -248,6 +248,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                 $saveModel[] = $model;
                 $contactModel = new TblContactDetails();
                 $contactModel->module_code = $model->id;
+                $contactModel->module_name = 'user';
                 $contactModelData = $contactModel->getAllContactData(1);
                 if (!empty($contactModelData)) {
                     foreach ($contactModelData as $contactdetail) {
@@ -294,6 +295,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         $saveModel[] = $this->model;
         $contactModel = new TblContactDetails();
         $contactModel->module_code = $this->model->id;
+        $contactModel->module_name = 'user';
         $contactModelData = $contactModel->getAllContactData(0);
         if (!empty($contactModelData)) {
             foreach ($contactModelData as $contactdetail) {

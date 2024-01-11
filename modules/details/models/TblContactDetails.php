@@ -168,18 +168,15 @@ class TblContactDetails extends \app\models\ChildModel {
 
     public function getAllContactData($status) {
         return $this->find()
-                        ->where(['module_code' => $this->module_code, 'is_active' => $status])
+                        ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name, 'is_active' => $status])
                         ->all();
     }
 
-    public function getRouteContactData() {
-        $module_name = ['mccPlant', 'routeMapping', 'society', 'user', 'bmc', 'farmer'];
-
-        if (in_array($this->module_name, $module_name)) {
-            return $this->find()
-                            ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name, 'is_active' => 1, 'is_default' => 1])
-                            ->one();
-        }
+    public function getUserData($status) {
+        $data = $this->find()
+                ->where(['module_code' => $this->module_code, 'is_active' => 1])
+                ->one();
+        return;
     }
 
 }
