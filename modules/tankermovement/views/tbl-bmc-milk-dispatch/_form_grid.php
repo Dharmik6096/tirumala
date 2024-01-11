@@ -35,12 +35,13 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'destination_code',],
-    ['attribute' => 'destination_type', 'value' => function($model) {
-            $rel = Yii::$app->general->getDestRelation($model->destination_type);
-            $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : strtolower($model->destination_type) == 'party' ? 'party_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
-            if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
-        },],
+    ['attribute' => 'destination_type', 'value' => function ($model) {
+        $rel = Yii::$app->general->getDestRelation($model->destination_type);
+        $destinationType = strtolower($model->destination_type);
+        $att = ($destinationType == 'bmc') ? 'bmc_name' : (($destinationType == 'party') ? 'party_name' : (($destinationType == 'vendor') ? 'customer_name' : 'name'));
+        if (!empty($rel))
+            return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
+    }],
     [
         'attribute' => 'transaction_date',
         'filterType' => GridView::FILTER_DATE,
