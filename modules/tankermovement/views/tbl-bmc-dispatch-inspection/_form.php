@@ -24,7 +24,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcdispatchinspection-union_code', 'plant_code', TRUE, FALSE, '', TRUE); ?>
     </div> 
-    <?php if (isset($model->bmc_code)) : ?>
+    <?php if (!empty($model->bmc_code)) : ?>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcdispatchinspection-plant_code', 'mcc_plant_code', TRUE, FALSE, '', TRUE); ?>
         </div>      

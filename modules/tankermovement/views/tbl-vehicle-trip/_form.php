@@ -72,16 +72,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "
 $('#tblvehicletrip-plant_code').on('change',function(){
-    setBmcList();
-});
-function setBmcList() {
     var plant_code = $('#tblvehicletrip-plant_code').val(); 
-    if(plant_code==''){
-    var options = $('#tblvehicletrip-plant_code option');
-    plant_code = $.map(options ,function(option) {
-                return option.value;
-            });
-    }
     $.ajax({
         type: 'post',
         url: '" . Url::to(['/organisation/tbl-dcs-bmc/get-plant-bmc']) . "',    
@@ -127,7 +118,7 @@ function setBmcList() {
             }
         }
     });           
-}
+});
 $('#vehicle-trip-form').submit(function(e) {
     var bmcarray = '';                                      
     var options = $('#tblvehicletrip-bmc_code option:selected');

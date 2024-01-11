@@ -48,7 +48,7 @@ class TblBmcDispatchInspectionController extends \app\controllers\ChildControlle
         $trip_detail = $model->tripDetailCode;
 
         if (!empty($trip_model) && !empty($trip_detail)) {
-            if (isset($trip_model->bmc_code)) {
+            if (!empty($trip_model->bmc_code)) {
                 $model->bmc_code = $trip_detail->destination_code;
                 $org_detail = $model->bmcCode;
                 $model->union_code = $org_detail->union_code;

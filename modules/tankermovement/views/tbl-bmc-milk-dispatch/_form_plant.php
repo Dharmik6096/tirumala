@@ -223,14 +223,6 @@ $(document).ready(function(){
         $('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
     }
 });
-
-$(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-rtpl', function() {
-    var rtpl=$('#tblbmcmilkdispatchtxn-rtpl').val();
-    var dispatch_qty=$('#tblbmcmilkdispatchtxn-dispatch_qty').val();
-    if(rtpl !='' && dispatch_qty!=''){
-        $('#tblbmcmilkdispatchtxn-amount').val(parseFloat(rtpl*dispatch_qty).toFixed(2))
-    } 
-});
 ";
 
 $script .= "
