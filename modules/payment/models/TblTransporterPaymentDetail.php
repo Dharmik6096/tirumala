@@ -74,7 +74,7 @@ class TblTransporterPaymentDetail extends \yii\db\ActiveRecord {
                 [['transporter_payment_code'], 'integer'],
                 [['vehicle_code', 'parsing_no', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
                 [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'avg_rate', 'morning_qty', 'evening_qty', 'qty', 'morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'km_rate', 'fuel_rate', 'fuel_consumption', 'amount', 'toll_amount', 'fastag_amount', 'fixed_amount', 'other_amount', 'total_amount', 'weighing_cost'], 'number'],
-                [['dispatch_date', 'created_at', 'updated_at', 'weighing_cost', 'return_type', 'return_dest'], 'safe'],
+                [['dispatch_date', 'created_at', 'updated_at', 'weighing_cost', 'return_type', 'return_dest', 'trip_code'], 'safe'],
                 [['rejected_kg_fat', 'rejected_kg_snf', 'morning_rejected_qty', 'evening_rejected_qty', 'rejected_qty', 'rejected_amount', 'qty_amount', 'morning_vts_kms', 'evening_vts_kms', 'total_vts_kms', 'primary_tpt_cost', 'morning_late_minute', 'morning_applicable_penalty', 'morning_penalty_amount', 'evening_late_minute', 'evening_applicable_penalty', 'evening_penalty_amount', 'penalty_amount', 'morning_least_kms', 'evening_least_kms', 'total_least_kms', 'incentive_value', 'e_basic_price', 'm_basic_price', 'chilling_cost', 'basic_price'], 'safe']
         ];
     }
@@ -154,8 +154,9 @@ class TblTransporterPaymentDetail extends \yii\db\ActiveRecord {
             'incentive_value' => Yii::t('app', 'Agent Incentive(%)'),
             'e_basic_price' => Yii::t('app', 'Basic Rate(M)'),
             'm_basic_price' => Yii::t('app', 'Basic Rate(E)'),
-            'return_dest' => Yii::t('app', 'RETURN'),
+            'return_dest' => Yii::t('app', 'START'),
             'return_type' => Yii::t('app', 'Return Type'),
+            'trip_code' => Yii::t('app', 'Trip No.'),
         ];
     }
 

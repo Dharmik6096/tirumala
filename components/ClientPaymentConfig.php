@@ -74,7 +74,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_disburse_vendor_payment',
                 ],
                 'secondary_tpt_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'param' => 'union_code,from_date,to_date,user_code,transporter_code,vehicle_code',
                     'sp_name' => 'sp_tpt_secondary_payment_cargill',
                 ],
                 'member_payment_disburse' => [
