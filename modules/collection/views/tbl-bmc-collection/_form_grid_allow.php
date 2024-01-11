@@ -81,6 +81,7 @@ $attribute = [
             return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
         },],
         ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'converted_amount', 'value' => 'converted_amount', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'rtpl'],
         ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'transporter_code', 'value' => function($model) {
