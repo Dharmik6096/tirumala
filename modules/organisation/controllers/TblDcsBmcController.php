@@ -534,7 +534,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
             $model = new TblDcsBmc();
-            $plantList = $model->getBMCList([], 'TRUE', false, false, [], $plant);
+            $plantList = $model->getBMCList([], 'TRUE', false, false, [], $plant, 'BMC');
         }
         return Json::encode(['status' => 'success', 'data' => $plantList]);
     }
