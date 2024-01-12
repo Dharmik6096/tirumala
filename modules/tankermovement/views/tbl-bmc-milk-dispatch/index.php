@@ -2,7 +2,7 @@
 
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'BMC Milk Dispatch'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Tanker Milk Dispatch'));
 
 $this->params['menu'][] = Yii::$app->controls->add('BMC Milk Dispatch');
 $this->params['menu'][] = Yii::$app->controls->add('PLANT Milk Dispatch', 'create-plant-dispatch');
