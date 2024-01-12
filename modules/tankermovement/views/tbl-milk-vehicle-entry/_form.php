@@ -412,8 +412,8 @@ $script = "
                 url: '" . Url::to(['set-fields']) . "',
                 data: {'challan_no' : challan_no,'trip_code':trip_code},             
                 success: function(data) {
-                $('#tblmilkvehicleentrytransaction-source_org_type').val('BMC');
-                $('#tblmilkvehicleentrytransaction-source_org_code').val(data.data.bmc_code);
+                $('#tblmilkvehicleentrytransaction-source_org_type').val(data.data.source_org_type.toUpperCase());
+                $('#tblmilkvehicleentrytransaction-source_org_code').val(data.data.source_org_code);
                 $('#tblmilkvehicleentrytransaction-destination_type').val(data.data.destination_type);
                 $('#tblmilkvehicleentrytransaction-destination_code').val(data.data.destination_code);
                 $('#tblmilkvehicleentrytransaction-source').val(data.source);
