@@ -123,6 +123,9 @@ class TblVehicleTripController extends \app\controllers\ChildController
                 if ($result[0]) {
                     $validate = TRUE;
                     $save_model = $result[1];
+                    if (!empty($save_model) && $this->model->fl_type == 'plant') {
+                        $save_model[0]->plant_code =  $this->model->fl_code;
+                    }
                     foreach ($bmc_array as $key => $bmc) {
                         $trip_detai = new TblVehicleTripDetail();
                         if ($key == 0 || $key == count($bmc_array) - 1) {
