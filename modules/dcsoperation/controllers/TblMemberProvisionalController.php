@@ -25,6 +25,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
+use app\modules\dcsoperation\models\TblMemberHistory;
 
 /**
  * TblMemberProvisionalController implements the CRUD actions for TblMemberProvisional model.
@@ -425,29 +426,38 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $memberModel->approved_by = Yii::$app->session['UserCode'];
             if ($memberModel->is_approved = 1) {
                 $tblMember = new TblMember();
+                $memberCode = $tblMember->getCode();
+                if($memberModel->provisional_from == 'mobile_update'){
+                    $tblMember = TblMember::find()->where(['member_code' => $memberModel->member_code])->one();
+                    $memberCode = $memberModel->member_code;
+                    $historyMemberModel = new TblMemberHistory();
+                    Yii::$app->operation->history($tblMember, $historyMemberModel, UPDATE);
+                    $model_save[] = $historyMemberModel;
+                }
                 $tblMember->scenario = 'ApprovalMember';
                 $tblMember->attributes = $memberModel->attributes;
-                $tblMember->member_code = $tblMember->getCode();
+                $tblMember->member_code = $memberCode;
                 $historyModel = new TblMemberProvisionalHistory();
                 Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
                 if ($tblMember->validate()) {
                     $model_save[] = $tblMember;
                     $model_save[] = $memberModel;
                     $model_save[] = $historyModel;
-
-                    $milkCollectionData = new TblProvisionalMilkCollection();
-                    $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
-                    if (!empty($milkCollectionData)) {
-                        foreach ($milkCollectionData as $key => $value) {
-                            $deleteModel[] = $value;
-                            $tblMilkCollection = new TblMilkCollection();
-                            $tblMilkCollection->attributes = $value->attributes;
-                            $tblMilkCollection->member_code = $tblMember->member_code;
-                            $tblMilkCollection->is_provisional = 1;
-                            $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
-                            Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
-                            $model_save[] = $tblMilkCollection;
-                            $model_save[] = $tblProvisionalMilkCollectionHistory;
+                    if($memberModel->provisional_from != 'mobile_update'){
+                        $milkCollectionData = new TblProvisionalMilkCollection();
+                        $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
+                        if (!empty($milkCollectionData)) {
+                            foreach ($milkCollectionData as $key => $value) {
+                                $deleteModel[] = $value;
+                                $tblMilkCollection = new TblMilkCollection();
+                                $tblMilkCollection->attributes = $value->attributes;
+                                $tblMilkCollection->member_code = $tblMember->member_code;
+                                $tblMilkCollection->is_provisional = 1;
+                                $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                                Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
+                                $model_save[] = $tblMilkCollection;
+                                $model_save[] = $tblProvisionalMilkCollectionHistory;
+                            }
                         }
                     }
                     $tblAttachment = new TblAttachment();
