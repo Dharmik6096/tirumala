@@ -335,7 +335,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
 
             $sourceType = strtolower($data->source_org_type);
             $SourceRel = Yii::$app->general->getDestRelation($sourceType);
-            $SourceAtt = ($destinationType == 'bmc') ? 'bmc_name' : (($destinationType == 'party') ? 'party_name' : (($destinationType == 'vendor') ? 'customer_name' : 'name'));
+            $SourceAtt = ($sourceType == 'bmc') ? 'bmc_name' : (($sourceType == 'party') ? 'party_name' : (($sourceType == 'vendor') ? 'customer_name' : 'name'));
 
             if (!empty($SourceRel)) {
                 $sourceName = Yii::$app->general->getforeignkey($data->{$SourceRel . 'Source'}, $SourceAtt);

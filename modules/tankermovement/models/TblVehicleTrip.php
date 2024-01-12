@@ -99,7 +99,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             'is_last_destination' => Yii::t('app', 'Is Last Destination ?'),
             'trip_mode' => Yii::t('app', 'Mode'),
             'challan_no' => Yii::t('app', 'Challan No.'),
-            'bmc_detail' => Yii::t('app', 'BMC Detail'),
+            'bmc_detail' => Yii::t('app', 'Org Detail'),
             'kg_fat' => Yii::t('app', 'FATKg'),
             'kg_snf' => Yii::t('app', 'SNFKg'),
             'total_qty' => Yii::t('app', 'Total Qty'),
