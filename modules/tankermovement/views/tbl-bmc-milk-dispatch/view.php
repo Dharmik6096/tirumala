@@ -5,7 +5,7 @@ use kartik\detail\DetailView;
 use yii\helpers\Url;
 use yii\web\View;
 
-$this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
+$this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
