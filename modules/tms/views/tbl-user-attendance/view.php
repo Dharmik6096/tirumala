@@ -93,7 +93,7 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
                         ],
                         [
                             'attribute' => 'Attendance_hours',
-                            'value' => Yii::$app->controls->timeDifference($model->in_time, $model->out_time),
+                            'value' => Yii::$app->controls->calculateTimeDifference($model->in_time, $model->out_time,FALSE),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -126,6 +126,16 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
                             'attribute' => 'out_desc',
                             'format' => 'raw',
                             'value' => Yii::$app->controls->openInGoogleMaps($model->out_desc, $model->out_lat_long),
+                            'valueColOptions' => ['style' => 'width:100%']
+                        ]
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'details_total_hours',
+                            'label' => 'User Attendances Details List Total Hours',
+                            'value' => $total_hours,
                             'valueColOptions' => ['style' => 'width:100%']
                         ]
                     ],

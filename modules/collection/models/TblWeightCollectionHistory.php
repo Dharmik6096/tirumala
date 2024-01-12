@@ -57,45 +57,42 @@ use Yii;
  * @property string $history_created_at
  * @property string $history_created_by
  */
-class TblWeightCollectionHistory extends \yii\db\ActiveRecord
-{
+class TblWeightCollectionHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_weight_collection_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['uuid'], 'required'],
-            [['sample_no', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'rejected_can', 'qty_auto', 'doc_no', 'originating_type', 'bmc_silos_info_code'], 'integer'],
-            [['date_time_of_collection', 'weight_datetime', 'created_at', 'updated_at', 'route_arrival_time', 'history_created_at'], 'safe'],
-            [['qty', 'converted_qty', 'cans', 'rejected_qty'], 'number'],
-            [['uuid'], 'string', 'max' => 50],
-            [['producer_flag', 'version_no', 'customer_type', 'customer_code'], 'string', 'max' => 20],
-            [['shift_code'], 'string', 'max' => 30],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            [['bmc_code', 'dcs_code', 'own_mcc_plant_code', 'own_bmc_code'], 'string', 'max' => 12],
-            [['route_code', 'operation_type'], 'string', 'max' => 10],
-            [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
-            [['device_id'], 'string', 'max' => 500],
-            [['vehicle_no', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['ws_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['uuid'], 'required'],
+                [['sample_no', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'rejected_can', 'qty_auto', 'doc_no', 'originating_type', 'bmc_silos_info_code'], 'integer'],
+                [['date_time_of_collection', 'weight_datetime', 'created_at', 'updated_at', 'route_arrival_time', 'history_created_at', 'tare_weight', 'gross_weight'], 'safe'],
+                [['qty', 'converted_qty', 'cans', 'rejected_qty'], 'number'],
+                [['uuid'], 'string', 'max' => 50],
+                [['producer_flag', 'version_no', 'customer_type', 'customer_code'], 'string', 'max' => 20],
+                [['shift_code'], 'string', 'max' => 30],
+                [['union_code'], 'string', 'max' => 3],
+                [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
+                [['bmc_code', 'dcs_code', 'own_mcc_plant_code', 'own_bmc_code'], 'string', 'max' => 12],
+                [['route_code', 'operation_type'], 'string', 'max' => 10],
+                [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
+                [['device_id'], 'string', 'max' => 500],
+                [['vehicle_no', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['ws_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'uuid' => Yii::t('app', 'Uuid'),
@@ -148,4 +145,5 @@ class TblWeightCollectionHistory extends \yii\db\ActiveRecord
             'history_created_by' => Yii::t('app', 'History Created By'),
         ];
     }
+
 }
