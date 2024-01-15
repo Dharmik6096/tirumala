@@ -100,7 +100,7 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                                 [
                                 'attribute' => 'bmc_code',
                                 'label' => (Yii::t('app', 'Dest. Ref.Code')),
-                                'value' => (strtolower($model->source_org_type) != 'party') ? Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code') : 'N/A',
+                                'value' => (strtolower($model->destination_type) != 'party') ? Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code') : 'N/A',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],

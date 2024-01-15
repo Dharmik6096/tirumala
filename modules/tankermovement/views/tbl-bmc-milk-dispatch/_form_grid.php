@@ -88,7 +88,7 @@ $attribute = [
         'label' => (Yii::t('app', 'Dest. Ref.Code')),
         'value' => function ($model) {
             $rel = Yii::$app->general->getDestRelation($model->destination_type);
-            if (strtolower($model->source_org_type) != 'party' && !empty($rel))
+            if (strtolower($model->destination_type) != 'party' && !empty($rel))
                 return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code');
         }, 'vAlign' => 'middle', 'filter' => false
     ],
