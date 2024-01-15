@@ -9,23 +9,23 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function ($model) {
+        ['attribute' => 'union_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'plant_code', 'value' => function ($model) {
+        ['attribute' => 'plant_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
+        ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    [
+        [
         'attribute' => 'transporter_code',
         'label' => Yii::t('app', 'Transporter'),
         'value' => function ($model) {
             return Yii::$app->general->getmultiforeignkey($model->vehicleCode, ['transporter'], 'transporter_name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false
     ],
-    [
+        [
         'attribute' => 'source_org_type',
         'label' => Yii::t('app', 'Source Type'),
         'value' => function ($model) {
@@ -34,7 +34,7 @@ $attribute = [
         'vAlign' => 'middle',
         'filter' => false
     ],
-    [
+        [
         'attribute' => 'source_org_type',
         'label' => Yii::t('app', 'Source Name'),
         'value' => function ($model) {
@@ -44,7 +44,7 @@ $attribute = [
                 return Yii::$app->general->getforeignkey($model->$rel, $att) . '-' . $model->source_org_code;
         }, 'vAlign' => 'middle', 'filter' => false
     ],
-    [
+        [
         'attribute' => 'source_org_code',
         'label' => Yii::t('app', 'Source Code'),
         'value' => function ($model) {
@@ -53,16 +53,16 @@ $attribute = [
         'vAlign' => 'middle',
         'filter' => false
     ],
-    [
+        [
         'attribute' => 'source_org_code',
         'label' => (Yii::t('app', 'Source Ref.Code')),
         'value' => function ($model) {
             $rel = Yii::$app->general->getDestRelation($model->source_org_type);
-            if (!empty($rel))
+            if (strtolower($model->source_org_type) != 'party' && !empty($rel))
                 return Yii::$app->general->getforeignkey($model->$rel, 'ref_code');
         }, 'vAlign' => 'middle'
     ],
-    [
+        [
         'attribute' => 'destination_type',
         'label' => Yii::t('app', 'Dest. Type'),
         'value' => function ($model) {
@@ -71,7 +71,7 @@ $attribute = [
         'vAlign' => 'middle',
         'filter' => false
     ],
-    [
+        [
         'attribute' => 'destination_type',
         'label' => Yii::t('app', 'Dest. Name'),
         'value' => function ($model) {
@@ -82,17 +82,17 @@ $attribute = [
                 return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_code);
         }, 'vAlign' => 'middle', 'filter' => false
     ],
-    ['attribute' => 'destination_code', 'filter' => false],
-    [
+        ['attribute' => 'destination_code', 'filter' => false],
+        [
         'attribute' => 'destination_code',
         'label' => (Yii::t('app', 'Dest. Ref.Code')),
         'value' => function ($model) {
             $rel = Yii::$app->general->getDestRelation($model->destination_type);
-            if (!empty($rel))
+            if (strtolower($model->source_org_type) != 'party' && !empty($rel))
                 return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code');
         }, 'vAlign' => 'middle', 'filter' => false
     ],
-    [
+        [
         'attribute' => 'transaction_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -105,13 +105,13 @@ $attribute = [
             return Yii::$app->controls->view_date($model->transaction_date);
         }
     ],
-    [
+        [
         'attribute' => 'from_date',
         'value' => function ($model) {
             return Yii::$app->controls->view_date($model->from_date);
         }
     ],
-    [
+        [
         'attribute' => 'from_shift_code',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->fromShiftCode, 'shift');
@@ -143,30 +143,30 @@ $attribute = [
             return Yii::$app->controls->view_date($model->to_date);
         }
     ],
-    [
+        [
         'attribute' => 'to_shift_code',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->toShiftCode, 'shift');
         }
     ],
-    [
+        [
         'attribute' => 'parsing_no',
         'label' => Yii::t('app', 'Vehicle No.'),
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
         }
     ],
-    ['attribute' => 'trip_code'],
-    ['attribute' => 'challan_no'],
-    ['attribute' => 'driver_name'],
-    ['attribute' => 'driver_contact_no'],
-    [
+        ['attribute' => 'trip_code'],
+        ['attribute' => 'challan_no'],
+        ['attribute' => 'driver_name'],
+        ['attribute' => 'driver_contact_no'],
+        [
         'attribute' => 'vehicle_in_time',
         'value' => function ($model) {
             return Yii::$app->controls->view_time($model->vehicle_in_time);
         }
     ],
-    [
+        [
         'attribute' => 'vehicle_out_time',
         'value' => function ($model) {
             return Yii::$app->controls->view_time($model->vehicle_out_time);
@@ -175,13 +175,13 @@ $attribute = [
     // ['attribute' => 'gross_weight'],
     // ['attribute' => 'tare_weight'],
     ['attribute' => 'remarks'],
-    [
+        [
         'attribute' => 'is_last_destination',
         'value' => function ($model) {
             return $model->is_last_destination == 1 ? 'Yes' : 'No';
         }, 'filter' => false
     ],
-    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'Channel'), 'value' => function ($model) {
+        ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'Channel'), 'value' => function ($model) {
             return Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc');
         }, 'visible' => true, 'filter' => false],
 ];
