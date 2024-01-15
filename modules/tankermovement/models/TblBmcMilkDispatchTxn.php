@@ -8,6 +8,7 @@ use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\tankermovement\models\TblQtyDiffType;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch_txn".
@@ -71,7 +72,7 @@ use app\modules\tankermovement\models\TblQtyDiffType;
  */
 class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty;
+    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty, $source_type, $source_code;
 
     /**
      * @inheritdoc
@@ -257,6 +258,10 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             }
         }
         $this->amount = $this->dispatch_qty * $this->rtpl;
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
 }

@@ -185,12 +185,15 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
     public function getPlantCodeDest() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'destination_code']);
     }
+
     public function getPartyMasterCodeDest() {
         return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'destination_code']);
     }
+
     public function getPartyMasterCodeSource() {
         return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'source_org_code']);
     }
+
     public function getFromShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'from_shift_code']);
     }
@@ -218,7 +221,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             $this->addError('to_date', Yii::t('app/validation', 'To Date must not be less than from date.'));
             return FALSE;
         } else {
-            if($this->getScenario() == 'create') {
+            if ($this->getScenario() == 'create') {
                 $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])
                         ->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])
                         ->one();
@@ -313,5 +316,5 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         $value = $orgCode . $code;
         return $value;
     }
-    
+
 }

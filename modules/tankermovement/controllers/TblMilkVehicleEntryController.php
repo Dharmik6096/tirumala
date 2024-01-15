@@ -320,21 +320,25 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     }
 
     public function actionSetFields() {
-        $response = [];
-        $response['status'] = 'success';
-        $response['data'] = '';
-        $destName = '';
+        $response = ['status' => 'success', 'data' => ''];
+        $destName = $sourceName = '';
         $challan = Yii::$app->request->get('challan_no');
         $trip = Yii::$app->request->get('trip_code');
         $data = TblBmcMilkDispatch::find()->where(['challan_no' => $challan, 'trip_code' => $trip])->one();
-        $sourceName = '';
         if (!empty($data)) {
-            $sourceName = Yii::$app->general->getforeignkey($data->bmcCode, 'bmc_name');
+            $destinationType = strtolower($data->destination_type);
+            $DestRel = Yii::$app->general->getDestRelation($destinationType);
+            $DestAtt = ($destinationType == 'bmc') ? 'bmc_name' : (($destinationType == 'party') ? 'party_name' : (($destinationType == 'vendor') ? 'customer_name' : 'name'));
+            if (!empty($DestRel)) {
+                $destName = Yii::$app->general->getforeignkey($data->{$DestRel . 'Dest'}, $DestAtt);
+            }
 
-            $rel = Yii::$app->general->getDestRelation($data->destination_type);
-            $att = strtolower($data->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($data->destination_type) == 'vendor' ? 'customer_name' : 'name');
-            if (!empty($rel)) {
-                $destName = Yii::$app->general->getforeignkey($data->{$rel . 'Dest'}, $att);
+            $sourceType = strtolower($data->source_org_type);
+            $SourceRel = Yii::$app->general->getDestRelation($sourceType);
+            $SourceAtt = ($sourceType == 'bmc') ? 'bmc_name' : (($sourceType == 'party') ? 'party_name' : (($sourceType == 'vendor') ? 'customer_name' : 'name'));
+
+            if (!empty($SourceRel)) {
+                $sourceName = Yii::$app->general->getforeignkey($data->{$SourceRel . 'Source'}, $SourceAtt);
             }
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
