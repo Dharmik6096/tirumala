@@ -598,6 +598,16 @@ echo GhostMenu::widget([
                                     ['label' => '117 -' . Yii::t('app', 'MCC comparison summary'), 'url' => ['/misreports/reports/bmc-milk-collection-proc']],
                                     ['label' => '118 -' . Yii::t('app', 'MCC comparison details'), 'url' => ['/misreports/reports/bmc-milk-collection-proc-detail']],
                                     ['label' => '113 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
+                                    [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Customer receipt') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                        ['label' => Yii::t('app', 'Milk Receipt For Member'), 'url' => ['/jasperreports/default/milk-receipt-for-member']],
+                                        ['label' => Yii::t('app', 'Milk Receipt For BMC'), 'url' => ['/jasperreports/default/milk-receipt-for-bmc']],
+                                        ['label' => Yii::t('app', 'Product Sale Invoice For Member'), 'url' => ['/jasperreports/default/product-sale-invoice-for-member']],
+                                        ['label' => Yii::t('app', 'Product Sale Invoice For Customer'), 'url' => ['/jasperreports/default/product-sale-invoice-for-customer']],
+                                    ]
+                                ],
                             ]
                         ],
                             [
@@ -668,6 +678,7 @@ echo GhostMenu::widget([
                             ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                             ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
                             ['label' => '408-' . Yii::t('app', 'CP liability Report'), 'url' => ['/misreports/reports/cpliability-report']],
+                            ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/default/sap-wq-file']],
                     ]
                 ],
                     [
@@ -810,7 +821,14 @@ echo GhostMenu::widget([
                     'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Trend') . ' <b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'Missing Shift'), 'url' => ['/misreports/reports/missing-shift']],
-                            ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Tracking') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
+                                    ['label' => Yii::t('app', 'BIPL Data'), 'url' => ['/misreports/reports/bipl-data']],
+                            ]
+                        ],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
                             ['label' => Yii::t('app', 'Auto Manual Report'), 'url' => ['/misreports/reports/auto-manual-milk-collection']],
                             ['label' => Yii::t('app', 'Antibiotic Report'), 'url' => ['/misreports/reports/antibiotic-report']],

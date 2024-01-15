@@ -136,6 +136,17 @@ $this->title = Yii::$app->label->title('view', 'Product Sales');
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'deduction_start_date',
+                                'format' => 'html',
+                                'value' => !empty($model->deduction_start_date) ? date('d-m-Y', strtotime($model->deduction_start_date)) : date('d-m-Y', strtotime($model->invoice_date)),
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                          
+                        ],
+                    ],
                 ];
 
                 // View file rendering the widget

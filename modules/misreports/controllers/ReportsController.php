@@ -1526,6 +1526,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBiplData() {
+        $this->report = 'BiplData';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3154,6 +3159,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'TallyReport',
                 'title' => '916 - TallyReport',
                 'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection')],
+            ],
+            'VehicleMasterHistory' => [
+                'param' => 'transporter_code',
+                'sp_name' => 'portal_history_tbl_vehicle_master',
+                'title' => 'Vehicle Master History',
+            ],
+            'BiplData' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_ftp_bipl_data',
+                'scenario' => 'BiplData',
+                'title' => 'Bipl Data',
+                'report_type' => [Yii::t('app', 'All'), Yii::t('app', 'Online'), Yii::t('app', 'Pendrive')],
             ],
         ];
         return $label[$l];
