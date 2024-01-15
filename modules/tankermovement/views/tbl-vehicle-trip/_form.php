@@ -39,7 +39,7 @@ $form = ActiveForm::begin([
     <div class="clearfix"></div>
     <div class="col-sm-12 megaSizeDualList">
         <?php
-        echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12'], 'labelOptions' => ['label' => Yii::t('app', 'Plant/Bmc')]])
+        echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12'], 'labelOptions' => ['label' => Yii::t('app', 'PLANT/BMC*')]])
             ->widget(DualListbox::className(), [
                 'items' => [],
                 'options' => [
