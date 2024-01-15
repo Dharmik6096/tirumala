@@ -50,6 +50,16 @@ $attribute = [
         'vAlign' => 'middle', 'filter' => false
     ],
     [
+        'attribute' => 'bmc_code',
+        'label' => (Yii::t('app', 'Source Ref.Code')),
+        'value' => function ($model) {
+            $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
+            $rel = Yii::$app->general->getDestRelation($sourceType);
+            if (!empty($rel))
+                return Yii::$app->general->getforeignkey($model->$rel, 'ref_code');
+        }, 'vAlign' => 'middle'
+    ],
+    [
         'attribute' => 'vehicle_code',
         'label' => Yii::t('app', 'Vehicle No.'),
         'value' => function ($model) {
