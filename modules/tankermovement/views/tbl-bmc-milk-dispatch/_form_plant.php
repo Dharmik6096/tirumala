@@ -273,7 +273,7 @@ $script .= "
         $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-detail']) . "',
-                data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code},             
+                data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code,'form_type':'plant'},             
                 success: function(data) {
                   $('#transactions-detial').html(data);
                //   $('#loadercontent').hide();
