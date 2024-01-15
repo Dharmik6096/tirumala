@@ -76,6 +76,22 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'dispatch_from_code',
+                                'label' => (Yii::t('app', 'Source Ref.Code')),
+                                'value' => Yii::$app->general->getforeignkey($model->{$relsource . 'Source'}, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'receipt_at_code',
+                                'label' => (Yii::t('app', 'Destination Ref.Code')),
+                                'value' => Yii::$app->general->getforeignkey($model->{$reldest . 'Dest'}, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'vehicle_code',
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no'),
                                 'label' => Yii::t('app', 'Vehicle No.'),
