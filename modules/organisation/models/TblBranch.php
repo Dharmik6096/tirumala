@@ -96,7 +96,9 @@ class TblBranch extends ChildModel {
                 [['branch_name'], 'string', 'max' => 100],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['ifsc'], function ($attribute, $params) {
-                    Yii::$app->general->validateIfsc($this, $attribute, $params);
+                    if (Yii::$app->session->get('eiplCode') !== 'CARGILL') {
+                        Yii::$app->general->validateIfsc($this, $attribute, $params);
+                    }
                 }, 'skipOnEmpty' => false],
             //[['ifsc'], 'string', 'max' =>10,'min'=>10,'message'=>Yii::t('app/validation','Please enter a valid IFSC Length')],
             //[['ifsc'], 'integer', 'max' => 11, 'min' => 11, 'tooBig' => 'Please enter a valid IFSC Length', 'tooSmall' => 'Please enter a valid IFSC Length'],

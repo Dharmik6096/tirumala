@@ -14,6 +14,7 @@ $attribute = [
         ['attribute' => 'short_name', 'visible' => FALSE],
         ['attribute' => 'local_short_name', 'visible' => FALSE],
         ['attribute' => 'ac_no_length', 'value' => 'ac_no_length'],
+        ['attribute' => 'old_bank_code'],
         ['attribute' => 'checked_ac_no',
         'width' => '100px',
         'value' => function($model) {

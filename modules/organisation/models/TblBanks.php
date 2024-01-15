@@ -45,29 +45,30 @@ class TblBanks extends ChildModel {
      */
     public function rules() {
         return [
-                [['bank_name', 'ac_no_length', 'checked_ac_no'], 'required'],
-                [['bank_name'], 'getBankCode', 'on' => 'importCsv'],
-                [['bank_code'], 'required', 'except' => 'importCsv'],
-                [['bank_code', 'bank_name', 'short_name'], 'unique'],
-                [['bank_code'], 'validateBankCode', 'on' => 'importCsv'],
-                ['bank_code', 'compare', 'compareValue' => '0000', 'operator' => '!=', 'type' => 'number', 'message' => Yii::t('app/validation', '{attribute} can not be "0000".')],
-                [['bank_name'], function ($attribute, $params) {
+            [['bank_name', 'ac_no_length', 'checked_ac_no', 'old_bank_code'], 'required'],
+            [['bank_name'], 'getBankCode', 'on' => 'importCsv'],
+            [['bank_code'], 'required', 'except' => 'importCsv'],
+            [['bank_code', 'bank_name', 'short_name', 'old_bank_code'], 'unique'],
+            [['bank_code'], 'validateBankCode', 'on' => 'importCsv'],
+            ['bank_code', 'compare', 'compareValue' => '0000', 'operator' => '!=', 'type' => 'number', 'message' => Yii::t('app/validation', '{attribute} can not be "0000".')],
+            [['bank_name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['is_active', 'local_short_name'], 'safe'],
-                [['local_name', 'local_short_name'], function ($attribute, $params) {
+            [['is_active', 'local_short_name', 'old_bank_code'], 'safe'],
+            [['local_name', 'local_short_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['district'], 'validateState', 'skipOnEmpty' => false, 'except' => 'importCsv'],
-                [['ac_no_length'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit e.g. "11"')],
-                [['ac_no_length'], 'vaildateAcNoLength'],
+            [['district'], 'validateState', 'skipOnEmpty' => false, 'except' => 'importCsv'],
+            [['ac_no_length'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit e.g. "11"')],
+            [['ac_no_length'], 'vaildateAcNoLength'],
             //[['ac_no_length'], 'integer', 'max' => 2, 'min' => 1, 'tooBig' => 'Please enter a valid A/C No Length', 'tooSmall' => 'Please enter a valid A/C No Length'],
             [['checked_ac_no', 'nationalized_bank', 'is_alpha_acno_allow'], 'boolean'],
-                [['created_at', 'nationalized_bank', 'updated_at', 'state', 'district', 'is_alpha_acno_allow'], 'safe'],
+            [['created_at', 'nationalized_bank', 'updated_at', 'state', 'district', 'is_alpha_acno_allow'], 'safe'],
                 [['bank_code'], 'string', 'max' => 4],
-                [['bank_name'], 'string', 'max' => 100],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['is_alpha_acno_allow'], function ($attribute, $params) {
+            [['bank_name'], 'string', 'max' => 100],
+            [['old_bank_code'], 'string', 'max' => 10],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['is_alpha_acno_allow'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'boolean_value');
                 }, 'on' => 'importCsv'],
         ];
