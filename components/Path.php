@@ -97,6 +97,8 @@ class Path extends Component {
         '\\webvimark\modules\UserManagement\models\\' => ['User'],
         '\\app\modules\tms\models\\' => ['TblFormType', 'TblTaskType', 'TblTask', 'TblTaskActivity'],
         '\\app\modules\document\models\\' => ['TblDocumentMapping', 'TblAttachment'],
+    '\\app\modules\webservice\eipl\models\\' =>
+        ['TblEiplAppLogin'],
     ];
 
     public function get($model) {

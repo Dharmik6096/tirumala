@@ -1531,6 +1531,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionDetailsReport() {
+        $this->report = 'DetailsReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3171,6 +3176,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'BiplData',
                 'title' => 'Bipl Data',
                 'report_type' => [Yii::t('app', 'All'), Yii::t('app', 'Online'), Yii::t('app', 'Pendrive')],
+            ],
+            'DetailsReport' => [
+                'param' => 'union_code,user_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_user_attendance',
+                'scenario' => 'DetailsReport',
+                'title' => 'Details Report',
             ],
         ];
         return $label[$l];

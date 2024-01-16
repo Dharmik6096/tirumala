@@ -89,11 +89,15 @@ $this->params['menu'][] = Yii::$app->controls->update($model->bank_code);
                     [
                     'columns' => [
                             [
+                                'attribute' => 'old_bank_code',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
                             'attribute' => 'is_active',
                             'label' => 'Status',
                             'format' => 'html',
                             'value' => GeneralFunctions::getRecordStatus($model->is_active),
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
