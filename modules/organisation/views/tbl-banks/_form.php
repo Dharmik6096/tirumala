@@ -39,7 +39,10 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'ac_no_length')->textInput(['readonly' => $disable == '' ? false : true]) ?>
+        <?= $form->field($model, 'old_bank_code')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'ac_no_length')->textInput(['readonly' => $disable == 0 ? false : true]) ?>
     </div>
     <!-- <div class="clearfix"></div> -->
     <div class="col-sm-2 mt15">

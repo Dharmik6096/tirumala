@@ -877,20 +877,27 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap'], 'visible' => User::canRoute(['/misreports/reports/stock-register-mcc-to-sap']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
-                    [
+                [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', ' Tanker Moment') . '<b class="caret"></b></a>',
                     'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', ' Tanker Moment') . ' <b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'BMC Dispatch Register'), 'url' => ['/misreports/reports/bmc-register']],
-                            ['label' => Yii::t('app', 'Plant Receipt Register'), 'url' => ['/misreports/reports/plant-register']],
-                            ['label' => Yii::t('app', 'Tanker Receipt Report'), 'url' => ['/misreports/reports/tanker-receipt-note']],
-                            ['label' => Yii::t('app', 'Trip Wise Detail'), 'url' => ['/misreports/reports/mcc-receipt-vs-bmc-dispatch']],
-                            ['label' => Yii::t('app', 'MCC Day Book (MIS)'), 'url' => ['/misreports/reports/mcc-day-book-dispatch-hub-horizontal']],
-                            ['label' => Yii::t('app', 'MCC Day Book'), 'url' => ['/jasperreports/default/mcc-day-book-dispatch-hub']],
+                        ['label' => Yii::t('app', 'BMC Dispatch Register'), 'url' => ['/misreports/reports/bmc-register']],
+                        ['label' => Yii::t('app', 'Plant Receipt Register'), 'url' => ['/misreports/reports/plant-register']],
+                        ['label' => Yii::t('app', 'Tanker Receipt Report'), 'url' => ['/misreports/reports/tanker-receipt-note']],
+                        ['label' => Yii::t('app', 'Trip Wise Detail'), 'url' => ['/misreports/reports/mcc-receipt-vs-bmc-dispatch']],
+                        ['label' => Yii::t('app', 'MCC Day Book (MIS)'), 'url' => ['/misreports/reports/mcc-day-book-dispatch-hub-horizontal']],
+                        ['label' => Yii::t('app', 'MCC Day Book'), 'url' => ['/jasperreports/default/mcc-day-book-dispatch-hub']],
                     ]
                 ],
-                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'TMS Reports') . '<b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
+                    ]
+                ],
+                ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],
             [
