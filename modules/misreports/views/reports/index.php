@@ -475,6 +475,12 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('user_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('app_login_id', $model, $form, '', 'User Name', false, '', TRUE); ?>
+                                            </div>   <?php
+                                        }
                                     }
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);

@@ -520,7 +520,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 foreach ($deletedata as $code) {
                     $where['milk_collection_code'] = $code;
                     $existData = TblMilkCollection::find()->where($where)->one();
-                    if(!empty($existData)){
+                    if (!empty($existData)) {
                         if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
                             $ApprovalModel = new TblCollectionDataAlias();
                             $ApprovalModel->attributes = $existData->attributes;
@@ -538,7 +538,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                if(!empty($saveModel) || !empty($deleteModel)){
+                if (!empty($saveModel) || !empty($deleteModel)) {
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
                 }
             }
@@ -1142,7 +1142,15 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         $ftp_model->exportData($data_array, $title = '', $output, $mccRefCode = '', FALSE, FALSE);
                     } elseif (in_array($status, ['download', 'bulk_download', 'bulk_download_shift_wise'])) {
                         if ($eiplCode == 'DODLA') {
-                            $key = date('Y-m-d', strtotime($data[5])) . '~~' . $data[6];
+                            $searchParam = !empty(Yii::$app->request->queryParams['TblMilkCollectionSearch']) ? Yii::$app->request->queryParams['TblMilkCollectionSearch'] : NULL;
+                            if (in_array($status, ['bulk_download', 'bulk_download_shift_wise']) && !empty($searchParam) && !empty($searchParam['from_date']) && !empty($searchParam['from_shift']) && !empty($searchParam['to_date']) && !empty($searchParam['to_shift'])) {
+                                $from_datetime = Yii::$app->formatter->asDate($searchParam['from_date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($searchParam['from_shift']);
+                                $to_datetime = Yii::$app->formatter->asDate($searchParam['to_date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($searchParam['to_shift']);
+                                $key = $from_datetime . '~~' . $to_datetime;
+                            } else {
+                                $from_datetime = date('Y-m-d', strtotime($data[5])) . ' ' . Yii::$app->general->getshift($data[6]);
+                                $key = $from_datetime . '~~' . $from_datetime;
+                            }
                             if (empty($checkArray[$key]['dcs_code'])) {
                                 $checkArray[$key]['dcs_code'] = [];
                             }
@@ -1193,14 +1201,15 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     $all_data_e = [];
                     $postData = Yii::$app->request->post();
                     foreach ($checkArray as $checkKey => $checkAr) {
+                        $dcs_codes = array_unique($checkAr['dcs_code']);
                         $dateArr = explode('~~', $checkKey);
-                        $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
+                        // $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
                         $controls['union_code'] = $checkAr['union_code'];
                         $controls['mcc_plant_code'] = $checkAr['mcc_plant_code'];
                         $controls['bmc_code'] = $checkAr['bmc_code'];
-                        $controls['dcs_code'] = ',' . implode(',', $checkAr['dcs_code']) . ',';
-                        $controls['from_date'] = $date;
-                        $controls['to_date'] = $date;
+                        $controls['dcs_code'] = implode(',', $dcs_codes);
+                        $controls['from_date'] = $dateArr[0];
+                        $controls['to_date'] = $dateArr[1];
                         $sp = 'mis_vmcc_collection_date_wise';
 
                         if ($eiplCode == 'DODLA') {
