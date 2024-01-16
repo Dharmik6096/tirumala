@@ -163,11 +163,12 @@ class TblContactDetailsController extends \app\controllers\ChildController {
             $UserRecords->login_type = isset($UserRecords->login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$UserRecords->login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$UserRecords->login_type] : '') : '';
             Yii::$app->getSession()->setFlash('success', [
                 'type' => 'error',
-                'message' => "Could Not Deactivate {$this->model->mobile_no} Active User Available: {$UserRecords->username} - {$UserRecords->user_code} - {$UserRecords->login_type}",
+                'message' => "Could Not Deactivate {$this->model->mobile_no} <br> Active User Available: {$UserRecords->username} - {$UserRecords->user_code} - {$UserRecords->login_type}",
             ]);
         } else {
             Yii::$app->operation->history($this->model, $contactModel, UPDATE);
             $this->model->is_active = 0;
+            $this->model->is_default = 0;
             $this->model->is_contact_verified = 0;
             $transaction = $this->generalModel->saveTransaction([$this->model, $contactModel], ['Contact Details', 'edit']);
             if ($transaction !== FALSE) {
@@ -187,13 +188,15 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         Yii::$app->operation->history($this->model, $contactModel, UPDATE);
         $this->model->is_active = 1;
         $ContactDetailsRecord = $this->model->getContactDetailsRecord();
-        $transaction = $this->generalModel->saveTransaction([$this->model, $contactModel], ['Contact Details', 'edit']);
         if (!empty($ContactDetailsRecord)) {
             Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $ContactDetailsRecord->module_name . ' - ' . $ContactDetailsRecord->module_code . '.']);
-        } else if ($transaction == 'customRedirect') {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Contact activated successfully.']);
         } else {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Could not Activate. Please try again.']);
+            $transaction = $this->generalModel->saveTransaction([$this->model, $contactModel], ['Contact Details', 'edit']);
+            if ($transaction == 'customRedirect') {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Contact activated successfully.']);
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Could not Activate. Please try again.']);
+            }
         }
         $this->redirect(Url::previous());
     }

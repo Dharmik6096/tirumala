@@ -172,11 +172,4 @@ class TblContactDetails extends \app\models\ChildModel {
                         ->all();
     }
 
-    public function getUserData($status) {
-        $data = $this->find()
-                ->where(['module_code' => $this->module_code, 'is_active' => 1])
-                ->one();
-        return;
-    }
-
 }
