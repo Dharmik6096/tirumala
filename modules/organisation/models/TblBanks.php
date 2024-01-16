@@ -45,10 +45,10 @@ class TblBanks extends ChildModel {
      */
     public function rules() {
         return [
-            [['bank_name', 'ac_no_length', 'checked_ac_no', 'old_bank_code'], 'required'],
+            [['bank_name', 'ac_no_length', 'checked_ac_no'], 'required'],
             [['bank_name'], 'getBankCode', 'on' => 'importCsv'],
             [['bank_code'], 'required', 'except' => 'importCsv'],
-            [['bank_code', 'bank_name', 'short_name', 'old_bank_code'], 'unique'],
+            [['bank_code', 'bank_name', 'short_name'], 'unique'],
             [['bank_code'], 'validateBankCode', 'on' => 'importCsv'],
             ['bank_code', 'compare', 'compareValue' => '0000', 'operator' => '!=', 'type' => 'number', 'message' => Yii::t('app/validation', '{attribute} can not be "0000".')],
             [['bank_name'], function ($attribute, $params) {
