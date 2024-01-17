@@ -62,20 +62,8 @@ class TblWeightRejectionHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['sample_no', 'milk_type_code', 'qty_mode', 'converted_qty_mode', 'return_type', 'doc_no', 'rejection_reason_code', 'rejection_responsibility_code'], 'integer'],
-            [['uuid', 'sample_no', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'qty_mode', 'qty', 'converted_qty_mode', 'converted_qty', 'cans', 'return_type', 'device_id', 'version_no', 'doc_no', 'vehicle_no', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'rejection_reason_code', 'rejection_responsibility_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type'], 'safe'],
-            [['qty', 'converted_qty', 'cans'], 'number'],
-            [['uuid', 'version_no'], 'string', 'max' => 50],
-            [['shift_code'], 'string', 'max' => 30],
-            [['device_id'], 'string', 'max' => 500],
-            [['vehicle_no'], 'string', 'max' => 20],
-            [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            [['bmc_code', 'dcs_code', 'route_code'], 'string', 'max' => 12],
-            [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'string', 'max' => 25],
-            [['operation_type'], 'string', 'max' => 10],
+            [['uuid', 'sample_no', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'qty_mode', 'qty', 'converted_qty_mode', 'converted_qty', 'cans', 'return_type', 'device_id', 'version_no', 'doc_no', 'vehicle_no', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'rejection_reason_code', 'rejection_responsibility_code'], 'safe'],
+            [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type'], 'safe'],
         ];
     }
 

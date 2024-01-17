@@ -44,44 +44,30 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblWeightRejection extends \app\models\ChildModel
-{
+class TblWeightRejection extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_weight_rejection';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['uuid'], 'required'],
-            [['sample_no', 'milk_type_code', 'qty_mode', 'converted_qty_mode', 'return_type', 'doc_no', 'rejection_reason_code', 'rejection_responsibility_code'], 'integer'],
-            [['uuid', 'sample_no', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'qty_mode', 'qty', 'converted_qty_mode', 'converted_qty', 'cans', 'return_type', 'device_id', 'version_no', 'doc_no', 'vehicle_no', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'rejection_reason_code', 'rejection_responsibility_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['qty', 'converted_qty', 'cans'], 'number'],
-            [['uuid', 'version_no'], 'string', 'max' => 50],
-            [['shift_code'], 'string', 'max' => 30],
-            [['device_id'], 'string', 'max' => 500],
-            [['vehicle_no'], 'string', 'max' => 20],
-            [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            [['bmc_code', 'dcs_code', 'route_code'], 'string', 'max' => 12],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'string', 'max' => 25],
+            [['uuid', 'sample_no', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'qty_mode', 'qty', 'converted_qty_mode', 'converted_qty', 'cans', 'return_type', 'device_id', 'version_no', 'doc_no', 'vehicle_no', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'rejection_reason_code', 'rejection_responsibility_code'], 'safe'],
+            [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['uuid'], 'required', 'except' => ['androidsync']],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'uuid' => Yii::t('app', 'Uuid'),
             'sample_no' => Yii::t('app', 'Sample No'),
@@ -121,4 +107,5 @@ class TblWeightRejection extends \app\models\ChildModel
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
 }
