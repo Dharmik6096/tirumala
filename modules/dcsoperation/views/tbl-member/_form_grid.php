@@ -107,9 +107,9 @@ $grid_option = [
     'actions' => [
         'update' => function ($url, $model) {
             $name = $model->member_name;
-            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 || !empty($model->provisionalMember)) ? 'link-disable' : '';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
-            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
         'view' => true,
         'deactive' => function ($url, $model) {
