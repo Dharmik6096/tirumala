@@ -19,7 +19,8 @@ use yii\web\Response;
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
  */
-class TblVehicleTripController extends \app\controllers\ChildController {
+class TblVehicleTripController extends \app\controllers\ChildController
+{
 
     public $freeAccessActions = ['open-trip-list'];
 
@@ -27,13 +28,14 @@ class TblVehicleTripController extends \app\controllers\ChildController {
      * Lists all TblVehicleTrip models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new TblVehicleTripSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -42,13 +44,14 @@ class TblVehicleTripController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         $searchModel = new TblVehicleTripDetailSearch();
         $searchModel->vehicle_trip_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
-                    'model' => $this->findModel($id),
-                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+            'model' => $this->findModel($id),
+            'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -57,7 +60,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $this->model = new TblVehicleTrip();
         $this->model->scenario = 'createTrip';
         $this->model->transaction_date = date('Y-m-d');
@@ -82,29 +86,59 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $this->model->bmc_code = NULL;
             }
             $bmc_array = $this->model->bmc_code;
-            if (!empty($bmc_array)) {
-                $this->model->bmc_code = $bmc_array[0];
-                $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+            $is_valid_trip = FALSE;
+            if (count($bmc_array) > 2) {
+                $sl_detail = explode('-', $bmc_array[0]);
+                $sl_code = $sl_detail[0];
+                $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
+
+                $el_detail = explode('-', $bmc_array[count($bmc_array) - 1]);
+                $el_code = $el_detail[0];
+                $el_type = !empty($el_detail[1]) ? $el_detail[1] : 'bmc';
+
+                $is_valid_trip = ($sl_type == 'plant' && $el_type == 'plant') ? TRUE : FALSE;
+                if ($is_valid_trip) {
+                    $this->model->plant_code = $sl_code;
+                    $fl_detail = explode('-', $bmc_array[1]);
+                    $this->model->fl_code = $fl_detail[0];
+                    $this->model->fl_type = !empty($fl_detail[1]) ? $fl_detail[1] : 'bmc';
+                    if ($this->model->fl_type == 'bmc') {
+                        $this->model->bmc_code = $this->model->fl_code;
+                        $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+                    } else {
+                        $this->model->bmc_code = NULL;
+                        $this->model->mcc_plant_code = NULL;
+                    }
+                }
+            }
+            if (!$is_valid_trip) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Vehicle Trip Must be Start and End at Plant.'
+                ]);
             }
             $this->model->trip_mode = 'offline';
-            if ($this->model->validate()) {
+            if ($this->model->validate() && $is_valid_trip) {
                 $result = $this->model->setModel();
                 if ($result[0]) {
                     $validate = TRUE;
                     $save_model = $result[1];
+                    if (!empty($save_model) && $this->model->fl_type == 'plant') {
+                        $save_model[0]->plant_code =  $this->model->fl_code;
+                    }
                     foreach ($bmc_array as $key => $bmc) {
                         $trip_detai = new TblVehicleTripDetail();
-                        if ($key == count($bmc_array) - 1) {
-                            $trip_detai->source_org_code = $bmc;
-                            $trip_detai->source_org_type = 'bmc';
-                            $trip_detai->destination_code = $this->model->dest_plant_code;
-                            $trip_detai->destination_type = 'plant';
-                        } else {
-                            $trip_detai->source_org_code = $bmc;
-                            $trip_detai->source_org_type = 'bmc';
-                            $trip_detai->destination_code = $bmc_array[$key + 1];
-                            $trip_detai->destination_type = 'bmc';
+                        if ($key == 0 || $key == count($bmc_array) - 1) {
+                            continue;
                         }
+                        $sloc_detail = explode('-', $bmc);
+                        $dloc_detail = explode('-', $bmc_array[$key + 1]);
+
+                        $trip_detai->source_org_code = $sloc_detail[0];
+                        $trip_detai->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                        $trip_detai->destination_code = $dloc_detail[0];
+                        $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
+
                         $trip_detai->originating_org_code = $this->model->union_code;
                         $trip_detai->vehicle_trip_code = $this->model->vehicle_trip_code;
                         $trip_detai->vehicle_code = $this->model->vehicle_code;
@@ -125,9 +159,10 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
                         if ($transaction == 'customRedirect') {
                             if ($result[2]['inspection_require']) {
-                                return $this->redirect(['/tankermovement/tbl-bmc-dispatch-inspection/create',
-                                            'trip_code' => $result[2]['trip_code'],
-                                            'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
+                                return $this->redirect([
+                                    '/tankermovement/tbl-bmc-dispatch-inspection/create',
+                                    'trip_code' => $result[2]['trip_code'],
+                                    'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
                                 ]);
                             } else {
                                 return $this->{$transaction}();
@@ -141,7 +176,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         return $this->customRender();
     }
 
-    public function actionGenerateChallan($id) {
+    public function actionGenerateChallan($id)
+    {
         $model = new TblVehicleTrip();
         $model->vehicle_trip_code = $id;
         $model = $model->dispatchConsolidatedSummary();
@@ -181,19 +217,22 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     }
                 }
                 return $this->render('generate_challan', [
-                            'model' => $model,
-                            'searchModel' => $searchModel,
-                            'dataProvider' => $dataProvider,
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
                 ]);
             } else {
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                    'message' => 'Dispatch Detail not found.']);
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Dispatch Detail not found.'
+                ]);
             }
         }
         return $this->redirect(['index']);
     }
 
-    public function actionPrintChallan($id) {
+    public function actionPrintChallan($id)
+    {
         $controls = [];
         $controls['p_trip_code'] = $id;
         $controls['p_report_name'] = 'Consolidate Challan';
@@ -207,7 +246,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
      * @return TblVehicleTrip the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         if (($model = TblVehicleTrip::findOne($id)) !== null) {
             return $model;
         } else {
@@ -215,7 +255,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionCloseTrip($id) {
+    public function actionCloseTrip($id)
+    {
         $tripModel = $this->findModel($id);
         $historyModel = new TblVehicleTripHistory();
         Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
@@ -232,7 +273,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
-    public function actionInactiveTrip($id) {
+    public function actionInactiveTrip($id)
+    {
         $saveModel = [];
         $tripModel = $this->findModel($id);
         $historyModel = new TblVehicleTripHistory();
@@ -258,15 +300,16 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
-    public function actionOpenTripList() {
+    public function actionOpenTripList()
+    {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
                 $tripCode = isset($parents[3]) ? $parents[3] : '';
 
-                $trip = new TblVehicleTripDetail();                
-                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);            
+                $trip = new TblVehicleTripDetail();
+                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
