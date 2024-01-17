@@ -24,7 +24,7 @@ $grid_option = [
             $path = Yii::$app->params['complaint_dir_path'];
             $attachemnt = '/' . $path . $model->file_name;
             $url = Url::to([$attachemnt]);
-            return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
+            return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View']);
         },
         'delete' => ['option' => 'attachment_code,attachment_code,tbl-complain/attachment-delete,attachmentDelete()'],
     ]

@@ -118,7 +118,7 @@ $grid_option = [
                 $icon = '<i class="fa fa-check"></i>';
                 $url = ['/organisation/tbl-customer-master-provisional/approve-customer-master', 'id' => $model->process_approval_code];
             }
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View'];
             return Html::a($icon, $url, $options);
         },
         'update' => function ($url, $model) use ($pending_approval) {
@@ -127,7 +127,7 @@ $grid_option = [
                 $class = ($model->status != 'Pending') ? 'link-disable' : '';
             }
             $name = $model->customer_name;
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_provisional_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_provisional_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fas fa-pencil-alt"></i>', $url, $options);
         },
         'add-document' => function ($url, $model) use ($pending_approval) {

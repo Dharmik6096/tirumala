@@ -121,8 +121,8 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa fa-cog"></i>', ['/tankermovement/tbl-vehicle-trip/generate-challan'], ['class' => 'disabled']);
             } else {
                 $options = [
-                    'title' => Yii::t('app', 'Generate Challan'), 'data-toggle' => 'tooltip', 'data-placement' => 'top',
-                    'data-original-title' => Yii::t('app', 'Generate Challan')
+                    'title' => Yii::t('app', 'Generate Challan'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top',
+                    'title' => Yii::t('app', 'Generate Challan')
                 ];
                 return GhostHtml::a(
                                 '<i class="fa fa-cog"></i>',
@@ -138,11 +138,11 @@ $grid_option = [
             $disable = (in_array($model->trip_status, ['tankerfull', 'closed'])) ? FALSE : TRUE;
             $disable = ($model->is_active == 1) ? $disable : TRUE;
             if ($disable) {
-                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan'], ['class' => 'disabled']);
+                return GhostHtml::a('<i class="fas fa-file-pdf"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan'], ['class' => 'disabled']);
             } else {
 
                 $options = ['target' => '_blank', 'title' => Yii::t('app', 'Print Challan'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Print Challan')];
-                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan', 'id' => $model->trip_code], $options);
+                return GhostHtml::a('<i class="fas fa-file-pdf"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan', 'id' => $model->trip_code], $options);
             }
         },
         'close-trip' => function ($url, $model) {

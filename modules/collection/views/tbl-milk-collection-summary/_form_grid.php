@@ -60,7 +60,7 @@ $grid_option = [
     'actions' => [
         'view' => TRUE,
         'edit' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Update'];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/collection/tbl-milk-collection-summary/update', 'id' => $model->milk_collection_summary_code], $options);
         },
     ]

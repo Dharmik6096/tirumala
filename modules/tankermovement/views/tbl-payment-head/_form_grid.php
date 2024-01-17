@@ -33,13 +33,13 @@ $grid_option = [
         'update' => function ($url, $model) {
             $name = $model->payment_head_name;
             $class = $model->is_active == 0 ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->payment_head_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->payment_head_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
         'deactive' => function ($url, $model) {
             $name = $model->payment_head_name;
             $class = $model->is_active == 0 ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-party ' . $class, 'data-val' => $model->payment_head_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deact-party ' . $class, 'data-val' => $model->payment_head_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-payment-head/deactivate-payment-head'], $options);
         },
     ]

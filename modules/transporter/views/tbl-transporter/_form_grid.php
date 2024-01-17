@@ -114,7 +114,7 @@ $grid_option = [
             $id = $model->transporter_code;
             $name = $model->transporter_name;
             $url = ['/transporter/tbl-transporter/transporter-document-upload', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->transporter_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Document Upload', 'data-val' => $model->transporter_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
     ]
