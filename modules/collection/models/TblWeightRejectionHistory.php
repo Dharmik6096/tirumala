@@ -63,7 +63,7 @@ class TblWeightRejectionHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['uuid', 'sample_no', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'qty_mode', 'qty', 'converted_qty_mode', 'converted_qty', 'cans', 'return_type', 'device_id', 'version_no', 'doc_no', 'vehicle_no', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'rejection_reason_code', 'rejection_responsibility_code'], 'safe'],
-            [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type'], 'safe'],
+            [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
