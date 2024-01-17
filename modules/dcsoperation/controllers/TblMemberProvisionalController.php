@@ -377,8 +377,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $model_save[] = $memberModel;
                 $all_doc = [];
                 $memberdoc = [];
+                $unlink_files = [];
                 if ($memberModel->provisional_status == 'Approve') {
-                    $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message);
+                    $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
                 }
                 if (!empty($message)) {
                     foreach ($message as $msg) {
@@ -392,6 +393,14 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                             $memberDir = $baseDir . 'member';
                             $proMemberDir = $baseDir . 'provisional_member';
+                            
+                            if(!empty($unlink_files)){
+                                foreach($unlink_files as $file){
+                                    if (file_exists($memberDir . '/' . $file)) {
+                                        unlink($memberDir . '/' . $file);
+                                    }
+                                }
+                            }
                             for ($i = 0; $i < count($all_doc); $i++) {
                                 $fileName = basename($memberdoc[$i]);
                                 $file = $memberDir . '/' . $fileName;
@@ -419,7 +428,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = [], &$message) {
+    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = [], &$message, &$unlink_files) {
         if ($status == 'Approve' && $memberModel->provisional_status == 'Approve') {
             $memberModel->is_approved = 1;
             $memberModel->approved_at = date('Y-m-d H:i:s');
@@ -443,6 +452,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $model_save[] = $tblMember;
                     $model_save[] = $memberModel;
                     $model_save[] = $historyModel;
+                    $deleteAttachment = [];
                     if($memberModel->provisional_from != 'mobile_update'){
                         $milkCollectionData = new TblProvisionalMilkCollection();
                         $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
@@ -459,10 +469,13 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $model_save[] = $tblProvisionalMilkCollectionHistory;
                             }
                         }
+                    } else {
+                        $deleteAttachment['module_code'] =  $memberModel->member_code;
+                        $deleteAttachment['module_name'] =  'tbl_member';
                     }
                     $tblAttachment = new TblAttachment();
                     $memberProvisionalCode = (string) $memberModel->provisional_member_code;
-                    $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc);
+                    $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc, $deleteModel, $deleteAttachment, $unlink_files);
 
                     if (!empty($save_member_doc)) {
                         foreach ($save_member_doc as $key => $member_attach) {
