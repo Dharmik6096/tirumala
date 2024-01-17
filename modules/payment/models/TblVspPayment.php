@@ -203,7 +203,7 @@ class TblVspPayment extends \app\models\ChildModel {
     }
 
     public function getStatusCount($status) {
-        return $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])
+        return $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'customer_type' => $this->customer_type])
                         ->andWhere(['status' => $status])->count();
     }
 

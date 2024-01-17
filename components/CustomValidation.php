@@ -105,6 +105,9 @@ class CustomValidation extends Component {
                             ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
                         ],
+                        [['ifsc'], function ($attribute, $params) {
+                                Yii::$app->general->validateIfsc($this, $attribute, $params);
+                            }, 'skipOnEmpty' => false],
                     ],
                 ],
                 'BackGroundDataImport' => [
@@ -200,6 +203,9 @@ class CustomValidation extends Component {
                         ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                         'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
                     ],
+                    [['ifsc'], function ($attribute, $params) {
+                            Yii::$app->general->validateIfsc($this, $attribute, $params);
+                        }, 'skipOnEmpty' => false],
                 ],
                 'BackGroundDataImport' => [
                     [['address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'on' => ['member']],

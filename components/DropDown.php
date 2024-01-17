@@ -861,6 +861,9 @@ class DropDown extends Component {
             $where['is_active'] = 1;
         }
         if (isset($labelData['whereCondition'])) {
+//            echo '<pre>';
+//            print_r($labelData['whereCondition']);
+//            die;
             $where = array_merge($labelData['whereCondition'], $where);
         }
         $select_fields[] = $fields[0];
@@ -975,7 +978,7 @@ class DropDown extends Component {
             'value' => !empty($model->{$name}) ? array_values($model->{$name}) : [0],
             'multiSelectOptions' => [
                 'id' => $id,
-                'options' =>
+                'clientOptions' =>
                 [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
@@ -1276,7 +1279,7 @@ class DropDown extends Component {
             'bank_type' => [
                 'name' => 'bank_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal')],
+                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT')],
             ],
             'payment_mode_member' => [
                 'name' => 'payment_mode_member',
@@ -1852,7 +1855,6 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select txn type'),
                 'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'BIPLZIP' => Yii::t('app', 'BIPLZIP')],
             ],
-
         ];
         return $records[$l];
     }
@@ -1990,6 +1992,7 @@ class DropDown extends Component {
             'party_master_code' => ['name' => 'party_name', 'fields' => 'party_master_code,party_name', 'prompt' => 'Applicable Name', 'model' => 'TblPartyMaster'],
             'party_master' => ['name' => 'party_master_code', 'fields' => 'party_master_code,party_name,owner_name', 'prompt' => 'Select Party', 'model' => 'TblPartyMaster'],
             'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'app_login_id' => ['name' => 'user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
         ];
         return $label[$l];
     }
@@ -2078,7 +2081,7 @@ class DropDown extends Component {
             'value' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [0],
             'multiSelectOptions' => [
                 'id' => $id,
-                'options' =>
+                'clientOptions' =>
                 [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
