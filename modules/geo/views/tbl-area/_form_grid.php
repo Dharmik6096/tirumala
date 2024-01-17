@@ -77,7 +77,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fas fa-user-circle"></i>', ['/geo/tbl-area/contact-details', 'id' => $model->area_code], $options);
         },
         'mapping' => function ($url, $model) {
-            $options = ['data-val' => $model->area_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Area Mapping'];
+            $options = ['data-val' => $model->area_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Area Mapping'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/geo/tbl-area/area-mapping', 'id' => $model->area_code], $options);
         },
     ]

@@ -51,11 +51,11 @@ $grid_option = [
         'disable' => function ($url, $model) {
             if ($model->is_active == 1) {
                 $class = $model->is_active == 1 ? '' : 'disabled';
-                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive ' . $class, 'data-is-default' => $model->is_default];
+                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deactive ' . $class, 'data-is-default' => $model->is_default];
 //            die('here');
                 return Html::a('<i class="fa fa-ban"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options);
             } else {
-                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user', 'data-is-default' => $model->is_default];
+                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Activate', 'class' => 'react-user', 'data-is-default' => $model->is_default];
                 return Html::a('<i class="fa fa-life-ring"></i>', ['/details/tbl-contact-details/activate', 'id' => $model->detail_code], $options);
             }
         },

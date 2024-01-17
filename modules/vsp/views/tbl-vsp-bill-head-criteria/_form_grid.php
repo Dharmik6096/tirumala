@@ -34,7 +34,7 @@ $grid_option = [
         },
         'update_to_date_applicability' => function ($url, $model) {
             $disable = '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update To Date Applicability', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Update To Date Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-share"></i>', ['/vsp/tbl-vsp-bill-head-criteria/update-to-date-applicability', 'id' => $model->vsp_criteria_code], $options);
         },
         'update' => function($url, $model) {

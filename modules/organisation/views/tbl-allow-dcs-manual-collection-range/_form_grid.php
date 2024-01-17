@@ -93,9 +93,9 @@ $grid_option = [
             $type = 'DCS';
             $class = $model->status == 1 ? '' : 'link-disable disabled';
             $options = [
-                'data-toggle' => 'tooltip',
+                'data-bs-toggle' => 'tooltip',
                 'data-placement' => 'top',
-                'data-original-title' => 'Status',
+                'title' => 'Status',
                 'class' => 'update-status' . $class,
                 'data-val' => $id,
                 'data-model-id' => $id,

@@ -121,8 +121,8 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa fa-cog"></i>', ['/tankermovement/tbl-vehicle-trip/generate-challan'], ['class' => 'disabled']);
             } else {
                 $options = [
-                    'title' => Yii::t('app', 'Generate Challan'), 'data-toggle' => 'tooltip', 'data-placement' => 'top',
-                    'data-original-title' => Yii::t('app', 'Generate Challan')
+                    'title' => Yii::t('app', 'Generate Challan'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top',
+                    'title' => Yii::t('app', 'Generate Challan')
                 ];
                 return GhostHtml::a(
                                 '<i class="fa fa-cog"></i>',

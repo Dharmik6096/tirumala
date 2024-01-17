@@ -32,16 +32,16 @@ $grid_option = [
         'deactive' => function ($url, $model) {
             $name = 'ai_name';
             if ($model->is_active == 1) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-animal', 'data-val' => $model->animal_inspector_code, 'data-name' => $name];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deact-animal', 'data-val' => $model->animal_inspector_code, 'data-name' => $name];
                 return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/organisation/tbl-animal-inspector/deactivate-doctor'], $options);
             } else {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-animal', 'data-val' => $model->animal_inspector_code, 'data-name' => $name];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Activate', 'class' => 'react-animal', 'data-val' => $model->animal_inspector_code, 'data-name' => $name];
                 return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/organisation/tbl-animal-inspector/activate-doctor'], $options);
             }
         },
         'applicability' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-animal-inspector/animal-inspector-applicability', 'id' => $model->animal_inspector_code], $options);
         },
     ]
