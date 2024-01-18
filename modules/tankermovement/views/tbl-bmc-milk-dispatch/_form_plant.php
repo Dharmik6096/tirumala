@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use yii\widgets\MaskedInput;
@@ -26,7 +26,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">PLANT Milk Dispatch Detail</h4>
         </div>
-        <div class="col-md-12 micro_form <?= $disabled ?> padding-bottom-20">
+        <div class="row col-md-12 micro_form <?= $disabled ?> padding-bottom-20">
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
@@ -151,7 +151,7 @@ $form = ActiveForm::begin([
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
+            <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?>
         </div>
     </div>
 </div>
