@@ -48,20 +48,31 @@ class TblBmcDispatchInspectionController extends \app\controllers\ChildControlle
         $trip_detail = $model->tripDetailCode;
 
         if (!empty($trip_model) && !empty($trip_detail)) {
+            if (!empty($trip_model->bmc_code)) {
+                $model->bmc_code = $trip_detail->destination_code;
+                $org_detail = $model->bmcCode;
+                $model->union_code = $org_detail->union_code;
+                $model->plant_code = $org_detail->plant_code;
+                $model->mcc_plant_code = $org_detail->mcc_plant_code;
+                $config_text = 'BMC';
+                $bmc_plant_value = $trip_model->bmc_code;
+            } else {
+                $model->scenario = 'generate_auto_trip';
+                $model->union_code = $trip_model->union_code;
+                $model->plant_code = $trip_model->plant_code;
+                $config_text = 'PLANT';
+                $bmc_plant_value = $trip_model->plant_code;
+            }
             $model->inspection_date = $trip_model->transaction_date;
             $model->trip_code = $trip_model->trip_code;
             $model->vehicle_code = $trip_model->vehicle_code;
-            $model->bmc_code = $trip_detail->destination_code;
-            $org_detail = $model->bmcCode;
-            $model->union_code = $org_detail->union_code;
-            $model->plant_code = $org_detail->plant_code;
-            $model->mcc_plant_code = $org_detail->mcc_plant_code;
+            
             $config = new TblConfig();
-            $config->config_for = 'BMC';
+            $config->config_for = $config_text;
             $config->process_name = 'BMC_DISPATCH_INSPECTION';
             $config->config_type = 'CONTROL';
             $config_mapping = new TblConfigTxnResult();
-            $config_list = $config->getOrgConfigList($config->config_for, $model->bmc_code);
+            $config_list = $config->getOrgConfigList($config->config_for, $bmc_plant_value);
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $model->inspection_date = $trip_model->transaction_date;
                 $model->bmc_dispatch_inspection_code = Yii::$app->general->getPrimaryCode($model);

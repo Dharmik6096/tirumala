@@ -9,23 +9,26 @@ use yii\helpers\Url;
 
     <?php
     $attribute = [
-            ['attribute' => 'milk_type_code', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
-            }, 'vAlign' => 'middle'],
-            ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
-            }, 'vAlign' => 'middle'],
-            ['attribute' => 'bmc_silos_info_code',
-            'value' => function($model) {
+        ['attribute' => 'milk_type_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
+        }, 'vAlign' => 'middle'],
+        ['attribute' => 'milk_quality_type_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
+        }, 'vAlign' => 'middle'],
+        [
+            'attribute' => 'bmc_silos_info_code',
+            'value' => function ($model) {
                 return Yii::$app->general->getforeignkey($model->silosInfoCode, 'silo_no');
-            }],
+            },
+            'visible' => $isVisible
+        ],
         'chamber_no',
         'dispatch_qty',
-        'qty_diff',
-            ['attribute' => 'qty_diff_type_code', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->qtyDiffType, 'qty_diff_type_name');
-            }, 'vAlign' => 'middle'],
-        'balance_qty',
+        ['attribute' => 'qty_diff', 'visible' => $isVisible],
+        ['attribute' => 'qty_diff_type_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->qtyDiffType, 'qty_diff_type_name');
+        }, 'vAlign' => 'middle'],
+        ['attribute' => 'balance_qty', 'visible' => $isVisible],
         'fat',
         'snf',
         'water',
@@ -42,23 +45,24 @@ use yii\helpers\Url;
         'dip_open',
         'dip_close',
         'dip_diff',
-        'rtpl',
-        'amount',
-            [
+        [
             'attribute' => 'qty_auto',
-            'value' => function($model) {
+            'value' => function ($model) {
                 return $model->qty_auto == 1 ? 'Yes' : 'No';
-            }, 'filter' => false],
-            [
+            }, 'filter' => false
+        ],
+        [
             'attribute' => 'qlty_auto',
-            'value' => function($model) {
+            'value' => function ($model) {
                 return $model->qlty_auto == 1 ? 'Yes' : 'No';
-            }, 'filter' => false],
-            [
+            }, 'filter' => false
+        ],
+        [
             'attribute' => 'is_rejected',
-            'value' => function($model) {
+            'value' => function ($model) {
                 return $model->is_rejected == 1 ? 'Yes' : 'No';
-            }, 'filter' => false],
+            }, 'filter' => false
+        ],
     ];
 
     $grid_option = [

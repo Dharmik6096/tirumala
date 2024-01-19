@@ -374,6 +374,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapWqFile() {
+        $this->report = 'SapWqFile';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -1021,6 +1026,17 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'Member Register',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],
                 'removeExportType' => ['CSV']
+            ],
+            'SapWqFile' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa',
+                'scenario' => 'SapWqFile',
+                'title' => 'SAP WQ File',
+                'export_title' => true,
+                'message' => Yii::t('app', 'Sync of data is pending from device.'),
+                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                'sap_download' => true,
+                'multiArray' => ['mcc_code', 'bmc_code'],
             ],
         ];
         return $label[$l];

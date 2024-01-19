@@ -25,6 +25,7 @@ use app\modules\syncutility\models\TblSentbox;
 use yii\db\Query;
 use app\modules\organisation\models\TblDcsVendorStatus;
 use yii\helpers\ArrayHelper;
+use app\modules\dcsoperation\models\TblMemberProvisional;
 
 /**
  * This is the model class for table "tbl_member".
@@ -676,6 +677,11 @@ class TblMember extends ChildModel {
         return ArrayHelper::map($value, 'member_code', function($value) {
                     return $value->member_name . ' - ' . $value->ref_code;
                 });
+    }
+    
+    public function getProvisionalMember(){
+        $provisional_status = ['Inprogress','Register'];
+        return $this->hasOne(TblMemberProvisional::className(), ['member_code' => 'member_code'])->andOnCondition(['provisional_from' => 'mobile_update', 'provisional_status' => $provisional_status]);
     }
 
 }
