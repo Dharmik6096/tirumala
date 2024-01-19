@@ -13,6 +13,26 @@ $attribute = [
         ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'bmc_code', 'value' => 'bmc_code', 'filter' => false],
         ['attribute' => 'bmc_name', 'value' => 'tblDcsBmc.bmc_name', 'filter' => false],
+        ['attribute' => 'created_at', 'filter' => true,
+            'filterType' => GridView::FILTER_DATE,
+            'filterWidgetOptions' => [
+                'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                    'autoclose' => true]
+            ],
+            'value' => function($model) {
+                return Yii::$app->controls->view_date($model->created_at);
+            },
+        ],
+        ['attribute' => 'approved_at', 'filter' => true,
+            'filterType' => GridView::FILTER_DATE,
+            'filterWidgetOptions' => [
+                'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                    'autoclose' => true]
+            ],
+            'value' => function($model) {
+                return Yii::$app->controls->view_date($model->approved_at);
+            },
+        ],
         ['attribute' => 'society_code', 'value' => 'dcs_code', 'filter' => false],
         ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
         ['attribute' => 'member_code', 'value' => 'member_code'],

@@ -19,8 +19,8 @@ class TblBulkNotificationSearch extends TblBulkNotification {
      */
     public function rules() {
         return [
-                [['bulk_notification_id', 'content_id', 'status'], 'integer'],
-                [['union_code', 'receiver_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'wef_date', 'title', 'message', 'campaign_name', 'created_at', 'created_by', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'from_date', 'to_date'], 'safe'],
+            [['bulk_notification_id', 'content_id', 'status'], 'integer'],
+            [['union_code', 'receiver_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'wef_date', 'title', 'message', 'campaign_name', 'created_at', 'created_by', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -56,6 +56,8 @@ class TblBulkNotificationSearch extends TblBulkNotification {
             return $dataProvider;
         }
 
+        $query->joinWith(['dcsCode']);
+
         // grid filtering conditions
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bulk_notification', 'tbl_bulk_notification', 'tbl_bulk_notification');
 
@@ -63,6 +65,9 @@ class TblBulkNotificationSearch extends TblBulkNotification {
             $query->andFilterWhere(['and', ['>=', 'wef_date', date('Y-m-d', strtotime($this->wef_date)) . ' 00:00:00.000'], ['<=', 'wef_date', date('Y-m-d', strtotime($this->wef_date)) . ' 23:59:59.000']]);
         // grid filtering conditions
 
+        if (!empty($this->entry_datetime))
+            $query->andFilterWhere(['like', 'entry_datetime', date('Y-m-d', strtotime($this->entry_datetime))]);
+        // grid filtering conditions
 
         if (!empty($this->from_date)) {
             $query->andFilterWhere(['>=', 'wef_date', date('Y-m-d', strtotime($this->from_date))]);
@@ -77,7 +82,7 @@ class TblBulkNotificationSearch extends TblBulkNotification {
             'status' => $this->status,
         ]);
 
-        $query->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
+        $query->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code])
                 ->andFilterWhere(['like', 'tbl_api_master.api_name', $this->app_type])
                 ->andFilterWhere(['like', 'login_type', $this->login_type])

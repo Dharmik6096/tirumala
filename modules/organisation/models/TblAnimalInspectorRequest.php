@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblAnimalInspector;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_animal_inspector_request".
@@ -79,13 +80,14 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_at' => Yii::t('app', 'AI Complete Date'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'status' => yii::t('app', 'Status'),
-            'close_remarks' => yii::t('app', 'Close Remarks')
+            'close_remarks' => yii::t('app', 'Close Remarks'),
+            'request_date' => yii::t('app', 'Request Date')
         ];
     }
 
@@ -115,6 +117,10 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
 
     public function getAnimalInspectorCode() {
         return $this->hasOne(TblAnimalInspector::className(), ['animal_inspector_code' => 'animal_inspector_code']);
+    }
+    
+    public function getContactDetailsCode() {
+        return $this->hasOne(TblContactDetails::className(), ['detail_code' => 'created_by']);
     }
 
 }

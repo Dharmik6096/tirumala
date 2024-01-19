@@ -34,6 +34,9 @@ $this->title = Yii::t('app', 'Indent Approval');
                 ['attribute' => 'member_name', 'filter' => FALSE, 'visible' => ($visible ? FALSE : TRUE)],
                 ['attribute' => 'product_name', 'filter' => FALSE],
                 ['attribute' => 'qty', 'filter' => FALSE],
+                ['attribute' => 'indent_date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model['indent_date']);
+                }, 'filter' => FALSE],
                 ['attribute' => 'approve_qty', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {

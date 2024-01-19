@@ -125,7 +125,9 @@ class TblIndentMasterSearch extends TblIndentMaster {
                 'mcc_plant_code' => '',
                 'bmc_code' => '',
                 'dcs_code' => '',
-                'user_code' => ''
+                'user_code' => '',
+                'from_date' => '',
+                'to_date' => '',
             ];
 
             $sp_params = array_merge($sp_params, $params['TblIndentMasterSearch']);
@@ -142,6 +144,8 @@ class TblIndentMasterSearch extends TblIndentMaster {
             $sp_params['bmc_code'] = $this->bmc_code;
             $sp_params['dcs_code'] = $this->dcs_code;
             $sp_params['user_code'] = Yii::$app->session->get('UserCode');
+            $sp_params['from_date'] = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $sp_params['to_date'] = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
             $output = \Yii::$app->general->getSpData($sp, $sp_params);
         }
         $dataProvider = new ArrayDataProvider();
