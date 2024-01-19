@@ -31,6 +31,8 @@ $form = ActiveForm::begin([
                 echo Html::activeHiddenInput($model, '[' . $index . ']bmc_code', ['value' => $model->bmc_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']plant_code', ['value' => $model->plant_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']mcc_plant_code', ['value' => $model->mcc_plant_code]);
+                $model->is_clr_input = Yii::$app->general->getforeignkey($model->customerType, 'is_clr_input');
+                echo Html::activeHiddenInput($model, '[' . $index . ']is_clr_input', ['value' => $model->is_clr_input]);
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE],
             ['attribute' => 'customer_code', 'label' => Yii::t('app', 'SAP Vendor Code'), 'value' => function($model) {
@@ -108,28 +110,41 @@ $form = ActiveForm::begin([
             ['attribute' => 'snf',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'rtpl_validate\'>' . $form->field($model, '[' . $index . ']snf')->textInput(['value' => $model->snf, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
+                $readonly = $model->is_clr_input == 1 ? true : false;
+                return '<span class=\'rtpl_validate snf_calculate\'>' . $form->field($model, '[' . $index . ']snf')->textInput(['value' => $model->snf, 'class' => 'form-control number-validate', 'readonly' => $readonly])->label(FALSE) . '</span>';
             },
         ],
             ['attribute' => 'clr',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
-                return $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+                $readonly = $model->is_clr_input == 1 ? false : true;
+                return '<span class=\'rtpl_validate clr_calculate\'>' . $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => $readonly])->label(FALSE) . '</span>';
             },
         ],
-            ['attribute' => 'scheme_rate',
-            'format' => 'raw',
-            'value' => function ($model, $key, $index) use ($form) {
-                return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
-            },
-        ],
-            ['attribute' => 'actual_rate',
-            'format' => 'raw',
-            'value' => function ($model, $key, $index) use ($form) {
-                return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
-            },
-        ],
-            ['attribute' => 'rtpl',
+//            ['attribute' => 'scheme_rate',
+//            'format' => 'raw',
+//            'value' => function ($model, $key, $index) use ($form) {
+//                return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+//            },
+//        ],
+//            ['attribute' => 'actual_rate',
+//            'format' =>  ['attribute' => 'scheme_rate',
+//            'format' => 'raw',
+//            'value' => function ($model, $key, $index) use ($form) {
+//                return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+//            },
+//        ],
+//            ['attribute' => 'actual_rate',
+//            'format' => 'raw',
+//            'value' => function ($model, $key, $index) use ($form) {
+//                return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+//            },
+//        ],'raw',
+//            'value' => function ($model, $key, $index) use ($form) {
+//                return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+//            },
+//        ],
+        ['attribute' => 'rtpl',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']rate_code', ['value' => $model->rate_code]);
@@ -142,18 +157,18 @@ $form = ActiveForm::begin([
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-            ['attribute' => 'bmc_silos_info_code',
-            'format' => 'raw',
-            'value' => function ($model, $key, $index) use ($form) {
-                return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
-            },
-        ],
-            ['attribute' => 'antibiotic',
-            'format' => 'raw',
-            'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
-            }, 'visible' => $antibiotic
-        ],
+//            ['attribute' => 'bmc_silos_info_code',
+//            'format' => 'raw',
+//            'value' => function ($model, $key, $index) use ($form) {
+//                return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
+//            },
+//        ],
+//            ['attribute' => 'antibiotic',
+//            'format' => 'raw',
+//            'value' => function ($model, $key, $index) use ($form) {
+//                return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
+//            }, 'visible' => $antibiotic
+//        ],
     ];
 
     $grid_option = [
@@ -308,16 +323,24 @@ $script = "
         var union = $('#tblbmccollection-'+tr_key+'-union_code').val();
         var fat = $('#tblbmccollection-'+tr_key+'-fat').val();
         var snf = $('#tblbmccollection-'+tr_key+'-snf').val();
-            if(fat !='' && snf !=''){
+        var clr = $('#tblbmccollection-'+tr_key+'-clr').val();
+        var is_clr_input = $('#tblbmccollection-'+tr_key+'-is_clr_input').val();
+
+            if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
-                        if (obj.status == 'success')
+                        if (obj.status == 'success')                       
                         {
-                            $('#tblbmccollection-'+tr_key+'-clr').val(obj.data.toFixed(2));
+                            if(is_clr_input==0){
+                                $('#tblbmccollection-'+tr_key+'-clr').val(obj.data.toFixed(2));
+                            }else{
+                                $('#tblbmccollection-'+tr_key+'-snf').val(obj.data.toFixed(2));
+                            }
+                            rtpl(tr_key);
                         }
                     },
                     error:function(data){

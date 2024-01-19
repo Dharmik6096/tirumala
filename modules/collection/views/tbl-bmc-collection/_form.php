@@ -192,32 +192,39 @@ $script = "
                     },
                 });
     }
+   
     
-
-    $('#tblbmccollection-snf').change(function(){
-        calculateClr();
-    });
-    
-     $('#tblbmccollection-fat').change(function(){
+    $('#tblbmccollection-fat').change(function(){
         calculateClr();
         checkFatRange();
     });
     
+    $(document).change('#tblbmccollection-clr,#tblbmccollection-snf',function(){
+        calculateClr();
+    });
+
     function calculateClr(){
         var union = $('#tblbmccollection-union_code').val();
         var fat = $('#tblbmccollection-fat').val();
         var snf = $('#tblbmccollection-snf').val();
-            if(fat !='' && snf !=''){
+        var clr = $('#tblbmccollection-clr').val();
+        var is_clr_input = $('#is_clr_input').val();
+
+            if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
                         {
-                            $('#tblbmccollection-clr').val(obj.data.toFixed(2));
-                            $('#tblbmccollection-clr').trigger('change');
+                            if(is_clr_input==0){
+                                $('#tblbmccollection-clr').val(obj.data.toFixed(2));
+                            }else{
+                                $('#tblbmccollection-snf').val(obj.data.toFixed(2));
+                            }
+                            rtpl();
                         }
                     },
                     error:function(data){
@@ -290,8 +297,44 @@ $script = "
     $('#tblbmccollection-customer_type').change(function(){
           $('#tblbmccollection-customer_code').val('');
           $('#tblbmccollection-rtpl').val('');
+          isClrInput();
     });
      
+    function isClrInput(){
+        var customer_type = $('#tblbmccollection-customer_type').val();
+            if(customer_type !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['get-clr-input']) . "',
+                    data: {'customer_type':customer_type},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success' && obj.data != null)
+                        {
+                            var exist_is_clr_input = $('#is_clr_input').val();
+                            var is_clr_input = obj.data.is_clr_input;
+                            $('#is_clr_input').val(is_clr_input);
+                            var snf_html = $('.snf_calculate').html();
+                            var crl_html = $('.clr_calculate').html();
+                            if(exist_is_clr_input != is_clr_input){
+                                $('.snf_calculate').html(crl_html);
+                                $('.clr_calculate').html(snf_html);
+                            } 
+                            $('#tblbmccollection-snf').attr('readonly', true);
+                            $('#tblbmccollection-clr').attr('readonly', false);
+                            if(is_clr_input==0){
+                                $('#tblbmccollection-snf').attr('readonly', false);
+                                $('#tblbmccollection-clr').attr('readonly', true);
+                            }
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
+    
     function calculateCan(){
         var bmcid = $('#collectionvillage-bmcid').val();
         var qty = $('#collectionvillage-qty').val();
