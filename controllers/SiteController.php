@@ -68,6 +68,7 @@ class SiteController extends \app\controllers\ChildController {
         if (!file_exists($path)) {
             \Yii::$app->language = Yii::$app->session->get('LanguageCode');
         }
+        \Yii::$app->language = empty(\Yii::$app->language) ? 'en' : \Yii::$app->language;
     }
 
     /**
@@ -83,7 +84,7 @@ class SiteController extends \app\controllers\ChildController {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
