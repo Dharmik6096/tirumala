@@ -16,27 +16,27 @@ $this->title = Yii::$app->general->getforeignkey($model->formTypeCode, 'form_nam
                 $rel = Yii::$app->general->getDestRelation($model->module_type);
                 $att = strtolower($model->module_type) == 'bmc' ? 'bmc_name' : (strtolower($model->module_type) == 'dcs' ? 'dcs_name' : 'name');
                 $attributes = [
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'module_type',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'module_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'module_code',
                                 'label' => Yii::t('app', 'Ref.Code'),
                                 'value' => Yii::$app->general->getforeignkey($model->{$rel}, 'ref_code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'module_code',
                                 'label' => Yii::t('app', 'Name'),
                                 'value' => Yii::$app->general->getforeignkey($model->{$rel}, $att),
@@ -44,35 +44,35 @@ $this->title = Yii::$app->general->getforeignkey($model->formTypeCode, 'form_nam
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'contact_person',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'contact_person_mobile_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'user_code',
                                 'value' => Yii::$app->general->getforeignkey($model->userCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'activity_datetime',
                                 'value' => Yii::$app->controls->view_datetime($model->activity_datetime),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'remarks',
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
@@ -99,6 +99,20 @@ $this->title = Yii::$app->general->getforeignkey($model->formTypeCode, 'form_nam
         </div>
         <div class="col-md-12 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading mt_0">Task Attachment</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-grid">
+                <?=
+                $this->render('_attachment_list', [
+                    'attachment' => $attachment,
+                    'task_attachment' => $task_attachment
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Form Detail') ?></h4>
             </div>
             <div class="form-grid hide-grid-settings panel_clear_both">
@@ -106,8 +120,8 @@ $this->title = Yii::$app->general->getforeignkey($model->formTypeCode, 'form_nam
                 $grid_option = [
                     'id' => 'task-activity-list',
                     'attributes' => [
-                            ['attribute' => 'question',],
-                            ['attribute' => 'answer',],
+                        ['attribute' => 'question',],
+                        ['attribute' => 'answer',],
                     ],
                     'active_column' => FALSE,
                 ];
