@@ -128,18 +128,7 @@ $form = ActiveForm::begin([
             },
         ],
             ['attribute' => 'actual_rate',
-            'format' => ['attribute' => 'scheme_rate',
-                'format' => 'raw',
-                'value' => function ($model, $key, $index) use ($form) {
-                    return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
-                },
-            ],
-                ['attribute' => 'actual_rate',
-                'format' => 'raw',
-                'value' => function ($model, $key, $index) use ($form) {
-                    return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
-                },
-            ], 'raw',
+            'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
             },
