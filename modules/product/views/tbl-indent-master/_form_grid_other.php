@@ -34,6 +34,9 @@ $attribute = [
         ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],
+        ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+        }, 'visible' => TRUE, 'filter' => false],
         ['attribute' => 'warehouse_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->warehouseCode, 'store_location_name');
         }, 'filter' => false],
@@ -64,9 +67,6 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->statusBy, 'name');
         }, 'filter' => false],
-        ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member'), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-        }, 'visible' => TRUE, 'filter' => false],
 ];
 
 $grid_option = [
