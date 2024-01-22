@@ -94,7 +94,7 @@ class TblTaskController extends ChildController {
         $form_data = json_decode($model->form_data, TRUE);
         $form_data = !empty($form_data['details']) ? $form_data['details'] : [];
         $attachment = new TblAttachment();
-        $task_attachment = $attachment->getAttachmentDataProvider($id);
+        $task_attachment = $attachment->getAttachmentDataProvider($id, 'tbl_task_activity');
         ksort($form_data);
         $dataPro = [
             'allModels' => $form_data,

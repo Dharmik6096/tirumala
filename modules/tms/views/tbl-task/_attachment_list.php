@@ -15,20 +15,15 @@ $attribute = [
     ['attribute' => 'file_name', 'filter' => false],
     ['attribute' => 'attachment', 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],
+    ['attribute' => 'attachment', 'value' => function($model) {
+            return Yii::$app->general->openImage($model->attachment);
+        }, 'format' => 'raw', 'visible' => true],
 ];
 
 $grid_option = [
-    'id' => 'complaint',
+    'id' => 'task-attachment-list',
     'attributes' => $attribute,
     'active_column' => false,
-    'actions' => [
-        'view-attachment' => function ($url, $model) {
-            $path = Yii::$app->params['complaint_dir_path'];
-            $attachemnt = '/' . $path . $model->file_name;
-            $url = Url::to([$attachemnt]);
-            return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
-        },
-    ]
 ];
 
 Yii::$app->grid->bind($task_attachment, $attachment, $grid_option, '', false);

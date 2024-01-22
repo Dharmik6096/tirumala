@@ -135,9 +135,9 @@ class TblAttachment extends \app\models\ChildModel {
         }
     }
 
-    function getAttachmentDataProvider($id) {
+    function getAttachmentDataProvider($id, $name) {
         return new ActiveDataProvider([
-            'query' => $this->find()->where(['module_code' => (string) $id]),
+            'query' => $this->find()->where(['module_code' => (string) $id, 'module_name' => $name]),
         ]);
     }
 
