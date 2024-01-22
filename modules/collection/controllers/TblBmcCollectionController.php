@@ -20,6 +20,7 @@ use app\modules\collection\models\TblCollectionDataAlias;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
 use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * TblBmcCollectionController implements the CRUD actions for TblBmcCollection model.
@@ -890,7 +891,9 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $response['status'] = 'success';
         $response['data'] = '';
         $custome_type = Yii::$app->request->post('customer_type');
-        $is_clr = \app\modules\globalmaster\models\TblCustomerType::find()->select('is_clr_input')->where(['customer_type' => $custome_type])->one();
+        $union = Yii::$app->request->post('union_code');
+        $customerModel = new TblCustomerType();
+        $is_clr = $customerModel->getClrInput($custome_type, $union);
         $response['data'] = $is_clr;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);

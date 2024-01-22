@@ -121,30 +121,30 @@ $form = ActiveForm::begin([
                 return '<span class=\'rtpl_validate clr_calculate\'>' . $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => $readonly])->label(FALSE) . '</span>';
             },
         ],
-//            ['attribute' => 'scheme_rate',
-//            'format' => 'raw',
-//            'value' => function ($model, $key, $index) use ($form) {
-//                return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
-//            },
-//        ],
-//            ['attribute' => 'actual_rate',
-//            'format' =>  ['attribute' => 'scheme_rate',
-//            'format' => 'raw',
-//            'value' => function ($model, $key, $index) use ($form) {
-//                return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
-//            },
-//        ],
-//            ['attribute' => 'actual_rate',
-//            'format' => 'raw',
-//            'value' => function ($model, $key, $index) use ($form) {
-//                return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
-//            },
-//        ],'raw',
-//            'value' => function ($model, $key, $index) use ($form) {
-//                return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
-//            },
-//        ],
-        ['attribute' => 'rtpl',
+            ['attribute' => 'scheme_rate',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+            },
+        ],
+            ['attribute' => 'actual_rate',
+            'format' => ['attribute' => 'scheme_rate',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index) use ($form) {
+                    return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+                },
+            ],
+                ['attribute' => 'actual_rate',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index) use ($form) {
+                    return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+                },
+            ], 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+            },
+        ],
+            ['attribute' => 'rtpl',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']rate_code', ['value' => $model->rate_code]);
@@ -157,18 +157,18 @@ $form = ActiveForm::begin([
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-//            ['attribute' => 'bmc_silos_info_code',
-//            'format' => 'raw',
-//            'value' => function ($model, $key, $index) use ($form) {
-//                return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
-//            },
-//        ],
-//            ['attribute' => 'antibiotic',
-//            'format' => 'raw',
-//            'value' => function ($model, $key, $index) use ($form) {
-//                return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
-//            }, 'visible' => $antibiotic
-//        ],
+            ['attribute' => 'bmc_silos_info_code',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
+            },
+        ],
+            ['attribute' => 'antibiotic',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
+            }, 'visible' => $antibiotic
+        ],
     ];
 
     $grid_option = [

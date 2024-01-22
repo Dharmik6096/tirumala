@@ -302,11 +302,12 @@ $script = "
      
     function isClrInput(){
         var customer_type = $('#tblbmccollection-customer_type').val();
-            if(customer_type !=''){
+        var union = $('#tblbmccollection-union_code').val();
+            if(customer_type !='' && union != ''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['get-clr-input']) . "',
-                    data: {'customer_type':customer_type},
+                    data: {'customer_type':customer_type,'union_code':union},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success' && obj.data != null)
