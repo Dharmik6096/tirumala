@@ -49,9 +49,9 @@ $attribute = [
     ['attribute' => 'animal_inspector_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->animalInspectorCode, 'ai_name');
         }],
-    ['attribute' => 'created_by', 'label' => (Yii::t('app', 'Animal Inspector Mobile Number')), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->contactDetailsCode, 'mobile_no');
-        }],
+    ['attribute' => 'ai_mobile_no', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->animalInspectorCode, 'ai_mobile_no');
+        }, 'filter' => true],
     [
         'attribute' => 'expected_visit_date', 'filter' => true,
         'filterType' => GridView::FILTER_DATE,

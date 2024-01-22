@@ -65,8 +65,7 @@ class TblBulkNotificationSearch extends TblBulkNotification {
             $query->andFilterWhere(['and', ['>=', 'wef_date', date('Y-m-d', strtotime($this->wef_date)) . ' 00:00:00.000'], ['<=', 'wef_date', date('Y-m-d', strtotime($this->wef_date)) . ' 23:59:59.000']]);
         // grid filtering conditions
 
-        if (!empty($this->entry_datetime))
-            $query->andFilterWhere(['like', 'entry_datetime', date('Y-m-d', strtotime($this->entry_datetime))]);
+        $query->andFilterWhere(['=', 'CAST(tbl_bulk_notification.entry_datetime as date)', !empty($this->entry_datetime) ? date('Y-m-d', strtotime($this->entry_datetime)) : NULL]);
         // grid filtering conditions
 
         if (!empty($this->from_date)) {

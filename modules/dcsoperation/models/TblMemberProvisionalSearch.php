@@ -94,11 +94,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             return $dataProvider;
         }
 
-        if (!empty($this->created_at))
-            $query->andFilterWhere(['like', 'tbl_member_provisional.created_at', date('Y-m-d', strtotime($this->created_at))]);
-
-        if (!empty($this->approved_at))
-            $query->andFilterWhere(['like', 'approved_at', date('Y-m-d', strtotime($this->approved_at))]);
+        $query->andFilterWhere(['=', 'CAST(tbl_member_provisional.approved_at as date)', !empty($this->approved_at) ? date('Y-m-d', strtotime($this->approved_at)) : NULL]);
 
         if (!empty($this->download_date_time))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), download_date_time, 126)', date('Y-m-d', strtotime($this->download_date_time))]);
@@ -115,7 +111,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         $query->andFilterWhere([
             'tbl_member_provisional.is_active' => $this->is_active,
         ]);
-        
+
         $query->andFilterWhere([
             'tbl_member_provisional.is_approved' => $this->approved_status,
         ]);
@@ -125,7 +121,6 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
                 ->andFilterWhere(['like', 'tbl_member_provisional.member_name', $this->member_name])
                 ->andFilterWhere(['like', 'tbl_member_provisional.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_member_provisional.provisional_from', $this->provisional_from]);
-
 
         return $dataProvider;
     }

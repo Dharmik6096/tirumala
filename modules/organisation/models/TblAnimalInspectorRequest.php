@@ -52,9 +52,9 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['originating_org_code', 'originating_org_type', 'address', 'member_name', 'mobile_no', 'remarks', 'user_type', 'member_code', 'ai_request_for', 'created_by', 'updated_by', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'union_code', 'animal_inspector_request_code', 'expected_visit_date', 'created_at', 'updated_at', 'animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'request_date', 'status', 'close_remarks'], 'safe'],
-                [['close_remarks'], 'required'],
-                [['status'], 'required'],
+            [['originating_org_code', 'originating_org_type', 'address', 'member_name', 'mobile_no', 'remarks', 'user_type', 'member_code', 'ai_request_for', 'created_by', 'updated_by', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'union_code', 'animal_inspector_request_code', 'expected_visit_date', 'created_at', 'updated_at', 'animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'request_date', 'status', 'close_remarks', 'ai_mobile_no'], 'safe'],
+            [['close_remarks'], 'required'],
+            [['status'], 'required'],
         ];
     }
 
@@ -87,7 +87,8 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'status' => yii::t('app', 'Status'),
             'close_remarks' => yii::t('app', 'Close Remarks'),
-            'request_date' => yii::t('app', 'Request Date')
+            'request_date' => yii::t('app', 'Request Date'),
+            'ai_mobile_no' => yii::t('app', 'Animal Inspector Mobile Number')
         ];
     }
 
@@ -117,10 +118,6 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
 
     public function getAnimalInspectorCode() {
         return $this->hasOne(TblAnimalInspector::className(), ['animal_inspector_code' => 'animal_inspector_code']);
-    }
-    
-    public function getContactDetailsCode() {
-        return $this->hasOne(TblContactDetails::className(), ['detail_code' => 'created_by']);
     }
 
 }

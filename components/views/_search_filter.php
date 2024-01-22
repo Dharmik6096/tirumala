@@ -329,7 +329,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
@@ -350,14 +350,6 @@ if (!empty($filter_data)) {
                                         ?>
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->dropdown('party_master', $model, $form, ''); ?>
-                                        </div>
-                                    <?php } ?>
-                                    <?php
-                                    if (in_array($value, array('approved_status'))) {
-                                        $f_cnt++
-                                        ?>
-                                        <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic('approved_status', $model, $form, ''); ?>
                                         </div>
                                     <?php } ?>
                                     <?php
