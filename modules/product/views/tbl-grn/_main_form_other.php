@@ -57,7 +57,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'remarks')->textInput() ?>
         </div>
         <div class="col-sm-1 mt15 create_fields">
-            <?= $form->field($model, 'payment_mode', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'payment_mode'); ?>
         </div>
         <div class="col-sm-1 noOfInstallment create_fields number-validate">
             <?= $form->field($model, 'no_of_installment')->textInput() ?>
