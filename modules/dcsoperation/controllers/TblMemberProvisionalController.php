@@ -25,6 +25,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
+use app\modules\dcsoperation\models\TblMemberHistory;
 
 /**
  * TblMemberProvisionalController implements the CRUD actions for TblMemberProvisional model.
@@ -376,8 +377,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $model_save[] = $memberModel;
                 $all_doc = [];
                 $memberdoc = [];
+                $unlink_files = [];
                 if ($memberModel->provisional_status == 'Approve') {
-                    $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message);
+                    $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
                 }
                 if (!empty($message)) {
                     foreach ($message as $msg) {
@@ -391,6 +393,14 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                             $memberDir = $baseDir . 'member';
                             $proMemberDir = $baseDir . 'provisional_member';
+                            
+                            if(!empty($unlink_files)){
+                                foreach($unlink_files as $file){
+                                    if (file_exists($memberDir . '/' . $file)) {
+                                        unlink($memberDir . '/' . $file);
+                                    }
+                                }
+                            }
                             for ($i = 0; $i < count($all_doc); $i++) {
                                 $fileName = basename($memberdoc[$i]);
                                 $file = $memberDir . '/' . $fileName;
@@ -418,41 +428,54 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = [], &$message) {
+    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = [], &$message, &$unlink_files) {
         if ($status == 'Approve' && $memberModel->provisional_status == 'Approve') {
             $memberModel->is_approved = 1;
             $memberModel->approved_at = date('Y-m-d H:i:s');
             $memberModel->approved_by = Yii::$app->session['UserCode'];
             if ($memberModel->is_approved = 1) {
                 $tblMember = new TblMember();
+                $memberCode = $tblMember->getCode();
+                if($memberModel->provisional_from == 'mobile_update'){
+                    $tblMember = TblMember::find()->where(['member_code' => $memberModel->member_code])->one();
+                    $memberCode = $memberModel->member_code;
+                    $historyMemberModel = new TblMemberHistory();
+                    Yii::$app->operation->history($tblMember, $historyMemberModel, UPDATE);
+                    $model_save[] = $historyMemberModel;
+                }
                 $tblMember->scenario = 'ApprovalMember';
                 $tblMember->attributes = $memberModel->attributes;
-                $tblMember->member_code = $tblMember->getCode();
+                $tblMember->member_code = $memberCode;
                 $historyModel = new TblMemberProvisionalHistory();
                 Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
                 if ($tblMember->validate()) {
                     $model_save[] = $tblMember;
                     $model_save[] = $memberModel;
                     $model_save[] = $historyModel;
-
-                    $milkCollectionData = new TblProvisionalMilkCollection();
-                    $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
-                    if (!empty($milkCollectionData)) {
-                        foreach ($milkCollectionData as $key => $value) {
-                            $deleteModel[] = $value;
-                            $tblMilkCollection = new TblMilkCollection();
-                            $tblMilkCollection->attributes = $value->attributes;
-                            $tblMilkCollection->member_code = $tblMember->member_code;
-                            $tblMilkCollection->is_provisional = 1;
-                            $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
-                            Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
-                            $model_save[] = $tblMilkCollection;
-                            $model_save[] = $tblProvisionalMilkCollectionHistory;
+                    $deleteAttachment = [];
+                    if($memberModel->provisional_from != 'mobile_update'){
+                        $milkCollectionData = new TblProvisionalMilkCollection();
+                        $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
+                        if (!empty($milkCollectionData)) {
+                            foreach ($milkCollectionData as $key => $value) {
+                                $deleteModel[] = $value;
+                                $tblMilkCollection = new TblMilkCollection();
+                                $tblMilkCollection->attributes = $value->attributes;
+                                $tblMilkCollection->member_code = $tblMember->member_code;
+                                $tblMilkCollection->is_provisional = 1;
+                                $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                                Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
+                                $model_save[] = $tblMilkCollection;
+                                $model_save[] = $tblProvisionalMilkCollectionHistory;
+                            }
                         }
+                    } else {
+                        $deleteAttachment['module_code'] =  $memberModel->member_code;
+                        $deleteAttachment['module_name'] =  'tbl_member';
                     }
                     $tblAttachment = new TblAttachment();
                     $memberProvisionalCode = (string) $memberModel->provisional_member_code;
-                    $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc);
+                    $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc, $deleteModel, $deleteAttachment, $unlink_files);
 
                     if (!empty($save_member_doc)) {
                         foreach ($save_member_doc as $key => $member_attach) {

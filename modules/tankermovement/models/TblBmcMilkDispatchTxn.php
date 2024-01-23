@@ -8,6 +8,7 @@ use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\tankermovement\models\TblQtyDiffType;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch_txn".
@@ -71,7 +72,7 @@ use app\modules\tankermovement\models\TblQtyDiffType;
  */
 class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty;
+    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty, $source_type, $source_code;
 
     /**
      * @inheritdoc
@@ -85,7 +86,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'water', 'temperature', 'bmc_silos_info_code', 'chamber_no', 'qty_diff_type_code', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync']],
+            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'water', 'temperature', 'bmc_silos_info_code', 'chamber_no', 'qty_diff_type_code', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync', 'createPlantDispatch']],
             [['bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'milk_analyser_type_code', 'ws_code', 'adt_param', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type'], 'integer'],
             [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'number'],
@@ -98,6 +99,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['qty_auto', 'qlty_auto', 'is_rejected', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff', 'rtpl', 'amount',], 'default', 'value' => '0'],
             [['milk_type_code'], 'ValidateData', 'on' => 'create'],
             [['union_code'], 'required', 'except' => ['androidsync']],
+            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'water', 'temperature', 'chamber_no'], 'required', 'on' => 'createPlantDispatch'],
         ];
     }
 
@@ -256,6 +258,10 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             }
         }
         $this->amount = $this->dispatch_qty * $this->rtpl;
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
 }

@@ -37,28 +37,12 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'mcc_plant_code',
-                                'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                            [
-                                'attribute' => 'bmc_code',
-                                'label' => Yii::t('app', 'BMC Code'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'bmc_code',
-                                'label' => Yii::t('app', 'BMC Name'),
-                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                            [
                                 'attribute' => 'vehicle_entry_date',
                                 'value' => Yii::$app->controls->view_date($model->vehicle_entry_date),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'trip_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -92,40 +76,56 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'trip_code',
+                                'attribute' => 'dispatch_from_code',
+                                'label' => (Yii::t('app', 'Source Ref.Code')),
+                                'value' => Yii::$app->general->getforeignkey($model->{$relsource . 'Source'}, 'ref_code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                            [
+                                'attribute' => 'receipt_at_code',
+                                'label' => (Yii::t('app', 'Destination Ref.Code')),
+                                'value' => Yii::$app->general->getforeignkey($model->{$reldest . 'Dest'}, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'vehicle_code',
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no'),
                                 'label' => Yii::t('app', 'Vehicle No.'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'qty',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'receipt_at',
                                 'value' => Yii::$app->general->getStaticValue($model->receipt_at, 'receipt_at'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'arrival_time',
                                 'value' => Yii::$app->controls->view_time($model->arrival_time),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'tare_weight_time',
                                 'value' => Yii::$app->controls->view_time($model->tare_weight_time),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'gross_weight',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -133,12 +133,8 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'gross_weight',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                            [
                                 'attribute' => 'tare_weight',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:100%']
                             ],
                         ],
                     ],
@@ -164,12 +160,12 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
         </div>
         <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Milk Receipt Transactions Detail') ?></h5></div>
         <div class="form-grid">
-            <?=
-            $this->render('_transaction_detail', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-            ?>
+                <?=
+                $this->render('_transaction_detail', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+                ?>
         </div>
     </div> 
 </div>

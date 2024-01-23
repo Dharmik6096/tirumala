@@ -11,13 +11,23 @@ use kartik\grid\GridView;
 $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
         ['attribute' => 'receipt_at'],
         ['attribute' => 'receipt_at_code', 'value' => function($model) {
             $rel = Yii::$app->general->getDestRelation($model->receipt_at);
             $att = strtolower($model->receipt_at) == 'bmc' ? 'bmc_name' : (strtolower($model->receipt_at) == 'vendor' ? 'customer_name' : (strtolower($model->receipt_at) == 'party' ? 'party_name' : 'name'));
             if (!empty($rel))
                 return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->receipt_at_code);
+        }, 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'receipt_at_code',
+            'label' => Yii::t('app', 'Destination Code')],
+        ['attribute' => 'receipt_at_code',
+            'label' => (Yii::t('app', 'Destination Ref.Code')),
+        'value' => function($model) {
+            $rel = Yii::$app->general->getDestRelation($model->receipt_at);
+            $att = strtolower($model->receipt_at) == 'bmc' ? 'bmc_name' : (strtolower($model->receipt_at) == 'vendor' ? 'customer_name' : (strtolower($model->receipt_at) == 'party' ? 'party_name' : 'name'));
+            if (!empty($rel) && $att !== 'party_name')
+                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code');
         }, 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'dispatch_from'],    
         ['attribute' => 'dispatch_from_code', 'value' => function($model) {
@@ -26,40 +36,26 @@ $attribute = [
             if (!empty($rel))
                 return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->dispatch_from_code);
         }, 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'dispatch_from_code',
+            'label' => Yii::t('app', 'Source Code')],
+        ['attribute' => 'dispatch_from_code',
+            'label' => (Yii::t('app', 'Source Ref.Code')),
+            'value' => function($model) {
+            $rel = Yii::$app->general->getDestRelation($model->dispatch_from);
+            $att = strtolower($model->dispatch_from) == 'bmc' ? 'bmc_name' : (strtolower($model->dispatch_from) == 'vendor' ? 'customer_name' : (strtolower($model->dispatch_from) == 'party' ? 'party_name' : 'name'));
+            if (!empty($rel) && $att !== 'party_name')
+                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, 'ref_code');
+        }, 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'transporter_code',
         'label' => Yii::t('app', 'Transporter'),
         'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->vehicleCode, ['transporter'], 'transporter_name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-        ['attribute' => 'bmc_code',
-        'label' => Yii::t('app', 'BMC Code'),
-        'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
-        ['attribute' => 'bmc_ref_code', 'label' => (Yii::t('app', 'BMC Ref.Code')), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
-        }, 'vAlign' => 'middle', 'visible' => FALSE],
-        ['attribute' => 'bmc_name',
-        'label' => Yii::t('app', 'BMC Name'),
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
-        ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref. Code'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->customer_type, false, false, TRUE);
-        }, 'visible' => FALSE],
-        ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
-        }, 'visible' => FALSE],
-        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->customer_type);
-        }, 'visible' => FALSE],
         ['attribute' => 'grn_no'],
-        [
-        'attribute' => 'vehicle_entry_date',
+        ['attribute' => 'vehicle_entry_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',

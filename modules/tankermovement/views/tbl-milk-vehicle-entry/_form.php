@@ -267,6 +267,7 @@ endif;
 
 <?php
 $script = "
+    $('#dispatch-detail').css('display', 'none');
     $('.tanker_no_hide').css('display', 'none');
     $('#tblmilkvehicleentry-vehicle_code, #tblmilkvehicleentry-receipt_datetime').on('change', function() {
         var vehicleCode = $('#tblmilkvehicleentry-vehicle_code').val();
@@ -292,25 +293,25 @@ $script = "
         var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
         var entryTypeField = $('#tblmilkvehicleentrytransaction-entry_type');
         var EntryType = document.querySelector('.col-sm-1.entry_type');
-        
+
         if (receipt_at !== '' && dispatch_from !== '') {
-            if ((dispatch_from == 'BMC' && receipt_at == 'PLANT') || (dispatch_from == 'BMC' && receipt_at == 'BMC') || (dispatch_from == 'BMC' && receipt_at == 'PARTY')) {
-                $('.vehicle_code_hide').css('display', 'block');
-                 $('.tanker_no_hide').css('display', 'none');
-                $('#dispatch-detail').css('display', 'block');                
-                entryTypeField.val('').prop('readonly', false).trigger('change');
-            } else if(dispatch_from == 'PARTY') {
+            if (dispatch_from == 'PARTY') {
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
                $('#dispatch-detail').css('display', 'none');
                $('.trip-code-hide').css('display', 'none');
                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
+               $('#tblmilkvehicleentry-trip_code').val('').trigger('change');
+               $('#tblmilkvehicleentry-vehicle_code').val('').trigger('change');
                EntryType.classList.add('no_pointer');
             } else {
                 $('.vehicle_code_hide').css('display', 'block');
-                $('#dispatch-detail').css('display', 'none');
-                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
-                EntryType.classList.add('no_pointer');
+                $('.tanker_no_hide').css('display', 'none');
+                $('.trip-code-hide').css('display', 'block');
+                $('#dispatch-detail').css('display', 'block');
+                entryTypeField.val('').prop('readonly', false).trigger('change');
+                $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
+                EntryType.classList.remove('no_pointer');
             }
         } else {
             $('.vehicle_code_hide').css('display', 'block');
@@ -411,8 +412,8 @@ $script = "
                 url: '" . Url::to(['set-fields']) . "',
                 data: {'challan_no' : challan_no,'trip_code':trip_code},             
                 success: function(data) {
-                $('#tblmilkvehicleentrytransaction-source_org_type').val('BMC');
-                $('#tblmilkvehicleentrytransaction-source_org_code').val(data.data.bmc_code);
+                $('#tblmilkvehicleentrytransaction-source_org_type').val(data.data.source_org_type.toUpperCase());
+                $('#tblmilkvehicleentrytransaction-source_org_code').val(data.data.source_org_code);
                 $('#tblmilkvehicleentrytransaction-destination_type').val(data.data.destination_type);
                 $('#tblmilkvehicleentrytransaction-destination_code').val(data.data.destination_code);
                 $('#tblmilkvehicleentrytransaction-source').val(data.source);

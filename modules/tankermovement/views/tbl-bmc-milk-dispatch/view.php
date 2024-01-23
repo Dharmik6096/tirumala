@@ -5,7 +5,7 @@ use kartik\detail\DetailView;
 use yii\helpers\Url;
 use yii\web\View;
 
-$this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
+$this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -16,14 +16,11 @@ $this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
         <div class="form-grid">
             <div class="table-responsive">
                 <?php
+                $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
+                $relSource = Yii::$app->general->getDestRelation($model->source_org_type);
                 $rel = Yii::$app->general->getDestRelation($model->destination_type);
-                $att = strtolower($model->destination_type) == 'bmc' 
-                    ? 'bmc_name' 
-                    : (strtolower($model->destination_type) == 'vendor' 
-                        ? 'customer_name' 
-                        : (strtolower($model->destination_type) == 'party'
-                            ? 'party_name'
-                            : 'name'));
+                $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : (strtolower($model->destination_type) == 'party' ? 'party_name' : 'name'));
+                $attSource = strtolower($sourceType) == 'bmc' ? 'bmc_name' : (strtolower($sourceType) == 'vendor' ? 'customer_name' : (strtolower($sourceType) == 'party' ? 'party_name' : 'name'));
                 $attributes = [
                         [
                         'columns' => [
@@ -51,14 +48,44 @@ $this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
                         [
                         'columns' => [
                                 [
-                                'attribute' => 'bmc_code',
-                                'label' => Yii::t('app', 'BMC Code'),
+                                'attribute' => 'source_org_type',
+                                'label' => Yii::t('app', 'Source Type'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'source_org_code',
+                                'label' => Yii::t('app', 'Source Name'),
+                                'value' => !empty($rel) ? Yii::$app->general->getforeignkey($model->$relSource, $attSource) : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'source_org_code',
+                                'label' => Yii::t('app', 'Source Code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
                                 'attribute' => 'bmc_code',
-                                'label' => Yii::t('app', 'BMC Name'),
-                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'label' => (Yii::t('app', 'Source Ref.Code')),
+                                'value' => (strtolower($model->source_org_type) != 'party') ? Yii::$app->general->getforeignkey($model->$relSource, 'ref_code') : 'N/A',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'destination_type',
+                                'label' => Yii::t('app', 'Dest. Type'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'destination_code',
+                                'label' => Yii::t('app', 'Dest. Name'),
+                                'value' => !empty($rel) ? Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) : $model->destination_type,
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -67,11 +94,13 @@ $this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
                         'columns' => [
                                 [
                                 'attribute' => 'destination_code',
+                                'label' => Yii::t('app', 'Dest. Code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
-                                'attribute' => 'destination_type',
-                                'value' => !empty($rel) ? Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type) : $model->destination_type,
+                                'attribute' => 'bmc_code',
+                                'label' => (Yii::t('app', 'Dest. Ref.Code')),
+                                'value' => (strtolower($model->destination_type) != 'party') ? Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code') : 'N/A',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -210,17 +239,18 @@ $this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions Detail') ?></h4>
             </div>
             <div class="form-grid">
-                <?=
-                $this->render('_transaction_detail', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                ]);
-                ?>
+<?=
+$this->render('_transaction_detail', [
+    'searchModel' => $searchModel,
+    'dataProvider' => $dataProvider,
+    'isVisible' => (strtolower($model->source_org_type == 'bmc')) ? true : false,
+]);
+?>
             </div>
-        </div> 
+        </div>
     </div>
-    <?php
-    $script = "$(document).ready(function(){
+                <?php
+                $script = "$(document).ready(function(){
     $(document).on('click','.view-config',function(e){
     var id= $(this).attr('data-val');
   ViewConfig(id);
@@ -249,6 +279,5 @@ $this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
         }
     }
 });";
-    $this->registerJs($script, View::POS_END, 'bmc-config-popup');
-    ?>
-    
+                $this->registerJs($script, View::POS_END, 'bmc-config-popup');
+                ?>

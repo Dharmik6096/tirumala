@@ -24,16 +24,17 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcdispatchinspection-union_code', 'plant_code', TRUE, FALSE, '', TRUE); ?>
     </div> 
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcdispatchinspection-plant_code', 'mcc_plant_code', TRUE, FALSE, '', TRUE); ?>
-    </div>      
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcdispatchinspection-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', TRUE); ?>
-    </div>
+    <?php if (!empty($model->bmc_code)) : ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcdispatchinspection-plant_code', 'mcc_plant_code', TRUE, FALSE, '', TRUE); ?>
+        </div>      
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcdispatchinspection-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', TRUE); ?>
+        </div>
+    <?php endif; ?>
     <div class="col-sm-2"> 
         <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcdispatchinspection-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', TRUE); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'inspection_date', '', TRUE, FALSE, TRUE); ?>
     </div>

@@ -74,7 +74,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_disburse_vendor_payment',
                 ],
                 'secondary_tpt_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'param' => 'union_code,from_date,to_date,user_code,transporter_code,vehicle_code',
                     'sp_name' => 'sp_tpt_secondary_payment_cargill',
                 ],
                 'member_payment_disburse' => [
@@ -241,7 +241,7 @@ class ClientPaymentConfig extends Component {
                 ],
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
-                    'sp_name' => 'sp_vsp_payment_vrs_newasa',
+                    'sp_name' => 'sp_vsp_payment_vrs_glt',
                 ],
                 'remuneration_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
@@ -267,15 +267,15 @@ class ClientPaymentConfig extends Component {
             'VRS_MLP' => [
                 'member_payment' => [
                     'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
-                    'sp_name' => 'sp_member_payment_vrs_newasa',
+                    'sp_name' => 'sp_member_payment_vrs_mlp',
                 ],
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
-                    'sp_name' => 'sp_vsp_payment_vrs_newasa',
+                    'sp_name' => 'sp_vsp_payment_vrs_mlp',
                 ],
                 'remuneration_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
-                    'sp_name' => 'sp_remuneration_payment_vrs_newasa',
+                    'sp_name' => 'sp_remuneration_payment_vrs_mlp',
                 ],
                 'mcc_remuneration_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
