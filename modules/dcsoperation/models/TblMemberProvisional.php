@@ -185,6 +185,7 @@ class TblMemberProvisional extends ChildModel {
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from'], 'safe'],
                 [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+
                     return $this->is_active;
                 }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected', 'updateProvisionalMember']],
                 [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
@@ -242,7 +243,7 @@ class TblMemberProvisional extends ChildModel {
             'voter_id' => Yii::t('app', 'Voter ID'),
             'annual_income' => Yii::t('app', 'Annual Income'),
             'village_code' => Yii::t('app', 'Village'),
-            'created_at' => Yii::t('app', 'Created At'),
+            'created_at' => Yii::t('app', 'Create Date'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
@@ -275,6 +276,7 @@ class TblMemberProvisional extends ChildModel {
             'is_approved' => Yii::t('app', 'Approval status'),
             'plant_code' => Yii::t('app', 'Plant'),
             'pro_ex_member_code' => Yii::t('app', 'Pro Ex Member Code'),
+            'approved_at' => Yii::t('app', 'Approve Date'),
         ];
     }
 

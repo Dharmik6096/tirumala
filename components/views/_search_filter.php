@@ -205,7 +205,7 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->depend_dropdown('task_type', $model, $form, $depend_str, 'form-group'); ?>
                                         </div>
                                     <?php } ?>
-                                         <?php
+                                    <?php
                                     if (in_array($value, array('form_type'))) {
                                         $depend_str = $field_class . '-task_type_code';
                                         $f_cnt++;
@@ -220,7 +220,7 @@ if (!empty($filter_data)) {
                                         ?>
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->dropdown('user_code', $model, $form, 'form-group col-sm-2 padding-right-5'); ?>
-        
+
                                         </div>
                                     <?php } ?>
                                     <?php
@@ -329,7 +329,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status','txn_type'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
