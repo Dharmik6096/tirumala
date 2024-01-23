@@ -101,7 +101,7 @@ $grid_option = [
             if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 0) {
                 $name = $model->member_name;
                 $class = ($model->is_approved == 1) ? 'link-disable' : '';
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
                 return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
             } else {
                 $class = '';
@@ -109,7 +109,7 @@ $grid_option = [
                     $class = ($model->is_active === 0 || $model->provisional_status != 'Pending') ? 'link-disable' : '';
                 }
                 $name = $model->member_name;
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
                 return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
             }
             $name = $model->member_name;
@@ -125,16 +125,16 @@ $grid_option = [
                     $icon = '<i class="fa fa-check"></i>';
                     $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
                 }
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Approve Member'];
                 return Html::a($icon, $url, $options);
             } else {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Provisional Member View'];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Provisional Member View'];
                 return Html::a('<i class="fa fa-eye"></i>', ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code], $options);
             }
         },
         'milk_collection' => function ($url, $model) {
             $class = ($model->is_approved == 1 || strtolower($model->provisional_from) != 'collection') ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Milk Collection', 'class' => 'view_data ' . $class, 'data-dcs_code' => $model->dcs_code, 'data-pro_ex_mem_code' => $model->pro_ex_member_code, 'data-name' => $model->member_name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Milk Collection', 'class' => 'view_data ' . $class, 'data-dcs_code' => $model->dcs_code, 'data-pro_ex_mem_code' => $model->pro_ex_member_code, 'data-name' => $model->member_name];
             return GhostHtml::a_alert('<i class="fa fa-list"></i>', ['/dcsoperation/tbl-member-provisional/provisional-milk-collection-list'], $options);
         },
         'document-upload' => function ($url, $model) use ($pending_approval) {

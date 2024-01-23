@@ -33,7 +33,7 @@ $grid_option = [
     'active_column' => FALSE,
     'actions' => [
         'views' => function($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Banner View'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Banner View'];
             return Html::a('<i class="fa fa-eye"></i>', ['/general/tbl-banner/view', 'id' => $model->banner_code], $options);
         },
         'delete' => ['option' => 'banner_code,banner_code,/general/tbl-banner/delete'],

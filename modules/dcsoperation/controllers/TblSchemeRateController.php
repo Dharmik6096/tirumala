@@ -195,9 +195,9 @@ class TblSchemeRateController extends \app\controllers\ChildController {
                     }
                     $popupWindowTitle = 'Are you sure you want to Deactivate';
                     $options = [
-                        'data-toggle' => 'tooltip',
+                        'data-bs-toggle' => 'tooltip',
                         'data-placement' => 'top',
-                        'data-original-title' => $title,
+                        'title' => $title,
                         'data-popup-message' => $popupWindowTitle,
                         'class' => $popupClass,
                         'data-post-url' => Url::to([$url, 'id' => $model->scheme_rate_app_code])

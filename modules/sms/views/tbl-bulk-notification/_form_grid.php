@@ -61,7 +61,7 @@ $grid_option = [
         },
         'mapping' => function ($url, $model) {
             $class = ($model->login_type == 'all') ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => '' . $class,];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => '' . $class,];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/sms/tbl-bulk-notification/bulk-notification-applicability', 'id' => $model->bulk_notification_id], $options);
         },
         'delete' => ['option' => 'bulk_notification_id,bulk_notification_id,tbl-bulk-notification/delete'],

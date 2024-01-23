@@ -65,7 +65,7 @@ $grid_option = [
     'actions' => [
         'complain-status' => function ($url, $model) {
             $count = TblComplainActivity::getComplainStatusCount($model->complain_code);
-            return $count > 0 ? GhostHtml::a('<i class="fa fa-circle" style="color: #07a309 !important;"></i>', '', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Complain Activity',]) :
+            return $count > 0 ? GhostHtml::a('<i class="fa fa-circle" style="color: #07a309 !important;"></i>', '', ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Complain Activity',]) :
                     GhostHtml::a('', '', ['class' => 'hidden-button', 'style' => 'pointer-events: none; margin-right: 15px;',
             ]);
         },
@@ -77,21 +77,21 @@ $grid_option = [
                 $url = '#';
                 $class = 'disabled';
             }
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'delete' => ['option' => 'complain_code,complain_code,tbl-complain/delete,checkEditable()'],
         'assign-complain' => function ($url, $model) {
             $url = Url::to(['assign-complain', 'complain_code' => $model->complain_code]);
             $class = ($model->checkAssign()) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Assign', 'class' => 'assign-complain' . $class, 'data-complain_code' => $model->complain_code, 'data-name' => ''];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Assign', 'class' => 'assign-complain' . $class, 'data-complain_code' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-user"></i>', $url, $options);
         },
         'resolve-complain' => function ($url, $model) {
             $url = Url::to(['tbl-complain/resolve-complain', 'id' => $model->complain_code]);
             $status = $model->getComplainStatus($model->complain_code);
             $class = !isset($status) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-registered"></i>', $url, $options);
         },
     ]

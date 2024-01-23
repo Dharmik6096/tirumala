@@ -57,10 +57,10 @@ $grid_option = [
                 $icon = '<i class="fa fa-check"></i>';
                 $url = ['/configuration/tbl-shift-time-exceed/approve-shift-time-exceed', 'id' => $model->process_approval_code];
 
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve AMCS -  Shift Time Exceed Provision'];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Approve AMCS -  Shift Time Exceed Provision'];
                 return Html::a($icon, $url, $options);
             } else {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Shift Time Exceed View'];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Shift Time Exceed View'];
                 return Html::a($icon, $url, $options);
             }
         },

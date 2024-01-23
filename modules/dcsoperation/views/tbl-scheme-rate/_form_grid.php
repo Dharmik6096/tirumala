@@ -69,7 +69,7 @@ $grid_option = [
                 $icon = '<i class="fa fa-eye"></i>';
                 $title = 'View';
             }
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title, 'class' => $disable];
             return GhostHtml::a($icon, [$url, 'id' => $model->scheme_rate_code], $options);
         },
         'deactivate' => function ($url, $model) {
@@ -80,7 +80,7 @@ $grid_option = [
             $name = 'Deactivate';
             $disable = ($model->is_active == 0) ? 'disabled' : '';
             $class = 'deact-rate ' . $disable;
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => $class, 'data-val' => $model->scheme_rate_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title, 'class' => $class, 'data-val' => $model->scheme_rate_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa ' . $icon_class . '""></i>', $urls, $options);
         },
     ]

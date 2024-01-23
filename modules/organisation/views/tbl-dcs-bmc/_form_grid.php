@@ -152,11 +152,11 @@ $grid_option = [
             $id = $model->bmc_code;
             $name = $model->bmc_name;
             $url = ['/organisation/tbl-dcs-bmc/bmc-document-upload', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->bmc_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Document Upload', 'data-val' => $model->bmc_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
         'chiller-info' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Chiller Info.'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Chiller Info.'];
             return GhostHtml::a('<i class="fa fa-snowflake-o"></i>', ['/organisation/tbl-dcs-bmc/bmc-chiller-info', 'id' => $model->bmc_code], $options);
         },
     ]

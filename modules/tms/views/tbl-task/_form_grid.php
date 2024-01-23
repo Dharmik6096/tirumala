@@ -66,7 +66,7 @@ $grid_option = [
         'cancel' => function ($url, $model) {
             $name = $model->title . ' of ' . date('d-m-Y', strtotime($model->task_datetime));
             $class = ($model->status == 'OPEN' && $model->is_cancel == 0) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Cancel', 'class' => 'deact-task ' . $class, 'data-val' => $model->task_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Cancel', 'class' => 'deact-task ' . $class, 'data-val' => $model->task_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/tms/tbl-task/cancel'], $options);
         },
     ]

@@ -45,7 +45,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Dcs Provisional Ap
                         'active_column' => false,
                         'actions' => [
                             'views' => function($url, $model) {
-                                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+                                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Approve Member'];
                                 return Html::a('<i class="fa fa-check"></i>', ['/organisation/tbl-dcs-provisional/view', 'id' => $model->dcs_provisional_code, 'flag' => 'approve'], $options);
                             },
                         ]

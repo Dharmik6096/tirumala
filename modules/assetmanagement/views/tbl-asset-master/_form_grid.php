@@ -35,7 +35,7 @@ $grid_option = [
         'update' => true,
         'asset-bom' => function ($url, $model) {
             $class = $model->is_spare == 0 ? '' : 'disabled';
-            $options = ['data-code' => $model->asset_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Asset Bom', 'class' => $class,];
+            $options = ['data-code' => $model->asset_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Asset Bom', 'class' => $class,];
             return GhostHtml::a('<i class="fa fa-money-bill"></i>', ['/assetmanagement/tbl-asset-bom/create', 'id' => $model->asset_code], $options);
         },
     ]
