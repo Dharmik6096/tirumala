@@ -115,7 +115,7 @@ $countrestriction = strtolower($type)=='ekomilk' ? 20 : 0;
                                     if (obj1.status == "success"){
                                         $("#importModal").modal("toggle");
                                         $("#import-pendrive-packet")[0].reset();
-                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                        Dropzone.forElement("#myDropzone").removeAllFiles(true);
                                         var redirectUrl = "' . Url::to(['/bkgprocess/tbl-ftp-txn-log/list']) . '";
                                         bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>", function() {
                                             window.location = redirectUrl;
