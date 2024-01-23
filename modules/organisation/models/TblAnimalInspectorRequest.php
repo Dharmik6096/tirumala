@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblAnimalInspector;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_animal_inspector_request".
@@ -51,9 +52,9 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['originating_org_code', 'originating_org_type', 'address', 'member_name', 'mobile_no', 'remarks', 'user_type', 'member_code', 'ai_request_for', 'created_by', 'updated_by', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'union_code', 'animal_inspector_request_code', 'expected_visit_date', 'created_at', 'updated_at', 'animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'request_date', 'status', 'close_remarks'], 'safe'],
-                [['close_remarks'], 'required'],
-                [['status'], 'required'],
+            [['originating_org_code', 'originating_org_type', 'address', 'member_name', 'mobile_no', 'remarks', 'user_type', 'member_code', 'ai_request_for', 'created_by', 'updated_by', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'union_code', 'animal_inspector_request_code', 'expected_visit_date', 'created_at', 'updated_at', 'animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'request_date', 'status', 'close_remarks', 'ai_mobile_no'], 'safe'],
+            [['close_remarks'], 'required'],
+            [['status'], 'required'],
         ];
     }
 
@@ -79,13 +80,15 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_at' => Yii::t('app', 'AI Complete Date'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'status' => yii::t('app', 'Status'),
-            'close_remarks' => yii::t('app', 'Close Remarks')
+            'close_remarks' => yii::t('app', 'Close Remarks'),
+            'request_date' => yii::t('app', 'Request Date'),
+            'ai_mobile_no' => yii::t('app', 'Animal Inspector Mobile Number')
         ];
     }
 
