@@ -12,11 +12,74 @@ use app\models\TblUserOrganizationMapping;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\widgets\ActiveForm;
+use app\modules\usermanagement\models\User;
 
 /**
  * UserController implements the CRUD actions for User model.
  */
 class UserController extends \webvimark\modules\UserManagement\controllers\UserController {
+
+    /**
+     * @return mixed|string|\yii\web\Response
+     */
+    public function actionCreate() {
+        $this->model = new User(['scenario' => 'newUser']);
+        $this->viewFile = 'create';
+
+        if ($this->model->load(Yii::$app->request->post())) {
+            $identity = new \app\models\IdentityMaster();
+            $data = $identity->getIdentity();
+            $roleName = $_POST['User']['role'];
+            Yii::$app->operation->defaults($this->model, INSERT);
+            $this->model->id = $this->model->getCode();
+            $this->model->user_code = $this->model->getCode();
+            $this->model->user_identity = $data['organization_code'];
+
+            $this->model->username = $this->model->user_identity . '#' . $this->model->username;
+            $this->model->portal_type = 'portal';
+            $this->model->is_active = 1;
+            $this->model->mobile_no = !empty($this->model->mobile_no) ? $this->model->mobile_no : NULL;
+
+            //Assign Role
+            $master = [];
+            $master[] = $this->model;
+            if ($this->model->allow_app_login == 1 && !empty($this->model->mobile_no)) {
+                $contactModel = new TblContactDetails();
+                $contactModel->mobile_no = $this->model->mobile_no;
+                $contactModelData = $contactModel->getContactDetailsRecord();
+                if (!empty($contactModelData)) {
+                    $contactModel = $contactModelData;
+                } else {
+                    $contactModel->firstname = $this->model->name;
+                    $contactModel->setModel('user', $this->model->id, 0);
+                }
+                $contactModel->department = $this->model->department;
+                $master[] = $contactModel;
+            }
+            $transaction = $this->generalModel->saveTransaction($master, ['User', 'create']);
+            if ($transaction !== FALSE) {
+                if ($roleName) {
+                    foreach ($roleName as $role) {
+                        User::assignRole($this->model->id, $role);
+                    }
+                }
+                $this->model->username = $_POST['User']['username'];
+                return $this->{$transaction}();
+            }
+        }
+
+        $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
+
+        if ($searchModel) {
+            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        } else {
+            $modelClass = $this->modelClass;
+            $dataProvider = new ActiveDataProvider([
+                'query' => $modelClass::find()->where(),
+            ]);
+        }
+        return $this->renderIsAjax('create', ['model' => $this->model, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel]);
+    }
 
     public function actionUpdate($id) {
         $model = $this->findModel($id);
@@ -286,6 +349,23 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         Yii::$app->getSession()->setFlash('success');
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    /**
+     * Finds the model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param mixed $id
+     *
+     * @return ActiveRecord the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id) {
+        if (($model = User::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
+        }
     }
 
 }
