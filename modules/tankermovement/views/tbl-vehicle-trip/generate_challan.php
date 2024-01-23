@@ -125,13 +125,31 @@ $this->title = Yii::t('app', 'Consolidate Challan Preview');
         <div class="hide_toolbar_only hide_filters_only">
             <?php
             $attribute = [
-                ['attribute' => 'bmc_code',
-                    'label' => Yii::t('app', 'BMC Code'),
-                    'vAlign' => 'middle', 'filter' => false],
-                ['attribute' => 'bmc_name',
-                    'label' => Yii::t('app', 'BMC Name'),
+                ['attribute' => 'source_type',
+                    'label' => Yii::t('app', 'Source Type'),
                     'value' => function($model) {
-                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                        return !empty($model->bmc_code) ? 'BMC' : 'PLANT';
+                    }, 'vAlign' => 'middle', 'filter' => false
+                ],
+                ['attribute' => 'source_name',
+                    'label' => Yii::t('app', 'Source Name'),
+                    'value' => function($model) {
+                        $SourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
+                        $SourceCode = !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code;
+                        $rel = Yii::$app->general->getDestRelation($SourceType);
+                        $att = (strtolower($SourceType) == 'bmc') ? 'bmc_name' : 'name';
+                        if (!empty($rel))
+                            return Yii::$app->general->getforeignkey($model->$rel, $att) . '-' . strtoupper($SourceCode);
+                    }, 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'ref_code',
+                    'label' => Yii::t('app', 'Ref Code'),
+                    'value' => function($model) {
+                        $SourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
+                        $SourceCode = !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code;
+                        $rel = Yii::$app->general->getDestRelation($SourceType);
+                        $att = (strtolower($SourceType) == 'bmc') ? 'bmc_name' : 'name';
+                        if (!empty($rel))
+                            return Yii::$app->general->getforeignkey($model->$rel, 'ref_code');
                     }, 'vAlign' => 'middle', 'filter' => false],
                 ['attribute' => 'challan_no',
                     'label' => Yii::t('app', 'Challan No.'),

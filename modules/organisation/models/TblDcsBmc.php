@@ -307,10 +307,11 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = [], $plant_bmc = []) {
+    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = [], $plant_bmc = [], $concatField = '') {
         $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode, $plant_bmc);
-        $value = ArrayHelper::map($value, 'bmc_code', function($value) use ($invert) {
-                    return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code;
+        $concatField = !empty($concatField) ? ' - '.$concatField : '';
+        $value = ArrayHelper::map($value, 'bmc_code', function($value) use ($invert, $concatField) {
+                    return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code . $concatField;
                 });
         return $value;
     }

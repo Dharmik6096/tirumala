@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\usermanagement\models\User;
 
 /**
  * TblContactDetailsController implements the CRUD actions for TblContactDetails model.
@@ -153,16 +154,49 @@ class TblContactDetailsController extends \app\controllers\ChildController {
     public function actionDeactivate($id) {
         $this->model = $this->findModel($id);
         $contactModel = new TblContactDetailsHistory();
-        Yii::$app->operation->history($this->model, $contactModel, UPDATE);
-        $this->model->is_active = 0;
-        $this->model->is_contact_verified = 0;
-        $transaction = $this->generalModel->saveTransaction([$this->model, $contactModel], ['Contact Details', 'edit']);
-        if ($transaction !== FALSE) {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                'message' => 'Contact deactivated successfully.']);
+        $userModel = new user();
+        $userModel->mobile_no = $this->model->mobile_no;
+        $UserRecords = $userModel->getLoginDetails();
+        $allow_app_login = !empty($UserRecords) ? $UserRecords->allow_app_login : '';
+        if ($allow_app_login == 1) {
+            $UserRecords->username = Yii::$app->general->getUserName($UserRecords->username);
+            $UserRecords->login_type = isset($UserRecords->login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$UserRecords->login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$UserRecords->login_type] : '') : '';
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'error',
+                'message' => "Could Not Deactivate {$this->model->mobile_no} <br> Active User Available: {$UserRecords->username} - {$UserRecords->user_code} - {$UserRecords->login_type}",
+            ]);
         } else {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => 'Could not deactivate. Please try again.']);
+            Yii::$app->operation->history($this->model, $contactModel, UPDATE);
+            $this->model->is_active = 0;
+            $this->model->is_default = 0;
+            $this->model->is_contact_verified = 0;
+            $transaction = $this->generalModel->saveTransaction([$this->model, $contactModel], ['Contact Details', 'edit']);
+            if ($transaction !== FALSE) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                    'message' => 'Contact deactivated successfully.']);
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Could not deactivate. Please try again.']);
+            }
+        }
+        $this->redirect(Url::previous());
+    }
+
+    public function actionActivate($id) {
+        $this->model = $this->findModel($id);
+        $contactModel = new TblContactDetailsHistory();
+        Yii::$app->operation->history($this->model, $contactModel, UPDATE);
+        $this->model->is_active = 1;
+        $ContactDetailsRecord = $this->model->getContactDetailsRecord();
+        if (!empty($ContactDetailsRecord)) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $ContactDetailsRecord->module_name . ' - ' . $ContactDetailsRecord->module_code . '.']);
+        } else {
+            $transaction = $this->generalModel->saveTransaction([$this->model, $contactModel], ['Contact Details', 'edit']);
+            if ($transaction == 'customRedirect') {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Contact activated successfully.']);
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Could not Activate. Please try again.']);
+            }
         }
         $this->redirect(Url::previous());
     }

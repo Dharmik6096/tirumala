@@ -49,10 +49,15 @@ $grid_option = [
 //      'update' => true,
 //      'delete' => ['option' => 'contact_person,detail_code,/details/tbl-contact-details/delete'],
         'disable' => function ($url, $model) {
-            $class = $model->is_active == 1 ? '' : 'disabled';
-            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deactive ' . $class, 'data-is-default' => $model->is_default];
+            if ($model->is_active == 1) {
+                $class = $model->is_active == 1 ? '' : 'disabled';
+                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deactive ' . $class, 'data-is-default' => $model->is_default];
 //            die('here');
-            return Html::a('<i class="fa fa-times"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options);
+                return Html::a('<i class="fa fa-ban"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options);
+            } else {
+                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user', 'data-is-default' => $model->is_default];
+                return Html::a('<i class="fa fa-life-ring"></i>', ['/details/tbl-contact-details/activate', 'id' => $model->detail_code], $options);
+            }
         },
         'default' => function ($url, $model) {
             $class = $model->is_default == 0 && $model->is_active == 1 && !empty($model->mobile_no) ? '' : 'disabled';
@@ -102,7 +107,36 @@ $script = <<< JS
                 }
              });
         });
-      
+        
 JS;
+$script = "$(document).ready(function(){
+    $(document).on('click','.react-user',function(e){
+    var id= $(this).attr('data-val');
+    var name = $(this).attr('data-name');
+    bootbox.confirm({
+        callback: function(result) {
+            if (result) {
+              $('#loader').show();
+                 $.ajax({
+                        type: 'get',
+                        url: '" . Url::to(['activate']) . "',
+                        data:{'id':id},
+                        success: function(data) {
+                            var obj1 = $.parseJSON(data);
+                            if (obj1.status == 'success')
+                            {
+                                $.pjax.reload({container: '#user-grid'});
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                            else if (obj1.status == 'error'){
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                        }
+            });
+            }
+        }
+    });
+    });  
+});";
 $this->registerJs($script, View::POS_READY);
 ?>

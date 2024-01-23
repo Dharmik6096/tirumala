@@ -23,8 +23,6 @@ use yii\helpers\Url;
             ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'chamber_quantity', 'value' => 'chamber_quantity', 'vAlign' => 'middle', 'filter' => false],
-        'water',
-        'temp',
         'clr',
         'protein',
         'density',
