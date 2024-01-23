@@ -240,7 +240,7 @@ $this->title = Yii::$app->label->title('view', 'Bonus Payment');
                     'default_sorting' => FALSE,
                     'actions' => [
                         'member-bill-head' => function ($url, $model) {
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-bonus_payment_code' => $model->bonus_payment_code];
+                            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'title' => 'View Bill Head', 'data-bonus_payment_code' => $model->bonus_payment_code];
                             return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-bonus-payment/bill-head', 'bonus_payment_code' => $model->bonus_payment_code], $options);
                         },
                     ]

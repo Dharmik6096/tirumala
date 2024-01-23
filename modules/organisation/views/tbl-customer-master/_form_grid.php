@@ -167,7 +167,7 @@ $grid_option = [
             $id = $model->customer_code;
             $name = $model->customer_name;
             $url = ['/organisation/tbl-customer-master/customer-document-upload', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $id, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Document Upload', 'data-val' => $id, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
     ]

@@ -73,11 +73,11 @@ $message = Yii::t('app', 'Payment data will be Locked for (' . $bmc_info . '). A
             'showPageSummary' => true,
             'actions' => [
                 'bill-head' => function ($url, $model) {
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-val' => $model->bonus_payment_summary_code];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'title' => 'View Bill Head', 'data-val' => $model->bonus_payment_summary_code];
                     return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-bonus-payment/summary-bill-head', 'id' => $model->bonus_payment_summary_code], $options);
                 },
                 'payment-detail' => function ($url, $model) {
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Detail', 'data-val' => $model->bonus_payment_summary_code];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'title' => 'View Detail', 'data-val' => $model->bonus_payment_summary_code];
                     return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-bonus-payment/payment-detail', 'id' => $model->bonus_payment_summary_code], $options);
                 },
             ]

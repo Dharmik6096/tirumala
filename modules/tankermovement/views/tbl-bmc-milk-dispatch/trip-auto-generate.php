@@ -11,11 +11,11 @@ $this->title = Yii::t('app', 'Create Trip');
 
 ?>
 <div class="modal modal-default fade create-trip-modal" id="createTripModal" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content panel">
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalHeader">Generate Trip For Vehicle: <span id="vehicleName"><?= $data['vehicleName'] ?></span>, Date: <span id="dispatchDate"><?= $data['dispatchDate'] ?></span></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -33,15 +33,23 @@ $this->title = Yii::t('app', 'Create Trip');
                     ?>
                     <div class="row">
                         <div class="col-sm-12">
-                            <div class="col-sm-2 hide_help_block">
-                                <?= $form->field($bmcDispatchInspectionModel, 'bmc_code')->hiddenInput(['value' => $data['bmcValue']]); ?>
-                                <input type="text" class="form-control" id="bmc_code" value="<?= $data['bmcName'] ?>" readonly>
-                            </div>
-                            <div class="col-sm-2 hide_help_block">
+                            <?php if (isset($data['bmcValue'])) : ?>
+                                <div class="col-sm-2 hide_help_block mb-manage">
+                                    <?= $form->field($bmcDispatchInspectionModel, 'bmc_code')->hiddenInput(['value' => $data['bmcValue']]); ?>
+                                    <input type="text" class="form-control" id="bmc_code" value="<?= isset($data['bmcName']) ? $data['bmcName'] : null; ?>" readonly>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!isset($data['bmcValue'])) : ?>
+                                <div class="col-sm-2 hide_help_block mb-manage">
+                                    <?= $form->field($bmcDispatchInspectionModel, 'plant_code')->hiddenInput(['value' => $data['plantValue']]); ?>
+                                    <input type="text" class="form-control" id="plant_code" value="<?= isset($data['plantName']) ? $data['plantName'] : null; ?>" readonly>
+                                </div>
+                            <?php endif; ?>
+                            <div class="col-sm-2 hide_help_block mb-manage">
                                 <?= $form->field($bmcDispatchInspectionModel, 'vehicle_code')->hiddenInput(['value' => $data['vehicleValue']]); ?>
                                 <input type="text" class="form-control" id="vehicle_code" value="<?= $data['vehicleName'] ?>" readonly>
                             </div>
-                            <div class="col-sm-2 hide_help_block">
+                            <div class="col-sm-2 hide_help_block mb-manage">
                                 <?= $form->field($bmcDispatchInspectionModel, 'inspection_date')->hiddenInput(['value' => $data['dispatchDate']]); ?>
                                 <input type="text" class="form-control" id="inspection_date" value="<?= $data['dispatchDate'] ?>" readonly>
                             </div>
@@ -75,12 +83,12 @@ $this->title = Yii::t('app', 'Create Trip');
                             <div class="hide_help_block">
                                 <?= $form->field($bmcDispatchInspectionModel, 'union_code')->hiddenInput(['value' => $data['unionValue']])->label(false); ?>
                                 <?= $form->field($bmcDispatchInspectionModel, 'plant_code')->hiddenInput(['value' => $data['plantValue']])->label(false); ?>
-                                <?= $form->field($bmcDispatchInspectionModel, 'mcc_plant_code')->hiddenInput(['value' => $data['mccValue']])->label(false); ?>
+                                <?= $form->field($bmcDispatchInspectionModel, 'mcc_plant_code')->hiddenInput(['value' => isset($data['mccValue']) ? $data['mccValue'] : null])->label(false); ?>
                             </div>
                         </div>
                         <div class="modal-footer mt10 col-sm-12">
                             <div class="col-md-12 top-bottom-15 padding-50">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn-login btn btn-primary" data-bs-dismiss="modal">Cancel</button>
                                 <?php
                                 AjaxSubmitButton::begin([
                                     'label' => Yii::t('app', 'Generate Trip'),
@@ -112,7 +120,7 @@ $this->title = Yii::t('app', 'Create Trip');
                                                  }'),
                                     ],
                                     'options' => [
-                                        'class' => 'btn btn-default btn-raised',
+                                        'class' => 'btn-login btn btn-default btn-raised',
                                         'type' => 'submit'
                                     ],
                                 ]);

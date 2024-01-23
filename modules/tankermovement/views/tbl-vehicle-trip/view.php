@@ -15,53 +15,77 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
         <div class="form-grid">
             <div class="table-responsive">
                 <?php
+                $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
+                $rel = Yii::$app->general->getDestRelation($sourceType);
+                $att = strtolower($sourceType) == 'bmc' ? 'bmc_name' : (
+                    strtolower($sourceType) == 'vendor' ? 'customer_name' : (
+                        strtolower($sourceType) == 'party' ? 'party_name' : 'name'
+                    )
+                );
                 $attributes = [
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'union_code',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'bmc_code',
-                                'label' => Yii::t('app', 'BMC Code'),
+                                'label' => Yii::t('app', 'Source Type'),
+                                'value' => $sourceType,
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'bmc_code',
-                                'label' => Yii::t('app', 'BMC Name'),
-                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'label' => Yii::t('app', 'Source Name'),
+                                'value' => Yii::$app->general->getforeignkey($model->$rel, $att),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
+                                'attribute' => 'bmc_code',
+                                'label' => Yii::t('app', 'Source Code'),
+                                'value' => !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code,
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'bmc_code',
+                                'label' => (Yii::t('app', 'Source Ref.Code')),
+                                'value' => Yii::$app->general->getforeignkey($model->$rel, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'transporter_code',
                                 'value' => Yii::$app->general->getmultiforeignkey($model->vehicleCode, ['transporter'], 'transporter_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'vehicle_code',
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no'),
                                 'label' => Yii::t('app', 'Vehicle No.'),
@@ -69,28 +93,28 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'transaction_date',
                                 'value' => Yii::$app->controls->view_date($model->transaction_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'trip_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'vehicle_code',
                                 'label' => Yii::t('app', 'Driver Name'),
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'driver_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'vehicle_code',
                                 'label' => Yii::t('app', 'Driver Contact No.'),
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'driver_contact_no'),
@@ -98,25 +122,25 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'trip_mode',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'trip_status',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'grn_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
@@ -137,7 +161,7 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [// your ajax delete parameters
+                    'deleteOptions' => [ // your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],
@@ -155,25 +179,44 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
             <div class="form-grid">
                 <?php
                 $attribute = [
-                        [
+                    [
                         'attribute' => 'transaction_datetime',
-                        'value' => function($model) {
+                        'value' => function ($model) {
                             return Yii::$app->controls->view_datetime($model->transaction_datetime);
-                        }],
-                        ['attribute' => 'source_org_code',],
-                        ['attribute' => 'source_org_type', 'value' => function($model) {
+                        }
+                    ],
+                    ['attribute' => 'source_org_code',],
+                    ['attribute' => 'source_org_type', 'value' => function ($model) {
+                        $rel = Yii::$app->general->getDestRelation($model->source_org_type);
+                        $att = strtolower($model->source_org_type) == 'bmc' ? 'bmc_name' : (strtolower($model->source_org_type) == 'vendor' ? 'customer_name' : 'name');
+                        if (!empty($rel))
+                            return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->source_org_type);
+                    }, 'filter' => false],
+                    [
+                        'attribute' => 'source_org_code',
+                        'label' => (Yii::t('app', 'Source Ref.Code')),
+                        'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->source_org_type);
-                            $att = strtolower($model->source_org_type) == 'bmc' ? 'bmc_name' : (strtolower($model->source_org_type) == 'vendor' ? 'customer_name' : 'name');
                             if (!empty($rel))
-                                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->source_org_type);
-                        }, 'filter' => false],
-                        ['attribute' => 'destination_code',],
-                        ['attribute' => 'destination_type', 'value' => function($model) {
+                                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, 'ref_code');
+                        }, 'filter' => false
+                    ],
+                    ['attribute' => 'destination_code',],
+                    ['attribute' => 'destination_type', 'value' => function ($model) {
+                        $rel = Yii::$app->general->getDestRelation($model->destination_type);
+                        $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
+                        if (!empty($rel))
+                            return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
+                    }, 'filter' => false],
+                    [
+                        'attribute' => 'destination_code',
+                        'label' => (Yii::t('app', 'Dest. Ref.Code')),
+                        'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->destination_type);
-                            $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
                             if (!empty($rel))
-                                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
-                        }, 'filter' => false],
+                                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code');
+                        }, 'filter' => false
+                    ],
                 ];
                 $grid_option = [
                     'id' => 'trip-detail-list',
@@ -183,6 +226,6 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                 ];
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], FALSE);
                 ?>
-            </div> 
+            </div>
         </div>
     </div>

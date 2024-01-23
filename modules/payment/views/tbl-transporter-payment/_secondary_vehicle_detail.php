@@ -146,8 +146,15 @@ use kartik\grid\GridView;
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->receipt_datetime);
             }, 'filter' => false],
+            ['attribute' => 'trip_code', 'filter' => false],
             ['attribute' => 'mchallan_no', 'label' => Yii::t('app', 'Challan No.'), 'filter' => false],
             ['attribute' => 'grn_no', 'label' => Yii::t('app', 'GRN No.'), 'filter' => false],
+            ['attribute' => 'return_dest', 'value' => function($model) {
+                $rel = Yii::$app->general->getDestRelation($model->return_type);
+                $att = strtolower($model->return_type) == 'bmc' ? 'bmc_name' : (strtolower($model->return_type) == 'vendor' ? 'customer_name' : 'name');
+                if (!empty($rel))
+                    return Yii::$app->general->getforeignkey($model->{$rel . 'Return'}, $att);
+            }, 'filter' => false],
             ['attribute' => 'from_dest', 'value' => function($model) {
                 $rel = Yii::$app->general->getDestRelation($model->from_type);
                 $att = strtolower($model->from_type) == 'bmc' ? 'bmc_name' : (strtolower($model->from_type) == 'vendor' ? 'customer_name' : 'name');

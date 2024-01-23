@@ -67,7 +67,7 @@ $grid_option = [
         'update' => true,
         'delete' => ['option' => 'region_name,region_code,tbl-region/delete'],
         'contact-details' => function ($url, $model) {
-    $options = ['data-name' => $model->region_name, 'data-val' => $model->region_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
+    $options = ['data-name' => $model->region_name, 'data-val' => $model->region_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details'];
     return GhostHtml::a('<i class="fas fa-user-circle"></i>', ['/geo/tbl-region/contact-details', 'id' => $model->region_code], $options);
 },
     ]

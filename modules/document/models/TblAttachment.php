@@ -96,7 +96,7 @@ class TblAttachment extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc) {
+    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc, &$deleteModel = [], $deleteAttachment = [], &$unlink_files) {
 
         $tblAttachment = $this->getAttachment($provisional_code, $module_name);
         $doc_path = Yii::$app->params['document_upload'] . $process_name;
@@ -121,6 +121,18 @@ class TblAttachment extends \app\models\ChildModel {
                             $attach->file_name = $file_name;
                             $model_save[] = $attach;
                             $model_save[] = $attachHistoryModel;
+                        }
+                        if(!empty($deleteAttachment)){
+                            $attachMaster = $this->find()
+                                    ->where(['module_code' => $deleteAttachment['module_code'], 'module_name' => $deleteAttachment['module_name'], 'doc_id' => $doc->doc_id])
+                                    ->one();
+                            if (!empty($attachMaster)) {
+                                $unlink_files[] = $attachMaster->file_name;
+                                $attachHistoryModel = new TblAttachmentHistory();
+                                Yii::$app->operation->history($attachMaster, $attachHistoryModel, DELETE);
+                                $deleteModel[] = $attachMaster;
+                                $model_save[] = $attachHistoryModel;
+                            }
                         }
                         $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
                         $tblAttachments->module_name = $master_module_name;
