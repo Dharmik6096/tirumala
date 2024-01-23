@@ -70,6 +70,7 @@ $form = ActiveForm::begin([
                         </div>
                     <?php } ?>
                     <div class="col-sm-2 create_fields">
+                        <?php echo Html::hiddenInput('is_clr_input', 0, ['id' => 'is_clr_input']); ?>
                         <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                     </div>
                     <div class="col-sm-2 rtpl_validate create_fields reset_field">
@@ -91,17 +92,17 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1 reset_field number-validate">
                         <?= $form->field($model, 'fat')->textInput() ?>
                     </div>
-                    <div class="col-sm-1 reset_field number-validate">
+                    <div class="col-sm-1 reset_field number-validate snf_calculate">
                         <?= $form->field($model, 'snf')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 reset_field number-validate rtpl_validate clr_calculate ">
+                        <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
                     </div>
                     <?php if ($allowCanSelection) { ?>
                         <div class="col-sm-1 create_fields">
                             <?= $form->field($model, 'can_no')->textInput() ?>
                         </div>
                     <?php } ?>
-                    <div class="col-sm-1 reset_field rtpl_validate ">
-                        <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
-                    </div>
                     <div class="col-sm-1 reset_field">
                         <?= $form->field($model, 'scheme_rate')->textInput(['readOnly' => true]) ?>
                         <?= $form->field($model, 'scheme_rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
