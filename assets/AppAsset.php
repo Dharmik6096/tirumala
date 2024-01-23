@@ -27,6 +27,9 @@ class AppAsset extends AssetBundle {
         'themes/pcdf/assets/css/print.css',
         'themes/pcdf/assets/css/font.css',
         'vendor/bower-asset/jquery-ui/themes/smoothness/jquery-ui.min.css',
+        ///
+        'themes/pcdf/assets/emoji/css/emoji.css',
+        'themes/pcdf/assets/emoji/css/emoji.css.map',
     ];
     public $js = [
 //        'themes/nddb/assets/js/bootstrap.js',
@@ -44,7 +47,12 @@ class AppAsset extends AssetBundle {
         'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
         'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
         'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js'
+        'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js',
+        ///
+        'themes/pcdf/assets/emoji/js/config.min.js',
+        'themes/pcdf/assets/emoji/js/emoji-picker.min.js',
+        'themes/pcdf/assets/emoji/js/jquery.emojiarea.min.js',
+        'themes/pcdf/assets/emoji/js/util.min.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
