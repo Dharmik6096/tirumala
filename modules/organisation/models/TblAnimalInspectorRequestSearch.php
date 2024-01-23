@@ -12,12 +12,14 @@ use app\modules\organisation\models\TblAnimalInspectorRequest;
  */
 class TblAnimalInspectorRequestSearch extends TblAnimalInspectorRequest {
 
+    public $ai_mobile_no;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_type', 'member_code', 'member_name', 'mobile_no', 'address', 'ai_request_for', 'expected_visit_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'request_date', 'status', 'close_remarks'], 'safe'],
+            [['animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_type', 'member_code', 'member_name', 'mobile_no', 'address', 'ai_request_for', 'expected_visit_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'request_date', 'status', 'close_remarks', 'ai_mobile_no'], 'safe'],
         ];
     }
 
@@ -57,10 +59,12 @@ class TblAnimalInspectorRequestSearch extends TblAnimalInspectorRequest {
         if (!empty($this->expected_visit_date))
             $query->andFilterWhere(['like', 'expected_visit_date', date('Y-m-d', strtotime($this->expected_visit_date))]);
 
+        $query->andFilterWhere(['=', 'CAST(tbl_animal_inspector_request.request_date as date)', !empty($this->request_date) ? date('Y-m-d', strtotime($this->request_date)) : NULL]);
+
+        $query->andFilterWhere(['=', 'CAST(tbl_animal_inspector_request.updated_at as date)', !empty($this->updated_at) ? date('Y-m-d', strtotime($this->updated_at)) : NULL]);
         // grid filtering conditions
         $query->andFilterWhere([
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'originating_type' => $this->originating_type,
         ]);
 
@@ -74,6 +78,7 @@ class TblAnimalInspectorRequestSearch extends TblAnimalInspectorRequest {
                 ->andFilterWhere(['like', 'tbl_animal_inspector_request.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_animal_inspector_request.address', $this->address])
                 ->andFilterWhere(['like', 'tbl_animal_inspector.ai_name', $this->animal_inspector_code])
+                ->andFilterWhere(['like', 'tbl_animal_inspector.ai_mobile_no', $this->ai_mobile_no])
                 ->andFilterWhere(['like', 'tbl_animal_inspector_request.ai_request_for', $this->ai_request_for])
                 ->andFilterWhere(['like', 'tbl_animal_inspector_request.remarks', $this->remarks])
                 ->andFilterWhere(['like', 'tbl_animal_inspector_request.created_by', $this->created_by])
