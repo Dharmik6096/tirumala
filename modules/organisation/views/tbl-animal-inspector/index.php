@@ -1,6 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Animal Inspector'));
-$this->params['menu'][] = Yii::$app->controls->add('Animal Inspector');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Artificial Insemination'));
+$this->params['menu'][] = Yii::$app->controls->add('Artificial Insemination');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
