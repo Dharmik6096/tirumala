@@ -63,7 +63,7 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'animal_inspector_request_code' => Yii::t('app', 'Animal Inspector Request Code'),
+            'animal_inspector_request_code' => Yii::t('app', 'Artificial Insemination Request Code'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
@@ -75,7 +75,7 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
             'mobile_no' => Yii::t('app', 'Mobile No'),
             'address' => Yii::t('app', 'Address'),
             'ai_request_for' => Yii::t('app', 'Ai Request For'),
-            'animal_inspector_code' => Yii::t('app', 'Animal Inspector Name'),
+            'animal_inspector_code' => Yii::t('app', 'Artificial Insemination Name'),
             'expected_visit_date' => Yii::t('app', 'Expected Visit Date'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -88,7 +88,7 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
             'status' => yii::t('app', 'Status'),
             'close_remarks' => yii::t('app', 'Close Remarks'),
             'request_date' => yii::t('app', 'Request Date'),
-            'ai_mobile_no' => yii::t('app', 'Animal Inspector Mobile Number')
+            'ai_mobile_no' => yii::t('app', 'Artificial Insemination Mobile Number')
         ];
     }
 
