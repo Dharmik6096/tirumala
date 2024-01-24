@@ -314,19 +314,9 @@ class TblBannerController extends \app\controllers\ChildController {
         $appModel->setModelFields = true;
         $appModel->assignMultiDataKey = 'login_type';
         $appModel->assignDataKey = 'applicable_code';
-
-        $value = [];
-        $value['farmer'] = 'Farmer';
-        $value['vsp'] = 'Village Superviser';
-        $value['az_manager'] = 'A/Z Manager';
-        $value['route_supervisor'] = 'Route Supervisor';
-        $value['mcc_incharge'] = 'MCC Incharge';
-        $value['procurement_staff'] = 'Head Office User';
-        $value['gyan_dhara_plant'] = 'Inventory User';
-        $value['service_engineer'] = 'Service Engineer';
-        $value['zonal_manager'] = 'Zonal Manager';
-
-        $appModel->customer_type_list = $value;
+        $userLoginType = Yii::$app->dropdown->getRecords('user_login_type')['data'];
+        unset($userLoginType['all']);
+        $appModel->customer_type_list = $userLoginType;
         $appModel->customer_type_field_name = 'login_type';
 
         $appModel->assignStaticData = [
