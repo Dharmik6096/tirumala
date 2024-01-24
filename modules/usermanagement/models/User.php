@@ -17,6 +17,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\general\models\TblDepartment;
+use yii\web\NotFoundHttpException;
 
 /**
  * This is the model class for table "user".
@@ -49,8 +50,7 @@ use app\modules\general\models\TblDepartment;
  * @property string $sync_timestamp
  * @property string $user_identity
  */
-class User extends \webvimark\modules\UserManagement\models\User
-{
+class User extends \webvimark\modules\UserManagement\models\User {
 
     public $organizations;
     public $federation;
@@ -58,53 +58,60 @@ class User extends \webvimark\modules\UserManagement\models\User
     public $dcs;
     public $role;
 
-    public function behaviors()
-    {
+    public function behaviors() {
         return [];
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['username', 'name'], 'required'],
             [['role'], 'required', 'on' => ['newUser']],
             [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
+//			['username', 'unique'],
             ['user_code', 'unique'],
             ['username', 'trim'],
             [['status', 'email_confirmed', 'is_active'], 'integer'],
-            ['email', 'email'],
-            ['email', 'validateEmailConfirmedUnique'],
-            ['bind_to_ip', 'validateBindToIp'],
-            [['federation', 'mobile_no', 'alert_recipient_group_id', 'designation_code', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'primary_parent', 'secondary_parent'], 'safe'],
+            ['email', 'email', 'except' => ['DeactiveUser']],
+            ['email', 'validateEmailConfirmedUnique', 'except' => ['DeactiveUser']],
+            ['bind_to_ip', 'validateBindToIp', 'except' => ['DeactiveUser']],
+            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id'], 'safe'],
             ['bind_to_ip', 'trim'],
             [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
             [['mobile_no'], function ($attribute, $params) {
-                Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-            }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['DeactiveUser']],
             ['password', 'required', 'on' => ['newUser', 'changePassword']],
             ['password', 'string', 'max' => 255, 'on' => ['newUser', 'changePassword']],
+//            ['password', 'trim', 'on' => ['newUser', 'changePassword']],
             ['password', 'match', 'pattern' => '/^\S*$/', 'message' => Yii::t('app', 'Space not allowed in Password.')],
             ['repeat_password', 'required', 'on' => ['newUser', 'changePassword']],
             ['repeat_password', 'compare', 'compareAttribute' => 'password'],
             [['allow_app_login'], 'default', 'value' => 0],
-            [['department', 'mobile_no'], 'required', 'when' => function ($model) {
-                return $model->allow_app_login == 1;
-            }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }"],
-            [['mobile_no'], 'unique'],
+            [['department', 'mobile_no', 'login_type'], 'required', 'when' => function($model) {
+                    return $model->allow_app_login == 1;
+                }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }", 'except' => ['DeactiveUser', 'orgMapping']],
+            [['mobile_no'], 'unique', 'except' => ['DeactiveUser']],
             [['name'], function ($attribute, $params) {
-                Yii::$app->general->validateName($this, $attribute, $params);
-            }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['DeactiveUser']],
+            [['wef_date'], 'required', 'on' => ['DeactiveUser']],
+            [['username'], 'validateUniqueParent', 'on' => ['newUser', 'userUpdate']],
+            [['primary_parent'], 'required', 'when' => function ($model) {
+                    return !empty($model->secondary_parent);
+                }, 'whenClient' => "function (attribute, value) { 
+                            return $('#user-secondary_parent').val() != ''; 
+                        }"],
+            [['employee_id'], 'string', 'max' => 14],
         ];
     }
 
     /**
      * @return array
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'user_code' => Yii::t('app', 'User Code'),
@@ -130,26 +137,23 @@ class User extends \webvimark\modules\UserManagement\models\User
             'email' => Yii::t('app', 'E-mail'),
             'portal_type' => Yii::t('app', 'Portal Type'),
             'designation_code' => yii::t('app', 'Designation'),
+            'employee_id' => yii::t('app', 'Employee Id'),
         ];
     }
 
-    public function getDesignationCode()
-    {
+    public function getDesignationCode() {
         return $this->hasOne(\app\modules\globalmaster\models\TblDesignation::className(), ['designation_code' => 'designation_code']);
     }
 
-    public function getPrimaryParent()
-    {
+    public function getPrimaryParent() {
         return $this->hasOne(User::className(), ['id' => 'primary_parent']);
     }
 
-    public function getSecondaryParent()
-    {
+    public function getSecondaryParent() {
         return $this->hasOne(User::className(), ['id' => 'secondary_parent']);
     }
 
-    public function validateUniqueUsername()
-    {
+    public function validateUniqueUsername() {
         if (!empty($this->username)) {
             $check = $this->find()->where(['username' => $this->username])->count();
             if ($check != 0) {
@@ -158,24 +162,22 @@ class User extends \webvimark\modules\UserManagement\models\User
         }
     }
 
-    public function getUserList()
-    {
+    public function getUserList() {
         $data = $this->find()->where(['portal_type' => 'portal', 'is_active' => 1])->all();
         $list = ArrayHelper::map($data, 'user_code', function ($array, $key) {
-            return $array['name'] . '-' . $array['department'];
-        });
+                    return $array['name'] . '-' . $array['department'];
+                });
         return $list;
     }
 
-    public static function assignRole($userId, $roleName)
-    {
+    public static function assignRole($userId, $roleName) {
         try {
             Yii::$app->db->createCommand()
-                ->insert(Yii::$app->getModule('user-management')->auth_assignment_table, [
-                    'user_id' => $userId,
-                    'item_name' => (string) $roleName,
-                    'created_at' => time(),
-                ])->execute();
+                    ->insert(Yii::$app->getModule('user-management')->auth_assignment_table, [
+                        'user_id' => $userId,
+                        'item_name' => (string) $roleName,
+                        'created_at' => time(),
+                    ])->execute();
             AuthHelper::invalidatePermissions();
             return true;
         } catch (\Exception $e) {
@@ -183,26 +185,25 @@ class User extends \webvimark\modules\UserManagement\models\User
         }
     }
 
-    public static function revokeRole($userId, $roleName)
-    {
+    public static function revokeRole($userId, $roleName) {
         $result = Yii::$app->db->createCommand()
-            ->delete(Yii::$app->getModule('user-management')->auth_assignment_table, ['user_id' => $userId, 'item_name' => (string) $roleName])
-            ->execute() > 0;
+                        ->delete(Yii::$app->getModule('user-management')->auth_assignment_table, ['user_id' => $userId, 'item_name' => (string) $roleName])
+                        ->execute() > 0;
         if ($result) {
             AuthHelper::invalidatePermissions();
         }
         return $result;
     }
-    public function getAssignList($location_type, $code)
-    {
+
+    public function getAssignList($location_type, $code) {
         $userData = $this->find()->alias('u')
-            ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
-            ->where(['tbl_user_organization_mapping.organization_code' => $code, 'tbl_user_organization_mapping.organization_type' => $location_type])
-            ->andWhere(['NOT IN', 'u.login_type', ['vsp', 'farmer', '']])->all();
+                        ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
+                        ->where(['tbl_user_organization_mapping.organization_code' => $code, 'tbl_user_organization_mapping.organization_type' => $location_type])
+                        ->andWhere(['NOT IN', 'u.login_type', ['vsp', 'farmer', '']])->all();
 
         $user = ArrayHelper::map($userData, 'id', function ($data) {
-            return $data->name . ' (' . $data->mobile_no . '-' . $data->login_type . ')';
-        });
+                    return $data->name . ' (' . $data->mobile_no . '-' . $data->login_type . ')';
+                });
         return $user;
     }
 
@@ -210,12 +211,11 @@ class User extends \webvimark\modules\UserManagement\models\User
      * getStatusList
      * @return array
      */
-    public static function getUserTypeList()
-    {
+    public static function getUserTypeList() {
         $userType = TblUserTypes::find()->where('id>="' . Yii::$app->session->get('UserType') . '"')->all();
         $userType = ArrayHelper::map($userType, function ($array, $key) {
-            return $array['id'] . '-' . $array['user_type'];
-        }, 'user_type');
+                    return $array['id'] . '-' . $array['user_type'];
+                }, 'user_type');
         return $userType;
     }
 
@@ -226,15 +226,13 @@ class User extends \webvimark\modules\UserManagement\models\User
      *
      * @return string
      */
-    public static function getAllRoles()
-    {
+    public static function getAllRoles() {
         $roles = Role::getAvailableRoles(true, true);
         $roles = ArrayHelper::map($roles, 'name', 'description');
         return $roles;
     }
 
-    public static function getAvailableRoles()
-    {
+    public static function getAvailableRoles() {
         $roles = Role::getAvailableRoles(true, true);
         $out = [];
         //             print_r($roles);
@@ -245,16 +243,14 @@ class User extends \webvimark\modules\UserManagement\models\User
         return $out;
     }
 
-    public static function findByRole($role)
-    {
+    public static function findByRole($role) {
         return static::find()
-            ->join('LEFT JOIN', 'auth_assignment', 'auth_assignment.user_id = id')
-            ->where(['auth_assignment.item_name' => $role])
-            ->all();
+                        ->join('LEFT JOIN', 'auth_assignment', 'auth_assignment.user_id = id')
+                        ->where(['auth_assignment.item_name' => $role])
+                        ->all();
     }
 
-    public function beforeSave($insert)
-    {
+    public function beforeSave($insert) {
         if ($insert) {
             if (php_sapi_name() != 'cli') {
                 $this->registration_ip = LittleBigHelper::getRealIp();
@@ -300,13 +296,11 @@ class User extends \webvimark\modules\UserManagement\models\User
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUserType()
-    {
+    public function getUserType() {
         return $this->hasOne(TblUserTypes::className(), ['id' => 'user_type_id']);
     }
 
-    public function getCode()
-    {
+    public function getCode() {
 
         $identity = \app\models\IdentityMaster::find()->one();
         $federation = '00';
@@ -326,9 +320,9 @@ class User extends \webvimark\modules\UserManagement\models\User
             $code = $federation . $union . $other;
 
             $val = (new \yii\db\Query)
-                ->select(["MAX(convert(int,id)) as id"])
-                ->from('user')
-                ->one();
+                    ->select(["MAX(convert(int,id)) as id"])
+                    ->from('user')
+                    ->one();
             $newcode = (int) $val['id'] + 1;
 
 
@@ -337,8 +331,7 @@ class User extends \webvimark\modules\UserManagement\models\User
         }
     }
 
-    public function getInstallationCode($organization_type, $organization_code, $parent_code)
-    {
+    public function getInstallationCode($organization_type, $organization_code, $parent_code) {
 
         $federation = '00';
         $union = '000';
@@ -356,10 +349,10 @@ class User extends \webvimark\modules\UserManagement\models\User
         $code = $federation . $union . $other;
 
         $val = (new \yii\db\Query)
-            ->select("MAX(CAST(trim(SUBSTRING(`id`, length(`id`) -3,length(`id`) +4)) AS UNSIGNED)) as id")
-            ->from('user')
-            ->where('(CAST(trim(SUBSTRING(id, 1,11)) AS UNSIGNED))="' . trim($code) . '"')
-            ->one();
+                ->select("MAX(CAST(trim(SUBSTRING(`id`, length(`id`) -3,length(`id`) +4)) AS UNSIGNED)) as id")
+                ->from('user')
+                ->where('(CAST(trim(SUBSTRING(id, 1,11)) AS UNSIGNED))="' . trim($code) . '"')
+                ->one();
         $newcode = (int) $val['id'] + 1;
 
 
@@ -374,8 +367,7 @@ class User extends \webvimark\modules\UserManagement\models\User
      *
      * @return string
      */
-    public static function getUserOrganizations($userID)
-    {
+    public static function getUserOrganizations($userID) {
         $org = \app\models\TblUserOrganizationMapping::find()->where(['user_id' => $userID])->all();
         $values = '';
         foreach ($org as $val) {
@@ -400,8 +392,7 @@ class User extends \webvimark\modules\UserManagement\models\User
         return $values;
     }
 
-    public static function getSelectedOrganization($value)
-    {
+    public static function getSelectedOrganization($value) {
 
         $data = [];
         $field = [];
@@ -454,15 +445,13 @@ class User extends \webvimark\modules\UserManagement\models\User
         return ['data' => $data, 'field' => $field];
     }
 
-    public function afterSave($insert, $changedAttributes)
-    {
+    public function afterSave($insert, $changedAttributes) {
         parent::afterSave($insert, $changedAttributes);
 
         return true;
     }
 
-    public function save($master = true, $validation = TRUE)
-    {
+    public function save($master = true, $validation = TRUE) {
 
         $flag = parent::save($validation);
         if ($master === FALSE && $flag === FALSE) {
@@ -471,32 +460,34 @@ class User extends \webvimark\modules\UserManagement\models\User
         return $flag;
     }
 
-    public function getOrganizations()
-    {
+    public function getOrganizations() {
         return $this->hasMany(TblUserOrganizationMapping::className(), ['user_id' => 'user_code']);
     }
 
-    public function getUserData()
-    {
+    public function getUserData() {
         return $this->find()
-            ->where(['mobile_no' => $this->mobile_no, 'is_active' => 1])
-            ->one();
+                        ->where(['mobile_no' => $this->mobile_no, 'is_active' => 1])
+                        ->one();
     }
 
-    public function getDepartmentCode()
-    {
+    public function getDepartmentCode() {
         return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
-    public function checkNotSelf()
-    {
+    public function checkNotSelf() {
         return $this->id != Yii::$app->session->get('UserCode');
     }
 
-    public function getLoginDetails()
-    {
+    public function getLoginDetails() {
         return $this->find()
-            ->where(['is_active' => 1, 'mobile_no' => $this->mobile_no])
-            ->one();
+                        ->where(['is_active' => 1, 'mobile_no' => $this->mobile_no])
+                        ->one();
     }
+
+    public function validateUniqueParent() {
+        if (!empty($this->primary_parent) && !empty($this->secondary_parent) && ($this->primary_parent == $this->secondary_parent)) {
+            $this->addError('secondary_parent', UserManagementModule::t('front', 'Parent Must Not Same.'));
+        }
+    }
+
 }
