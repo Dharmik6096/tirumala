@@ -5178,6 +5178,10 @@ tr.highlightRow {
     margin: 5px 0px 0px 0px;
 }
 
+#chatboard .feedback_message a{
+    color: #fff;
+}
+
 #chatboard .triangle{
     width: 0;
     height: 0;

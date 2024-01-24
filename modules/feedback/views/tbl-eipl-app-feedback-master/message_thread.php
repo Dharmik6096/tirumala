@@ -23,7 +23,16 @@ use yii\web\View;
                     <div class="received">
                         <span class="messager_name"><strong><?php echo ucfirst($value->name); ?></strong></span>
                         <span class="message-time"><?php echo $message_time; ?></span>
-                        <p class="feedback_message"><?php echo nl2br(Yii::$app->general->asciiToTextConvert($value->feedback_message)); ?></p>                        
+                        <p class="feedback_message">
+                            <?php 
+                            $urlRegex = '/(https?|http):\/\/[^\s]+/';
+                            $message = nl2br(Yii::$app->general->asciiToTextConvert($value->feedback_message));
+                            if (preg_match($urlRegex, $message, $matches)) {
+                                $url = $matches[0];
+                                $message = '<a href="'.$url.'" target="_blank">'.$message.'</a>';
+                            }
+                            echo $message;?>
+                        </p>                      
                         <?php
                         if(!empty($value->file_path)){ ?>
                             <div class="feedback_image">
@@ -42,7 +51,16 @@ use yii\web\View;
                     <div class="sent">
                         <span class="messager_name"><strong><?php echo ucfirst($value->name); ?></strong></span>
                         <span class="message-time"><?php echo $message_time; ?></span>
-                        <p class="feedback_message"><?php echo nl2br(Yii::$app->general->asciiToTextConvert($value->feedback_message)); ?></p>                        
+                        <p class="feedback_message">
+                            <?php 
+                            $urlRegex = '/(https?|http):\/\/[^\s]+/';
+                            $message = nl2br(Yii::$app->general->asciiToTextConvert($value->feedback_message));
+                            if (preg_match($urlRegex, $message, $matches)) {
+                                $url = $matches[0];
+                                $message = '<a href="'.$url.'" target="_blank">'.$message.'</a>';
+                            }
+                            echo $message;?>
+                        </p>                        
                         <?php
                         if(!empty($value->file_path)){ ?>
                             <div class="feedback_image">
