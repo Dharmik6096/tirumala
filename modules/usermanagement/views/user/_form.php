@@ -120,7 +120,9 @@ $form = ActiveForm::begin([
             ?>
         </div>
     <?php endif; ?>
-
+    <div class="col-sm-2">
+        <?= $form->field($model, 'employee_id')->textInput() ?>
+    </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save($button, $model); ?>

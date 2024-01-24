@@ -32,6 +32,10 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => FALSE,
     'actions' => [
+        'applicabilty' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+            return Html::a('<i class="fa fa-plus"></i>', ['/general/tbl-banner/banner-applicability', 'id' => $model->banner_code], $options);
+        },
         'views' => function($url, $model) {
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Banner View'];
             return Html::a('<i class="fa fa-eye"></i>', ['/general/tbl-banner/view', 'id' => $model->banner_code], $options);

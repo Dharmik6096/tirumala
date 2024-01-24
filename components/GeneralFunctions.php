@@ -2095,7 +2095,7 @@ class GeneralFunctions extends Component {
 
     public function getSpDropData($sp, $param, $execute = false) {
         $str = '';
-        $count = count($param);
+        $count = !empty($param) ? count($param) : 0;
         for ($i = 1; $i <= $count; $i++) {
             $str .= ':paramName' . $i . ',';
         }

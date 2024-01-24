@@ -47,7 +47,7 @@ class TblAttachment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['is_mandate', 'doc_name', 'doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name', 'is_new_file'], 'safe'],
+                [['is_mandate', 'doc_name', 'doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name', 'is_new_file'], 'safe'],
         ];
     }
 
@@ -97,7 +97,7 @@ class TblAttachment extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc, &$deleteModel = [], $deleteAttachment = [], &$unlink_files) {
+    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc, &$deleteModel = [], $deleteAttachment = [], &$unlink_files = []) {
 
         $tblAttachment = $this->getAttachment($provisional_code, $module_name);
         $doc_path = Yii::$app->params['document_upload'] . $process_name;
@@ -123,7 +123,7 @@ class TblAttachment extends \app\models\ChildModel {
                             $model_save[] = $attach;
                             $model_save[] = $attachHistoryModel;
                         }
-                        if(!empty($deleteAttachment)){
+                        if (!empty($deleteAttachment)) {
                             $attachMaster = $this->find()
                                     ->where(['module_code' => $deleteAttachment['module_code'], 'module_name' => $deleteAttachment['module_name'], 'doc_id' => $doc->doc_id])
                                     ->one();
