@@ -15,7 +15,9 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }],
-        ['attribute' => 'dcs_code', 'label' => (Yii::t('app', 'DCS Code')), 'filter' => FALSE],
+        ['attribute' => 'dcs_ref_code','label' => Yii::t('app', 'DCS') . ' Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                }, 'filter' => TRUE],
         ['attribute' => 'created_by', 'label' => (Yii::t('app', 'Notification Sender')), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->userCode, 'name');
                 }, 'filter' => FALSE],
