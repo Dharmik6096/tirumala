@@ -67,7 +67,7 @@ class TblAnimalInspectorRequestHistory extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'animal_inspector_request_code' => Yii::t('app', 'Animal Inspector Request Code'),
+            'animal_inspector_request_code' => Yii::t('app', 'Artificial Insemination Request Code'),
             'union_code' => Yii::t('app', 'Union Code'),
             'plant_code' => Yii::t('app', 'Plant Code'),
             'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
@@ -79,7 +79,7 @@ class TblAnimalInspectorRequestHistory extends \app\models\ChildModel {
             'mobile_no' => Yii::t('app', 'Mobile No'),
             'address' => Yii::t('app', 'Address'),
             'ai_request_for' => Yii::t('app', 'Ai Request For'),
-            'animal_inspector_code' => Yii::t('app', 'Animal Inspector Code'),
+            'animal_inspector_code' => Yii::t('app', 'Artificial Insemination Code'),
             'expected_visit_date' => Yii::t('app', 'Expected Visit Date'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),

@@ -103,6 +103,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
         },
     ],
+    'employee_id',
         /* [
           'class' => 'webvimark\components\StatusColumn',
           'attribute' => 'status',

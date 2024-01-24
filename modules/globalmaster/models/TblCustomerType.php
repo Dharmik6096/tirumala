@@ -74,4 +74,9 @@ class TblCustomerType extends \yii\db\ActiveRecord {
         return $customerType;
     }
 
+    public function getClrInput($custome_type, $union) {
+        $query = $this->find()->select('is_clr_input')->where(['customer_type' => $custome_type, 'union_code' => $union])->one();
+        return $query;
+    }
+
 }
