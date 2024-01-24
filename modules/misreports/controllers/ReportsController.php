@@ -807,6 +807,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionStockAtMcc() {
         $this->report = 'StockAtMcc';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'StockAtMccAmount';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -2784,6 +2789,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_stock_to_cc',
                 'scenario' => 'StockAtMcc',
                 'title' => 'Stock At MCC',
+                'report_type' => [Yii::t('app', 'Without Amount'), Yii::t('app', 'With Amount')],
+            ],
+            'StockAtMccAmount' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,p_date:string',
+                'sp_name' => 'mis_stock_to_cc_amount',
+                'scenario' => 'StockAtMcc',
+                'title' => 'Stock At MCC',
+                'report_type' => [Yii::t('app', 'Without Amount'), Yii::t('app', 'With Amount')],
             ],
             'StockAtDcs' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,p_date:string',
