@@ -421,8 +421,7 @@ $('.dpu_data_icon').click(function(){
     $('#modal_widget_selection').collapse('hide');
 });
 
-
-    $(window).on('load', function () {
+    $(document).ready(function() {
         if('" . $widget_type . "' == '' || '" . $widget_type . "' == 'farmer'){
             $('#hidden_widget_type').val('farmer');
             $('#radio-farmer').prop('checked', true);
