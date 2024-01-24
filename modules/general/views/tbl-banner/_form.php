@@ -27,9 +27,6 @@ echo $form->errorSummary($model);
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $applicability_model, $form, '', 'Login Type', FALSE, 'login_type', FALSE, TRUE, TRUE, FALSE, TRUE) ?> 
-    </div>
-    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE, date('Y-m-d'), FALSE, true); ?>
     </div>
     <div class="col-sm-2">

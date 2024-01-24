@@ -48,7 +48,6 @@ class TblBannerSearch extends TblBanner {
         ]);
 
         $this->load($params);
-        $query->joinWith(['bannerApplicabilityCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_banner');
 
         if (!$this->validate()) {
@@ -57,15 +56,17 @@ class TblBannerSearch extends TblBanner {
             return $dataProvider;
         }
         if (!empty($this->login_type)) {
+            $query->joinWith(['bannerApplicabilityCode']);
+
             $query->andFilterWhere(['tbl_banner_applicability.login_type' => $this->login_type]);
         }
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['<=', 'tbl_banner.from_date', $from_date]);
+            $query->andFilterWhere(['>=', 'tbl_banner.from_date', $from_date]);
         }
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andFilterWhere(['>=', 'tbl_banner.to_date', $to_date]);
+            $query->andFilterWhere(['<=', 'tbl_banner.to_date', $to_date]);
         }
 
         $query->andFilterWhere(['like', 'tbl_banner.title', $this->title])

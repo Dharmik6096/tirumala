@@ -3001,7 +3001,7 @@ select[multiple]{
     margin-bottom: 10px;
 }
 
-#applicable_type-list {
+#applicable_type-list, #login_type-list  {
     margin-left: 10px;
 }
 
