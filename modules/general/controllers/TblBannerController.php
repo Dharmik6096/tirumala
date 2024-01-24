@@ -70,39 +70,20 @@ class TblBannerController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $this->model = new TblBanner();
-        $applicability_model = new TblBannerApplicability();
-        $applicability_model->scenario = 'banner_upload';
         $attachment = new TblAttachment();
         $this->viewFile = 'create';
         $saveModel = [];
         if (Yii::$app->request->post()) {
 
             $this->model->load(Yii::$app->request->post());
-            $applicability_data = Yii::$app->request->post()['TblBannerApplicability']['login_type'];
 
             $this->model->from_date = !empty($this->model->from_date) ? date('Y-m-d', strtotime($this->model->from_date)) : '';
             $this->model->to_date = !empty($this->model->to_date) ? date('Y-m-d', strtotime($this->model->to_date)) : '';
             $this->model->banner_for = 'mobile_app';
 
             $saveModel[] = $this->model;
-            $msg = '';
 
-            if (!empty($applicability_data)) {
-                foreach ($applicability_data as $login_type) {
-                    $applicability_model = new TblBannerApplicability();
-                    $login_type_count = $this->model->checkLogintype($login_type, $this->model->from_date, $this->model->to_date);
-
-                    if ($login_type_count < 5) {
-                        $applicability_model->login_type = $login_type;
-                        $saveModel[] = $applicability_model;
-                        $auto_key_config['TblBannerApplicability'][] = ['self_key' => 'banner_code', 'parent_key' => 'banner_code', 'parent_index' => 0];
-                    } else {
-                        $msg = $msg . 'More than 5 ' . $login_type . ' login type not allowed. <br>';
-                    }
-                }
-            }
-
-            if ($msg == '' && $this->model->validate() && $applicability_model->validate() && empty($this->model->getErrors()) && empty($applicability_model->getErrors())) {
+            if ($this->model->validate() && empty($this->model->getErrors())) {
                 $attachment_file = Yii::$app->request->post()['attachment'];
                 if (!empty($attachment_file)) {
                     $attachment = new TblAttachment();
@@ -126,15 +107,7 @@ class TblBannerController extends \app\controllers\ChildController {
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 $err = [];
-                if ($msg != '') {
-                    $err['login_type'] = $msg;
-                }
-
                 foreach ($this->model->getErrors() as $key => $value) {
-                    $err[$key] = $value;
-                }
-
-                foreach ($applicability_model->getErrors() as $key => $value) {
                     $err[$key] = $value;
                 }
                 return Json::encode($err);
@@ -142,7 +115,6 @@ class TblBannerController extends \app\controllers\ChildController {
         }
         return $this->render('create', [
                     'model' => $this->model,
-                    'applicability_model' => $applicability_model,
                     'attachment' => $attachment,
         ]);
     }
@@ -320,6 +292,65 @@ class TblBannerController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionBannerApplicability($id) {
+        $cmodel = $this->findModel($id);
+        $appModel = Yii::$app->getModule('applicability');
+        $appModel->model = new TblBannerApplicability();
+        $appModel->model->banner_code = $id;
+        $appModel->searchModel = new TblBannerApplicabilitySearch();
+        $appModel->field_name = 'banner_code';
+        $appModel->field_value = $id;
+        $appModel->trans_label = 'banner applicability';
+        $appModel->top_section = FALSE;
+        $appModel->is_union = FALSE;
+        $appModel->union_code = $cmodel->union_code;
+        $appModel->bmc_field_name = 'applicable_code';
+        $appModel->options = ['bmc'];
+        $appModel->payment = false;
+        $appModel->customer_type_wise_entry = true;
+        $appModel->assignMultiData = true;
+        $appModel->setModelFields = true;
+        $appModel->assignMultiDataKey = 'login_type';
+        $appModel->assignDataKey = 'applicable_code';
+
+        $value = [];
+        $value['farmer'] = 'Farmer';
+        $value['vsp'] = 'Village Superviser';
+        $value['az_manager'] = 'A/Z Manager';
+        $value['route_supervisor'] = 'Route Supervisor';
+        $value['mcc_incharge'] = 'MCC Incharge';
+        $value['procurement_staff'] = 'Head Office User';
+        $value['gyan_dhara_plant'] = 'Inventory User';
+        $value['service_engineer'] = 'Service Engineer';
+        $value['zonal_manager'] = 'Zonal Manager';
+
+        $appModel->customer_type_list = $value;
+        $appModel->customer_type_field_name = 'login_type';
+
+        $appModel->assignStaticData = [
+            'applicable_for' => 'BMC',
+        ];
+
+        $appModel->fields = [
+            'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                },],
+            'mcc_plant_code' => ['view' => ['grid'], 'value' => 'mcc_plant_code'],
+            'bmc_code' => ['view' => ['grid'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                }],
+            'login_type' => ['view' => ['grid'],
+                'value' => function ($model) {
+                    return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '';
+                }],
+            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+        ];
+        $appModel->actions = [];
+
+        return $appModel->customerTypeWiseApplicability();
     }
 
 }

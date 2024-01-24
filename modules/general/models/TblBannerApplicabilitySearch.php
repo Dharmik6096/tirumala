@@ -17,7 +17,7 @@ class TblBannerApplicabilitySearch extends TblBannerApplicability {
      */
     public function rules() {
         return [
-                [['login_type', 'banner_code', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['banner_code', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'applicable_code', 'union_code', 'plant_code'], 'safe'],
         ];
     }
 
@@ -54,7 +54,8 @@ class TblBannerApplicabilitySearch extends TblBannerApplicability {
         }
 
         $query->andFilterWhere(['like', 'login_type', $this->login_type])
-                ->andFilterWhere(['like', 'banner_code', $this->banner_code]);
+                ->andFilterWhere(['like', 'banner_code', $this->banner_code])
+                ->andFilterWhere(['like', 'applicable_code', $this->applicable_code]);
 
         return $dataProvider;
     }
