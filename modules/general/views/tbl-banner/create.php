@@ -7,7 +7,6 @@ $this->title = Yii::$app->label->title('create', 'Banner');
         <?=
         $this->render('_form', [
             'model' => $model,
-            'applicability_model' => $applicability_model,
             'attachment' => $attachment,
             'type' => 'create',
         ])
