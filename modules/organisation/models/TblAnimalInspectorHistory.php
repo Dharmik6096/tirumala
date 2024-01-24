@@ -56,7 +56,7 @@ class TblAnimalInspectorHistory extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'animal_inspector_code' => Yii::t('app', 'Animal Inspector Code'),
+            'animal_inspector_code' => Yii::t('app', 'Artificial Insemination Code'),
             'union_code' => Yii::t('app', 'Union Code'),
             'ai_name' => Yii::t('app', 'Ai Name'),
             'ai_mobile_no' => Yii::t('app', 'Ai Mobile No'),
