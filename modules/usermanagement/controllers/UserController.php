@@ -20,8 +20,7 @@ use \app\modules\details\models\TblContactDetailsHistory;
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends \webvimark\modules\UserManagement\controllers\UserController
-{
+class UserController extends \webvimark\modules\UserManagement\controllers\UserController {
 
     use \app\controllers\ChildControllerTrait;
 
@@ -35,8 +34,69 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
      */
     public $modelSearchClass = 'app\modules\usermanagement\models\search\UserSearch';
 
-    public function actionUpdate($id)
-    {
+    /**
+     * @return mixed|string|\yii\web\Response
+     */
+    public function actionCreate() {
+        $this->model = new User(['scenario' => 'newUser']);
+        $this->viewFile = 'create';
+
+        if ($this->model->load(Yii::$app->request->post())) {
+            $identity = new \app\models\IdentityMaster();
+            $data = $identity->getIdentity();
+            $roleName = $_POST['User']['role'];
+            Yii::$app->operation->defaults($this->model, INSERT);
+            $this->model->id = $this->model->getCode();
+            $this->model->user_code = $this->model->getCode();
+            $this->model->user_identity = $data['organization_code'];
+
+            $this->model->username = $this->model->user_identity . '#' . $this->model->username;
+            $this->model->portal_type = 'portal';
+            $this->model->is_active = 1;
+            $this->model->mobile_no = !empty($this->model->mobile_no) ? $this->model->mobile_no : NULL;
+
+            //Assign Role
+            $master = [];
+            $master[] = $this->model;
+            if ($this->model->allow_app_login == 1 && !empty($this->model->mobile_no)) {
+                $contactModel = new TblContactDetails();
+                $contactModel->mobile_no = $this->model->mobile_no;
+                $contactModelData = $contactModel->getContactDetailsRecord();
+                if (!empty($contactModelData)) {
+                    $contactModel = $contactModelData;
+                } else {
+                    $contactModel->firstname = $this->model->name;
+                    $contactModel->setModel('user', $this->model->id, 0);
+                }
+                $contactModel->department = $this->model->department;
+                $master[] = $contactModel;
+            }
+            $transaction = $this->generalModel->saveTransaction($master, ['User', 'create']);
+            if ($transaction !== FALSE) {
+                if ($roleName) {
+                    foreach ($roleName as $role) {
+                        User::assignRole($this->model->id, $role);
+                    }
+                }
+                $this->model->username = $_POST['User']['username'];
+                return $this->{$transaction}();
+            }
+        }
+
+        $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
+
+        if ($searchModel) {
+            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        } else {
+            $modelClass = $this->modelClass;
+            $dataProvider = new ActiveDataProvider([
+                'query' => $modelClass::find()->where(),
+            ]);
+        }
+        return $this->renderIsAjax('create', ['model' => $this->model, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel]);
+    }
+
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($this->scenarioOnUpdate) {
@@ -250,72 +310,11 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->renderIsAjax('update', compact('model', 'dataProvider', 'searchModel'));
     }
 
-    /**
-     * @return mixed|string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $this->model = new User(['scenario' => 'newUser']);
-        $this->viewFile = 'create';
-
-        if ($this->model->load(Yii::$app->request->post())) {
-            $identity = new \app\models\IdentityMaster();
-            $data = $identity->getIdentity();
-            $roleName = $_POST['User']['role'];
-            Yii::$app->operation->defaults($this->model, INSERT);
-            $this->model->id = $this->model->getCode();
-            $this->model->user_code = $this->model->getCode();
-            $this->model->user_identity = $data['organization_code'];
-            $this->model->username = $this->model->user_identity . '#' . $this->model->username;
-            $this->model->portal_type = 'portal';
-            $this->model->is_active = 1;
-            $this->model->mobile_no = !empty($this->model->mobile_no) ? $this->model->mobile_no : NULL;
-
-            $master = [];
-            $master[] = $this->model;
-            if ($this->model->allow_app_login == 1 && !empty($this->model->mobile_no)) {
-                $contactModel = new TblContactDetails();
-                $contactModel->mobile_no = $this->model->mobile_no;
-                $contactModelData = $contactModel->getContactDetailsRecord();
-                if (!empty($contactModelData)) {
-                    $contactModel = $contactModelData;
-                } else {
-                    $contactModel->firstname = $this->model->name;
-                    $contactModel->setModel('user', $this->model->id, 0);
-                }
-                $contactModel->department = $this->model->department;
-                $master[] = $contactModel;
-            }
-            $transaction = $this->generalModel->saveTransaction($master, ['User', 'create']);
-            if ($transaction !== FALSE) {
-                if ($roleName) {
-                    foreach ($roleName as $role) {
-                        User::assignRole($this->model->id, $role);
-                    }
-                }
-                $this->model->username = $_POST['User']['username'];
-                return $this->{$transaction}();
-            }
-        }
-        $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
-        if ($searchModel) {
-            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        } else {
-            $modelClass = $this->modelClass;
-            $dataProvider = new ActiveDataProvider([
-                'query' => $modelClass::find()->where(),
-            ]);
-        }
-        return $this->renderIsAjax('create', ['model' => $this->model, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel]);
-    }
-
-    public function customRedirect()
-    {
+    public function customRedirect() {
         return $this->redirect(['organization-map', 'id' => $this->model->id]);
     }
 
-    public function customRender()
-    {
+    public function customRender() {
         $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
 
         if ($searchModel) {
@@ -329,8 +328,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->render('create', ['model' => $this->model, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel]);
     }
 
-    public function actionGetOrgazinations()
-    {
+    public function actionGetOrgazinations() {
         $out = '';
         if (!isset($_POST['depdrop_parents'])) {
             return Json::encode(['output' => '', 'selected' => '']);
@@ -344,8 +342,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return Json::encode(['output' => $out]);
     }
 
-    public function actionGetRoles()
-    {
+    public function actionGetRoles() {
         $out = '';
         if (!isset($_POST['depdrop_parents'])) {
             return Json::encode(['output' => '', 'selected' => '']);
@@ -361,8 +358,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return Json::encode(['output' => $out, 'selected' => '']);
     }
 
-    public function actionOrganizationMap($id)
-    {
+    public function actionOrganizationMap($id) {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
         $model->scenario = 'organizationMapping';
@@ -474,8 +470,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
     }
 
-    private function addUserOrganizationMapping($data, $type, $userId, $active)
-    {
+    private function addUserOrganizationMapping($data, $type, $userId, $active) {
         $userModel = new User();
         $users = $userModel->findByRole(['EIPL']);
         $users = \yii\helpers\ArrayHelper::getColumn($users, 'id');
@@ -530,8 +525,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
       return $this->renderIsAjax('organization_map',['model'=>$model,'values'=>$data['value'],'selected'=>$data['selected']]);
       } */
 
-    public function setAppOrgMapping($org_codes, $org_type, $contactModel)
-    {
+    public function setAppOrgMapping($org_codes, $org_type, $contactModel) {
         foreach ($org_codes as $org_code) {
             $appOrgMapModel = new TblAppOrganizationMapping();
             $appOrgMapModel->detail_code = $contactModel->detail_code;
@@ -543,8 +537,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
     }
 
-    public function actionDeactiveUser()
-    {
+    public function actionDeactiveUser() {
         $model = $this->findModel(Yii::$app->request->get()['id']);
         if (Yii::$app->request->post()) {
 
@@ -591,12 +584,11 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             return Json::encode($record);
         }
         return $this->renderAjax('deactive_user', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
-    public function actionActivateUser($id)
-    {
+    public function actionActivateUser($id) {
         $this->model = $this->findModel($id);
         $historyModel = new UserHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
@@ -628,4 +620,22 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
+
+    /**
+     * Finds the model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param mixed $id
+     *
+     * @return ActiveRecord the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id) {
+        if (($model = User::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
+        }
+    }
+
 }
