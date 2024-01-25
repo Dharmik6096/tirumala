@@ -3191,7 +3191,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_ftp_bipl_data',
                 'scenario' => 'BiplData',
                 'title' => 'Bipl Data',
-                'report_type' => [Yii::t('app', 'All'), Yii::t('app', 'Online'), Yii::t('app', 'Pendrive')],
+                'report_type' => ['All' => Yii::t('app', 'All'), 'Online' => Yii::t('app', 'Online'), 'Pendrive' => Yii::t('app', 'Pendrive')],
             ],
             'DetailsReport' => [
                 'param' => 'union_code,user_code,from_date:string,to_date:string',
