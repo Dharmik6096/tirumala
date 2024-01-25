@@ -6,6 +6,7 @@ use Yii;
 use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use app\modules\document\models\TblDocumentMapping;
 use app\modules\document\models\TblAttachmentHistory;
+use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class for table "tbl_attachment".
@@ -96,7 +97,7 @@ class TblAttachment extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc, &$deleteModel = [], $deleteAttachment = [], &$unlink_files) {
+    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc, &$deleteModel = [], $deleteAttachment = [], &$unlink_files = []) {
 
         $tblAttachment = $this->getAttachment($provisional_code, $module_name);
         $doc_path = Yii::$app->params['document_upload'] . $process_name;
@@ -122,7 +123,7 @@ class TblAttachment extends \app\models\ChildModel {
                             $model_save[] = $attach;
                             $model_save[] = $attachHistoryModel;
                         }
-                        if(!empty($deleteAttachment)){
+                        if (!empty($deleteAttachment)) {
                             $attachMaster = $this->find()
                                     ->where(['module_code' => $deleteAttachment['module_code'], 'module_name' => $deleteAttachment['module_name'], 'doc_id' => $doc->doc_id])
                                     ->one();
@@ -144,6 +145,12 @@ class TblAttachment extends \app\models\ChildModel {
                 }
             }
         }
+    }
+
+    function getAttachmentDataProvider($id, $name) {
+        return new ActiveDataProvider([
+            'query' => $this->find()->where(['module_code' => (string) $id, 'module_name' => $name]),
+        ]);
     }
 
 }

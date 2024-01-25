@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Animal Inspector');
+$this->title = Yii::$app->label->title('create', 'Artificial Insemination');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

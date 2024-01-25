@@ -13,6 +13,7 @@ use app\modules\tms\models\TblTaskHistory;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\data\ArrayDataProvider;
+use app\modules\document\models\TblAttachment;
 
 /**
  * TblTaskController implements the CRUD actions for TblTask model.
@@ -92,6 +93,8 @@ class TblTaskController extends ChildController {
         $model = TblTaskActivity::findOne($id);
         $form_data = json_decode($model->form_data, TRUE);
         $form_data = !empty($form_data['details']) ? $form_data['details'] : [];
+        $attachment = new TblAttachment();
+        $task_attachment = $attachment->getAttachmentDataProvider($id, 'tbl_task_activity');
         ksort($form_data);
         $dataPro = [
             'allModels' => $form_data,
@@ -106,6 +109,8 @@ class TblTaskController extends ChildController {
         return $this->render('view_form', [
                     'model' => $model,
                     'dataProvider' => $dataProvider,
+                    'attachment' => $attachment,
+                    'task_attachment' => $task_attachment,
         ]);
     }
 

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 
-$this->title = Yii::$app->label->title('view', 'Animal Inspector');
+$this->title = Yii::$app->label->title('view', 'Artificial Insemination');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

@@ -15,23 +15,26 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-        ['attribute' => 'union_code', 'value' => function($model) {
+    ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => false, 'filter' => false],
-        ['attribute' => 'plant_code', 'value' => function($model) {
+    ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'visible' => false, 'filter' => false],
-        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccCode, 'name');
         }, 'visible' => false, 'filter' => false],
-        ['attribute' => 'bmc_code', 'value' => function($model) {
+    ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'visible' => false, 'filter' => false],
-        ['attribute' => 'dcs_code', 'value' => function($model) {
+    ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],
-        ['attribute' => 'user_type', 'visible' => true, 'filter' => true],
-        ['attribute' => 'member_code', 'visible' => true, 'filter' => true],
+    ['attribute' => 'dcs_code', 'label' => (Yii::t('app', 'DCS Code')), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        }, 'filter' => false],
+    ['attribute' => 'user_type', 'visible' => true, 'filter' => true],
+    ['attribute' => 'member_code', 'visible' => true, 'filter' => true],
 //        ['attribute' => 'member_name', 'value' => function($model) {
 //            if (!empty($model->member_code)) {
 //                return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
@@ -40,13 +43,16 @@ $attribute = [
 //            }
 //        }, 'vAlign' => 'middle', 'visible' => true, 'filter' => true],
     ['attribute' => 'member_name', 'visible' => true, 'filter' => true],
-        ['attribute' => 'mobile_no', 'visible' => true, 'filter' => true],
-        ['attribute' => 'address', 'visible' => true, 'filter' => true],
-        ['attribute' => 'ai_request_for', 'visible' => true, 'filter' => true],
-        ['attribute' => 'animal_inspector_code', 'value' => function($model) {
+    ['attribute' => 'mobile_no', 'visible' => true, 'filter' => true],
+    ['attribute' => 'address', 'visible' => true, 'filter' => true],
+    ['attribute' => 'ai_request_for', 'visible' => true, 'filter' => true],
+    ['attribute' => 'animal_inspector_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->animalInspectorCode, 'ai_name');
         }],
-        [
+    ['attribute' => 'ai_mobile_no', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->animalInspectorCode, 'ai_mobile_no');
+        }, 'filter' => true],
+    [
         'attribute' => 'expected_visit_date', 'filter' => true,
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -57,8 +63,30 @@ $attribute = [
             return Yii::$app->controls->view_date($model->expected_visit_date);
         },
     ],
-        ['attribute' => 'remarks', 'visible' => true, 'filter' => true],
-        ['attribute' => 'status',
+    [
+        'attribute' => 'request_date', 'filter' => true,
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->request_date);
+        },
+    ],
+    [
+        'attribute' => 'updated_at', 'filter' => true,
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->updated_at);
+        },
+    ],
+    ['attribute' => 'remarks', 'visible' => true, 'filter' => true],
+    ['attribute' => 'status',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('animal_req_status', $searchModel, 'status'),
         'value' => function ($model) {
             return (isset($model->status) && $model->status != '') ? Yii::$app->dropdown->getRecords('animal_req_status')['data'][$model->status] : '';

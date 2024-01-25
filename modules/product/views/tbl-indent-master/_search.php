@@ -31,6 +31,12 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-2 ">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblindentmastersearch-bmc_code', 'dcs_code', Yii::t('app', 'Society'), FALSE); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
+    </div>
     <div class="col-sm-3 mt23">
         <?= Yii::$app->controls->search(); ?>
     </div>

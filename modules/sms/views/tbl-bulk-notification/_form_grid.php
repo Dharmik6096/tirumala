@@ -8,6 +8,27 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 <?php
 
 $attribute = [
+        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'dcs_code',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+        }],
+        ['attribute' => 'dcs_code', 'label' => (Yii::t('app', 'DCS Code')), 'filter' => FALSE],
+        ['attribute' => 'created_by', 'label' => (Yii::t('app', 'Notification Sender')), 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->userCode, 'name');
+                }, 'filter' => FALSE],
+        [
+        'attribute' => 'entry_datetime',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->entry_datetime);
+        }],
         ['attribute' => 'login_type', 'value' => function($model) {
             return Yii::$app->general->getStaticDropdownVal('user_login_type', $model, 'login_type');
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('user_login_type', $searchModel, 'login_type')],

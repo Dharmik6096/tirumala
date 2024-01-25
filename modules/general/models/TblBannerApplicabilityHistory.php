@@ -36,7 +36,7 @@ class TblBannerApplicabilityHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['login_type', 'banner_applicability_code', 'banner_code', 'originating_type', 'operation_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'history_created_by', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['login_type', 'banner_applicability_code', 'banner_code', 'originating_type', 'operation_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'history_created_by', 'created_at', 'updated_at', 'history_created_at', 'applicable_for', 'applicable_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
         ];
     }
 
