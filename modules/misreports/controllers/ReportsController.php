@@ -1324,6 +1324,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'MccReceiptVsBmcDispatchDetail';
             }
         }
+        return $this->actionIndex();
     }
 
     public function actionMemberCollectionReportForSap() {
