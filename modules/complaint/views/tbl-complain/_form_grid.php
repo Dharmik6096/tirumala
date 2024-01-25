@@ -64,9 +64,9 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'complain-status' => function ($url, $model) {
-            $count = TblComplainActivity::getComplainStatusCount($model->complain_code);
-            return $count > 0 ? GhostHtml::a('<i class="fa fa-circle" style="color: #07a309 !important;"></i>', '', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Complain Activity',]) :
-                    GhostHtml::a('', '', ['class' => 'hidden-button', 'style' => 'pointer-events: none; margin-right: 15px;',
+            return ($model->complain_assignment_datetime >= date("Y-m-d H:i:s", strtotime('-24 hours'))) ?
+                    GhostHtml::a('<i class="fa fa-circle green-text" style="color: #07a309 !important;"></i>', '', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Feedback Activity']) :
+                    GhostHtml::a('', '', ['class' => 'hidden-button mr15'
             ]);
         },
         'view' => TRUE,
