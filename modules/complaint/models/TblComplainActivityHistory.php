@@ -40,7 +40,7 @@ class TblComplainActivityHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['activity_type', 'remarks', 'user_code', 'location_details', 'entry_type', 'operation_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'history_created_by', 'created_at', 'updated_at', 'history_created_at', 'complain_activity_code', 'complain_code', 'originating_type'], 'safe'],
+            [['activity_type', 'remarks', 'user_code', 'location_details', 'entry_type', 'operation_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'history_created_by', 'created_at', 'updated_at', 'history_created_at', 'complain_activity_code', 'complain_code', 'originating_type', 'union_code'], 'safe'],
         ];
     }
 
