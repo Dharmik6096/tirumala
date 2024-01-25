@@ -12,7 +12,7 @@ use app\modules\sms\models\TblBulkNotification;
  */
 class TblBulkNotificationSearch extends TblBulkNotification {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $dcs_ref_code;
 
     /**
      * @inheritdoc
@@ -20,7 +20,7 @@ class TblBulkNotificationSearch extends TblBulkNotification {
     public function rules() {
         return [
             [['bulk_notification_id', 'content_id', 'status'], 'integer'],
-            [['union_code', 'receiver_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'wef_date', 'title', 'message', 'campaign_name', 'created_at', 'created_by', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'from_date', 'to_date'], 'safe'],
+            [['union_code', 'receiver_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'wef_date', 'title', 'message', 'campaign_name', 'created_at', 'created_by', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'from_date', 'to_date', 'dcs_ref_code'], 'safe'],
         ];
     }
 
@@ -82,6 +82,7 @@ class TblBulkNotificationSearch extends TblBulkNotification {
         ]);
 
         $query->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->dcs_ref_code])
                 ->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code])
                 ->andFilterWhere(['like', 'tbl_api_master.api_name', $this->app_type])
                 ->andFilterWhere(['like', 'login_type', $this->login_type])

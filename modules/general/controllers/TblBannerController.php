@@ -195,7 +195,7 @@ class TblBannerController extends \app\controllers\ChildController {
     }
 
     public function actionBannerUpload() {
-        $path = Yii::$app->params['banner_upload'];
+        $path = Yii::getAlias('@webroot') . Yii::$app->params['banner_upload'];
         if (!is_dir($path)) {
             Yii::$app->general->CreateDirectory($path);
         }
