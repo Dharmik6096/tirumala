@@ -79,7 +79,7 @@ $grid_option = [
             $options = ['data-name' => $model->name, 'data-val' => $model->plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Prouduct Group Mapping'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-plant/map-product-groups', 'id' => $model->plant_code], $options);
         },
-        'delete' => ['option' => 'name,plant_code,tbl-plant/delete'],
+//        'delete' => ['option' => 'name,plant_code,tbl-plant/delete'],
         'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->name, 'data-val' => $model->plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-plant/contact-details', 'id' => $model->plant_code], $options);
