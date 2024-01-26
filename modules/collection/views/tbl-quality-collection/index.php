@@ -9,7 +9,7 @@ $this->params['menu'][] = Yii::$app->controls->import('bmc-quality-test', $this)
         <div class="panel-heading">
             <?= $this->title; ?>           
         </div>
-        <div class="panel-body">
+        <div class="panel-body hide-grid-export">
             <?=
             $this->render('_form_grid', [
                 'dataProvider' => $dataProvider,
