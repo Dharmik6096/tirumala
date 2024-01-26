@@ -908,7 +908,14 @@ class Applicability extends \yii\base\Module {
                                     if ($model->hasMethod('setOrgDetail')) {
                                         $model->setOrgDetail();
                                     }
-                                    $saveModel[] = $model->save();
+                                    if ($model->validate()) {
+                                        $saveModel[] = $model->save();
+                                    } else {
+                                        foreach ($model->getErrors() as $value) {
+                                            $errorArr[] = $value[0];
+                                        }
+                                        $saveModel[] = false;
+                                    }
                                 } catch (UserException $e) {
                                     $saveModel[] = false;
                                     $errorArr[] = $e->getMessage();
