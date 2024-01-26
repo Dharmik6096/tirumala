@@ -101,7 +101,7 @@ $grid_option = [
             $options = ['data-name' => $model->route_name, 'data-val' => $model->route_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Route Source'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-route-mapping/map-route-source', 'id' => $model->route_code], $options);
         },
-        'delete' => ['option' => 'route_name,route_code,tbl-route-mapping/delete'],
+//        'delete' => ['option' => 'route_name,route_code,tbl-route-mapping/delete'],
         'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->route_name, 'data-val' => $model->route_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details'];
             return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-route-mapping/contact-details', 'id' => $model->route_code], $options);

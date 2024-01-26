@@ -7,6 +7,7 @@ use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use app\modules\document\models\TblDocumentMapping;
 use app\modules\document\models\TblAttachmentHistory;
 use yii\data\ActiveDataProvider;
+use app\modules\complaint\models\TblComplain;
 
 /**
  * This is the model class for table "tbl_attachment".
@@ -151,6 +152,15 @@ class TblAttachment extends \app\models\ChildModel {
         return new ActiveDataProvider([
             'query' => $this->find()->where(['module_code' => (string) $id, 'module_name' => $name]),
         ]);
+    }
+    
+    public function attachmentDelete() {
+        $user = Yii::$app->session->get('UserCode');
+        $attachment = TblComplain::find()->where(['created_by' => $user])->one();
+        if (!empty($attachment))
+            return true;
+        else
+            return false;
     }
 
 }
