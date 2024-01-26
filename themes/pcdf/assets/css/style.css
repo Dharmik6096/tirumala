@@ -5047,3 +5047,6 @@ tr.highlightRow {
 .inline_block {
     display: inline-block;
 }
+.mr15{
+    margin-left: 15px;
+}

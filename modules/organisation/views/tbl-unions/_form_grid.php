@@ -122,7 +122,7 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'update' => true,
-        'delete' => ['option' => 'union_name,union_code,tbl-unions/delete'],
+//        'delete' => ['option' => 'union_name,union_code,tbl-unions/delete'],
         'mapping' => function ($url, $model) {
             $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'District Mapping'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-unions/map-districts', 'id' => $model->union_code], $options);

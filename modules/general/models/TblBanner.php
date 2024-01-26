@@ -94,17 +94,6 @@ class TblBanner extends \app\models\ChildModel {
         }
     }
 
-    public function checkLogintype($login_type, $from_date, $to_date) {
-
-        return $this->find()->select('*')
-                        ->from(['tbl_banner'])
-                        ->innerJoin('tbl_banner_applicability', 'tbl_banner_applicability.banner_code = tbl_banner.banner_code')
-                        ->where(['tbl_banner_applicability.login_type' => $login_type])
-                        ->andWhere(['<=', 'tbl_banner.from_date', $from_date])
-                        ->andWhere(['>=', 'tbl_banner.to_date', $to_date])
-                        ->count();
-    }
-
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
