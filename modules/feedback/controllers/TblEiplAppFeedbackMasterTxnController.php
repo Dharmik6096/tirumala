@@ -33,9 +33,9 @@ class TblEiplAppFeedbackMasterTxnController extends \app\controllers\ChildContro
      * @param integer $eipl_app_feedback_master_txn_code
      * @return mixed
      */
-    public function actionView($eipl_app_feedback_master_txn_code) {
+    public function actionView($id) {
         return $this->render('view', [
-                    'model' => $this->findModel($eipl_app_feedback_master_txn_code),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -48,7 +48,7 @@ class TblEiplAppFeedbackMasterTxnController extends \app\controllers\ChildContro
         $model = new TblEiplAppFeedbackMasterTxn();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'eipl_app_feedback_master_txn_code' => $model->eipl_app_feedback_master_txn_code]);
+            return $this->redirect(['view', 'id' => $model->eipl_app_feedback_master_txn_code]);
         } else {
             return $this->render('create', [
                         'model' => $model,
@@ -62,11 +62,11 @@ class TblEiplAppFeedbackMasterTxnController extends \app\controllers\ChildContro
      * @param integer $eipl_app_feedback_master_txn_code
      * @return mixed
      */
-    public function actionUpdate($eipl_app_feedback_master_txn_code) {
-        $model = $this->findModel($eipl_app_feedback_master_txn_code);
+    public function actionUpdate($id) {
+        $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'eipl_app_feedback_master_txn_code' => $model->eipl_app_feedback_master_txn_code]);
+            return $this->redirect(['view', 'id' => $model->eipl_app_feedback_master_txn_code]);
         } else {
             return $this->render('update', [
                         'model' => $model,
@@ -80,8 +80,8 @@ class TblEiplAppFeedbackMasterTxnController extends \app\controllers\ChildContro
      * @param integer $eipl_app_feedback_master_txn_code
      * @return mixed
      */
-    public function actionDelete($eipl_app_feedback_master_txn_code) {
-        $this->findModel($eipl_app_feedback_master_txn_code)->delete();
+    public function actionDelete($id) {
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
