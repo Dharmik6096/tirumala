@@ -265,27 +265,27 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['customer_type'] = Yii::$app->request->post('customer_type');
         $data['union'] = Yii::$app->request->post('union_code');
         $validCode = !empty(Yii::$app->request->post('valid_code')) ? Yii::$app->request->post('valid_code') : '';
-        $bmcModel = new TblBmcCollection();
-        $dcsModel = new TblDcs();
-        $dcs = $dcsModel->validDcs($data['dcs_code'], $data['bmc_code']);
-        $bmcModel->dcs_code = !empty($dcs) ? $dcs : $data['dcs_code'];
-//        $bmcModel->bmc_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'bmc_code');
-//        $bmcModel->mcc_plant_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'mcc_plant_code');
-//        $is_mcc = Yii::$app->general->getforeignkey($bmcModel->bmcData, 'is_mcc');
-//        $for = $is_mcc == 1 ? 'MCC' : 'BMC';
-//        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
-        if (strtolower($for) != 'dcs') {
-            $code = $bmcModel->validateCustomer($data['union'], $data['dcs_code'], $for, $data['bmc_code']);
-        } else {
-            $code = $bmcModel->dcs_code;
-        }
+        /* $bmcModel = new TblBmcCollection();
+          $dcsModel = new TblDcs();
+          $dcs = $dcsModel->validDcs($data['dcs_code'], $data['bmc_code']);
+          $bmcModel->dcs_code = !empty($dcs) ? $dcs : $data['dcs_code'];
+          //        $bmcModel->bmc_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'bmc_code');
+          //        $bmcModel->mcc_plant_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'mcc_plant_code');
+          //        $is_mcc = Yii::$app->general->getforeignkey($bmcModel->bmcData, 'is_mcc');
+          //        $for = $is_mcc == 1 ? 'MCC' : 'BMC';
+          //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
+          if (strtolower($for) != 'dcs') {
+          $code = $bmcModel->validateCustomer($data['union'], $data['dcs_code'], $for, $data['bmc_code']);
+          } else {
+          $code = $bmcModel->dcs_code;
+          } */
         $model = new TblDcsPurchaseRateApplicabitity();
         $model->wef_date = $data['dt_date'];
         $data['milk_type'] = $data['milk_type'];
         $data['milk_quality_type_code'] = $data['milk_quality_type'];
         $data['appl_for'] = $for;
-        $data['appl_code'] = !empty($validCode) ? $validCode : $code;
+        $data['appl_code'] = !empty($validCode) ? $validCode : $data['dcs_code'];
         $model_data = $model->getDcsPurchaseRateApplicableData($data);
 
         if (!empty($model_data)) {
