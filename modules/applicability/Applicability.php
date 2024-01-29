@@ -146,7 +146,7 @@ class Applicability extends \yii\base\Module {
         $searchModel->$field_name = $this->field_value;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $hideCustomerType = false;
-        if ($this->customer_type_wise_entry) {
+        if ($this->customer_type_wise_entry && empty($this->customer_type_list)) {
             $customerModel = new TblCustomerType();
             $customerModel->union_code = $this->union_code;
             $this->customer_type_list = $customerModel->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
@@ -905,7 +905,17 @@ class Applicability extends \yii\base\Module {
                                         $model->union_code = $this->union_code;
                                     }
                                     $model->setAttributes($this->assignStaticData);
-                                    $saveModel[] = $model->save();
+                                    if ($model->hasMethod('setOrgDetail')) {
+                                        $model->setOrgDetail();
+                                    }
+                                    if ($model->validate()) {
+                                        $saveModel[] = $model->save();
+                                    } else {
+                                        foreach ($model->getErrors() as $value) {
+                                            $errorArr[] = $value[0];
+                                        }
+                                        $saveModel[] = false;
+                                    }
                                 } catch (UserException $e) {
                                     $saveModel[] = false;
                                     $errorArr[] = $e->getMessage();

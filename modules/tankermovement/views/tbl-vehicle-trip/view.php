@@ -37,12 +37,13 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                             [
                                 'attribute' => 'plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:' . (!empty($model->bmc_code) ? '30%' : '80%')],
                             ],
                             [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:30%'],
+                                'visible' => !empty($model->bmc_code) ? true : false
                             ],
                         ],
                     ],

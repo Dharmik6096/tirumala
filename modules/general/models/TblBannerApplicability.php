@@ -3,6 +3,9 @@
 namespace app\modules\general\models;
 
 use Yii;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\general\models\TblBanner;
 
 /**
  * This is the model class for table "tbl_banner_applicability".
@@ -20,6 +23,8 @@ use Yii;
  */
 class TblBannerApplicability extends \app\models\ChildModel {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
@@ -32,8 +37,12 @@ class TblBannerApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['login_type', 'banner_code', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['login_type'], 'required', 'on' => ['banner_upload']],
+                [['login_type', 'banner_code', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'applicable_for', 'applicable_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'safe'],
+                [['login_type', 'applicable_code'], 'required'],
+                [['applicable_code'], 'validateBanner', 'skipOnEmpty' => false,],
+                [['login_type'], 'validateLoginTypeCount', 'when' => function($model) {
+                    return (!empty($model->login_type) && !is_array($model->login_type));
+                }],
         ];
     }
 
@@ -52,7 +61,82 @@ class TblBannerApplicability extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
         ];
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function validateBanner($attribute, $params) {
+        return $this->validateData();
+    }
+
+    public function getBannerCode() {
+        return $this->hasOne(TblBanner::className(), ['banner_code' => 'banner_code']);
+    }
+
+    public function validateData() {
+        $data = $this->find()
+                ->where(['applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'banner_code' => $this->banner_code, 'login_type' => $this->login_type])
+                ->all();
+
+        $message = [];
+        if (!empty($data)) {
+            for ($i = 0; $i < count($data); $i++) {
+                $mesageVal = $data[$i] ['login_type'];
+                $message[$mesageVal] = $mesageVal;
+            }
+            if (count($message) > 0) {
+                $messagestring = 'Following are the current applicabilities.<br/>' . implode('<br/>', $message);
+                $this->addError('applicable_code', $messagestring);
+
+                return false;
+            }
+            return true;
+        }
+    }
+
+    public function validateLoginTypeCount($attribute, $params) {
+        $this->from_date = isset($this->bannerCode) ? $this->bannerCode->from_date : NULL;
+        $this->to_date = isset($this->bannerCode) ? $this->bannerCode->to_date : NULL;
+
+        $loginTypeCount = $this->checkLogintype($this->login_type, $this->from_date, $this->to_date, $this->applicable_code);
+
+        if ($loginTypeCount >= 5) {
+            $this->addError($attribute, 'More than 5 ' . $this->login_type . ' login type not allowed.');
+            return false;
+        }
+    }
+
+    public function checkLogintype($login_type, $from_date, $to_date, $applicable_code) {
+
+        return $this->find()
+                        ->select(['tbl_banner_applicability.*', 'tbl_banner.*'])
+                        ->innerJoin('tbl_banner', 'tbl_banner.banner_code = tbl_banner_applicability.banner_code')
+                        ->where([
+                            'tbl_banner_applicability.login_type' => $login_type,
+                            'tbl_banner_applicability.applicable_code' => $applicable_code,
+                        ])
+                        ->andWhere('(\'' . $from_date . '\'  between from_date and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\')')
+                        ->count();
+    }
+
+    public function setOrgDetail() {
+        if ($this->applicable_for == 'BMC') {
+            $this->bmc_code = $this->applicable_code;
+            $bmc_detail = $this->bmcCode;
+            $this->plant_code = $bmc_detail->plant_code;
+            $this->mcc_plant_code = $bmc_detail->mcc_plant_code;
+        }
     }
 
 }

@@ -3001,7 +3001,7 @@ select[multiple]{
     margin-bottom: 10px;
 }
 
-#applicable_type-list {
+#applicable_type-list, #login_type-list  {
     margin-left: 10px;
 }
 
@@ -5372,4 +5372,7 @@ a.emoji-menu-tab {
 
 .p-0{
     padding: 0px !important;
+}
+.mr15{
+    margin-left: 15px;
 }

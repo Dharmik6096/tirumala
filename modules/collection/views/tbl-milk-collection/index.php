@@ -24,7 +24,7 @@ $url = Url::to(array_values($url_path));
             <?= $this->title; ?>           
             <?= GhostHtml::a('<i class="fa fa-map-marker"></i>', $url, ['class' => 'headerIcon btn btn-danger apply-shortcut btn-block', 'shortcut_key' => 'ctrl+alt+c']); ?>           
         </div>
-        <div class="panel-body">
+        <div class="panel-body hide-grid-export">
             <?=
             $this->render('_form_grid', [
                 'dataProvider' => $dataProvider,

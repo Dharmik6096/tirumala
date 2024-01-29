@@ -93,7 +93,7 @@ $grid_option = [
     'actions' => [
         'view' => TRUE,
         'update' => true,
-        'delete' => ['option' => 'name,mcc_plant_code,tbl-mcc-plant/delete'],
+//        'delete' => ['option' => 'name,mcc_plant_code,tbl-mcc-plant/delete'],
         'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->name, 'data-val' => $model->mcc_plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-mcc-plant/contact-details', 'id' => $model->mcc_plant_code], $options);

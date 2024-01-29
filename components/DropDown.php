@@ -2167,7 +2167,8 @@ class DropDown extends Component {
                                 });
                                 // console.log('#'+modelname+'-'+fieldName);
                                 // $('#'+modelname+'-'+fieldName).val(array_val);
-                                $('#'+modelname+'-'+fieldName).trigger('change');
+//                                $('#'+modelname+'-'+fieldName).trigger('change');
+                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
                             });
                     });";
             $id_dropdown = strtolower((new ReflectionClass($model))->getShortName()) . '-' . strtolower($name);
