@@ -3,8 +3,6 @@
 namespace app\modules\general\models;
 
 use Yii;
-use app\modules\organisation\models\TblUnions;
-use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\general\models\TblBanner;
@@ -42,7 +40,9 @@ class TblBannerApplicability extends \app\models\ChildModel {
                 [['login_type', 'banner_code', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'applicable_for', 'applicable_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'safe'],
                 [['login_type', 'applicable_code'], 'required'],
                 [['applicable_code'], 'validateBanner', 'skipOnEmpty' => false,],
-                [['login_type'], 'validateLoginTypeCount'],
+                [['login_type'], 'validateLoginTypeCount', 'when' => function($model) {
+                    return (!empty($model->login_type) && !is_array($model->login_type));
+                }],
         ];
     }
 
@@ -66,14 +66,6 @@ class TblBannerApplicability extends \app\models\ChildModel {
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
         ];
-    }
-
-    public function getUnionCode() {
-        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
-    }
-
-    public function getPlantCode() {
-        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
     public function getMccPlantCode() {
@@ -117,21 +109,24 @@ class TblBannerApplicability extends \app\models\ChildModel {
         $this->from_date = isset($this->bannerCode) ? $this->bannerCode->from_date : NULL;
         $this->to_date = isset($this->bannerCode) ? $this->bannerCode->to_date : NULL;
 
-        $loginTypeCount = $this->checkLogintype($this->login_type, $this->from_date, $this->to_date);
+        $loginTypeCount = $this->checkLogintype($this->login_type, $this->from_date, $this->to_date, $this->applicable_code);
 
         if ($loginTypeCount >= 5) {
-            $this->addError($attribute, 'More than 5 ' . implode(',', $this->login_type) . ' login type not allowed.');
+            $this->addError($attribute, 'More than 5 ' . $this->login_type . ' login type not allowed.');
+            return false;
         }
     }
 
-    public function checkLogintype($login_type, $from_date, $to_date) {
+    public function checkLogintype($login_type, $from_date, $to_date, $applicable_code) {
 
-        return $this->find()->select('*')
-                        ->from(['tbl_banner_applicability'])
+        return $this->find()
+                        ->select(['tbl_banner_applicability.*', 'tbl_banner.*'])
                         ->innerJoin('tbl_banner', 'tbl_banner.banner_code = tbl_banner_applicability.banner_code')
-                        ->where(['tbl_banner_applicability.login_type' => $login_type])
-                        ->andWhere(['<=', 'tbl_banner.from_date', $from_date])
-                        ->andWhere(['>=', 'tbl_banner.to_date', $to_date])
+                        ->where([
+                            'tbl_banner_applicability.login_type' => $login_type,
+                            'tbl_banner_applicability.applicable_code' => $applicable_code,
+                        ])
+                        ->andWhere('(\'' . $from_date . '\'  between from_date and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\')')
                         ->count();
     }
 
