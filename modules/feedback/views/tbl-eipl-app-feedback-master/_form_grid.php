@@ -14,20 +14,20 @@ $attribute = [
     ['attribute' => 'user_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCodeById, 'name');
         }],
-    ['attribute' => 'mcc_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->mccCode, 'mccname');
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccCode, 'name');
         }, 'filter' => false],
     ['attribute' => 'bmc_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcCode, 'BMCName');
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => function($model) {
-            return (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'villagename') : '';
+            return (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '';
         }, 'filter' => false],
     ['attribute' => 'member_code', 'value' => function($model) {
             return strtolower($model->user_type) == 'farmer' ? Yii::$app->general->getforeignkey($model->userCodeById, 'name') : '';
         }, 'filter' => false],
-    ['attribute' => 'feedback_item_id', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->itemId, 'feedback_item_name');
+    ['attribute' => 'eipl_app_feedback_item_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->eiplAppFeedbackItemCode, 'feedback_item_name');
         }],
     ['attribute' => 'feedback_message', 'value' => function($model) {
             return nl2br(Yii::$app->general->asciiToTextConvert($model->feedback_message));

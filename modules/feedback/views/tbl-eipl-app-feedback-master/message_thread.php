@@ -79,7 +79,7 @@ use yii\web\View;
     </div>
     <?php if ($model->feedback_status != 2) { ?>
         <div class="message-section">
-            <?= Html::hiddenInput('feedback_master_id', $model->Id, ['id' => 'feedback_master_id']); ?>
+            <?= Html::hiddenInput('eipl_app_feedback_master_code', $model->eipl_app_feedback_master_code, ['id' => 'eipl_app_feedback_master_code']); ?>
             <div class="form-group message-width">
                 <p class="emoji-picker-container" id="emoji-picker-container">
                     <?= Html::textarea("message", "", ['id' => 'message', 'class' => 'form-control emoji-picker-container', 'data-emojiable' => 'true', 'data-emoji-input' => 'unicode', 'placeholder' => 'Please Message Type Here...']) ?>
@@ -124,7 +124,7 @@ $script = "
     $('#send-message').click(function(){
         $('#send-message').attr('disabled',true);
         $('#send-message').css('pointer-events','none');
-        var feedback_master_id = $('#feedback_master_id').val();
+        var eipl_app_feedback_master_code = $('#eipl_app_feedback_master_code').val();
         var message = $('#message').val();
         var is_close = 0;
         if($('#close').prop('checked') == true){
@@ -137,7 +137,7 @@ $script = "
         $.ajax({
             type: 'post',
             url: '" . Url::to(['/feedback/tbl-eipl-app-feedback-master/send-message']) . "',
-            data: {is_close:is_close, message:message, feedback_master_id: feedback_master_id},
+            data: {is_close:is_close, message:message, eipl_app_feedback_master_code: eipl_app_feedback_master_code},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if(obj1.status == 'success'){

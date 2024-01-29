@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'Id') ?>
+    <?= $form->field($model, 'eipl_app_feedback_item_code') ?>
 
     <?= $form->field($model, 'feedback_item_name') ?>
 

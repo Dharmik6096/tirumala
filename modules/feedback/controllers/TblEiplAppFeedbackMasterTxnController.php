@@ -30,12 +30,12 @@ class TblEiplAppFeedbackMasterTxnController extends \app\controllers\ChildContro
 
     /**
      * Displays a single TblEiplAppFeedbackMasterTxn model.
-     * @param integer $id
+     * @param integer $eipl_app_feedback_master_txn_code
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($eipl_app_feedback_master_txn_code) {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $this->findModel($eipl_app_feedback_master_txn_code),
         ]);
     }
 
@@ -48,7 +48,7 @@ class TblEiplAppFeedbackMasterTxnController extends \app\controllers\ChildContro
         $model = new TblEiplAppFeedbackMasterTxn();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->Id]);
+            return $this->redirect(['view', 'eipl_app_feedback_master_txn_code' => $model->eipl_app_feedback_master_txn_code]);
         } else {
             return $this->render('create', [
                         'model' => $model,
@@ -59,14 +59,14 @@ class TblEiplAppFeedbackMasterTxnController extends \app\controllers\ChildContro
     /**
      * Updates an existing TblEiplAppFeedbackMasterTxn model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param integer $eipl_app_feedback_master_txn_code
      * @return mixed
      */
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
+    public function actionUpdate($eipl_app_feedback_master_txn_code) {
+        $model = $this->findModel($eipl_app_feedback_master_txn_code);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->Id]);
+            return $this->redirect(['view', 'eipl_app_feedback_master_txn_code' => $model->eipl_app_feedback_master_txn_code]);
         } else {
             return $this->render('update', [
                         'model' => $model,
@@ -77,11 +77,11 @@ class TblEiplAppFeedbackMasterTxnController extends \app\controllers\ChildContro
     /**
      * Deletes an existing TblEiplAppFeedbackMasterTxn model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param integer $eipl_app_feedback_master_txn_code
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
+    public function actionDelete($eipl_app_feedback_master_txn_code) {
+        $this->findModel($eipl_app_feedback_master_txn_code)->delete();
 
         return $this->redirect(['index']);
     }

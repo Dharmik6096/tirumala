@@ -26,7 +26,7 @@ $this->title = Yii::$app->label->title('view', 'Feedback Master');
                         ],
                             [
                             'attribute' => 'plant_code',
-                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'plantname'),
+                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
@@ -34,13 +34,13 @@ $this->title = Yii::$app->label->title('view', 'Feedback Master');
                     [
                     'columns' => [
                             [
-                            'attribute' => 'mcc_code',
-                            'value' => Yii::$app->general->getforeignkey($model->mccCode, 'mccname'),
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                             [
                             'attribute' => 'bmc_code',
-                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'BMCName'),
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
@@ -49,7 +49,7 @@ $this->title = Yii::$app->label->title('view', 'Feedback Master');
                     'columns' => [
                             [
                             'attribute' => 'dcs_code',
-                            'value' => (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'villagename') : '',
+                            'value' => (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                             [
@@ -62,8 +62,8 @@ $this->title = Yii::$app->label->title('view', 'Feedback Master');
                     [
                     'columns' => [
                             [
-                            'attribute' => 'feedback_item_id',
-                            'value' => Yii::$app->general->getforeignkey($model->itemId, 'feedback_item_name'),
+                            'attribute' => 'eipl_app_feedback_master_code',
+                            'value' => Yii::$app->general->getforeignkey($model->eiplAppFeedbackItemCode, 'feedback_item_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                             [

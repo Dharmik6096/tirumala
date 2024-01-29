@@ -18,7 +18,7 @@ class TblEiplAppFeedbackMasterTxnSearch extends TblEiplAppFeedbackMasterTxn
     public function rules()
     {
         return [
-            [['Id', 'feedback_master_id'], 'integer'],
+            [['eipl_app_feedback_master_txn_code', 'eipl_app_feedback_master_code'], 'integer'],
             [['feedback_message', 'feedback_message_datetime', 'name', 'originator_type', 'originator_code', 'replier_type', 'replier_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
         ];
     }
@@ -59,8 +59,8 @@ class TblEiplAppFeedbackMasterTxnSearch extends TblEiplAppFeedbackMasterTxn
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'Id' => $this->Id,
-            'feedback_master_id' => $this->feedback_master_id,
+            'eipl_app_feedback_master_txn_code' => $this->eipl_app_feedback_master_txn_code,
+            'eipl_app_feedback_master_code' => $this->eipl_app_feedback_master_code,
             'feedback_message_datetime' => $this->feedback_message_datetime,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -15,13 +15,13 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'Id') ?>
+    <?= $form->field($model, 'eipl_app_feedback_master_code') ?>
 
     <?= $form->field($model, 'user_code') ?>
 
     <?= $form->field($model, 'plant_code') ?>
 
-    <?= $form->field($model, 'mcc_code') ?>
+    <?= $form->field($model, 'mcc_plant_code') ?>
 
     <?= $form->field($model, 'bmc_code') ?>
 
@@ -29,7 +29,7 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'member_code') ?>
 
-    <?php // echo $form->field($model, 'feedback_item_id') ?>
+    <?php // echo $form->field($model, 'eipl_app_feedback_item_code') ?>
 
     <?php // echo $form->field($model, 'feedback_message') ?>
 

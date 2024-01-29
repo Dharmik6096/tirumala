@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'plant_code')->textInput() ?>
 
-    <?= $form->field($model, 'mcc_code')->textInput() ?>
+    <?= $form->field($model, 'mcc_plant_code')->textInput() ?>
 
     <?= $form->field($model, 'bmc_code')->textInput() ?>
 
@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'member_code')->textInput() ?>
 
-    <?= $form->field($model, 'feedback_item_id')->textInput() ?>
+    <?= $form->field($model, 'eipl_app_feedback_item_code')->textInput() ?>
 
     <?= $form->field($model, 'feedback_message')->textInput() ?>
 

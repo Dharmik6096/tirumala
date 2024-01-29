@@ -18,7 +18,7 @@ $this->title = Yii::$app->label->title('view', 'Feedback Item');
                     [
                     'columns' => [
                             [
-                            'attribute' => 'Id',
+                            'attribute' => 'eipl_app_feedback_item_code',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],

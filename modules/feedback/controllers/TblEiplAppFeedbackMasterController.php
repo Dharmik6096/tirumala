@@ -36,7 +36,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
 
     /**
      * Displays a single TblEiplAppFeedbackMaster model.
-     * @param integer $id
+     * @param integer $eipl_app_feedback_master_code
      * @return mixed
      */
     public function actionView($id) {
@@ -90,7 +90,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
         $name = isset(explode('#', $_SESSION['UserName'])[1]) ? explode('#', $_SESSION['UserName'])[1] : '';
         $this->model = new TblEiplAppFeedbackMasterTxn();
         $this->model->load(Yii::$app->request->post());
-        $this->model->feedback_master_id = $post['feedback_master_id'];
+        $this->model->eipl_app_feedback_master_code = $post['eipl_app_feedback_master_code'];
         $this->model->feedback_message = $post['message'] ? Yii::$app->general->textToAsciiConvert($post['message']) : '';
         $this->model->feedback_message_datetime = date('Y-m-d H:i:s');
         $this->model->name = $name;
@@ -100,7 +100,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
         $this->model->originator_code = isset($_SESSION['UserCode']) ? $_SESSION['UserCode'] : '';
         $this->model->save();
         $is_close = false;
-        $masterModel = $this->findModel($post['feedback_master_id']);
+        $masterModel = $this->findModel($post['eipl_app_feedback_master_code']);
         if ($post['is_close'] == '1' || $post['is_close'] == 1) {
             $masterModel->feedback_status = 2;
             $masterModel->save();
@@ -154,7 +154,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
 //            $name = isset(explode('#', $_SESSION['UserName'])[1]) ? explode('#', $_SESSION['UserName'])[1] : '';
 //            $this->model = new TblEiplAppFeedbackMasterTxn();
 //            $this->model->load(Yii::$app->request->post());
-//            $this->model->feedback_master_id = $post['feedback_master_id'];
+//            $this->model->eipl_app_feedback_master_code = $post['eipl_app_feedback_master_code'];
 //            $this->model->file_code = $last_id['$oid'];
 //            $this->model->file_name = $post['filename'];
 //            $this->model->feedback_message = '';

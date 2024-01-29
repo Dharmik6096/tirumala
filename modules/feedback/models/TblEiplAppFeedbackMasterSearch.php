@@ -19,8 +19,8 @@ class TblEiplAppFeedbackMasterSearch extends TblEiplAppFeedbackMaster {
      */
     public function rules() {
         return [
-                [['Id', 'feedback_status'], 'integer'],
-                [['feedback_item_id', 'union_code', 'from_date', 'to_date', 'user_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'member_code', 'feedback_message', 'feedback_message_datetime', 'user_type', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+                [['eipl_app_feedback_master_code', 'feedback_status'], 'integer'],
+                [['eipl_app_feedback_item_code', 'union_code', 'from_date', 'to_date', 'user_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'feedback_message', 'feedback_message_datetime', 'user_type', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
         ];
     }
 
@@ -56,9 +56,9 @@ class TblEiplAppFeedbackMasterSearch extends TblEiplAppFeedbackMaster {
             return $dataProvider;
         }
 
-        $query->joinWith(['plantCode', 'userCodeById', 'itemId', 'mccCode', 'bmcCode', 'dcsCode']);
+        $query->joinWith(['plantCode', 'userCodeById', 'eiplAppFeedbackItemCode', 'mccCode', 'bmcCode', 'dcsCode']);
 
-        Yii::$app->general->filterByOrg($query, $this, ['masterplant'], ['tbl_eipl_app_feedback_master', 'plant_code'], ['tbl_eipl_app_feedback_master', 'mcc_code'], ['tbl_eipl_app_feedback_master', 'bmc_code'], ['tbl_eipl_app_feedback_master', 'dcs_code']);
+        Yii::$app->general->filterByOrg($query, $this, ['masterplant'], ['tbl_eipl_app_feedback_master', 'plant_code'], ['tbl_eipl_app_feedback_master', 'mcc_plant_code'], ['tbl_eipl_app_feedback_master', 'bmc_code'], ['tbl_eipl_app_feedback_master', 'dcs_code']);
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -72,7 +72,7 @@ class TblEiplAppFeedbackMasterSearch extends TblEiplAppFeedbackMaster {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'tbl_eipl_app_feedback_master.Id' => $this->Id,
+            'tbl_eipl_app_feedback_master.eipl_app_feedback_master_code' => $this->eipl_app_feedback_master_code,
             'tbl_eipl_app_feedback_master.feedback_status' => $this->feedback_status,
             'tbl_eipl_app_feedback_master.created_at' => $this->created_at,
             'tbl_eipl_app_feedback_master.updated_at' => $this->updated_at,
@@ -84,7 +84,7 @@ class TblEiplAppFeedbackMasterSearch extends TblEiplAppFeedbackMaster {
             $query->andFilterWhere(['like', 'tbl_eipl_app_feedback_master.feedback_message', Yii::$app->general->textToAsciiConvert($this->feedback_message)]);
         }
         $query->andFilterWhere(['like', 'user.name', $this->user_code]);
-        $query->andFilterWhere(['like', 'tbl_eipl_app_feedback_item.feedback_item_name', $this->feedback_item_id]);
+        $query->andFilterWhere(['like', 'tbl_eipl_app_feedback_item.feedback_item_name', $this->eipl_app_feedback_item_code]);
         $query->andFilterWhere(['like', 'tbl_eipl_app_feedback_master.plant_code', $this->plant_code])
                 ->andFilterWhere(['like', 'tbl_eipl_app_feedback_master.user_type', $this->user_type]);
 

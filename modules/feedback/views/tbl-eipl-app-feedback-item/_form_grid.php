@@ -19,7 +19,7 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'update' => true,
-        'delete' => ['option' => 'feedback_item_name,Id,tbl-eipl-app-feedback-item/delete'],
+        'delete' => ['option' => 'feedback_item_name,eipl_app_feedback_item_code,tbl-eipl-app-feedback-item/delete'],
     ]
 ];
 ?>

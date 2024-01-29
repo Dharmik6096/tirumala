@@ -18,7 +18,7 @@ class TblEiplAppFeedbackItemSearch extends TblEiplAppFeedbackItem
     public function rules()
     {
         return [
-            [['Id'], 'integer'],
+            [['eipl_app_feedback_item_code'], 'integer'],
             [['feedback_item_name', 'created_at', 'created_by', 'updated_by'], 'safe'],
         ];
     }
@@ -59,7 +59,7 @@ class TblEiplAppFeedbackItemSearch extends TblEiplAppFeedbackItem
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'Id' => $this->Id,
+            'eipl_app_feedback_item_code' => $this->eipl_app_feedback_item_code,
             'created_at' => $this->created_at,
         ]);
 

@@ -18,14 +18,14 @@ use app\modules\organisation\models\TblDcs;
 /**
  * This is the model class for table "tbl_eipl_app_feedback_master".
  *
- * @property integer $Id
+ * @property integer $eipl_app_feedback_master_code
  * @property string $user_code
  * @property string $plant_code
- * @property string $mcc_code
+ * @property string $mcc_plant_code
  * @property string $bmc_code
  * @property string $dcs_code
  * @property string $member_code
- * @property integer $feedback_item_id
+ * @property integer $eipl_app_feedback_item_code
  * @property string $feedback_message
  * @property string $feedback_message_datetime
  * @property string $user_type
@@ -51,8 +51,8 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['user_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'member_code', 'feedback_message', 'user_type', 'created_by', 'updated_by'], 'string'],
-                [['feedback_item_id', 'feedback_status'], 'integer'],
+                [['user_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'feedback_message', 'user_type', 'created_by', 'updated_by'], 'string'],
+                [['eipl_app_feedback_item_code', 'feedback_status'], 'integer'],
                 [['feedback_message_datetime', 'created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -62,14 +62,14 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'Id' => Yii::t('app', 'ID'),
+            'eipl_app_feedback_master_code' => Yii::t('app', 'Eipl App Feedback Master Code'),
             'user_code' => Yii::t('app', 'User Name'),
             'plant_code' => Yii::t('app', 'Plant Name'),
-            'mcc_code' => Yii::t('app', 'MCC Name'),
+            'mcc_plant_code' => Yii::t('app', 'MCC Name'),
             'bmc_code' => Yii::t('app', 'BMC Name'),
             'dcs_code' => Yii::t('app', 'DCS Name'),
             'member_code' => Yii::t('app', 'Member Name'),
-            'feedback_item_id' => Yii::t('app', 'Feedback Item Name'),
+            'eipl_app_feedback_item_code' => Yii::t('app', 'Feedback Item Name'),
             'feedback_message' => Yii::t('app', 'Feedback Message'),
             'feedback_message_datetime' => Yii::t('app', 'Feedback Message Date'),
             'user_type' => Yii::t('app', 'User Type'),
@@ -82,7 +82,7 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
     }
 
     public function getFeedbackMasterTxn() {
-        return $this->hasMany(TblEiplAppFeedbackMasterTxn::className(), ['feedback_master_id' => 'Id']);
+        return $this->hasMany(TblEiplAppFeedbackMasterTxn::className(), ['eipl_app_feedback_master_code' => 'eipl_app_feedback_master_code']);
     }
 
     public function getUserCodeById() {
@@ -90,7 +90,7 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
     }
 
     public function getMccCode() {
-        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_code']);
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
     public function getBmcCode() {
@@ -105,8 +105,8 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
         return $this->hasOne(Masterfarmer::className(), ['member_code' => 'member_code']);
     }
 
-    public function getItemId() {
-        return $this->hasOne(TblEiplAppFeedbackItem::className(), ['Id' => 'feedback_item_id']);
+    public function getEiplAppFeedbackItemCode() {
+        return $this->hasOne(TblEiplAppFeedbackItem::className(), ['eipl_app_feedback_item_code' => 'eipl_app_feedback_item_code']);
     }
 
     public function getPlantCode() {

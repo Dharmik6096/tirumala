@@ -31,7 +31,7 @@ $readonly = false;
             ]]);
             ?>
             <div class="modal-body">
-                <?= Html::hiddenInput('feedback_master_id', $model->Id, ['id' => 'feedback_master_id']); ?>
+                <?= Html::hiddenInput('eipl_app_feedback_master_code', $model->eipl_app_feedback_master_code, ['id' => 'eipl_app_feedback_master_code']); ?>
                 <div class="modal-msg">
                     <h4><?= Yii::t('app', 'Upload file image and pdf only') ?></h4>
                 </div>

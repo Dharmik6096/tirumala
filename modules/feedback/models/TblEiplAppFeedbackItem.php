@@ -8,7 +8,7 @@ use webvimark\modules\UserManagement\models\User;
 /**
  * This is the model class for table "tbl_eipl_app_feedback_item".
  *
- * @property integer $Id
+ * @property integer $eipl_app_feedback_item_code
  * @property string $feedback_item_name
  * @property string $created_at
  * @property string $created_by
@@ -38,7 +38,7 @@ class TblEiplAppFeedbackItem extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'Id' => Yii::t('app', 'ID'),
+            'eipl_app_feedback_item_code' => Yii::t('app', 'Eipl App Feedback Item Code'),
             'feedback_item_name' => Yii::t('app', 'Feedback Item Name'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),

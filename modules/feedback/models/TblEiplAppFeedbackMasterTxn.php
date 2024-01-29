@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "tbl_eipl_app_feedback_master_txn".
  *
- * @property integer $Id
- * @property integer $feedback_master_id
+ * @property integer $eipl_app_feedback_master_txn_code
+ * @property integer $eipl_app_feedback_master_code
  * @property string $feedback_message
  * @property string $feedback_message_datetime
  * @property string $name
@@ -35,9 +35,9 @@ class TblEiplAppFeedbackMasterTxn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['feedback_master_id'], 'integer'],
+            [['eipl_app_feedback_master_code'], 'integer'],
             [['feedback_message', 'name', 'originator_type', 'originator_code', 'replier_type', 'replier_code', 'created_by', 'updated_by'], 'safe'],
-            [['feedback_master_id','feedback_message_datetime', 'created_at', 'updated_at','feedback_message', 'name', 'originator_type', 'originator_code', 'replier_type', 'replier_code', 'created_by', 'updated_by','file_code','file_name','file_path'], 'safe'],
+            [['eipl_app_feedback_master_code','feedback_message_datetime', 'created_at', 'updated_at','feedback_message', 'name', 'originator_type', 'originator_code', 'replier_type', 'replier_code', 'created_by', 'updated_by','file_code','file_name','file_path'], 'safe'],
         ];
     }
 
@@ -46,8 +46,8 @@ class TblEiplAppFeedbackMasterTxn extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'Id' => Yii::t('app', 'ID'),
-            'feedback_master_id' => Yii::t('app', 'Feedback Master ID'),
+            'eipl_app_feedback_master_txn_code' => Yii::t('app', 'Eipl App Feedback Master Txn Code'),
+            'eipl_app_feedback_master_code' => Yii::t('app', 'Eipl App Feedback Master Code'),
             'feedback_message' => Yii::t('app', 'Feedback Message'),
             'feedback_message_datetime' => Yii::t('app', 'Feedback Message Datetime'),
             'name' => Yii::t('app', 'Name'),

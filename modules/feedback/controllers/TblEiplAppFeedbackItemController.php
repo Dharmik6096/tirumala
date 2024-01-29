@@ -8,6 +8,7 @@ use app\modules\feedback\models\TblEiplAppFeedbackItemSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\feedback\models\TblEiplAppFeedbackItemHistory;
 
 /**
  * TblEiplAppFeedbackItemController implements the CRUD actions for TblEiplAppFeedbackItem model.
@@ -30,11 +31,11 @@ class TblEiplAppFeedbackItemController extends \app\controllers\ChildController 
 
     /**
      * Displays a single TblEiplAppFeedbackItem model.
-     * @param integer $id
+     * @param integer $eipl_app_feedback_item_code
      * @return mixed
      */
     public function actionView($id) {
-        $model = TblEiplAppFeedbackItem::find()->joinWith(['createdBy', 'updatedBy'])->where(['tbl_eipl_app_feedback_item.id' => $id])->one();
+        $model = TblEiplAppFeedbackItem::find()->joinWith(['createdBy', 'updatedBy'])->where(['tbl_eipl_app_feedback_item.eipl_app_feedback_item_code' => $id])->one();
         return $this->render('view', [
                     'model' => $model,
         ]);
@@ -67,15 +68,20 @@ class TblEiplAppFeedbackItemController extends \app\controllers\ChildController 
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-        if ($this->model->load(Yii::$app->request->post())) {
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblEiplAppFeedbackItemHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
             $this->model->updated_by = $_SESSION['UserCode'];
-            $this->model->save();
-            return $this->redirect(['view', 'id' => $this->model->Id]);
-        } else {
-            return $this->render('update', [
-                        'model' => $this->model,
-            ]);
+//            $this->model->save();
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Eipl App Feedback Item', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['view', 'id' => $this->model->eipl_app_feedback_item_code]);
+            }
         }
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
@@ -93,7 +99,7 @@ class TblEiplAppFeedbackItemController extends \app\controllers\ChildController 
     /**
      * Finds the TblEiplAppFeedbackItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param integer $eipl_app_feedback_item_code
      * @return TblEiplAppFeedbackItem the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
