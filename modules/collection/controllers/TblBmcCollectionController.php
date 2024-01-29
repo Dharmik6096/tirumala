@@ -267,7 +267,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['union'] = Yii::$app->request->post('union_code');
         $validCode = !empty(Yii::$app->request->post('valid_code')) ? Yii::$app->request->post('valid_code') : '';
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
-        /* $bmcModel = new TblBmcCollection();
+        /*   $bmcModel = new TblBmcCollection();
           $dcsModel = new TblDcs();
           $dcs = $dcsModel->validDcs($data['dcs_code'], $data['bmc_code']);
           $bmcModel->dcs_code = !empty($dcs) ? $dcs : $data['dcs_code'];
