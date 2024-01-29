@@ -274,6 +274,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                 $fstockModel->setCodes($this->from_type, $this->from_code);
                 $fstockModel->product_code = $txModel->product_code;
                 $fstockModel->union_code = $txModel->union_code;
+                $batch = !empty($txModel->sap_batch_no) ? $txModel->sap_batch_no : '';
                 $existfromStock = $fstockModel->getExistStock($this->from_type);
 
                 $f_stock = 0;
@@ -307,19 +308,19 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                 //set to stock
                 $stockModel = new TblProductStock();
                 $stockModel->setCodes($this->to_type, $this->to_code);
-
                 $stockModel->product_code = $txModel->product_code;
                 $stockModel->union_code = $txModel->union_code;
+                $stockModel->sap_batch_no = $batch;
                 $existtoStock = $stockModel->getExistStock($this->to_type);
 
                 $t_stock = 0;
                 $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock'] : 0;
                 $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
                 $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
-                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
+                if ($valid_avl_stock == 1 && strtoupper($this->to_type)=='DCS' && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
                     $this->addError('qty', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
                 } else if (!empty($existtoStock)) {
-                    $historyModel = new TblProductStockHistory();
+                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
                     array_push($saveModel, $historyModel);
                     $t_stock = $existtoStock->stock;

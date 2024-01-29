@@ -26,7 +26,8 @@ class ReportsModelOld extends Model {
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code', 'upload_ftp_file'], 'safe'],
                 [['report_type'], 'required', 'on' => ['BmcCollection', 'CPReportSap']],
                 [['union_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => 'SapReport'],
-                [['union_code', 'mcc_code', 'bmc_code'], 'required', 'on' => 'SapWqFile'],
+                [['report_type'], 'default', 'value' => 1, 'on' => 'SapWqFile'],
+                [['union_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapWqFile'],
                 [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
                 }, 'skipOnEmpty' => false],

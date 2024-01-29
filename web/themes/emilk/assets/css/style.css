@@ -2903,7 +2903,7 @@ td.action-cell{
 
 .panel-main .panel-body .grid-search .btn {
     padding: 3px 15px;
-    float: left;
+    float: right;
 }
 
 .dropdown-menu{
@@ -5268,6 +5268,9 @@ tr.highlightRow {
 .text-right{
     text-align: right;
 }
+.text-left{
+    text-align: left;
+}
 .days-container {
     display: flex;
 }
@@ -5351,7 +5354,6 @@ tr.highlightRow {
 .addTripButtonDiv {
     margin: 17px 0px 0px 0px !important;
 }
-
 .mb-manage .mb-3{
     margin-bottom: 0px !important;
 }
