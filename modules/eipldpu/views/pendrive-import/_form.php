@@ -1,4 +1,5 @@
 <?php
+
 use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
@@ -17,14 +18,14 @@ $form = ActiveForm::begin(['options' => [
 ?>
 <div class="modal-body">
     <div class="row">
-        <?php echo Html::hiddenInput('TblEiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
+            <?php echo Html::hiddenInput('TblEiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
         <div class="col-sm-3">
-            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
+<?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
         </div>
         <div class="col-sm-12">
             <?=
-            Dropzone::widget([
-                'id' => 'mainDrop',
+            DropZone::widget([
+                'id' => 'myDropzone',
                 'options' => [
                     'acceptedMimeTypes' => ".eip",
                     'url' => \yii\helpers\Url::to(['/eipldpu/pendrive-import/import-file']),
@@ -78,12 +79,12 @@ $form = ActiveForm::begin(['options' => [
                                             if (obj1.status == "success"){
                                                 $("#importModal").modal("toggle");
                                                 $("#import-pendrive-packet")[0].reset();
-                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                Dropzone.forElement("#myDropzone").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }else{
                                                 $("#importModal").modal("toggle");
                                                 $("#import-pendrive-packet")[0].reset();
-                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                Dropzone.forElement("#myDropzone").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }
                              }'),
@@ -95,7 +96,7 @@ $form = ActiveForm::begin(['options' => [
                                     }else{
                                         $("#importModal").modal("toggle");
                                         $("#import-pendrive-packet")[0].reset();
-                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                        Dropzone.forElement("#myDropzone").removeAllFiles(true);
                                     }
                              }'),
         ],
