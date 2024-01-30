@@ -30,7 +30,7 @@ $script = "
         visible();
     });
     var hasBMC = '" . $hasBmc . "';
-    $('#tblbmccollection-bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#tblbmccollection-bmc_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         var bmc = $('#tblbmccollection-own_bmc_code').val();
         $('#tblbmccollection-bmc_code').val(bmc);
         $('#tblbmccollection-bmc_code').trigger('select2:select');
