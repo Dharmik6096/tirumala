@@ -175,6 +175,4 @@ class EIPLPacketConfig extends Component {
         return $config[$dpu_type];
     }
 
-}
-
-?> 
+} 
