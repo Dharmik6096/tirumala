@@ -13,11 +13,9 @@ class EIPLSecurity extends Component {
 
     function setDpuKey() {
         $this->key_size = strlen($this->key);
-//        $this->iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB);
-//        $this->iv = mcrypt_create_iv($this->iv_size, MCRYPT_RAND);
-        $this->iv_size = openssl_cipher_iv_length('aes-128-cbc');
-        $this->iv = openssl_random_pseudo_bytes($this->iv_size);
-        // $receivedIV = substr($ivAndCiphertext, 0, openssl_cipher_iv_length('aes-128-cbc'));
+        //$this->iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB);
+        //$this->iv = mcrypt_create_iv($this->iv_size, MCRYPT_RAND);
+        $this->iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
     }
 
     function Encrypt($plaintext, $dpu_key = NULL, $dpu_type = 8, $add_char = '') {
@@ -25,17 +23,17 @@ class EIPLSecurity extends Component {
             $key = pack('H*', $dpu_key);
             $iv = pack('H*', "00000000000000000000000000000000");
             $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, "?");
-            $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $plaintext, MCRYPT_MODE_CBC, $iv);
+            //  $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $plaintext, MCRYPT_MODE_CBC, $iv);
+            $ciphertext = openssl_encrypt($plaintext, 'aes-128-cbc', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv);
             $ciphertext_base64 = base64_encode($ciphertext);
         } else {
             $this->key = pack('H*', $dpu_key);
-            // $this->setDpuKey();
-            // $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, "=");
-            $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->key, $plaintext . $add_char, MCRYPT_MODE_ECB, $this->iv);
-
+            $this->setDpuKey();
+            $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, "=");
+            //  $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->key, $plaintext . $add_char, MCRYPT_MODE_ECB, $this->iv);
+            $ciphertext = openssl_encrypt($plaintext . $add_char, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $this->iv);
             $ciphertext_base64 = base64_encode($ciphertext);
         }
-
         return $ciphertext_base64;
     }
 
@@ -44,11 +42,9 @@ class EIPLSecurity extends Component {
             $key = pack('H*', $dpu_key);
             $iv = pack('H*', "00000000000000000000000000000000");
             $ciphertext_dec = base64_decode($ciphertext_base64, TRUE);
-
             if ($ciphertext_dec) {
-//                $plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $ciphertext_dec, MCRYPT_MODE_CBC, $iv);
-//                $plaintext_dec = openssl_decrypt($ciphertext_dec, 'aes-128-cbc', $key, OPENSSL_RAW_DATA, $iv);
-                $plaintext_dec = openssl_decrypt($ciphertext_dec, 'aes-128-cbc', $key, OPENSSL_RAW_DATA, $iv);
+                //   $plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $ciphertext_dec, MCRYPT_MODE_CBC, $iv);
+                $plaintext_dec = openssl_decrypt($ciphertext_dec, 'aes-128-cbc', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv);
             } else {
                 $plaintext_dec = FALSE;
             }
@@ -57,15 +53,13 @@ class EIPLSecurity extends Component {
             $this->setDpuKey();
             $ciphertext_dec = base64_decode($ciphertext_base64, TRUE);
             if ($ciphertext_dec) {
-                $method = "aes-128-cbc";
-                //  $plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->key, $ciphertext_dec, MCRYPT_MODE_ECB, $this->iv);
-//                $plaintext_dec = openssl_decrypt($ciphertext_dec, $method, $this->key, OPENSSL_RAW_DATA);
-                $plaintext_dec = openssl_decrypt($ciphertext_dec, $method, $this->key, OPENSSL_RAW_DATA, $this->iv);
+                //$plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->key, $ciphertext_dec, MCRYPT_MODE_ECB, $this->iv);
+                $plaintext_dec = openssl_decrypt($ciphertext_dec, 'aes-128-ecb', $this->key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
             } else {
                 $plaintext_dec = FALSE;
             }
         }
-        if ($plaintext_dec && mb_strlen($plaintext_dec, 'UTF-8') != mb_strlen($plaintext_dec, 'ISO-8859-1')) {
+        if ($plaintext_dec && strlen($plaintext_dec) != strlen(iconv('ISO-8859-1', 'UTF-8', $plaintext_dec))) {
             $plaintext_dec = FALSE;
         }
         return $plaintext_dec;
