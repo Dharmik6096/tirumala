@@ -45,6 +45,10 @@ class EIPLPacketConfig extends Component {
                     'vlccid' => 'pckt=14-12',
                     'savelog' => false,
                 ],
+                '49' => [
+                    'vlccid' => 'pckt=7-12',
+                    'savelog' => false,
+                ],
                 '34#3' => [
                     'farmerid' => 'pckt=0-3',
                     'milktype' => 'pckt=3-1',
@@ -171,6 +175,4 @@ class EIPLPacketConfig extends Component {
         return $config[$dpu_type];
     }
 
-}
-
-?> 
+} 
