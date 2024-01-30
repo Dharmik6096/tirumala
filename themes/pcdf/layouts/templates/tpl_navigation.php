@@ -670,6 +670,7 @@ echo GhostMenu::widget([
                             ['label' => '624-' . Yii::t('app', 'Member Payment Bank Format'), 'url' => ['/misreports/reports/member-payment-bank-format']],
                             ['label' => '625-' . Yii::t('app', 'Bonus Report'), 'url' => ['/misreports/reports/bonus-report']],
                             ['label' => '626-' . Yii::t('app', 'Milk Shortage Recovery'), 'url' => ['/misreports/reports/milk-shortage-recovery']],
+                            ['label' => '627-' . Yii::t('app', 'Payment Summary'), 'url' => ['/jasperreports/default/payment-summary']],
                     ]
                 ],
                     [
