@@ -187,7 +187,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                                 'type' => 'POST',
                                 'url' => Url::to(['create-product-sale']),
                                 'beforeSend' => new JsExpression("function(data){
-                                                $('.error-summary').hide();
+                                                $('.alert').hide();
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
                                                 }"),
@@ -202,7 +202,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                                                                     $(".form-group").removeClass("has-error");         
                                                                     reloadGrid();
 //                                                                  $(".error-summary").hide();
-                                                                    $(".error-summary li").remove();
+                                                                    $(".alert li").remove();
                                                                     $(".panel-body").scrollTop(0);
                                                                    
                                                                     $("#create-product-sale-form .reset_field input").val("");
@@ -228,12 +228,12 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                                                                     $("#pageloader").hide();
                                                                     $(".help-block").text("");
                                                                     $(".form-group").removeClass("has-error");
-                                                                    $(".error-summary").hide();
-                                                                    $(".error-summary li").remove();
+                                                                    $(".alert").hide();
+                                                                    $(".alert li").remove();
                                                                     $.each(data, function(key, val) {
-                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        $(".alert ul").append("<li>"+val+"</li>");
                                                                     });
-                                                                    $(".error-summary").show();
+                                                                    $(".alert").show();
                                                                 }
                                                  }'),
                             ],
