@@ -68,11 +68,11 @@ class TblGateEntry extends \app\models\ChildModel {
 //            [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'date_time_of_collection', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['getOut']],
             [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'date_time_of_collection', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                     $client_code = \Yii::$app->session->get('eiplCode');
-                    return $client_code != 'UMANG';
+                    return ($client_code != 'UMANG' || 'MOTHER');
                 }, 'except' => ['getOut']],
             [['route_code'], function ($attribute, $params) {
                     $client_code = \Yii::$app->session->get('eiplCode');
-                    if (empty($this->getErrors()) && $client_code != 'UMANG') {
+                    if (empty($this->getErrors()) && $client_code != 'UMANG' || 'MOTHER') {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'date_time_of_collection', 'vm_data_lock');
                     }
                 }, 'skipOnEmpty' => TRUE, 'except' => ['getOut']],
