@@ -31,7 +31,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
         }, 'filter' => false],
         ['attribute' => 'vehicle_code', 'value' => function($model) use ($client_code) {
-            if ($client_code == 'UMANG' || 'MOTHER') {
+            if (in_array($client_code, ['UMANG', 'MOTHER'])) {
                 return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
             } else {
                 return $model->vehicle_code;
