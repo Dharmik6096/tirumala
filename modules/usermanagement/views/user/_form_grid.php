@@ -62,6 +62,7 @@ $attribute = [
         'attribute' => 'mobile_no',
         'value' => 'mobile_no',
         'visible' => false,
+        'filter' => true,
     ],
     ['attribute' => 'allow_app_login',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('allow_app_login', $searchModel, 'allow_app_login'),
