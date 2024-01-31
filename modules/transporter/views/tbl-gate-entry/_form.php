@@ -130,7 +130,7 @@ $script = "
                         var obj = $.parseJSON(data);
                         $('#tblgateentry-define_arrival_time').val(obj.arrival_time);
                         $('#tblgateentry-grace_time').val(obj.grace_time);
-                        if(clientCode == 'umang') {
+                        if(clientCode == 'umang' || 'MOTHER') {
                             $('#tblgateentry-vehicle_code').find('option').remove().end().append($('<option></option>').attr('value',obj.vehicle_code).text(obj.parsing_no));
                         } else {
                             $('#tblgateentry-vehicle_code').val(obj.parsing_no);
