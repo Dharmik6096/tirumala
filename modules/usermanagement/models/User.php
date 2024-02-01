@@ -18,7 +18,6 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\general\models\TblDepartment;
 use yii\web\NotFoundHttpException;
-use webvimark\modules\UserManagement\UserManagementModule;
 
 /**
  * This is the model class for table "user".
@@ -487,7 +486,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
 
     public function validateUniqueParent() {
         if (!empty($this->primary_parent) && !empty($this->secondary_parent) && ($this->primary_parent == $this->secondary_parent)) {
-            $this->addError('secondary_parent', UserManagementModule::t('front', 'Parent Must Not Same.'));
+            $this->addError('secondary_parent', yii::t('app', 'Parent Must Not Same.'));
         }
     }
 
