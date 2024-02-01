@@ -5357,3 +5357,6 @@ tr.highlightRow {
 .mb-manage .mb-3{
     margin-bottom: 0px !important;
 }
+.d-grid{
+    display: grid;
+}
