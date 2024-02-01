@@ -18,6 +18,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\general\models\TblDepartment;
 use yii\web\NotFoundHttpException;
+use webvimark\modules\UserManagement\UserManagementModule;
 
 /**
  * This is the model class for table "user".
