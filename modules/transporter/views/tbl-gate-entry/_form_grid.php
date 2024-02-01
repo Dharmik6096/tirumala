@@ -72,7 +72,7 @@ $grid_option = [
     'actions' => [
         'print-gate-pass' => function ($url, $model) {
             $options = ['target' => '_blank', 'title' => Yii::t('app', 'Print Gate Pass'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Print Gate Pass')];
-            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/transporter/tbl-gate-entry/print-gate-pass', 'id' => $model->gate_entry_code], $options);
+            return GhostHtml::a('<i class="fas fa-file-pdf"></i>', ['/transporter/tbl-gate-entry/print-gate-pass', 'id' => $model->gate_entry_code], $options);
         },
     ]
 ];
