@@ -62,7 +62,7 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->all_routes($model, $form, 'tblgateentry-plant_code,tblgateentry-mcc_plant_code,tblgateentry-bmc_code', 'route_code', $model->getAttributeLabel('route_code')); ?>
                     </div>
                     <div class="col-sm-2 reset_field create_fields <?= $disable ?>">
-                        <?php if ($client_code == 'UMANG') { ?>
+                        <?php if (in_array($client_code, ['UMANG', 'MOTHER'])) { ?>
                             <?= $form->field($model, 'vehicle_code')->dropDownList([]); ?>
                         <?php } else { ?>
                             <?= $form->field($model, 'vehicle_code')->textInput() ?>

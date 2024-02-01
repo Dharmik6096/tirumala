@@ -358,6 +358,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'ProductSaleInvoiceForCustomer';
         return $this->actionIndex();
     }
+    
+    public function actionPaymentSummary() {
+        $this->report = 'PaymentSummary';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -851,6 +856,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'milkcollection/ProductSaleInvoiceForCustomer',
                 'scenario' => 'ProductSaleInvoiceForCustomer',
                 'title' => 'Product Sale Invoice For Customer',
+            ],
+            'PaymentSummary' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
+                'path' => 'vsp/VspPaymentForDevMilk',
+                'scenario' => 'PaymentSummary',
+                'title' => '627 - Payment Summary',
             ],
         ];
         return $label[$l];

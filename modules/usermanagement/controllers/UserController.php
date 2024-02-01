@@ -16,6 +16,7 @@ use yii\helpers\Json;
 use yii\helpers\FileHelper;
 use yii\widgets\ActiveForm;
 use \app\modules\details\models\TblContactDetailsHistory;
+use app\modules\usermanagement\models\UserSearch;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -33,6 +34,16 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
      * @var UserSearch
      */
     public $modelSearchClass = 'app\modules\usermanagement\models\search\UserSearch';
+
+    /**
+     * @var User
+     */
+    public $modelClass = 'app\modules\usermanagement\models\User';
+
+    /**
+     * @var UserSearch
+     */
+    public $modelSearchClass = 'app\modules\usermanagement\models\UserSearch';
 
     /**
      * @return mixed|string|\yii\web\Response
@@ -631,7 +642,9 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id) {
-        if (($model = User::findOne($id)) !== null) {
+        $modelClass = $this->modelClass;
+
+        if (($model = $modelClass::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));

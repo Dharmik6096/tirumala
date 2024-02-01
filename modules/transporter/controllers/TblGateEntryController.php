@@ -85,7 +85,7 @@ class TblGateEntryController extends ChildController {
                 $define_arrival_time = date("H:i", strtotime('+' . (empty($this->model->grace_time) ? 0 : (int) $this->model->grace_time) . ' minutes', strtotime($this->model->define_arrival_time)));
                 $late_by_time = (strtotime($actual_arrival_time) - strtotime($define_arrival_time)) / 60;
                 $this->model->late_by_time = ($late_by_time > 0) ? $late_by_time : 0;
-                if ($client_code == 'UMANG') {
+                if (in_array($client_code, ['UMANG', 'MOTHER'])) {
                     $this->model->transporter_code = $this->model->vehicleCode->transporter_code;
                 } else {
                     $this->model->transporter_code = Yii::$app->general->getforeignkey($this->model->vehicleName, 'transporter_code');
