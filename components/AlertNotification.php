@@ -53,7 +53,7 @@ class AlertNotification {
             try {
                 $response = $client->request($request_param['method'], $url, [$request_param['param'] => $param]);     //send request with method,url,request_param
                 $data = $response->getBody(); //get response . guzzle return respone in stream object
-                $stream = Psr7\stream_for($data); //convert stream response to string
+                $stream = Psr7\Utils::streamFor($data); //convert stream response to string
                 return json_encode($stream->getContents()); //getreponse in string format
             } catch (GuzzleHttp\Exception\RequestException $ex) {
                 $status = 3;
