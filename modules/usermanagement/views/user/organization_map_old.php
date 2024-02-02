@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use app\modules\usermanagement\models\User;
 /* 
  * To change this license header, choose License Headers in Project Properties.

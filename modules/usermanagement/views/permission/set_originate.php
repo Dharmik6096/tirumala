@@ -4,7 +4,7 @@ use app\modules\usermanagement\components\GhostHtml;
 use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 
 $this->title = Yii::t('app', 'Settings for Originate Actions');
 ?>

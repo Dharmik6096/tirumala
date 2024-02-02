@@ -2,7 +2,7 @@
 
 use app\modules\usermanagement\models\User;
 use yii\helpers\Html;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use webvimark\extensions\BootstrapSwitch\BootstrapSwitch;
 use yii\web\View;
 use kartik\depdrop\DepDrop;
