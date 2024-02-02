@@ -486,7 +486,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
 
     public function validateUniqueParent() {
         if (!empty($this->primary_parent) && !empty($this->secondary_parent) && ($this->primary_parent == $this->secondary_parent)) {
-            $this->addError('secondary_parent', UserManagementModule::t('front', 'Parent Must Not Same.'));
+            $this->addError('secondary_parent', yii::t('app', 'Parent Must Not Same.'));
         }
     }
 

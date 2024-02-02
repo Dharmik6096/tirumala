@@ -3,6 +3,7 @@
 namespace app\modules\usermanagement\models\search;
 
 use Yii;
+use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\usermanagement\models\User;
 use app\models\TblUserOrganizationMapping;
@@ -11,16 +12,22 @@ class UserSearch extends \webvimark\modules\UserManagement\models\search\UserSea
 
     public function rules() {
         return [
-                [['id', 'superadmin', 'status', 'created_at', 'updated_at', 'email_confirmed', 'is_active'], 'integer'],
-                [['username', 'gridRoleSearch', 'registration_ip', 'email', 'user_code', 'name', 'user_type_id'], 'string'],
-                [['department', 'allow_app_login'], 'safe']
+            [['id', 'superadmin', 'status', 'created_at', 'updated_at', 'email_confirmed', 'is_active'], 'integer'],
+            [['username', 'gridRoleSearch', 'registration_ip', 'email', 'user_code', 'name', 'user_type_id'], 'string'],
+            [['department', 'allow_app_login', 'mobile_no'], 'safe']
         ];
+    }
+
+    public function scenarios() {
+        // bypass scenarios() implementation in the parent class
+        return Model::scenarios();
     }
 
     public function search($params) {
         $query = User::find();
         $query->joinWith(['userType', 'departmentCode']);
         if (!Yii::$app->user->isSuperadmin && Yii::$app->session->get('organizations_type') != 'FEDERATION') {
+            //  $query->joinWith(['organizations']);
             $org_array = [];
             $unions = explode(',', Yii::$app->session->get('Unions'));
             $feds = explode(',', Yii::$app->session->get('Federations'));
@@ -66,6 +73,7 @@ class UserSearch extends \webvimark\modules\UserManagement\models\search\UserSea
                 ->andFilterWhere(['like', 'user_code', $this->user_code])
                 ->andFilterWhere(['like', 'tbl_user_types.user_type', $this->user_type_id])
                 ->andFilterWhere(['like', 'email', $this->email])
+                ->andFilterWhere(['like', 'mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_department.department', $this->department]);
 
         return $dataProvider;

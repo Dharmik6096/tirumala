@@ -35,7 +35,7 @@ $form = ActiveForm::begin([
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-12 padding_10_0 theme-box ">
+    <div class="col-md-12 padding_10_0 theme-box row">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Route Mappings Details</h4>
         </div>
