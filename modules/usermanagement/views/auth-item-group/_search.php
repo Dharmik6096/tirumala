@@ -26,8 +26,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'updated_at') ?>
 
     <div class="form-group">
-        <?= Html::submitButton(UserManagementModule::t('back', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(UserManagementModule::t('back', 'Reset'), ['class' => 'btn btn-default']) ?>
+        <?= Html::submitButton(yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
+        <?= Html::resetButton(yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

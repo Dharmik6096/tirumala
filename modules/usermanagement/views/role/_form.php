@@ -4,8 +4,6 @@
  * @var yii\widgets\ActiveForm $form
  * @var webvimark\modules\UserManagement\models\rbacDB\Role $model
  */
-use webvimark\modules\UserManagement\models\rbacDB\AuthItemGroup;
-use webvimark\modules\UserManagement\UserManagementModule;
 use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\ArrayHelper;

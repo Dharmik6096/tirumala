@@ -10,7 +10,6 @@
  * @var yii\rbac\Permission $item
  */
 use app\modules\usermanagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -48,7 +47,7 @@ $this->title = Yii::t('app', 'Settings for permission') . ': ' . ($item->group_c
                             ?>
                         </span>
 
-                        <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= UserManagementModule::t('back', 'Search route'); ?>">
+                        <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= yii::t('app', 'Search route'); ?>">
 
                         <span class="input-group-btn">
                             <span id="show-only-selected-routes" class="btn btn-default">

@@ -5,7 +5,6 @@
  * @var $model webvimark\modules\UserManagement\models\forms\LoginForm
  */
 use webvimark\modules\UserManagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
@@ -39,7 +38,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><?= UserManagementModule::t('front', 'EVEREST Application') ?></h4>
+                <h4 class="modal-title"><?= yii::t('app', 'EVEREST Application') ?></h4>
             </div>
             <div class="modal-body">
                 <?php
@@ -85,24 +84,8 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     <div class="col-sm-12">
                         <?=
                         Html::submitButton(
-                                UserManagementModule::t('front', 'Login'), ['class' => 'btn btn-primary btn-block']
+                                yii::t('app', 'Login'), ['class' => 'btn btn-primary btn-block']
                         )
-                        ?>
-                    </div>
-                </div>
-                <div class="row registration-block">
-                    <div class="col-sm-6">
-                        <?php
-                        /* GhostHtml::a(
-                          UserManagementModule::t('front', "Registration"), ['/user-management/auth/registration']
-                          ) */
-                        ?>
-                    </div>
-                    <div class="col-sm-6 text-right">
-                        <?php
-                        /* GhostHtml::a(
-                          UserManagementModule::t('front', "Forgot password ?"), ['/user-management/auth/password-recovery']
-                          ) */
                         ?>
                     </div>
                 </div>
