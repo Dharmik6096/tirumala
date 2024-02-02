@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\usermanagement\models;
+namespace app\modules\usermanagement\models\search;
 
 use Yii;
 use yii\base\Model;
