@@ -132,7 +132,7 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
                 ];
             }
             foreach ($sentboxArray as $sent) {
-                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
                 if ($this->is_active == 0) {
                     $flag = 'DELETE';
                 }

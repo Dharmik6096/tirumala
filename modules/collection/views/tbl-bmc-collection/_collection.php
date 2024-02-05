@@ -63,7 +63,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-12 container">
             <div class="col-sm-10">
-                <div class="QltyParamDiv inline_block">
+                <div class="QltyParamDiv row">
                     <?php if ($allowRouteSelection) { ?>
                         <div class="col-sm-2">
                             <?= Yii::$app->dropdown->all_routes($model, $form, 'tblbmccollection-plant_code,tblbmccollection-mcc_plant_code,tblbmccollection-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>

@@ -100,12 +100,12 @@ $this->title = Yii::t('app', 'Member Bonus Payment Process : Step 1');
                                                     }
                                      }'),
                         ],
-                        'options' => ['class' => 'btn btn-primary',
+                        'options' => ['class' => 'btn-login btn btn-primary',
                             'type' => 'submit'],
                     ]);
                     AjaxSubmitButton::end();
                     ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                    <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
                 </div>
             </div>
         </div>

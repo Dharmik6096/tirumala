@@ -85,7 +85,7 @@ $this->title = Yii::t('app', 'Product Sale Delete');
                 echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary submit', 'id' => 'delete', 'value' => 'delete', 'name' => 'delete']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
