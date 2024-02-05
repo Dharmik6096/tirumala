@@ -11,6 +11,7 @@ use yii\data\ArrayDataProvider;
 use PHPExcel;
 use app\modules\configuration\models\TblGenerateReportParam;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
+use app\modules\usermanagement\models\User;
 
 /**
  * Default controller for the `JasperReports` module
@@ -31,12 +32,17 @@ class ReportsController extends \app\controllers\ChildController {
                 $model->scenario = $this->data['scenario'];
             }
         }
+
+        if ((!isset($this->data['output_type']) && User::canRoute('site/mis-background-report-generation-on'))) {
+            $this->data['output_type'] = $model->output_type = 'BACKGROUND';
+        }
+
         if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
             $this->LoadReport($model);
             if (empty($this->output)) {
 
                 $this->output = Yii::t('app', 'No Data Available.');
-            } else if (isset($this->data['export_file_name'])) {
+            } else if (isset($this->data['export_file_name']) && is_array($this->output)) {
 
                 $title_data = array_merge($model->attributes, $this->output[0]);
                 $export_file_name = $this->data['export_file_name'];
@@ -1032,10 +1038,14 @@ class ReportsController extends \app\controllers\ChildController {
             }
         }
         $sp_name = $this->data['sp_name'];
-        if ($showOutPut) {
-            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+        if ($model->output_type != 'BACKGROUND') {
+            if ($showOutPut) {
+                $output = \Yii::$app->general->getSpData($sp_name, $controls);
+            } else {
+                $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
+            }
         } else {
-            $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
+            $output = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
         }
         $this->output = $output;
 
@@ -1070,7 +1080,7 @@ class ReportsController extends \app\controllers\ChildController {
             }
         }
 
-        if (!empty($output)) {
+        if ($model->output_type != 'BACKGROUND' && !empty($output)) {
             $attr = '';
             $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
             $dataToDecrypt = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];

@@ -2931,4 +2931,12 @@ class SiteController extends Controller {
         echo 'Schema Refreshed';
     }
 
+    public function actionMisBackgroundReportGenerationOn() {
+        
+    }
+
+    public function actionJasperBackgroundReportGenerationOn() {
+        
+    }
+
 }
