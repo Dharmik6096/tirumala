@@ -74,7 +74,7 @@ $this->title = Yii::$app->label->title('create', 'Scheme Criteria');
                                                         }
                                                  }'),
                         ],
-                        'options' => ['class' => 'btn btn-default btn-save-txn saveSchemeCriteria',
+                        'options' => ['class' => 'btn-login btn btn-default btn-save-txn saveSchemeCriteria',
                             'type' => 'submit'],
                     ]);
                     AjaxSubmitButton::end();

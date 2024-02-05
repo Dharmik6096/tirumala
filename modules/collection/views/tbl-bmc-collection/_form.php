@@ -14,7 +14,7 @@ use kartik\grid\GridView;
     ?>
 </div>
 <div id="gridcontentSet" class='hide-grid-settings panel_clear_both'>
-    <div class="QltyParamDivGrid">
+    <div class="QltyParamDivGrid d-grid">
         <?=
         $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
         ?>
