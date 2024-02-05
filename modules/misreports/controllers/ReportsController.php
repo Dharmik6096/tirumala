@@ -32,8 +32,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $model->scenario = $this->data['scenario'];
             }
         }
-
-        if ((!isset($this->data['output_type']) && User::canRoute('site/mis-background-report-generation-on'))) {
+        if ((!isset($this->data['output_type']) && !User::canRoute('misreports/reports/mis-live-report-generation'))) {
             $this->data['output_type'] = $model->output_type = 'BACKGROUND';
         }
 
@@ -3447,6 +3446,10 @@ class ReportsController extends \app\controllers\ChildController {
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
+    }
+
+    public function actionMisLiveReportGeneration() {
+        
     }
 
 }
