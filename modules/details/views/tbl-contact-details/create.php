@@ -73,6 +73,7 @@ $script = "
                     $('#pageloader').show();
                     },
                     success: function(data) {
+                        $('#tblcontactdetails-mobile_no').prop('readonly', true);
                         $.each(data.modelData, function(index, value) {
                             $('#tblcontactdetails-'+index).val(value);
                         });

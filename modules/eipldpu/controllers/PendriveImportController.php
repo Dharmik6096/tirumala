@@ -106,13 +106,13 @@ class PendriveImportController extends \app\controllers\ChildController {
                         $modelSave = [];
                         while ($line = fgets($fh)) {
                             $line_no++;
-                            if (!empty($dpu_config['endline']) && strpos($line, $dpu_config['endline']) !== false) {
-                                $header_line = ($file->dpu_type == 8) ? TRUE : FALSE;
-                                continue;
-                            }
                             $dec_text = \Yii::$app->EIPLSecurity->Decrypt($line, $dpu_key, $file->dpu_type);
                             $packet = ($dec_text) ? $dec_text : $line;
                             $packet = $header_line ? trim($packet) : $packet;
+                            if (!empty($dpu_config['endline']) && strpos($packet, $dpu_config['endline']) !== false) {
+                                $header_line = ($file->dpu_type == 8) ? TRUE : FALSE;
+                                continue;
+                            }
                             $p_len = strlen($packet);
                             if ($file->dpu_type == 8 && !$header_line) {
                                 $char = preg_match('/^[a-zA-Z ]+$/', substr($packet, 3, 1)) ? TRUE : FALSE;
