@@ -21,6 +21,7 @@ use app\modules\dcsoperation\models\TblQualityParam;
 use app\models\ChildModel;
 use Jaspersoft\Client\Client;
 use app\modules\organisation\models\TblUnions;
+use app\modules\configuration\models\TblReportTxnLog;
 
 class ChildController extends Controller {
 
@@ -66,7 +67,7 @@ class ChildController extends Controller {
             'access' => [
                 'class' => 'yii\filters\AccessControl',
                 'rules' => [
-                    [
+                        [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -120,6 +121,25 @@ class ChildController extends Controller {
         return [
             'DATFILES' => [['ext' => '.BDF', 'module_name' => 'TblMilkCollection']],
         ];
+    }
+
+    public function RegisterReportRequest($report_type, $config, $controls) {
+        $model = new TblReportTxnLog();
+        $model->report_type = $report_type;
+        $model->report_title = $config['title'];
+        $model->sp_name = $report_type == 'mis' ? $config['sp_name'] : $config['path'];
+        $model->input_param = json_encode($controls);
+        $model->search_param = NULL;
+        $model->export_file_name = isset($config['export_file_name']) ? $config['export_file_name'] : NULL;
+        $model->file_type = $report_type == 'mis' ? 'xls' : 'pdf';
+        $model->user_code = \Yii::$app->user->identity->user_code;
+        $model->union_code = isset($controls['union_code']) ? $controls['union_code'] : NULL;
+        $model->union_code = isset($controls['p_union_code']) ? $controls['p_union_code'] : $model->union_code;
+        $model->status = 0;
+        if ($model->save()) {
+            return TRUE;
+        }
+        return FALSE;
     }
 
 }

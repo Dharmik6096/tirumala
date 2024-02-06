@@ -6,6 +6,7 @@ use yii\web\Controller;
 use yii;
 use Jaspersoft\Client\Client;
 use app\modules\jasperreports\models\ReportsModel;
+use app\modules\usermanagement\models\User;
 
 /**
  * Default controller for the `JasperReports` module
@@ -358,7 +359,7 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'ProductSaleInvoiceForCustomer';
         return $this->actionIndex();
     }
-    
+
     public function actionPaymentSummary() {
         $this->report = 'PaymentSummary';
         return $this->actionIndex();
@@ -417,18 +418,26 @@ class DefaultController extends \app\controllers\ChildController {
             $controls['digit_config'] = 0;
 
 //                  var_dump($controls);die;
-            $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
-
-            $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
-            if ($this->type != 'html') {
-                header('Cache-Control: must-revalidate');
-                header('Pragma: public');
-                header('Content-Description: File Transfer');
-                header('Content-Disposition: attachment; filename=' . $this->report . '.' . $this->type);
-                header('Content-Transfer-Encoding: binary');
-                header('Content-Length: ' . strlen($this->output));
-                header('Content-Type: application/' . $this->type);
-                echo $this->output;
+            if (User::canRoute('misreports/reports/jasper-live-report-generation')) {
+                $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
+                $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
+                if ($this->type != 'html') {
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Description: File Transfer');
+                    header('Content-Disposition: attachment; filename=' . $this->report . '.' . $this->type);
+                    header('Content-Transfer-Encoding: binary');
+                    header('Content-Length: ' . strlen($this->output));
+                    header('Content-Type: application/' . $this->type);
+                    echo $this->output;
+                }
+            } else {
+                if ($this->RegisterReportRequest('jasper', $this->data, $controls)) {
+                    $msg = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
+                } else {
+                    $msg = 'Error While Request Submit.';
+                }
+                $this->output = '<p><center><b>' . $msg . '<b/></center><p/>';
             }
         } else {
             $client_code = \Yii::$app->session->get('eiplCode');
@@ -865,6 +874,10 @@ class DefaultController extends \app\controllers\ChildController {
             ],
         ];
         return $label[$l];
+    }
+
+    public function actionJasperLiveReportGeneration() {
+        
     }
 
 }
