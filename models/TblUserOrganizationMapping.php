@@ -525,7 +525,7 @@ class TblUserOrganizationMapping extends ChildModel
                         $mccArray = [];
                         foreach ($this->dcs as $dcs) {
                             $data = explode(':', $dcs);
-                            $key = $data[1];
+                            $key = !empty($data[1]) ? $data[1] : $data[0];
                             if (!in_array($key, $mccArray)) {
                                 $mccArray[] = $key;
                             }
