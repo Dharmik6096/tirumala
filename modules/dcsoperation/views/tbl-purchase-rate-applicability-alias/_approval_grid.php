@@ -45,6 +45,10 @@ $visible = !empty($searchModel->status) ? FALSE : TRUE;
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }, 'filter' => false],
         ['attribute' => 'purchase_rate_code', 'label' => Yii::T('app', 'Rate Id'), 'filter' => false],
+        ['attribute' => 'shift_applicability',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        },],
         ['attribute' => 'error_desc', 'filter' => false],
     ];
 

@@ -45,6 +45,10 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->download_date_time);
         }],
+        ['attribute' => 'shift_applicability',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        }],
 ];
 
 $grid_option = [

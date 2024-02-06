@@ -20,7 +20,7 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
      */
     public function rules() {
         return [
-                [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name', 'reference_code', 'code_ex'], 'safe'],
+                [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name', 'reference_code', 'code_ex', 'shift_applicability'], 'safe'],
                 [['is_active'], 'boolean'],
 //            [['shift_code'], 'integer'],
         ];

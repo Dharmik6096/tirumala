@@ -25,7 +25,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
             //   [['rate_app_code', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code'], 'safe'],
             //   [['is_active'], 'boolean'],
             //   [['shift_code'], 'integer'],
-            [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for', 'union_code', 'dcs_code', 'purchase_rate_code'], 'safe'],
+            [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for', 'union_code', 'dcs_code', 'purchase_rate_code', 'shift_applicability'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for'], 'required', 'on' => ['deleteApplicability']]
         ];
     }

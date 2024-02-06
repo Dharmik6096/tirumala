@@ -61,7 +61,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             [['is_download'], 'default', 'value' => '1'],
             [['is_active'], 'default', 'value' => '1'],
             [['shift_code'], 'default', 'value' => '1'],
-            [['wef_date', 'shift_code'], 'required', 'except' => ['importCsv']],
+            [['wef_date', 'shift_code', 'shift_applicability'], 'required', 'except' => ['importCsv']],
             [['applicable_for', 'applicable_code', 'bmc_code', 'wef_date'], 'required', 'on' => ['importCsv']],
             [['dcs_code'], 'required', 'message' => 'You must select atleast one society.', 'except' => ['importCsv']],
             [['bmc_code'], function ($attribute, $params) {
@@ -84,7 +84,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 //            [['union_code'], 'string', 'max' => 3],
             //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'shift_applicability'], 'safe'],
             [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
@@ -346,7 +346,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                         ->select(['dprd.rate_type_code as rate_app_code', 'tbl_purchase_rate_applicability.purchase_rate_code'])
                         ->joinWith(['purchaseRateCode'])
                         ->join('LEFT JOIN', 'tbl_purchase_rate_details dprd', 'dprd.purchase_rate_code = tbl_purchase_rate_applicability.purchase_rate_code AND dprd.milk_type_code =' . $data['milk_type'] . ' AND dprd.milk_quality_type_code =' . $data['milk_quality_type'] . ' AND dprd.rate_class =\'' . $data['rate_class'] . '\'')
-                        ->where(['tbl_purchase_rate_applicability.is_active' => 1, 'tbl_purchase_rate_applicability.dcs_code' => $this->dcs_code, 'tbl_purchase_rate.shift_applicability' => [3, $data['shift']]])
+                        ->where(['tbl_purchase_rate_applicability.is_active' => 1, 'tbl_purchase_rate_applicability.dcs_code' => $this->dcs_code, 'tbl_purchase_rate_applicability.shift_applicability' => [3, $data['shift']]])
                         ->andWhere(['<=', 'tbl_purchase_rate_applicability.wef_date', $this->wef_date])
 //                        ->andWhere(['dprd.milk_type_code' => $data['milk_type'], 'dprd.milk_quality_type_code' => $data['milk_quality_type']])
                         ->orderBy('tbl_purchase_rate_applicability.wef_date desc')
@@ -586,6 +586,10 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                         ->andWhere(['<=', 'tbl_purchase_rate_applicability.wef_date', $date])
                         ->orderBy('tbl_purchase_rate_applicability.wef_date desc')
                         ->one();
+    }
+    
+    public function getShiftApplicability() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
     }
 
 }

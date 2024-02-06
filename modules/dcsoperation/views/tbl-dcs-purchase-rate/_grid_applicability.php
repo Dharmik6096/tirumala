@@ -47,6 +47,9 @@ $attribute = [
                 return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
             }
         }, 'vAlign' => 'middle',],
+        ['attribute' => 'shift_applicability', 'label' => Yii::t('app', 'Shift Applicability'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        }, 'vAlign' => 'middle',],
 ];
 
 $grid_option = [

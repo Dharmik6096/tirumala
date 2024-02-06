@@ -485,6 +485,9 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
             'download_date_time' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->download_date_time);
                 }],
+            'shift_applicability' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => function($model){
+                    return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+                }, 'class' => 'form-control'],
         ];
         $username = explode('#', Yii::$app->session->get('UserName'))[1];
         if (!in_array(strtolower($username), ['bipl', 'reil']))

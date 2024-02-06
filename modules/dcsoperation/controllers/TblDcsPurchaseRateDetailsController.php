@@ -149,7 +149,6 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
                         $data[$i]->delete();
                     }
                 }
-
                 $transaction = $this->generalModel->saveTransaction($main_model, ['Data Succesfully Added', 'info']);
 
                 if ($transaction !== FALSE) {

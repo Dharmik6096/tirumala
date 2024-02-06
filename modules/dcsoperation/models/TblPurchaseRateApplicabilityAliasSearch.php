@@ -22,7 +22,7 @@ class TblPurchaseRateApplicabilityAliasSearch extends TblPurchaseRateApplicabili
             [['rate_app_alias_code', 'purchase_rate_code', 'shift_code', 'rate_type', 'rate_gen_method_code', 'is_download', 'is_active', 'originating_type'], 'integer'],
             [['wef_date', 'dcs_code', 'union_code', 'download_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'error_desc', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['union_code', 'plant_code'], 'required', 'on' => ['approvalApplicability']],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'status'], 'safe']
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'status','shift_applicability'], 'safe']
         ];
     }
 
