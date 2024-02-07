@@ -59,7 +59,7 @@ class CronjobController extends \yii\console\Controller {
                     $this->model->save();
                 }
             } catch (\Throwable $ex) {
-                // var_dump($ex->getMessage());
+                Yii::error('report_txn_log_id=' . $this->model->report_txn_log_id . ' Error occurred: ' . $ex->getMessage());
                 $this->model->status = 3;
                 $this->model->response_msg = 'Unable to Generate Report.';
                 $this->model->updated_at = $this->model->response_datetime = date('Y-m-d H:i:s');
@@ -69,6 +69,7 @@ class CronjobController extends \yii\console\Controller {
     }
 
     public function SaveExcel() {
+        Yii::error('report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Start');
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
@@ -94,6 +95,7 @@ class CronjobController extends \yii\console\Controller {
                 }
             }
         }
+        Yii::error('report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Decrypted');
 
         $sheet->fromArray($file_header, NULL, 'A1');
         $sheet->fromArray($this->output, NULL, 'A2');
@@ -107,6 +109,7 @@ class CronjobController extends \yii\console\Controller {
         $objWriter->save($this->report_path . $fileName);
         $this->model->file_name = $fileName;
         $this->model->file_path = $this->report_folder . $fileName;
+        Yii::error('report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Done');
     }
 
     public function SaveJasperPdf() {
