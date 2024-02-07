@@ -821,6 +821,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                     ]
                 ],
+                ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],

@@ -29,7 +29,7 @@ use Yii;
  * @property string $response_datetime
  * @property string $response_msg
  */
-class TblReportTxnLog extends \app\models\ChildModel {
+class TblReportTxnLog extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
