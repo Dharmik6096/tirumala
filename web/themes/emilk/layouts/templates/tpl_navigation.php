@@ -551,6 +551,7 @@ echo GhostMenu::widget([
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="reportsNewDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Reports - New <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-menu-end' aria-labelledby='reportsNewDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
+                    ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
@@ -889,7 +890,6 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                     ]
                 ],
-                ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],

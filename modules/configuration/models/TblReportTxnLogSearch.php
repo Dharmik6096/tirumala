@@ -53,13 +53,7 @@ class TblReportTxnLogSearch extends TblReportTxnLog {
         $defaultToDate = date('Y-m-d');
         
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_report_txn_log');
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-        $query->andWhere(['tbl_report_txn_log.created_by' => Yii::$app->session->get('UserCode')]);
+        $query->andWhere(['tbl_report_txn_log.user_code' => Yii::$app->session->get('UserCode')]);
 
         if (!empty($this->from_date)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
