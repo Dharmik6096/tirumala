@@ -131,8 +131,10 @@ class ChildController extends Controller {
         $model->input_param = json_encode($controls);
         $model->search_param = NULL;
         $model->export_file_name = isset($config['export_file_name']) ? $config['export_file_name'] : NULL;
+        $model->decrypt_data = isset($config['to_decrypt']) ? json_encode($config['to_decrypt']) : NULL;
         $model->file_type = $report_type == 'mis' ? 'xls' : 'pdf';
-        $model->user_code = \Yii::$app->user->identity->user_code;
+        $model->user_code = $model->created_by = \Yii::$app->user->identity->user_code;
+        $model->created_at = date('Y-m-d H:i:s');
         $model->union_code = isset($controls['union_code']) ? $controls['union_code'] : NULL;
         $model->union_code = isset($controls['p_union_code']) ? $controls['p_union_code'] : $model->union_code;
         $model->status = 0;
