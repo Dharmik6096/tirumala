@@ -23,6 +23,7 @@ class CronjobController extends \yii\console\Controller {
         Yii::$app->general->checkDirectory($report_path . '/jasper/');
         $i = 0;
         while ($i < 1) {
+            sleep(5);
             try {
                 $this->model = new TblReportTxnLog();
                 $this->model = $this->model->find()->where(['status' => 0])->orderBy(['report_txn_log_id' => SORT_ASC])->one();
