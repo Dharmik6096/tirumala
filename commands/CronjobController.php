@@ -23,7 +23,7 @@ class CronjobController extends \yii\console\Controller {
         Yii::$app->general->checkDirectory($report_path . '/jasper/');
         $i = 0;
         while ($i < 1) {
-            sleep(5);
+            sleep(2);
             try {
                 $this->model = new TblReportTxnLog();
                 $this->model = $this->model->find()->where(['status' => 0])->orderBy(['report_txn_log_id' => SORT_ASC])->one();
@@ -37,7 +37,10 @@ class CronjobController extends \yii\console\Controller {
                     $msg = 'Error While Report Generate.';
                     $controls = json_decode($this->model->input_param, TRUE);
                     if ($this->model->report_type == 'mis') {
+
+                        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SP CALL');
                         $this->output = \Yii::$app->general->getSpData($this->model->sp_name, $controls);
+                        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SP Result');
                         if (!empty($this->output)) {
                             $this->SaveExcel();
                             $status = 2;
@@ -59,7 +62,7 @@ class CronjobController extends \yii\console\Controller {
                     $this->model->save();
                 }
             } catch (\Throwable $ex) {
-                Yii::error('report_txn_log_id=' . $this->model->report_txn_log_id . ' Error occurred: ' . $ex->getMessage());
+                var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . ' Error occurred: ' . $ex->getMessage());
                 $this->model->status = 3;
                 $this->model->response_msg = 'Unable to Generate Report.';
                 $this->model->updated_at = $this->model->response_datetime = date('Y-m-d H:i:s');
@@ -69,7 +72,7 @@ class CronjobController extends \yii\console\Controller {
     }
 
     public function SaveExcel() {
-        Yii::error('report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Start');
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Start');
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
@@ -95,25 +98,33 @@ class CronjobController extends \yii\console\Controller {
                 }
             }
         }
-        Yii::error('report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Decrypted');
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Decrypted');
 
         $sheet->fromArray($file_header, NULL, 'A1');
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header');
+
         $sheet->fromArray($this->output, NULL, 'A2');
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data');
+
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $labelT = date('Ymdhis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title;
+        $labelT = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title;
         $fileName = $labelT . '.' . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel header before save');
+
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
         $objWriter->save($this->report_path . $fileName);
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel filesave');
+        
         $this->model->file_name = $fileName;
         $this->model->file_path = $this->report_folder . $fileName;
-        Yii::error('report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Done');
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Done');
     }
 
     public function SaveJasperPdf() {
-        $fileName = date('Ymdhis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title . '.pdf';
+        $fileName = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title . '.pdf';
         file_put_contents($this->report_path . $fileName, $this->output);
         $this->model->file_name = $fileName;
         $this->model->file_path = $this->report_folder . $fileName;
