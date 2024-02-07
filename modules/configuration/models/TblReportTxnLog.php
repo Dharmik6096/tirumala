@@ -45,7 +45,7 @@ class TblReportTxnLog extends \yii\db\ActiveRecord {
         return [
             [['created_at', 'updated_at', 'pick_datetime', 'cron_pick_datetime', 'response_datetime', 'report_type', 'report_title',
             'sp_name_or_report_path', 'input_param', 'search_param', 'export_file_name', 'file_type', 'file_name', 'file_path',
-            'user_code', 'union_code', 'created_by', 'updated_by', 'response_msg', 'status'], 'safe'],
+            'user_code', 'union_code', 'created_by', 'updated_by', 'response_msg', 'status', 'decrypt_data'], 'safe'],
             [['status'], 'integer'],
         ];
     }
@@ -76,6 +76,7 @@ class TblReportTxnLog extends \yii\db\ActiveRecord {
             'cron_pick_datetime' => 'Cron Pick Datetime',
             'response_datetime' => 'Response Datetime',
             'response_msg' => 'Response Msg',
+            'decrypt_data' => 'Decrypt Data',
         ];
     }
 
