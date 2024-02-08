@@ -24,8 +24,24 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->created_at);
         }],
-    ['attribute' => 'pick_datetime', 'visible' => true, 'filter' => FALSE],
-    ['attribute' => 'response_datetime', 'visible' => true, 'filter' => FALSE],
+    ['attribute' => 'pick_datetime',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->pick_datetime);
+        }, 'filter' => FALSE],
+    ['attribute' => 'response_datetime',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->response_datetime);
+        }, 'filter' => FALSE],
     ['attribute' => 'response_msg', 'visible' => true, 'filter' => true],
     [
         'attribute' => 'status',
