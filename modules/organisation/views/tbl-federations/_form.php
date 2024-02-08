@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 $url= ($model->isNewRecord) ? '' : Url::to(['../../organisation/tbl-federations/view','id'=>$model->federation_code]);

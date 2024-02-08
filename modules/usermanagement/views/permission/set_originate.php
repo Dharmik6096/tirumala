@@ -1,10 +1,9 @@
 <?php
 
 use app\modules\usermanagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 
 $this->title = Yii::t('app', 'Settings for Originate Actions');
 ?>
@@ -71,7 +70,7 @@ $form = ActiveForm::begin([
                             ?>
                         </span>
 
-                        <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= UserManagementModule::t('back', 'Search route'); ?>">
+                        <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= yii::t('app', 'Search route'); ?>">
 
                     </div>
 

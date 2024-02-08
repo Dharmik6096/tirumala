@@ -1,7 +1,6 @@
 <?php
 
 use app\modules\usermanagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
@@ -18,7 +17,7 @@ use yii\web\View;
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var webvimark\modules\UserManagement\models\rbacDB\search\AuthItemGroupSearch $searchModel
  */
-$this->title = UserManagementModule::t('back', 'Permission groups');
+$this->title = yii::t('app', 'Permission groups');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

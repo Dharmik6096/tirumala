@@ -1,7 +1,7 @@
 <?php
 
 use kartik\grid\GridView;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use kartik\helpers\Html;
 use yii\web\View;
 use app\modules\usermanagement\components\GhostHtml;

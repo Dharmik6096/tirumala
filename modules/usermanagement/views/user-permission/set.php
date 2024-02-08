@@ -7,15 +7,14 @@
  */
 use app\modules\usermanagement\components\GhostHtml;
 use webvimark\modules\UserManagement\models\rbacDB\Role;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\bootstrap5\BootstrapPluginAsset;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 BootstrapPluginAsset::register($this);
-$this->title = UserManagementModule::t('back', 'Roles and permissions for user:') . ' ' . $user->username;
+$this->title = yii::t('app', 'Roles and permissions for user:') . ' ' . $user->username;
 
-$this->params['breadcrumbs'][] = ['label' => UserManagementModule::t('back', 'Users'), 'url' => ['/user-management/user/index']];
+$this->params['breadcrumbs'][] = ['label' => yii::t('app', 'Users'), 'url' => ['/user-management/user/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -64,12 +63,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php if (Yii::$app->user->isSuperadmin OR Yii::$app->user->id != $user->id): ?>
                     <?=
                     Html::submitButton(
-                            UserManagementModule::t('back', 'save'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
+                            yii::t('app', 'save'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
                     )
                     ?>
                 <?php else: ?>
                     <div class="alert alert-warning well-sm text-center">
-                        <?= UserManagementModule::t('back', 'You can not change own permissions') ?>
+                        <?= yii::t('app', 'You can not change own permissions') ?>
                     </div>
                 <?php endif; ?>
             </div>

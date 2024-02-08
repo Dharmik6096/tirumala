@@ -1,14 +1,13 @@
 <?php
 
 use app\assets\LoginAsset;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\bootstrap5\BootstrapAsset;
 use yii\helpers\Html;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-$this->title = UserManagementModule::t('front', 'Everest');
+$this->title = yii::t('app', 'Everest');
 LoginAsset::register($this);
 BootstrapAsset::register($this);
 ?>

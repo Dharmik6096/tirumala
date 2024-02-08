@@ -10,15 +10,14 @@
  * @var yii\rbac\Permission $item
  */
 use app\modules\usermanagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 //echo '<pre>';
 //print_r($item);exit;
-$this->title = UserManagementModule::t('back', 'Settings for permission') . ': ' . $item->description;
-//$this->title = UserManagementModule::t('back', 'Settings for permission') . ': ' . ($item->group_code ? $item->group->name : '');
-$this->params['breadcrumbs'][] = ['label' => UserManagementModule::t('back', 'Permissions'), 'url' => ['index']];
+$this->title = yii::t('app', 'Settings for permission') . ': ' . $item->description;
+//$this->title = yii::t('app', 'Settings for permission') . ': ' . ($item->group_code ? $item->group->name : '');
+$this->params['breadcrumbs'][] = ['label' => yii::t('app', 'Permissions'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 //$this->params['menu'][] = Yii::$app->controls->update($item->group_code);
 ?>
@@ -45,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="btn-group pull-right">
                     <?=
                     Html::a(
-                            UserManagementModule::t('back', 'Refresh routes'), ['refresh-routes', 'id' => $item->name], [
+                            yii::t('app', 'Refresh routes'), ['refresh-routes', 'id' => $item->name], [
                         'class' => 'btn btn-default btn-sm',
                         'style' => 'margin-top:-3px;',
                             ]
@@ -53,10 +52,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     ?>
                     <?=
                     Html::a(
-                            UserManagementModule::t('back', 'Refresh routes (and delete unused)'), ['refresh-routes', 'id' => $item->name, 'deleteUnused' => 1], [
+                            yii::t('app', 'Refresh routes (and delete unused)'), ['refresh-routes', 'id' => $item->name, 'deleteUnused' => 1], [
                         'class' => 'btn btn-default btn-sm',
                         'style' => 'margin-top:-3px;',
-                        'data-confirm' => UserManagementModule::t('back', 'Routes that are not exists in this application will be deleted. Do not recommended for application with "advanced" structure, because frontend and backend have they own set of routes.'),
+                        'data-confirm' => yii::t('app', 'Routes that are not exists in this application will be deleted. Do not recommended for application with "advanced" structure, because frontend and backend have they own set of routes.'),
                             ]
                     )
                     ?>
@@ -69,20 +68,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     <span class="input-group-btn">
                         <?=
                         Html::submitButton(
-                                '<!--<span class="glyphicon glyphicon-ok"></span> -->' . UserManagementModule::t('back', 'Save'), ['class' => 'btn btn-default']
+                                '<!--<span class="glyphicon glyphicon-ok"></span> -->' . yii::t('app', 'Save'), ['class' => 'btn btn-default']
                         )
                         ?>
                     </span>
 
-                    <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= UserManagementModule::t('back', 'Search route'); ?>">
+                    <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= yii::t('app', 'Search route'); ?>">
 
                     <span class="input-group-btn">
                         <span id="show-only-selected-routes" class="btn btn-default">
-                            <i class="fa fa-minus"></i> <?= UserManagementModule::t('back', 'Show only selected'); ?>
+                            <i class="fa fa-minus"></i> <?= yii::t('app', 'Show only selected'); ?>
                         </span>
 
                         <span id="show-all-routes" class="btn btn-default hide">
-                            <i class="fa fa-plus"></i> <?= UserManagementModule::t('back', 'Show all'); ?>
+                            <i class="fa fa-plus"></i> <?= yii::t('app', 'Show all'); ?>
                         </span>
                     </span>
                 </div>
@@ -115,7 +114,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="form-group">
                             <?=
                             Html::submitButton(
-                                    UserManagementModule::t('back', 'save'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
+                                    yii::t('app', 'save'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
                             )
                             ?>
                             <?php echo Html::a('cancel', ['create'], ['class' => 'btn-login btn btn-danger apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']); ?>

@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 
 ($type == 'edit') ? $disabled = true: $disabled = false;
 ?>

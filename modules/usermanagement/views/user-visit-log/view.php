@@ -1,6 +1,5 @@
 <?php
 
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -10,7 +9,7 @@ use yii\widgets\DetailView;
  */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => UserManagementModule::t('back', 'Visit log'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => yii::t('app', 'Visit log'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-visit-log-view">

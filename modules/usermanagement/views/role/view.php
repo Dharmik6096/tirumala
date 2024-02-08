@@ -11,13 +11,11 @@
  * @var yii\rbac\Role $role
  */
 use app\modules\usermanagement\components\GhostHtml;
-use webvimark\modules\UserManagement\models\rbacDB\Role;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-$this->title = UserManagementModule::t('back', 'Permissions for role:') . ' ' . $role->description;
-$this->params['breadcrumbs'][] = ['label' => UserManagementModule::t('back', 'Roles'), 'url' => ['index']];
+$this->title = yii::t('app', 'Permissions for role:') . ' ' . $role->description;
+$this->params['breadcrumbs'][] = ['label' => yii::t('app', 'Roles'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['menu'][]=Yii::$app->controls->update($role->description);
 ?>
@@ -67,7 +65,7 @@ $this->params['menu'][]=Yii::$app->controls->update($role->description);
                 <div class="form-group">
                     <?=
                     Html::submitButton(
-                            UserManagementModule::t('back', 'save'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
+                            yii::t('app', 'save'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
                     )
                     ?>
                     <?php echo Html::a('cancel', ['create'], ['class' => 'btn btn-danger apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']); ?>

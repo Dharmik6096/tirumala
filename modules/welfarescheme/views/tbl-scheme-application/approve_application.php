@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\detail\DetailView;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Url;
 
 $this->title = Yii::$app->label->title('view', 'Scheme Application Approval');

@@ -3,7 +3,6 @@
 use app\modules\usermanagement\components\GhostHtml;
 use webvimark\modules\UserManagement\models\rbacDB\Role;
 use app\modules\usermanagement\models\User;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -48,7 +47,7 @@ $this->title = Yii::$app->label->title('view', Yii::$app->general->getUserName($
                         'visible' => User::hasPermission('viewUserEmail'),
                     ],
                     [
-                        'label' => UserManagementModule::t('back', 'Roles'),
+                        'label' => yii::t('app', 'Roles'),
                         'value' => implode('<br/>', (array) ArrayHelper::map(Role::getUserRoles($model->id), 'name', 'description')),
                         'visible' => User::hasPermission('viewUserRoles'),
                         'format' => 'raw',
@@ -90,7 +89,7 @@ $this->title = Yii::$app->label->title('view', Yii::$app->general->getUserName($
         </div>
         <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="true">
             <div class="form-group">
-                <?= GhostHtml::a(UserManagementModule::t('back', 'edit'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']) ?>
+                <?= GhostHtml::a(yii::t('app', 'edit'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']) ?>
                 <?php
                 /* echo GhostHtml::a(UserManagementModule::t('back', 'delete'), 'javascript:void(0)', [
                   'class' => 'btn btn-default user-record apply-shortcut',

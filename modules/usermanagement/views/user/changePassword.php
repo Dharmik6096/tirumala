@@ -1,17 +1,16 @@
 <?php
 
-use webvimark\modules\UserManagement\UserManagementModule;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Html;
 
 /**
  * @var yii\web\View $this
  * @var app\modules\usermanagement\models\User $model
  */
-$this->title = UserManagementModule::t('back', 'Changing password for user: ') . ' ' . $model->username;
-$this->params['breadcrumbs'][] = ['label' => UserManagementModule::t('back', 'Users'), 'url' => ['index']];
+$this->title = yii::t('app', 'Changing password for user: ') . ' ' . $model->username;
+$this->params['breadcrumbs'][] = ['label' => yii::t('app', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->username, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = UserManagementModule::t('back', 'Changing password');
+$this->params['breadcrumbs'][] = yii::t('app', 'Changing password');
 ?>
 <div class="user-update">
 
@@ -43,13 +42,13 @@ $this->params['breadcrumbs'][] = UserManagementModule::t('back', 'Changing passw
                             <?php if ($model->isNewRecord): ?>
                                 <?=
                                 Html::submitButton(
-                                        '<!--<span class="fas fa-plus"></span> -->' . UserManagementModule::t('back', 'Create'), ['class' => 'btn btn-default']
+                                        '<!--<span class="fas fa-plus"></span> -->' . yii::t('app', 'Create'), ['class' => 'btn btn-default']
                                 )
                                 ?>
                             <?php else: ?>
                                 <?=
                                 Html::submitButton(
-                                        '<!--<span class="glyphicon glyphicon-ok"></span> -->' . UserManagementModule::t('back', 'Save'), ['class' => 'btn btn-default']
+                                        '<!--<span class="glyphicon glyphicon-ok"></span> -->' . yii::t('app', 'Save'), ['class' => 'btn btn-default']
                                 )
                                 ?>
                             <?php endif; ?>

@@ -6,7 +6,7 @@ use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\helpers\Url;
 use yii\web\View;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\dcsconfiguration\models\TblDcsGeneralConfigDefault */

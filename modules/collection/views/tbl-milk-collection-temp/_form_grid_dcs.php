@@ -3,7 +3,7 @@
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Html;
 use app\modules\usermanagement\components\GhostHtml;
 

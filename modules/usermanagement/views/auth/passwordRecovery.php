@@ -1,7 +1,6 @@
 <?php
 
-use webvimark\modules\UserManagement\UserManagementModule;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\captcha\Captcha;
 use yii\helpers\Html;
 
@@ -10,7 +9,7 @@ use yii\helpers\Html;
  * @var webvimark\modules\UserManagement\models\forms\PasswordRecoveryForm $model
  */
 
-$this->title = UserManagementModule::t('front', 'Password recovery');
+$this->title = yii::t('app', 'Password recovery');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -40,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-9">
 			<?= Html::submitButton(
-				'<span class="glyphicon glyphicon-ok"></span> ' . UserManagementModule::t('front', 'Recover'),
+				'<span class="glyphicon glyphicon-ok"></span> ' . yii::t('app', 'Recover'),
 				['class' => 'btn btn-primary']
 			) ?>
 		</div>

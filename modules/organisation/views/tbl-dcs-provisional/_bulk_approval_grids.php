@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Dcs Provisional Approval'));
 ?>
