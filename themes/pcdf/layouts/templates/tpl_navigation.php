@@ -496,9 +496,16 @@ echo GhostMenu::widget([
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t("app", "Reports - New") . ' <b class="caret"></b></a>',
-            'items' => [
-                    ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
-                    [
+            'items' => [[
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Report Request<b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
+                        ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
+                        ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
+                    ],
+                ],
+                [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
                     'items' => [
