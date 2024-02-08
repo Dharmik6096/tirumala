@@ -140,6 +140,7 @@ class CronjobController extends \yii\console\Controller {
             var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data Chunk ' . $a);
             $a++;
         }
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');
 
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title;
