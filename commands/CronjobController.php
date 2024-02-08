@@ -42,9 +42,14 @@ class CronjobController extends \yii\console\Controller {
                         $this->output = \Yii::$app->general->getSpData($this->model->sp_name, $controls);
                         var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SP Result');
                         if (!empty($this->output)) {
-                            $this->SaveExcel();
-                            $status = 2;
-                            $msg = 'Report Generated.';
+                            $result = $this->SaveExcel();
+                            if ($result === TRUE) {
+                                $status = 2;
+                                $msg = 'Report Generated.';
+                            } else {
+                                $status = 3;
+                                $msg = $result;
+                            }
                         } else {
                             $status = 2;
                             $msg = 'No Data Found.';
@@ -63,8 +68,9 @@ class CronjobController extends \yii\console\Controller {
                 }
             } catch (\Throwable $ex) {
                 var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . ' Error occurred: ' . $ex->getMessage());
+                $msg = substr($ex->getMessage(), 0, 254);
                 $this->model->status = 3;
-                $this->model->response_msg = 'Unable to Generate Report.';
+                $this->model->response_msg = $msg;
                 $this->model->updated_at = $this->model->response_datetime = date('Y-m-d H:i:s');
                 $this->model->save();
             }
@@ -72,6 +78,15 @@ class CronjobController extends \yii\console\Controller {
     }
 
     public function SaveExcel() {
+        $chunk_size = 1000;
+        $chunk_limit = 500;
+        $sheet_change_on_chunk = 251;
+
+        $output_chunk = array_chunk($this->output, $chunk_size, TRUE);
+        $sheet_count = count($output_chunk);
+        if ($sheet_count > $chunk_limit) {
+            return 'More than ' . ($chunk_limit * $chunk_size) . ' Records.Please Change Your Filter.';
+        }
         var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Start');
         $header = [
             'mime' => '	application/vnd.ms-excel',
@@ -79,7 +94,6 @@ class CronjobController extends \yii\console\Controller {
             'writer' => 'Excel2007',
         ];
         $objPHPExcel = new PHPExcel();
-        $sheet = $objPHPExcel->getActiveSheet();
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
 
         $dataToDecrypt = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
@@ -100,27 +114,46 @@ class CronjobController extends \yii\console\Controller {
         }
         var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Decrypted');
 
-        $sheet->fromArray($file_header, NULL, 'A1');
-        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header');
+        $output_chunk = array_chunk($this->output, $chunk_size, TRUE);
+        $chunk_count = count($output_chunk);
 
-        $sheet->fromArray($this->output, NULL, 'A2');
-        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data');
+        $a = 1;
+        $sheet_no = 2;
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Sheet Count ' . count($chunk_count));
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Data Count ' . count($this->output));
+
+        $sheet = $objPHPExcel->getActiveSheet();
+        $sheet->setTitle('Sheet1');
+        $sheet->fromArray($file_header, NULL, 'A1');
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet1');
+        foreach ($output_chunk as $output) {
+            if ($a == $sheet_change_on_chunk) {
+                $a = 1;
+                $sheet = $objPHPExcel->createSheet($sheet_no); // Pass the index as the second argument
+                $sheet->setTitle('Sheet' . $sheet_no);
+                $sheet->fromArray($file_header, NULL, 'A1');
+                var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet' . $sheet_no);
+                $sheet_no++;
+            }
+            $data_cell = 'A' . ($a == 1 ? '2' : ((($a - 1) * $chunk_size) + 2));
+            $sheet->fromArray($output, NULL, $data_cell);
+            var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data Chunk ' . $a);
+            $a++;
+        }
 
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title;
-        $fileName = $labelT . '.' . $header['extension'] .
-                header('Content-Type: ' . $header['mime']);
-        header('Content-Disposition: attachment;filename=' . $fileName);
-        header('Cache-Control: max-age=0');
-        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel header before save');
+        $fileName = $labelT . '.' . $header['extension'];
 
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
         $objWriter->save($this->report_path . $fileName);
-        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel filesave');
-        
+
+        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Done');
+
         $this->model->file_name = $fileName;
         $this->model->file_path = $this->report_folder . $fileName;
-        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Done');
+
+        return TRUE;
     }
 
     public function SaveJasperPdf() {
