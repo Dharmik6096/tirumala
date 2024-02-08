@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 //use yii\widgets\ActiveForm;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\helpers\Url;

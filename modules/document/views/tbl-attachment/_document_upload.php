@@ -1,7 +1,7 @@
 <?php
 $this->title = 'Upload Documents';
 
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;

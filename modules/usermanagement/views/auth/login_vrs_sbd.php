@@ -4,9 +4,7 @@
  * @var $this yii\web\View
  * @var $model webvimark\modules\UserManagement\models\forms\LoginForm
  */
-use webvimark\modules\UserManagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
@@ -80,22 +78,6 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                         Html::submitButton(
                                 Yii::t('app', 'Login'), ['class' => 'btn-login btn btn-primary btn-block']
                         )
-                        ?>
-                    </div>
-                </div>
-                <div class="row registration-block">
-                    <div class="col-sm-6">
-                        <?php
-                        /* GhostHtml::a(
-                          UserManagementModule::t('front', "Registration"), ['/user-management/auth/registration']
-                          ) */
-                        ?>
-                    </div>
-                    <div class="col-sm-6 text-right">
-                        <?php
-                        /* GhostHtml::a(
-                          UserManagementModule::t('front', "Forgot password ?"), ['/user-management/auth/password-recovery']
-                          ) */
                         ?>
                     </div>
                 </div>

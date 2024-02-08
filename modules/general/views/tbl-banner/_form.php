@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use kato\DropZone;
 use yii\helpers\Html;

@@ -1,7 +1,7 @@
 <?php
 
 use app\modules\usermanagement\components\GhostHtml;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;

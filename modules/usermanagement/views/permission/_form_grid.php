@@ -5,7 +5,6 @@ use webvimark\extensions\GridPageSize\GridPageSize;
 use app\modules\usermanagement\components\GhostHtml;
 use webvimark\modules\UserManagement\models\rbacDB\AuthItemGroup;
 use webvimark\modules\UserManagement\models\rbacDB\Permission;
-use webvimark\modules\UserManagement\UserManagementModule;
 //use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -20,7 +19,7 @@ use yii\web\View;
  * @var webvimark\modules\UserManagement\models\rbacDB\search\PermissionSearch $searchModel
  * @var yii\web\View $this
  */
-$this->title = UserManagementModule::t('back', 'Permissions');
+$this->title = yii::t('app', 'Permissions');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

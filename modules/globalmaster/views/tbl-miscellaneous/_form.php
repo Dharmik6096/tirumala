@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\TblMiscellaneous */

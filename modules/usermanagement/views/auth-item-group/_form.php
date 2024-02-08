@@ -1,8 +1,7 @@
 <?php
 
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\Html;
-use yii\bootstrap5\ActiveForm;
+use app\components\ActiveForm;
 
 /**
  * @var yii\web\View $this
