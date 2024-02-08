@@ -268,6 +268,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 }
                 if (empty($error_msg)) {
                     if (empty($msg)) {
+                        $unlink_files = [];
                         $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
                         $deleteModel = [];
                         if ($config == 1) {
@@ -284,7 +285,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $all_doc = [];
                                 $memberdoc = [];
                                 if ($model->provisional_status = 'Approve') {
-                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message);
+                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message, $unlink_files);
                                 }
                                 if (!empty($message)) {
                                     foreach ($message as $msg) {
@@ -304,6 +305,13 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                     $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                                     $memberDir = $baseDir . 'member';
                                     $proMemberDir = $baseDir . 'provisional_member';
+                                    if(!empty($unlink_files)){
+                                        foreach($unlink_files as $file){
+                                            if (file_exists($memberDir . '/' . $file)) {
+                                                unlink($memberDir . '/' . $file);
+                                            }
+                                        }
+                                    }
                                     for ($i = 0; $i < count($all_doc); $i++) {
                                         $fileName = basename($memberdoc[$i]);
                                         $file = $memberDir . '/' . $fileName;
