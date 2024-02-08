@@ -57,14 +57,14 @@ class TblReportTxnLogSearch extends TblReportTxnLog {
 
         if (!empty($this->from_date)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $query->andFilterWhere(['>=', 'tbl_report_txn_log.created_at', $from_date]);
+            $query->andFilterWhere(['>=', 'cast(tbl_report_txn_log.created_at as date)', $from_date]);
         } else {
             $this->from_date = $defaultFromDate;
         }
 
         if (!empty($this->to_date)) {
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $query->andFilterWhere(['<=', 'tbl_report_txn_log.created_at', $to_date]);
+            $query->andFilterWhere(['<=', 'cast(tbl_report_txn_log.created_at as date)', $to_date]);
         } else {
             $this->to_date = $defaultToDate;
         }
