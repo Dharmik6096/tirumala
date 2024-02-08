@@ -32,7 +32,7 @@ $attribute = [
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->pick_datetime);
-        }],
+        }, 'filter' => FALSE],
     ['attribute' => 'response_datetime',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -41,7 +41,7 @@ $attribute = [
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->response_datetime);
-        }],
+        }, 'filter' => FALSE],
     ['attribute' => 'response_msg', 'visible' => true, 'filter' => true],
     [
         'attribute' => 'status',
