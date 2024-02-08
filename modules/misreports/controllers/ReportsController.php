@@ -1541,6 +1541,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'DetailsReport';
         return $this->actionIndex();
     }
+    
+    public function actionRegionWiseUserAttendanceReport() {
+        $this->report = 'RegionWiseUserAttendanceReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3196,6 +3201,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_user_attendance',
                 'scenario' => 'DetailsReport',
                 'title' => 'Details Report',
+            ],
+            'RegionWiseUserAttendanceReport' => [
+                'param' => 'union_code,state_code,region_code,area_code,user_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_user_attendance_region_wise',
+                'scenario' => 'RegionWiseUserAttendanceReport',
+                'title' => 'Region-wise User Attendance Report',
             ],
         ];
         return $label[$l];
