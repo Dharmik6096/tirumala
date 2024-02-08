@@ -79,13 +79,12 @@ class CronjobController extends \yii\console\Controller {
 
     public function SaveExcel() {
         $chunk_size = 1000;
-        $chunk_limit = 500;
+        $chunk_limit = 100;
         $sheet_change_on_chunk = 251;
 
-        $output_chunk = array_chunk($this->output, $chunk_size, TRUE);
-        $sheet_count = count($output_chunk);
-        if ($sheet_count > $chunk_limit) {
-            return 'More than ' . ($chunk_limit * $chunk_size) . ' Records.Please Change Your Filter.';
+        $record_limit = ($chunk_limit * $chunk_size);
+        if (count($this->output) > $record_limit) {
+            return 'More than ' . $record_limit . ' Records.Please Change Your Filter.';
         }
         var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Start');
         $header = [
