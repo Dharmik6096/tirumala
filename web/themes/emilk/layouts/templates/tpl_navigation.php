@@ -793,7 +793,8 @@ echo GhostMenu::widget([
                                         ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation-region']],
                                     ]
                                 ],
-                                ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
+                                ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
+                                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
                         [
