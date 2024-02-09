@@ -87,7 +87,7 @@ class TblBmcCollectionHistory extends \yii\db\ActiveRecord {
                 [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks', 'transporter_code', 'vehicle_code', 'bmc_code', 'created_by', 'updated_by', 'route_code', 'operation_type'], 'safe'],
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'density', 'clr', 'lactose', 'protein', 'converted_qty'], 'safe'],
                 [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'qlty_time', 'qty_time', 'date_time_of_testing', 'created_at', 'updated_at', 'history_created_at', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
-                [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'originating_org_code', 'originating_org_type', 'response_datetime'], 'safe'],
+                [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'originating_org_code', 'originating_org_type', 'response_datetime', 'originating_type'], 'safe'],
                 [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'rejection_responsibility_code', 'converted_amount'], 'safe'],
                 [['adt_param', 'adt_value', 'bmc_silos_info_code', 'received_timestamp', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_rate_recalc', 'purchase_rate_code_old', 'antibiotic', 'can_no', 'tare_weight', 'gross_weight'], 'safe']
         ];
