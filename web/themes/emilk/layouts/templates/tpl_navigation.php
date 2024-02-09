@@ -988,6 +988,15 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Complain'), 'url' => ['/complaint/tbl-complain/index'], 'active' => ($cntrl == 'tbl-complain')],
                     ]
                 ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">'.Yii::t('app', 'Feedback').'<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Feedback Item'), 'url' => ['/feedback/tbl-eipl-app-feedback-item/index']],
+                            ['label' => Yii::t('app', 'Feedback Master'), 'url' => ['/feedback/tbl-eipl-app-feedback-master/index']],
+                    //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
+                    ],
+                ],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Global <b class="caret"></b></a>',

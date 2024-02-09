@@ -2415,5 +2415,20 @@ class GeneralFunctions extends Component {
             }
         }
     }
-
+    public function asciiToTextConvert($asciiValue) {
+        $asciiValueArray = explode(',', $asciiValue);
+        $string = '';
+        foreach ($asciiValueArray as $char) {
+            $string = $string . chr($char);
+        }
+        return $string;
+    }
+    public function textToAsciiConvert($text) {
+        $string = '';
+        $textArray = str_split($text);
+        foreach ($textArray as $char) {
+            $string = $string . ord($char) . ', ';
+        }
+        return substr($string, 0, -2);
+    }
 }
