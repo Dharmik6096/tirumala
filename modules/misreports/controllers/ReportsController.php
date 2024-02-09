@@ -1554,12 +1554,12 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'DetailsReport';
         return $this->actionIndex();
     }
-    
+
     public function actionAllReportRequest() {
         $this->report = 'AllReportRequest';
         return $this->actionIndex();
     }
-    
+
     public function actionRegionWiseUserAttendanceReport() {
         $this->report = 'RegionWiseUserAttendanceReport';
         return $this->actionIndex();
@@ -1577,6 +1577,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
 //                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1585,6 +1586,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
 //                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1593,6 +1595,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
 //                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             //102
             'DcsCollDateShiftSummary' => [
@@ -1601,6 +1604,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DcsCollDateShiftSummary',
                 'title' => '102 - Society Collection Date And Shift Summary',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'DcsCollDateWiseSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -1608,6 +1612,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DcsCollDateShiftSummary',
                 'title' => '102 - Society Collection Date Wise Summary',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'DcsCollectionConsolidate' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -1615,6 +1620,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DcsCollDateShiftSummary',
                 'title' => '102 - Society Collection Consolidated',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'MemberCollectionShiftReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,date:string:shift',
@@ -2980,6 +2986,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberMilkBill',
                 'title' => '113 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'MemberMilkBillDateWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2987,6 +2994,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberMilkBill',
                 'title' => '113 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'MemberMilkBillSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2994,6 +3002,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberMilkBill',
                 'title' => '113 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'AgentWiseReconciliation' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3001,7 +3010,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'AgentWiseReconciliation',
                 'title' => '219 - Agent Wise Reconciliation',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
             ],
             'AgentWiseReconciliationDateWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3009,7 +3019,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'AgentWiseReconciliation',
                 'title' => '219 - Agent Wise Reconciliation',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
             ],
             'AgentWiseReconciliationSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3017,7 +3028,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'AgentWiseReconciliation',
                 'title' => '219 - Agent Wise Reconciliation',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
             ],
             'RouteWiseReconciliation' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
