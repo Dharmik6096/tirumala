@@ -32,7 +32,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $model->scenario = $this->data['scenario'];
             }
         }
-        if ((!isset($this->data['output_type']) && !User::canRoute('misreports/reports/mis-live-report-generation'))) {
+        if (isset($this->data['bkg_export']) && (!isset($this->data['output_type']) && !User::canRoute('misreports/reports/mis-live-report-generation'))) {
             $this->data['output_type'] = $model->output_type = 'BACKGROUND';
         }
 
@@ -3020,6 +3020,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_vlcc_transaction_ftp_data',
                 'scenario' => 'VlccTransactionDataReport',
                 'title' => 'VLCC Transaction Data Report',
+                'bkg_export' => TRUE
             ],
             'BmcWiseSocietyWiseAutoManual' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
