@@ -1554,6 +1554,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'DetailsReport';
         return $this->actionIndex();
     }
+    
+    public function actionAllReportRequest() {
+        $this->report = 'AllReportRequest';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3210,6 +3215,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_user_attendance',
                 'scenario' => 'DetailsReport',
                 'title' => 'Details Report',
+            ],
+            'AllReportRequest' => [
+                'param' => 'from_date:string,to_date:string,all_user_code,status',
+                'sp_name' => 'mis_all_report_request',
+                'scenario' => 'AllReportRequest',
+                'title' => 'All Report Request',
             ],
         ];
         return $label[$l];

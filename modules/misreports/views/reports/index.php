@@ -480,6 +480,19 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 <?= Yii::$app->dropdown->dropdown('app_login_id', $model, $form, '', 'User Name', false, '', TRUE); ?>
                                             </div>   <?php
                                         }
+                                        if (in_array($value, array('status'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic('report_req_status', $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('all_user_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('user_code', $model, $form, '', 'User Name', false, '', TRUE); ?>
+                                            </div>   <?php
+                                        }
                                     }
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
