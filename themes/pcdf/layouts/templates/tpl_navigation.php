@@ -765,6 +765,7 @@ echo GhostMenu::widget([
                             'items' => [
                                     ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
                                     ['label' => Yii::t('app', 'BIPL Data'), 'url' => ['/misreports/reports/bipl-data']],
+                                    ['label' => Yii::t('app', 'BIPL Data Admin'), 'url' => ['/misreports/reports/bipl-data-admin']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
