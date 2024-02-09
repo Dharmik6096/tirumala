@@ -3,7 +3,7 @@
 use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 
@@ -41,7 +41,7 @@ $readonly = false;
                 echo Html::hiddenInput('local_field', $param);
                 ?>
                 <?=
-                Dropzone::widget([
+                DropZone::widget([
                     'id' => 'mainDrop',
                     'options' => [
                         'acceptedMimeTypes' => ".jpg,.jpeg,.png,.pdf",
@@ -140,6 +140,7 @@ $readonly = false;
 
 <?php
 $script = "    
+    Dropzone.autoDiscover = false;
     $('.close-import').on('click',function(e){
         Dropzone.forElement('#mainDrop').removeAllFiles(true);
     });

@@ -18,19 +18,19 @@ class FeedbackAssets extends AssetBundle {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'themes/pcdf/assets/emoji/css/emoji.css',
-        'themes/pcdf/assets/emoji/css/emoji.css.map',
-        'themes/pcdf/assets/emoji/css/chatboard.css',
+        'themes/emilk/assets/emoji/css/emoji.css',
+        'themes/emilk/assets/emoji/css/emoji.css.map',
+        'themes/emilk/assets/emoji/css/chatboard.css',
     ];
     public $js = [
-        'themes/pcdf/assets/emoji/js/config.min.js',
-        'themes/pcdf/assets/emoji/js/emoji-picker.min.js',
-        'themes/pcdf/assets/emoji/js/jquery.emojiarea.min.js',
-        'themes/pcdf/assets/emoji/js/util.min.js',
+        'themes/emilk/assets/emoji/js/config.min.js',
+        'themes/emilk/assets/emoji/js/emoji-picker.min.js',
+        'themes/emilk/assets/emoji/js/jquery.emojiarea.min.js',
+        'themes/emilk/assets/emoji/js/util.min.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
-        'yii\bootstrap\BootstrapPluginAsset',
+        'yii\bootstrap5\BootstrapAsset',
+        'yii\bootstrap5\BootstrapPluginAsset',
     ];
 }

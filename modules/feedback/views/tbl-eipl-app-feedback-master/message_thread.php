@@ -116,7 +116,7 @@ $script = "
         window.emojiPicker = new EmojiPicker({
             emojiable_selector: '[data-emojiable=true]',
             assetsPath: '" . $this->theme->getUrl('/assets/emoji/img') . "',
-            popupButtonClasses: 'fa fa-smile-o'
+            popupButtonClasses: 'far fa-smile'
         });
 
         window.emojiPicker.discover();
