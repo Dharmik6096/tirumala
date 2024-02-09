@@ -97,7 +97,7 @@ class TblOrgFileLog extends \app\models\ChildModel {
         $eiplCode = Yii::$app->general->getmultiforeignkey($this->dcsCode, ['unionCode'], 'eipl_code');
         $crnt_dir = getcwd();
         $ftp_conn_code = $this->dcsCode->mcc_plant_code;
-        $path = \Yii::getAlias('@webroot') . Yii::$app->params['biplDirPath'] . $cp_code . '/' . 'MASFILES';
+        $path = \Yii::getAlias('@app') . Yii::$app->params['biplDirPath'] . $cp_code . '/' . 'MASFILES';
         if (Yii::$app->general->checkDirectory($path)) {
             if ($file_type == 'MEMBER') {
                 $utility_path = \Yii::getAlias('@webroot') . '/' . Yii::$app->params['biplMemberUtilityPath'];
