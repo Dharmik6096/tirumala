@@ -418,7 +418,7 @@ class DefaultController extends \app\controllers\ChildController {
             $controls['digit_config'] = 0;
 
 //                  var_dump($controls);die;
-            if (User::canRoute('jasperreports/default/jasper-live-report-generation')) {
+            if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
                 $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
                 $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
                 if ($this->type != 'html') {
@@ -811,6 +811,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'milkcollection/VLCCTransactionDataFTP',
                 'scenario' => 'VlccTransactionDataReport',
                 'title' => 'VLCC Transaction Data Report',
+                'bkg_export' => TRUE
             ],
             'VendorMilkBillAnig' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
