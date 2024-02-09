@@ -3211,13 +3211,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => ['All' => Yii::t('app', 'All'), 'Online' => Yii::t('app', 'Online'), 'Pendrive' => Yii::t('app', 'Pendrive')],
             ],
             'DetailsReport' => [
-                'param' => 'union_code,user_code,from_date:string,to_date:string',
+                'param' => 'union_code,login_user_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_user_attendance',
                 'scenario' => 'DetailsReport',
                 'title' => 'Details Report',
             ],
             'AllReportRequest' => [
-                'param' => 'from_date:string,to_date:string,all_user_code,status',
+                'param' => 'from_date:string,to_date:string,user_code,status',
                 'sp_name' => 'mis_all_report_request',
                 'scenario' => 'AllReportRequest',
                 'title' => 'All Report Request',

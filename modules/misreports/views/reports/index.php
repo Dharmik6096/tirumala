@@ -474,7 +474,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('user_code'))) {
+                                        if (in_array($value, array('login_user_code'))) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdown('app_login_id', $model, $form, '', 'User Name', false, '', TRUE); ?>
@@ -487,7 +487,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('all_user_code'))) {
+                                        if (in_array($value, array('user_code'))) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdown('user_code', $model, $form, '', 'User Name', false, '', TRUE); ?>
