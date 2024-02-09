@@ -32,8 +32,10 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                 ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                'checkboxOptions' => function($model, $key, $index) {
-                    return ['class' => 'checkbox', 'value' => $model['dcs_code'] . '###' . $model['product_code'] . '###' . $model['approve_qty'] . '###' . $model['warehouse_code']];
+                'checkboxOptions' => function($model, $key, $index) use ($form, $dispatchModel) {
+                    $selection_key = $model['dcs_code'] . '###' . $model['product_code'] . '###' . $model['approve_qty'] . '###' . $model['warehouse_code'];
+                    echo Html::activeHiddenInput($dispatchModel, '[' . $index . ']selection_key', ['value' => $selection_key]);
+                    return ['class' => 'checkbox', 'value' => $selection_key];
                 }],
                 ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
                 ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
