@@ -134,8 +134,9 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'required', 'on' => ['MccRecipationSummary', 'MccRecipationDetail']],
             [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcWiseSocietyWiseAutoManual', 'BmcWiseAutoManualSummary']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberPaymentBankFormat']],
-            [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'report_type'], 'required', 'on' => ['BiplData']],
+            [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'report_type'], 'required', 'on' => ['BiplData', 'BiplDataAdmin']],
             [['union_code', 'user_code', 'from_date', 'to_date'], 'required', 'on' => ['DetailsReport']],
+            [['union_code', 'state_code'], 'required', 'on' => ['RegionWiseUserAttendanceReport']],
         ];
     }
 

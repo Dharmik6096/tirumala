@@ -1541,6 +1541,16 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'DetailsReport';
         return $this->actionIndex();
     }
+    
+    public function actionRegionWiseUserAttendanceReport() {
+        $this->report = 'RegionWiseUserAttendanceReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionBiplDataAdmin() {
+        $this->report = 'BiplDataAdmin';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3196,6 +3206,19 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_user_attendance',
                 'scenario' => 'DetailsReport',
                 'title' => 'Details Report',
+            ],
+            'RegionWiseUserAttendanceReport' => [
+                'param' => 'union_code,state_code,region_code,area_code,user_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_user_attendance_region_wise',
+                'scenario' => 'RegionWiseUserAttendanceReport',
+                'title' => 'Region-wise User Attendance Report',
+            ],
+            'BiplDataAdmin' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_ftp_bipl_data_admin',
+                'scenario' => 'BiplDataAdmin',
+                'title' => 'Bipl Data Admin',
+                'report_type' => ['All' => Yii::t('app', 'All'), 'Online' => Yii::t('app', 'Online'), 'Pendrive' => Yii::t('app', 'Pendrive')],
             ],
         ];
         return $label[$l];
