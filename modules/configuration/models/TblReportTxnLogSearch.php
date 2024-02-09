@@ -124,8 +124,7 @@ class TblReportTxnLogSearch extends TblReportTxnLog {
         $query->andFilterWhere([
             'status' => '0',
         ]);
-        $query->andFilterWhere(['like', 'report_type', $this->report_type])
-                ->andFilterWhere(['like', 'report_title', $this->report_title]);
+        $query->andFilterWhere(['like', 'report_title', $this->report_title]);
         return $dataProvider;
     }
 

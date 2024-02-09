@@ -5,7 +5,6 @@ use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
-use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 <div class=" no-effect">
 
@@ -33,7 +32,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'user_code',
                 'value' => function ($model) {
                   return Yii::$app->general->getforeignkey($model->userCode, 'name');
-                }
+                }, 'filter' => false
             ],
             [
                 'attribute' => 'status',
@@ -56,9 +55,10 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             <?php
             if (!empty($dataProvider->getModels())) {
                 echo Html::button(Yii::t('app', 'Block Request'), ['class' => 'btn btn-primary submit', 'id' => 'block', 'value' => 'block', 'name' => 'block']);
-            }
+                 echo  Html::button(Yii::t('app', 'Reset'), ['class' => 'btn btn-default', 'id' => 'reset-btn']); 
+                }
             ?>
-        <?= Html::button(Yii::t('app', 'Reset'), ['class' => 'btn btn-default', 'id' => 'reset-btn']); ?>
+      
         </div>
 
 <?php ActiveForm::end(); ?>
