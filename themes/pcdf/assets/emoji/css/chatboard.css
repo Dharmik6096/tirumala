@@ -1,0 +1,147 @@
+.chatboard .feedback_message a{
+    color: #fff;
+}
+
+.refreshBtn {
+    position: absolute;
+    font-size: 15px;
+    background: #7a231c;
+    right: 3px;
+    top: 0px;
+    color: #fff;
+}
+
+.refreshBtn i {
+    margin: 10px 8px;
+}
+
+.chatboard-section {
+    padding: 10px;
+}
+
+.chatboard-section .empty_message{
+    text-align: center;
+    width: 100%;
+    margin: 0px;
+}
+
+.chatboard {
+    display: grid;
+    width: 100%;
+    /*overflow: scroll;*/
+    overflow-x: hidden;
+    max-height: 335px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+.chatboard .sent-section,
+.chatboard .received-section {
+    position: relative;
+    padding: 5px;
+    border-radius: 0.6rem;
+    max-width: 70%;
+    text-align: justify;
+    margin: 4px 0px 3px 3px;
+}
+
+.chatboard .received-section {
+    justify-self: left;
+    color: #6a6c6f;
+}
+
+.chatboard .sent-section {
+    justify-self: right;
+}
+.chatboard .received , .chatboard .sent{
+    padding: 4px 10px;
+    border-radius: 8px;
+    width: fit-content;
+    font-size: 12px;
+}
+.chatboard .feedback_image img {
+    width: 350px;
+}
+.chatboard .triangle{
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 10px 10px 10px;
+}
+
+.chatboard .received-section .triangle{
+    border-color: transparent transparent #f8f3f3 transparent;
+    position: absolute;
+    left: -5px;
+    bottom: 5px;
+}
+.chatboard .sent-section .triangle{
+    border-color: transparent transparent #7a231c transparent;
+    position: absolute;
+    right: -4px;
+    bottom: 5px;
+}
+.chatboard .received{
+    background: #741c150d;
+    color: #474849;
+}
+.chatboard .sent {
+    background: #7a231c;
+    color: #FFF;
+}
+.chatboard .sent pre{
+    padding: 0;
+    background: transparent;
+    border: transparent;
+    white-space: break-spaces;
+    word-break: unset;
+    font-family: unset;
+    font-size: 14px;
+    color: unset;
+}
+.chatboard .message-time {
+    float: right;
+    font-size: 11px;
+    margin-left: 20px;
+}
+.message-section {
+    display: flex;
+    margin-top: 12px;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    /*height: 77px;*/
+}
+.message-section .message-box {
+    width: 88%;
+}
+
+.message-section .message-btn {
+    margin: auto;
+}
+
+.message-section i.fa-paperclip {
+    font-size: 15px;
+}
+.emoji-menu {
+    bottom: 99%;
+    width: 192px !important;
+}
+.emoji-menu .emoji-items-wrap {
+    overflow-x:hidden !important;
+}
+a.emoji-menu-tab {
+    margin-top: 0px !important;
+}
+.emoji-items a{
+    padding: 5px !important;
+}
+.text-wrap .kv-attribute {
+    text-wrap: wrap;
+}
+.emoji-wysiwyg-editor {
+    height:45px !important;
+}
+#emoji-picker-container {
+    margin: 0px;
+}
