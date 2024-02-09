@@ -1823,7 +1823,7 @@ class DropDown extends Component {
             'report_req_status' => [
                 'name' => 'report_req_status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error'), 4 => Yii::t('app', 'Block')],
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error'), 4 => Yii::t('app', 'Blocked')],
             ],
         ];
         return $records[$l];

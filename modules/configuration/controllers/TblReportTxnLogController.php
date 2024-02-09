@@ -41,4 +41,31 @@ class TblReportTxnLogController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionBlockRequest() {
+        $model = new TblReportTxnLog();
+        $searchModel = new TblReportTxnLogSearch();
+        $searchModel->scenario = 'block_request';
+        $dataProvider = $searchModel->searchPending(Yii::$app->request->queryParams);
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $selectedIds = $_REQUEST['selection'];
+                $total = count($_REQUEST['selection']);
+                if (!empty($selectedIds)) {
+                    $attributes = ['status' => '4'];
+                    $condition = ['status' => '0', 'report_txn_log_id' => $selectedIds];
+                    $success = $model->updateAll($attributes, $condition);
+                }
+                $msg = $success . ' Requests out of ' . $total . ' are successfully blocked.';
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => Yii::t('app', $msg)]);
+               return $this->redirect(Yii::$app->request->referrer);
+            }
+        } else {
+            return $this->render('block_request', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'title' => 'Block Request List'
+            ]);
+        }
+    }
 }

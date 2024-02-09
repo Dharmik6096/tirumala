@@ -3,6 +3,7 @@
 namespace app\modules\configuration\models;
 
 use Yii;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_report_txn_log".
@@ -78,6 +79,10 @@ class TblReportTxnLog extends \yii\db\ActiveRecord {
             'response_msg' => 'Response Msg',
             'decrypt_data' => 'Decrypt Data',
         ];
+    }
+    
+    public function getUserCode(){
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
     }
 
 }

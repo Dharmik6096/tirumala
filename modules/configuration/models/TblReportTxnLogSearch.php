@@ -22,6 +22,7 @@ class TblReportTxnLogSearch extends TblReportTxnLog {
             [['created_at', 'updated_at', 'pick_datetime', 'cron_pick_datetime', 'response_datetime', 'report_type', 'report_title',
             'sp_name_or_report_path', 'input_param', 'search_param', 'export_file_name', 'file_type', 'file_name', 'file_path',
             'user_code', 'union_code', 'created_by', 'updated_by', 'response_msg', 'status', 'from_date', 'to_date', 'decrypt_data'], 'safe'],
+            [['from_date','to_date'],'required','on'=>['block_request']],
         ];
     }
 
@@ -86,5 +87,47 @@ class TblReportTxnLogSearch extends TblReportTxnLog {
 
         return $dataProvider;
     }
+    
+     public function searchPending($params) {
+        $query = TblReportTxnLog::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        
+        $this->load($params);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+             $query->where('0=1');
+            return $dataProvider;
+        }
+
+//        if(empty($this->from_date)){
+//            $query->where('0=1');
+//            return $dataProvider;
+//        }
+        
+        if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(tbl_report_txn_log.created_at as date)', $from_date]);
+        }
+
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(tbl_report_txn_log.created_at as date)', $to_date]);
+        }
+        
+        if(!empty($this->user_code)){
+            $query->andWhere(['tbl_report_txn_log.user_code' => $this->user_code]);
+        }
+//         grid filtering conditions
+        $query->andFilterWhere([
+            'status' => '0',
+        ]);
+        $query->andFilterWhere(['like', 'report_type', $this->report_type])
+                ->andFilterWhere(['like', 'report_title', $this->report_title]);
+        return $dataProvider;
+    }
+
 
 }

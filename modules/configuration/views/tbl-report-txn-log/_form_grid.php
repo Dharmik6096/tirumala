@@ -45,9 +45,9 @@ $attribute = [
     ['attribute' => 'response_msg', 'visible' => true, 'filter' => true],
     [
         'attribute' => 'status',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('file_status', $searchModel, 'status'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('report_req_status', $searchModel, 'status'),
         'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '';
+            return isset(Yii::$app->dropdown->getRecords('report_req_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('report_req_status')['data'][$model->status] : '';
         }],
     [
         'attribute' => 'interval',
