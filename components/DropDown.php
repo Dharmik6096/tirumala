@@ -1820,6 +1820,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select txn type'),
                 'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'BIPLZIP' => Yii::t('app', 'BIPLZIP')],
             ],
+            'report_req_status' => [
+                'name' => 'report_req_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error'), 4 => Yii::t('app', 'Block')],
+            ],
         ];
         return $records[$l];
     }
