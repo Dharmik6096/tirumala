@@ -80,21 +80,23 @@ use yii\web\View;
     <?php if ($model->feedback_status != 2) { ?>
         <div class="message-section">
             <?= Html::hiddenInput('eipl_app_feedback_master_code', $model->eipl_app_feedback_master_code, ['id' => 'eipl_app_feedback_master_code']); ?>
-            <div class="form-group message-width">
+            <div class="form-group message-box">
                 <p class="emoji-picker-container" id="emoji-picker-container">
                     <?= Html::textarea("message", "", ['id' => 'message', 'class' => 'form-control emoji-picker-container', 'data-emojiable' => 'true', 'data-emoji-input' => 'unicode', 'placeholder' => 'Please Message Type Here...']) ?>
                 </p>
             </div>
-            <div class="form-group attachment no_pointer" id="attachment">
-                <i class="fa fa-paperclip" aria-hidden="true"></i>
-            </div>
-            <div class="form-group msg-check">
-                <?= Html::checkbox("close", false, ['id' => 'close', 'class' => 'msg-checkbox']) ?>
-                <?= Html::label('Close', 'close') ?>
-            </div>
-            <div class="form-group btn-margin">
-                <?= Html::a("send", null, ['href' => 'javascript:void(0);', 'class' => 'btn btn-primary', 'id' => 'send-message']) ?>
-            </div>
+            <!--<div class="button-section">-->
+                <div class="form-group attachment no_pointer message-btn" id="attachment">
+                    <i class="fa fa-paperclip" aria-hidden="true"></i>
+                </div>
+                <div class="form-group msg-check message-btn">
+                    <?= Html::checkbox("close", false, ['id' => 'close', 'class' => 'msg-checkbox']) ?>
+                    <?= Html::label('Close', 'close') ?>
+                </div>
+                <div class="form-group btn-margin message-btn">
+                    <?= Html::a("send", null, ['href' => 'javascript:void(0);', 'class' => 'btn btn-primary', 'id' => 'send-message']) ?>
+                </div>
+            <!--</div>-->
         </div>
         <?php
             echo $this->render('@app/modules/feedback\views\tbl-eipl-app-feedback-master\attachment_modal', ['model' => $model]);

@@ -1,6 +1,8 @@
 <?php
 
 namespace app\modules\feedback;
+use app\assets\FeedbackAssets;
+use Yii;
 
 /**
  * feedback module definition class
@@ -18,7 +20,7 @@ class feedback extends \yii\base\Module
     public function init()
     {
         parent::init();
-
+        FeedbackAssets::register(Yii::$app->view);
         // custom initialization code goes here
     }
 }
