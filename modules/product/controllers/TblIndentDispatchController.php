@@ -291,8 +291,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                     $setOldVal = [];
 
                     foreach ($codes as $code) {
-                        $where['indent_code'] = $code;
-                        $existData = TblIndentMaster::find()->where($where)->one();
+                        $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
                         $dcs = $existData->dcs_code;
                         $product = $existData->product_code;
 //                        $disp_qty = $data[2];
@@ -455,23 +454,20 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                         $saveModel[] = $receiptTxnTo;
 
                         $saveModel[] = $dispatch;
-                        $existIndentData = TblIndentMaster::find()->where(['dcs_code' => $dcs, 'product_code' => $product, 'status' => 2, 'indent_code' => $indentPostData[$code]['indent_code'], 'ISNULL(warehouse_code, \'\')' => $warehouse])->all();
 
-                        if (!empty($existIndentData)) {
-                            foreach ($existIndentData as $indent) {
-                                $historyModel = new TblIndentMasterHistory();
-                                Yii::$app->operation->history($indent, $historyModel, 'UPDATE');
-                                $saveModel[] = $historyModel;
-                                $indent->dispatch_qty = $indent->dispatch_qty + $disp_qty;
-                                $indent->status_by = \Yii::$app->user->identity->user_code;
-                                $indent->status_date = date('Y-m-d H:i:s');
+                        if (!empty($existData)) {
+                            $historyModel = new TblIndentMasterHistory();
+                            Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                            $saveModel[] = $historyModel;
+                            $existData->dispatch_qty = $existData->dispatch_qty + $disp_qty;
+                            $existData->status_by = \Yii::$app->user->identity->user_code;
+                            $existData->status_date = date('Y-m-d H:i:s');
 
-                                if ($indentPostData[$code]['is_close'] == 1 || $indent->dispatch_qty == $approve_qty) {
-                                    $indent->status = 5;
-                                    $indent->is_close = 1;
-                                }
-                                $saveModel[] = $indent;
+                            if ($indentPostData[$code]['is_close'] == 1 || $existData->dispatch_qty == $approve_qty) {
+                                $existData->status = 5;
+                                $existData->is_close = 1;
                             }
+                            $saveModel[] = $existData;
                         }
                         $i++;
                         $j++;
