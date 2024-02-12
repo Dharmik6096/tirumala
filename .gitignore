@@ -47,3 +47,4 @@ web/welfarescheme/**
 web/document_upload/**
 config/env.php
 web/uploads/banner_upload/**
+web/export_report/**
