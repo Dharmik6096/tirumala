@@ -290,25 +290,19 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                     $j = 1;
                     $setOldVal = [];
 
-                    $matchingRecords = [];
-                    foreach ($indentPostData as $postData) {
-                        if (in_array($postData['selection_key'], $codes)) {
-                            $postData['remaining_qty'] = $postData['approve_qty'] - $postData['dispatch_qty'];
-                            $matchingRecords[] = $postData;
-                        }
-                    }
-                    foreach ($matchingRecords as $code) {
-                        $data = explode('###', $code['selection_key']);
-                        $dcs = $data[0];
-                        $product = $data[1];
+                    foreach ($codes as $code) {
+                        $where['indent_code'] = $code;
+                        $existData = TblIndentMaster::find()->where($where)->one();
+                        $dcs = $existData->dcs_code;
+                        $product = $existData->product_code;
 //                        $disp_qty = $data[2];
-                        $approve_qty = $data[2];
-                        $disp_qty = $code['dispatch_qty'] == "" ? 0 : $code['dispatch_qty'];
-                        $warehouse = isset($data[3]) ? $data[3] : '';
+                        $approve_qty = $existData->approve_qty;
+                        $disp_qty = $indentPostData[$code]['dispatch_qty'] == "" ? 0 : $indentPostData[$code]['dispatch_qty'];
+                        $warehouse = isset($existData->warehouse_code) ? $existData->warehouse_code : '';
                         $dispatch = new TblIndentDispatch();
                         $dispatch->setAttributes($searchModel->attributes);
                         $dispatch->indent_dispatch_code = Yii::$app->general->getCodeAutoIncrement($dispatch, $i);
-                        $dispatch->indent_code = $code['indent_code'];
+                        $dispatch->indent_code = $code;
                         $dispatch->challan_date = date('Y-m-d');
                         $dispatch->vehicle_no = $_REQUEST['vehicle'];
                         $dispatch->dispatch_date = $dispatch->challan_date;
@@ -461,7 +455,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                         $saveModel[] = $receiptTxnTo;
 
                         $saveModel[] = $dispatch;
-                        $existIndentData = TblIndentMaster::find()->where(['dcs_code' => $dcs, 'product_code' => $product, 'status' => 2, 'indent_code' => $code['indent_code'], 'ISNULL(warehouse_code, \'\')' => $warehouse])->all();
+                        $existIndentData = TblIndentMaster::find()->where(['dcs_code' => $dcs, 'product_code' => $product, 'status' => 2, 'indent_code' => $indentPostData[$code]['indent_code'], 'ISNULL(warehouse_code, \'\')' => $warehouse])->all();
 
                         if (!empty($existIndentData)) {
                             foreach ($existIndentData as $indent) {
@@ -472,7 +466,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                                 $indent->status_by = \Yii::$app->user->identity->user_code;
                                 $indent->status_date = date('Y-m-d H:i:s');
 
-                                if ($code['is_close'] == 1 || $indent->dispatch_qty == $approve_qty) {
+                                if ($indentPostData[$code]['is_close'] == 1 || $indent->dispatch_qty == $approve_qty) {
                                     $indent->status = 5;
                                     $indent->is_close = 1;
                                 }
@@ -482,7 +476,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                         $i++;
                         $j++;
                     }
-                    
+
                     $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'create']);
                     if ($transaction == 'customRedirect') {
                         return $this->redirect(['index-other']);
