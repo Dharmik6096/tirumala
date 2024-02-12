@@ -439,10 +439,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('month'))) {
+                                        if (in_array($value, array('month','report_req_status'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?>
                                             </div>
                                             <?php
                                         }
@@ -474,23 +474,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('login_user_code'))) {
+                                        if (in_array($value, array('login_user_code','user_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdown('app_login_id', $model, $form, '', 'User Name', false, '', TRUE); ?>
-                                            </div>   <?php
-                                        }
-                                        if (in_array($value, array('status'))) {
-                                            ?>
-                                            <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdownStatic('report_req_status', $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
-                                            </div>
-                                            <?php
-                                        }
-                                        if (in_array($value, array('user_code'))) {
-                                            ?>
-                                            <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdown('user_code', $model, $form, '', 'User Name', false, '', TRUE); ?>
+                                                <?= Yii::$app->dropdown->dropdown($value, $model, $form, '', 'User Name', false, '', TRUE); ?>
                                             </div>   <?php
                                         }
                                     }
