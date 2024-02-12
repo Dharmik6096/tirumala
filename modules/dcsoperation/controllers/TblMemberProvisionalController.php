@@ -301,8 +301,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                     $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                                     $memberDir = $baseDir . 'member';
                                     $proMemberDir = $baseDir . 'provisional_member';
-                                    if(!empty($unlink_files)){
-                                        foreach($unlink_files as $file){
+                                    if (!empty($unlink_files)) {
+                                        foreach ($unlink_files as $file) {
                                             if (file_exists($memberDir . '/' . $file)) {
                                                 unlink($memberDir . '/' . $file);
                                             }
@@ -401,9 +401,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                             $memberDir = $baseDir . 'member';
                             $proMemberDir = $baseDir . 'provisional_member';
-                            
-                            if(!empty($unlink_files)){
-                                foreach($unlink_files as $file){
+
+                            if (!empty($unlink_files)) {
+                                foreach ($unlink_files as $file) {
                                     if (file_exists($memberDir . '/' . $file)) {
                                         unlink($memberDir . '/' . $file);
                                     }
@@ -443,8 +443,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $memberModel->approved_by = Yii::$app->session['UserCode'];
             if ($memberModel->is_approved = 1) {
                 $tblMember = new TblMember();
+                $tblMember->attributes = $memberModel->attributes;
                 $memberCode = $tblMember->getCode();
-                if($memberModel->provisional_from == 'mobile_update'){
+                if ($memberModel->provisional_from == 'mobile_update') {
                     $tblMember = TblMember::find()->where(['member_code' => $memberModel->member_code])->one();
                     $memberCode = $memberModel->member_code;
                     $historyMemberModel = new TblMemberHistory();
@@ -452,7 +453,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $model_save[] = $historyMemberModel;
                 }
                 $tblMember->scenario = 'ApprovalMember';
-                $tblMember->attributes = $memberModel->attributes;
                 $tblMember->member_code = $memberCode;
                 $historyModel = new TblMemberProvisionalHistory();
                 Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
@@ -461,7 +461,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $model_save[] = $memberModel;
                     $model_save[] = $historyModel;
                     $deleteAttachment = [];
-                    if($memberModel->provisional_from != 'mobile_update'){
+                    if ($memberModel->provisional_from != 'mobile_update') {
                         $milkCollectionData = new TblProvisionalMilkCollection();
                         $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
                         if (!empty($milkCollectionData)) {
@@ -478,8 +478,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             }
                         }
                     } else {
-                        $deleteAttachment['module_code'] =  $memberModel->member_code;
-                        $deleteAttachment['module_name'] =  'tbl_member';
+                        $deleteAttachment['module_code'] = $memberModel->member_code;
+                        $deleteAttachment['module_name'] = 'tbl_member';
                     }
                     $tblAttachment = new TblAttachment();
                     $memberProvisionalCode = (string) $memberModel->provisional_member_code;
