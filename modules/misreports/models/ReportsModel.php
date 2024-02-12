@@ -167,7 +167,8 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             'member' => \Yii::t('app', 'Member'),
             'channel_code' => \Yii::t('app', 'Channel'),
             'report_type' => (in_array($this->scenario, ['SaleReportFarmer', 'SaleReportVendor'])) ? \Yii::t('app', 'Lock Type') : \Yii::t('app', 'Report Type'),
-        ];
+            'report_req_status' => \Yii::t('app','Status'),
+            ];
     }
 
     public function search($params) {
