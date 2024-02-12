@@ -440,10 +440,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('month'))) {
+                                        if (in_array($value, array('month','report_req_status'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?>
                                             </div>
                                             <?php
                                         }
@@ -475,10 +475,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('user_code'))) {
+                                        if (in_array($value, array('login_user_code','user_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdown('app_login_id', $model, $form, '', 'User Name', false, '', TRUE); ?>
+                                                <?= Yii::$app->dropdown->dropdown($value, $model, $form, '', 'User Name', false, '', TRUE); ?>
                                             </div>   <?php
                                         }
                                     }
@@ -528,7 +528,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 
             <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class ?>">
                 <div class="btn-login btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
-                <?php if (!empty($result)) {
+                <?php if (!empty($result) && $model->output_type != 'BACKGROUND') {
                     ?>
                     <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="far fa-file-excel"></i></div>
                     <?php }
