@@ -3239,7 +3239,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Details Report',
             ],
             'AllReportRequest' => [
-                'param' => 'from_date:string,to_date:string,user_code,status',
+                'param' => 'from_date:string,to_date:string,user_code,report_req_status',
                 'sp_name' => 'mis_all_report_request',
                 'scenario' => 'AllReportRequest',
                 'title' => 'All Report Request',
