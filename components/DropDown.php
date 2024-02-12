@@ -1820,6 +1820,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select txn type'),
                 'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'BIPLZIP' => Yii::t('app', 'BIPLZIP')],
             ],
+            'report_req_status' => [
+                'name' => 'report_req_status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error'), 4 => Yii::t('app', 'Blocked')],
+            ],
         ];
         return $records[$l];
     }
@@ -1956,8 +1961,8 @@ class DropDown extends Component {
             'payment_head_code' => ['name' => 'payment_head_code', 'fields' => 'payment_head_code,payment_head_name', 'prompt' => 'Payment Head Name', 'model' => 'TblPaymentHead'],
             'party_master_code' => ['name' => 'party_name', 'fields' => 'party_master_code,party_name', 'prompt' => 'Applicable Name', 'model' => 'TblPartyMaster'],
             'party_master' => ['name' => 'party_master_code', 'fields' => 'party_master_code,party_name,owner_name', 'prompt' => 'Select Party', 'model' => 'TblPartyMaster'],
-            'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
-            'app_login_id' => ['name' => 'user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
+            'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name', 'prompt' => Yii::t('app', 'Select User'), 'model' => 'User'],
+            'login_user_code' => ['name' => 'login_user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
         ];
         return $label[$l];
     }
