@@ -56,32 +56,32 @@ class TblReportTxnLog extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'report_txn_log_id' => 'Report Txn Log ID',
-            'report_type' => 'Report Type',
-            'report_title' => 'Report Title',
-            'sp_name_or_report_path' => 'Sp Name Or Report Path',
-            'input_param' => 'Input Param',
-            'search_param' => 'Search Param',
-            'export_file_name' => 'Export File Name',
-            'file_type' => 'File Type',
-            'file_name' => 'File Name',
-            'file_path' => 'File Path',
-            'user_code' => 'User Code',
-            'union_code' => 'Union Code',
-            'created_at' => 'Created At',
-            'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
-            'status' => 'Status',
-            'pick_datetime' => 'Pick Datetime',
-            'cron_pick_datetime' => 'Cron Pick Datetime',
-            'response_datetime' => 'Response Datetime',
-            'response_msg' => 'Response Msg',
-            'decrypt_data' => 'Decrypt Data',
+            'report_txn_log_id' => Yii::t('app', 'Report Txn Log ID'),
+            'report_type' => Yii::t('app', 'Report Type'),
+            'report_title' => Yii::t('app', 'Report Title'),
+            'sp_name_or_report_path' => Yii::t('app', 'Sp Name Or Report Path'),
+            'input_param' => Yii::t('app', 'Input Param'),
+            'search_param' => Yii::t('app', 'Search Param'),
+            'export_file_name' => Yii::t('app', 'Export File Name'),
+            'file_type' => Yii::t('app', 'File Type'),
+            'file_name' => Yii::t('app', 'File Name'),
+            'file_path' => Yii::t('app', 'File Path'),
+            'user_code' => Yii::t('app', 'User Code'),
+            'union_code' => Yii::t('app', 'Union Code'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'status' => Yii::t('app', 'Status'),
+            'pick_datetime' => Yii::t('app', 'Pick Datetime'),
+            'cron_pick_datetime' => Yii::t('app', 'Cron Pick Datetime'),
+            'response_datetime' => Yii::t('app', 'Response Datetime'),
+            'response_msg' => Yii::t('app', 'Response Msg'),
+            'decrypt_data' => Yii::t('app', 'Decrypt Data'),
         ];
     }
-    
-    public function getUserCode(){
+
+    public function getUserCode() {
         return $this->hasOne(User::className(), ['user_code' => 'user_code']);
     }
 

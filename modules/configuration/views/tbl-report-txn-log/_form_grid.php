@@ -16,7 +16,7 @@ $attribute = [
     ['attribute' => 'report_type', 'visible' => true, 'filter' => true],
     ['attribute' => 'report_title', 'visible' => true, 'filter' => true],
     ['attribute' => 'created_at',
-        'filterType' => GridView::FILTER_DATE,
+            'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
                 'autoclose' => true]
@@ -25,20 +25,10 @@ $attribute = [
             return Yii::$app->controls->view_datetime($model->created_at);
         }],
     ['attribute' => 'pick_datetime',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->pick_datetime);
         }, 'filter' => FALSE],
     ['attribute' => 'response_datetime',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->response_datetime);
         }, 'filter' => FALSE],
