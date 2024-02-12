@@ -4,17 +4,24 @@ $params = require(__DIR__ . '/params.php');
 $db = require(__DIR__ . '/db.php');
 
 $config = [
-    'id' => 'basic-console',
+    'id' => 'eipl-console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'timeZone' => 'Asia/Calcutta',
     'controllerNamespace' => 'app\commands',
     'components' => [
-        'cache' => [
-            'class' => 'yii\caching\FileCache',
+        'general' => ['class' => 'app\components\GeneralFunctions'],
+        'encrypter' => [
+            'class' => '\nickcv\encrypter\components\Encrypter',
+            'globalPassword' => '1234567890123456',
+            'iv' => '1234567890123456',
+            'useBase64Encoding' => true,
+            'use256BitesEncoding' => false,
         ],
+        'cache' => ['class' => 'yii\caching\FileCache',],
         'log' => [
             'targets' => [
-                [
+                    [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
@@ -22,20 +29,19 @@ $config = [
         ],
         'db' => $db,
     ],
-    'modules'=>[
-    'user-management' => [
-        'class' => 'app\modules\usermanagement\usermanagementmodule',
-        //'identityClass' => 'app\models\User',
-    ],
-],
-    'params' => $params,
-    /*
-    'controllerMap' => [
-        'fixture' => [ // Fixture generation command line.
-            'class' => 'yii\faker\FixtureController',
+    'modules' => [
+        'user-management' => [
+            'class' => 'app\modules\usermanagement\usermanagement',
         ],
     ],
-    */
+    'params' => $params,
+        /*
+          'controllerMap' => [
+          'fixture' => [ // Fixture generation command line.
+          'class' => 'yii\faker\FixtureController',
+          ],
+          ],
+         */
 ];
 
 if (YII_ENV_DEV) {
