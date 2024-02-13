@@ -4,20 +4,21 @@ namespace app\commands;
 
 use Yii;
 use app\modules\configuration\models\TblReportTxnLog;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use yii\helpers\Url;
 use Jaspersoft\Client\Client;
 
 class CronjobController extends \yii\console\Controller {
 
-    public $report_folder_main = '/web/export_report/';
+    public $report_folder_main = '/export_report/';
     public $report_folder = '';
     public $report_path = '';
     public $output = '';
     public $model = '';
 
     public function actionReportGenerate() {
-        $report_path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $this->report_folder_main;
+        $report_path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web' . $this->report_folder_main;
         Yii::$app->general->checkDirectory($report_path);
         Yii::$app->general->checkDirectory($report_path . '/mis/');
         Yii::$app->general->checkDirectory($report_path . '/jasper/');
@@ -90,9 +91,9 @@ class CronjobController extends \yii\console\Controller {
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLS,
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
 
         $dataToDecrypt = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
@@ -144,7 +145,7 @@ class CronjobController extends \yii\console\Controller {
         $labelT = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title;
         $fileName = $labelT . '.' . $header['extension'];
 
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         $objWriter->save($this->report_path . $fileName);
 
         //      var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Done');

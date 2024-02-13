@@ -32,7 +32,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model, $key, $index) {
-                    return ['class' => 'checkbox', 'value' => $model['dcs_code'] . '###' . $model['product_code'] . '###' . $model['approve_qty'] . '###' . $model['warehouse_code']];
+                    return ['class' => 'checkbox', 'value' => $model['indent_code']];
                 }],
                 ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
                 ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
@@ -55,18 +55,18 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                 ['attribute' => 'dispatch_qty', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
-                    echo Html::activeHiddenInput($dispatchModel, '[' . $index . ']indent_code', ['value' => $model->indent_code]);
-                    echo Html::activeHiddenInput($dispatchModel, '[' . $index . ']approve_qty', ['value' => $model->approve_qty]);
-                    return $form->field($dispatchModel, '[' . $index . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch dispatch_qty-' . $model->indent_code, 'data-id' => $index])->label(FALSE);
+                    echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']indent_code', ['value' => $model->indent_code]);
+                    echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']approve_qty', ['value' => $model->approve_qty]);
+                    return $form->field($dispatchModel, '[' . $key . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch dispatch_qty-' . $model->indent_code, 'data-id' => $key])->label(FALSE);
                 },
             ],
                 ['attribute' => 'remaining_qty', 'label' => Yii::t('app', 'Remaining Qty'), 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
                     $remaining_qty = $model->approve_qty - $dispatchModel->dispatch_qty;
-                    echo Html::activeHiddenInput($dispatchModel, '[' . $index . ']remaining_qty', ['value' => $remaining_qty]);
-                    echo Html::activeHiddenInput($dispatchModel, '[' . $index . ']is_close', ['value' => 1]);
-                    return '<span id="tblindentdispatch-' . $index . '-remaining">' . $remaining_qty . '</span>';
+                    echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']remaining_qty', ['value' => $remaining_qty]);
+                    echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']is_close', ['value' => 1]);
+                    return '<span id="tblindentdispatch-' . $key . '-remaining">' . $remaining_qty . '</span>';
                 },
             ],
                 ['attribute' => 'received_qty', 'filter' => FALSE],
