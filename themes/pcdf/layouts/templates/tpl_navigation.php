@@ -496,8 +496,16 @@ echo GhostMenu::widget([
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t("app", "Reports - New") . ' <b class="caret"></b></a>',
-            'items' => [
-                    [
+            'items' => [[
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Report Request<b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
+                        ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
+                        ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
+                    ],
+                ],
+                [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
                     'items' => [
@@ -720,6 +728,7 @@ echo GhostMenu::widget([
                                             ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation-region']],
                                     ]
                                 ],
+                                ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
                                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
@@ -764,6 +773,7 @@ echo GhostMenu::widget([
                             'items' => [
                                     ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
                                     ['label' => Yii::t('app', 'BIPL Data'), 'url' => ['/misreports/reports/bipl-data']],
+                                    ['label' => Yii::t('app', 'BIPL Data Admin'), 'url' => ['/misreports/reports/bipl-data-admin']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
@@ -904,6 +914,15 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Complain Type'), 'url' => ['/complaint/tbl-complain-type/index'], 'active' => ($cntrl == 'tbl-complain-type')],
                             ['label' => Yii::t('app', 'Complain'), 'url' => ['/complaint/tbl-complain/index'], 'active' => ($cntrl == 'tbl-complain')],
                     ]
+                ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">'.Yii::t('app', 'Feedback').'<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Feedback Item'), 'url' => ['/feedback/tbl-eipl-app-feedback-item/index']],
+                            ['label' => Yii::t('app', 'Feedback Master'), 'url' => ['/feedback/tbl-eipl-app-feedback-master/index']],
+                    //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
+                    ],
                 ],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
