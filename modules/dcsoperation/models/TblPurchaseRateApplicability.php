@@ -85,7 +85,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'shift_applicability'], 'safe'],
-            [['shift_code'], function ($attribute, $params) {
+            [['shift_code','shift_applicability'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
             [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
