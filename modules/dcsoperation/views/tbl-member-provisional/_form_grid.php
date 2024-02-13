@@ -97,6 +97,12 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
+        'provisional-member-status' => function ($url, $model) {
+            return ($model->updated_at >= date("Y-m-d H:i:s", strtotime('-24 hours'))) ?
+                    GhostHtml::a('<i class="fa fa-circle" style="color: #07a309 !important;"></i>', '') :
+                    GhostHtml::a('', '', ['class' => 'hidden-button mr15'
+            ]);
+        },
         'update' => function ($url, $model)use ($pending_approval) {
             if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 0) {
                 $name = $model->member_name;
