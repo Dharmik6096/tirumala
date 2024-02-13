@@ -289,19 +289,19 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                     $i = 1;
                     $j = 1;
                     $setOldVal = [];
-                    foreach ($codes as $code_key => $code) {
-                        $data = explode('###', $code);
-                        $dcs = $data[0];
-                        $product = $data[1];
-//                        $disp_qty = $data[2];
-                        $approve_qty = $data[2];
-                        $disp_qty = $indentPostData[$code_key]['dispatch_qty'] == "" ? 0 : $indentPostData[$code_key]['dispatch_qty'];
 
-                        $warehouse = isset($data[3]) ? $data[3] : '';
+                    foreach ($codes as $code) {
+                        $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
+                        $dcs = $existData->dcs_code;
+                        $product = $existData->product_code;
+//                        $disp_qty = $data[2];
+                        $approve_qty = $existData->approve_qty;
+                        $disp_qty = $indentPostData[$code]['dispatch_qty'] == "" ? 0 : $indentPostData[$code]['dispatch_qty'];
+                        $warehouse = isset($existData->warehouse_code) ? $existData->warehouse_code : '';
                         $dispatch = new TblIndentDispatch();
                         $dispatch->setAttributes($searchModel->attributes);
                         $dispatch->indent_dispatch_code = Yii::$app->general->getCodeAutoIncrement($dispatch, $i);
-                        $dispatch->indent_code = $indentPostData[$code_key]['indent_code'];
+                        $dispatch->indent_code = $code;
                         $dispatch->challan_date = date('Y-m-d');
                         $dispatch->vehicle_no = $_REQUEST['vehicle'];
                         $dispatch->dispatch_date = $dispatch->challan_date;
@@ -454,23 +454,20 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                         $saveModel[] = $receiptTxnTo;
 
                         $saveModel[] = $dispatch;
-                        $existIndentData = TblIndentMaster::find()->where(['dcs_code' => $dcs, 'product_code' => $product, 'status' => 2, 'ISNULL(warehouse_code, \'\')' => $warehouse])->all();
 
-                        if (!empty($existIndentData)) {
-                            foreach ($existIndentData as $indent) {
-                                $historyModel = new TblIndentMasterHistory();
-                                Yii::$app->operation->history($indent, $historyModel, 'UPDATE');
-                                $saveModel[] = $historyModel;
-                                $indent->dispatch_qty = $indent->dispatch_qty + $disp_qty;
-                                $indent->status_by = \Yii::$app->user->identity->user_code;
-                                $indent->status_date = date('Y-m-d H:i:s');
+                        if (!empty($existData)) {
+                            $historyModel = new TblIndentMasterHistory();
+                            Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                            $saveModel[] = $historyModel;
+                            $existData->dispatch_qty = $existData->dispatch_qty + $disp_qty;
+                            $existData->status_by = \Yii::$app->user->identity->user_code;
+                            $existData->status_date = date('Y-m-d H:i:s');
 
-                                if ($indentPostData[$code_key]['is_close'] == 1 || $indent->dispatch_qty == $approve_qty) {
-                                    $indent->status = 5;
-                                    $indent->is_close = 1;
-                                }
-                                $saveModel[] = $indent;
+                            if ($indentPostData[$code]['is_close'] == 1 || $existData->dispatch_qty == $approve_qty) {
+                                $existData->status = 5;
+                                $existData->is_close = 1;
                             }
+                            $saveModel[] = $existData;
                         }
                         $i++;
                         $j++;
@@ -478,7 +475,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
 
                     $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'create']);
                     if ($transaction == 'customRedirect') {
-                        return $this->redirect(['index']);
+                        return $this->redirect(['index-other']);
                     }
                 }
             }
