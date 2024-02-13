@@ -56,7 +56,6 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         ]);
 
         $this->load($params);
-
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -85,7 +84,8 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
 //                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_for', $this->applicable_for])
                 ->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code]);
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability]);
 
         return $dataProvider;
     }

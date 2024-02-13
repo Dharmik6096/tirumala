@@ -454,6 +454,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblPurchaseRateApplicability();
         $appModel->model->shift_code = $model->shift_id;
+        $appModel->model->shift_applicability = $model->shift_applicability;
         $appModel->model->wef_date = $model->wef_date;
         $appModel->is_union = false;
         $appModel->union_code = $model->union_code;
@@ -469,6 +470,9 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
+            'shift_applicability' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => function($model){
+                    return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+                }, 'class' => 'form-control'],
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
             'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
                     return \Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
@@ -485,9 +489,6 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
             'download_date_time' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->download_date_time);
                 }],
-            'shift_applicability' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => function($model){
-                    return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
-                }, 'class' => 'form-control'],
         ];
         $username = explode('#', Yii::$app->session->get('UserName'))[1];
         if (!in_array(strtolower($username), ['bipl', 'reil']))
