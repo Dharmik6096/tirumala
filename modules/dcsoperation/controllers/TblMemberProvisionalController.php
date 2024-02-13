@@ -297,7 +297,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         if (empty($member_error)) {
                             $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
                             if ($transaction == 'customRedirect') {
-                                if ($model->provisional_status == 'approve') {
+                                if ($model->provisional_status == 'Approve') {
                                     $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                                     $memberDir = $baseDir . 'member';
                                     $proMemberDir = $baseDir . 'provisional_member';
