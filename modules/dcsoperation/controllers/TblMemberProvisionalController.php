@@ -284,7 +284,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $save_model[] = $model;
                                 $all_doc = [];
                                 $memberdoc = [];
-                                if ($model->provisional_status = 'Approve') {
+                                if (strtolower($model->provisional_status) = 'approve') {
                                     $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message, $unlink_files);
                                 }
                                 if (!empty($message)) {
@@ -301,7 +301,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         if (empty($member_error)) {
                             $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
                             if ($transaction == 'customRedirect') {
-                                if ($model->provisional_status == 'approve') {
+                                if (strtolower($model->provisional_status) == 'approve') {
                                     $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                                     $memberDir = $baseDir . 'member';
                                     $proMemberDir = $baseDir . 'provisional_member';
@@ -440,8 +440,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, &$message, &$unlink_files, $save_member_doc = []) {
-        if ($status == 'Approve' && $memberModel->provisional_status == 'Approve') {
+    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = [], &$message = [], &$unlink_files = []) {
+        if (strtolower($status) == 'approve' && strtolower($memberModel->provisional_status) == 'approve') {
             $memberModel->is_approved = 1;
             $memberModel->approved_at = date('Y-m-d H:i:s');
             $memberModel->approved_by = Yii::$app->session['UserCode'];
