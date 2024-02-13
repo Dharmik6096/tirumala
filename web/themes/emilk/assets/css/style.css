@@ -953,8 +953,8 @@ input[type="hidden"] + .help-block{
     position: absolute;
     top: 0;
     left: 0;
-    content: "\f00d";
-    font-family: FontAwesome;
+/*    content: "\f00d";
+    font-family: FontAwesome;*/
 }
 
 .alert-danger{
@@ -2342,10 +2342,21 @@ div.crystalstyle{
 .widget_table_popup .widget_table_popup_icon{
     max-width: 20px;
     position: absolute;
-    right: 35px;
+    /* right: 35px; */
     cursor: pointer;
     color:#fff;
-    top: 7px;
+    /* top: 7px; */
+    margin-left: -47%;
+    margin-top: 2px;
+}
+
+.table_popup_only .widget_table_popup .widget_table_popup_icon{
+    max-width: 20px;
+    position: absolute;
+    right: 35px; 
+    cursor: pointer;
+    color:#fff;
+    top: 7px; 
 }
 
 .hide_toolbar_only .kv-panel-before{
@@ -2423,7 +2434,7 @@ div.crystalstyle{
     /* min-height: calc(100vH - 100px); */
     min-height: calc(100vH - 200px);
     overflow: hidden;
-    padding-bottom: 18px;
+    /* padding-bottom: 18px; */
 }
 .actionButtons{
     position: absolute;
@@ -3777,13 +3788,15 @@ input[type="checkbox"]:after{
 .widget_table_search_btn{
     max-width: 20px;
     position: absolute;
-    right: 7px;
+    /* right: 7px; */
     cursor: pointer;
     color: #fff;
-    top: 3px;
+    /* top: 3px; */
     background: transparent;
     border: none !important;
     box-shadow: none;
+    margin-top: -20px;
+    display: block;
 }
 
 td.fc-year-month-border.fc-first{
@@ -3823,7 +3836,7 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
     text-align: right;
     width: calc(100% + 10px);
     border-top: 1px solid #ccc;
-    margin: 18px -5px -10px;
+    margin: 18px -5px 0px;
     padding-right: 10px;
 }
 
@@ -5359,4 +5372,7 @@ tr.highlightRow {
 }
 .d-grid{
     display: grid;
+}
+.mis_custom_report{
+    margin-right: 95%;
 }
