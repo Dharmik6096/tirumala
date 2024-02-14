@@ -623,6 +623,7 @@ echo GhostMenu::widget([
                                         ['label' => Yii::t('app', 'Milk Receipt For BMC'), 'url' => ['/jasperreports/default/milk-receipt-for-bmc']],
                                         ['label' => Yii::t('app', 'Product Sale Invoice For Member'), 'url' => ['/jasperreports/default/product-sale-invoice-for-member']],
                                         ['label' => Yii::t('app', 'Product Sale Invoice For Customer'), 'url' => ['/jasperreports/default/product-sale-invoice-for-customer']],
+                                        ['label' => Yii::t('app', 'Product Sale Summary'), 'url' => ['/jasperreports/default/product-sale-summary']],
                                     ]
                                 ],
                             ]
