@@ -944,7 +944,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1820,6 +1820,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select txn type'),
                 'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'BIPLZIP' => Yii::t('app', 'BIPLZIP')],
             ],
+            'feedback_status' => [
+                'name' => 'feedback_status',
+                'prompt' => Yii::t('app', 'Select Feedback Status'),
+                'data' => [0 => Yii::t('app', 'Open'), 1 => Yii::t('app', 'In Process'), 2 => Yii::t('app', 'Closed')],
+            ],
             'report_req_status' => [
                 'name' => 'report_req_status',
                 'prompt' => Yii::t('app', 'Select Status'),
@@ -2049,7 +2054,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

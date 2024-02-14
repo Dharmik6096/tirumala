@@ -68,7 +68,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $date, $weigh_time, $testing_time;
+    public $date, $weigh_time, $testing_time, $is_clr_input;
     public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name, $ex_code, $allow_rate_zero, $status, $bmc_ref_code, $ref_code;
 
     public static function tableName() {
@@ -114,7 +114,7 @@ class TblBmcCollection extends \app\models\ChildModel {
 //                }, 'except' => ['androidsync']],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData', 'androidsync', 'importCsv']],
                 [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync', 'rejectRespMap', 'DataTransfer']],
-                [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'purchase_rate_code', 'bmc_silos_info_code', 'response_datetime'], 'safe'],
+                [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'purchase_rate_code', 'bmc_silos_info_code', 'response_datetime', 'is_clr_input'], 'safe'],
                 [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type', 'converted_amount', 'originating_type'], 'safe'],
                 [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
                 [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code', 'own_bmc_code'], 'required', 'on' => ['create', 'update', 'create_allow', 'update_allow']],
@@ -337,8 +337,9 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->union_code = $union;
             $this->bmc_code = $bmc;
             $this->customer_type = $type;
-            $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
-            $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
+            $customer_type = $this->customerType;
+            $prefix = $customer_type->code_prefix;
+            $length = $customer_type->code_length;
             $Code = '';
             if (!empty($prefix) && is_numeric($this->customer_code)) {
                 $customerModel = new TblCustomerMaster();
@@ -401,21 +402,24 @@ class TblBmcCollection extends \app\models\ChildModel {
                     $this->addError($attribute, Yii::t('app/validation', 'Silo No. is invalid'));
                 }
             }
-            $this->union_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'union_code');
-            $this->plant_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'plant_code');
-            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'mcc_plant_code');
+            $bmc_code = $this->mainBmcCode;
+            $this->union_code = $bmc_code->union_code;
+            $this->plant_code = $bmc_code->plant_code;
+            $this->mcc_plant_code = $bmc_code->mcc_plant_code;
             $this->date_time_of_collection = !empty($this->date_time_of_collection) ? date('Y-m-d', strtotime($this->date_time_of_collection)) : '';
             $this->date_time_of_collection = $this->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->shift_code);
             Yii::$app->general->validateCustomer($this);
             if (strtoupper($this->customer_type) == 'DCS') {
                 $this->dcs_code = $this->customer_code;
-                $this->village_code = Yii::$app->general->getforeignkey($this->dcsCode, 'village_code');
-                $this->route_code = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
+                $dcs_code = $this->dcsCode;
+                $this->village_code = $dcs_code->village_code;
+                $this->route_code = $dcs_code->route_code;
                 Yii::$app->general->validateDeactivateDcs($this, $this->date_time_of_collection);
             } else {
                 $this->dcs_code = NULL;
-                $this->village_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'village_code');
-                $this->route_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'route_code');
+                $customer_code = $this->mainCustomerCode;
+                $this->village_code = $customer_code->village_code;
+                $this->route_code = $customer_code->route_code;
             }
             $datetime = date('Y-m-d H:i:s');
             $this->qlty_auto = 0;
@@ -570,15 +574,18 @@ class TblBmcCollection extends \app\models\ChildModel {
         $model->status = 'Accept';
         $model->sms_status = 'n';
         $allowRouteSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1 ? TRUE : FALSE;
+        $dcs_code = $model->dcsCode;
+        $customer_code = $model->mainCustomerCode;
+
         if (strtolower($model->customer_type) == 'dcs') {
-            $model->village_code = Yii::$app->general->getforeignkey($model->dcsCode, 'village_code');
+            $model->village_code = $dcs_code->village_code;
             if (!$allowRouteSelection) {
-                $model->route_code = Yii::$app->general->getforeignkey($model->dcsCode, 'route_code');
+                $model->route_code = $dcs_code->route_code;
             }
         } else {
-            $model->village_code = Yii::$app->general->getforeignkey($model->mainCustomerCode, 'village_code');
+            $model->village_code = $customer_code->village_code;
             if (!$allowRouteSelection) {
-                $model->route_code = Yii::$app->general->getforeignkey($model->mainCustomerCode, 'route_code');
+                $model->route_code = $customer_code->route_code;
             }
         }
         $model->own_mcc_plant_code = $model->mcc_plant_code;
@@ -722,8 +729,9 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function validateMinLimit($attribute, $params) {
-        $flag = Yii::$app->general->getforeignkey($this->mccPlantCode, 'has_min_qty_limit');
-        $value = Yii::$app->general->getforeignkey($this->mccPlantCode, 'min_qty_limit');
+        $mcc_code = $this->mccPlantCode;
+        $flag = $mcc_code->has_min_qty_limit;
+        $value = $mcc_code->min_qty_limit;
         if (strtoupper($this->customer_type) == 'DCS' && $flag == 1 && $value > $this->qty) {
             $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' Must be greater than ' . $value));
         }

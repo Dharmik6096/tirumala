@@ -20,13 +20,14 @@ use app\modules\collection\models\TblCollectionDataAlias;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
 use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * TblBmcCollectionController implements the CRUD actions for TblBmcCollection model.
  */
 class TblBmcCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid', 'poured-bmc-config', 'check-fat-range'];
+    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid', 'poured-bmc-config', 'check-fat-range', 'get-clr-input'];
 
     /**
      * Lists all TblBmcCollection models.
@@ -266,7 +267,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['union'] = Yii::$app->request->post('union_code');
         $validCode = !empty(Yii::$app->request->post('valid_code')) ? Yii::$app->request->post('valid_code') : '';
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
-        /* $bmcModel = new TblBmcCollection();
+        /*   $bmcModel = new TblBmcCollection();
           $dcsModel = new TblDcs();
           $dcs = $dcsModel->validDcs($data['dcs_code'], $data['bmc_code']);
           $bmcModel->dcs_code = !empty($dcs) ? $dcs : $data['dcs_code'];
@@ -340,10 +341,16 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         (float) $fat = Yii::$app->request->post('fat');
         (float) $snf = Yii::$app->request->post('snf');
         $union = Yii::$app->request->post('union_code');
+        (float) $clr = Yii::$app->request->post('clr');
+        $is_clr_input = Yii::$app->request->post('is_clr_input');
         (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
         (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
-        $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
-        $response['data'] = $clr;
+        if ($is_clr_input == 0) {
+            $data = ($snf - ($fat * $lr1) - $lr2) * 4;
+        } else {
+            $data = ($clr / 4) + ($fat * $lr1) + $lr2;
+        }
+        $response['data'] = $data;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
@@ -877,6 +884,19 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionGetClrInput() {
+        $response = [];
+        $response['status'] = 'success';
+        $response['data'] = '';
+        $custome_type = Yii::$app->request->post('customer_type');
+        $union = Yii::$app->request->post('union_code');
+        $customerModel = new TblCustomerType();
+        $is_clr = $customerModel->getClrInput($custome_type, $union);
+        $response['data'] = $is_clr;
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
 }
