@@ -669,7 +669,11 @@ $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
 });
-   
+   $('#reportsmodel-from_date').change(function() {
+        var dt = $(this).val();
+        $('#reportsmodel-to_date').val('');
+        $('#reportsmodel-to_date').parent().kvDatepicker('setStartDate',dt);
+    });
     $(document).ready(function(){  
         $('.dataTables_scrollBody').resize();
         if('" . $report . "'=='LocationWiseAssetMovement'|| '" . $report . "'=='LocationWiseAssetSummary'|| '" . $report . "'=='LocationWiseAssetDetail'){
