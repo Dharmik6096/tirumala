@@ -63,7 +63,7 @@ class TblReportTxnLog extends \yii\db\ActiveRecord {
             'input_param' => Yii::t('app', 'Input Param'),
             'search_param' => Yii::t('app', 'Search Param'),
             'export_file_name' => Yii::t('app', 'Export File Name'),
-            'file_type' => Yii::t('app', 'File Type'),
+            'file_type' => Yii::t('app', 'Report Type'),
             'file_name' => Yii::t('app', 'File Name'),
             'file_path' => Yii::t('app', 'File Path'),
             'user_code' => Yii::t('app', 'User Code'),

@@ -13,7 +13,7 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    ['attribute' => 'report_type', 'visible' => true, 'filter' => true],
+    ['attribute' => 'file_type', 'visible' => true, 'filter' => true],
     ['attribute' => 'report_title', 'visible' => true, 'filter' => true],
     ['attribute' => 'created_at',
             'filterType' => GridView::FILTER_DATE,
@@ -22,15 +22,16 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->created_at);
+            return Yii::$app->controls->view_datetime($model->created_at, 'php:d-m-Y H:i:s');
         }],
     ['attribute' => 'pick_datetime',
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->pick_datetime);
+            $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
+            return Yii::$app->controls->view_datetime($fromDate,'php:d-m-Y H:i:s');
         }, 'filter' => FALSE],
     ['attribute' => 'response_datetime',
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->response_datetime);
+            return Yii::$app->controls->view_datetime($model->response_datetime,'php:d-m-Y H:i:s');
         }, 'filter' => FALSE],
     ['attribute' => 'response_msg', 'visible' => true, 'filter' => true],
     [
@@ -43,8 +44,8 @@ $attribute = [
         'attribute' => 'interval',
         'filter' => FALSE,
         'value' => function($model) {
-            $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
-            $datetime1 = new DateTime($fromDate);
+//            $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
+            $datetime1 = new DateTime($model->cron_pick_datetime);
             $datetime2 = new DateTime($model->response_datetime);
             $interval = $datetime1->diff($datetime2);
             return $interval->format('%h') . ":" . $interval->format('%i') . ":" . $interval->format('%s');
