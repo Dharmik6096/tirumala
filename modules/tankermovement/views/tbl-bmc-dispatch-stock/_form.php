@@ -295,7 +295,7 @@ $(document).ready(function(){
 
             if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
                 var errorMessage = 'must not be less than from date.';
-                var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
+                var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(0, 163, 222);\">' + errorMessage + '</div>';
                 $('.field-tblbmcdispatchstock-to_date .error-message').remove();
                 $('.field-tblbmcdispatchstock-to_date').append(errorElement);
             } else {

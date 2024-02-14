@@ -1006,7 +1006,7 @@ $('.dpu_data_icon').click(function(){
             series: [{
                     name: 'QTY(ltr)',
                     type: 'column',
-                    color: '#7A231C',
+                    color: '#00A3DE',
                     yAxis: 1,
                     data: ydata,
                     tooltip: {
