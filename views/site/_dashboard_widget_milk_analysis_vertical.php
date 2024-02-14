@@ -71,15 +71,15 @@ $model->mav_to_shift = empty($model->mav_to_shift) ? 2 : $model->mav_to_shift;
                 <?php } ?>
                 <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
                 <div class="col-sm-3 pt5 dashboard_modal_footer">
-                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton_analysis'); ?>
+                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton_analysis btn-login'); ?>
                 </div>
                 <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
 </div>
-<div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="widget_table_search_btn downloadDashboardExcel right_30 mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
-<button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
+<div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="widget_table_search_btn downloadDashboardExcel right_30 mis_custom_report"><i class="far fa-file-excel"></i></div>
+<button type="button" class="widget_table_search_btn" data-bs-toggle="modal" data-bs-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 
 <div class="dashboard_milk_analysis">
     <div class="table-responsive overflow_hidden dashboard_tbl dashboard_table_section">

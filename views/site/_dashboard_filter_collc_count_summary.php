@@ -90,15 +90,15 @@ $model->ccs_to_shift = empty($model->ccs_to_shift) ? 2 : $model->ccs_to_shift;
                 <?= Html::activeHiddenInput($model, 'union_code'); ?>
                 <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
                 <div class="col-sm-3 pt5 dashboard_modal_footer">
-                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
+                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton btn-login'); ?>
                 </div>
                 <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
 </div>
-<div onclick="exportThisWithParameter('custom_report_coll_count_summary', '<?= $this->title ?>')" class="widget_table_search_btn downloadDashboardExcel right_30 mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
-<button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
+<div onclick="exportThisWithParameter('custom_report_coll_count_summary', '<?= $this->title ?>')" class="widget_table_search_btn downloadDashboardExcel right_30 mis_custom_report"><i class="far fa-file-excel"></i></div>
+<button type="button" class="widget_table_search_btn" data-bs-toggle="modal" data-bs-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 <?php
 $script = "
     $(document).ready(function () {

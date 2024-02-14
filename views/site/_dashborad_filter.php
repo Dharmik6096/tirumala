@@ -81,7 +81,7 @@ if (isset($table_pop_up_only) && $table_pop_up_only) {
                     <?php } ?>
                     <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);   ?>
                     <div class="col-sm-2 dashboard_modal_footer pt5">
-                        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
+                        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton btn-login'); ?>
                     </div>
                     <?php
                         ActiveForm::end();
@@ -90,7 +90,7 @@ if (isset($table_pop_up_only) && $table_pop_up_only) {
             </div>
         </div>
     </div>
-        <button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
+        <button type="button" class="widget_table_search_btn mt0" data-bs-toggle="modal" data-bs-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
         <?php if (isset($table_popup) && $table_popup) { ?>
             <div class="widget_table_popup"><i class="fa fa-plus widget_table_popup_icon <?= $table_class ?>"></i></div>
         <?php } ?>

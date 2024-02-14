@@ -393,7 +393,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <div onclick="exportThisWithParameter('dup_collection_table', '<?= $this->title ?>')" class="widget_table_search_btn_right_margin mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
+                <div onclick="exportThisWithParameter('dup_collection_table', '<?= $this->title ?>')" class="widget_table_search_btn_right_margin mis_custom_report"><i class="far fa-file-excel"></i></div>
                 <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?= Yii::t('app', 'DPU Data'); ?></h4>
             </div>

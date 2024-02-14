@@ -25,7 +25,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
         <?= $breadcrum_title . $this->title; ?>
-        <button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-toggle="collapse" data-target=".grid_card"><i class="fa fa-list"></i></button>
+        <button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-bs-toggle="collapse" data-bs-target=".grid_card"><i class="fa fa-list"></i></button>
         <span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
     <div class="panel-body hide-grid-export">

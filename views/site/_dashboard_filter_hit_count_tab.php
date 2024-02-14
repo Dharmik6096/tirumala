@@ -72,7 +72,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                 <?= Html::activeHiddenInput($model, 'union_code'); ?>
                 <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
                 <div class="col-sm-3 pt5 dashboard_modal_footer">
-                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
+                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton btn-login'); ?>
                 </div>
                 <?php ActiveForm::end(); ?>
             </div>
@@ -80,7 +80,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
     </div>
 </div>
 <button type="button" class="widget_table_search_btn downloadDashboardExcel right_30" data-val="periodicTable" data-title="periodic_online_data_comparision"><i class="fa fa-download"></i></button>
-<button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
+<button type="button" class="widget_table_search_btn" data-bs-toggle="modal" data-bs-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 <?php
 $script = "
     $(document).ready(function () {
