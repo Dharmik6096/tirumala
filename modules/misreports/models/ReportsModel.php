@@ -107,6 +107,9 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 16, '>', 'Day Difference can not be greater than 16.');
                 }, 'skipOnEmpty' => false, 'on' => ['MemberDailyCollection', 'MilkCollectionData', 'MemberMilkBill']],
+            [['to_date'], function ($attribute, $params) {
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+                }, 'skipOnEmpty' => false, 'except' => ['MemberDailyCollection', 'MilkCollectionData', 'MemberMilkBill']],
             [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SocietyCompositeVsActual', 'MpgPaymentBillStatement']],
             [['union_code', 'channel_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SdFileSummary']],
             [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
