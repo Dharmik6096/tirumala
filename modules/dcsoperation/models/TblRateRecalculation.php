@@ -35,7 +35,7 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblRateRecalculation extends \app\models\ChildModel {
 
-    public $purchase_rate_code, $customer_name, $rate_desc, $sp_param, $shift_applicability;
+    public $purchase_rate_code, $customer_name, $rate_desc, $sp_param;
 
     /**
      * @inheritdoc
@@ -131,6 +131,10 @@ class TblRateRecalculation extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'customer_code']);
+    }
+    
+    public function getShiftApplicability() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
     }
 
 }

@@ -108,6 +108,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 $shiftApplicability[] = $c[7];
             }
             $this->model->rate_code = $rateCodes;
+            $this->model->shift_applicability = $shiftApplicability;
             $this->model->recalc_for = $searchModel->recalc_for;
             if ($this->model->validate()) {
 
@@ -154,6 +155,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 $saveModel->mcc_plant_code = $searchModel->mcc_plant_code;
                 $saveModel->bmc_code = $searchModel->bmc_code;
                 $saveModel->rate_code = is_array($rateCode) ? $rateCode[$key] : $rateCode;
+                $saveModel->shift_applicability = is_array($shiftApplicability) ? $shiftApplicability[$key] : $shiftApplicability;
                 $saveModel->rate_type = is_array($calcFor) ? $calcFor[$key] : $calcFor;
                 $saveModel->from_date = date('Y-m-d', strtotime($searchModel->from_date));
                 $saveModel->to_date = date('Y-m-d', strtotime($searchModel->to_date));

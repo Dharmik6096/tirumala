@@ -28,6 +28,10 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'rate_code', 'value' => 'rate_code'],
+    ['attribute' => 'shift_applicability',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        }],
     ['attribute' => 'rate_desc', 'label' => Yii::t('app', 'Rate Desc.'), 'value' => function($model) {
             $desc = strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description');
             $refCode = strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : '';
