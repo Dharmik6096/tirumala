@@ -13,7 +13,7 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    ['attribute' => 'report_type', 'visible' => true, 'filter' => true],
+    ['attribute' => 'file_type', 'visible' => true, 'filter' => true],
     ['attribute' => 'report_title', 'visible' => true, 'filter' => true],
     ['attribute' => 'created_at',
             'filterType' => GridView::FILTER_DATE,
@@ -26,11 +26,12 @@ $attribute = [
         }],
     ['attribute' => 'pick_datetime',
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->pick_datetime);
+            $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
+            return Yii::$app->controls->view_datetime($fromDate,'php:d-m-Y H:i:s');
         }, 'filter' => FALSE],
     ['attribute' => 'response_datetime',
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->response_datetime);
+            return Yii::$app->controls->view_datetime($model->response_datetime,'php:d-m-Y H:i:s');
         }, 'filter' => FALSE],
     ['attribute' => 'response_msg', 'visible' => true, 'filter' => true],
     [
