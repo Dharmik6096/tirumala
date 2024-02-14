@@ -27,6 +27,9 @@ $attribute = [
         ['attribute' => 'shift_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
         }, 'vAlign' => 'middle',],
+        ['attribute' => 'shift_applicability', 'label' => Yii::t('app', 'Shift Applicability'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        }, 'vAlign' => 'middle',],
         ['attribute' => 'applicable_for', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
         }, 'vAlign' => 'middle',],
@@ -46,9 +49,6 @@ $attribute = [
             } else {
                 return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
             }
-        }, 'vAlign' => 'middle',],
-        ['attribute' => 'shift_applicability', 'label' => Yii::t('app', 'Shift Applicability'), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
         }, 'vAlign' => 'middle',],
 ];
 

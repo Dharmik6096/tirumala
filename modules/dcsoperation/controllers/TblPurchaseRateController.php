@@ -454,7 +454,6 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblPurchaseRateApplicability();
         $appModel->model->shift_code = $model->shift_id;
-        $appModel->model->shift_applicability = $model->shift_applicability;
         $appModel->model->wef_date = $model->wef_date;
         $appModel->is_union = false;
         $appModel->union_code = $model->union_code;

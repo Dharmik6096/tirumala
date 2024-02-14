@@ -74,7 +74,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                     $c = explode('###', $code);
                     $dcs_codes[] = $c[0];
                 }
-                return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all', $codes);
+                return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, $this->model->shift_applicability, 'all', $codes);
             }
         } else {
             $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams);
@@ -99,18 +99,19 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
             $searchModel->load(Yii::$app->request->queryParams);
-            $dcs_codes = $rateCodes = [];
+            $dcs_codes = $rateCodes = $shiftApplicability = [];
             $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
             foreach ($codes as $code) {
                 $c = explode('###', $code);
                 $dcs_codes[] = $c[0];
                 $rateCodes[] = $c[1];
+                $shiftApplicability[] = $c[7];
             }
             $this->model->rate_code = $rateCodes;
             $this->model->recalc_for = $searchModel->recalc_for;
             if ($this->model->validate()) {
 
-                return $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, 'custom', $codes);
+                return $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, $shiftApplicability, 'custom', $codes);
             }
         }
         $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams, 'sp_Portal_Data_Recalculation_Custom');
@@ -123,7 +124,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function saveAndRedirect($dcs_codes, $searchModel, $rateCode, $rtype, $data = [], $customeCode = []) {
+    public function saveAndRedirect($dcs_codes, $searchModel, $rateCode, $shiftApplicability, $rtype, $data = [], $customeCode = []) {
         $master = [];
         //$coll_data = $dataProvider->allModels;//->getModels();
         if (empty($dcs_codes)) {
@@ -173,7 +174,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 if ($rtype == 'custom') {
                     foreach ($data as $code) {
                         $c = explode('###', $code);
-                        $sp_params = [$searchModel->bmc_code, $c[1], (string) $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $c[5], (string) $c[0], $c[4]];
+                        $sp_params = [$searchModel->bmc_code, $c[1], (string) $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $c[5], (string) $c[0], $c[4], $c[7]];
                         $sp = 'sp_Portal_Process_Recalculation';
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }
@@ -184,7 +185,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         $fdate = date('Y-m-d H:i:s', strtotime($searchModel->from_date . ' ' . $from_shift));
                         $tdate = date('Y-m-d H:i:s', strtotime($searchModel->to_date . ' ' . $to_shift));
                         $codes = (string) (!empty($code['customer_code']) ? $code['customer_code'] : $code);
-                        $sp_params = [$searchModel->bmc_code, $rateCode, $codes, $fdate, $tdate, $searchModel->recalc_for, $codes, $c[1]];
+                        $sp_params = [$searchModel->bmc_code, $rateCode, $codes, $fdate, $tdate, $searchModel->recalc_for, $codes, $c[1], $shiftApplicability];
                         $sp = 'sp_Portal_Process_Recalculation';
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }

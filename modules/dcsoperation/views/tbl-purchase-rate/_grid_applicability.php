@@ -24,6 +24,10 @@ $attribute = [
             return Yii::$app->controls->view_date($model->wef_date);
         }],
         ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle',],
+        ['attribute' => 'shift_applicability',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        }],
     'dcs_code',
         ['attribute' => 'code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -44,10 +48,6 @@ $attribute = [
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->download_date_time);
-        }],
-        ['attribute' => 'shift_applicability',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
         }],
 ];
 
