@@ -22,7 +22,7 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->created_at);
+            return Yii::$app->controls->view_datetime($model->created_at, 'php:d-m-Y H:i:s');
         }],
     ['attribute' => 'pick_datetime',
         'value' => function($model) {
@@ -44,8 +44,8 @@ $attribute = [
         'attribute' => 'interval',
         'filter' => FALSE,
         'value' => function($model) {
-            $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
-            $datetime1 = new DateTime($fromDate);
+//            $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
+            $datetime1 = new DateTime($model->cron_pick_datetime);
             $datetime2 = new DateTime($model->response_datetime);
             $interval = $datetime1->diff($datetime2);
             return $interval->format('%h') . ":" . $interval->format('%i') . ":" . $interval->format('%s');
