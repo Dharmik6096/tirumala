@@ -72,7 +72,7 @@ class TblReportTxnLogSearch extends TblReportTxnLog {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'report_type' => $this->report_type,
+            'file_type' => $this->file_type,
             'report_title' => $this->report_title,
             'response_msg' => $this->response_msg,
             'status' => $this->status,
@@ -80,7 +80,7 @@ class TblReportTxnLogSearch extends TblReportTxnLog {
         if (!empty($this->created_at)) {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_report_txn_log.created_at, 126)', date('Y-m-d', strtotime($this->created_at))]);
         }
-        $query->andFilterWhere(['like', 'report_type', $this->report_type])
+        $query->andFilterWhere(['like', 'file_type', $this->file_type])
                 ->andFilterWhere(['like', 'report_title', $this->report_title])
                 ->andFilterWhere(['like', 'response_msg', $this->response_msg])
                 ->andFilterWhere(['like', 'status', $this->status]);
