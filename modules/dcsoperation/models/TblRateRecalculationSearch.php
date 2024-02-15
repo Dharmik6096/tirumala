@@ -51,6 +51,7 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
         ]);
 
         $this->load($params);
+        $query->joinWith(['shiftApplicability']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_rate_recalculation', 'tbl_rate_recalculation', 'tbl_rate_recalculation');
         // $this->attributes=$params['TblRateRecalculationSearch'];
         //echo '<pre>';
@@ -88,7 +89,7 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
                 ->andFilterWhere(['like', 'module_type', $this->module_type])
                 ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'customer_code', $this->customer_code])
-                ->andFilterWhere(['like', 'shift_applicability', $this->shift_applicability]);
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability]);
         $query->groupBy(['from_date', 'to_date', 'recalc_for', 'rate_code', 'from_shift', 'to_shift', 'recalc_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type', 'module_type', 'shift_applicability']);
         //echo $query->createCommand()->rawSql; exit;
         return $dataProvider;
@@ -166,7 +167,7 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
 //        $query->joinWith(['dcsCode']);
 //        $query->andWhere(['tbl_dcs.mcc_plant_code' => $this->mcc_plant_code]);
 
-        Yii::$app->general->filterByOrg($query, $this);
+//        Yii::$app->general->filterByOrg($query, $this);
 
         if (!empty($this->from_date))
             $query->andFilterWhere(['CAST(from_date as date)' => date('Y-m-d', strtotime($this->from_date))]);
