@@ -75,10 +75,10 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
         return [
             ['is_active', 'default', 'value' => 1],
             ['is_download', 'default', 'value' => 0],
-            [['wef_date', 'shift_code', 'applicable_code'], 'required'],
+            [['wef_date', 'shift_code', 'applicable_code', 'shift_applicability'], 'required'],
 //                [['applicable_code'], 'checkDuplicate'], //Comment as Set Validation from DB Side: Hardik
 //            [['route_code'], 'required', 'except' => 'applicability'],
-            [['purchase_rate_code', 'dcs_code', 'is_active', 'sync_status', 'created_at', 'shift_code', 'deleted_at', 'sync_timestamp', 'updated_at', 'wef_date', 'applicable_code', 'applicable_for', 'milk_purchase_rate_code', 'union_code'], 'safe'],
+            [['purchase_rate_code', 'dcs_code', 'is_active', 'sync_status', 'created_at', 'shift_code', 'deleted_at', 'sync_timestamp', 'updated_at', 'wef_date', 'applicable_code', 'applicable_for', 'milk_purchase_rate_code', 'union_code', 'shift_applicability'], 'safe'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
@@ -299,7 +299,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
                         ->select(['dprd.rate_type_code as rate_app_code', 'tbl_dcs_purchase_rate_applicability.purchase_rate_code'])
                         ->joinWith(['purchaseRateCode'])
                         ->join('LEFT JOIN', 'tbl_dcs_purchase_rate_details dprd', 'dprd.purchase_rate_code = tbl_dcs_purchase_rate_applicability.purchase_rate_code AND dprd.milk_type_code =' . $data['milk_type'] . ' AND dprd.milk_quality_type_code =' . $data['milk_quality_type'])
-                        ->where(['tbl_dcs_purchase_rate_applicability.is_active' => 1, 'tbl_dcs_purchase_rate_applicability.applicable_code' => $data['appl_code'], 'tbl_dcs_purchase_rate_applicability.applicable_for' => $data['appl_for'], 'tbl_dcs_purchase_rate.shift_applicability' => [3, $data['shift']]])
+                        ->where(['tbl_dcs_purchase_rate_applicability.is_active' => 1, 'tbl_dcs_purchase_rate_applicability.applicable_code' => $data['appl_code'], 'tbl_dcs_purchase_rate_applicability.applicable_for' => $data['appl_for'], 'tbl_dcs_purchase_rate_applicability.shift_applicability' => [3, $data['shift']]])
                         ->andWhere(['<=', 'tbl_dcs_purchase_rate_applicability.wef_date', $this->wef_date])
 //                        ->andWhere(['dprd.milk_type_code' => $data['milk_type'], 'dprd.milk_quality_type_code' => $data['milk_quality_type_code']])
                         ->orderBy('tbl_dcs_purchase_rate_applicability.wef_date desc')
@@ -407,6 +407,10 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
 
     public function getMemberPurchaseRateCode() {
         return $this->hasOne(TblPurchaseRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+    }
+    
+    public function getShiftApplicability() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
     }
 
 }

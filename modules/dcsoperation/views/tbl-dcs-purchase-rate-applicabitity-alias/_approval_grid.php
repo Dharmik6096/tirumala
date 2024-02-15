@@ -36,6 +36,10 @@ $visible = !empty($searchModel->status) ? FALSE : TRUE;
         ['attribute' => 'shift_code', 'label' => Yii::t('app', 'Shift'), 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => false],
+        ['attribute' => 'shift_applicability',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        },],
         ['attribute' => 'applicable_code', 'filter' => false],
         ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, FALSE, FALSE);

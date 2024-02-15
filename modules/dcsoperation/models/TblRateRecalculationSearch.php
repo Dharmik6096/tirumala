@@ -19,7 +19,7 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
      */
     public function rules() {
         return [
-            [['rate_recalculation_code', 'rate_code', 'from_shift', 'to_shift'], 'safe'],
+            [['rate_recalculation_code', 'rate_code', 'from_shift', 'to_shift', 'shift_applicability'], 'safe'],
             [['rate_type', 'from_date', 'to_date', 'dcs_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'mcc_plant_code', 'bmc_code', 'plant_code', 'recalc_for', 'customer_code', 'customer_type', 'module_type', 'recalc_type'], 'safe'],
             [['recalc_for', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required', 'on' => 'recalculation_search'],
             [['recalc_type', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code', 'from_shift', 'to_shift', 'from_date', 'to_date'], 'required', 'on' => 'recalculation_dispatch'],
@@ -76,7 +76,7 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
 //            FOR XML PATH(''), TYPE
 //            ).value('.', 'NVARCHAR(MAX)')
 //        ,1,1,'')";
-        $query->select(['from_date', 'to_date', 'recalc_for', 'recalc_type', 'rate_code', 'from_shift', 'to_shift', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type', 'module_type']);
+        $query->select(['from_date', 'to_date', 'recalc_for', 'recalc_type', 'rate_code', 'from_shift', 'to_shift', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type', 'module_type', 'shift_applicability']);
         $query->andFilterWhere([
             'from_shift' => $this->from_shift,
             'to_shift' => $this->to_shift,
@@ -87,8 +87,9 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
                 ->andFilterWhere(['like', 'recalc_for', $this->recalc_for])
                 ->andFilterWhere(['like', 'module_type', $this->module_type])
                 ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'customer_code', $this->customer_code]);
-        $query->groupBy(['from_date', 'to_date', 'recalc_for', 'rate_code', 'from_shift', 'to_shift', 'recalc_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type', 'module_type']);
+                ->andFilterWhere(['like', 'customer_code', $this->customer_code])
+                ->andFilterWhere(['like', 'shift_applicability', $this->shift_applicability]);
+        $query->groupBy(['from_date', 'to_date', 'recalc_for', 'rate_code', 'from_shift', 'to_shift', 'recalc_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type', 'module_type', 'shift_applicability']);
         //echo $query->createCommand()->rawSql; exit;
         return $dataProvider;
     }

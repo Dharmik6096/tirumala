@@ -45,12 +45,13 @@ class TblPurchaseRate extends \app\models\ChildModel {
                 [['is_default',], 'default', 'value' => '1'],
                 [['is_active',], 'default', 'value' => '1'],
                 [['rate_gen_method_code',], 'default', 'value' => '3', 'on' => ['stellapps']],
-                [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'union_code', 'shift_id'], 'required', 'except' => ['stellapps']],
+                [['wef_date', 'rate_gen_method_code', 'union_code', 'shift_id'], 'required', 'except' => ['stellapps']],
 //            ['originating_org_code', 'unique', 'when' => function($model) {
 //                    $data = $this->find()->where(['originating_org_code' => $model->originating_org_code, 'wef_date' => $model->wef_date, 'shift_applicability' => $model->shift_applicability])->andWhere(['<>', 'purchase_rate_code', $model->purchase_rate_code])->one();
 //                    return ($data) ? true : false;
 //                }, 'message' => Yii::t('app/validation', 'Purchase Rate is already created for inserted inputs.')],
                 [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code', 'dcs_purchase_rate_code', 'ts_rate', 'kg_fat_rate', 'kg_snf_rate'], 'safe'],
+                [['shift_applicability'], 'default', 'value' => 3],
                 [['shift_applicability'], 'integer'],
                 [['description', 'originating_org_code'], 'string', 'max' => 255],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],

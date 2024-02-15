@@ -21,7 +21,7 @@ class TblDcsPurchaseRateApplicabitityAliasSearch extends TblDcsPurchaseRateAppli
         return [
             [['rate_app_alias_code', 'is_active', 'purchase_rate_code', 'shift_code', 'rate_type', 'rate_gen_method_code', 'is_download'], 'integer'],
             [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'union_code', 'download_date_time', 'applicable_code', 'applicable_for', 'error_desc'], 'safe'],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'status'], 'safe'],
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'shift_applicability'], 'safe'],
             [['union_code', 'plant_code'], 'required', 'on' => 'approvalApplicability']
         ];
     }
