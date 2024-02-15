@@ -50,7 +50,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         $query->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
         $query->orderBy(['wef_date' => SORT_DESC]);
         // add conditions that should always apply here
-        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'shiftCode']);
+        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'shiftCode', 'shiftApplicability sapp']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -85,7 +85,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
 //                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_for', $this->applicable_for])
                 ->andFilterWhere(['like', 'union_code', $this->union_code])
                 ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
-                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability]);
+                ->andFilterWhere(['like', 'sapp.shift', $this->shift_applicability]);
 
         return $dataProvider;
     }
