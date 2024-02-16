@@ -40,6 +40,9 @@ use kartik\grid\GridView;
                     <?= Html::activeHiddenInput($searchModel, 'recalc_for', ['value' => 'member']) ?>
                     <?= Yii::$app->dropdown->dcsRateChart($model, $form, 'tblraterecalculationsearch-union_code,tblraterecalculationsearch-recalc_for', 'rate_code', $model->getAttributeLabel('rate_code')); ?>
                 </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift Applicability', false, 'shift_applicability'); ?>
+                </div>
             <?php } ?>
             <?= Html::activeHiddenInput($searchModel, 'union_code') ?>
             <?= Html::activeHiddenInput($searchModel, 'plant_code') ?>
@@ -75,7 +78,7 @@ use kartik\grid\GridView;
                                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                                 'checkboxOptions' => function($model) {
-                            return ['value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date']];
+                            return ['value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['shift_applicability']];
                         }],
                             ['attribute' => 'type',
                                 'value' => function($model) {
@@ -98,6 +101,7 @@ use kartik\grid\GridView;
                                     return Yii::$app->controls->view_date($model['wef_date']) . $shift;
                                 }, 'filter' => false],
                             ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'filter' => false],
+                            ['header' => 'Shift Applicability', 'attribute' => 'shift', 'filter' => false],
                             ['attribute' => 'qty', 'filter' => false],
                             ['attribute' => 'amount', 'filter' => false],
                         ];

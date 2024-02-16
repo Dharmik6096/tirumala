@@ -301,7 +301,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 $rate_model->attributes = $model->attributes;
                 $fdate = $rate_model->from_date . ' ' . Yii::$app->general->getshift($rate_model->from_shift);
                 $tdate = $rate_model->to_date . ' ' . Yii::$app->general->getshift($rate_model->to_shift);
-                $rate_model->sp_param = [(string) $rate_model->bmc_code, (string) $rate_model->dcs_code, $fdate, $tdate, $rate_model->rate_code];
+                $rate_model->sp_param = [(string) $rate_model->bmc_code, (string) $rate_model->dcs_code, $fdate, $tdate, $rate_model->rate_code, $rate_model->shift_applicability];
                 $saveModel[] = $rate_model;
             }
         } else {
@@ -310,9 +310,10 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 $c = explode('###', $code);
                 $model->dcs_code = $model->customer_code = $c[0];
                 $model->rate_code = $c[1];
+                $model->shift_applicability = $c[4];
                 $rate_model = new TblRateRecalculation();
                 $rate_model->attributes = $model->attributes;
-                $rate_model->sp_param = [(string) $rate_model->bmc_code, (string) $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $c[1]];
+                $rate_model->sp_param = [(string) $rate_model->bmc_code, (string) $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $c[1], $c[4]];
                 $saveModel[] = $rate_model;
             }
         }
