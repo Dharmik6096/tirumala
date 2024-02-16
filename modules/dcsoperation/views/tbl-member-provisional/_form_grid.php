@@ -11,6 +11,9 @@ use yii\web\View;
 <?php
 $attribute = [
         ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
+        ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
+            return Yii::$app->general->generateActivityStatus($model, 'updated_at');
+        }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
         ['attribute' => 'bmc_code', 'value' => 'bmc_code', 'filter' => false],
         ['attribute' => 'bmc_name', 'value' => 'tblDcsBmc.bmc_name', 'filter' => false],
         ['attribute' => 'created_at', 'vAlign' => 'middle', 'value' => function($model) {
@@ -97,12 +100,6 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'provisional-member-status' => function ($url, $model) {
-            return ($model->updated_at >= date("Y-m-d H:i:s", strtotime('-24 hours'))) ?
-                    GhostHtml::a('<i class="fa fa-circle" style="color: #07a309 !important;"></i>', '') :
-                    GhostHtml::a('', '', ['class' => 'hidden-button mr15'
-            ]);
-        },
         'update' => function ($url, $model)use ($pending_approval) {
             if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 0) {
                 $name = $model->member_name;

@@ -5051,3 +5051,12 @@ tr.highlightRow {
 .mr15{
     margin-left: 15px;
 }
+.green-text{
+    color: rgb(7, 163, 9) !important;
+}
+.sticky-column {
+    position: sticky;
+    left: 0;
+    z-index: 9999;
+    background-color: white; 
+}
