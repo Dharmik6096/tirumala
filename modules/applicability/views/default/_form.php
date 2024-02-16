@@ -60,7 +60,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 echo $divPrefix . Yii::$app->controls->date($model, $form, $key, '', false) . $divPostfix;
             } else if (!empty($f['type']) && $f['type'] == 'dropdown') {
                 if (isset($f['class'])) {
-                    $divPrefix = '<div class="col-sm-2 ' . $f['class'] . '">';
+                    $divPrefix = '<div class="col-sm-2">';
                 }
                 echo $divPrefix . Yii::$app->dropdown->dropdown($f['flag'], $model, $form, '', $model->getAttributeLabel($key), false, $key) . $divPostfix;
             }

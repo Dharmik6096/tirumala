@@ -57,7 +57,7 @@ class TblRateRecalculation extends \app\models\ChildModel {
             [['rate_type', 'union_code', 'created_by', 'updated_by', 'recalc_for', 'recalc_type'], 'string'],
             [['from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
             [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['purchase_rate_code', 'bmc_code', 'recalc_for', 'plant_code', 'mcc_plant_code', 'dcs_code', 'module_type'], 'safe']
+            [['purchase_rate_code', 'bmc_code', 'recalc_for', 'plant_code', 'mcc_plant_code', 'dcs_code', 'module_type', 'shift_applicability'], 'safe']
         ];
     }
 
@@ -131,6 +131,10 @@ class TblRateRecalculation extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'customer_code']);
+    }
+    
+    public function getShiftApplicability() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
     }
 
 }

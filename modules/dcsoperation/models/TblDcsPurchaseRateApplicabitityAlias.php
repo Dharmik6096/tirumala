@@ -45,9 +45,9 @@ class TblDcsPurchaseRateApplicabitityAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['created_at', 'updated_at', 'wef_date', 'download_date_time', 'status'], 'safe'],
+            [['created_at', 'updated_at', 'wef_date', 'download_date_time', 'status', 'shift_applicability'], 'safe'],
             [['is_active', 'purchase_rate_code', 'shift_code', 'rate_type', 'rate_gen_method_code', 'is_download'], 'integer'],
-            [['is_download'], 'required'],
+            [['is_download', 'shift_applicability'], 'required'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['dcs_code'], 'string', 'max' => 12],
             [['union_code'], 'string', 'max' => 3],
@@ -120,5 +120,8 @@ class TblDcsPurchaseRateApplicabitityAlias extends \app\models\ChildModel {
     public function getMainCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
     }
-
+    
+    public function getShiftApplicability() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
+    }
 }

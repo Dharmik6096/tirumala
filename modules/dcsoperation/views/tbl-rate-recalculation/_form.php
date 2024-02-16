@@ -31,6 +31,9 @@ if (!empty($rec_data) && $rtype == 'forced') {
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dcsRateChart($model, $form, 'tblraterecalculationsearch-union_code,tblraterecalculationsearch-recalc_for', 'rate_code', $model->getAttributeLabel('rate_code')); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift Applicability', false, 'shift_applicability'); ?>
+    </div>
 <?php } ?>
 <?= Html::activeHiddenInput($searchModel, 'union_code') ?>
 <?= Html::activeHiddenInput($searchModel, 'plant_code') ?>
@@ -69,7 +72,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
-                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for'] . '###' . $model['name']];
+                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for'] . '###' . $model['name'] . '###' . $model['shift_applicability']];
                 }],
             ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],
@@ -92,7 +95,8 @@ if (!empty($rec_data) && $rtype == 'forced') {
                     $modelPurchase = new TblPurchaseRate();
                     $dcsRate = $modelPurchase->find()->where(['purchase_rate_code' => $model['purchase_rate_code']])->one();
                     return (!empty($dcsRate) && $model['recalc_for'] == 'Member') ? $model['purchase_rate_code'] . ' (' . $dcsRate->dcs_purchase_rate_code . ')' : $model['purchase_rate_code'];
-                }, 'visible' => true, 'filter' => false],
+                }, 'visible' => true, 'filter' => false],            
+            ['label' => 'Shift Applicability', 'attribute' => 'shift', 'value' => 'shift', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
