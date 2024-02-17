@@ -669,7 +669,7 @@ $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
 });
-   
+
     $(document).ready(function(){  
         $('.dataTables_scrollBody').resize();
         if('" . $report . "'=='LocationWiseAssetMovement'|| '" . $report . "'=='LocationWiseAssetSummary'|| '" . $report . "'=='LocationWiseAssetDetail'){
