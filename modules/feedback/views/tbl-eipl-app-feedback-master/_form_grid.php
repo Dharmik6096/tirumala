@@ -4,13 +4,14 @@
  * and open the template in the editor.
  */
 
-use yii\helpers\Html;
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 
 <?php
 $attribute = [
+    ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
+            return Yii::$app->general->generateActivityStatus($model, 'created_at', 'Feedback Activity');
+        }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
     ['attribute' => 'user_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCodeById, 'name');
         }],
@@ -56,14 +57,6 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'feedback-activity-status' => function ($url, $model) {
-            $twentyFourHoursAgo = date("Y-m-d H:i:s", strtotime('-24 hours'));
-            if ($model->created_at >= $twentyFourHoursAgo) {
-                return GhostHtml::a('<i class="fa fa-circle" style="color: #07a309 !important;"></i>', '', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Feedback Activity']);
-            } else {
-                return GhostHtml::a('', '', ['class' => 'hidden-button m-r-lg']);
-            }
-        },
         'view' => true,
     ]
 ];
