@@ -243,8 +243,10 @@ class TblProductStock extends \app\models\ChildModel {
                 ->andWhere(['!=', "ISNULL(tbl_product_stock.sap_batch_no, '')", '']);
         $isMcc = FALSE;
         if ($check_is_mcc && strtoupper($type) == 'BMC') {
+            $this->setCodes(strtoupper($type), $code);
             $this->bmc_code = $code;
             $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+            $code = ($isMcc) ? $this->mcc_plant_code : $code;
         }
         $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         if (strtoupper($type) == 'MCC' || $isMcc) {
