@@ -1572,6 +1572,17 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BiplDataAdmin';
         return $this->actionIndex();
     }
+    
+    public function actionPurchaseSummary() {
+        $this->report = 'PurchaseSummary';
+        return $this->actionIndex();
+    }
+    
+    public function actionPurchaseSummaryFormat() {
+        $this->report = 'PurchaseSummaryFormat';
+        return $this->actionIndex();
+    }
+    
 
     /* Reports Configuration */
 
@@ -3259,6 +3270,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'BiplDataAdmin',
                 'title' => 'Bipl Data Admin',
                 'report_type' => ['All' => Yii::t('app', 'All'), 'Online' => Yii::t('app', 'Online'), 'Pendrive' => Yii::t('app', 'Pendrive')],
+            ],
+            'PurchaseSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_vsp_payment_for_glt',
+                'scenario' => 'PurchaseSummary',
+                'title' => '628 - Purchase Summary',
+            ],
+            'PurchaseSummaryFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code:type_check',
+                'sp_name' => 'mis_vendor_payment_for_devmilk',
+                'scenario' => 'PurchaseSummaryFormat',
+                'title' => '629 - Purchase Summary format 2',
             ],
         ];
         return $label[$l];
