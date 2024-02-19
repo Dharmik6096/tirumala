@@ -99,7 +99,7 @@ $form = ActiveForm::begin([
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
-            },
+            },'options' => ['class' => 'w9'],
         ],
             ['attribute' => 'fat',
             'format' => 'raw',
