@@ -680,6 +680,8 @@ echo GhostMenu::widget([
                             ['label' => '625-' . Yii::t('app', 'Bonus Report'), 'url' => ['/misreports/reports/bonus-report']],
                             ['label' => '626-' . Yii::t('app', 'Milk Shortage Recovery'), 'url' => ['/misreports/reports/milk-shortage-recovery']],
                             ['label' => '627-' . Yii::t('app', 'Payment Summary'), 'url' => ['/jasperreports/default/payment-summary']],
+                            ['label' => '628-' . Yii::t('app', 'Purchase Summary'), 'url' => ['/misreports/reports/purchase-summary']],
+                            ['label' => '629-' . Yii::t('app', 'Purchase Summary Format 2'), 'url' => ['/misreports/reports/purchase-summary-format']],
                     ]
                 ],
                     [
