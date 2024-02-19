@@ -123,6 +123,10 @@ class TblUserAttendance extends \app\models\ChildModel {
     public function getUserCode() {
         return $this->hasOne(User::class, ['id' => 'user_code']);
     }
+    
+    public function getUserCodes($userCode) {
+        return User::find()->where(['user_code' => $userCode])->one();
+    }
 
     public function getAttachment() {
         return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code']);
