@@ -1,15 +1,16 @@
 <?php
 
-use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
-use app\modules\complaint\models\TblComplainActivity;
 ?>
 
 <?php
 
 $attribute = [
+        ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
+            return Yii::$app->general->generateActivityStatus($model, 'complain_assignment_datetime', 'Complain Activity');
+        }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
         ['attribute' => 'complain_code', 'visible' => true, 'filter' => true],
         ['attribute' => 'union_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');

@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
+
 /**
  * This is the model class for table "tbl_eipl_app_feedback_master".
  *
@@ -37,7 +38,7 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
 
-    public $member_name;
+    public $member_name, $activityStatus;
 
     /**
      * @inheritdoc
@@ -51,9 +52,9 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['user_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'feedback_message', 'user_type', 'created_by', 'updated_by'], 'string'],
-                [['eipl_app_feedback_item_code', 'feedback_status'], 'integer'],
-                [['feedback_message_datetime', 'created_at', 'updated_at'], 'safe'],
+            [['user_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'feedback_message', 'user_type', 'created_by', 'updated_by'], 'string'],
+            [['eipl_app_feedback_item_code', 'feedback_status'], 'integer'],
+            [['feedback_message_datetime', 'created_at', 'updated_at', 'activityStatus'], 'safe'],
         ];
     }
 

@@ -53,6 +53,7 @@ use Exception;
 use app\modules\general\models\TblProcessApproval;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 class GeneralFunctions extends Component {
 
@@ -2431,4 +2432,14 @@ class GeneralFunctions extends Component {
         }
         return substr($string, 0, -2);
     }
+    
+    function generateActivityStatus($model, $attribute, $dataOriginalTitle = '', $hours = '-24', $colorClass = 'green-text') {
+        $dateTime = date("Y-m-d H:i:s", strtotime("$hours hours"));
+        if ($model->$attribute >= $dateTime) {
+            return '<i class="fa fa-circle ' . $colorClass . '" data-toggle="tooltip" data-placement="top" title="' . $dataOriginalTitle . '"></i>';
+        } else {
+            return '';
+        }
+    }
+
 }
