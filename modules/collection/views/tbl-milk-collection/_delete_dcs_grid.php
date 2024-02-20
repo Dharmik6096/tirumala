@@ -24,16 +24,16 @@ $form = ActiveForm::begin([
 
     <?php
     $attribute = [
-        ['class' => 'kartik\grid\CheckboxColumn',
+            ['class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
-                return ['class' => 'checkbox-collection', 'value' => $model['dcs_code'] . '###' . $model['date_time_of_collection']];
+                return ['class' => 'checkbox-collection', 'value' => $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['milk_type_code']];
             }],
-        ['attribute' => 'dcs_code', 'filter' => FALSE],
-        ['attribute' => 'dcs_ref_code', 'filter' => FALSE],
-        ['attribute' => 'dcs_name', 'filter' => FALSE],
-        ['label' => 'Date', 'attribute' => 'date_time_of_collection',
+            ['attribute' => 'dcs_code', 'filter' => FALSE],
+            ['attribute' => 'dcs_ref_code', 'filter' => FALSE],
+            ['attribute' => 'dcs_name', 'filter' => FALSE],
+            ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
             'filterWidgetOptions' => [
                 'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -42,14 +42,14 @@ $form = ActiveForm::begin([
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model['date_time_of_collection']);
             }, 'filter' => false],
-        ['label' => 'Shift', 'attribute' => 'shift_code', 'filter' => FALSE],
-        ['attribute' => 'milk_type', 'filter' => false],
-        ['attribute' => 'qty', 'filter' => FALSE],
-        ['attribute' => 'fat', 'label' => 'Avg FAT', 'filter' => FALSE],
-        ['attribute' => 'snf', 'label' => 'Avg SNF', 'filter' => FALSE],
+            ['label' => 'Shift', 'attribute' => 'shift_code', 'filter' => FALSE],
+            ['attribute' => 'milk_type', 'filter' => false],
+            ['attribute' => 'qty', 'filter' => FALSE],
+            ['attribute' => 'fat', 'label' => 'Avg FAT', 'filter' => FALSE],
+            ['attribute' => 'snf', 'label' => 'Avg SNF', 'filter' => FALSE],
 //        ['attribute' => 'clr', 'filter' => FALSE],
         ['attribute' => 'rtpl', 'label' => 'Avg Rate', 'filter' => FALSE],
-        ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+            ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
     ];
 
     $grid_option = [
@@ -59,8 +59,8 @@ $form = ActiveForm::begin([
         'showPageSummary' => false,
         'actions' => [
             'member-delete' => function ($url, $model) {
-                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberwisedelete', 'title' => 'Member Detail', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection']];
-                return GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/collection/tbl-milk-collection/delete-member-wise', 'union_code' => $model['union_code'], 'plant_code' => $model['plant_code'], 'mcc_plant_code' => $model['mcc_plant_code'], 'bmc_code' => $model['bmc_code'], 'dcs_code' => $model['dcs_code'], 'date_time_of_collection' => $model['date_time_of_collection']], $options);
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberwisedelete', 'title' => 'Member Detail', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-milk_type_code' => $model['milk_type_code']];
+                return GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/collection/tbl-milk-collection/delete-member-wise', 'union_code' => $model['union_code'], 'plant_code' => $model['plant_code'], 'mcc_plant_code' => $model['mcc_plant_code'], 'bmc_code' => $model['bmc_code'], 'dcs_code' => $model['dcs_code'], 'date_time_of_collection' => $model['date_time_of_collection'], 'milk_type_code' => $model['milk_type_code']], $options);
             },
         ]
     ];
@@ -106,15 +106,16 @@ $script .= "
         var dcs_code= $(this).attr('data-dcs_code');
         var dcs_code= $(this).attr('data-dcs_code');
         var date= $(this).attr('data-date_time_of_collection');
-            MemberWiseDelete(union_code,plant_code,mcc_plant_code,bmc_code,dcs_code,date);
+        var milk_type_code= $(this).attr('data-milk_type_code');
+            MemberWiseDelete(union_code,plant_code,mcc_plant_code,bmc_code,dcs_code,date,milk_type_code);
     });
 
-    function MemberWiseDelete(union_code,plant_code,mcc_plant_code,bmc_code,dcs_code,date){
-        if(union_code != '' && plant_code != '' && mcc_plant_code != '' && bmc_code != '' && dcs_code != ''&& date != ''){         
+    function MemberWiseDelete(union_code,plant_code,mcc_plant_code,bmc_code,dcs_code,date,milk_type_code){
+        if(union_code != '' && plant_code != '' && mcc_plant_code != '' && bmc_code != '' && dcs_code != ''&& date != '' && milk_type_code != ''){         
         $.ajax({
                 type: 'get',
                 url: '" . Url::to(['/collection/tbl-milk-collection/delete-member-wise']) . "',
-                data: {'union_code' : union_code,'plant_code' : plant_code,'mcc_plant_code' : mcc_plant_code,'bmc_code' : bmc_code,'dcs_code' : dcs_code,'date_time_of_collection' : date},
+                data: {'union_code' : union_code,'plant_code' : plant_code,'mcc_plant_code' : mcc_plant_code,'bmc_code' : bmc_code,'dcs_code' : dcs_code,'date_time_of_collection' : date,'milk_type_code' : milk_type_code},
                 beforeSend:function(data) {
                     $('#loadercontent').show();
                     $('#pageloader').show();
