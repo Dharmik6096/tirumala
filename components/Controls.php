@@ -363,7 +363,7 @@ class Controls extends Component {
     }
 
     public function calculateTimeDifference($inTime, $outTime, $array = false) {
-        $hours = $minutes = 0;
+        $hours = $minutes = 00;
         $in_time = Yii::$app->controls->view_time($inTime);
         $out_time = Yii::$app->controls->view_time($outTime);
         if (!empty($in_time) && !empty($out_time) && ($in_time < $out_time)) {

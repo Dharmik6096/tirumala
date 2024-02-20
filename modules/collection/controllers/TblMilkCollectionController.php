@@ -699,6 +699,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     $exist = explode('###', $code);
                     $where['dcs_code'] = $exist[0];
                     $where['date_time_of_collection'] = $exist[1];
+                    $where['milk_type_code'] = $exist[2];
                     $existData = TblMilkCollection::find()->where($where)->all();
                     foreach ($existData as $delete) {
                         if (Yii::$app->general->getUnionConfiguration($delete->union_code, 'collection_approval', 'PORTAL') == 1) {
