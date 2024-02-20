@@ -13,7 +13,8 @@ class BackGroundDataImport extends Model {
     public $customer_type, $customer_code, $invoice_date, $payment_mode, $product_code, $quantity, $discount, $no_of_installment,$deduction_start_date;
     public $member_code, $product_sale_rate_code, $product_group_code, $product_name, $tax_code, $is_dpu_product, $dpu_product_code, $is_inhouse, $is_inclusive_tax, $is_saleable, $is_indent;
     public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code, $sap_farmer_code, $product_type, $remarks, $sap_batch_no, $rate_wharehouse;
-
+    public $shift_applicability;
+    
     function __construct() {
         
     }
@@ -25,7 +26,7 @@ class BackGroundDataImport extends Model {
         $main_rules = [
             [['dcs_code', 'member_name'], 'required', 'on' => ['member', 'member_rateclass']],
             [['dob', 'registration_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true, 'on' => ['member', 'member_rateclass']],
-            [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date'], 'required', 'on' => ['rateapplicability']],
+            [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date', 'shift_applicability'], 'required', 'on' => ['rateapplicability']],
 //            [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true, 'on' => ['rateapplicability']],
             [['dcs_purchase_rate_code'], 'required', 'when' => function ($model) {
                     return strtoupper($model->applicable_for) != 'DCS';
@@ -33,7 +34,7 @@ class BackGroundDataImport extends Model {
             [['wef_date'], 'convertDateDot', 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate','product_sale_rate_gyan']],
             [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate','product_sale_rate_gyan']],
             [['wef_date'], 'validateRateId', 'on' => ['rateapplicability']],
-            ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['rateapplicability']],
+            [['shift_code','shift_applicability'], 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['rateapplicability']],
             [['bmc_code', 'customer_code', 'customer_type', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale', 'product_sale_batch']],
             [['invoice_date'], 'convertDateDot', 'on' => ['product_sale', 'product_sale_member', 'product_sale_batch', 'product_sale_member_batch']],
             [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['product_sale', 'product_sale_member', 'product_sale_batch', 'product_sale_member_batch']],

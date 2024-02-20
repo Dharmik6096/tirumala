@@ -67,7 +67,7 @@ class TblComplainController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $complain_attachment = new TblAttachment();
         $attachmentDataProvider = new ActiveDataProvider([
-            'query' => $complain_attachment->find()->where(['module_code' => $id]),
+            'query' => $complain_attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_complain']),
         ]);
         $complain_escalation_txn = new TblComplainEscalationTxnDetail();
         $escalationTxnDataProvider = new ActiveDataProvider([

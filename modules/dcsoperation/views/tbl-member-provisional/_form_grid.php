@@ -11,6 +11,9 @@ use yii\web\View;
 <?php
 $attribute = [
         ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
+        ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
+            return Yii::$app->general->generateActivityStatus($model, 'updated_at');
+        }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
         ['attribute' => 'bmc_code', 'value' => 'bmc_code', 'filter' => false],
         ['attribute' => 'bmc_name', 'value' => 'tblDcsBmc.bmc_name', 'filter' => false],
         ['attribute' => 'created_at', 'vAlign' => 'middle', 'value' => function($model) {

@@ -131,7 +131,7 @@ class TblDcsDeactive extends \app\models\ChildModel {
     public function validateToRange($attribute, $params) {
         $fromDate = date('Y-m-d', strtotime($this->from_date));
         $toDate = date('Y-m-d', strtotime($this->to_date));
-        if ($fromDate == $toDate || $fromDate > $toDate) {
+        if ($fromDate > $toDate) {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }

@@ -40,10 +40,12 @@ use app\modules\complaint\models\TblComplainEscalationTxnDetail;
 use app\modules\complaint\models\TblComplainActivity;
 use app\modules\complaint\models\TblComplain;
 use app\modules\complaint\models\TblComplainHistory;
+use app\modules\tms\models\TblUserAttendance;
+use app\components\WebApi;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign' , 'process-attendance-data'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -1291,6 +1293,67 @@ class SchedulerController extends ChildController {
                 } catch (\Throwable $e) {
                     $row->cron_status = 3;
                     $row->updateProcessStatus();
+                }
+            }
+        }
+    }
+    
+    public function actionProcessAttendanceData() {
+        $currentTime = time();
+            $startTimestamp = strtotime(date('Y-m-d') . ' 03:00');
+            $endTimestamp = strtotime(date('Y-m-d') . ' 04:00');
+        if ($currentTime >= $startTimestamp && $currentTime <= $endTimestamp) {
+            $model = new TblUserAttendance();
+            $data = $model->getAttendanceRecords();
+            if (!empty($data)) {
+                $ids = array_map(function ($e) {
+                    return $e->attendance_code;
+                }, $data);
+                $model->updateApiStatus($ids);
+
+                $jsonData = [];
+                try {
+                    foreach ($data as $attendanceRecords) {
+                        $jsonData[] = [
+                            'Supplier' => 'Milk',
+                            'Empid' => $attendanceRecords->userCode->employee_id,
+                            'EmpName' => $attendanceRecords->userCode->name,
+                            'RMCode' => 'RMCode',
+                            'RMName' => 'RMName',
+                            'Trdate' => !empty($attendanceRecords->attendance_date) ? date('d-M-Y', strtotime($attendanceRecords->attendance_date)) : '',
+                            'StartTime' => !empty($attendanceRecords->in_time) ? date('H:i:s', strtotime($attendanceRecords->in_time)) : '',
+                            'Endtime' => !empty($attendanceRecords->out_time) ? date('H:i:s', strtotime($attendanceRecords->out_time)) : '',
+                            'Duration' => $attendanceRecords->duration,
+                            'Distance' => 0,
+                            'Total_outlets' => 0,
+                            'Customers_Visited' => 0,
+                            'New_Points_Visited' => 0,
+                            'Total_Visited' => 0,
+                            'Shift_Type' => (strtotime($attendanceRecords->out_time) > strtotime('12:00:00')) ? 'PM' : 'AM',
+                            'Route_Stopped_by' => 'User'
+                        ];
+                    }
+
+                    $api = new WebApi();
+                    $api->serverUrl = 'http://lmstmstest.dodladairy.com:808/api/data';
+                    $api->authentication = FALSE;
+                    $api->body = json_encode($jsonData);
+                    $api->header_info = ['ApiKey: A9G3A9T3H6A6M2U1D8I3'];
+                    $response = $api->ExchangeData();
+                    if (!empty($response)) {
+                        $status = $response[0]->status;
+                        $msg = $response[0]->message;
+                        if ($status == 'success') {
+                            $model->updateSuccessApiStatus($msg, $ids);
+                        } else {
+                            $model->updateErrorApiStatus($msg, $ids);
+                        }
+                    } else {
+                        $model->updateErrorApiStatus('Empty response', $ids);
+                    }
+                } catch (\Throwable $e) {
+                   $errorMessage = substr($e->getMessage(), 0, 250);
+                   $model->updateErrorApiStatus($errorMessage, $ids);
                 }
             }
         }

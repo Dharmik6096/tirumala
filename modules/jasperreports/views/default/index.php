@@ -489,11 +489,6 @@ $defaultToggle = true;
                 $('#reportsmodel-p_milk_type option:first').after($('<option/>', { 'value': '','selected':'selected', text: '" . Yii::t('app', 'NA') . "'}));      
             }
     });
-    $('#reportsmodel-p_from_date').change(function() {
-        var dt = $(this).val();
-        $('#reportsmodel-p_to_date').val('');
-        $('#reportsmodel-p_to_date').parent().kvDatepicker('setStartDate',dt);
-    });
    $(document).ready(function() {
        $('#reportsmodel-from_shift option:contains(\'All\')').remove();    
        $('#reportsmodel-to_shift option:contains(\'All\')').remove();
