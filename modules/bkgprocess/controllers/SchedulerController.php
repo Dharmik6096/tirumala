@@ -1299,20 +1299,20 @@ class SchedulerController extends ChildController {
     }
     
     public function actionProcessAttendanceData() {
-        try {
-            $currentTime = time();
+        $currentTime = time();
             $startTimestamp = strtotime(date('Y-m-d') . ' 03:00');
             $endTimestamp = strtotime(date('Y-m-d') . ' 04:00');
-            if ($currentTime >= $startTimestamp && $currentTime <= $endTimestamp) {
-                $model = new TblUserAttendance();
-                $data = $model->getAttendanceRecords();
-                if (!empty($data)) {
-                    $ids = array_map(function ($e) {
-                        return $e->attendance_code;
-                    }, $data);
-                    $model->updateApiStatus($ids);
+        if ($currentTime >= $startTimestamp && $currentTime <= $endTimestamp) {
+            $model = new TblUserAttendance();
+            $data = $model->getAttendanceRecords();
+            if (!empty($data)) {
+                $ids = array_map(function ($e) {
+                    return $e->attendance_code;
+                }, $data);
+                $model->updateApiStatus($ids);
 
-                    $jsonData = [];
+                $jsonData = [];
+                try {
                     foreach ($data as $attendanceRecords) {
                         $jsonData[] = [
                             'Supplier' => 'Milk',
@@ -1338,26 +1338,23 @@ class SchedulerController extends ChildController {
                     $api->serverUrl = 'http://lmstmstest.dodladairy.com:808/api/data';
                     $api->authentication = FALSE;
                     $api->body = json_encode($jsonData);
-                    $api->header_info = ['ApiKey: A9G3A9T3H6A6M2U1D8I3', 'Content-Type: application/json'];
-
+                    $api->header_info = ['ApiKey: A9G3A9T3H6A6M2U1D8I3'];
                     $response = $api->ExchangeData();
-                    $responseData = json_decode(json_encode($response), false);
-
-                    $msg = $responseData[0]->message;
                     if (!empty($response)) {
-                        $status = $responseData[0]->status;
+                        $status = $response[0]->status;
+                        $msg = $response[0]->message;
                         if ($status == 'success') {
                             $model->updateSuccessApiStatus($msg, $ids);
                         } else {
                             $model->updateErrorApiStatus($msg, $ids);
                         }
                     } else {
-                        $model->updateErrorApiStatus($msg, $ids);
+                        $model->updateErrorApiStatus('Empty response', $ids);
                     }
+                } catch (\Throwable $e) {
+                    $model->updateAll(['api_status' => 0, 'response_msg' => $e->getMessage(), 'response_datetime' => date('Y-m-d H:i:s')], ['attendance_code' => $ids]);
                 }
             }
-        } catch (\Throwable $e) {
-            // Handle exception here
         }
     }
 
