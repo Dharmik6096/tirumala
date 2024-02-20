@@ -5376,3 +5376,15 @@ tr.highlightRow {
 .mis_custom_report{
     margin-right: 95%;
 }
+.w9{
+    width: 9%;
+}
+.green-text{
+    color: rgb(7, 163, 9) !important;
+}
+.sticky-column {
+    position: sticky;
+    left: 0;
+    z-index: 9999;
+    background-color: white; 
+}
