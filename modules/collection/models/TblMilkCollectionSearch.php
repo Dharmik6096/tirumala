@@ -169,7 +169,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 ->where(['mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'dcs_code' => $this->dcs_code, 'action_perform' => 'CREATE', 'table_name' => 'tbl_milk_collection'])
                 ->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime((string)$this->date_time_of_collection))]);
 
-        $query = $this->find()->select(['tbl_milk_collection.mcc_plant_code', 'tbl_milk_collection.bmc_code', 'tbl_milk_collection.dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr',  'scheme_rate', 'actual_rate','rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Verified'")]);
+        $query = $this->find()->select(['tbl_milk_collection.mcc_plant_code', 'tbl_milk_collection.bmc_code', 'tbl_milk_collection.dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'scheme_rate', 'actual_rate', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Verified'")]);
 
 
         $unionQuery = (new ActiveQuery(TblMilkCollection::className()))->from([
@@ -335,7 +335,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             'tbl_milk_collection.bmc_code' => $this->bmc_code]);
 
         $query->andFilterWhere(['tbl_milk_collection.date_time_of_collection' => $this->date_time_of_collection]);
-
+        $query->andFilterWhere(['tbl_milk_collection.milk_type_code' => $this->milk_type_code]);
         $query->andFilterWhere(['tbl_milk_collection.dcs_code' => $this->dcs_code]);
         if ($flag == 1) {
             $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
@@ -403,7 +403,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                     'defaultOrder' => [],
                     'attributes' => [
                         'milk_type',
-                        'qty',                 
+                        'qty',
                     ],
                 ],
             ]);
