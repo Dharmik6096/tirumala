@@ -1352,7 +1352,8 @@ class SchedulerController extends ChildController {
                         $model->updateErrorApiStatus('Empty response', $ids);
                     }
                 } catch (\Throwable $e) {
-                    $model->updateAll(['api_status' => 0, 'response_msg' => $e->getMessage(), 'response_datetime' => date('Y-m-d H:i:s')], ['attendance_code' => $ids]);
+                   $errorMessage = substr($e->getMessage(), 0, 250);
+                   $model->updateErrorApiStatus($errorMessage, $ids);
                 }
             }
         }
