@@ -127,5 +127,27 @@ class TblUserAttendance extends \app\models\ChildModel {
     public function getAttachment() {
         return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code']);
     }
+    
+    public function getAttendanceRecords() {
+        return $this->find()
+                 ->select(['tbl_user_attendance.*', 'user.name', 'user.employee_id'])
+                ->joinWith(['userCode'])
+                ->where(['=', 'tbl_user_attendance.attendance_date', date('Y-m-d', strtotime('-1 day'))])
+                ->andWhere(['or', ['tbl_user_attendance.api_status' => null], ['tbl_user_attendance.api_status' => 0]])
+                ->limit(50)
+                ->all();
+    }
+    
+    public function updateApiStatus($value) {
+        return $this->updateAll(['api_status' => '1', 'pick_datetime' => date('Y-m-d H:i:s')], ['attendance_code' => $value]);
+    }
+    
+    public function updateSuccessApiStatus($msg, $value) {
+        return $this->updateAll(['api_status' => '2', 'response_datetime' => date('Y-m-d H:i:s'), 'response_msg' => $msg], ['attendance_code' => $value]);
+    }
+
+    public function updateErrorApiStatus($msg, $value) {
+        return $this->updateAll(['api_status' => '3', 'response_datetime' => date('Y-m-d H:i:s'), 'response_msg' => $msg], ['attendance_code' => $value]);
+    }
 
 }
