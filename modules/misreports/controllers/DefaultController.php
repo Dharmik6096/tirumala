@@ -85,11 +85,22 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function actionSapReport() {
         $this->report = 'VmReportSap';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
-                $this->report = 'WqReportSap';
-            } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
-                $this->report = 'SdReportSap';
+        $client_code = \Yii::$app->session->get('eiplCode');
+        if ($client_code == 'ANANDA') {
+            if (Yii::$app->request->queryParams) {
+                if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
+                    $this->report = 'WqReportSap';
+                } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
+                    $this->report = 'SdReportSapAnanda';
+                }
+            }
+        } else {
+            if (Yii::$app->request->queryParams) {
+                if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
+                    $this->report = 'WqReportSap';
+                } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
+                    $this->report = 'SdReportSap';
+                }
             }
         }
         return $this->actionIndex();
@@ -562,7 +573,7 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
-        $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection' : 'TblMilkCollection';
+        $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection' :( ($model->union_code=='001') ? 'TblMilkCollection_collection' : 'TblMilkCollection');
         $data_array['module_code'] = $bmc;
         $data_array['mcc_plant_code'] = $bmc;
         $data_array['union_code'] = $model->union_code;
@@ -644,6 +655,20 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name2' => 'sp_checkDatacompleteness_TMPL',
                 'param2' => 'date:string:shift,union_code,mcc_code',
                 'scenario' => 'SapReport',
+                'title' => 'SAP SD Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'export_title' => true,
+                'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
+                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                'sap_download' => true,
+                'multiArray' => ['mcc_code', 'bmc_code'],
+            ],
+            'SdReportSapAnanda' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_SDSAPReport_Ananda',
+                //'sp_name2' => '',
+                //'param2' => 'date:string:shift,union_code,mcc_code',
+                 'scenario' => 'SapReport',
                 'title' => 'SAP SD Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
@@ -1041,5 +1066,4 @@ class DefaultController extends \app\controllers\ChildController {
         ];
         return $label[$l];
     }
-
 }
