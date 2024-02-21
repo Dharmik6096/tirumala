@@ -3,13 +3,22 @@
         'name' => 'yiisoft/yii2-app-basic',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'bc235bf0778626603a686bda54b99a335811661c',
+        'reference' => '6568249051726cf0890bfadd1ddd48faabe04f9f',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
+        '2amigos/yii2-multi-select-widget' => array(
+            'pretty_version' => '0.1.1',
+            'version' => '0.1.1.0',
+            'reference' => '8e3d743ea48db77a78778e09c4ce0d20825a69cc',
+            'type' => 'yii2-extension',
+            'install_path' => __DIR__ . '/../2amigos/yii2-multi-select-widget',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'behat/gherkin' => array(
             'pretty_version' => 'v4.9.0',
             'version' => '4.9.0.0',
@@ -1567,7 +1576,7 @@
         'yiisoft/yii2-app-basic' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'bc235bf0778626603a686bda54b99a335811661c',
+            'reference' => '6568249051726cf0890bfadd1ddd48faabe04f9f',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
