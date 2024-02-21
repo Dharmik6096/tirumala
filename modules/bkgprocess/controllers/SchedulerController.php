@@ -41,7 +41,7 @@ use app\modules\complaint\models\TblComplainActivity;
 use app\modules\complaint\models\TblComplain;
 use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
-use yii\helpers\Json;
+use app\components\WebApi;
 
 class SchedulerController extends ChildController {
 
@@ -1299,77 +1299,61 @@ class SchedulerController extends ChildController {
     }
     
     public function actionProcessAttendanceData() {
-        $currentHour = date('H:i');
-
-        if ($currentHour >= strtotime('03:00') && $currentHour <= strtotime('04:00')) {
-            $currentDateTime = date('Y-m-d H:i:s');
-            $previousDayDate = date('Y-m-d', strtotime('-1 day'));
-
-            $userAttendance = new TblUserAttendance();
-            $attendanceRecords = $userAttendance::find()
-                    ->where(['and', ['>=', 'attendance_date', $previousDayDate], ['<', 'attendance_date', $currentDateTime]])
-                    ->andWhere(['or', ['api_status' => null], ['api_status' => 0]])
-                    ->limit(50)
-                    ->all();
-
-            if (!empty($attendanceRecords)) {
-                foreach ($attendanceRecords as $record) {
-                    $record->pick_datetime = $currentDateTime;
-                    $record->api_status = 1;
-                    $record->save();
-                }
+        $currentTime = time();
+            $startTimestamp = strtotime(date('Y-m-d') . ' 03:00');
+            $endTimestamp = strtotime(date('Y-m-d') . ' 04:00');
+        if ($currentTime >= $startTimestamp && $currentTime <= $endTimestamp) {
+            $model = new TblUserAttendance();
+            $data = $model->getAttendanceRecords();
+            if (!empty($data)) {
+                $ids = array_map(function ($e) {
+                    return $e->attendance_code;
+                }, $data);
+                $model->updateApiStatus($ids);
 
                 $jsonData = [];
-                foreach ($attendanceRecords as $record) {
-                    $duration = Yii::$app->controls->calculateTimeDifference($record->in_time, $record->out_time, true);
-                    $durationFormatted = sprintf("%02d:%02d:00", $duration['hours'], $duration['minutes']);
-
-                    $jsonData[] = [
-                        'Supplier' => 'Milk',
-                        'Empid' => $userAttendance->getUserCodes($record->user_code)->employee_id,
-                        'EmpName' => $userAttendance->getUserCodes($record->user_code)->name,
-                        'RMCode' => 'RMCode',
-                        'RMName' => 'RMName',
-                        'Trdate' => date('d-M-Y', strtotime($record->attendance_date)),
-                        'StartTime' => date('H:i:s', strtotime($record->in_time)),
-                        'Endtime' => date('H:i:s', strtotime($record->out_time)),
-                        'Duration' => $durationFormatted,
-                        'Distance' => 0,
-                        'Total_outlets' => 0,
-                        'Customers_Visited' => 0,
-                        'New_Points_Visited' => 0,
-                        'Total_Visited' => 0,
-                        'Shift_Type' => (strtotime($record->out_time) > strtotime('12:00:00')) ? 'PM' : 'AM',
-                        'Route_Stopped_by' => 'User'
-                    ];
-                }
-
-                if (!empty($jsonData)) {
-                    $curl = curl_init();
-                    curl_setopt_array($curl, [
-                        CURLOPT_URL => 'http://lmstmstest.dodladairy.com:808/api/data',
-                        CURLOPT_POST => true,
-                        CURLOPT_POSTFIELDS => json_encode($jsonData),
-                        CURLOPT_HTTPHEADER => ['ApiKey: A9G3A9T3H6A6M2U1D8I3', 'Content-Type: application/json'],
-                        CURLOPT_RETURNTRANSFER => true
-                    ]);
-                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-                    $response = curl_exec($curl);
-                    curl_close($curl);
-                    $responseData = Json::decode($response, true);
-                    foreach ($responseData as $index => $data) {
-                        $attendanceRecord = $attendanceRecords[$index];
-                        $attendanceRecord->api_status = ($data['status'] == 'success') ? 2 : 3;
-                        $attendanceRecord->response_msg = $data['message'];
-                        $attendanceRecord->response_datetime = $currentDateTime;
-                        $attendanceRecord->save();
+                try {
+                    foreach ($data as $attendanceRecords) {
+                        $jsonData[] = [
+                            'Supplier' => 'Milk',
+                            'Empid' => $attendanceRecords->userCode->employee_id,
+                            'EmpName' => $attendanceRecords->userCode->name,
+                            'RMCode' => 'RMCode',
+                            'RMName' => 'RMName',
+                            'Trdate' => !empty($attendanceRecords->attendance_date) ? date('d-M-Y', strtotime($attendanceRecords->attendance_date)) : '',
+                            'StartTime' => !empty($attendanceRecords->in_time) ? date('H:i:s', strtotime($attendanceRecords->in_time)) : '',
+                            'Endtime' => !empty($attendanceRecords->out_time) ? date('H:i:s', strtotime($attendanceRecords->out_time)) : '',
+                            'Duration' => $attendanceRecords->duration,
+                            'Distance' => 0,
+                            'Total_outlets' => 0,
+                            'Customers_Visited' => 0,
+                            'New_Points_Visited' => 0,
+                            'Total_Visited' => 0,
+                            'Shift_Type' => (strtotime($attendanceRecords->out_time) > strtotime('12:00:00')) ? 'PM' : 'AM',
+                            'Route_Stopped_by' => 'User'
+                        ];
                     }
-                } else {
-                    foreach ($attendanceRecords as $record) {
-                        $record->api_status = 0;
-                        $record->save();
+
+                    $api = new WebApi();
+                    $api->serverUrl = 'http://lmstmstest.dodladairy.com:808/api/data';
+                    $api->authentication = FALSE;
+                    $api->body = json_encode($jsonData);
+                    $api->header_info = ['ApiKey: A9G3A9T3H6A6M2U1D8I3'];
+                    $response = $api->ExchangeData();
+                    if (!empty($response)) {
+                        $status = $response[0]->status;
+                        $msg = $response[0]->message;
+                        if ($status == 'success') {
+                            $model->updateSuccessApiStatus($msg, $ids);
+                        } else {
+                            $model->updateErrorApiStatus($msg, $ids);
+                        }
+                    } else {
+                        $model->updateErrorApiStatus('Empty response', $ids);
                     }
+                } catch (\Throwable $e) {
+                   $errorMessage = substr($e->getMessage(), 0, 250);
+                   $model->updateErrorApiStatus($errorMessage, $ids);
                 }
             }
         }
