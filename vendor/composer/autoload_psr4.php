@@ -83,6 +83,7 @@ return array(
     'kartik\\base\\' => array($vendorDir . '/kartik-v/yii2-krajee-base/src'),
     'kartik\\alert\\' => array($vendorDir . '/kartik-v/yii2-widget-alert/src'),
     'kartik\\affix\\' => array($vendorDir . '/kartik-v/yii2-widget-affix'),
+    'dosamigos\\multiselect\\' => array($vendorDir . '/2amigos/yii2-multi-select-widget'),
     'demogorgorn\\ajax\\' => array($vendorDir . '/demogorgorn/yii2-ajax-submit-button'),
     'cebe\\markdown\\' => array($vendorDir . '/cebe/markdown'),
     'ZipStream\\' => array($vendorDir . '/maennchen/zipstream-php/src'),

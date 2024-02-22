@@ -482,4 +482,13 @@ return array (
       '@spanjeta/modules/backup' => $vendorDir . '/spanjeta/yii2-backup',
     ),
   ),
+  '2amigos/yii2-multi-select-widget' => 
+  array (
+    'name' => '2amigos/yii2-multi-select-widget',
+    'version' => '0.1.1.0',
+    'alias' => 
+    array (
+      '@dosamigos/multiselect' => $vendorDir . '/2amigos/yii2-multi-select-widget',
+    ),
+  ),
 );

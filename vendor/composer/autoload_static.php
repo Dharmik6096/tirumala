@@ -12,8 +12,8 @@ class ComposerStaticInitdc4c39c4278cd57d48e7089f218864ff
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
-        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
@@ -133,6 +133,7 @@ class ComposerStaticInitdc4c39c4278cd57d48e7089f218864ff
         ),
         'd' => 
         array (
+            'dosamigos\\multiselect\\' => 22,
             'demogorgorn\\ajax\\' => 17,
         ),
         'c' => 
@@ -529,6 +530,10 @@ class ComposerStaticInitdc4c39c4278cd57d48e7089f218864ff
         'kartik\\affix\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-affix',
+        ),
+        'dosamigos\\multiselect\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/2amigos/yii2-multi-select-widget',
         ),
         'demogorgorn\\ajax\\' => 
         array (
