@@ -1300,8 +1300,8 @@ class SchedulerController extends ChildController {
     
     public function actionProcessAttendanceData() {
         $currentTime = time();
-            $startTimestamp = strtotime(date('Y-m-d') . ' 03:00');
-            $endTimestamp = strtotime(date('Y-m-d') . ' 04:00');
+        $startTimestamp = strtotime(date('Y-m-d') . ' 03:00');
+        $endTimestamp = strtotime(date('Y-m-d') . ' 04:00');
         if ($currentTime >= $startTimestamp && $currentTime <= $endTimestamp) {
             $model = new TblUserAttendance();
             $data = $model->getAttendanceRecords();
@@ -1311,29 +1311,36 @@ class SchedulerController extends ChildController {
                 }, $data);
                 $model->updateApiStatus($ids);
 
+                $withEmployeeIds = [];
+                $withoutEmployeeIds = [];
                 $jsonData = [];
                 try {
                     foreach ($data as $attendanceRecords) {
-                        $jsonData[] = [
-                            'Supplier' => 'Milk',
-                            'Empid' => $attendanceRecords->userCode->employee_id,
-                            'EmpName' => $attendanceRecords->userCode->name,
-                            'RMCode' => 'RMCode',
-                            'RMName' => 'RMName',
-                            'Trdate' => !empty($attendanceRecords->attendance_date) ? date('d-M-Y', strtotime($attendanceRecords->attendance_date)) : '',
-                            'StartTime' => !empty($attendanceRecords->in_time) ? date('H:i:s', strtotime($attendanceRecords->in_time)) : '',
-                            'Endtime' => !empty($attendanceRecords->out_time) ? date('H:i:s', strtotime($attendanceRecords->out_time)) : '',
-                            'Duration' => $attendanceRecords->duration,
-                            'Distance' => 0,
-                            'Total_outlets' => 0,
-                            'Customers_Visited' => 0,
-                            'New_Points_Visited' => 0,
-                            'Total_Visited' => 0,
-                            'Shift_Type' => (strtotime($attendanceRecords->out_time) > strtotime('12:00:00')) ? 'PM' : 'AM',
-                            'Route_Stopped_by' => 'User'
-                        ];
+                        if (!empty($attendanceRecords->userCode->employee_id)) {
+                            $withEmployeeIds[] = $attendanceRecords->attendance_code;
+                            $jsonData[] = [
+                                'Supplier' => 'Milk',
+                                'Empid' => $attendanceRecords->userCode->employee_id,
+                                'EmpName' => $attendanceRecords->userCode->name,
+                                'RMCode' => 'RMCode',
+                                'RMName' => 'RMName',
+                                'Trdate' => !empty($attendanceRecords->attendance_date) ? date('d-M-Y', strtotime($attendanceRecords->attendance_date)) : '',
+                                'StartTime' => !empty($attendanceRecords->in_time) ? date('H:i:s', strtotime($attendanceRecords->in_time)) : '',
+                                'Endtime' => !empty($attendanceRecords->out_time) ? date('H:i:s', strtotime($attendanceRecords->out_time)) : '',
+                                'Duration' => $attendanceRecords->duration,
+                                'Distance' => 0,
+                                'Total_outlets' => 0,
+                                'Customers_Visited' => 0,
+                                'New_Points_Visited' => 0,
+                                'Total_Visited' => 0,
+                                'Shift_Type' => (strtotime($attendanceRecords->out_time) > strtotime('12:00:00')) ? 'PM' : 'AM',
+                                'Route_Stopped_by' => 'User'
+                            ];
+                        } else {
+                            $withoutEmployeeIds[] = $attendanceRecords->attendance_code;
+                        }
                     }
-
+                    $model->updateErrorApiStatus('Employee Code Value is Empty', $withoutEmployeeIds);
                     $api = new WebApi();
                     $api->serverUrl = 'http://lmstmstest.dodladairy.com:808/api/data';
                     $api->authentication = FALSE;
@@ -1344,16 +1351,16 @@ class SchedulerController extends ChildController {
                         $status = $response[0]->status;
                         $msg = $response[0]->message;
                         if ($status == 'success') {
-                            $model->updateSuccessApiStatus($msg, $ids);
+                            $model->updateSuccessApiStatus($msg, $withEmployeeIds);
                         } else {
-                            $model->updateErrorApiStatus($msg, $ids);
+                            $model->updateErrorApiStatus($msg, $withEmployeeIds);
                         }
                     } else {
-                        $model->updateErrorApiStatus('Empty response', $ids);
+                        $model->updateErrorApiStatus('Empty response', $withEmployeeIds);
                     }
                 } catch (\Throwable $e) {
-                   $errorMessage = substr($e->getMessage(), 0, 250);
-                   $model->updateErrorApiStatus($errorMessage, $ids);
+                    $errorMessage = substr($e->getMessage(), 0, 250);
+                    $model->updateErrorApiStatus($errorMessage, $ids);
                 }
             }
         }
