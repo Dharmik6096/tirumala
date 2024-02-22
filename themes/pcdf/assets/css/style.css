@@ -247,7 +247,7 @@ ul{
 }
 .navbar .dropdown-menu li > a:hover, .navbar.navbar-default .dropdown-menu li > a:hover, .navbar .dropdown-menu li > a:focus, .navbar.navbar-default .dropdown-menu li > a:focus{
     color: #fff;
-    background: rgba(59,62,71, 0.8);
+    background: rgba(0, 163, 222, 1);
 }
 .dropdown-menu{
     border-radius: 2px;
@@ -924,14 +924,11 @@ input[type="hidden"] + .help-block{
 #calculator {
     width: 332px;
     height: auto;
-
     margin: 40px auto;
     padding: 20px 20px 9px;
-
-    background: #3b3e47;
-
+    background: #00A3DE;
     border-radius: 3px;
-    box-shadow: 0px 4px #1c1d23, 0px 10px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 4px #00a3de8a, 0px 10px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Top portion */
@@ -1024,7 +1021,7 @@ input[type="hidden"] + .help-block{
 
 .top span.clear {
     float: right;
-    background: rgb(0, 163, 222);
+    background: rgba(0, 0, 0, 0.2);
     box-shadow: 0px 4px #4b0000;
     color: white;
 }
@@ -1053,7 +1050,7 @@ input[type="hidden"] + .help-block{
 }
 
 .top span.clear:hover {
-    background: #981b1b;
+    background: rgba(0, 0, 0, 0.4);;
     box-shadow: 0px 4px rgb(0, 163, 222);
     color: white;
 }
@@ -5063,3 +5060,20 @@ tr.highlightRow {
     z-index: 9999;
     background-color: white; 
 }
+.has-error .select2-container--krajee .select2-selection {
+    border-color: #00A3DE !important;
+    box-shadow: 0 0 6px #00a3de7a !important;
+}
+.has-error .input-group-addon {
+    color: #00A3DE;
+    background-color: #00a3de7a;
+    border-color: #00A3DE;
+}
+.error_message {
+    font-size: 8px;
+    margin-bottom: -12px;
+    color: rgb(0, 163, 222);
+}
+/*rect.highcharts-point {
+    fill: rgb(0, 163, 222);
+}*/

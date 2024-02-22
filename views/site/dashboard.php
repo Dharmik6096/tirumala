@@ -1038,7 +1038,7 @@ function drawChart(id, cntr, url, type)
             var index = $('#' + cntr).data('highcharts-chart');
             var chart = Highcharts.charts[index];
             var vals = [];
-            var color = '7A231C';
+            var color = '00A3DE';
             var suf = '';
             // console.log(chart +'--'+id);
             while (chart.series.length > 0) {
