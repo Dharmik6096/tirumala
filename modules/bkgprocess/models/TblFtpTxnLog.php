@@ -196,7 +196,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
         $ftpPath = !empty($mccRefCode) ? $mccRefCode : $FTPProcess['ftp_path'];
-
+        
         $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
         $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
         $skip_header = isset($FTPProcess['skip_header']) ? TRUE : FALSE;
@@ -233,6 +233,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 }
                 fclose($txt_file);
             }
+            //$data->save();
             return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email, $append_ftp_path);
         }
         return FALSE;

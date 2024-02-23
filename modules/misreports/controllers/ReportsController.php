@@ -1583,7 +1583,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
     
-
+    public function actionMilkVan() {
+        $this->report = 'MilkVan';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3282,6 +3286,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_vendor_payment_for_devmilk',
                 'scenario' => 'PurchaseSummaryFormat',
                 'title' => '629 - Purchase Summary format 2',
+            ],
+            'MilkVan' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_type',
+                'sp_name' => 'mis_milk_van',
+                'scenario' => 'MilkVan',
+                'title' => 'MilkVan',
+                'report_type' => ['Time management' => Yii::t('app', 'Time management'), 'capacity utilizations' => Yii::t('app', 'capacity utilizations')],
             ],
         ];
         return $label[$l];
