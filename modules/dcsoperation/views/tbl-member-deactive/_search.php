@@ -9,6 +9,8 @@ use yii\web\JsExpression;
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblProject */
 /* @var $form yii\widgets\ActiveForm */
+$fDate = date('Y-m-d', strtotime('+1 day'));
+$minDate = date('d-m-Y', strtotime($fDate));
 ?>
 <div class="modal modal-default fade" id="MemberActiveModal" role="dialog">
     <div class="modal-dialog">
@@ -30,7 +32,7 @@ use yii\web\JsExpression;
                     ?>
 
                     <div class="col-sm-6">
-                        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, date('d-m-Y')); ?> 
+                        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, $minDate); ?> 
                     </div>
                     <div class="col-sm-4">
                         <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>

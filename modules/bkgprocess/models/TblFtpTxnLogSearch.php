@@ -44,7 +44,7 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
         $this->load($params);
         $query = TblFtpTxnLog::find();
         $query->where(['txn_type' => 'EIPL']);
-        $query->joinWith(['mccPlantCode', 'creatorId']);
+        $query->joinWith(['mccPlantCode']);
 
         // add conditions that should always apply here
      
@@ -78,16 +78,16 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
             $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
             $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['=', 'tbl_file_creator.applicable_date', $from_date]);
+           // $query->andFilterWhere(['=', 'tbl_file_creator.applicable_date', $from_date]);
         }
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'status' => $this->status,
+            'tbl_ftp_txn_log.status' => $this->status,
         ]);
 
-        $query->andFilterWhere(['like', 'module_name', $this->module_name])
-                ->andFilterWhere(['like', 'file_name', $this->file_name]);
+        $query->andFilterWhere(['like', 'tbl_ftp_txn_log.module_name', $this->module_name])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_name', $this->file_name]);
 
         return $dataProvider;
     }
