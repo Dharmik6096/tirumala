@@ -278,7 +278,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path,$use_ftp_path=FALSE) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path) {
         $ftpDetail = new TblFtpDetail();
         $ftpDetail->ftp_connection_code = $data->union_code;
         $ftpData = $ftpDetail->getData();

@@ -25,7 +25,12 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionIndex() {
         $model = new ReportsModelOld();
         if ($this->report != '') {
-            $this->data = $this->getLabels($this->report);
+            $client_code = \Yii::$app->session->get('eiplCode');
+            if (!empty($client_code) && !empty($this->getLabels($this->report)[$client_code])) {
+                $this->data = $this->getLabels($this->report)[$client_code];
+            } else {
+                $this->data = $this->getLabels($this->report);
+            }
             if (!empty($this->data['scenario'])) {
                 $model->scenario = $this->data['scenario'];
             }
@@ -85,24 +90,14 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function actionSapReport() {
         $this->report = 'VmReportSap';
-        $client_code = \Yii::$app->session->get('eiplCode');
-        if ($client_code == 'ANANDA') {
-            if (Yii::$app->request->queryParams) {
-                if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
-                    $this->report = 'WqReportSap';
-                } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
-                    $this->report = 'SdReportSapAnanda';
-                }
-            }
-        } else {
-            if (Yii::$app->request->queryParams) {
-                if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
-                    $this->report = 'WqReportSap';
-                } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
-                    $this->report = 'SdReportSap';
-                }
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
+                $this->report = 'WqReportSap';
+            } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
+                $this->report = 'SdReportSap';
             }
         }
+
         return $this->actionIndex();
     }
 
@@ -573,7 +568,12 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
-        $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection' :( ($model->union_code=='001') ? 'TblMilkCollection_collection' : 'TblMilkCollection');
+        if (empty($this->data['module_name'])) {
+            $data_array['module_name'] = ($model->report_type == '1' ? 'TblBmcCollection' : 'TblMilkCollection');
+        } else {
+            $data_array['module_name'] = $this->data['module_name'];
+        }
+        // tblmilkcollection_collection
         $data_array['module_code'] = $bmc;
         $data_array['mcc_plant_code'] = $bmc;
         $data_array['union_code'] = $model->union_code;
@@ -650,32 +650,33 @@ class DefaultController extends \app\controllers\ChildController {
                 'multiArray' => ['mcc_code', 'bmc_code'],
             ],
             'SdReportSap' => [
-                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'rpt_MIS_SDSAPReport',
-                'sp_name2' => 'sp_checkDatacompleteness_TMPL',
-                'param2' => 'date:string:shift,union_code,mcc_code',
-                'scenario' => 'SapReport',
-                'title' => 'SAP SD Report',
-                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
-                'export_title' => true,
-                'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
-                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
-                'sap_download' => true,
-                'multiArray' => ['mcc_code', 'bmc_code'],
-            ],
-            'SdReportSapAnanda' => [
-                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'rpt_MIS_SDSAPReport_Ananda',
-                //'sp_name2' => '',
-                //'param2' => 'date:string:shift,union_code,mcc_code',
-                 'scenario' => 'SapReport',
-                'title' => 'SAP SD Report',
-                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
-                'export_title' => true,
-                'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
-                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
-                'sap_download' => true,
-                'multiArray' => ['mcc_code', 'bmc_code'],
+                'EIPLCOMMON' => [
+                    'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                    'sp_name' => 'rpt_MIS_SDSAPReport',
+                    'sp_name2' => 'sp_checkDatacompleteness_TMPL',
+                    'param2' => 'date:string:shift,union_code,mcc_code',
+                    'scenario' => 'SapReport',
+                    'title' => 'SAP SD Report',
+                    'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                    'export_title' => true,
+                    'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
+                    'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                    'sap_download' => true,
+                    'multiArray' => ['mcc_code', 'bmc_code'],
+                ],
+                'ANANDA' => [
+                    'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                    'sp_name' => 'rpt_MIS_SDSAPReport_Ananda',
+                    'scenario' => 'SapReport',
+                    'title' => 'SAP SD Report',
+                    'report_type' => [Yii::t('app', 'SD')],
+                    'export_title' => true,
+                    'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
+                    'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                    'sap_download' => true,
+                    'multiArray' => ['mcc_code', 'bmc_code'],
+                    'module_name' => 'TblMilkCollection_Ananda'
+                ],
             ],
             'DateBmcCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',

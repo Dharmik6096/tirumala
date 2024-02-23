@@ -38,10 +38,8 @@ class Bkgprocess extends \yii\base\Module {
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
                 'ftp_path' => 'SD/Inbound'
             ],
-               'TblMilkCollection_collection' => [
+               'TblMilkCollection_Ananda' => [
                 'ext' => '.csv',
-                'param' => 'union_code,mcc_plant_code,bmc_code,from_date,to_date',
-                'sp_name' => 'rpt_MIS_SDSAPReport',
                 'export_title' => 'module_code+_+SD+_+applicable_date:date+_+shift_code',
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
                 'ftp_path' => ''
