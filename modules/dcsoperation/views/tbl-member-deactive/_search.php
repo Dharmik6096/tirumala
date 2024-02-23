@@ -9,7 +9,7 @@ use yii\web\JsExpression;
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblProject */
 /* @var $form yii\widgets\ActiveForm */
-$fDate = date('Y-m-d', strtotime('+1 day', date('Y-m-d')));
+$fDate = date('Y-m-d', strtotime('+1 day'));
 $minDate = date('d-m-Y', strtotime($fDate));
 ?>
 <div class="modal modal-default fade" id="MemberActiveModal" role="dialog">
