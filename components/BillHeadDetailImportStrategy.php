@@ -10,6 +10,10 @@ namespace app\components;
 use ruskid\csvimporter\ARImportStrategy;
 use Yii;
 use app\modules\vsp\models\TblBillHeadInstallment;
+use yii\base\UserException;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblCustomerMaster;
 
 class BillHeadDetailImportStrategy extends ARImportStrategy {
 
@@ -63,6 +67,41 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
 
                     $modelList = [];
                     $model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($model);
+
+                    if (!empty($model->bmc_code)) {
+                        $Bmc = TblDcsBmc::find()->select('bmc_code')
+                                ->where(['or', ['bmc_code' => $model->bmc_code], ['ref_code' => $model->bmc_code]])
+                                ->andWhere(['is_active' => 1])
+                                ->one();
+
+                        $model->bmc_code = $Bmc->bmc_code;
+
+                        if (!empty($model->dcs_code)) {
+                            $DcsData = TblDcs::find()->select('dcs_code')
+                                    ->where(['or', ['dcs_code' => $model->dcs_code], ['ref_code' => $model->dcs_code]])
+                                    ->andWhere(['is_active' => 1])
+                                    ->one();
+
+                            $model->dcs_code = $DcsData->dcs_code;
+                        }
+                        if (!empty($model->customer_code) && !empty($model->customer_type)) {
+                            if (strtoupper($model->customer_type) == 'DCS') {
+                                $Dcs = TblDcs::find()->select('dcs_code')
+                                                ->where(['or', ['dcs_code' => $model->customer_code], ['ref_code' => $model->customer_code]])
+                                                ->andWhere(['is_active' => 1, 'bmc_code' => $model->bmc_code])->one();
+
+                                $model->customer_code = $Dcs->dcs_code;
+                            }
+                            if (strtolower($model->customer_type) != 'dcs') {
+                                $customerData = TblCustomerMaster::find()->select('customer_code')
+                                        ->where(['or', ['customer_code' => $model->customer_code], ['ref_code' => $model->customer_code]])
+                                        ->andWhere(['customer_type' => $model->customer_type, 'bmc_code' => $model->bmc_code])
+                                        ->one();
+                                $model->customer_code = $customerData->customer_code;
+                            }
+                        }
+                    }
+
                     if (empty($model->getErrors()) && $model->validate()) {
                         $modelList[] = $model;
                         $model->is_active = 1;
