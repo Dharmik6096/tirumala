@@ -28,7 +28,10 @@ class DefaultController extends \app\controllers\ChildController {
             $client_code = \Yii::$app->session->get('eiplCode');
             if (!empty($client_code) && !empty($this->getLabels($this->report)[$client_code])) {
                 $this->data = $this->getLabels($this->report)[$client_code];
-            } else {
+            }else  if (!empty($client_code) && !empty($this->getLabels($this->report)['EIPLCOMMON'])) {
+                $this->data = $this->getLabels($this->report)['EIPLCOMMON'];
+            }
+            else {
                 $this->data = $this->getLabels($this->report);
             }
             if (!empty($this->data['scenario'])) {
@@ -669,7 +672,7 @@ class DefaultController extends \app\controllers\ChildController {
                     'sp_name' => 'rpt_MIS_SDSAPReport_Ananda',
                     'scenario' => 'SapReport',
                     'title' => 'SAP SD Report',
-                    'report_type' => [Yii::t('app', 'SD')],
+                    'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                     'export_title' => true,
                     'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
                     'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
