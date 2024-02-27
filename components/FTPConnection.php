@@ -391,5 +391,4 @@ class FTPConnection extends Component {
     }
 
 }
-
-?> 
+?>
