@@ -11,6 +11,7 @@ use yii\data\ArrayDataProvider;
 use PHPExcel;
 use app\modules\configuration\models\TblGenerateReportParam;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
+use app\modules\usermanagement\models\User;
 
 /**
  * Default controller for the `JasperReports` module
@@ -31,12 +32,16 @@ class ReportsController extends \app\controllers\ChildController {
                 $model->scenario = $this->data['scenario'];
             }
         }
+        if (isset($this->data['bkg_export']) && (!isset($this->data['output_type']) && !User::canRoute('misreports/reports/mis-live-report-generation'))) {
+            $this->data['output_type'] = $model->output_type = 'BACKGROUND';
+        }
+
         if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
             $this->LoadReport($model);
             if (empty($this->output)) {
 
                 $this->output = Yii::t('app', 'No Data Available.');
-            } else if (isset($this->data['export_file_name'])) {
+            } else if (isset($this->data['export_file_name']) && is_array($this->output)) {
 
                 $title_data = array_merge($model->attributes, $this->output[0]);
                 $export_file_name = $this->data['export_file_name'];
@@ -1032,10 +1037,18 @@ class ReportsController extends \app\controllers\ChildController {
             }
         }
         $sp_name = $this->data['sp_name'];
-        if ($showOutPut) {
-            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+        if ($model->output_type != 'BACKGROUND') {
+            if ($showOutPut) {
+                $output = \Yii::$app->general->getSpData($sp_name, $controls);
+            } else {
+                $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
+            }
         } else {
-            $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
+            if ($this->RegisterReportRequest('mis', $this->data, $controls)) {
+                $output = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
+            } else {
+                $output = 'Error While Request Submit.';
+            }
         }
         $this->output = $output;
 
@@ -1070,7 +1083,7 @@ class ReportsController extends \app\controllers\ChildController {
             }
         }
 
-        if (!empty($output)) {
+        if ($model->output_type != 'BACKGROUND' && !empty($output)) {
             $attr = '';
             $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
             $dataToDecrypt = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
@@ -1542,6 +1555,36 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionAllReportRequest() {
+        $this->report = 'AllReportRequest';
+        return $this->actionIndex();
+    }
+
+    public function actionRegionWiseUserAttendanceReport() {
+        $this->report = 'RegionWiseUserAttendanceReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionBiplDataAdmin() {
+        $this->report = 'BiplDataAdmin';
+        return $this->actionIndex();
+    }
+    
+    public function actionPurchaseSummary() {
+        $this->report = 'PurchaseSummary';
+        return $this->actionIndex();
+    }
+    
+    public function actionPurchaseSummaryFormat() {
+        $this->report = 'PurchaseSummaryFormat';
+        return $this->actionIndex();
+    }
+    
+    public function actionMilkVan() {
+        $this->report = 'MilkVan';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -1554,6 +1597,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
 //                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1562,6 +1606,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
 //                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1570,6 +1615,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
 //                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             //102
             'DcsCollDateShiftSummary' => [
@@ -1578,6 +1624,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DcsCollDateShiftSummary',
                 'title' => '102 - Society Collection Date And Shift Summary',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'DcsCollDateWiseSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -1585,6 +1632,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DcsCollDateShiftSummary',
                 'title' => '102 - Society Collection Date Wise Summary',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'DcsCollectionConsolidate' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -1592,6 +1640,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DcsCollDateShiftSummary',
                 'title' => '102 - Society Collection Consolidated',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'MemberCollectionShiftReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,date:string:shift',
@@ -2957,6 +3006,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberMilkBill',
                 'title' => '113 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'MemberMilkBillDateWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2964,6 +3014,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberMilkBill',
                 'title' => '113 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'MemberMilkBillSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2971,6 +3022,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberMilkBill',
                 'title' => '113 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
             ],
             'AgentWiseReconciliation' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2978,7 +3030,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'AgentWiseReconciliation',
                 'title' => '219 - Agent Wise Reconciliation',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
             ],
             'AgentWiseReconciliationDateWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2986,7 +3039,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'AgentWiseReconciliation',
                 'title' => '219 - Agent Wise Reconciliation',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
             ],
             'AgentWiseReconciliationSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2994,7 +3048,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'AgentWiseReconciliation',
                 'title' => '219 - Agent Wise Reconciliation',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
             ],
             'RouteWiseReconciliation' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
@@ -3007,6 +3062,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_vlcc_transaction_ftp_data',
                 'scenario' => 'VlccTransactionDataReport',
                 'title' => 'VLCC Transaction Data Report',
+                'bkg_export' => TRUE
             ],
             'BmcWiseSocietyWiseAutoManual' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3192,10 +3248,48 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => ['All' => Yii::t('app', 'All'), 'Online' => Yii::t('app', 'Online'), 'Pendrive' => Yii::t('app', 'Pendrive')],
             ],
             'DetailsReport' => [
-                'param' => 'union_code,user_code,from_date:string,to_date:string',
+                'param' => 'union_code,login_user_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_user_attendance',
                 'scenario' => 'DetailsReport',
                 'title' => 'Details Report',
+            ],
+            'AllReportRequest' => [
+                'param' => 'from_date:string,to_date:string,user_code,report_req_status',
+                'sp_name' => 'mis_all_report_request',
+                'scenario' => 'AllReportRequest',
+                'title' => 'All Report Request',
+            ],
+            'RegionWiseUserAttendanceReport' => [
+                'param' => 'union_code,state_code,region_code,area_code,user_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_user_attendance_region_wise',
+                'scenario' => 'RegionWiseUserAttendanceReport',
+                'title' => 'Region-wise User Attendance Report',
+            ],
+            'BiplDataAdmin' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_ftp_bipl_data_admin',
+                'scenario' => 'BiplDataAdmin',
+                'title' => 'Bipl Data Admin',
+                'report_type' => ['All' => Yii::t('app', 'All'), 'Online' => Yii::t('app', 'Online'), 'Pendrive' => Yii::t('app', 'Pendrive')],
+            ],
+            'PurchaseSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_vsp_payment_for_glt',
+                'scenario' => 'PurchaseSummary',
+                'title' => '628 - Purchase Summary',
+            ],
+            'PurchaseSummaryFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code:type_check',
+                'sp_name' => 'mis_vendor_payment_for_devmilk',
+                'scenario' => 'PurchaseSummaryFormat',
+                'title' => '629 - Purchase Summary format 2',
+            ],
+            'MilkVan' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_type',
+                'sp_name' => 'mis_milk_van',
+                'scenario' => 'MilkVan',
+                'title' => 'MilkVan',
+                'report_type' => ['Time management' => Yii::t('app', 'Time management'), 'capacity utilizations' => Yii::t('app', 'capacity utilizations')],
             ],
         ];
         return $label[$l];
@@ -3437,6 +3531,10 @@ class ReportsController extends \app\controllers\ChildController {
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
+    }
+
+    public function actionMisLiveReportGeneration() {
+        
     }
 
 }

@@ -44,7 +44,7 @@ class AppAsset extends AssetBundle {
         'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
         'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
         'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js'
+        'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

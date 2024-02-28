@@ -37,7 +37,7 @@ class TblPurchaseRateApplicabilityHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['is_active', 'shift_code', 'created_at', 'history_created_at', 'updated_at', 'wef_date', 'created_by', 'operation_type', 'rate_app_code', 'updated_by', 'dcs_code', 'purchase_rate_code', 'union_code', 'is_download', 'download_date_time'], 'safe'],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'history_created_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'history_created_by', 'shift_applicability'], 'safe'],
         ];
     }
 

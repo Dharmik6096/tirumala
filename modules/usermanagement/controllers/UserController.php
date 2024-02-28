@@ -14,7 +14,7 @@ use yii\helpers\Json;
 use yii\widgets\ActiveForm;
 use app\modules\usermanagement\models\User;
 use \app\modules\details\models\TblContactDetailsHistory;
-use app\modules\usermanagement\models\UserSearch;
+use app\modules\usermanagement\models\search\UserSearch;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -29,7 +29,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
     /**
      * @var UserSearch
      */
-    public $modelSearchClass = 'app\modules\usermanagement\models\UserSearch';
+    public $modelSearchClass = 'app\modules\usermanagement\models\search\UserSearch';
 
     /**
      * @return mixed|string|\yii\web\Response

@@ -699,6 +699,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     $exist = explode('###', $code);
                     $where['dcs_code'] = $exist[0];
                     $where['date_time_of_collection'] = $exist[1];
+                    $where['milk_type_code'] = $exist[2];
                     $existData = TblMilkCollection::find()->where($where)->all();
                     foreach ($existData as $delete) {
                         if (Yii::$app->general->getUnionConfiguration($delete->union_code, 'collection_approval', 'PORTAL') == 1) {
@@ -1244,18 +1245,20 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             }
                         }
                     }
+                    $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : '00000000000000';
+                    $user = $user . '_' . date('YmdHis') . rand(1000, 9999);
                     if (!empty($all_data)) {
-                        $title = 'ALL_VMCC_DATA';
+                        $title = $user . '_ALL_VMCC_DATA';
                         $this->downloadData($title, $all_data, $fileArray);
                         $this->fileDownloadArr = $fileArray;
                     }
                     if (!empty($all_data_m)) {
-                        $title = 'ALL_VMCC_DATA_M';
+                        $title = $user . '_ALL_VMCC_DATA_M';
                         $this->downloadData($title, $all_data_m, $fileArray);
                         $this->fileDownloadArr = $fileArray;
                     }
                     if (!empty($all_data_e)) {
-                        $title = 'ALL_VMCC_DATA_E';
+                        $title = $user . '_ALL_VMCC_DATA_E';
                         $this->downloadData($title, $all_data_e, $fileArray);
                         $this->fileDownloadArr = $fileArray;
                     }

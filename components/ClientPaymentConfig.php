@@ -330,6 +330,12 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_vsp_payment_anig',
                 ],
             ],
+            'DEVMILK' => [
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_devmilk',
+                ],
+            ],
         ];
     }
 

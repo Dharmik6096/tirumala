@@ -25,7 +25,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
             //   [['rate_app_code', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code'], 'safe'],
             //   [['is_active'], 'boolean'],
             //   [['shift_code'], 'integer'],
-            [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for', 'union_code', 'dcs_code', 'purchase_rate_code'], 'safe'],
+            [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for', 'union_code', 'dcs_code', 'purchase_rate_code', 'shift_applicability'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for'], 'required', 'on' => ['deleteApplicability']]
         ];
     }
@@ -50,13 +50,12 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         $query->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
         $query->orderBy(['wef_date' => SORT_DESC]);
         // add conditions that should always apply here
-        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'shiftCode']);
+        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'shiftCode', 'shiftApplicability sapp']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $this->load($params);
-
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -85,7 +84,8 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
 //                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_for', $this->applicable_for])
                 ->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code]);
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
+                ->andFilterWhere(['like', 'sapp.shift', $this->shift_applicability]);
 
         return $dataProvider;
     }

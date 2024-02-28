@@ -55,11 +55,20 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
+                                'attribute' => 'shift_applicability',
+                                'value' => !empty($model->shift_applicability) ? Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift') : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ]
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'rate_code',
                                 'label' => Yii::t('app', 'Rate Desc.'),
                                 'value' => !empty(strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description')) ?
-                                        (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : '') . '(' . (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description')) . ')' : (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : ''),
-                                'valueColOptions' => ['style' => 'width:30%']
+                                (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : '') . '(' . (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description')) . ')' : (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : ''),
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ]
                     ],
