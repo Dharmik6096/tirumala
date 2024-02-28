@@ -228,7 +228,10 @@ class Grid extends Widget {
                 'label' => '<i class="glyphicon"></i>'
             ],
             'exportConfig' => $exportConfig,
-            'batchSize' => 2000
+            'batchSize' => 2000,
+            'autoXlFormat' => true,
+            'enableAutoFormat' => false,
+            'enableFormatter' => false,
         ];
         foreach ($exportEvents as $event => $content) {
             $ExportWidget[$event] = $content;
