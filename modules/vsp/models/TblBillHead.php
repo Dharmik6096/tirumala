@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblDcs;
 use yii\helpers\ArrayHelper;
 use app\modules\payment\models\TblPaymentCycle;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\globalmaster\models\TblAnimalType;
 
 /**
  * This is the model class for table "tbl_bill_head".
@@ -46,7 +47,7 @@ class TblBillHead extends \app\models\ChildModel {
                 [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no', 'bill_head_for'], 'required', 'except' => ['dcsWiseHead']],
                 [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
                 [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
-                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on', 'is_hold', 'payment_cycle_type'], 'safe'],
+                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on', 'is_hold', 'payment_cycle_type', 'milk_type_code'], 'safe'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_disburse_allowed'], 'default', 'value' => '1'],
                 [['is_default', 'has_slab', 'is_hold'], 'default', 'value' => '0'],
@@ -91,6 +92,7 @@ class TblBillHead extends \app\models\ChildModel {
             'calculation_based_on' => Yii::t('app', 'Calculation Based On'),
             'is_hold' => Yii::t('app', 'Is Hold'),
             'payment_cycle_type' => Yii::t('app', 'Payment Cycle Type'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
         ];
     }
 
@@ -177,6 +179,10 @@ class TblBillHead extends \app\models\ChildModel {
 
     public function getPaymentCycle() {
         return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
 }
