@@ -374,7 +374,12 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
                 $customerModel->customer_type = $model->applicable_for;
                 $customerModelData = $customerModel->find()
                         ->where(['customer_type' => $model->applicable_for])
-                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->applicable_code])
+                        ->andWhere([
+                            'OR',
+                            ['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->applicable_code],
+                            ['customer_code' => $model->applicable_code],
+                            ['ref_code' => $model->applicable_code]
+                        ])
                         ->all();
                 if (count($customerModelData) == 1) {
                     $Code = $customerModelData[0]->customer_code;
