@@ -6,7 +6,7 @@ use kartik\helpers\Html;
 use yii\web\View;
 use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
-<div class="panel-body">
+<div class="panel-body d_inline">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php
     $form = ActiveForm::begin([
@@ -70,7 +70,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
     ?>
     <?php if (!empty($dataProvider->getModels())) { ?>
-        <div class="panel-footer sticky-footer" >
+        <div class="panel-footer" >
             <?= Html::button(Yii::t('app', 'Re-Generate'), ['class' => 'btn btn-primary sub', 'name' => 'submit-ftp']); ?>
         </div>
     <?php } ?>
