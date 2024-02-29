@@ -5,7 +5,7 @@
 .refreshBtn {
     position: absolute;
     font-size: 15px;
-    background: #7a231c;
+    background: #00A3DE;
     right: 3px;
     top: 0px;
     color: #fff;
@@ -76,7 +76,7 @@
     bottom: 5px;
 }
 .chatboard .sent-section .triangle{
-    border-color: transparent transparent #7a231c transparent;
+    border-color: transparent transparent #00A3DE transparent;
     position: absolute;
     right: -4px;
     bottom: 5px;
@@ -86,7 +86,7 @@
     color: #474849;
 }
 .chatboard .sent {
-    background: #7a231c;
+    background: #00A3DE;
     color: #FFF;
 }
 .chatboard .sent pre{
