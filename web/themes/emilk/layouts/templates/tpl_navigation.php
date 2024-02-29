@@ -751,6 +751,7 @@ echo GhostMenu::widget([
                         ['label' => '627-' . Yii::t('app', 'Payment Summary'), 'url' => ['/jasperreports/default/payment-summary']],
                         ['label' => '628-' . Yii::t('app', 'Purchase Summary'), 'url' => ['/misreports/reports/purchase-summary']],
                         ['label' => '629-' . Yii::t('app', 'Purchase summary format 2'), 'url' => ['/misreports/reports/purchase-summary-format']],
+                        ['label' => '630-' . Yii::t('app', 'Payment summary'), 'url' => ['/misreports/reports/payment-summary']],
                     ]
                 ],
                 [

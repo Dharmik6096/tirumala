@@ -1589,6 +1589,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'QualityCollectionReport';
         return $this->actionIndex();
     }
+
+    public function actionPaymentSummary() {
+        $this->report = 'PaymentSummary';
+        return $this->actionIndex();
+    }
     
     /* Reports Configuration */
 
@@ -3301,6 +3306,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_quality_collection',
                 'scenario' => 'QualityCollectionReport',
                 'title' => 'Quality Collection Report',
+            ],
+            'PaymentSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_vsp_billing_consolidate',
+                'scenario' => 'PaymentSummary',
+                'title' => '630 - Payment Summary',
+                'report_type' => [Yii::t('app', 'All'), Yii::t('app', 'DCS Wise'), Yii::t('app', 'VSP Wise')],
             ],
         ];
         return $label[$l];
