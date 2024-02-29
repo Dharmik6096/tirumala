@@ -15,7 +15,7 @@ use yii\db\ActiveQuery;
  */
 class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabitity {
 
-    public $mcc_name, $code_ex, $shift_code, $rate_for;
+    public $mcc_name, $code_ex, $shift_code, $rate_for, $ref_code;
 
     /**
      * @inheritdoc
@@ -25,8 +25,8 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
             //   [['rate_app_code', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code'], 'safe'],
             //   [['is_active'], 'boolean'],
             //   [['shift_code'], 'integer'],
-            [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for', 'union_code', 'dcs_code', 'purchase_rate_code', 'shift_applicability'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for'], 'required', 'on' => ['deleteApplicability']]
+                [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for', 'union_code', 'dcs_code', 'purchase_rate_code', 'shift_applicability', 'ref_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for'], 'required', 'on' => ['deleteApplicability']]
         ];
     }
 
@@ -50,7 +50,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         $query->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
         $query->orderBy(['wef_date' => SORT_DESC]);
         // add conditions that should always apply here
-        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'shiftCode', 'shiftApplicability sapp']);
+        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'shiftCode', 'shiftApplicability sapp', 'dcsName.bmcCode as dcs', 'customerMasterCode.bmcCode as vendor']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -69,17 +69,26 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         // grid filtering conditions
 
         $query->andFilterWhere(['or',
-            ['like', 'tbl_dcs.dcs_name', $this->mcc_name],
-            ['like', 'tbl_customer_master.customer_name', $this->mcc_name],
-            ['like', 'tbl_plant.name', $this->mcc_name],
-            ['like', 'tbl_mcc_plant.name', $this->mcc_name],
-            ['like', 'tbl_bmc.bmc_name', $this->mcc_name]
+                ['like', 'tbl_dcs.dcs_name', $this->mcc_name],
+                ['like', 'tbl_customer_master.customer_name', $this->mcc_name],
+                ['like', 'tbl_plant.name', $this->mcc_name],
+                ['like', 'tbl_mcc_plant.name', $this->mcc_name],
+                ['like', 'tbl_bmc.bmc_name', $this->mcc_name]
         ]);
         $query->andFilterWhere(['or',
-            ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
-            ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex]
+                ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+                ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex]
         ]);
 
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.ref_code', $this->ref_code],
+                ['like', 'tbl_customer_master.ref_code', $this->ref_code],
+        ]);
+
+        $query->andFilterWhere(['or',
+                ['like', 'dcs.ref_code', $this->bmc_code],
+                ['like', 'vendor.ref_code', $this->bmc_code],
+        ]);
         $query->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_code', $this->applicable_code])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
 //                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_for', $this->applicable_for])

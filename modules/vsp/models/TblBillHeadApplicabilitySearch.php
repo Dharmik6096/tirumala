@@ -12,7 +12,7 @@ use app\modules\vsp\models\TblBillHeadApplicability;
  */
 class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
 
-    public $mcc_name, $code_ex;
+    public $mcc_name, $code_ex, $ref_code, $bmc_code;
 
     /**
      * @inheritdoc
@@ -20,7 +20,7 @@ class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
     public function rules() {
         return [
                 [['bill_head_applicabilty_code'], 'integer'],
-                [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'bill_head_code', 'union_code', 'applicable_for', 'applicable_code', 'mcc_name', 'code_ex'], 'safe'],
+                [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'bill_head_code', 'union_code', 'applicable_for', 'applicable_code', 'mcc_name', 'code_ex', 'ref_code', 'bmc_code'], 'safe'],
         ];
     }
 
@@ -56,7 +56,7 @@ class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['mainCustomerCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType']);
+        $query->joinWith(['mainCustomerCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'dcsName.bmcCode as dcs', 'mainCustomerCode.bmcCode as vendor']);
 
         if (!empty($this->wef_date))
             $query->andFilterWhere(['cast(tbl_bill_head_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
@@ -73,6 +73,16 @@ class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
         $query->andFilterWhere(['or',
                 ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
                 ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex],
+        ]);
+
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.ref_code', $this->ref_code],
+                ['like', 'tbl_customer_master.ref_code', $this->ref_code],
+        ]);
+
+        $query->andFilterWhere(['or',
+                ['like', 'dcs.ref_code', $this->bmc_code],
+                ['like', 'vendor.ref_code', $this->bmc_code],
         ]);
 
         $query->andFilterWhere(['like', 'tbl_bill_head_applicability.applicable_code', $this->applicable_code])
