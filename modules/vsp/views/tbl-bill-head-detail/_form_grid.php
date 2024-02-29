@@ -23,6 +23,9 @@ $attribute = [
         ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
         }, 'filter' => false],
+        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Ref Code'), 'value' => function($model) {
+            return Yii::$app->general->getCustomer($model, $model->customer_type, False, False, True);
+        }, 'filter' => false],
         ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type);
         }],

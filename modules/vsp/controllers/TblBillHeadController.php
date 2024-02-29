@@ -161,10 +161,20 @@ class TblBillHeadController extends \app\controllers\ChildController {
             'to_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->to_date);
                 }],
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Ref. Code'), 'value' => function($model) {
+                    if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getmultiforeignkey($model->dcsName, ['bmcCode'], 'ref_code');
+                    } else {
+                        return Yii::$app->general->getmultiforeignkey($model->mainCustomerCode, ['bmcCode'], 'ref_code');
+                    }
+                }],
             'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
                 }],
             'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, FALSE, TRUE);
+                }],
             'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
                 }],
