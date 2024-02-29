@@ -4,7 +4,7 @@ use yii\web\View;
 
 $society_name = !empty($dataProvider->getModels()) ?
         ' of ' . Yii::$app->general->getforeignkey($searchModel->dcsCode, 'dcs_name') . ' (' .
-        $searchModel->dcs_code . ')' : '';
+        Yii::$app->general->getforeignkey($searchModel->dcsCode, 'ref_code') . ')' : '';
 ?>
 <div class="modal modal-default fade" id="BillHeadModal" role="dialog">
     <div class="modal-dialog">
