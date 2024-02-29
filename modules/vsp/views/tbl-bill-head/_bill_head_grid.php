@@ -14,7 +14,7 @@ $form = ActiveForm::begin([
 <div class=" no-effect table_form" >
     <div class="col-sm-12">
         <div class="table-responsive table-rate-chart">
-            <table class="table table-bordered table-striped table-input" id="table">
+            <table class="table table-bordered table-striped table-input text-white-color" id="table">
                 <?php
                 if (!empty($head) && !empty($dcs)) {
                     $cnt = 0;
