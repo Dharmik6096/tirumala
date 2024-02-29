@@ -1584,6 +1584,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MilkVan';
         return $this->actionIndex();
     }
+
+    public function actionQualityCollectionReport() {
+        $this->report = 'QualityCollectionReport';
+        return $this->actionIndex();
+    }
     
     /* Reports Configuration */
 
@@ -3290,6 +3295,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MilkVan',
                 'title' => 'MilkVan',
                 'report_type' => ['Time management' => Yii::t('app', 'Time management'), 'capacity utilizations' => Yii::t('app', 'capacity utilizations')],
+            ],
+            'QualityCollectionReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_quality_collection',
+                'scenario' => 'QualityCollectionReport',
+                'title' => 'Quality Collection Report',
             ],
         ];
         return $label[$l];
