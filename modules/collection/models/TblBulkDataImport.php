@@ -37,7 +37,8 @@ use Yii;
  */
 class TblBulkDataImport extends \yii\db\ActiveRecord {
 
-    public $calibration_value_fat,$calibration_value_snf;
+    public $calibration_value_fat, $calibration_value_snf, $clr;
+
     /**
      * @inheritdoc
      */
@@ -50,50 +51,50 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['customer_type'], 'default', 'value' => 'DCS'],
-                [['shift_code', 'sample_no', 'date_time_of_collection'],  'required'],
-                [['bmc_code'],  'required', 'except' => 'milk_collection_dpu_data'],
-                [['qlty_auto', 'qty_auto'], 'default', 'value' => 0],
-                [['fat', 'snf'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can','bmc_collection_bmc_route','bmc_collection_bmc_can','bmc_collection_route_can','bmc_collection_bmc_route_can','milk_collection_dpu_data']],
-
-                [['milk_type_code'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can','bmc_collection_bmc_route','bmc_collection_bmc_can','bmc_collection_route_can','bmc_collection_bmc_route_can','milk_collection_dpu_data']],
-
-                [['qty'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can','bmc_collection_bmc_route','bmc_collection_bmc_can','bmc_collection_route_can','bmc_collection_bmc_route_can','bmc_weight_collection','milk_collection_dpu_data']],
-
-//                [['qty'], 'required','except' => ['bmc_quality_test']],
-
-                [['union_code', 'doc_no'], 'required', 'on' => ['bmc_quality_test','bmc_weight_collection']],
-                [['route_arrival_time'], 'required', 'on' => ['bmc_quality_test']],
-                [['member_code', 'dcs_code'], 'required', 'on' => ['milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow','milk_collection_dpu_data']],
-                [['milk_quality_type_code'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic','bmc_weight_collection']],
-                [['customer_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic','bmc_weight_collection']],
-                [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code', 'can_no', 'route_code', 'antibiotic','doc_no','qlty_auto','qty_auto','calibration_value_fat','calibration_value_snf'], 'safe'],
-                [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
-                [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime'], 'safe'],
-                [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no'], 'number'],
-                ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic','bmc_quality_test','bmc_weight_collection']],
-                ['milk_type_code', 'in', 'range' => ['C', 'B', 'M', 'c', 'b', 'm'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic']],
-                [['milk_type_code', 'shift_code'], function ($attribute) {
+            [['customer_type'], 'default', 'value' => 'DCS'],
+            [['shift_code', 'sample_no', 'date_time_of_collection'], 'required'],
+            [['bmc_code'], 'required', 'except' => ['milk_collection_dpu_data', 'milk_collection_other_data']],
+            [['qlty_auto', 'qty_auto'], 'default', 'value' => 0],
+            [['fat', 'snf'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'milk_collection_dpu_data', 'milk_collection_other_data']],
+            [['clr'], 'required', 'on' => ['milk_collection_other_data']],
+            [['milk_type_code'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'milk_collection_dpu_data']],
+            [['qty'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_weight_collection', 'milk_collection_dpu_data', 'milk_collection_other_data']],
+//          [['qty'], 'required','except' => ['bmc_quality_test']],
+            [['union_code', 'doc_no'], 'required', 'on' => ['bmc_quality_test', 'bmc_weight_collection']],
+            [['route_arrival_time'], 'required', 'on' => ['bmc_quality_test']],
+            [['member_code', 'dcs_code'], 'required', 'on' => ['milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow', 'milk_collection_dpu_data']],
+            [['milk_quality_type_code'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection']],
+            [['customer_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection']],
+            [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code', 'can_no', 'route_code', 'antibiotic', 'doc_no', 'qlty_auto', 'qty_auto', 'calibration_value_fat', 'calibration_value_snf'], 'safe'],
+            [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
+            [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime', 'clr'], 'safe'],
+            [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no', 'clr'], 'number'],
+            ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_quality_test', 'bmc_weight_collection']],
+            ['milk_type_code', 'in', 'range' => ['C', 'B', 'M', 'c', 'b', 'm'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic']],
+            [['milk_type_code', 'shift_code'], function ($attribute) {
                     $this->$attribute = strtoupper($this->$attribute);
-                }, 'on' => ['milk_collection_dpu_data']],    
-                ['shift_code', 'in', 'range' => ['M', 'E', '06:00', '18:00', '06:00:00', '18:00:00', 'MORNING', 'EVENING'], 'on' => ['milk_collection_dpu_data']],
-                ['milk_type_code', 'in', 'range' => ['C', 'COW', 'B', 'BUF', 'BUFFALO', 'M', 'MIXED', 'MIX'], 'on' => ['milk_collection_dpu_data']],
-                ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain', 'good', 'curd', 'sour', 'drain'], 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'milk_collection_dpu_data']],
-                [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
-                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic','bmc_weight_collection','bmc_quality_test', 'milk_collection_dpu_data']],
-                [['collection_type'], function ($attribute, $params) {
+                }, 'on' => ['milk_collection_dpu_data', 'milk_collection_other_data']],
+            ['shift_code', 'in', 'range' => ['M', 'E', '06:00', '18:00', '06:00:00', '18:00:00', 'MORNING', 'EVENING'], 'on' => ['milk_collection_dpu_data', 'milk_collection_other_data']],
+            ['milk_type_code', 'in', 'range' => ['C', 'COW', 'B', 'BUF', 'BUFFALO', 'M', 'MIXED', 'MIX'], 'on' => ['milk_collection_dpu_data', 'milk_collection_other_data']],
+            [['milk_quality_type_code', 'shift_code'], function ($attribute) {
+                    $this->$attribute = strtolower($this->$attribute);
+                }, 'on' => ['milk_collection_other_data']],
+            ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain', 'good', 'curd', 'sour', 'drain'], 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'milk_collection_dpu_data']],
+            [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
+            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection', 'bmc_quality_test', 'milk_collection_dpu_data', 'milk_collection_other_data']],
+            [['collection_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
                 }],
-                [['own_bmc_code'], 'required', 'on' => ['bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_bmc_route_can']],
-                [['milk_quality_type_code'], 'required', 'on' => ['milk_collection_qlty', 'milk_collection_qlty_allow',]],
-                [['can_no'], 'required', 'on' => ['bmc_collection_can', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
-                [['route_code'], 'required', 'on' => ['bmc_collection_route', 'bmc_collection_bmc_route', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
-                [['antibiotic'], 'required', 'when' => function ($model) {
+            [['own_bmc_code'], 'required', 'on' => ['bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_bmc_route_can']],
+            [['milk_quality_type_code'], 'required', 'on' => ['milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_other_data']],
+            [['can_no'], 'required', 'on' => ['bmc_collection_can', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
+            [['route_code'], 'required', 'on' => ['bmc_collection_route', 'bmc_collection_bmc_route', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
+            [['antibiotic'], 'required', 'when' => function ($model) {
                     return \Yii::$app->session->get('eiplCode') == 'PRABHAT';
                 }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection', 'bmc_collection_antibiotic']],
-                [['antibiotic'], function ($attribute, $params) {
+            [['antibiotic'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'antibiotic');
-                }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection', 'bmc_collection_antibiotic','milk_collection','milk_collection_qlty']],
+                }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty']],
         ];
     }
 
@@ -116,6 +117,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             'milk_quality_type_code' => 'Milk Quality Type Code',
             'fat' => 'Fat',
             'snf' => 'Snf',
+            'clr' => 'Clr',
             'qty' => 'Qty',
             'rtpl' => 'Rtpl',
             'amount' => 'Amount',
@@ -131,7 +133,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             'uuid' => 'Uuid',
         ];
     }
-    
+
     public function SetDataForShagunDPU() {
         $cValues = ['C', 'COW'];
         $bValues = ['B', 'BUF', 'BUFFALO'];

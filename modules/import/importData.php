@@ -171,6 +171,7 @@ class importData extends \yii\base\Module {
             'product-stock-physical' => ['table_name' => 'tbl_product_stock_physical', 'fields' => 'customer_type,customer_code,stock_date,product_code,qty', 'scenario' => 'importCsv'],
             'product-stock-sap' => ['table_name' => 'tbl_product_stock_sap', 'fields' => 'mcc_plant_code,stock_date,product_code,qty', 'scenario' => 'importCsv'],
             'import-shagun-dpu-data' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'dcs_code,date_time_of_collection,member_code,shift_code,qty,fat,snf,rtpl,amount,milk_type_code,qty_auto,qlty_auto,calibration_value_fat,calibration_value_snf,sample_no', 'scenario' => 'milk_collection_dpu_data', 'validate_length' => FALSE, 'accept_old_template' => TRUE],
+            'import-other-dpu-data' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'dcs_code,member_code,milk_type_code,sample_no,qty,fat,snf,clr,rtpl,amount,shift_code,date_time_of_collection,qty_auto,qlty_auto,milk_quality_type_code', 'scenario' => 'milk_collection_other_data', 'validate_length' => FALSE, 'accept_old_template' => TRUE],
         ];
         return $label[$l];
     }
