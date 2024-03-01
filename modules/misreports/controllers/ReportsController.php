@@ -3308,11 +3308,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Quality Collection Report',
             ],
             'PaymentSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_type',
                 'sp_name' => 'sp_mis_member_vsp_billing_consolidate',
                 'scenario' => 'PaymentSummary',
                 'title' => '630 - Payment Summary',
-                'report_type' => [Yii::t('app', 'All'), Yii::t('app', 'DCS Wise'), Yii::t('app', 'VSP Wise')],
+                'report_type' => [
+                    'all' => Yii::t('app', 'All'),
+                    'dcswise' => Yii::t('app', 'DCS Wise'),
+                    'vspwise' => Yii::t('app', 'VSP Wise'),
+                    'remuneration' => Yii::t('app', 'Remuneration')
+                ],
             ],
         ];
         return $label[$l];
