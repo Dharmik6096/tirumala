@@ -122,7 +122,7 @@ $script = '
                          
                          if(received_date== ""){
                             var errorMessage = "Received Date cnnot be blank.";
-                            var errorElement = "<div class = \"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">" + errorMessage + "</div>";
+                            var errorElement = "<div class = \"error-message error_message\">" + errorMessage + "</div>";
                             $(".field-tblassettransaction-received_date .error-message").remove();
                             $(".field-tblassettransaction-received_date").append(errorElement);
                          }
@@ -131,7 +131,7 @@ $script = '
                          }
                          if(received_by== ""){
                             var errorMessage = "Received By cnnot be blank.";
-                            var errorElement = "<div class = \"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">" + errorMessage + "</div>";
+                            var errorElement = "<div class = \"error-message error_message\">" + errorMessage + "</div>";
                             $(".field-tblassettransaction-received_by .error-message").remove();
                             $(".field-tblassettransaction-received_by").append(errorElement);
                          }
