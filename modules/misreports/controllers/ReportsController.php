@@ -3312,7 +3312,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_vsp_billing_consolidate',
                 'scenario' => 'PaymentSummary',
                 'title' => '630 - Payment Summary',
-                'report_type' => [Yii::t('app', 'All'), Yii::t('app', 'DCS Wise'), Yii::t('app', 'VSP Wise')],
+                'report_type' => [
+                    'all' => Yii::t('app', 'All'),
+                    'dcswise' => Yii::t('app', 'DCS Wise'),
+                    'vspwise' => Yii::t('app', 'VSP Wise'),
+                    'remuneration' => Yii::t('app', 'Remuneration')
+                ],
             ],
         ];
         return $label[$l];
