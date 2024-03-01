@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
@@ -56,10 +56,10 @@ $this->title = Yii::t('app', 'Delete Member Payment Restrict');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary', 'id' => 'delete']);
+                echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary btn-login', 'id' => 'delete']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'delete-bulk-payment-restrict'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'delete-bulk-payment-restrict', '', 'btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
