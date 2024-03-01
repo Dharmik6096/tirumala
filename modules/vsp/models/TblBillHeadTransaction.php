@@ -197,6 +197,9 @@ class TblBillHeadTransaction extends \app\models\ChildModel {
             $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
             if (!empty($this->dcs_code)) {
+                $dcsModel = new TblDcs();
+                $dcsCode = $dcsModel->validDcs($this->dcs_code, $this->bmc_code);
+                $this->dcs_code = $dcsCode;
                 $this->customer_code = $this->dcs_code;
                 $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
                 if ($bmc_code != $this->bmc_code) {
