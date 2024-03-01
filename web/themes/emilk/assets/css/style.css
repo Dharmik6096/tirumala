@@ -953,8 +953,8 @@ input[type="hidden"] + .help-block{
     position: absolute;
     top: 0;
     left: 0;
-/*    content: "\f00d";
-    font-family: FontAwesome;*/
+    /*    content: "\f00d";
+        font-family: FontAwesome;*/
 }
 
 .alert-danger{
@@ -5387,4 +5387,7 @@ tr.highlightRow {
     left: 0;
     z-index: 9999;
     background-color: white; 
+}
+.text-white-color tr th{
+    color: #ffffff !important;
 }
