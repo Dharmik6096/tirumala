@@ -59,10 +59,10 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                         'checkboxOptions' => function($model) {
                             return ['value' => $model['dcs_code']];
                         }],
-                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function($model) {
+                        ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
                         }],
-                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                        ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                         }],
                         ['attribute' => 'dcs_code', 'value' => function($model) {

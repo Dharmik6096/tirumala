@@ -9,7 +9,7 @@ use yii\helpers\Html;
 
 $society_name = !empty($dataProvider->getModels()) ?
         ' of ' . Yii::$app->general->getforeignkey($searchModel->memberCode, 'member_name') . ' (' .
-        $searchModel->member_code . ')' : '';
+         Yii::$app->general->getforeignkey($searchModel->memberCode, 'ref_code') . ')' : '';
 $update_count = 0;
 ?>
 <div class="modal modal-default fade" id="BillHeadModal" role="dialog">

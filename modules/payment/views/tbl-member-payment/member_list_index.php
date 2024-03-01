@@ -42,10 +42,10 @@ $this->title = Yii::t('app', 'Members');
                         return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
                     }, 'vAlign' => 'middle', 'filter' => false],
                 ['attribute' => 'dcs_code', 'visible' => false],
-                ['attribute' => 'ex_code', 'visible' => false, 'value' => function($model) {
+                ['attribute' => 'dcs_code_ex', 'visible' => false, 'value' => function($model) {
                         return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                     }],
-                 ['attribute' => 'dcs_code', 'value' => function($model) {
+                 ['attribute' => 'ref_code', 'value' => function($model) {
                         return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
                     }],
                 ['attribute' => 'dcs_name', 'value' => function($model) {

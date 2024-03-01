@@ -50,7 +50,9 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
 //            'checkboxOptions' => function($model) {
 //                return ['value' => $model['dcs_code']];
 //            }],
-            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+            }],
             ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
             }],
