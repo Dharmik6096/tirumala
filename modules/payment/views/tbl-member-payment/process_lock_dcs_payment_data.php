@@ -67,10 +67,10 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                             return Yii::$app->dropdown->dropdownfilterStatic('stop_payment_type', $model, '[' . $model->dcs_code . ']stop_payment_type', '');
                         }, 'visible' => $allow_stop_payment_member == '1'
                     ],
-                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function($model) {
+                        ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
                         }],
-                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                        ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                         }],
                         ['attribute' => 'dcs_code', 'value' => function($model) {
