@@ -51,7 +51,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'billHeadCode', 'installmentCode', 'memberCode']);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'billHeadCode', 'memberCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bill_head_detail', 'tbl_bill_head_detail', 'tbl_bill_head_detail');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -118,7 +118,6 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         }
 
         // Yii::$app->general->filterByOrg($query, $this);
-
 //        $query->andWhere(['tbl_bill_head_detail.payment_cycle_code' => $this->payment_cycle_code]);
         $query->andWhere(['tbl_bill_head_detail.bmc_code' => $this->bmc_code]);
 //        $query->andFilterWhere(['bmc_code' => $this->bmc_code])
@@ -144,7 +143,6 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             // $query->where('0=1');
             return $dataProvider;
         }
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_bill_head_installment');
         $query->andWhere([
             'bill_head_detail_code' => $this->bill_head_detail_code
         ]);
