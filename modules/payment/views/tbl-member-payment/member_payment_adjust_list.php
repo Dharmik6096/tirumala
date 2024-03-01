@@ -12,7 +12,7 @@ $this->title = Yii::t('app', 'Member Payment Process : Step 3');
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'from_date'));
 $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'to_date'));
 
-$bmc_info = Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' > ' .
+$bmc_info = Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' > ' .
         $fromDate . ' to ' . $toDate;
 $message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 $config = (isset(Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['recovery_from_other_member']) && Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['recovery_from_other_member'] == 1) ? TRUE : FALSE;
@@ -121,8 +121,8 @@ $tot_amt = array_sum(array_map(function ($array) {
                                 $totalFinalPay = $totalFinalPay + $m['net_payable'];
                                 ?>
                                 <tr>
-                                    <td><?= $index + 1 ?></td>
-                                    <td><?= $m['dcs_code'] ?></td>
+                                    <td><?= $index + 1 ?></td>                                    
+                                    <td><?= $m['ref_code'] ?></td>
                                     <td><?= $m['dcs_code_ex'] ?></td>
                                     <td><?= $m['dcs_name'] ?></td>
                                     <td><?= substr($m['member_code'], -4) ?></td>

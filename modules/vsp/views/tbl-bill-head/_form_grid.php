@@ -36,6 +36,9 @@ $attribute = [
         'value' => function($model) {
             return isset($model->bill_head_for) ? Yii::$app->dropdown->getRecords('bill_head_for')['data'][$model->bill_head_for] : 'N/A';
         },],
+        ['attribute' => 'milk_type_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
+        }, 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'sequence_no'],
         ['attribute' => 'has_slab',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_slab'),

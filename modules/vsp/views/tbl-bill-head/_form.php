@@ -78,6 +78,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('calc_based_on', $model, $form, 'form-group', $model->getAttributeLabel('calculation_based_on'), false, 'calculation_based_on', false); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', $model->getAttributeLabel('milk_type_code'), FALSE, 'milk_type_code'); ?>
+    </div>
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_default'); ?>
     </div>   

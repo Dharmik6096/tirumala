@@ -45,6 +45,9 @@ $this->title = Yii::t('app', 'Members');
                 ['attribute' => 'ex_code', 'visible' => false, 'value' => function($model) {
                         return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                     }],
+                 ['attribute' => 'dcs_code', 'value' => function($model) {
+                        return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                    }],
                 ['attribute' => 'dcs_name', 'value' => function($model) {
                         return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                     }, 'label' => Yii::t('app', 'DCS')],

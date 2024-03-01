@@ -633,6 +633,13 @@ echo GhostMenu::widget([
                             //                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
                             'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'BMC Collection') . ' <b class="caret"></b></a>',
                             'items' => [
+                                [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Testing Data') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                        ['label' => Yii::t('app', 'Quality Collection Report'), 'url' => ['/misreports/reports/quality-collection-report']],
+                                    ]
+                                ],
                                 ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
                                 ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary']],
                                 ['label' => '203 -' . Yii::t('app', 'Company Collection Detail'), 'url' => ['/misreports/reports/union-coll-date-shift-wise-summary']],
@@ -753,6 +760,7 @@ echo GhostMenu::widget([
                         ['label' => '627-' . Yii::t('app', 'Payment Summary'), 'url' => ['/jasperreports/default/payment-summary']],
                         ['label' => '628-' . Yii::t('app', 'Purchase Summary'), 'url' => ['/misreports/reports/purchase-summary']],
                         ['label' => '629-' . Yii::t('app', 'Purchase summary format 2'), 'url' => ['/misreports/reports/purchase-summary-format']],
+                        ['label' => '630-' . Yii::t('app', 'Payment summary'), 'url' => ['/misreports/reports/payment-summary']],
                     ]
                 ],
                 [

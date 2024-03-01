@@ -561,14 +561,18 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->options = ['tanker_rate'];
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = [
-            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Code'), 'value' => function($model) {
-                    return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Ref. Code'), 'value' => function($model) {
+                    if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getmultiforeignkey($model->dcsName, ['bmcCode'], 'ref_code');
+                    } else {
+                        return Yii::$app->general->getmultiforeignkey($model->customerMasterCode, ['bmcCode'], 'ref_code');
+                    }
                 }],
             'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
-            'shift_applicability' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => function($model){
+            'shift_applicability' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
                 }, 'class' => 'form-control'],
             'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {

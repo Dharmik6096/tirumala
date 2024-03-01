@@ -118,4 +118,37 @@ class TblMemberPaymentRestrictController extends \app\controllers\ChildControlle
         }
     }
 
+    public function actionDeleteBulkPaymentRestrict() {
+        $searchModel = new TblMemberPaymentRestrictSearch();
+        $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'deletePaymentRestrict';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $deletedata = Yii::$app->request->post('selection');
+                $where = [];
+                foreach ($deletedata as $code) {
+                    $where['member_payment_restrict_code'] = $code;
+                    $existData = TblMemberPaymentRestrict::find()->where($where)->one();
+                    $historyModel = new TblMemberPaymentRestrictHistory();
+                    Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    $saveModel[] = $historyModel;
+                    $deleteModel[] = $existData;
+                    $message = 'Member Payment Restrict';
+                    $type = 'delete';
+                }
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+
+        return $this->render('bulk_delete_payment_restrict', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
 }

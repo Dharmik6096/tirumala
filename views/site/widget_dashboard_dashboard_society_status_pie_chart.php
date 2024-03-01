@@ -51,7 +51,7 @@ function drawPieChart(online_dcs,offline_dcs) {
             title: {
                 text: '' ,
 //                style: {
-//                        color: '#7A231C',
+//                        color: '#00A3DE',
 //                }
             },
             plotOptions: {

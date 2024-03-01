@@ -12,7 +12,7 @@ use app\modules\payment\models\TblMemberPaymentRestrict;
  */
 class TblMemberPaymentRestrictSearch extends TblMemberPaymentRestrict {
 
-    public $from_date, $to_date, $bmc_name, $dcs_name, $ex_code;
+    public $from_date, $to_date, $bmc_name, $dcs_name, $ex_code, $ref_code;
 
     /**
      * @inheritdoc
@@ -20,7 +20,8 @@ class TblMemberPaymentRestrictSearch extends TblMemberPaymentRestrict {
     public function rules() {
         return [
                 [['member_payment_restrict_code', 'originating_type'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'bmc_name', 'dcs_code', 'ex_code', 'dcs_name', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'bmc_name', 'dcs_code', 'ex_code', 'dcs_name', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'ref_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['deletePaymentRestrict']],
         ];
     }
 
@@ -75,6 +76,31 @@ class TblMemberPaymentRestrictSearch extends TblMemberPaymentRestrict {
                 ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_name])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->ex_code]);
+        return $dataProvider;
+    }
+
+    public function deletesearch($params) {
+        $this->load($params);
+        $query = TblMemberPaymentRestrict::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+
+        $query->joinWith(['dcsCode']);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        if (!empty($this->bmc_code)) {
+            $query->andWhere(['tbl_member_payment_restrict.bmc_code' => $this->bmc_code]);
+        } else {
+            $query->andWhere('0=1');
+        }
+
         return $dataProvider;
     }
 

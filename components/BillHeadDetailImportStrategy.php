@@ -64,6 +64,7 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
 
                     $modelList = [];
                     $model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($model);
+
                     if (empty($model->getErrors()) && $model->validate()) {
                         $modelList[] = $model;
                         $model->is_active = 1;

@@ -1343,7 +1343,7 @@ class SchedulerController extends ChildController {
                     }
                     $model->updateErrorApiStatus('Employee Code Value is Empty', $withoutEmployeeIds);
                     $api = new WebApi();
-                    $api->serverUrl = 'http://lmstmstest.dodladairy.com:808/api/data';
+                    $api->serverUrl = Yii::$app->params['user_attendance_api_url'];
                     $api->authentication = FALSE;
                     $api->body = json_encode($jsonData);
                     $api->header_info = ['ApiKey: A9G3A9T3H6A6M2U1D8I3'];
