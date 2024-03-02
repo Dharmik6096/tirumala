@@ -283,7 +283,11 @@ class FTPConnection extends Component {
             foreach ($directory as $dir) {
                 if ($dir != '') {
                     $path .= $dir . '/';
-                    if (!is_dir('ftp://' . $this->ftp_username . ':' . $this->ftp_password . '@' . $this->ftp_host . ':' . $this->ftp_port . $path)) {
+                    try {
+                        if (!ftp_chdir($this->connection, $path)) {
+                            ftp_mkdir($this->connection, $path);
+                        }
+                    } catch (\ErrorException $e) {
                         ftp_mkdir($this->connection, $path);
                     }
                 }
@@ -391,4 +395,5 @@ class FTPConnection extends Component {
     }
 
 }
+
 ?>
