@@ -452,6 +452,7 @@ class TblBillHeadDetailController extends ChildController {
         $headModel->customer_type = $type;
         if (!empty($type) && strtolower($type) != 'dcs') {
             $headModel->customer_code = $dcs;
+            $headModel->bmc_code = $bmc;
             $data = Yii::$app->general->validateCustomerCode($headModel);
             $headModel->customer_code = $data;
         } else {
