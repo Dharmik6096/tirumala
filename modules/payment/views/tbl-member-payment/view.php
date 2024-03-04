@@ -54,6 +54,7 @@ $this->title = Yii::$app->label->title('view', 'Member Payment');
                                 [
                                 'attribute' => 'dcs_code',
                                 'label' => Yii::t('app', 'DCS Code'),
+                                'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
@@ -236,13 +237,20 @@ $this->title = Yii::$app->label->title('view', 'Member Payment');
                         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
                         ['attribute' => 'bmc_code', 'visible' => false,
                         'label' => Yii::t('app', 'BMC Code'),
+                        'value' => function($model) {
+                         return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+                        },
                         'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
                         ['attribute' => 'bmc_code', 'visible' => false,
                         'label' => Yii::t('app', 'BMC Name'),
                         'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
                         }, 'vAlign' => 'middle', 'filter' => false],
-                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'visible' => false],
+                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'),
+                         'value' => function($model) {
+                            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                        },
+                        'visible' => false],
                         ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'visible' => false, 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                         }],
@@ -250,7 +258,7 @@ $this->title = Yii::$app->label->title('view', 'Member Payment');
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                         }, 'label' => Yii::t('app', 'DCS')],
                         ['attribute' => 'member_code', 'value' => function($model) {
-                            return substr($model->member_code, -4);
+                            return Yii::$app->general->getforeignkey($model->memberCode, 'ref_code');
                         }, 'label' => Yii::t('app', 'Member Code')],
                         ['attribute' => 'member_code', 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');

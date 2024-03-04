@@ -224,7 +224,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     }
 
     public function getCustomerCode() {
-        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code,'bmc_code'=>$this->bmc_code]);
     }
 
     public function getMemberCode() {

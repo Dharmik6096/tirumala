@@ -23,14 +23,19 @@ $attribute = [
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
         ['attribute' => 'bmc_code',
         'label' => Yii::t('app', 'BMC Code'),
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        },
         'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
         ['attribute' => 'bmc_code',
         'label' => Yii::t('app', 'BMC Name'),
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-        ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+        ['attribute' => 'dcs_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        }],
+        ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
         }],
         ['attribute' => 'dcs_name', 'value' => function($model) {
