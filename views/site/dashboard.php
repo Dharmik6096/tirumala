@@ -163,6 +163,9 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         <div class="col-sm-2 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
+                        <div class="col-sm-2 searchFilterHeader">
+                            <?= Yii::$app->dropdown->dropdown('shift', $model, $form, 'form-group padding-right-5 col-sm-12 shift', false, false, ''); ?>
+                        </div>
                         <?= Html::activeHiddenInput($model, 'widget_type', ['id' => 'hidden_widget_type']) ?>
                         <div class="col-sm-2 searchFilterHeader">
                             <div class="switch-field">
@@ -505,6 +508,7 @@ $('.dpu_data_icon').click(function(){
                     var id= 'dashboard_farmer_rmrd_blocks';
                     var union= '" . $unionCode . "';
     //                var union= $('#dashboard-union_code').val();
+                      var shift= $('#dashboard-shift').val();
                     var mcc= '" . $mccCode . "';
     //                var mcc= $('#dashboard-mcc_code').val();
                     var widget_type= $('#hidden_widget_type').val();

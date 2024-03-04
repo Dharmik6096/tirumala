@@ -162,6 +162,10 @@ class SiteController extends Controller {
         if (Yii::$app->session->get('eiplCode') == 'GYAN') {
             $defaultWidget = 'rmrd';
         }
+        $model->shift = 3;
+        if (!empty(Yii::$app->request->post('Dashboard')['shift'])) {
+            $model->shift = Yii::$app->request->post('Dashboard')['shift'];
+        }
         $model->widget_type = isset(Yii::$app->request->post('Dashboard')['widget_type']) ? Yii::$app->request->post('Dashboard')['widget_type'] : $defaultWidget;
         $model->mcc_code = isset(Yii::$app->request->post('Dashboard')['mcc_code']) ? Yii::$app->request->post('Dashboard')['mcc_code'] : '';
         $dashboardUserWidgets = new TblDashboardUserWidgets();
@@ -770,6 +774,14 @@ class SiteController extends Controller {
         if (!empty($post['mag_to_shift'])) {
             $post['mav_to_shift'] = $post['mag_to_shift'];
         }
+        if(!empty($post['shift'])){
+            $post['from_shift'] = $post['shift'];
+            $post['to_shift'] = $post['shift'];
+            if($post['shift'] == 3){
+                $post['from_shift'] = 1;
+                $post['to_shift'] = 2;
+            }
+        }
         $input = $this->SpInput($sp_name, $post);
         $spname = $input['name'];
         $in_array = explode(',', str_replace(' ', '', $input['input']));
@@ -812,6 +824,12 @@ class SiteController extends Controller {
             }
 
             if ($param1 == 'shift') {
+                $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
+            }
+            if ($param1 == 'from_shift') {
+                $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
+            }
+            if ($param1 == 'to_shift') {
                 $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
             }
             $param_str .= "'" . $value . "',";
@@ -947,7 +965,7 @@ class SiteController extends Controller {
             ],
             'dashboard_farmer_rmrd_blocks' => [
                 'name' => 'sp_portal_dashboard_farmer_rmrd_blocks',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date~from_shift=' . date('Y-m-d') . '|date,date~to_shift=' . date('Y-m-d') . '|date,widget_type=' . $widget_type,
             ],
             'dashboard_farmer_rmrd_avg' => [
                 'name' => 'sp_portal_dashboard_farmer_rmrd_avg',
