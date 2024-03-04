@@ -10,7 +10,24 @@ use kartik\grid\GridView;
 $action = Url::to(['disburse-member-payment']);
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
 $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
-$message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+//$message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+$code = $name = '';
+if (is_array($model->mcc_plant_code)) {
+    $mcc_data = $model->plantCode;
+    $code = $mcc_data->plant_code;
+    $name = $mcc_data->name;
+} else {
+    if (is_array($model->bmc_code)) {
+        $mcc_data = $model->mccPlantCode;
+        $code = $mcc_data->mcc_plant_code;
+        $name = $mcc_data->name;
+    } else {
+        $bmc_data = $model->bmcCode;
+        $code = $bmc_data->bmc_code;
+        $name = $bmc_data->bmc_name;
+    }
+}
+$message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' . $name . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) ? TRUE : FALSE;
 ?>
 <div class="" >
@@ -24,8 +41,21 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
         <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
         <?= Html::activeHiddenInput($model, 'union_code'); ?>
         <?= Html::activeHiddenInput($model, 'plant_code'); ?>
-        <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
-        <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+          <?php if (is_array($model->mcc_plant_code)) { ?>
+            <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
+                <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+        <?php } ?>
+        <?php if (is_array($model->bmc_code)) { ?>
+            <?php foreach ($model->bmc_code as $bmc_code) { ?>
+                <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+        <?php } ?>
+
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
     </div>
     <div class="col-sm-2">

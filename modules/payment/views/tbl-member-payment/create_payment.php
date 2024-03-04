@@ -9,6 +9,7 @@ use yii\web\JsExpression;
 
 $this->title = isset($title) ? $title : Yii::t('app', 'Member Payment Process : Step 1');
 $post_url = isset($post_url) ? $post_url : Url::to(['create-payment']);
+$multiple =  Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -31,25 +32,25 @@ $post_url = isset($post_url) ? $post_url : Url::to(['create-payment']);
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmemberpaymentalias-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
             </div> 
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmemberpaymentalias-plant_code', 'mcc_plant_code', TRUE); ?>
-            </div>      
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberpaymentalias-mcc_plant_code', 'bmc_code', TRUE); ?>
-            </div>
-            <!--<div class="col-sm-2">-->
-            <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblmemberpaymentalias-bmc_code', 'customer_type', TRUE, FALSE);  ?>
-            <!--</div>-->
-            <div class="col-sm-2">
-                <?php
-                $where = json_encode(['data_lock_member' => 1, 'billing_lock_member' => 0]);
-                echo Html::hiddenInput('customer_type', 'DCS', ['id' => 'customer_type']);
-                echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
-                echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
-                ?>
-                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblmemberpaymentalias-union_code,tblmemberpaymentalias-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
-            </div>
+         <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmemberpaymentalias-plant_code', 'mcc_plant_code', TRUE,$multiple); ?>
+                </div> 
 
+            <?php
+
+            $where = json_encode(['data_lock_member' => 1, 'billing_lock_member' => 0]);
+            echo Html::hiddenInput('customer_type', 'DCS', ['id' => 'customer_type']);
+            echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
+            echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+            ?>
+             <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberpaymentalias-mcc_plant_code', 'bmc_code', TRUE, $multiple); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblmemberpaymentalias-union_code,tblmemberpaymentalias-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+                </div>
+            <!-- Yii::$app->dropdown->paymentCycle($model, $form, 'tblmemberpaymentalias-union_code,tblmemberpaymentalias-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); -->
+           
             <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
                     <?php
@@ -126,7 +127,46 @@ $post_url = isset($post_url) ? $post_url : Url::to(['create-payment']);
 </div>
 
 <?php
+//$script = "
+//     $('#single-bmc').hide();
+//     $('#multiple-bmc').hide();
+//     $('#tblmemberpaymentalias-mcc_plant_code').on('change',function(){
+//     var mcc_plant_code= $(this).val();
+//     if(mcc_plant_code !='' && mcc_plant_code != null){
+//            $.ajax({
+//            type: 'post',
+//            url: '" . Url::to(['/payment/tbl-vsp-payment/check-mcc-type']) . "',
+//            data: {'mcc_plant_code' : mcc_plant_code},            
+//            success: function(data) {
+//                var data = $.parseJSON(data);
+//                var multiple_bmc = data.multiple_bmc;
+//               if(multiple_bmc == '1'){
+//                 $('#single-bmc').hide();
+//                 $('#multiple-bmc').show();
+//               }else{
+//                 $('#multiple-bmc').hide();
+//                 $('#single-bmc').show();
+//               }   
+//            }
+//        });
+//      }
+//});
+//";
 $script = "
+     $('#single-bmc').hide();
+     $('#multiple-bmc').hide();
+     $('#tblmemberpaymentalias-mcc_plant_code').on('change',function(){
+     var mcc_plant_code= $(this).val();
+//     if(mcc_plant_code !='' && mcc_plant_code != null){
+//               if($multiple){
+//                 $('#single-bmc').hide();
+//                 $('#multiple-bmc').show();
+//               }else{
+//                 $('#multiple-bmc').hide();
+//                 $('#single-bmc').show();
+//               }   
+//            }
+});
 ";
 $this->registerJs($script, View::POS_END, 'check-payment-cycle-processed');
 ?>

@@ -10,9 +10,27 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $this->title = Yii::t('app', 'Member Payment Process : Step 2');
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
 $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
-$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
+//$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
+//        $fromDate . ' to ' . $toDate;
+//$message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+if (is_array($model->mcc_plant_code)) {
+    $mcc_data = $model->plantCode;
+    $code = $mcc_data->plant_code;
+    $name = $mcc_data->name;
+} else {
+    if (is_array($model->bmc_code)) {
+        $mcc_data = $model->mccPlantCode;
+        $code = $mcc_data->mcc_plant_code;
+        $name = $mcc_data->name;
+    } else {
+        $bmc_data = $model->bmcCode;
+        $code = $bmc_data->bmc_code;
+        $name = $bmc_data->bmc_name;
+    }
+}
+$bmc_info = $code . ' > ' . $name . ' > ' .
         $fromDate . ' to ' . $toDate;
-$message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+$message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . $name . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 ?>
 <?php
 $array = $dataProvider->getModels();
@@ -48,8 +66,22 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                 <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($model, 'union_code'); ?>
                 <?= Html::activeHiddenInput($model, 'plant_code'); ?>
-                <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
-                <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+                <!-- Html::activeHiddenInput($model, 'mcc_plant_code'); -->
+                <?php if (is_array($model->mcc_plant_code)) { ?>
+                    <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
+                        <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+                    <?php } ?>
+                <?php } else { ?>
+                    <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+                <?php } ?>
+                  <?php if (is_array($model->bmc_code)) { ?>
+                    <?php foreach ($model->bmc_code as $bmc_code) { ?>
+                        <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+                    <?php } ?>
+                <?php } else { ?>
+                    <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+                <?php } ?>
+
                 <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($model, 'dcs_code'); ?>
                 <?= Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']); ?>
