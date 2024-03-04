@@ -1567,22 +1567,22 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'RegionWiseUserAttendanceReport';
         return $this->actionIndex();
     }
-    
+
     public function actionBiplDataAdmin() {
         $this->report = 'BiplDataAdmin';
         return $this->actionIndex();
     }
-    
+
     public function actionPurchaseSummary() {
         $this->report = 'PurchaseSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionPurchaseSummaryFormat() {
         $this->report = 'PurchaseSummaryFormat';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkVan() {
         $this->report = 'MilkVan';
         return $this->actionIndex();
@@ -1597,7 +1597,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'PaymentSummary';
         return $this->actionIndex();
     }
-    
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3405,6 +3405,9 @@ class ReportsController extends \app\controllers\ChildController {
                 'A1'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
         );
+        array_walk_recursive($this->output, function(&$value) {
+            $value = is_numeric($value) && strlen($value) >= 10 ? '="' . $value . '"' : $value;
+        });
         $sheet->fromArray(
                 $this->output, // The data to set
                 NULL, // Array values with this value will not be set
