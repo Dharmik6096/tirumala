@@ -1598,6 +1598,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapWqFile() {
+        $this->report = 'SapWqFile';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3321,6 +3326,14 @@ class ReportsController extends \app\controllers\ChildController {
                     'vspwise' => Yii::t('app', 'VSP Wise'),
                     'remuneration' => Yii::t('app', 'Remuneration')
                 ],
+            ],
+            'SapWqFile' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa',
+                'scenario' => 'SapWqFile',
+                'title' => 'SAP WQ File',
+                'export_title' => true,
+                'multiArray' => ['mcc_code', 'bmc_code'],
             ],
         ];
         return $label[$l];

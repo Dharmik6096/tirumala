@@ -76,7 +76,7 @@ $model->mag_to_shift = empty($model->mag_to_shift) ? 2 : $model->mag_to_shift;
         </div>
     </div>
 </div>
-<div onclick="exportThisWithParameter('custom_report_1', '<?= $this->title ?>')" class="widget_table_search_btn downloadDashboardExcel right_30 mis_custom_report"><i class="far fa-file-excel"></i></div>
+<div onclick="exportThisWithParameter('custom_report_1', '<?= $this->title ?>')" class="widget_table_search_btn downloadDashboardExcel right_10 mis_custom_report"><i class="far fa-file-excel"></i></div>
 <button type="button" class="widget_table_search_btn" data-bs-toggle="modal" data-bs-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 
 <?php
