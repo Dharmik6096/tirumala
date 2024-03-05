@@ -46,7 +46,7 @@ use yii\widgets\ActiveForm;
 class TblVspPaymentController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['check-mcc-type', 'process-payment'];
-
+    
     /**
      * Creates a new TblVspPayment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -75,17 +75,18 @@ class TblVspPaymentController extends \app\controllers\ChildController {
     public function actionCreate() {
         $model = new TblVspPayment();
         if ($model->load(Yii::$app->request->post())) {
-            $multiple_bmc = FALSE;
-            $bmc_array = [];
-            $bmc_array[] = $model->bmc_code;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $model->bmc_code = $model->p_bmc_code;
-                $model->customer_type = $model->p_customer_type;
-                $model->payment_cycle_code = $model->p_payment_cycle_code;
-                $multiple_bmc = TRUE;
-                $bmc_array = $model->p_bmc_code;
-            }
+ //           $multiple_bmc = FALSE;
+//            $bmc_array = [];
+//            $bmc_array[] = $model->bmc_code;
+//            $mcc_data = $model->mccPlantCode;
+//             $bmc_array = $model->bmc_code;
+//            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
+//               // $model->bmc_code = $model->p_bmc_code;
+//               // $model->customer_type = $model->p_customer_type;
+//              //  $model->payment_cycle_code = $model->p_payment_cycle_code;
+//                $multiple_bmc = TRUE;
+//               
+//            }
             $model->scenario = 'processpayment';
             if ($model->validate()) {
                 $result = 'success';
@@ -140,18 +141,13 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     public function actionCreateStopPayment() {
         $model = new TblVspPayment();
+        $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
         if ($model->load(Yii::$app->request->post())) {
-            $multiple_bmc = FALSE;
+//            $multiple_bmc = FALSE;
             $bmc_array = [];
-            $bmc_array[] = $model->bmc_code;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $model->bmc_code = $model->p_bmc_code;
-                $model->customer_type = $model->p_customer_type;
-                $model->payment_cycle_code = $model->p_payment_cycle_code;
-                $multiple_bmc = TRUE;
-                $bmc_array = $model->p_bmc_code;
-            }
+//            $bmc_array[] = $model->bmc_code;
+//            $mcc_data = $model->mccPlantCode;
+            $bmc_array = $model->bmc_code;
             $model->scenario = 'processpayment';
             if ($model->validate()) {
                 $model->stop_payment_only = 1;
@@ -183,6 +179,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionProcessPayment($reGenerate = 0) {
+         $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
+       
         if (Yii::$app->request->get()) {
             $model = new TblVspPayment();
             $model->load(Yii::$app->request->get());
@@ -197,11 +195,11 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $this->getVspSpData($model);
                 }
             }
-            $multiple_bmc = FALSE;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $multiple_bmc = TRUE;
-            }
+//            $multiple_bmc = FALSE;
+ //           $mcc_data = $model->mccPlantCode;
+//            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
+//                $multiple_bmc = TRUE;
+//            }
             return $this->redirect(['payment-adjust', 'TblVspPayment' => ['multiple_bmc' => $multiple_bmc, 'mcc_plant_code' => $model->mcc_plant_code, 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'union_code' => $model->union_code]]);
         }
     }
@@ -210,7 +208,6 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
-
         if (Yii::$app->request->post()) {
             $bmc_array = [];
             $postData = Yii::$app->request->post();
@@ -544,14 +541,14 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
-        $multiple_bmc = FALSE;
-        $mcc_data = $model->mccPlantCode;
-        if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-            $model->bmc_code = $model->p_bmc_code;
-            $model->customer_type = $model->p_customer_type;
-            $model->payment_cycle_code = $model->p_payment_cycle_code;
-            $multiple_bmc = TRUE;
-        }
+//        $multiple_bmc = FALSE;
+//        $mcc_data = $model->mccPlantCode;
+//        if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
+//            $model->bmc_code = $model->p_bmc_code;
+//            $model->customer_type = $model->p_customer_type;
+//            $model->payment_cycle_code = $model->p_payment_cycle_code;
+//            $multiple_bmc = TRUE;
+//        }
         $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code,
             'bmc_code' => $model->bmc_code,
             'customer_type' => $model->customer_type,

@@ -56,7 +56,7 @@ class TblVspPayment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code', 'multiple_bmc'], 'safe'],
+                [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'bmc_code', 'customer_type', 'payment_cycle_code', 'multiple_bmc'], 'safe'],
                 [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery'], 'safe'],
                 [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
                 [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],

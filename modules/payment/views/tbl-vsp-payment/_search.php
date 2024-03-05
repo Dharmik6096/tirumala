@@ -8,6 +8,8 @@ use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $model app\modules\payment\models\TblVspPaymentSearch */
 /* @var $form yii\widgets\ActiveForm */
+$multiple =  Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
+
 ?>
 
 <div class="tbl-vsp-payment-search">
@@ -25,30 +27,39 @@ use yii\web\View;
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvsppayment-union_code', 'plant_code', 'Plant'); ?>
     </div> 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblvsppayment-plant_code', 'mcc_plant_code', 'MCC'); ?>
-    </div>      
-    <div id="single-bmc">
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'bmc_code', 'BMC *'); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblvsppayment-plant_code', 'mcc_plant_code', 'MCC',$multiple); ?>
+    </div> 
+     <div class="col-sm-2">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'bmc_code','BMC *',$multiple); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-bmc_code', 'customer_type', 'Customer Type *'); ?>
         </div>
-        <div class="col-sm-2">
+    <div class="col-sm-2">
             <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-bmc_code,tblvsppayment-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', 'Payment Cycle *'); ?>
         </div>
-    </div>
+<!--    <div id="single-bmc">
+        <div class="col-sm-2">
+            <!-- Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'bmc_code', TRUE,$multiple); -->
+<!--        </div>
+        <div class="col-sm-2">-->
+            <!--Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-bmc_code', 'customer_type', 'Customer Type *'); -->
+<!--        </div>
+        <div class="col-sm-2">-->
+            <!-- Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-bmc_code,tblvsppayment-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', 'Payment Cycle *'); -->
+<!--        </div>-->
+<!--    </div>
     <div id="multiple-bmc">
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'p_bmc_code', 'BMC *', TRUE); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-p_bmc_code', 'p_customer_type', 'Customer Type *'); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-p_bmc_code,tblvsppayment-p_customer_type,applicable_for,data_lock_bmc', 'p_payment_cycle_code', 'Payment Cycle *'); ?>
-        </div>
-    </div>
+        <div class="col-sm-2">-->
+            <!-- Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'p_bmc_code', 'BMC *', TRUE); -->
+<!--        </div>
+        <div class="col-sm-2">-->
+            <!-- Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-p_bmc_code', 'p_customer_type', 'Customer Type *'); -->
+<!--        </div>
+        <div class="col-sm-2">-->
+            <!-- Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-p_bmc_code,tblvsppayment-p_customer_type,applicable_for,data_lock_bmc', 'p_payment_cycle_code', 'Payment Cycle *'); -->
+<!--        </div>
+    </div>-->
     <div class="form-group padding_top_20">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>

@@ -20,12 +20,18 @@ $final_amt = array_sum(array_map(function($array) {
 
 $recovery_from_other_vendor = ($model->billing_type != 'remuneration' && isset(Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor']) && Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor'] == 1) ? TRUE : FALSE;
 
-if ($model->multiple_bmc) {
-    $mcc_data = $model->mccPlantCode;
-    $bmc_info = $mcc_data->mcc_plant_code . ' > ' . $mcc_data->name . ' > ';
+if (is_array($model->mcc_plant_code)) {
+    $model->plant_code = $model->mccPlantCode->plant_code;
+    $mcc_data = $model->plantCode;
+    $bmc_info= $mcc_data->plant_code.' > '. $mcc_data->name. ' > ';
 } else {
-    $bmc_data = $model->bmcCode;
-    $bmc_info = $bmc_data->bmc_code . ' > ' . $bmc_data->bmc_name . ' > ';
+    if (is_array($model->bmc_code)) {
+        $mcc_data = $model->mccPlantCode;
+        $bmc_info = $mcc_data->mcc_plant_code . ' > ' . $mcc_data->name . ' > ';
+    } else {
+        $bmc_data = $model->bmcCode;
+        $bmc_info = $bmc_data->bmc_code . ' > ' . $bmc_data->bmc_name . ' > ';
+    }
 }
 $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
         (($model->billing_type == 'remuneration') ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) :

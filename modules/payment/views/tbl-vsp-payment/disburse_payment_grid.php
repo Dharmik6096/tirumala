@@ -21,7 +21,13 @@ $this->title = 'Process for Payment Disburse';
     <div class="grid-button-wrap" >
         <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
         <?= Html::activeHiddenInput($model, 'union_code'); ?>
-        <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+         <?php if (is_array($model->mcc_plant_code)) { ?>
+            <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
+                <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+        <?php } ?>
         <?php if (is_array($model->bmc_code)) { ?>
             <?php foreach ($model->bmc_code as $bmc_code) { ?>
                 <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
