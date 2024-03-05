@@ -821,11 +821,13 @@ class SiteController extends Controller {
                 }
             }
             if (isset($val_type[1]) && $val_type[1] == 'date') {
-                if ($is_from_date) {
-                    $value .= ' ' . \Yii::$app->general->getshift($post['from_shift']);
-                    $is_from_date = FALSE;
-                } else {
-                    $value .= ' ' . \Yii::$app->general->getshift($post['to_shift']);
+                if (isset($post['from_shift'])) {
+                    if ($is_from_date) {
+                        $value .= ' ' . \Yii::$app->general->getshift($post['from_shift']);
+                        $is_from_date = FALSE;
+                    } else {
+                        $value .= ' ' . \Yii::$app->general->getshift($post['to_shift']);
+                    }
                 }
             }
             $param_str .= "'" . $value . "',";
