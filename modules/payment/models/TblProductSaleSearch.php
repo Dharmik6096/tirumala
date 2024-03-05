@@ -180,7 +180,7 @@ class TblProductSaleSearch extends TblProductSale {
             $query->andFilterWhere(['ps.customer_type' => $this->customer_type]);
         }
 
-        $query->andFilterWhere(['ps.payment_modes' => '1']);
+        $query->andFilterWhere(['ps.payment_mode' => '1']);
 
         return $dataProvider;
     }
