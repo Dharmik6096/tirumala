@@ -156,7 +156,7 @@ class TblProductSaleSearch extends TblProductSale {
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'memberCode', 'bmcCode']);
         $query->join('join', 'tbl_payment_cycle_applicability pca', 'pca.applicable_code=ps.bmc_code'
                 . ' and cast(ps.invoice_date as date) between cast(pca.from_date as date) and cast(pca.to_date as date)'
-                . ' and pca.applicable_for=\'BMC\' and pca.applicable_type = case when (ps.customer_type=\'Member\'OR  ps.customer_type=\'DCS\') then \'DCS\' else \'BULKVEN\' end end'
+                . ' and pca.applicable_for=\'BMC\' and pca.applicable_type = case when ps.customer_type=\'Member\'then \'DCS\' else ps.customer_type end'
                 . ' and pca.data_lock_member= case when ps.customer_type=\'Member\' then \'0\' else pca.data_lock_member end'
                 . ' and pca.billing_lock_member= case when ps.customer_type=\'Member\' then \'0\' else pca.billing_lock_member end'
                 . ' and pca.data_lock_bmc= case when ps.customer_type<>\'Member\' then \'0\' else pca.data_lock_bmc end'
@@ -180,7 +180,7 @@ class TblProductSaleSearch extends TblProductSale {
             $query->andFilterWhere(['ps.customer_type' => $this->customer_type]);
         }
 
-        $query->andFilterWhere(['ps.payment_mode' => '1']);
+        $query->andFilterWhere(['ps.payment_modes' => '1']);
 
         return $dataProvider;
     }
