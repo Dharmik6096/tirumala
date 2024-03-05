@@ -831,10 +831,6 @@ class SiteController extends Controller {
             $param_str .= "'" . $value . "',";
         }
         $param_str = rtrim($param_str, ",");
-
-        echo '<pre>';
-        print_r($param_str);
-        die;
         $query = \Yii::$app->db->createCommand("{CALL $spname($param_str)}");
 // echo $query->rawSql;exit;
         $results = $query->queryAll();
