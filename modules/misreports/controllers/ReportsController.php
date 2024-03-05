@@ -1564,27 +1564,32 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'RegionWiseUserAttendanceReport';
         return $this->actionIndex();
     }
-    
+
     public function actionBiplDataAdmin() {
         $this->report = 'BiplDataAdmin';
         return $this->actionIndex();
     }
-    
+
     public function actionPurchaseSummary() {
         $this->report = 'PurchaseSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionPurchaseSummaryFormat() {
         $this->report = 'PurchaseSummaryFormat';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkVan() {
         $this->report = 'MilkVan';
         return $this->actionIndex();
     }
-    
+
+    public function actionDcsWiseBillHeadApplicability() {
+        $this->report = 'DcsWiseBillHeadApplicability';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3290,6 +3295,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MilkVan',
                 'title' => 'MilkVan',
                 'report_type' => ['Time management' => Yii::t('app', 'Time management'), 'capacity utilizations' => Yii::t('app', 'capacity utilizations')],
+            ],
+            'DcsWiseBillHeadApplicability' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,payment_type,from_date:string,to_date:string',
+                'sp_name' => 'mis_dcs_bill_head_applicability',
+                'scenario' => 'DcsWiseBillHeadApplicability',
+                'title' => '509 - DCS Wise Bill Head Applicability',
             ],
         ];
         return $label[$l];

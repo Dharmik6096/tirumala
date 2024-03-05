@@ -14,28 +14,36 @@ $form = ActiveForm::begin([
 <div class=" no-effect table_form" >
     <div class="col-sm-12">
         <div class="table-responsive table-rate-chart">
-            <table class="table table-bordered table-striped table-input" id="table">
+            <table class="table table-bordered table-striped table-input table-hover" id="table">
                 <?php
                 if (!empty($head) && !empty($dcs)) {
                     $cnt = 0;
                     echo "<thead>";
+                    echo "<th></th><th></th>";
+                    foreach ($head as $h) {
+                        echo "<th class='width100px'><input type = 'checkbox' class = 'selectAllHead'  id='{$h->bill_head_code}'></th>";
+                    }
                     foreach ($dcs as $key => $attr) {
                         if ($key == 0) {
-                            echo "<tr><th class='width100px'>" . '' . "</th>";
+                            echo " <tr>";
+                            echo "<th><input type = 'checkbox' class = 'selectAllRowsCheckbox'></th>";
+                            echo "<th class='width100px'>" . Yii::t('app', 'DCS') . "</th>";
                             foreach ($head as $s) {
-                                echo "<th class='width100px'>" . $s->bill_head_name . "</th>";
+                                echo "<th class='width1 00px'>" . $s->bill_head_name . "</th>";
                             }
-                            echo "<th class='width100px'>" . Yii::t('app', 'Action') . "</th>";
+//                            echo "<th class='width100px'>" . Yii::t('app', 'Action') . "</th>";
                             echo "</tr>";
                         }
                     }
                     echo "</thead>";
                     echo "<tbody>";
                     foreach ($dcs as $key => $attr) {
-                        $name = strtolower($model->customer_type) == 'dcs' ? $attr->dcs_name : $attr->customer_name;
+                        $name = strtolower($model->customer_type) == 'dcs' ? $attr->dcs_name . '-' . $attr->ref_code : $attr->customer_name;
                         $code = strtolower($model->customer_type) == 'dcs' ? $attr->dcs_code : $attr->customer_code;
                         ?>
-                        <tr class="bill_head_row_<?= $key ?>">
+                        <tr class="bill_head_row_<?= $key ?>" data_key="<?= $key ?>">
+                            <td><input type="checkbox" class="selectAllCheckboxRow" id="selectAllCheckbox-<?= $key ?>"></td>
+
                             <td><?= $name; ?></td>
                             <?php
                             $fromDate = $model->from_date;
@@ -60,18 +68,18 @@ $form = ActiveForm::begin([
                                             <?= Html::hiddenInput('union', $model->union_code, ['class' => 'bill_head_row_' . $key, 'id' => 'union']); ?>
                                             <?= Html::hiddenInput('bmc', $model->bmc_code, ['class' => 'bill_head_row_' . $key, 'id' => 'bmc']); ?>
                                             <?= Html::hiddenInput('head_for', $model->bill_head_for, ['class' => 'bill_head_row_' . $key, 'id' => 'head_for']); ?>
-                                            <input type="checkbox" class="billHeadCheckbox" id="billheadcheck-<?= $s->bill_head_code . '_' . $code ?>" name="billhead_<?= $code ?>" value="<?= $s->bill_head_code ?>">
+                                            <input type="checkbox" class="billHeadCheckbox billHeadCheckbox-<?= $key ?> billhead-<?= $s->bill_head_code ?>" id="billheadcheck-<?= $s->bill_head_code . '_' . $code ?>" name="billhead_<?= $code ?>" value="<?= $s->bill_head_code ?>" head_key="<?= $s->bill_head_code ?>">
                                             <label for="billheadcheck-<?= $s->bill_head_code . '_' . $code ?>"></label>
                                         </div>
                                     </td>
                                     <?php
                                 }
                             }
-                            if ($dispBtn) {
-                                echo "<td>" . '<i class="fa fa-edit" onClick="saveDataBillHead(' . $key . ')"></i>' . "</td>";
-                            } else {
-                                echo "<td></td>";
-                            }
+//                            if ($dispBtn) {
+//                                echo "<td>" . '<i class="fa fa-edit" onClick="saveDataBillHead(' . $key . ')"></i>' . "</td>";
+//                            } else {
+//                                echo "<td></td>";
+//                            }
                             ?>
                         </tr>
                         <?php
@@ -79,6 +87,14 @@ $form = ActiveForm::begin([
                 }
                 ?>
             </table>
+            <div class="panel-footer">
+                <?php
+                if (!empty($head) && !empty($dcs)) {
+                    echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary', 'id' => 'saveApplicability']);
+                    echo Yii::$app->controls->custombutton('Cancel', 'cs-wise-bill-head');
+                }
+                ?>
+            </div>
         </div>
     </div>
 </div>
@@ -106,7 +122,7 @@ $script = "
         let from_date = $('.bill_head_row_'+setKey+' #from_date').val();
         let to_date = $('.bill_head_row_'+setKey+' #to_date').val();
         let head_for = $('.bill_head_row_'+setKey+' #head_for').val();
-
+        
         if(action_codes.length > 0){
                 $.ajax({
                     type: 'post',
@@ -117,7 +133,7 @@ $script = "
                         if (obj.status == 'success')
                         {
                             location.reload();
-                        }
+    }
                     },
                     error:function(data){
 
@@ -190,6 +206,158 @@ $script = "
     
     $(document).ready(function () {
         $('.highlightParentRow').closest('tr').addClass('highlightRow');
+    });
+    
+    $(document).on('click', '.selectAllCheckboxRow', function(e) { 
+        var dataKey= $(this).closest('tr').attr('data_key');
+        if($(this).is(':checked')){
+            $('.billHeadCheckbox-'+dataKey).prop('checked', true);
+        } else {
+            $('.billHeadCheckbox-'+dataKey).prop('checked', false);
+        }
+    });
+    
+    $(document).on('click', '.selectAllRowsCheckbox', function(e) { 
+        if($(this).is(':checked')){
+            $('.billHeadCheckbox').prop('checked', true);
+        } else {
+            $('.billHeadCheckbox').prop('checked', false);
+        }
+    });
+    
+    $(document).on('click', '.selectAllHead', function(e) { 
+        var dataKey= $(this).attr('id');
+        if($(this).is(':checked')){
+            $('.billhead-'+dataKey).prop('checked', true);
+        } else {
+            $('.billhead-'+dataKey).prop('checked', false);
+        }
+    });
+    
+    $(document).on('click', '#saveApplicability', function(e) {
+        saveDataBillHeadApplicability();
+    });
+    
+    function saveDataBillHeadApplicability() {
+        var action_codes = {};
+        var trKeys = [];
+        var isformSubmit=0;
+           $('.billHeadCheckbox').each(function() {
+            var set_key = $(this).closest('tr').attr('data_key');
+            var dcs = $('.bill_head_row_'+set_key+' #dcs').val();
+            if (!trKeys.includes(dcs)) {
+               action_codes[dcs]=[];
+               trKeys.push(dcs);
+            }
+                if ($(this).is(':checked')) {
+                    isformSubmit=1;
+                    action_codes[dcs].push($(this).val());
+                }
+          
+        });
+
+        let union = $('#union').val();
+        let bmc = $('#bmc').val();
+        let dcs = $('#dcs').val();
+        let type = $('#type').val();
+        let from_date = $('#from_date').val();
+        let to_date = $('#to_date').val();
+        let head_for = $('#head_for').val();
+
+         saveDatas(action_codes,union,bmc,dcs,type,from_date,to_date,head_for,isformSubmit);
+
+    }
+    
+    function saveDatas(action_codes,union,bmc,dcs,type,from_date,to_date,head_for,isformSubmit) {
+
+       if (isformSubmit==0) {
+            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please Check At Least One Check Box.</span></div></div>');
+            return;
+        }
+
+        if (isformSubmit==1) {
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['save-applicability']) . "',
+                data: {'union_code':union, 'bill_head_codes':action_codes,'bmc_code':bmc,'applicable_for':type,'wef_date':from_date,'from_date':from_date,'to_date':to_date,'bill_head_for':head_for},
+                success: function (data) {
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        location.reload();
+                    }
+                },
+                error: function (data) {
+                }
+            });
+        }
+    }
+    
+  $(document).on('click', '.billHeadCheckbox', function() {
+        var setKey = $(this).closest('tr').attr('data_key');
+        var headKey = $(this).attr('head_key');
+        var allChecked = true;
+        $('.billHeadCheckbox-'+setKey).each(function() {
+            if (!$(this).is(':checked')) {
+                allChecked = false;
+                //return false; 
+            }
+        });
+     
+        if (allChecked) {
+            $('#selectAllCheckbox-'+setKey).prop('checked', true);
+         //   $('.selectAllRowsCheckbox').prop('checked', true);
+//            $('#'+headKey).prop('checked', true);
+        } else {
+            $('#selectAllCheckbox-'+setKey).prop('checked', false);
+            $('.selectAllRowsCheckbox').prop('checked', false);
+            $('#'+headKey).prop('checked', false);
+        }
+      });  
+      
+    $(document).on('click', '.selectAllCheckboxRow', function() {
+        var allMainChecked = true;
+        $('.selectAllCheckboxRow').each(function() {
+            if (!$(this).is(':checked')) {
+                allMainChecked = false;
+                return false; 
+            }
+        });
+        
+        if (allMainChecked) {
+            $('.selectAllRowsCheckbox').prop('checked', true);
+            $('.selectAllHead').prop('checked', true);
+        } else {
+            $('.selectAllRowsCheckbox').prop('checked', false);
+            $('.selectAllHead').prop('checked', false);
+        }
+    });
+    
+    $(document).on('click', '.selectAllRowsCheckbox', function() {
+        if ($(this).is(':checked')) {
+            $('.selectAllCheckboxRow').prop('checked', true);
+            $('.selectAllHead').prop('checked', true);
+        } else {
+            $('.selectAllCheckboxRow').prop('checked', false);
+            $('.selectAllHead').prop('checked', false);
+        }
+    });
+    
+    $(document).on('click', '.selectAllHead', function() {
+        var allChecked = true;
+        $('.selectAllHead').each(function() {
+            if (!$(this).is(':checked')) {
+                allChecked = false;
+                return false; 
+            }
+        });
+        
+        if (allChecked) {
+            $('.selectAllCheckboxRow').prop('checked', true);
+            $('.selectAllRowsCheckbox').prop('checked', true);
+        } else {
+            $('.selectAllCheckboxRow').prop('checked', false);
+            $('.selectAllRowsCheckbox').prop('checked', false);
+        }
     });
       ";
 $this->registerJs($script, View::POS_END, 'bill-head-grid');
