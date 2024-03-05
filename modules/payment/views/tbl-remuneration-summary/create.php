@@ -6,8 +6,9 @@ use yii\web\View;
 use yii\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
-
 $this->title = 'Remuneration Payment Process : Step 1';
+$multiple =  Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
+
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -29,14 +30,14 @@ $this->title = 'Remuneration Payment Process : Step 1';
                 <?= Yii::$app->dropdown->union_plant($model, $form, 'tblremunerationsummary-union_code', 'plant_code', TRUE); ?>
             </div> 
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblremunerationsummary-plant_code', 'mcc_plant_code', TRUE); ?>
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblremunerationsummary-plant_code', 'mcc_plant_code', TRUE,$multiple); ?>
             </div>      
-            <div  id="single-bmc" class="col-sm-2">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'bmc_code', 'BMC *'); ?>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'bmc_code', TRUE,$multiple); ?>
             </div>
-            <div id="multiple-bmc" class="col-sm-2">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'p_bmc_code', 'BMC *', TRUE); ?>
-            </div>
+<!--            <div id="multiple-bmc" class="col-sm-2">
+                <!-- Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'p_bmc_code', 'BMC *', TRUE); -->
+
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'from_datetime', '', '', false, false); ?>
             </div>
@@ -125,29 +126,29 @@ $this->title = 'Remuneration Payment Process : Step 1';
 
 <?php
 $script = "
-     $('#single-bmc').hide();
-     $('#multiple-bmc').hide();  
-$('#tblremunerationsummary-mcc_plant_code').on('change',function(){
-     var mcc_plant_code= $(this).val();
-     if(mcc_plant_code !='' && mcc_plant_code != null){
-            $.ajax({
-            type: 'post',
-            url: '" . Url::to(['/payment/tbl-vsp-payment/check-mcc-type']) . "',
-            data: {'mcc_plant_code' : mcc_plant_code},            
-            success: function(data) {
-                var data = $.parseJSON(data);
-                var multiple_bmc = data.multiple_bmc;
-               if(multiple_bmc == '1'){
-                 $('#single-bmc').hide();
-                 $('#multiple-bmc').show();
-               }else{
-                 $('#multiple-bmc').hide();
-                 $('#single-bmc').show();
-               }   
-            }
-        });
-      }
-});
+//     $('#single-bmc').hide();
+//     $('#multiple-bmc').hide();  
+//$('#tblremunerationsummary-mcc_plant_code').on('change',function(){
+//     var mcc_plant_code= $(this).val();
+//     if(mcc_plant_code !='' && mcc_plant_code != null){
+//            $.ajax({
+//            type: 'post',
+//            url: '" . Url::to(['/payment/tbl-vsp-payment/check-mcc-type']) . "',
+//            data: {'mcc_plant_code' : mcc_plant_code},            
+//            success: function(data) {
+//                var data = $.parseJSON(data);
+//                var multiple_bmc = data.multiple_bmc;
+//               if(multiple_bmc == '1'){
+//                 $('#single-bmc').hide();
+//                 $('#multiple-bmc').show();
+//               }else{
+//                 $('#multiple-bmc').hide();
+//                 $('#single-bmc').show();
+//               }   
+//            }
+//        });
+//      }
+//});
 ";
 $this->registerJs($script, View::POS_END, 'check-mcc-type');
 ?>
