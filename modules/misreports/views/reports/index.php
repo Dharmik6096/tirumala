@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use app\modules\usermanagement\components\GhostHtml;
 use yii\grid\GridView;
 use yii\web\View;
-use app\components\DataTable;
+use nullref\datatable\DataTable;
 
 //$this->title = Yii::$app->label->title('view', 'Reports');
 $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : '');
