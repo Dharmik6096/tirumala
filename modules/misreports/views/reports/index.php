@@ -28,23 +28,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
     $exportEvents = [];
     if (isset($data['export_title']) && $data['export_title'] && !empty($result)) {
         $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
-        $codeToAppend = '';
-        if (!empty($model->bmc_code)) {
-            if (is_array($model->bmc_code) && count($model->bmc_code) > 1) {
-                $codeToAppend = 'All';
-            } else {
-                $codeToAppend = $model->getBmcCode($model->bmc_code);
-                $codeToAppend = $codeToAppend->ref_code;
-            }
-        } else if (!empty($model->mcc_code)) {
-            if (is_array($model->mcc_code) && count($model->mcc_code) > 1) {
-                $codeToAppend = 'All';
-            } else {
-                $codeToAppend = $model->getMccCode($model->mcc_code);
-                $codeToAppend = $codeToAppend->ref_code;
-            }
-        }
-        $this->title = $codeToAppend . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . (!empty($model->shift) ? $model->shift : $model->from_shift);
+        $this->title = $model->mcc_code . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
         $removeExportType = ['CSV'];
         $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
                 $sheet->getProtection()->setSheet(true);
@@ -98,7 +82,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                             <div class="row margin_0">
 
                                 <div class="modal-body">
-                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);     ?>  
+                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);    ?>  
                                     <?php
                                     $param = isset($data['param']) ? explode(',', $data['param']) : [];
                                     foreach ($param as $key => $value) {
@@ -297,7 +281,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));      ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));     ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
@@ -455,7 +439,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('month', 'report_req_status'))) {
+                                        if (in_array($value, array('month','report_req_status'))) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?>
@@ -490,7 +474,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('login_user_code', 'user_code'))) {
+                                        if (in_array($value, array('login_user_code','user_code'))) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdown($value, $model, $form, '', 'User Name', false, '', TRUE); ?>
