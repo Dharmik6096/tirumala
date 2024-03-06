@@ -3747,7 +3747,8 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
 .searchFilterArea.dashboardWidgetHeader {
     color: #222 !important;
     background: transparent !important;
-    float: right;
+    float: inline-start;
+    margin-left: -5%;
 }
 
 .searchFilterValue {
@@ -4189,9 +4190,9 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     overflow: auto !important;
 }
 
-.overflow_hidden{
+/*.overflow_hidden{
     overflow: hidden !important;
-}
+}*/
 
 .height_grid_f{
     max-height: calc(100vH - 200px);
@@ -4248,9 +4249,9 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .dynamic_report_margin{
     margin-top: 0px !important;
 }
-.overflow_hidden{
+/*.overflow_hidden{
     overflow: hidden;
-}
+}*/
 
 .report-area .grid-search.search-filter.custom_report_search{
     width: calc(100% - 0px) !important
@@ -5097,6 +5098,10 @@ tr.highlightRow {
     margin-bottom: -12px;
     color: rgb(0, 163, 222);
 }
-/*rect.highcharts-point {
-    fill: rgb(0, 163, 222);
-}*/
+.panel-body.hide-grid-export {
+    overflow-x: visible;
+}
+.table-responsive > .table > thead > tr > th.custom_grid_header {
+    position: sticky;
+    top: 0;
+}

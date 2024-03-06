@@ -39,6 +39,11 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'BMC Name') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'DCS Code') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'DCS Name') ?></th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Avg. FAT') ?></th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Avg. SNF') ?></th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Avg. Rate') ?></th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Amount') ?></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -57,6 +62,11 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['bmc_name'] ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['dcs_code'] ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['dcs_name'] ?></td>
+                                                            <td class="number_align custom_grid_normal"><?= $data['total_quantity'] ?></td>
+                                                            <td class="number_align custom_grid_normal"><?= $data['avgFAT'] ?></td>
+                                                            <td class="number_align custom_grid_normal"><?= $data['avgSNF'] ?></td>
+                                                            <td class="number_align custom_grid_normal"><?= $data['avgRate'] ?></td>
+                                                            <td class="number_align custom_grid_normal"><?= $data['total_amount'] ?></td>
                                                         </tr>
                                                         <?php
                                                     }
