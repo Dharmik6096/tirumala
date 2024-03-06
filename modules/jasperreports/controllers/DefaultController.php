@@ -364,7 +364,7 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'PaymentSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionProductSaleSummary() {
         $this->report = 'ProductSaleSummary';
         return $this->actionIndex();
@@ -425,6 +425,7 @@ class DefaultController extends \app\controllers\ChildController {
 //                  var_dump($controls);die;
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
                 $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
+                $clientJasper->setRequestTimeout(300);
                 $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
                 if ($this->type != 'html') {
                     header('Cache-Control: must-revalidate');
