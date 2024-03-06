@@ -2435,7 +2435,8 @@ class GeneralFunctions extends Component {
     function getPaymentHeader($model) {
         $data = [];
         if (is_array($model->mcc_plant_code)) {
-            $data['code'] = Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
+            $model->plant_code = empty($model->plant_code) ? $model->mccPlantCode->plant_code : $model->plant_code;
+            $data['code'] =  Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
             $data['name'] = Yii::$app->general->getforeignkey($model->plantCode, 'name');
         } else {
             if (is_array($model->bmc_code)) {

@@ -10,19 +10,12 @@ $this->title = 'Process for Payment Disburse';
 $action = Url::to(['bank-payment']);
 $bmc_info = '';
 if (!empty($searchModel)) {
-  if (is_array($model->mcc_plant_code)) {
-    $model->plant_code = $model->mccPlantCode->plant_code;
-    $mcc_data = $model->plantCode;
-    $bmc_info= $mcc_data->plant_code.' > '. $mcc_data->name. ' > ';
-} else {
-    if (is_array($model->bmc_code)) {
-        $mcc_data = $model->mccPlantCode;
-        $bmc_info = $mcc_data->mcc_plant_code . ' > ' . $mcc_data->name . ' > ';
-    } else {
-        $bmc_data = $model->bmcCode;
-        $bmc_info = $bmc_data->bmc_code . ' > ' . $bmc_data->bmc_name . ' > ';
+    $data = Yii::$app->general->getPaymentHeader($searchModel);
+    if (!empty($data)) {
+        $code = $data['code'];
+        $name = $data['name'];
     }
-}
+ $bmc_info = $code . ' > ' . $name . ' > ';
     $bmc_info .= Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .
             (($searchModel->billing_type == 'remuneration') ? Yii::$app->controls->view_date($searchModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($searchModel->to_datetime) :
             Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date')));
@@ -59,9 +52,8 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                     <?= Html::activeHiddenInput($searchModel, 'bmc_code'); ?>
                 <?php } ?>
                 <?= Html::activeHiddenInput($searchModel, 'customer_type'); ?>
-                <?php //foreach ($searchModel->dcs_code as $dcs_code) { ?>
-                <?php //Html::activeHiddenInput($searchModel, 'dcs_code[]', ['value' => $dcs_code]); ?>
-                <?php //} ?>
+
+
                 <div class="col-sm-2">
                     <?php
                     $allow_disburse_without_release = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['allow_disburse_without_release']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['allow_disburse_without_release'] : 0;
@@ -76,23 +68,7 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 <div class="clearfix"></div>
                 <?php
                 $attribute = [
-                    /* ['class' => 'kartik\grid\CheckboxColumn',
-                      'rowSelectedClass' => GridView::TYPE_SUCCESS,
-                      'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                      'checkboxOptions' => function($model) {
-                      $disabled = FALSE;
-                      if ($model->ifsc == '' || $model->bank_account_no == '') {
-                      $disabled = true;
-                      } else if ($model->is_verified == 2) {
-                      $disabled = true;
-                      } else if (Yii::$app->session->get('makerChecker') == 1 && $model->is_verified == 0) {
-                      $disabled = true;
-                      }
-                      return ['disabled' => $disabled, 'class' => 'checkbox', 'value' => $model['dcs_code']];
-                      }],
-                      ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name',
-                      'label' => Yii::t('app', 'DCS')
-                      ], */
+                  
                     ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
                     ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
                             return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
