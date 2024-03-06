@@ -49,7 +49,9 @@ class ReportsController extends \app\controllers\ChildController {
                     if ($k == 'from_date') {
                         $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
                     }
-                    $export_file_name = str_replace($k, $v, $export_file_name);
+                    if (!is_array($v)) {
+                        $export_file_name = str_replace($k, $v, $export_file_name);
+                    }
                 }
                 $this->data['export_file_name'] = $export_file_name;
             }
@@ -1192,7 +1194,9 @@ class ReportsController extends \app\controllers\ChildController {
                 if ($k == 'from_date') {
                     $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
                 }
-                $export_file_name = str_replace($k, $v, $export_file_name);
+                if (!is_array($v)) {
+                    $export_file_name = str_replace($k, $v, $export_file_name);
+                }
             }
             $this->label = $export_file_name;
         }
@@ -1564,22 +1568,22 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'RegionWiseUserAttendanceReport';
         return $this->actionIndex();
     }
-    
+
     public function actionBiplDataAdmin() {
         $this->report = 'BiplDataAdmin';
         return $this->actionIndex();
     }
-    
+
     public function actionPurchaseSummary() {
         $this->report = 'PurchaseSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionPurchaseSummaryFormat() {
         $this->report = 'PurchaseSummaryFormat';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkVan() {
         $this->report = 'MilkVan';
         return $this->actionIndex();
@@ -1594,7 +1598,12 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'PaymentSummary';
         return $this->actionIndex();
     }
-    
+
+    public function actionSapWqFile() {
+        $this->report = 'SapWqFile';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3318,6 +3327,14 @@ class ReportsController extends \app\controllers\ChildController {
                     'vspwise' => Yii::t('app', 'VSP Wise'),
                     'remuneration' => Yii::t('app', 'Remuneration')
                 ],
+            ],
+            'SapWqFile' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa',
+                'scenario' => 'SapWqFile',
+                'title' => 'SAP WQ File',
+                'export_file_name' => 'PLANT_CODE_WQ_from_date_from_shift',
+                'multiArray' => ['mcc_code', 'bmc_code'],
             ],
         ];
         return $label[$l];
