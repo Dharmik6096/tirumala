@@ -1716,7 +1716,7 @@ class DropDown extends Component {
             'animal_req_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'InProgress'), '2' => Yii::t('app', 'Complete')],
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'InProgress'), '2' => Yii::t('app', 'Complete'), '3' => Yii::t('app', 'Doctor Visited')],
             ],
             'product_stock_issue_reason' => [
                 'name' => 'reason',

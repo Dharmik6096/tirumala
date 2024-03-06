@@ -31,9 +31,9 @@ class TblEiplAppMenuActionsMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['action_code'], 'integer'],
-                [['login_type', 'department', 'created_by', 'updated_by'], 'string'],
-                [['created_at', 'updated_at'], 'safe'],
+            [['action_code'], 'integer'],
+            [['login_type', 'department', 'created_by', 'updated_by'], 'string'],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -56,7 +56,7 @@ class TblEiplAppMenuActionsMapping extends \app\models\ChildModel {
     public function getExistMapingMenu() {
         if (!empty($this->login_type)) {
             $query = $this->find()
-                    ->where(['login_type' => $this->login_type, "ISNULL(department,'')" => $this->department])
+                    ->where(['login_type' => $this->login_type, "ISNULL(department,'')" => !empty($this->department) ? $this->department : ''])
                     ->all();
             return ArrayHelper::map($query, 'action_code', 'action_code');
         } else {
@@ -66,7 +66,7 @@ class TblEiplAppMenuActionsMapping extends \app\models\ChildModel {
 
     public function getExistMappedmenus() {
         return $this->find()
-                        ->where(['login_type' => $this->login_type, 'action_code' => $this->action_code, "ISNULL(department,'')" => $this->department])
+                        ->where(['login_type' => $this->login_type, 'action_code' => $this->action_code, "ISNULL(department,'')" => !empty($this->department) ? $this->department : ''])
                         ->one();
     }
 
@@ -79,5 +79,4 @@ class TblEiplAppMenuActionsMapping extends \app\models\ChildModel {
                         ->andWhere(['IS', 'tbl_eipl_app_menu_actions_mapping.department', NULL])
                         ->asArray()->all();
     }
-
 }

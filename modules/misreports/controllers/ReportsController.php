@@ -50,7 +50,9 @@ class ReportsController extends \app\controllers\ChildController {
                     if ($k == 'from_date') {
                         $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
                     }
-                    $export_file_name = str_replace($k, $v, $export_file_name);
+                    if (!is_array($v)) {
+                        $export_file_name = str_replace($k, $v, $export_file_name);
+                    }
                 }
                 $this->data['export_file_name'] = $export_file_name;
             }
@@ -1194,7 +1196,9 @@ class ReportsController extends \app\controllers\ChildController {
                 if ($k == 'from_date') {
                     $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
                 }
-                $export_file_name = str_replace($k, $v, $export_file_name);
+                if (!is_array($v)) {
+                    $export_file_name = str_replace($k, $v, $export_file_name);
+                }
             }
             $this->label = $export_file_name;
         }
@@ -3332,7 +3336,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bmc_collection_wq_vrs_newasa',
                 'scenario' => 'SapWqFile',
                 'title' => 'SAP WQ File',
-                'export_title' => true,
+                'export_file_name' => 'PLANT_CODE_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
             ],
         ];
