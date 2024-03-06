@@ -4351,9 +4351,9 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     overflow: auto !important;
 }
 
-.overflow_hidden{
+/*.overflow_hidden{
     overflow: hidden !important;
-}
+}*/
 
 .height_grid_f{
     max-height: calc(100vH - 200px);
@@ -4411,9 +4411,9 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .dynamic_report_margin{
     margin-top: 0px !important;
 }
-.overflow_hidden{
+/*.overflow_hidden{
     overflow: hidden;    
-}
+}*/
 
 .report-area .grid-search.search-filter.custom_report_search{
     width: calc(100% - 0px) !important
@@ -4516,7 +4516,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .custom_grid_header {
     background-color: #7a231c !important;
     border: 1px solid #ddd;
-    color: #ffffff;
+    color: #ffffff !important;
     font-weight: 500;
     padding: 1px 4px;
     text-align: center;
@@ -5392,4 +5392,14 @@ tr.highlightRow {
 }
 .text-white-color tr th{
     color: #ffffff !important;
+}
+.pull-left {
+    float: left;
+}
+.panel-body.hide-grid-export {
+    overflow-x: visible;
+}
+.table-responsive > .table > thead > tr > th.custom_grid_header {
+    position: sticky;
+    top: 0;
 }
