@@ -41,12 +41,6 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
                <div class="col-sm-2">
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'bmc_code', 'BMC *',$multiple); ?>
             </div>
-<!--            <div  id="single-bmc" class="col-sm-2">
-                 Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'bmc_code', 'BMC *'); 
-            </div>-->
-<!--            <div id="multiple-bmc" class="col-sm-2">
-                 Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'p_bmc_code', 'BMC *', TRUE); 
-            </div>-->
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->RemunerationPaymentCycle($model, $form, 'tblremunerationsummary-union_code,tblremunerationsummary-bmc_code', 'payment_cycle_code', 'Payment Cycle'); ?>
             </div>
@@ -68,31 +62,3 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
     </div>
 </div>
 
-<?php
-$script = "
-//     $('#single-bmc').hide();
-//     $('#multiple-bmc').hide();  
-//$('#tblremunerationsummary-mcc_plant_code').on('change',function(){
-//     var mcc_plant_code= $(this).val();
-//     if(mcc_plant_code !='' && mcc_plant_code != null){
-//            $.ajax({
-//            type: 'post',
-//            url: '" . Url::to(['/payment/tbl-vsp-payment/check-mcc-type']) . "',
-//            data: {'mcc_plant_code' : mcc_plant_code},            
-//            success: function(data) {
-//                var data = $.parseJSON(data);
-//                var multiple_bmc = data.multiple_bmc;
-//               if(multiple_bmc == '1'){
-//                 $('#single-bmc').hide();
-//                 $('#multiple-bmc').show();
-//               }else{
-//                 $('#multiple-bmc').hide();
-//                 $('#single-bmc').show();
-//               }   
-//            }
-//        });
-//      }
-//});
-";
-$this->registerJs($script, View::POS_END, 'check-mcc-type');
-?>

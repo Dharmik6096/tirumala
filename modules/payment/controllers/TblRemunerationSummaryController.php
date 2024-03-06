@@ -28,16 +28,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
         if ($model->load(Yii::$app->request->post())) {
             $result = 'success';
             $model->scenario = 'processpayment';
-//            $multiple_bmc = FALSE;
-//            $bmc_array = [];
-//            $bmc_array[] = $model->bmc_code;
-//            $mcc_data = $model->mccPlantCode;
-//             $bmc_array = $model->bmc_code;
-//            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-//                //$model->bmc_code = $model->p_bmc_code;
-//                $multiple_bmc = TRUE;
-//                $bmc_array = $model->bmc_code;
-//            }
             if ($model->validate()) {
                 $validate = $model->ValidateDate('from_datetime', NULL, TRUE);
                 $queryParam = [];
@@ -64,7 +54,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                 return ['status' => $result, 'url' => $url, 'url_regenerate' => $url_regenerate, 'msg' => $msg];
             } else {
                 $form_validation = ActiveForm::validate($model);
-                $model->mcc_plant_code = is_array($model->mcc_plant_code) ? NULL : $model->mcc_plant_code;
                 $model->bmc_code = is_array($model->bmc_code) ? NULL : $model->bmc_code;
                 $model->scenario = 'default';
                 Yii::$app->response->format = Response::FORMAT_JSON;
@@ -89,15 +78,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             }
             $model->stop_payment_only = 1;
             $model->scenario = 'processpaymentstop';
-//            $multiple_bmc = FALSE;
-//            $bmc_array = [];
-//            $bmc_array[] = $model->bmc_code;
-//            $mcc_data = $model->mccPlantCode;
-//            if (!empty($mcc_data)) {
-//                $model->bmc_code = $model->bmc_code;
-//                $multiple_bmc = TRUE;
-//                $bmc_array = $model->bmc_code;
-//            }
+
             if ($model->validate()) {
                 $stopModel = new TblPaymentStop();
                 $stopModel->bmc_code = $model->bmc_code;
@@ -109,7 +90,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                     $model->from_datetime = date('Y-m-d', strtotime($model->from_datetime)) . ' ' . \Yii::$app->general->getshift(1);
                     $model->to_datetime = date('Y-m-d', strtotime($model->to_datetime)) . ' ' . \Yii::$app->general->getshift(2);
                     $this->getRemunerationSpData($model);
-//                    $model->bmc_code = $bmc_array;
                     return $this->redirect(['tbl-vsp-payment/payment-adjust', 'TblVspPayment' => ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'mcc_plant_code' => $model->mcc_plant_code, 'union_code' => $model->union_code, 'billing_type' => 'remuneration', 'customer_type' => 'DCS', 'multiple_bmc' => $multiple_bmc]]);
                 } else {
                     $msg = Yii::t('app', 'Stop Payment data is not available');
@@ -137,11 +117,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             if ($reGenerate == 1) {
                 $this->getRemunerationSpData($model);
             }
-//            $multiple_bmc = FALSE;
-//            $mcc_data = $model->mccPlantCode;
-//            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-//                $multiple_bmc = TRUE;
-//            }
             return $this->redirect(['tbl-vsp-payment/payment-adjust', 'TblVspPayment' => ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'mcc_plant_code' => $model->mcc_plant_code, 'union_code' => $model->union_code, 'billing_type' => 'remuneration', 'customer_type' => 'DCS', 'multiple_bmc' => $multiple_bmc]]);
         }
     }
@@ -168,17 +143,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data['user_code'] = $user;
             Yii::$app->ClientPaymentConfig->processPayment('remuneration_payment', $data);
         }
-        /* $result = \Yii::$app->db->createCommand("{CALL sp_remuneration_payment (:union_code,:plant_code,:mcc_plant_code,:bmc_code,:from_date,:to_date,:calculate_milk_recovey,:calculate_other_head)}")
-          ->bindValue(':from_date', $model->from_datetime)
-          ->bindValue(':to_date', $model->to_datetime)
-          ->bindValue(':union_code', $model->union_code)
-          ->bindValue(':bmc_code', $model->bmc_code)
-          ->bindValue(':plant_code', $model->plant_code)
-          ->bindValue(':mcc_plant_code', $model->mcc_plant_code)
-          ->bindValue(':calculate_milk_recovey', $model->calculate_milk_recovey)
-          ->bindValue(':calculate_other_head', $model->calculate_other_head);
-          $query = $result->execute();
-          return $query; */
     }
 
     public function actionPaymentDisburse() {
@@ -191,10 +155,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $model->from_datetime = $payment_cycle_code[0];
             $model->to_datetime = $payment_cycle_code[1];
         }
-//        $mcc_data = $model->mccPlantCode;
-//        if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-//            $model->bmc_code = $model->p_bmc_code;
-//        }
         $query = $model->find()->where(['from_datetime' => $model->from_datetime,
             'to_datetime' => $model->to_datetime,
             'bmc_code' => $model->bmc_code,
@@ -408,9 +368,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) &&  !empty($parents[1])) {
                 $bmc_array = !empty($parents[1]) ? $parents[1] : [];
-//                if (!empty($parents[1])) {
-//                    $bmc_array[] = $parents[1];
-//                }
                 $model = new TblRemunerationSummary();
                 $data = $model->RemunerationPaymentCycle($parents[0], $bmc_array);
                 foreach ($data as $key => $val) {
