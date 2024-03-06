@@ -29,7 +29,7 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
             $postArray = [];
             $postArray = Yii::$app->request->post('child_routes');
             $loginType = Yii::$app->request->post('login_type');
-            $department = !empty(Yii::$app->request->post('department')) ? Yii::$app->request->post('department') : NULL;
+            $department = !empty(Yii::$app->request->post('department')) ? Yii::$app->request->post('department') : '';
             $master = [];
             $auto_inc = 1;
             $newAssignments = [];
