@@ -10,23 +10,11 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $this->title = Yii::t('app', 'Member Payment Process : Step 2');
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
 $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
-//$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
-//        $fromDate . ' to ' . $toDate;
-//$message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
-if (is_array($model->mcc_plant_code)) {
-    $mcc_data = $model->plantCode;
-    $code = $mcc_data->plant_code;
-    $name = $mcc_data->name;
-} else {
-    if (is_array($model->bmc_code)) {
-        $mcc_data = $model->mccPlantCode;
-        $code = $mcc_data->mcc_plant_code;
-        $name = $mcc_data->name;
-    } else {
-        $bmc_data = $model->bmcCode;
-        $code = $bmc_data->bmc_code;
-        $name = $bmc_data->bmc_name;
-    }
+$code = $name = '';
+$data = Yii::$app->general->getPaymentHeader($model);
+if (!empty($data)) {
+    $code = $data['code'];
+    $name = $data['name'];
 }
 
 $bmc_info = $code . ' > ' . $name . ' > ' .
@@ -142,15 +130,15 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
                 ?>
                 <div class="col-md-12" >
-                <?php if (!empty($dataProvider->getModels())) { ?>
-                    <?php foreach ($dataProvider->getModels() as $data) { ?>
-                        <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
+                    <?php if (!empty($dataProvider->getModels())) { ?>
+                        <?php foreach ($dataProvider->getModels() as $data) { ?>
+                            <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
+                        <?php } ?>
+                        <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
+                        <?php //Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
+                        <?php // Yii::$app->controls->save('Next', $model); ?>
                     <?php } ?>
-                    <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
-                    <?php //Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
-                    <?php // Yii::$app->controls->save('Next', $model); ?>
-                <?php } ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?>        
+                    <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?>        
                 </div>
                 <?php ActiveForm::end(); ?>
 
@@ -160,8 +148,8 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
     </div>
 </div>
 <div id='bill_head_view'></div>
-                <?php
-                $script = "
+<?php
+$script = "
 $('.kv-panel-before').hide(); 
 
 $(document).on('click','.view-head',function(e){
@@ -237,5 +225,5 @@ $('#adjust-lock').click(function() {
     }
 //    $('form#w1').submit();
 });";
-                $this->registerJs($script, View::POS_END, 'panel-before-hide');
-                ?>
+$this->registerJs($script, View::POS_END, 'panel-before-hide');
+?>

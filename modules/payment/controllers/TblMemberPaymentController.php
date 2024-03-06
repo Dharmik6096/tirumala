@@ -88,8 +88,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $result = 'success';
             $model->scenario = 'processpayment';
-            $model->load(Yii::$app->request->post());
-            if ($model->validate()) {
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $appModel = new TblPaymentCycleApplicability();
                 $appModel->payment_cycle_code = $model->payment_cycle_code;
                 $appModel->applicable_code = $model->bmc_code;
@@ -133,8 +132,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 return ['status' => $result, 'url' => $url, 'url_regenerate' => $url_regenerate, 'msg' => $msg];
 //                return $this->redirect(['list-member-payment-summary', 'TblMemberPaymentAlias' => ['payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code]]);
             } else {
-                $model->mcc_plant_code = is_array($model->mcc_plant_code) ? NULL : $model->mcc_plant_code;
-                $model->bmc_code = is_array($model->bmc_code) ? NULL : $model->bmc_code;
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return ActiveForm::validate($model);
             }
@@ -442,7 +439,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $model = new TblMemberPaymentAlias();
                 $model->load(Yii::$app->request->post());
                 $data = Yii::$app->request->post();
-                $model->dcs_code = json_decode($model->dcs_code);
                 $model->dcs_code = !empty($data['selection']) ? $data['selection'] : $model->dcs_code;
                 $searchModel = new TblMemberPaymentSummaryAliasSearch();
                 $searchModel->attributes = $model->attributes;
@@ -465,7 +461,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 ]);
             }
         }
-        return $this->redirect(\yii\helpers\Url::previous());
     }
 
     public function actionMemberPaymentAdjust() {
@@ -717,13 +712,13 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //
 //        return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
         $bmc_array = [];
-        
+
         if (is_array($model->bmc_code)) {
             $bmc_array = $model->bmc_code;
         } else {
             $bmc_array[] = $model->bmc_code;
         }
-        
+
         foreach ($bmc_array as $bmc) {
             $data = [];
             $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
@@ -733,9 +728,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $data['payment_cycle_code'] = $model->payment_cycle_code;
             $data['process_stop_payment'] = $stop_payment_only;
             $data['user_code'] = $user;
-            $result[]= Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
+            $result[] = Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
         }
-return $result;
+        return $result;
         /*
           $fromDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
           $toDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
@@ -1142,12 +1137,14 @@ return $result;
                             $param['user_code'] = $user;
                             $param['org_code'] = $originating_org_code;
                             $param['org_type'] = 'PORTAL';
+                            $param['is_without_release'] = $model->payment_release_type;
                             Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
 
                             $param = [];
                             $param['from_datetime'] = $model->from_datetime;
                             $param['customer_type'] = 'MEMBER';
                             $param['bmc_code'] = $bmc;
+                            $param['user_code'] = $user;
                             Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
                         }
                         $msg_content = Yii::t('app', 'Member Payment Successfully Disbursed.');
@@ -1456,7 +1453,7 @@ return $result;
         $aliasmodel->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $aliasmodel->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
         $dcs = $model->getRecoverDcs();
-        $recoverDcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
+        $recoverDcs = ArrayHelper::map($dcs, 'dcs_code', function ($dcs) {
                     return $dcs['dcs_name'] . '(' . $dcs['ref_code'] . ')';
                 });
         return $this->renderAjax('_recovery', [
