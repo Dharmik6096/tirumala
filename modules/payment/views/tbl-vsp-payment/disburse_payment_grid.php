@@ -122,8 +122,8 @@ $this->title = 'Process for Payment Disburse';
     <div class="clearfix"></div>
     <?php if (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) { ?>
         <div class="col-md-12" >
-            <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn btn-primary bank', 'name' => 'vsp']); ?>
-            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'vsp-file']); ?>
+            <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn-login btn btn-primary bank', 'name' => 'vsp']); ?>
+            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn-login btn btn-primary sub', 'name' => 'vsp-file']); ?>
         </div>
     <?php } ?>
 
