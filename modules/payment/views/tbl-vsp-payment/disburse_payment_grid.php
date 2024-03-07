@@ -21,7 +21,13 @@ $this->title = 'Process for Payment Disburse';
     <div class="grid-button-wrap" >
         <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
         <?= Html::activeHiddenInput($model, 'union_code'); ?>
-        <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+         <?php if (is_array($model->mcc_plant_code)) { ?>
+            <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
+                <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+        <?php } ?>
         <?php if (is_array($model->bmc_code)) { ?>
             <?php foreach ($model->bmc_code as $bmc_code) { ?>
                 <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
@@ -116,8 +122,8 @@ $this->title = 'Process for Payment Disburse';
     <div class="clearfix"></div>
     <?php if (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) { ?>
         <div class="col-md-12" >
-            <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn btn-primary bank', 'name' => 'vsp']); ?>
-            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'vsp-file']); ?>
+            <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn-login btn btn-primary bank', 'name' => 'vsp']); ?>
+            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn-login btn btn-primary sub', 'name' => 'vsp-file']); ?>
         </div>
     <?php } ?>
 

@@ -439,8 +439,6 @@ class GeneralFunctions extends Component {
                 ->where('(CAST(trim(SUBSTRING(local_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
                 ->one();
 
-
-
         $code1 = (int) $val['local_code'] + 1;
 
         $value = $orgCode . '-' . $code1;
@@ -2416,6 +2414,7 @@ class GeneralFunctions extends Component {
             }
         }
     }
+
     public function asciiToTextConvert($asciiValue) {
         $asciiValueArray = explode(',', $asciiValue);
         $string = '';
@@ -2424,6 +2423,7 @@ class GeneralFunctions extends Component {
         }
         return $string;
     }
+
     public function textToAsciiConvert($text) {
         $string = '';
         $textArray = str_split($text);
@@ -2432,7 +2432,7 @@ class GeneralFunctions extends Component {
         }
         return substr($string, 0, -2);
     }
-    
+
     function generateActivityStatus($model, $attribute, $dataOriginalTitle = '', $hours = '-24', $colorClass = 'green-text') {
         $dateTime = date("Y-m-d H:i:s", strtotime("$hours hours"));
         if ($model->$attribute >= $dateTime) {
@@ -2442,4 +2442,30 @@ class GeneralFunctions extends Component {
         }
     }
 
+    function getPaymentHeader($model) {
+        $data = [];
+        if (is_array($model->mcc_plant_code)) {
+            $model->plant_code = empty($model->plant_code) ? $model->mccPlantCode->plant_code : $model->plant_code;
+            $detail = $model->plantCode;
+            if (!empty($detail)) {
+                $data['code'] = $detail->ref_code;
+                $data['name'] = $detail->name;
+            }
+        } else {
+            if (is_array($model->bmc_code)) {
+                $detail = $model->mccPlantCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->name;
+                }
+            } else {
+                $detail = $model->bmcCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->bmc_name;
+                }
+            }
+        }
+        return $data;
+    }
 }
