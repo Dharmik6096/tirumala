@@ -10,7 +10,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $this->title = Yii::t('app', 'Member Payment Process : Step 2');
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
 $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
-$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
+$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
         $fromDate . ' to ' . $toDate;
 $message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 ?>
@@ -59,8 +59,10 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                         'checkboxOptions' => function($model) {
                             return ['value' => $model['dcs_code']];
                         }],
-                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                        ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function($model) {
+                            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                        }],
+                        ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                         }],
                         ['attribute' => 'dcs_code', 'value' => function($model) {

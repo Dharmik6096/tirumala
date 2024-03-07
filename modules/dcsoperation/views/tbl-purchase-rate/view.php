@@ -65,8 +65,8 @@ $this->title = Yii::$app->label->title('view', 'Purchase Rates');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'shift_applicability',
-                                'value' => isset($model->shiftApplicability) ? $model->shiftApplicability->shift : '',
+                                'attribute' => 'rate_gen_method_code',
+                                'value' => isset($model->rateMethod) ? $model->rateMethod->method : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
@@ -79,9 +79,8 @@ $this->title = Yii::$app->label->title('view', 'Purchase Rates');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'rate_gen_method_code',
-                                'value' => isset($model->rateMethod) ? $model->rateMethod->method : '',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'attribute' => 'ts_rate',
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
                                 'attribute' => 'is_active',
@@ -95,12 +94,8 @@ $this->title = Yii::$app->label->title('view', 'Purchase Rates');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'ts_rate',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                            [
                                 'attribute' => 'description',
-                                'valueColOptions' => ['style' => 'width:30%'],
+                                'valueColOptions' => ['style' => 'width:80%'],
                             ],
                         ],
                     ],

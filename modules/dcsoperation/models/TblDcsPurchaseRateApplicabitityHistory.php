@@ -50,7 +50,7 @@ class TblDcsPurchaseRateApplicabitityHistory extends \yii\db\ActiveRecord {
             [['operation_type'], 'safe'],
             [['rate_app_code'], 'safe'],
             [['dcs_code'], 'safe'],
-            [['purchase_rate_code'], 'safe'],
+            [['purchase_rate_code', 'shift_applicability'], 'safe'],
             [['union_code', 'applicable_for', 'applicable_code','rate_type','rate_gen_method_code','download_date_time','is_download','history_created_by'], 'safe'],
         ];
     }

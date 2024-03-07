@@ -41,16 +41,17 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
-                [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate', 'rate_type', 'rate_value', 'kg_fat_rate', 'kg_snf_rate'], 'safe'],
-                [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
-                [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
-                [['rate_value'], 'number', 'min' => 1],
-                [['rate_value'], 'required', 'when' => function ($model) {
+            [['wef_date', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
+            [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate', 'rate_type', 'rate_value', 'kg_fat_rate', 'kg_snf_rate'], 'safe'],
+            [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
+            [['shift_applicability'], 'default', 'value' => 3],
+            [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
+            [['rate_value'], 'number', 'min' => 1],
+            [['rate_value'], 'required', 'when' => function ($model) {
                     return $model->rate_type == '1' || $model->rate_type == '2';
                 }, 'whenClient' => "function (attribute, value) { 
-              return $('#tbldcspurchaserate-rate_type').val() == '1' || $('#tbldcspurchaserate-rate_type').val() == '2'; 
-          }"],
+                    return $('#tbldcspurchaserate-rate_type').val() == '1' || $('#tbldcspurchaserate-rate_type').val() == '2'; 
+                }"],
         ];
     }
 
@@ -184,7 +185,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
 
     public function getRateChartList($union_code) {
         $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
-        return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
+        return ArrayHelper::map($data, 'purchase_rate_code', function ($data) {
                     return !empty($data->description) ? $data->purchase_rate_code . ' (' . $data->description . ')' : $data->purchase_rate_code;
                 });
     }
@@ -196,5 +197,4 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
     public function getPurchaseRateCode() {
         return $this->hasOne(TblPurchaseRate::className(), ['dcs_purchase_rate_code' => 'purchase_rate_code']);
     }
-
 }

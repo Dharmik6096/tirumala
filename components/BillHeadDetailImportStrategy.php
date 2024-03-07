@@ -10,6 +10,7 @@ namespace app\components;
 use ruskid\csvimporter\ARImportStrategy;
 use Yii;
 use app\modules\vsp\models\TblBillHeadInstallment;
+use yii\base\UserException;
 
 class BillHeadDetailImportStrategy extends ARImportStrategy {
 
@@ -63,6 +64,7 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
 
                     $modelList = [];
                     $model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($model);
+
                     if (empty($model->getErrors()) && $model->validate()) {
                         $modelList[] = $model;
                         $model->is_active = 1;

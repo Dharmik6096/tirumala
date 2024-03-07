@@ -37,11 +37,6 @@ $this->title = Yii::t('app', 'Purchase Rates') . ' (' . Yii::t('app', 'BMC') . '
                         ],
                         'shiftId.shift',
                         [
-                            'attribute' => 'shift_applicability',
-                            'format' => 'html',
-                            'value' => Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift'),
-                        ],
-                        [
                             'attribute' => 'rate_gen_method_code',
                             'value' => Yii::$app->general->getforeignkey($model->rateMethod, 'method'),
                         ],

@@ -35,7 +35,6 @@ $attribute = [
             return Yii::$app->controls->view_date($model->wef_date);
         }],
         ['attribute' => 'shift_id', 'value' => 'shiftId.shift',],
-        ['attribute' => 'shift_applicability', 'value' => 'shiftApplicability.shift',],
         ['attribute' => 'rate_gen_method_code', 'value' => 'rateMethod.method',],
         ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
     'ts_rate',

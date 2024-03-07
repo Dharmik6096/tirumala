@@ -37,10 +37,6 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftId, 'shift');
         },],
-        ['attribute' => 'shift_applicability',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
-        },],
         ['attribute' => 'rate_gen_method_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->rateMethod, 'method');
