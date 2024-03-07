@@ -64,12 +64,6 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'complain-status' => function ($url, $model) {
-            return ($model->complain_assignment_datetime >= date("Y-m-d H:i:s", strtotime('-24 hours'))) ?
-                    GhostHtml::a('<i class="fa fa-circle green-text" style="color: #07a309 !important;"></i>', '', ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Feedback Activity']) :
-                    GhostHtml::a('', '', ['class' => 'hidden-button mr15'
-            ]);
-        },
         'view' => TRUE,
         'edit' => function ($url, $model) {
             $url = Url::to(['tbl-complain/update', 'id' => $model->complain_code]);
