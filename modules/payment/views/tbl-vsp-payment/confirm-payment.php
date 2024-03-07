@@ -44,7 +44,13 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 ?>   
                 <?= Html::activeHiddenInput($searchModel, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($searchModel, 'union_code'); ?>
-                <?= Html::activeHiddenInput($searchModel, 'mcc_plant_code'); ?>
+                 <?php if (is_array($searchModel->mcc_plant_code)) { ?>
+                    <?php foreach ($searchModel->mcc_plant_code as $mcc_plant_code) { ?>
+                        <?= Html::activeHiddenInput($searchModel, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+                    <?php } ?>
+                <?php } else { ?>
+                    <?= Html::activeHiddenInput($searchModel, 'mcc_plant_code'); ?>
+                <?php } ?>
                 <?php if (is_array($searchModel->bmc_code)) { ?>
                     <?php foreach ($searchModel->bmc_code as $bmc_code) { ?>
                         <?= Html::activeHiddenInput($searchModel, 'bmc_code[]', ['value' => $bmc_code]); ?>
