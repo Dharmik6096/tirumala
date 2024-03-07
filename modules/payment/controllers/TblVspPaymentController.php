@@ -180,13 +180,13 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $this->getVspSpData($model);
                 }
             }
-            return $this->redirect(['payment-adjust', 'TblVspPayment' => ['multiple_bmc' => $multiple_bmc, 'mcc_plant_code' => $model->mcc_plant_code, 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'union_code' => $model->union_code]]);
+            return $this->redirect(['payment-adjust', 'TblVspPayment' => ['multiple_bmc' => $multiple_bmc, 'mcc_plant_code' => $model->mcc_plant_code, 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $bmc_array, 'customer_type' => $model->customer_type, 'union_code' => $model->union_code]]);
         }
     }
 
     public function actionPaymentAdjust() {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
-        $model = new TblVspPayment();
+        $model = new TblVspPayment();      
         $model->load(Yii::$app->request->get());
         if (Yii::$app->request->post()) {
             $bmc_array = [];
@@ -502,7 +502,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                 ->bindValue(':customer_type', $model->customer_type)
                 ->execute();
         /* delete recovery data */
-        return Yii::$app->ClientPaymentConfig->processPayment('vsp_payment', $data);
+        return  Yii::$app->ClientPaymentConfig->processPayment('vsp_payment', $data);
 
     }
 
