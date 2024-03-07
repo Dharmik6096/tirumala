@@ -82,7 +82,7 @@ $this->title = Yii::t('app', 'Product Sale Delete');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary submit', 'id' => 'delete', 'value' => 'delete', 'name' => 'delete']);
+                echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn-login btn btn-primary submit', 'id' => 'delete', 'value' => 'delete', 'name' => 'delete']);
             }
             ?>
             <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
