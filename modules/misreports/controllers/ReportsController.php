@@ -50,7 +50,7 @@ class ReportsController extends \app\controllers\ChildController {
                     if ($k == 'from_date') {
                         $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
                     }
-                    if (!is_array($v)) {
+                    if (!is_array($v) && !empty($v)) {
                         $export_file_name = str_replace($k, $v, $export_file_name);
                     }
                 }
@@ -1196,7 +1196,7 @@ class ReportsController extends \app\controllers\ChildController {
                 if ($k == 'from_date') {
                     $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
                 }
-                if (!is_array($v)) {
+                if (!is_array($v) && !empty($v)) {
                     $export_file_name = str_replace($k, $v, $export_file_name);
                 }
             }
