@@ -5396,8 +5396,8 @@ tr.highlightRow {
 .pull-left {
     float: left;
 }
-.panel-body.hide-grid-export {
-    overflow-x: visible;
+.overflow_visible {
+    overflow-x: visible !important;
 }
 .table-responsive > .table > thead > tr > th.custom_grid_header {
     position: sticky;

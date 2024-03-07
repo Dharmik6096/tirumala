@@ -16,7 +16,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
         <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" ><i class="far fa-file-excel"></i></button> 
         <span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
-    <div class="panel-body hide-grid-export">
+    <div class="panel-body hide-grid-export overflow_visible">
         <div id="plant-list" class="grid-content">
             <div id="plant-list">
                 <div id="w12" class="grid-view hide-resize" >
