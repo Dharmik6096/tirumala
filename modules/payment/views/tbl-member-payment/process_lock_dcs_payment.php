@@ -60,7 +60,7 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                         <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
                     <?php } ?>
                 <?php } else { ?>
-                    <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+                    <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
                 <?php } ?>
                 <?php if (is_array($model->bmc_code)) { ?>
                     <?php foreach ($model->bmc_code as $bmc_code) { ?>

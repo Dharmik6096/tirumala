@@ -2436,15 +2436,24 @@ class GeneralFunctions extends Component {
         $data = [];
         if (is_array($model->mcc_plant_code)) {
             $model->plant_code = empty($model->plant_code) ? $model->mccPlantCode->plant_code : $model->plant_code;
-            $data['code'] =  Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
-            $data['name'] = Yii::$app->general->getforeignkey($model->plantCode, 'name');
+            $detail = $model->plantCode;
+            if (!empty($detail)) {
+                $data['code'] = $detail->ref_code;
+                $data['name'] = $detail->name;
+            }
         } else {
             if (is_array($model->bmc_code)) {
-                $data['code'] = Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
-                $data['name'] = Yii::$app->general->getforeignkey($model->mccPlantCode, 'mcc_plant_name');
+                $detail = $model->mccPlantCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->mcc_plant_name;
+                }
             } else {
-                $data['code'] = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
-                $data['name'] = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                $detail = $model->bmcCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->bmc_name;
+                }
             }
         }
         return $data;

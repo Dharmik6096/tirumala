@@ -9,6 +9,7 @@ use kartik\grid\GridView;
 $this->title = 'Process for Payment Disburse';
 $action = Url::to(['bank-payment']);
 $bmc_info = '';
+$code =$name='';
 if (!empty($searchModel)) {
     $data = Yii::$app->general->getPaymentHeader($searchModel);
     if (!empty($data)) {
