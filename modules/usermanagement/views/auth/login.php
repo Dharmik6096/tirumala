@@ -29,7 +29,7 @@ if (Yii::$app->session->hasFlash('success')) {
     <div class="container-fluid">
         <a class="navbar-brand" href="javascript:void(0)">
             <img
-                src="<?= $this->theme->getUrl('/assets/images/nav_logo.png') ?>" alt="AMCS Logo"
+                src="<?= $this->theme->getUrl('/assets/images/logo.png') ?>" alt="AMCS Logo"
                 class="logo img-responsive" /> 
         </a>
     </div>
