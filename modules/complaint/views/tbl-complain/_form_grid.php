@@ -1,15 +1,16 @@
 <?php
 
-use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
-use app\modules\complaint\models\TblComplainActivity;
 ?>
 
 <?php
 
 $attribute = [
+        ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
+            return Yii::$app->general->generateActivityStatus($model, 'complain_assignment_datetime', 'Complain Activity');
+        }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
         ['attribute' => 'complain_code', 'visible' => true, 'filter' => true],
         ['attribute' => 'union_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -63,12 +64,6 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'complain-status' => function ($url, $model) {
-            return ($model->complain_assignment_datetime >= date("Y-m-d H:i:s", strtotime('-24 hours'))) ?
-                    GhostHtml::a('<i class="fa fa-circle green-text" style="color: #07a309 !important;"></i>', '', ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Feedback Activity']) :
-                    GhostHtml::a('', '', ['class' => 'hidden-button mr15'
-            ]);
-        },
         'view' => TRUE,
         'edit' => function ($url, $model) {
             $url = Url::to(['tbl-complain/update', 'id' => $model->complain_code]);

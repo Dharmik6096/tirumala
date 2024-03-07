@@ -193,7 +193,7 @@ echo GhostMenu::widget([
                         //                        ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
                         ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
                         ['label' => 'Inspection Detail', 'url' => ['/tankermovement/tbl-bmc-dispatch-inspection/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-inspection')],
-                        ['label' => Yii::t('app', 'BMC Milk Dispatch'), 'url' => ['/tankermovement/tbl-bmc-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-milk-dispatch')],
+                        ['label' => Yii::t('app', 'Milk Dispatch'), 'url' => ['/tankermovement/tbl-bmc-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-milk-dispatch')],
                         ['label' => 'Sample Bottle Testing', 'url' => ['/tankermovement/tbl-sample-bottle-testing/index'], 'active' => ($cntrl == 'tbl-sample-bottle-testing')],
                         ['label' => 'Milk Receipt', 'url' => ['/tankermovement/tbl-milk-vehicle-entry/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry')],
                         ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
@@ -560,13 +560,13 @@ echo GhostMenu::widget([
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="reportsNewDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Reports - New <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-menu-end' aria-labelledby='reportsNewDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [[
-                    'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Report Request<b class="caret"></b></a>',
-                    'items' => [
-                        ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
-                        ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
-                        ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
-                    ],
+            'options' => ['class' => 'dropdown-submenu'],
+            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Report Request<b class="caret"></b></a>',
+            'items' => [
+                ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
+                ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
+                ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
+            ],
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
@@ -814,7 +814,7 @@ echo GhostMenu::widget([
                                     ]
                                 ],
                                 ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
-                                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
+                                ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
                         [
@@ -858,9 +858,9 @@ echo GhostMenu::widget([
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Tracking') . '<b class="caret"></b></a>',
                             'items' => [
-                                    ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
-                                    ['label' => Yii::t('app', 'BIPL Data'), 'url' => ['/misreports/reports/bipl-data']],
-                                    ['label' => Yii::t('app', 'BIPL Data Admin'), 'url' => ['/misreports/reports/bipl-data-admin']],
+                                ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
+                                ['label' => Yii::t('app', 'BIPL Data'), 'url' => ['/misreports/reports/bipl-data']],
+                                ['label' => Yii::t('app', 'BIPL Data Admin'), 'url' => ['/misreports/reports/bipl-data-admin']],
                             ]
                         ],
                         ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
@@ -1009,6 +1009,15 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Complain Type'), 'url' => ['/complaint/tbl-complain-type/index'], 'active' => ($cntrl == 'tbl-complain-type')],
                         ['label' => Yii::t('app', 'Complain'), 'url' => ['/complaint/tbl-complain/index'], 'active' => ($cntrl == 'tbl-complain')],
                     ]
+                ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Feedback') . '<b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'Feedback Item'), 'url' => ['/feedback/tbl-eipl-app-feedback-item/index']],
+                        ['label' => Yii::t('app', 'Feedback Master'), 'url' => ['/feedback/tbl-eipl-app-feedback-master/index']],
+                    //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
+                    ],
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],

@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 
 $society_name = !empty($dataProvider->getModels()) ?
         ' of ' . Yii::$app->general->getforeignkey($searchModel->memberCode, 'member_name') . ' (' .
-        $searchModel->member_code . ')' : '';
+       Yii::$app->general->getforeignkey($searchModel->memberCode, 'ref_code') . ')' : '';
 ?>
 <div class="modal modal-default fade" id="MemberInstallmentModal" role="dialog">
     <div class="modal-dialog">

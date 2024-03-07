@@ -186,6 +186,9 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
             if (!empty($this->dcs_code)) {
+                $dcsModel = new TblDcs();
+                $dcsCode = $dcsModel->validDcs($this->dcs_code, $this->bmc_code);
+                $this->dcs_code = $dcsCode;
                 $this->customer_code = $this->dcs_code;
                 $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
                 if ($bmc_code != $this->bmc_code) {
@@ -228,17 +231,15 @@ class TblBillHeadDetail extends \app\models\ChildModel {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
     }
 
-    public function getInstallments()
-    {
+    public function getInstallments() {
         return $this->hasMany(TblBillHeadInstallment::class, ['bill_head_detail_code' => 'bill_head_detail_code']);
     }
 
-    public function hasInstallmentsToPreventDeletion()
-    {
+    public function hasInstallmentsToPreventDeletion() {
         return !$this->getInstallments()
-            ->andWhere(['not', ['installment_date' => null]])
-            ->andWhere(['!=', 'installment_status', 0])
-            ->exists();
+                        ->andWhere(['not', ['installment_date' => null]])
+                        ->andWhere(['!=', 'installment_status', 0])
+                        ->exists();
     }
 
 }

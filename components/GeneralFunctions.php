@@ -53,6 +53,7 @@ use Exception;
 use app\modules\general\models\TblProcessApproval;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 class GeneralFunctions extends Component {
 
@@ -2413,6 +2414,31 @@ class GeneralFunctions extends Component {
             } else {
                 $model->addError($attribute, Yii::t('app/validation', $attribute . ' can only contain exactly 10 or 12 digits.'));
             }
+        }
+    }
+    public function asciiToTextConvert($asciiValue) {
+        $asciiValueArray = explode(',', $asciiValue);
+        $string = '';
+        foreach ($asciiValueArray as $char) {
+            $string = $string . chr($char);
+        }
+        return $string;
+    }
+    public function textToAsciiConvert($text) {
+        $string = '';
+        $textArray = str_split($text);
+        foreach ($textArray as $char) {
+            $string = $string . ord($char) . ', ';
+        }
+        return substr($string, 0, -2);
+    }
+    
+    function generateActivityStatus($model, $attribute, $dataOriginalTitle = '', $hours = '-24', $colorClass = 'green-text') {
+        $dateTime = date("Y-m-d H:i:s", strtotime("$hours hours"));
+        if ($model->$attribute >= $dateTime) {
+            return '<i class="fa fa-circle ' . $colorClass . '" data-toggle="tooltip" data-placement="top" title="' . $dataOriginalTitle . '"></i>';
+        } else {
+            return '';
         }
     }
 

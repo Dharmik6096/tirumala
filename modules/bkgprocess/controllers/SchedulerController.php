@@ -46,7 +46,7 @@ use app\components\WebApi;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign' , 'process-attendance-data'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -279,6 +279,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'milk_collection_dpu_data') {
                 $flag = 'import-shagun-dpu-data';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
+            } else if ($row->file_type == 'milk_collection_other_data') {
+                $flag = 'import-other-dpu-data';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
             } else if ($row->file_type == 'milk_collection_qlty') {
                 $flag = 'milk-collection-qlty-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
@@ -359,7 +362,8 @@ class SchedulerController extends ChildController {
                     $model->uuid = $uuid;
                     $model->union_code = $row->union_code;
                     $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
-                    if ($row->file_type == 'milk_collection_dpu_data') {
+                    $FileType = ['milk_collection_dpu_data', 'milk_collection_other_data'];
+                    if (in_array($row->file_type, $FileType)) {
                         $model->SetDataForShagunDPU();
                     } else {
                         $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
@@ -367,7 +371,7 @@ class SchedulerController extends ChildController {
                     }
                     $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                     $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
-                    if ($model->save()) {  
+                    if ($model->save()) {
                         $success++;
                     } else {
                         $data['response_msg'] = 'File Record error.';
@@ -1298,7 +1302,7 @@ class SchedulerController extends ChildController {
             }
         }
     }
-    
+
     public function actionProcessAttendanceData() {
         $currentTime = time();
         $startTimestamp = strtotime(date('Y-m-d') . ' 03:00');

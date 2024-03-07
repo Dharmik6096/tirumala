@@ -107,6 +107,8 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'Society'),
+            'dcs_code_ex' => Yii::t('app', 'Code Ex.'),
+            'ref_code' => Yii::t('app', 'Society Code'),
             'member_code' => Yii::t('app', 'Member'),
             'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),

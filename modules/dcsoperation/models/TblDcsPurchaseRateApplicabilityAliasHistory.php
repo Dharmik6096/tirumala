@@ -45,7 +45,7 @@ class TblDcsPurchaseRateApplicabilityAliasHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['rate_app_alias_code', 'is_active', 'purchase_rate_code', 'shift_code', 'rate_type', 'rate_gen_method_code', 'is_download'], 'integer'],
-            [['created_at', 'updated_at', 'wef_date', 'download_date_time', 'history_created_at', 'status'], 'safe'],
+            [['created_at', 'updated_at', 'wef_date', 'download_date_time', 'history_created_at', 'status', 'shift_applicability'], 'safe'],
             [['is_download'], 'required'],
             [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
             [['dcs_code'], 'string', 'max' => 12],

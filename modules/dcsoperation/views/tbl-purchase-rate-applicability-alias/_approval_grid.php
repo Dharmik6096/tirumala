@@ -35,9 +35,13 @@ $visible = !empty($searchModel->status) ? FALSE : TRUE;
         ['attribute' => 'wef_date', 'value' => function($model) {
                 return Yii::$app->controls->view_date($model->wef_date);
             }, 'filter' => false],
-        ['attribute' => 'shift_code', 'value' => function($model) {
+        ['attribute' => 'shift_code', 'label' => Yii::t('app', 'Shift'), 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => false],
+        ['attribute' => 'shift_applicability',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        },],
         ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
             }, 'filter' => false],

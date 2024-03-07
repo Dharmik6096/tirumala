@@ -13,14 +13,14 @@ use yii\db\Query;
  */
 class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
 
-    public $code_ex;
+    public $code_ex, $ref_code, $bmc_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name', 'reference_code', 'code_ex'], 'safe'],
+                [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name', 'reference_code', 'code_ex', 'shift_applicability', 'ref_code', 'bmc_code'], 'safe'],
                 [['is_active'], 'boolean'],
 //            [['shift_code'], 'integer'],
         ];
@@ -53,8 +53,8 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         ]);
 
 //        $query->joinWith(['dcsCode', 'shiftCode']);
-        $query->joinWith(['shiftCode']);
-        $query->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_purchase_rate_applicability.dcs_code');
+        $query->joinWith(['shiftCode', 'shiftApplicability sapp', 'dcsCode.bmcCode as bmc']);
+        $query->join('LEFT JOIN', 'tbl_dcs as dcs', 'dcs.dcs_code = tbl_purchase_rate_applicability.dcs_code');
         //$query->joinWith(['rateType','dcsCode','rateMethod']);
 
         $this->load($params);
@@ -89,9 +89,13 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
-                ->andFilterWhere(['like', 'tbl_purchase_rate_applicability.dcs_code', $this->dcs_code])->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
+                ->andFilterWhere(['like', 'tbl_purchase_rate_applicability.dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
+                ->andFilterWhere(['like', 'sapp.shift', $this->shift_applicability])
                 ->andFilterWhere(['like', 'is_download', $this->is_download])
-                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->code_ex]);
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->code_ex])
+                ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'bmc.ref_code', $this->bmc_code]);
         //->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])
         //->andFilterWhere(['like', 'union_code', $this->union_code]);
         //echo $query->createCommand()->rawSql;exit;
