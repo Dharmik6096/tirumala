@@ -2446,7 +2446,7 @@ class GeneralFunctions extends Component {
                 $detail = $model->mccPlantCode;
                 if (!empty($detail)) {
                     $data['code'] = $detail->ref_code;
-                    $data['name'] = $detail->mcc_plant_name;
+                    $data['name'] = $detail->name;
                 }
             } else {
                 $detail = $model->bmcCode;
