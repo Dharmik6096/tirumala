@@ -5098,8 +5098,8 @@ tr.highlightRow {
     margin-bottom: -12px;
     color: rgb(0, 163, 222);
 }
-.panel-body.hide-grid-export {
-    overflow-x: visible;
+.overflow_visible {
+    overflow-x: visible !important;
 }
 .table-responsive > .table > thead > tr > th.custom_grid_header {
     position: sticky;
