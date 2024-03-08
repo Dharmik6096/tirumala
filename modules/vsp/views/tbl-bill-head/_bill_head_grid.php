@@ -18,22 +18,21 @@ $form = ActiveForm::begin([
                 <?php
                 if (!empty($head) && !empty($dcs)) {
                     $cnt = 0;
-                    echo "<thead>";
-                    echo "<th></th><th></th>";
-                    foreach ($head as $h) {
-                        echo "<th class='width100px'><input type = 'checkbox' class = 'selectAllHead'  id='{$h->bill_head_code}'></th>";
-                    }
+                    echo "<thead class='sticky_head'>";
                     foreach ($dcs as $key => $attr) {
                         if ($key == 0) {
                             echo " <tr>";
-                            echo "<th><input type = 'checkbox' class = 'selectAllRowsCheckbox'></th>";
-                            echo "<th class='width100px'>" . Yii::t('app', 'DCS') . "</th>";
+                            echo "<th rowspan='2'><input type = 'checkbox' class = 'selectAllRowsCheckbox'></th>";
+                            echo "<th rowspan='2' class='width100px'>" . Yii::t('app', 'DCS') . "</th>";
                             foreach ($head as $s) {
                                 echo "<th class='width1 00px'>" . $s->bill_head_name . "</th>";
                             }
 //                            echo "<th class='width100px'>" . Yii::t('app', 'Action') . "</th>";
                             echo "</tr>";
                         }
+                    }
+                    foreach ($head as $h) {
+                        echo "<th class='width100px'><input type = 'checkbox' class = 'selectAllHead'  id='{$h->bill_head_code}'></th>";
                     }
                     echo "</thead>";
                     echo "<tbody>";
@@ -104,43 +103,43 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
-    function saveDataBillHead(setKey) {
-        let action_codes = [];
-        $('.bill_head_row_'+setKey+' .billHeadCheckbox').each(function () {
-            if ($(this).is(':checked')) {
-              action_codes.push($(this).val());
-            }
-        });
-        if(action_codes.length == 0){
-            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please Check At Least One Check Box.</span></div></div>');
-
-        }
-        let union = $('.bill_head_row_'+setKey+' #union').val();
-        let bmc = $('.bill_head_row_'+setKey+' #bmc').val();
-        let dcs = $('.bill_head_row_'+setKey+' #dcs').val();
-        let type = $('.bill_head_row_'+setKey+' #type').val();
-        let from_date = $('.bill_head_row_'+setKey+' #from_date').val();
-        let to_date = $('.bill_head_row_'+setKey+' #to_date').val();
-        let head_for = $('.bill_head_row_'+setKey+' #head_for').val();
-        
-        if(action_codes.length > 0){
-                $.ajax({
-                    type: 'post',
-                    url:'" . Url::to(['save-applicability']) . "',
-                    data: {'union_code':union, 'bill_head_codes':action_codes,'bmc_code':bmc,'applicable_code':dcs,'applicable_for':type,'wef_date':from_date,'from_date':from_date,'to_date':to_date,'bill_head_for':head_for},
-                    success: function(data) {                                        
-                        var obj = $.parseJSON(data);
-                        if (obj.status == 'success')
-                        {
-                            location.reload();
-    }
-                    },
-                    error:function(data){
-
-                    }
-                });
-            }
-    }
+//    function saveDataBillHead(setKey) {
+//        let action_codes = [];
+//        $('.bill_head_row_'+setKey+' .billHeadCheckbox').each(function () {
+//            if ($(this).is(':checked')) {
+//              action_codes.push($(this).val());
+//            }
+//        });
+//        if(action_codes.length == 0){
+//            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please Check At Least One Check Box.</span></div></div>');
+//
+//        }
+//        let union = $('.bill_head_row_'+setKey+' #union').val();
+//        let bmc = $('.bill_head_row_'+setKey+' #bmc').val();
+//        let dcs = $('.bill_head_row_'+setKey+' #dcs').val();
+//        let type = $('.bill_head_row_'+setKey+' #type').val();
+//        let from_date = $('.bill_head_row_'+setKey+' #from_date').val();
+//        let to_date = $('.bill_head_row_'+setKey+' #to_date').val();
+//        let head_for = $('.bill_head_row_'+setKey+' #head_for').val();
+//        
+//        if(action_codes.length > 0){
+//                $.ajax({
+//                    type: 'post',
+//                    url:'" . Url::to(['save-applicability']) . "',
+//                    data: {'union_code':union, 'bill_head_codes':action_codes,'bmc_code':bmc,'applicable_code':dcs,'applicable_for':type,'wef_date':from_date,'from_date':from_date,'to_date':to_date,'bill_head_for':head_for},
+//                    success: function(data) {                                        
+//                        var obj = $.parseJSON(data);
+//                        if (obj.status == 'success')
+//                        {
+//                            location.reload();
+//    }
+//                    },
+//                    error:function(data){
+//
+//                    }
+//                });
+//            }
+//    }
     customerType();
     $(document).on('change', '#tblbillhead-bmc_code', function(e) { 
         e.preventDefault();
@@ -296,21 +295,32 @@ $script = "
         var setKey = $(this).closest('tr').attr('data_key');
         var headKey = $(this).attr('head_key');
         var allChecked = true;
+        var allColumnChecked = true;
+        $('.selectAllRowsCheckbox').prop('checked', false);
         $('.billHeadCheckbox-'+setKey).each(function() {
             if (!$(this).is(':checked')) {
                 allChecked = false;
-                //return false; 
+            }
+        });
+        
+        $('.billhead-'+headKey).each(function() {
+            if (!$(this).is(':checked')) {
+                allColumnChecked = false;
             }
         });
      
         if (allChecked) {
             $('#selectAllCheckbox-'+setKey).prop('checked', true);
-         //   $('.selectAllRowsCheckbox').prop('checked', true);
-//            $('#'+headKey).prop('checked', true);
         } else {
             $('#selectAllCheckbox-'+setKey).prop('checked', false);
-            $('.selectAllRowsCheckbox').prop('checked', false);
+        }
+        if (allColumnChecked) {
+            $('#'+headKey).prop('checked', true);
+        } else {
             $('#'+headKey).prop('checked', false);
+        }
+        if(allChecked && allColumnChecked){
+            $('.selectAllRowsCheckbox').prop('checked', true);
         }
       });  
       

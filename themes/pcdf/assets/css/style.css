@@ -5100,3 +5100,7 @@ tr.highlightRow {
 /*rect.highcharts-point {
     fill: rgb(0, 163, 222);
 }*/
+.sticky_head {
+    position: sticky;
+    top: 0;
+}
