@@ -248,30 +248,32 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         }
                     }
                     if ($model->oldAttributes['department'] != $model->department && $model->oldAttributes['allow_app_login'] == $model->allow_app_login && $model->oldAttributes['mobile_no'] == $model->mobile_no) {
-                        $contactModel = new TblContactDetails();
-                        $contactModel->mobile_no = $model->mobile_no;
-                        $contactModelData = $contactModel->getContactDetailsRecord();
-                        if (!empty($contactModelData)) {
-                            $contactModel = $contactModelData;
-                        }
-                        $contactModel->department = $model->department;
-                        $master[] = $contactModel;
+                        if ($model->allow_app_login == 1) {
+                            $contactModel = new TblContactDetails();
+                            $contactModel->mobile_no = $model->mobile_no;
+                            $contactModelData = $contactModel->getContactDetailsRecord();
+                            if (!empty($contactModelData)) {
+                                $contactModel = $contactModelData;
+                            }
+                            $contactModel->department = $model->department;
+                            $master[] = $contactModel;
 
-                        $appModel = new TblEiplAppLogin();
-                        $appModel->mobile_no = $model->oldAttributes['mobile_no'];
-                        $appModelData = $appModel->getAppLogin($id);
-                        if (!empty($appModelData)) {
-                            $appModelData->department = $model->department;
-                            $master[] = $appModelData;
-                        }
+                            $appModel = new TblEiplAppLogin();
+                            $appModel->mobile_no = $model->oldAttributes['mobile_no'];
+                            $appModelData = $appModel->getAppLogin($id);
+                            if (!empty($appModelData)) {
+                                $appModelData->department = $model->department;
+                                $master[] = $appModelData;
+                            }
 
-                        $tempModel = new TblEiplAppLoginTemp();
-                        $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
-                        $tempModelData = $tempModel->getAppTempLogin($id);
-                        if (!empty($tempModelData)) {
-                            foreach ($tempModelData as $temp) {
-                                $temp->department = $model->department;
-                                $delete[] = $temp;
+                            $tempModel = new TblEiplAppLoginTemp();
+                            $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
+                            $tempModelData = $tempModel->getAppTempLogin($id);
+                            if (!empty($tempModelData)) {
+                                foreach ($tempModelData as $temp) {
+                                    $temp->department = $model->department;
+                                    $delete[] = $temp;
+                                }
                             }
                         }
                     }
