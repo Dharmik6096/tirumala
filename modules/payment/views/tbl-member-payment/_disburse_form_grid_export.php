@@ -10,7 +10,14 @@ use kartik\grid\GridView;
 $action = Url::to(['disburse-member-payment']);
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
 $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
-$message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+//$message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+$code = $name = '';
+$data = Yii::$app->general->getPaymentHeader($model);
+if (!empty($data)) {
+    $code = $data['code'];
+    $name = $data['name'];
+}
+$message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' . $name . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) ? TRUE : FALSE;
 ?>
 <div class="" >
@@ -24,8 +31,21 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
         <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
         <?= Html::activeHiddenInput($model, 'union_code'); ?>
         <?= Html::activeHiddenInput($model, 'plant_code'); ?>
-        <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
-        <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+        <?php if (is_array($model->mcc_plant_code)) { ?>
+            <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
+                <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+        <?php } ?>
+        <?php if (is_array($model->bmc_code)) { ?>
+            <?php foreach ($model->bmc_code as $bmc_code) { ?>
+                <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+        <?php } ?>
+
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
     </div>
     <div class="col-sm-2">
@@ -50,26 +70,28 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
 //            'checkboxOptions' => function($model) {
 //                return ['value' => $model['dcs_code']];
 //            }],
-            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function ($model) {
+                return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+            }],
+        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
             }],
-            ['attribute' => 'dcs_code', 'value' => function($model) {
+        ['attribute' => 'dcs_code', 'value' => function ($model) {
                 return !empty($model->dcs_name) ? $model->dcs_name : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }],
-            ['attribute' => 'member_count'],
-            ['attribute' => 'kg_fat'],
-            ['attribute' => 'kg_snf'],
-            ['attribute' => 'qty', 'pageSummary' => true],
-            ['attribute' => 'total_amount', 'pageSummary' => true],
-            ['attribute' => 'total_addition', 'pageSummary' => true],
-            ['attribute' => 'total_deduction', 'pageSummary' => true],
-            ['attribute' => 'previous_hold', 'pageSummary' => true],
-            ['attribute' => 'previous_due', 'pageSummary' => true],
-            ['attribute' => 'net_payable', 'pageSummary' => true,],
-            ['attribute' => 'hold_amount', 'pageSummary' => true,],
-            ['attribute' => 'additional_pay', 'pageSummary' => true,],
-            ['attribute' => 'final_amount', 'pageSummary' => true,],
+        ['attribute' => 'member_count'],
+        ['attribute' => 'kg_fat'],
+        ['attribute' => 'kg_snf'],
+        ['attribute' => 'qty', 'pageSummary' => true],
+        ['attribute' => 'total_amount', 'pageSummary' => true],
+        ['attribute' => 'total_addition', 'pageSummary' => true],
+        ['attribute' => 'total_deduction', 'pageSummary' => true],
+        ['attribute' => 'previous_hold', 'pageSummary' => true],
+        ['attribute' => 'previous_due', 'pageSummary' => true],
+        ['attribute' => 'net_payable', 'pageSummary' => true,],
+        ['attribute' => 'hold_amount', 'pageSummary' => true,],
+        ['attribute' => 'additional_pay', 'pageSummary' => true,],
+        ['attribute' => 'final_amount', 'pageSummary' => true,],
     ];
 
     $grid_option = [
@@ -207,3 +229,4 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
     });
     ";
 $this->registerJs($script, View::POS_END, 'data-export-script');
+
