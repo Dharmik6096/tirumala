@@ -86,7 +86,7 @@ $form = ActiveForm::begin([
                 }
                 ?>
             </table>
-            <div class="panel-footer">
+            <div class="panel-footer sticky_head">
                 <?php
                 if (!empty($head) && !empty($dcs)) {
                     echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary', 'id' => 'saveApplicability']);

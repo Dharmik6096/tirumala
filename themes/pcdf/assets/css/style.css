@@ -5103,4 +5103,5 @@ tr.highlightRow {
 .sticky_head {
     position: sticky;
     top: 0;
+    bottom: 0;
 }
