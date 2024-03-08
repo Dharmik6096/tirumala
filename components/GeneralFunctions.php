@@ -810,11 +810,11 @@ class GeneralFunctions extends Component {
     }
 
     public function encryptData($string) {
-        return \Yii::$app->encrypter->encrypt($string);
+        return !empty($string) ? \Yii::$app->encrypter->encrypt($string) : $string;
     }
 
     public function decryptData($string) {
-        $decryptedData = \Yii::$app->encrypter->decrypt($string);
+        $decryptedData = !empty($string) ? \Yii::$app->encrypter->decrypt($string) : $string;
         if ($decryptedData) {
             return $decryptedData;
         }

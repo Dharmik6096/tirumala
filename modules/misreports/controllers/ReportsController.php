@@ -1604,6 +1604,63 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberDailyCollectionCommon() {
+        $this->report = 'MemberPassbookCommon';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberDailyCollectionCommon';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'MemberConsolidatedCommon';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionDcsCollDateShiftSummaryCommon() {
+        $this->report = 'DcsCollDateShiftSummaryCommon';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'DcsCollDateWiseSummaryCommon';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'DcsCollectionConsolidateCommon';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionBmcCollectionShiftReportCommon() {
+        $this->report = 'BmcCollectionShiftReportCommon';
+        return $this->actionIndex();
+    }
+    
+    public function actionBmcCollDateShiftWiseSummaryCommon() {
+        $this->report = 'BmcCollDateShiftWiseSummaryCommon';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BmcCollDateWiseSummaryCommon';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'BmcCollConsolidatedCommon';
+            }
+        }
+        return $this->actionIndex();
+    }
+    
+    public function actionSocietyWiseCdaCommon() {
+        $this->report = 'SocietyWiseCdaCommon';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SocietyWiseCdaDateWiseCommon';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'SocietyWiseCdaConsolidatedCommon';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3335,6 +3392,109 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'SAP WQ File',
                 'export_file_name' => 'PLANT_CODE_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
+            ],
+            'MemberDailyCollectionCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_day_wise_report_common',
+                'scenario' => 'MemberDailyCollectionCommon',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
+            ],
+            'MemberPassbookCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_passbook_common',
+                'scenario' => 'MemberDailyCollectionCommon',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
+            ],
+            'MemberConsolidatedCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_summary_common',
+                'scenario' => 'MemberDailyCollectionCommon',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
+            ],
+            'DcsCollDateShiftSummaryCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_society_wise_milk_collection_date_shift_wise_common',
+                'scenario' => 'DcsCollDateShiftSummaryCommon',
+                'title' => '102 - Society Collection Date And Shift Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
+            ],
+            'DcsCollDateWiseSummaryCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_society_wise_milk_collection_date_wise_common',
+                'scenario' => 'DcsCollDateShiftSummaryCommon',
+                'title' => '102 - Society Collection Date Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
+            ],
+            'DcsCollectionConsolidateCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_society_wise_milk_collection_consolidated_common',
+                'scenario' => 'DcsCollDateShiftSummaryCommon',
+                'title' => '102 - Society Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
+            ],
+            'BmcCollectionShiftReportCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,route_type_trans:static:route_type_trans',
+                'sp_name' => 'sp_mis_bmc_collection_shift_report_common',
+                'scenario' => 'BmcCollectionShiftReportCommon',
+                'title' => '201 - BMC Collection Shift Report',
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'BmcCollDateShiftWiseSummaryCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_bmc_wise_society_collection_date_shift_wise_common',
+                'scenario' => 'BmcCollDateShiftWiseSummaryCommon',
+                'title' => '202 - BMC Collection Date And Shift Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'BmcCollDateWiseSummaryCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_bmc_wise_soceity_collection_date_wise_common',
+                'scenario' => 'BmcCollDateShiftWiseSummaryCommon',
+                'title' => '202 - BMC Collection Date Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'BmcCollConsolidatedCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_bmc_collection_consolidated_common',
+                'scenario' => 'BmcCollDateShiftWiseSummaryCommon',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'SocietyWiseCdaCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_date_shift_common',
+                'scenario' => 'SocietyWiseCdaCommon',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'SocietyWiseCdaDateWiseCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_date_common',
+                'scenario' => 'SocietyWiseCdaCommon',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'SocietyWiseCdaConsolidatedCommon' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_consolidated_common',
+                'scenario' => 'SocietyWiseCdaCommon',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
             ],
         ];
         return $label[$l];
