@@ -813,13 +813,11 @@ class GeneralFunctions extends Component {
     }
 
     public function encryptData($string) {
-        return \Yii::$app->encrypter->encrypt($string);
+        return !empty($string) ? \Yii::$app->encrypter->encrypt($string) : $string;
     }
 
     public function decryptData($string) {
-        if ($string == null)
-            return $string;
-        $decryptedData = \Yii::$app->encrypter->decrypt($string);
+        $decryptedData = !empty($string) ? \Yii::$app->encrypter->decrypt($string) : $string;
         if ($decryptedData) {
             return $decryptedData;
         }
@@ -2416,6 +2414,7 @@ class GeneralFunctions extends Component {
             }
         }
     }
+
     public function asciiToTextConvert($asciiValue) {
         $asciiValueArray = explode(',', $asciiValue);
         $string = '';
@@ -2424,6 +2423,7 @@ class GeneralFunctions extends Component {
         }
         return $string;
     }
+
     public function textToAsciiConvert($text) {
         $string = '';
         $textArray = str_split($text);
@@ -2432,7 +2432,7 @@ class GeneralFunctions extends Component {
         }
         return substr($string, 0, -2);
     }
-    
+
     function generateActivityStatus($model, $attribute, $dataOriginalTitle = '', $hours = '-24', $colorClass = 'green-text') {
         $dateTime = date("Y-m-d H:i:s", strtotime("$hours hours"));
         if ($model->$attribute >= $dateTime) {
