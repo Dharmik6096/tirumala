@@ -270,7 +270,7 @@ $tot_amt = array_sum(array_map(function ($array) {
                                                             pending_shortage = pending_shortage - shortage;  
                                                         }
                                                 }).get();
-                                                pending_shortage = parseFloat($("#pending_shortage_amount").val()) + parseFloat(pending_shortage);
+                                                pending_shortage = parseFloat(parseFloat($("#pending_shortage_amount").val()) + parseFloat(pending_shortage)).toFixed(2);
                                                 if(pending_shortage < 0){
                                                     dispMessage = dispMessage+"<br>Shortage amount should not be gretter than total shortage amount.";
                                                 }
@@ -378,7 +378,7 @@ function shortageRecovery(){
         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Shortage amount should not be gretter than total shortage amount.</span>');
         return false;
     }
-    $('#total-shortage-amount').html('Pending Shortage Amount :: '+pending_shortage);
+    $('#total-shortage-amount').html('Pending Shortage Amount :: '+Math.abs(pending_shortage).toFixed(2));
 }
 function SumAmountold()
 {
