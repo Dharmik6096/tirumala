@@ -84,7 +84,7 @@ $form = ActiveForm::begin([
 <div class="col-sm-12 margin-top-10 form-group" >
     <?php
     if (!empty($dataProvider->getModels()) && empty($msg)) {
-        echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary', 'id' => 'delete']);
+        echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn-login btn btn-primary', 'id' => 'delete']);
     }
     ?>
     <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
