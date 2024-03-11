@@ -179,6 +179,7 @@ class ComposerStaticInitdc4c39c4278cd57d48e7089f218864ff
             'Psr\\Container\\' => 14,
             'PhpParser\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
+            'PhpAmqpLib\\' => 11,
             'ParagonIE\\ConstantTime\\' => 23,
         ),
         'M' => 
@@ -667,6 +668,10 @@ class ComposerStaticInitdc4c39c4278cd57d48e7089f218864ff
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
+        'PhpAmqpLib\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-amqplib/php-amqplib/PhpAmqpLib',
         ),
         'ParagonIE\\ConstantTime\\' => 
         array (

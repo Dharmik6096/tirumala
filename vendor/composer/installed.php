@@ -3,7 +3,7 @@
         'name' => 'yiisoft/yii2-app-basic',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '6568249051726cf0890bfadd1ddd48faabe04f9f',
+        'reference' => '86f250700daf6d8da4528d0d1e1cdd169ed65011',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -867,6 +867,15 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'php-amqplib/php-amqplib' => array(
+            'pretty_version' => 'v2.10.1',
+            'version' => '2.10.1.0',
+            'reference' => '6e2b2501e021e994fb64429e5a78118f83b5c200',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../php-amqplib/php-amqplib',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'phpoffice/phpspreadsheet' => array(
             'pretty_version' => '1.29.0',
             'version' => '1.29.0.0',
@@ -1483,6 +1492,12 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'videlalvaro/php-amqplib' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => 'v2.10.1',
+            ),
+        ),
         'wbraganca/yii2-dynamicform' => array(
             'pretty_version' => 'v2.0.3',
             'version' => '2.0.3.0',
@@ -1576,7 +1591,7 @@
         'yiisoft/yii2-app-basic' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '6568249051726cf0890bfadd1ddd48faabe04f9f',
+            'reference' => '86f250700daf6d8da4528d0d1e1cdd169ed65011',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
