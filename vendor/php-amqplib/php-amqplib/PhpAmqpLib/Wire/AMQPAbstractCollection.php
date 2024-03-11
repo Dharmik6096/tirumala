@@ -425,26 +425,31 @@ abstract class AMQPAbstractCollection implements \Iterator
         return $symbols[$symbol];
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->data);
     }
 
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return key($this->data);
     }
 
+    #[\ReturnTypeWillChange]
     public function next()
     {
         next($this->data);
     }
 
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->data);
     }
 
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return key($this->data) !== null;
