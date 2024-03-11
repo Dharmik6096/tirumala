@@ -106,7 +106,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'filename' => Yii::$app->basePath . $filepath . trim($fileName),
                 'fgetcsvOptions' => [
                     'delimiter' => ';'
-                ]
+                ],
+                'startFromLine' => 0
             ]));
             $compare_len = TRUE;
             if (isset($data['validate_length']) && ($data['validate_length'] == false)) {
