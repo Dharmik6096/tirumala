@@ -392,25 +392,25 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                     }
                 }
             }
-            $shiftflagArray = $for == 'Member' ? ['data_lock', 'member_lock'] : ['data_lock', 'bmc_lock'];
+            /*   $shiftflagArray = $for == 'Member' ? ['data_lock', 'member_lock'] : ['data_lock', 'bmc_lock'];
 
-            $payment_model = new TblMccShiftLock();
-            $fromDate = Yii::$app->formatter->asDate($searchData['from_date'], 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($searchData['from_shift']);
-            $toDate = Yii::$app->formatter->asDate($searchData['to_date'], 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($searchData['to_shift']);
-            $lockData = $payment_model->find()
-                    ->where(['mcc_plant_code' => $searchData['mcc_plant_code']])
-                    ->andWhere("date_time_of_collection between '$fromDate' and '$toDate' ")
-                    ->one();
-            if (!empty($lockData)) {
-                foreach ($shiftflagArray as $shiftFlag) {
-                    if ($lockData->$shiftFlag == 1) {
-                        $date = Yii::$app->formatter->asDate($lockData->date_time_of_collection, 'php:d-m-Y');
-                        $shift = $lockData->shift_code == '1' ? 'Morning' : 'Evening';
-                        $response['msg'] = 'Shift Is Already Lock of Date <b>' . $date . '</b> And Shift <b>' . $shift . '</b>';
-                        $response['status'] = 'error';
-                    }
-                }
-            }
+              $payment_model = new TblMccShiftLock();
+              $fromDate = Yii::$app->formatter->asDate($searchData['from_date'], 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($searchData['from_shift']);
+              $toDate = Yii::$app->formatter->asDate($searchData['to_date'], 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($searchData['to_shift']);
+              $lockData = $payment_model->find()
+              ->where(['mcc_plant_code' => $searchData['mcc_plant_code']])
+              ->andWhere("date_time_of_collection between '$fromDate' and '$toDate' ")
+              ->one();
+              if (!empty($lockData)) {
+              foreach ($shiftflagArray as $shiftFlag) {
+              if ($lockData->$shiftFlag == 1) {
+              $date = Yii::$app->formatter->asDate($lockData->date_time_of_collection, 'php:d-m-Y');
+              $shift = $lockData->shift_code == '1' ? 'Morning' : 'Evening';
+              $response['msg'] = 'Shift Is Already Lock of Date <b>' . $date . '</b> And Shift <b>' . $shift . '</b>';
+              $response['status'] = 'error';
+              }
+              }
+              } */
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
