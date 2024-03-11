@@ -30,9 +30,7 @@ $attribute = [
     ['attribute' => 'eipl_app_feedback_item_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->eiplAppFeedbackItemCode, 'feedback_item_name');
         }],
-    ['attribute' => 'feedback_message', 'value' => function($model) {
-            return nl2br(Yii::$app->general->asciiToTextConvert($model->feedback_message));
-        }],
+    ['attribute' => 'feedback_message'],
     [
         'attribute' => 'feedback_message_datetime', 'enableSorting' => false,
         'filterType' => GridView::FILTER_DATE,
