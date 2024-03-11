@@ -4,6 +4,8 @@ namespace app\modules\usermanagement\components;
 
 use Yii;
 use app\modules\usermanagement\models\rbacDB\Route;
+use app\modules\usermanagement\models\rbacDB\Role;
+use app\modules\usermanagement\models\rbacDB\Permission;
 use yii\rbac\DbManager;
 
 class AuthHelper extends \webvimark\modules\UserManagement\components\AuthHelper {
@@ -27,6 +29,23 @@ class AuthHelper extends \webvimark\modules\UserManagement\components\AuthHelper
             }
         }
         return $result;
+    }
+
+    public static function updatePermissions($identity) {
+        $session = Yii::$app->session;
+
+        // Clear data first in case we want to refresh permissions
+        $session->remove(self::SESSION_PREFIX_ROLES);
+        $session->remove(self::SESSION_PREFIX_PERMISSIONS);
+        $session->remove(self::SESSION_PREFIX_ROUTES);
+
+        // Set permissions last mod time
+        $session->set(self::SESSION_PREFIX_LAST_UPDATE, filemtime(self::getPermissionsLastModFile()));
+
+        // Save roles, permissions and routes in session
+        $session->set(self::SESSION_PREFIX_ROLES, array_keys(Role::getUserRoles($identity->id)));
+        $session->set(self::SESSION_PREFIX_PERMISSIONS, array_keys(Permission::getUserPermissions($identity->id)));
+        $session->set(self::SESSION_PREFIX_ROUTES, Route::getUserRoutes($identity->id));
     }
 
 }
