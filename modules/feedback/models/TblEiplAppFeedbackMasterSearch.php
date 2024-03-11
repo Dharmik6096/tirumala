@@ -81,7 +81,7 @@ class TblEiplAppFeedbackMasterSearch extends TblEiplAppFeedbackMaster {
             $query->andFilterWhere(['CAST(tbl_eipl_app_feedback_master.feedback_message_datetime as date)' => date('Y-m-d', strtotime($this->feedback_message_datetime))]);
 
         if(!empty($this->feedback_message)) {
-            $query->andFilterWhere(['like', 'tbl_eipl_app_feedback_master.feedback_message', Yii::$app->general->textToAsciiConvert($this->feedback_message)]);
+        $query->andFilterWhere(['like', 'tbl_eipl_app_feedback_master.feedback_message', $this->feedback_message]);
         }
         $query->andFilterWhere(['like', 'user.name', $this->user_code]);
         $query->andFilterWhere(['like', 'tbl_eipl_app_feedback_item.feedback_item_name', $this->eipl_app_feedback_item_code]);
