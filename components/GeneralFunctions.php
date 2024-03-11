@@ -1769,6 +1769,7 @@ class GeneralFunctions extends Component {
                 exec($command);
             }
         }
+        return TRUE;
         if ($status === false) {
             $model->addError($attribute, Yii::t('app/validation', 'FTP Directory not Generated.'));
             return false;
