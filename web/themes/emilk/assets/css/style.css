@@ -224,7 +224,7 @@ ul{
     background-color: #eee;
 }
 .bg-danger {
-    background-color: rgb(0, 163, 222);
+    background-color: rgb(0, 163, 222) !important;
 }
 .bg-info{
     background-color: #00A3DE !important;
@@ -5421,4 +5421,7 @@ tr.highlightRow {
 .table-responsive > .table > thead > tr > th.custom_grid_header {
     position: sticky;
     top: 0;
+}
+.mt_-30 {
+    margin-top: -30px;
 }

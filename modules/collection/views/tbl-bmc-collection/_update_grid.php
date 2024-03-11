@@ -155,7 +155,7 @@ $form = ActiveForm::begin([
             ['attribute' => 'antibiotic',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
+                return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, 'mt_-30', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
             }, 'visible' => $antibiotic
         ],
     ];
