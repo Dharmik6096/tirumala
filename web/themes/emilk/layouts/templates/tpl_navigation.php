@@ -655,6 +655,7 @@ echo GhostMenu::widget([
                                 ['label' => '220 -' . Yii::t('app', 'Route Wise Reconciliation'), 'url' => ['/misreports/reports/route-wise-reconciliation']],
                                 ['label' => '221 -' . Yii::t('app', 'RMRD Data Export'), 'url' => ['/misreports/reports/rmrd-data-export']],
                                 ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
+                                ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
                             ]
                         ],
                         [
