@@ -253,7 +253,7 @@ $config = [
         'welfarescheme' => ['class' => 'app\modules\welfarescheme\welfarescheme',],
         'tms' => ['class' => 'app\modules\tms\Tms',],
         'document' => ['class' => 'app\modules\document\Document',],
-        'feedback' => ['class' => 'app\modules\feedback\feedback',],
+        'feedback' => ['class' => 'app\modules\feedback\Feedback',],
     ],
     'params' => require(__DIR__ . '/params.php'),
 ];

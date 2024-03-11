@@ -68,7 +68,6 @@ $this->title = Yii::$app->label->title('view', 'Feedback Master');
                         ],
                             [
                             'attribute' => 'feedback_message',
-                            'value' => nl2br(Yii::$app->general->asciiToTextConvert($model->feedback_message)),
                             'valueColOptions' => ['style' => 'width:30%', 'class' => 'text-wrap'],
                         ],
                     ],

@@ -26,7 +26,7 @@ use yii\web\View;
                         <p class="feedback_message">
                             <?php 
                             $urlRegex = '/(https?|http):\/\/[^\s]+/';
-                            $message = nl2br(Yii::$app->general->asciiToTextConvert($value->feedback_message));
+                            $message = $value->feedback_message;
                             if (preg_match($urlRegex, $message, $matches)) {
                                 $url = $matches[0];
                                 $message = '<a href="'.$url.'" target="_blank">'.$message.'</a>';
@@ -54,7 +54,7 @@ use yii\web\View;
                         <p class="feedback_message">
                             <?php 
                             $urlRegex = '/(https?|http):\/\/[^\s]+/';
-                            $message = nl2br(Yii::$app->general->asciiToTextConvert($value->feedback_message));
+                            $message = $value->feedback_message;
                             if (preg_match($urlRegex, $message, $matches)) {
                                 $url = $matches[0];
                                 $message = '<a href="'.$url.'" target="_blank">'.$message.'</a>';
