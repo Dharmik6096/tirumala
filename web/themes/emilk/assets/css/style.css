@@ -5425,3 +5425,7 @@ tr.highlightRow {
 .mt_-30 {
     margin-top: -30px;
 }
+.card.border-default {
+    display: grid;
+}
+
