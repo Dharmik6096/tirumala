@@ -108,7 +108,7 @@ $form = ActiveForm::begin([
 <!--<div class="panel-footer" >
 <?php
 if (!empty($dataProvider->getModels())) {
-    echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary', 'id' => 'update']);
+    echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn-login btn btn-primary', 'id' => 'update']);
 }
 ?>
 <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
@@ -149,7 +149,7 @@ if (!empty($dataProvider->getModels())) {
                                                                 }
                                                  }'),
                 ],
-                'options' => ['class' => 'btn btn-default btn-raised',
+                'options' => ['class' => 'btn-login btn btn-default btn-raised',
                     'type' => 'submit'],
             ]);
             AjaxSubmitButton::end();
