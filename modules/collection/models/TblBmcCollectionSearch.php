@@ -241,34 +241,27 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             'query' => $query,
             'pagination' => FALSE,
         ]);
-        
         if (empty($this->from_date)) {
             $this->from_date = date('d-m-Y');
+            $this->from_shift = 1;
         }
         if (empty($this->to_date)) {
             $this->to_date = date('d-m-Y');
+            $this->to_shift = 2;
         }
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
             $from_date .= ' ' . $from_shift;
-        } else {
-            $from_date = date('Y-m-d');
-            $from_shift = \Yii::$app->general->getshift(1);
-            $from_date .= ' ' . $from_shift;
+            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
         }
-        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $to_shift = \Yii::$app->general->getshift($this->to_shift);
             $to_date .= ' ' . $to_shift;
-        } else {
-            $to_date = date('Y-m-d');
-            $to_shift = \Yii::$app->general->getshift(2);
-            $to_date .= ' ' . $to_shift;
+            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
         }
-        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
 
         $query->andFilterWhere(['tbl_bmc_collection.dcs_code' => $this->dcs_code]);
         $query->andFilterWhere(['tbl_bmc_collection.customer_code' => $this->customer_code]);
@@ -297,9 +290,11 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         
         if (empty($this->from_date)) {
             $this->from_date = date('d-m-Y');
+            $this->from_shift = 1;
         }
         if (empty($this->to_date)) {
             $this->to_date = date('d-m-Y');
+            $this->to_shift = 2;
         }
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
