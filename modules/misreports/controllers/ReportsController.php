@@ -3594,7 +3594,7 @@ class ReportsController extends \app\controllers\ChildController {
 //    we want to set these values (default is A1)
         );
         array_walk_recursive($this->output, function(&$value) {
-            $value = is_numeric($value) && strlen($value) >= 10 ? '="' . $value . '"' : $value;
+            $value = is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value) ? '="' . $value . '"' : $value;
         });
         $sheet->fromArray(
                 $this->output, // The data to set
