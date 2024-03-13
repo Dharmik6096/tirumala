@@ -281,6 +281,10 @@ class CustomValidation extends Component {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
                         }, 'skipOnEmpty' => true],
                 ],
+                'TblVspPayment' => [
+                   // [['customer_type'], 'required', 'on' => ['remuneration', 'processpayment', 'paymenttypevendor','disbursesearch']],
+                    [['customer_type'], 'required', 'except' =>['unreleasepaymentsearch','unreleasePaymentUpdate']],
+                ],
             ],
             'NIFPL' => [
                 'TblDcs' => [
@@ -814,6 +818,7 @@ class CustomValidation extends Component {
                     ],
                 ],
                 'TblVehicleMaster' => [],
+                'TblVspPayment' => [],
             ],
             'KOTMALE' => [
                 'TblContactDetails' => [
@@ -975,6 +980,7 @@ class CustomValidation extends Component {
                     ],
                 ],
                 'TblVehicleMaster' => [],
+                'TblVspPayment' => [],
             ],
         ];
     }

@@ -37,6 +37,7 @@ $this->title = 'Process for Payment Disburse';
         <?php } ?>
         <?= Html::activeHiddenInput($model, 'customer_type'); ?>
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
+        <?= Html::activeHiddenInput($model, 'types_title'); ?>
     </div>
     <?php
     $billing_type = 'remuneration';
@@ -58,6 +59,9 @@ $this->title = 'Process for Payment Disburse';
             ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
             }, 'filter' => false],
+             ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                },],
             ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                 return !empty($model->customer_name) ? $model->customer_name : Yii::$app->general->getCustomer($model, $model->customer_type);
             }],

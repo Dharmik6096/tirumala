@@ -9,16 +9,20 @@ use kartik\grid\GridView;
 $this->title = 'Process for Payment Disburse';
 $action = Url::to(['bank-payment']);
 $bmc_info = '';
-$code =$name='';
+$code = $name = '';
 if (!empty($searchModel)) {
     $data = Yii::$app->general->getPaymentHeader($searchModel);
     if (!empty($data)) {
         $code = $data['code'];
         $name = $data['name'];
     }
- $bmc_info = $code . ' > ' . $name . ' > ';
-    $bmc_info .= Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .
-            (($searchModel->billing_type == 'remuneration') ? Yii::$app->controls->view_date($searchModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($searchModel->to_datetime) :
+    $bmc_info = $code . ' > ' . $name . ' > ';
+    if (empty($searchModel->customer_type) && !empty($searchModel->types_title)) {
+        $bmc_info .= $searchModel->types_title;
+    } else {
+        $bmc_info .= Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ';
+    }
+    $bmc_info .= (($searchModel->billing_type == 'remuneration') ? Yii::$app->controls->view_date($searchModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($searchModel->to_datetime) :
             Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date')));
 }
 $title = ($searchModel->billing_type == 'remuneration' ? Yii::t('app', 'Remuneration Payment Disburse : Step 2') : Yii::t('app', 'Vendor Payment Disburse : Step 2') ) . ' ' . ' (' . $bmc_info . ')';
@@ -44,7 +48,7 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 ?>   
                 <?= Html::activeHiddenInput($searchModel, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($searchModel, 'union_code'); ?>
-                 <?php if (is_array($searchModel->mcc_plant_code)) { ?>
+                <?php if (is_array($searchModel->mcc_plant_code)) { ?>
                     <?php foreach ($searchModel->mcc_plant_code as $mcc_plant_code) { ?>
                         <?= Html::activeHiddenInput($searchModel, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
                     <?php } ?>
@@ -80,6 +84,9 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                     ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
                             return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
                         }, 'filter' => false],
+                    ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function ($model) {
+                            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                        },],
                     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function ($model) {
                             return Yii::$app->general->getCustomer($model, $model->customer_type);
                         }],
@@ -149,10 +156,10 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 ?>
                 <div class="clearfix"></div>
                 <div class="col-md-12" >    
-                    <?= Html::button(Yii::t('app', 'Disburse'), ['class' => 'btn btn-primary disburse', 'name' => 'member']); ?>
+<?= Html::button(Yii::t('app', 'Disburse'), ['class' => 'btn btn-primary disburse', 'name' => 'member']); ?>
                     <?= Yii::$app->controls->custombutton('Cancel', 'payment-disburse'); ?> 
                 </div>
-                <?= $this->render('/tbl-member-payment/verify-otp', ['model' => $searchModel, 'form' => $form]) ?>
+                    <?= $this->render('/tbl-member-payment/verify-otp', ['model' => $searchModel, 'form' => $form]) ?>
                 <div class="clearfix"></div>
                 <?php ActiveForm::end(); ?>
             </div>
