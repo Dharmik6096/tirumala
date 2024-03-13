@@ -540,9 +540,10 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     }
                 }
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
-//                if ($transaction == 'customRedirect') {
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(Yii::$app->request->referrer);
 //                    return $this->redirect(['index']);
-//                }
+                }
             }
         }
 
