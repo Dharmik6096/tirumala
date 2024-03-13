@@ -1604,8 +1604,8 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
-    public function actionSapWqFile() {
-        $this->report = 'SapWqFile';
+    public function actionBmcCollectionSummary() {
+        $this->report = 'BmcCollectionSummary';
         return $this->actionIndex();
     }
 
@@ -1663,6 +1663,11 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'SocietyWiseCdaConsolidatedCommon';
             }
         }
+        return $this->actionIndex();
+    }
+    
+    public function actionSapWqFile() {
+        $this->report = 'SapWqFile';
         return $this->actionIndex();
     }
 
@@ -3506,6 +3511,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'BmcCollectionSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_summary_devmilk',
+                'scenario' => 'BmcCollectionSummary',
+                'title' => 'Bmc Collection Summary',
             ],
         ];
         return $label[$l];

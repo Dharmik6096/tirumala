@@ -7,7 +7,7 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Bulk Data LOCK/UNLOCK');
-$button = !empty($searchModel->data_status) && $searchModel->data_status == 1 ? 'LOCK' : 'UNLOCK';
+$button = !empty($searchModel->data_status) && $searchModel->data_status == 0 ? 'LOCK' : 'UNLOCK';
 $data_status = !empty($searchModel->data_status) && $searchModel->data_status == 1 ? 0 : 1;
 $check_for = !empty($searchModel->check_for) ? $searchModel->check_for : '';
 ?>
@@ -61,23 +61,26 @@ $check_for = !empty($searchModel->check_for) ? $searchModel->check_for : '';
                 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->to_date);
                 }, 'filter' => FALSE],
-            ['attribute' => 'data_lock_bmc', 'value' => function($model) {
-                    return $model->data_lock_bmc == 1 ? 'Unlock' : 'Lock';
+                  ['attribute' => ''.$check_for.'', 'value' => function ($model)use($check_for) {
+                     return $model->{$check_for} == 1 ? 'Lock' : 'Unlock';
+                },'filter' => false],
+//            ['attribute' => 'data_lock_bmc', 'value' => function ($model) {
+//                    return $model->data_lock_bmc == 1 ? 'Unlock' : 'Lock';
+//                }, 'filter' => false],
+//            ['attribute' => 'sync_lock_bmc', 'value' => function ($model) {
+//                    return $model->sync_lock_bmc == 1 ? 'Unlock' : 'Lock';
+//                }, 'filter' => false],
+            ['attribute' => 'billing_lock_bmc', 'value' => function ($model) {
+                     return $model->billing_lock_bmc == 1 ? 'Lock' : 'Unlock';
                 }, 'filter' => false],
-            ['attribute' => 'sync_lock_bmc', 'value' => function($model) {
-                    return $model->sync_lock_bmc == 1 ? 'Unlock' : 'Lock';
-                }, 'filter' => false],
-            ['attribute' => 'billing_lock_bmc', 'value' => function($model) {
-                    return $model->billing_lock_bmc == 1 ? 'Unlock' : 'Lock';
-                }, 'filter' => false],
-            ['attribute' => 'data_lock_member', 'value' => function($model) {
-                    return $model->data_lock_member == 1 ? 'Unlock' : 'Lock';
-                }, 'filter' => false],
-            ['attribute' => 'sync_lock_member', 'value' => function($model) {
-                    return $model->sync_lock_member == 1 ? 'Unlock' : 'Lock';
-                }, 'filter' => false],
-            ['attribute' => 'billing_lock_member', 'value' => function($model) {
-                    return $model->billing_lock_member == 1 ? 'Unlock' : 'Lock';
+//            ['attribute' => 'data_lock_member', 'value' => function ($model) {
+//                    return $model->data_lock_member == 1 ? 'Unlock' : 'Lock';
+//                }, 'filter' => false],
+//            ['attribute' => 'sync_lock_member', 'value' => function ($model) {
+//                    return $model->sync_lock_member == 1 ? 'Unlock' : 'Lock';
+//                }, 'filter' => false],
+            ['attribute' => 'billing_lock_member', 'value' => function ($model) {
+                     return $model->billing_lock_member == 1 ? 'Lock' : 'Unlock';
                 }, 'filter' => false],
         ];
 

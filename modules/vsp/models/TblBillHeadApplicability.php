@@ -102,7 +102,7 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
     }
 
     public function setBMCCode($attribute, $params) {
-        if (empty($this->bmc_code)) {
+        if (empty($this->bmc_code) && !is_array($this->applicable_code)) {
             $this->bmc_code = Yii::$app->general->getCustomer($this, $this->applicable_for, FALSE, TRUE);
         }
     }

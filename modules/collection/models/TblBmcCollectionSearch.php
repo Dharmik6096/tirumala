@@ -24,15 +24,15 @@ class TblBmcCollectionSearch extends TblBmcCollection {
      */
     public function rules() {
         return [
-                [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
-                [['can_no', 'no_of_can', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no', 'bmc_silos_info_code', 'route_code'], 'safe'],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-                [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code', 'converted_amount'], 'safe'],
-                [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
-                [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
-                [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
-                [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
+            [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
+            [['can_no', 'no_of_can', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no', 'bmc_silos_info_code', 'route_code'], 'safe'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
+            [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code', 'converted_amount'], 'safe'],
+            [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
+            [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
+            [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
+            [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
         ];
     }
 
@@ -241,28 +241,27 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             'query' => $query,
             'pagination' => FALSE,
         ]);
-
+        if (empty($this->from_date)) {
+            $this->from_date = date('d-m-Y');
+            $this->from_shift = 1;
+        }
+        if (empty($this->to_date)) {
+            $this->to_date = date('d-m-Y');
+            $this->to_shift = 2;
+        }
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
             $from_date .= ' ' . $from_shift;
-        } else {
-            $from_date = date('Y-m-d');
-            $from_shift = \Yii::$app->general->getshift(1);
-            $from_date .= ' ' . $from_shift;
+            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
         }
-        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $to_shift = \Yii::$app->general->getshift($this->to_shift);
             $to_date .= ' ' . $to_shift;
-        } else {
-            $to_date = date('Y-m-d');
-            $to_shift = \Yii::$app->general->getshift(2);
-            $to_date .= ' ' . $to_shift;
+            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
         }
-        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
 
         $query->andFilterWhere(['tbl_bmc_collection.dcs_code' => $this->dcs_code]);
         $query->andFilterWhere(['tbl_bmc_collection.customer_code' => $this->customer_code]);
@@ -288,7 +287,15 @@ class TblBmcCollectionSearch extends TblBmcCollection {
 
         $query->andWhere([
             'tbl_bmc_collection.bmc_code' => $this->bmc_code]);
-
+        
+        if (empty($this->from_date)) {
+            $this->from_date = date('d-m-Y');
+            $this->from_shift = 1;
+        }
+        if (empty($this->to_date)) {
+            $this->to_date = date('d-m-Y');
+            $this->to_shift = 2;
+        }
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
