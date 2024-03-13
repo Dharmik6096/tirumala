@@ -54,7 +54,7 @@ class TblDcsSearch extends TblDcs {
             'sort' => ['defaultOrder' => ['dcs_name' => SORT_ASC]],
         ]);
 
-        $query->joinWith(['stateCode', 'districtCode', 'defaultMobileNo']);
+        $query->joinWith(['stateCode', 'districtCode', 'defaultMobileNo', 'mainBankDetails']);
 
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
@@ -83,7 +83,7 @@ class TblDcsSearch extends TblDcs {
 
         $query->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->ref_code])
                 ->andFilterWhere(['like', 'tbl_dcs.address', $this->address])
-                ->andFilterWhere(['like', 'tbl_dcs.bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'tbl_bank_details.bank_account_no', $this->bank_account_no])
                 ->andFilterWhere(['like', 'tbl_dcs.contact_person', $this->contact_person])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->dcs_code_ex])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])

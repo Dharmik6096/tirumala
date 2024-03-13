@@ -1592,6 +1592,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionDcsWiseBillHeadApplicability() {
+        $this->report = 'DcsWiseBillHeadApplicability';
+        return $this->actionIndex();
+    }
+
     public function actionQualityCollectionReport() {
         $this->report = 'QualityCollectionReport';
         return $this->actionIndex();
@@ -1637,7 +1642,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BmcCollectionShiftReportCommon';
         return $this->actionIndex();
     }
-    
+
     public function actionBmcCollDateShiftWiseSummaryCommon() {
         $this->report = 'BmcCollDateShiftWiseSummaryCommon';
         if (Yii::$app->request->queryParams) {
@@ -1650,7 +1655,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionSocietyWiseCdaCommon() {
         $this->report = 'SocietyWiseCdaCommon';
         if (Yii::$app->request->queryParams) {
@@ -3375,6 +3380,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'MilkVan',
                 'report_type' => ['Time management' => Yii::t('app', 'Time management'), 'capacity utilizations' => Yii::t('app', 'capacity utilizations')],
             ],
+            'DcsWiseBillHeadApplicability' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,payment_type,from_date:string,to_date:string',
+                'sp_name' => 'mis_dcs_bill_head_applicability',
+                'scenario' => 'DcsWiseBillHeadApplicability',
+                'title' => '509 - DCS Wise Bill Head Applicability',
+            ],
             'QualityCollectionReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_quality_collection',
@@ -3641,13 +3652,13 @@ class ReportsController extends \app\controllers\ChildController {
         $savePath = '/web/sapFiles';
         Yii::$app->general->checkDirectory($dirPath . $savePath);
         $fp = fopen($dirPath . $savePath . '/' . $fileName, 'w+');
-        //Here is the file we are downloading, replace spaces with %20
+//Here is the file we are downloading, replace spaces with %20
         $ch = curl_init(str_replace(" ", "%20", $str));
         curl_setopt($ch, CURLOPT_TIMEOUT, 50);
-        // write curl response to file
+// write curl response to file
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        // get curl response
+// get curl response
         curl_exec($ch);
         curl_close($ch);
         fclose($fp);

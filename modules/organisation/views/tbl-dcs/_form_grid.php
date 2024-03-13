@@ -138,7 +138,7 @@ $attribute = [
             return $detail;
         }
     ],
-        ['label' => 'Bank Account No', 'visible' => false, 'filter' => false,
+        ['attribute' => 'bank_account_no', 'label' => 'Bank Account No',
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultBankDetail($model->dcs_code, 'society');
             isset($detail->bank_account_no) ? $detail = $detail->bank_account_no : $detail = '';

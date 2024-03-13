@@ -13,7 +13,7 @@ class ReportsModel extends Model {
     public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type, $customer_type, $vendor_code, $payment_cycle_code, $bank_type, $report_status, $member_type, $route_code;
     public $no_of_payment_cycle, $output_type, $store_location_type, $asset_code, $sap_code, $sr_no, $main_customer_type, $transporter_code, $vehicle_code, $originating_type, $report_collection_type, $type_wise_report, $route_type_trans, $product_code;
     public $org_type, $product_type, $module_type, $action_perform, $channel_code, $upload_ftp_file, $sap_file, $trip_code, $grn_no, $plant_register_type;
-    public $state_code, $region_code, $area_code, $user_code, $report_req_status, $login_user_code;
+    public $state_code, $region_code, $area_code, $user_code, $report_req_status, $login_user_code, $payment_type;
 
     function __construct() {
         
@@ -142,6 +142,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'report_type'], 'required', 'on' => ['BiplData', 'BiplDataAdmin']],
                 [['union_code', 'login_user_code', 'from_date', 'to_date'], 'required', 'on' => ['DetailsReport']],
                 [['union_code', 'state_code'], 'required', 'on' => ['RegionWiseUserAttendanceReport']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_type', 'from_date', 'to_date'], 'required', 'on' => ['DcsWiseBillHeadApplicability']],
                 [['report_type'], 'default', 'value' => 1, 'on' => 'SapWqFile'],
                 [['union_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapWqFile'],
         ];
@@ -175,6 +176,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             'channel_code' => \Yii::t('app', 'Channel'),
             'report_type' => (in_array($this->scenario, ['SaleReportFarmer', 'SaleReportVendor'])) ? \Yii::t('app', 'Lock Type') : \Yii::t('app', 'Report Type'),
             'report_req_status' => \Yii::t('app', 'Status'),
+            'payment_type' => \Yii::t('app', 'Bill Head For'),
         ];
     }
 

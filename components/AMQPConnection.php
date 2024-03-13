@@ -9,10 +9,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class AMQPConnection extends Component {
 
-    private $url = '192.168.3.109';
-    private $port = 5672;
-    private $username = 'device';
-    private $password = 'device';
     private $connection = '';
     private $channel = '';
     public $queueName = '';
@@ -20,9 +16,12 @@ class AMQPConnection extends Component {
 
     public function ConnectServer() {
         try {
-            $this->connection = new AMQPStreamConnection($this->url, $this->port, $this->username, $this->password);
-            $this->channel = $this->connection->channel();
-            return TRUE;
+            $params = Yii::$app->params['amqp_detail'];
+            if (!empty($params)) {
+                $this->connection = new AMQPStreamConnection($params['url'], $params['port'], $params['username'], $params['password']);
+                $this->channel = $this->connection->channel();
+                return TRUE;
+            }
         } catch (\Throwable $ex) {
             return FALSE;
         }

@@ -1,7 +1,7 @@
 <?php
 $this->title = Yii::$app->label->title('list', 'Member Payment Restrict');
 $this->params['menu'][] = Yii::$app->controls->add('Member Payment Restrict');
-$this->params['menu'][] = Yii::$app->controls->custombutton('Bulk Delete Member Payment Restrict', 'delete-bulk-payment-restrict', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton(Yii::t('app', 'Bulk Delete Member Payment Restrict'), 'delete-bulk-payment-restrict', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 $this->params['menu'][] = Yii::$app->controls->import('member-payment-restrict', $this);
 ?>
 <div class="panel panel-default panel-grid panel-main">
