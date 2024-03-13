@@ -89,8 +89,8 @@ $form = ActiveForm::begin([
             <div class="panel-footer sticky_head">
                 <?php
                 if (!empty($head) && !empty($dcs)) {
-                    echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary', 'id' => 'saveApplicability']);
-                    echo Yii::$app->controls->custombutton('Cancel', 'cs-wise-bill-head');
+                    echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary btn-login mr-2', 'id' => 'saveApplicability']);
+                    echo Yii::$app->controls->custombutton('Cancel', 'cs-wise-bill-head', '', ' btn-login');
                 }
                 ?>
             </div>
@@ -160,7 +160,7 @@ $script = "
 //            $('.customertype').hide();
 //            $('#tblbillhead-customer_type').trigger('select2:select');
 //            $('#tblbillhead-customer_type').trigger('change');
-            $('#tblbillhead-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#tblbillhead-customer_type').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
                 $('#tblbillhead-customer_type').val('DCS');
                 $('.customertype').hide();
                 $('#tblbillhead-customer_type').trigger('select2:select');
@@ -178,7 +178,7 @@ $script = "
 //            } else {
 //                $('#tblbillhead-customer_type').parent('div').parent().show();               
 //            }
-            $('#tblbillhead-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#tblbillhead-customer_type').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
                 
                 length = $('#tblbillhead-customer_type option[value!=\'\']').length;
                 if(length == 0) {
