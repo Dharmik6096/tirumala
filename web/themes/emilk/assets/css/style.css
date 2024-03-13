@@ -5425,7 +5425,7 @@ tr.highlightRow {
 .mt_-30 {
     margin-top: -30px;
 }
-.card.border-default {
+div#w12 > .card.border-default {
     display: inline;
 }
 .sticky_head {
