@@ -32,6 +32,21 @@ $attribute = [
     ['attribute' => 'in_desc', 'filter' => false],
     ['attribute' => 'out_desc', 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],
+    ['attribute' => 'duration', 'value' => function($model) {
+        return Yii::$app->controls->view_time($model->duration);
+    }, 'filter' => false],
+    ['attribute' => 'api_status',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('send_status', $searchModel, 'api_status'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->api_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->api_status] : '';
+        },],
+    ['attribute' => 'pick_datetime', 'value' => function($model) {
+        return Yii::$app->controls->view_datetime($model->pick_datetime);
+    }, 'filter' => false, 'visible' => false],
+    ['attribute' => 'response_datetime', 'value' => function($model) {
+        return Yii::$app->controls->view_datetime($model->response_datetime);
+    }, 'filter' => false, 'visible' => false],
+    ['attribute' => 'response_msg', 'filter' => false],
 
 ];
 $grid_option = [
