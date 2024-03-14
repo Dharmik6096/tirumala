@@ -88,8 +88,9 @@ class ReportsModel extends Model {
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => ['FarmerIncentive', 'VlccTransactionDataReport']],
             [['p_from_date', 'p_to_date', 'p_bmc_code'], 'required', 'on' => ['MccDayBookDispatchHub']],
             [['p_union_code', 'state_code', 'region_code', 'area_code', 'p_bmc_code'], 'required', 'on' => ['VlccTransactionDataReportRegion']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['MilkReceiptForBMC', 'ProductSaleInvoiceForCustomer']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['MilkReceiptForBMC', 'ProductSaleInvoiceForCustomer', 'BmcCollectionSummary']],
             [['p_union_code', 'p_plant_code', 'p_mcc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ProductSaleSummary']],
+            [['p_union_code', 'p_plant_code'], 'required', 'on' => ['VendorMilkBillSbd']],
         ];
     }
 

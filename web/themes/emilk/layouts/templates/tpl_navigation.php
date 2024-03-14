@@ -656,6 +656,7 @@ echo GhostMenu::widget([
                                 ['label' => '221 -' . Yii::t('app', 'RMRD Data Export'), 'url' => ['/misreports/reports/rmrd-data-export']],
                                 ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
                                 ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
+                                ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
                             ]
                         ],
                         [
@@ -764,6 +765,8 @@ echo GhostMenu::widget([
                         ['label' => '628-' . Yii::t('app', 'Purchase Summary'), 'url' => ['/misreports/reports/purchase-summary']],
                         ['label' => '629-' . Yii::t('app', 'Purchase summary format 2'), 'url' => ['/misreports/reports/purchase-summary-format']],
                         ['label' => '630-' . Yii::t('app', 'Payment summary'), 'url' => ['/misreports/reports/payment-summary']],
+                        ['label' => '631-' . Yii::t('app', 'Vendor Payment Format 2'), 'url' => ['/misreports/reports/vendor-payment-format']],
+                        ['label' => '632-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-sbd']],
                     ]
                 ],
                 [
