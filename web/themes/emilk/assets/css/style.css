@@ -212,7 +212,7 @@ ul{
     padding-right: 5px;
 }
 .text-danger{
-    color: rgba(122, 35, 28, 1) !important;
+    color: rgba(0, 163, 222, 1) !important;
 }
 .text-info{
     color: #607188;
@@ -3935,7 +3935,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .fc-header-toolbar .fc-left h2 {
-    color: rgba(122, 35, 28,0.8) !important;
+    color: rgba(0, 163, 222, 0.8) !important;
 }
 
 .fc-button {
@@ -5426,7 +5426,7 @@ tr.highlightRow {
     margin-top: -30px;
 }
 div#w12 > .card.border-default {
-    display: inline;
+    display: flex;
 }
 .sticky_head {
     position: sticky;
