@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\tms\models\TblFormType;
 use app\modules\usermanagement\models\User;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_task_activity".
@@ -49,17 +50,17 @@ class TblTaskActivity extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['status'], 'default', 'value' => 'OPEN'],
-                [['task_code', 'form_type_code', 'originating_type'], 'safe'],
-                [['task_datetime', 'activity_datetime', 'created_at', 'updated_at'], 'safe'],
-                [['form_data'], 'safe'],
-                [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-                [['route_code'], 'string', 'max' => 12],
-                [['module_type', 'status'], 'string', 'max' => 10],
-                [['module_code'], 'string', 'max' => 20],
-                [['contact_person'], 'string', 'max' => 100],
-                [['contact_person_mobile_no', 'remarks'], 'string', 'max' => 255],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['status'], 'default', 'value' => 'OPEN'],
+            [['task_code', 'form_type_code', 'originating_type'], 'safe'],
+            [['task_datetime', 'activity_datetime', 'created_at', 'updated_at'], 'safe'],
+            [['form_data', 'longitude', 'latitude', 'address', 'task_type', 'task_type_code'], 'safe'],
+            [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+            [['route_code'], 'string', 'max' => 12],
+            [['module_type', 'status'], 'string', 'max' => 10],
+            [['module_code'], 'string', 'max' => 20],
+            [['contact_person'], 'string', 'max' => 100],
+            [['contact_person_mobile_no', 'remarks'], 'string', 'max' => 255],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
         ];
     }
 
@@ -89,6 +90,11 @@ class TblTaskActivity extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'longitude' => Yii::t('app', 'Longitude'),
+            'latitude' => Yii::t('app', 'Latitude'),
+            'address' => Yii::t('app', 'Address'),
+            'task_type' => Yii::t('app', 'Task Type'),
+            'task_type_code' => Yii::t('app', 'Task Type Code'),
         ];
     }
 
@@ -102,6 +108,10 @@ class TblTaskActivity extends \app\models\ChildModel {
 
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'module_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'module_code']);
     }
 
     public function getRouteCode() {
