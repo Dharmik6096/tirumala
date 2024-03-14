@@ -61,14 +61,16 @@ class TblShiftTimeAndroidSearch extends TblShiftTimeAndroid {
         $query->andFilterWhere([
             'tbl_shift_time_android.date_shift_enable' => $this->date_shift_enable,
         ]);
-
+        
         $query->joinWith(['bmcCode', 'mccCode']);
+        
         // grid filtering conditions
         $query->andFilterWhere(['or', ['like', 'tbl_bmc.bmc_name', $this->org_name], ['like', 'tbl_mcc_plant.name', $this->org_name]])
                 ->andFilterWhere(['or', ['like', 'tbl_bmc.bmc_code', $this->org_code], ['like', 'tbl_mcc_plant.plant_code', $this->org_code]])
                 ->andFilterWhere(['like', 'collection_type', $this->collection_type])
-                ->andFilterWhere(['org_code' => $this->f_mcc_code])
-                ->andFilterWhere(['org_code' => $this->f_bmc_code])
+                ->andFilterWhere(['tbl_bmc.plant_code' => $this->f_plant_code])
+                ->andFilterWhere(['tbl_bmc.bmc_code' => $this->f_bmc_code])
+                ->andFilterWhere(['tbl_bmc.mcc_plant_code' => $this->f_mcc_code])
                 ->andFilterWhere(['like', 'grace_hr', $this->grace_hr]);
         return $dataProvider;
     }

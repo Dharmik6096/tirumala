@@ -318,23 +318,28 @@ class TblBillHeadController extends \app\controllers\ChildController {
 
     public function actionSaveApplicability() {
         $data = Yii::$app->request->post();
-        $saveModel = [];
+        $count = 0;
         if (!empty($data['bill_head_codes'])) {
-            foreach ($data['bill_head_codes'] as $key => $code) {
-                $model = new TblBillHeadApplicability();
-                $model->setAttributes($data);
-                $model->bill_head_code = $code;
-                $model->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
-                $model->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
-                $model->wef_date = $model->from_date;
-                $saveModel[] = $model;
+            foreach ($data['bill_head_codes'] as $key => $codes) {
+                foreach ($codes as $code) {
+                    $model = new TblBillHeadApplicability();
+                    $model->setAttributes($data);
+                    $model->bill_head_code = $code;
+                    $model->applicable_code = $key;
+                    $model->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
+                    $model->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                    $model->wef_date = $model->from_date;
+                    if ($model->validate()) {
+                        $model->save();
+                        $count++;
+                    } else {
+                        return Json::encode(['status' => 'error']);
+                    }
+                }
             }
-            $transaction = $this->generalModel->saveTransaction($saveModel, ['Applicability', 'create']);
-            if ($transaction == 'customRedirect') {
-                return Json::encode(['status' => 'success']);
-            } else {
-                return Json::encode(['status' => 'error']);
-            }
+            $msg = 'Bill Head Applicability ' . $count;
+            Yii::$app->display->message(true, $msg, 'create');
+            return $this->redirect(['dcs-wise-bill-head']);
         }
     }
 

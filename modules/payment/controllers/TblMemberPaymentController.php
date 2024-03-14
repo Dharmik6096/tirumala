@@ -621,10 +621,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
                     $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
                     $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
-
-                    $save_model[] = $historyModel;
-                    $save_model[] = $summaryData;
                 }
+                $save_model[] = $historyModel;
+                $save_model[] = $summaryData;
             }
 
             $successMsg = 'Payment of ' . $cnt . ' member adjusted succesfully';
@@ -702,17 +701,36 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
     private function getMemberDcsSpData($model, $reGenerate = 0, $stop_payment_only = 0) {
         // use for generate or regenerate data for Member Payment
         $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-        $data = [];
-        $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
-        $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
-        $data['union_code'] = $model->union_code;
-        $data['bmc_code'] = $model->bmc_code;
-        $data['payment_cycle_code'] = $model->payment_cycle_code;
-        $data['process_stop_payment'] = $stop_payment_only;
-        $data['user_code'] = $user;
+//        $data = [];
+//        $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
+//        $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
+//        $data['union_code'] = $model->union_code;
+//        $data['bmc_code'] = $model->bmc_code;
+//        $data['payment_cycle_code'] = $model->payment_cycle_code;
+//        $data['process_stop_payment'] = $stop_payment_only;
+//        $data['user_code'] = $user;
+//
+//        return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
+        $bmc_array = [];
 
-        return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
+        if (is_array($model->bmc_code)) {
+            $bmc_array = $model->bmc_code;
+        } else {
+            $bmc_array[] = $model->bmc_code;
+        }
 
+        foreach ($bmc_array as $bmc) {
+            $data = [];
+            $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
+            $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
+            $data['union_code'] = $model->union_code;
+            $data['bmc_code'] = $bmc;
+            $data['payment_cycle_code'] = $model->payment_cycle_code;
+            $data['process_stop_payment'] = $stop_payment_only;
+            $data['user_code'] = $user;
+            $result[] = Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
+        }
+        return $result;
         /*
           $fromDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
           $toDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
@@ -1089,22 +1107,46 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
                         $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
                         $originating_org_code = \Yii::$app->session->get('organizations_code');
-                        $param = [];
-                        $param['union_code'] = $model->union_code;
-                        $param['bmc_code'] = $model->bmc_code;
-                        $param['payment_cycle_code'] = $model->payment_cycle_code;
-                        $param['user_code'] = $user;
-                        $param['org_code'] = $originating_org_code;
-                        $param['org_type'] = 'PORTAL';
-                        $param['is_without_release'] = $model->payment_release_type;
-                        Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
+//                        $param = [];
+//                        $param['union_code'] = $model->union_code;
+//                        $param['bmc_code'] = $model->bmc_code;
+//                        $param['payment_cycle_code'] = $model->payment_cycle_code;
+//                        $param['user_code'] = $user;
+//                        $param['org_code'] = $originating_org_code;
+//                        $param['org_type'] = 'PORTAL';
+//                        $param['is_without_release'] = $model->payment_release_type;
+//                        Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
+//
+//                        $param = [];
+//                        $param['from_datetime'] = $model->from_datetime;
+//                        $param['customer_type'] = 'MEMBER';
+//                        $param['bmc_code'] = $model->bmc_code;
+//                        $param['user_code'] = $user;
+//                        Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                        $bmc_array = [];
+                        if (is_array($model->bmc_code)) {
+                            $bmc_array = $model->bmc_code;
+                        } else {
+                            $bmc_array[] = $model->bmc_code;
+                        }
+                        foreach ($bmc_array as $bmc) {
+                            $param = [];
+                            $param['union_code'] = $model->union_code;
+                            $param['bmc_code'] = $bmc;
+                            $param['payment_cycle_code'] = $model->payment_cycle_code;
+                            $param['user_code'] = $user;
+                            $param['org_code'] = $originating_org_code;
+                            $param['org_type'] = 'PORTAL';
+                            $param['is_without_release'] = $model->payment_release_type;
+                            Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
 
-                        $param = [];
-                        $param['from_datetime'] = $model->from_datetime;
-                        $param['customer_type'] = 'MEMBER';
-                        $param['bmc_code'] = $model->bmc_code;
-                        $param['user_code'] = $user;
-                        Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                            $param = [];
+                            $param['from_datetime'] = $model->from_datetime;
+                            $param['customer_type'] = 'MEMBER';
+                            $param['bmc_code'] = $bmc;
+                            $param['user_code'] = $user;
+                            Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                        }
                         $msg_content = Yii::t('app', 'Member Payment Successfully Disbursed.');
                         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
                             'message' => $msg_content]);
@@ -1195,7 +1237,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         echo "</table>";
         exit();
 
-
 //        $header = [
 //            'mime' => 'application/ms-excel',
 //            'extension' => 'xls',
@@ -1271,6 +1312,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
     public function actionIndex() {
         $searchModel = new TblMemberPaymentSummarySearch();
+//        $searchModel->scenario = 'search_dialog';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 //        $dataProvider->pagination = false;
 
@@ -1411,7 +1453,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $aliasmodel->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $aliasmodel->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
         $dcs = $model->getRecoverDcs();
-        $recoverDcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
+        $recoverDcs = ArrayHelper::map($dcs, 'dcs_code', function ($dcs) {
                     return $dcs['dcs_name'] . '(' . $dcs['ref_code'] . ')';
                 });
         return $this->renderAjax('_recovery', [
@@ -1551,8 +1593,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $existSummaryData->final_amount = $existAmount + $existSummaryData->final_amount - $totalAmount;
                 $existSummaryData->net_payable = $existAmount + $existSummaryData->net_payable - $totalAmount;
                 $saveModel[] = $existSummaryData;
-                
-                   // head table update
+
+                // head table update
                 $pro_sale_head = TblBillHead::find()->where(['default_bill_head_code' => 6, 'bill_head_for' => 'MEMBER', 'union_code' => $instModel->union_code])->one();
                 $headSummary = new TblMemberPaymentHeadSummary();
                 $headSummaryModel = $headSummary::find()
@@ -1693,5 +1735,4 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             return Json::encode($record);
         }
     }
-
 }

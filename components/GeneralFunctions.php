@@ -417,8 +417,7 @@ class GeneralFunctions extends Component {
                     $result = $result + $this->array_flatten($value);
                 else
                     $result = array_merge($result, $this->array_flatten($value));
-            }
-            else {
+            } else {
                 $result[$key] = $value;
             }
         }
@@ -438,8 +437,6 @@ class GeneralFunctions extends Component {
                 ->from($tableName)
                 ->where('(CAST(trim(SUBSTRING(local_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
                 ->one();
-
-
 
         $code1 = (int) $val['local_code'] + 1;
 
@@ -813,11 +810,11 @@ class GeneralFunctions extends Component {
     }
 
     public function encryptData($string) {
-        return \Yii::$app->encrypter->encrypt($string);
+        return !empty($string) ? \Yii::$app->encrypter->encrypt($string) : $string;
     }
 
     public function decryptData($string) {
-        $decryptedData = \Yii::$app->encrypter->decrypt($string);
+        $decryptedData = !empty($string) ? \Yii::$app->encrypter->decrypt($string) : $string;
         if ($decryptedData) {
             return $decryptedData;
         }
@@ -1149,12 +1146,12 @@ class GeneralFunctions extends Component {
 
     public function &camelCaseToUnderscore(&$post_data) {
         if (is_array($post_data)) {
-            $post_data = array_combine(array_map(function($str) {
+            $post_data = array_combine(array_map(function ($str) {
                         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
                     }, array_keys($post_data)), array_values($post_data));
             foreach ($post_data as $key => $val) {
                 if (is_array($post_data[$key])) {
-                    $arr1 = array_combine(array_map(function($str) {
+                    $arr1 = array_combine(array_map(function ($str) {
                                 return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
                             }, array_keys($post_data[$key])), array_values($post_data[$key]));
                     $post_data[$key] = $arr1;
@@ -2377,7 +2374,7 @@ class GeneralFunctions extends Component {
             $model->bmc_code = explode(',', Yii::$app->session->get('BMC'))[0];
         }
     }
-    
+
     function openImage($attachment) {
         $AttachmentIcon = '';
         if ($attachment) {
@@ -2392,7 +2389,7 @@ class GeneralFunctions extends Component {
     }
 
     public function validateCargillAadharcard($model, $attribute, $params) {
-        $aadharNumber = $model->$attribute;    
+        $aadharNumber = $model->$attribute;
         if (!empty($aadharNumber)) {
             if (strlen($aadharNumber) == 10 || strlen($aadharNumber) == 12) {
                 if (strlen($aadharNumber) == 10) {
@@ -2407,6 +2404,7 @@ class GeneralFunctions extends Component {
             }
         }
     }
+
     public function asciiToTextConvert($asciiValue) {
         $asciiValueArray = explode(',', $asciiValue);
         $string = '';
@@ -2415,6 +2413,7 @@ class GeneralFunctions extends Component {
         }
         return $string;
     }
+
     public function textToAsciiConvert($text) {
         $string = '';
         $textArray = str_split($text);
@@ -2423,7 +2422,7 @@ class GeneralFunctions extends Component {
         }
         return substr($string, 0, -2);
     }
-    
+
     function generateActivityStatus($model, $attribute, $dataOriginalTitle = '', $hours = '-24', $colorClass = 'green-text') {
         $dateTime = date("Y-m-d H:i:s", strtotime("$hours hours"));
         if ($model->$attribute >= $dateTime) {
@@ -2433,4 +2432,30 @@ class GeneralFunctions extends Component {
         }
     }
 
+    function getPaymentHeader($model) {
+        $data = [];
+        if (is_array($model->mcc_plant_code)) {
+            $model->plant_code = empty($model->plant_code) ? $model->mccPlantCode->plant_code : $model->plant_code;
+            $detail = $model->plantCode;
+            if (!empty($detail)) {
+                $data['code'] = $detail->ref_code;
+                $data['name'] = $detail->name;
+            }
+        } else {
+            if (is_array($model->bmc_code)) {
+                $detail = $model->mccPlantCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->name;
+                }
+            } else {
+                $detail = $model->bmcCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->bmc_name;
+                }
+            }
+        }
+        return $data;
+    }
 }

@@ -497,15 +497,15 @@ echo GhostMenu::widget([
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t("app", "Reports - New") . ' <b class="caret"></b></a>',
             'items' => [[
-                    'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Report Request<b class="caret"></b></a>',
-                    'items' => [
-                        ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
-                        ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
-                        ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
-                    ],
+            'options' => ['class' => 'dropdown-submenu'],
+            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Report Request<b class="caret"></b></a>',
+            'items' => [
+                    ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
+                    ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
+                    ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
+            ],
                 ],
-                [
+                    [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
                     'items' => [
@@ -553,11 +553,11 @@ echo GhostMenu::widget([
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Customer receipt') . '<b class="caret"></b></a>',
                                     'items' => [
-                                        ['label' => Yii::t('app', 'Milk Receipt For Member'), 'url' => ['/jasperreports/default/milk-receipt-for-member']],
-                                        ['label' => Yii::t('app', 'Milk Receipt For BMC'), 'url' => ['/jasperreports/default/milk-receipt-for-bmc']],
-                                        ['label' => Yii::t('app', 'Product Sale Invoice For Member'), 'url' => ['/jasperreports/default/product-sale-invoice-for-member']],
-                                        ['label' => Yii::t('app', 'Product Sale Invoice For Customer'), 'url' => ['/jasperreports/default/product-sale-invoice-for-customer']],
-                                        ['label' => Yii::t('app', 'Product Sale Summary'), 'url' => ['/jasperreports/default/product-sale-summary']],
+                                            ['label' => Yii::t('app', 'Milk Receipt For Member'), 'url' => ['/jasperreports/default/milk-receipt-for-member']],
+                                            ['label' => Yii::t('app', 'Milk Receipt For BMC'), 'url' => ['/jasperreports/default/milk-receipt-for-bmc']],
+                                            ['label' => Yii::t('app', 'Product Sale Invoice For Member'), 'url' => ['/jasperreports/default/product-sale-invoice-for-member']],
+                                            ['label' => Yii::t('app', 'Product Sale Invoice For Customer'), 'url' => ['/jasperreports/default/product-sale-invoice-for-customer']],
+                                            ['label' => Yii::t('app', 'Product Sale Summary'), 'url' => ['/jasperreports/default/product-sale-summary']],
                                     ]
                                 ],
                             ]
@@ -567,12 +567,12 @@ echo GhostMenu::widget([
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
                             'items' => [
                                     [
-                                        'options' => ['class' => 'dropdown-submenu'],
-                                        'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Testing Data') . '<b class="caret"></b></a>',
-                                        'items' => [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Testing Data') . '<b class="caret"></b></a>',
+                                    'items' => [
                                             ['label' => Yii::t('app', 'Quality Collection Report'), 'url' => ['/misreports/reports/quality-collection-report']],
-                                        ]
-                                    ],
+                                    ]
+                                ],
                                     ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
                                     ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary']],
                                     ['label' => '203 -' . Yii::t('app', 'Company Collection Detail'), 'url' => ['/misreports/reports/union-coll-date-shift-wise-summary']],
@@ -597,6 +597,18 @@ echo GhostMenu::widget([
                                     ['label' => '220 -' . Yii::t('app', 'Route Wise Reconciliation'), 'url' => ['/misreports/reports/route-wise-reconciliation']],
                                     ['label' => '221 -' . Yii::t('app', 'RMRD Data Export'), 'url' => ['/misreports/reports/rmrd-data-export']],
                                     ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
+                                    ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
+                            ]
+                        ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Qty Conversion') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => '101 -' . Yii::t('app', 'Member Collection Detail'), 'url' => ['/misreports/reports/member-daily-collection-common']],
+                                    ['label' => '102 -' . Yii::t('app', 'Society Collection Detail'), 'url' => ['/misreports/reports/dcs-coll-date-shift-summary-common']],
+                                    ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report-common']],
+                                    ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary-common']],
+                                    ['label' => '207 -' . Yii::t('app', 'Society Wise CDA Format 1'), 'url' => ['/misreports/reports/society-wise-cda-common']],
                             ]
                         ],
                             ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -649,6 +661,7 @@ echo GhostMenu::widget([
                             ['label' => '506 -' . Yii::t('app', 'BMC Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment-cycle-wise-bmc-wise']],
                             ['label' => '507 -' . Yii::t('app', 'Company Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment-cycle-wise-union-wise']],
                             ['label' => '508 -' . Yii::t('app', 'Company Total Payment'), 'url' => ['/misreports/reports/total-payment-company-wise-payment-cycle-wise']],
+                            ['label' => '509 -' . Yii::t('app', 'DCS Wise Bill Head Applicability'), 'url' => ['/misreports/reports/dcs-wise-bill-head-applicability']],
                     ]
                 ],
                     [
@@ -739,7 +752,7 @@ echo GhostMenu::widget([
                                             ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation-region']],
                                     ]
                                 ],
-                                ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
+                                    ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
                                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
@@ -824,26 +837,26 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap'], 'visible' => User::canRoute(['/misreports/reports/stock-register-mcc-to-sap']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
-                [
+                    [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', ' Tanker Moment') . '<b class="caret"></b></a>',
                     'items' => [
-                        ['label' => Yii::t('app', 'BMC Dispatch Register'), 'url' => ['/misreports/reports/bmc-register']],
-                        ['label' => Yii::t('app', 'Plant Receipt Register'), 'url' => ['/misreports/reports/plant-register']],
-                        ['label' => Yii::t('app', 'Tanker Receipt Report'), 'url' => ['/misreports/reports/tanker-receipt-note']],
-                        ['label' => Yii::t('app', 'Trip Wise Detail'), 'url' => ['/misreports/reports/mcc-receipt-vs-bmc-dispatch']],
-                        ['label' => Yii::t('app', 'MCC Day Book (MIS)'), 'url' => ['/misreports/reports/mcc-day-book-dispatch-hub-horizontal']],
-                        ['label' => Yii::t('app', 'MCC Day Book'), 'url' => ['/jasperreports/default/mcc-day-book-dispatch-hub']],
+                            ['label' => Yii::t('app', 'BMC Dispatch Register'), 'url' => ['/misreports/reports/bmc-register']],
+                            ['label' => Yii::t('app', 'Plant Receipt Register'), 'url' => ['/misreports/reports/plant-register']],
+                            ['label' => Yii::t('app', 'Tanker Receipt Report'), 'url' => ['/misreports/reports/tanker-receipt-note']],
+                            ['label' => Yii::t('app', 'Trip Wise Detail'), 'url' => ['/misreports/reports/mcc-receipt-vs-bmc-dispatch']],
+                            ['label' => Yii::t('app', 'MCC Day Book (MIS)'), 'url' => ['/misreports/reports/mcc-day-book-dispatch-hub-horizontal']],
+                            ['label' => Yii::t('app', 'MCC Day Book'), 'url' => ['/jasperreports/default/mcc-day-book-dispatch-hub']],
                     ]
                 ],
-                [
+                    [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'TMS Reports') . '<b class="caret"></b></a>',
                     'items' => [
-                        ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
+                            ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                     ]
                 ],
-                ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
+                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],
             [
@@ -927,9 +940,9 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Complain'), 'url' => ['/complaint/tbl-complain/index'], 'active' => ($cntrl == 'tbl-complain')],
                     ]
                 ],
-                [
+                    [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">'.Yii::t('app', 'Feedback').'<b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Feedback') . '<b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'Feedback Item'), 'url' => ['/feedback/tbl-eipl-app-feedback-item/index']],
                             ['label' => Yii::t('app', 'Feedback Master'), 'url' => ['/feedback/tbl-eipl-app-feedback-master/index']],
