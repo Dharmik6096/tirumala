@@ -1,6 +1,6 @@
 <?php
 
-use app\components\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
