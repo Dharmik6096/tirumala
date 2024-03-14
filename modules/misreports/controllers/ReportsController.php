@@ -1665,6 +1665,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'SapWqFile';
         return $this->actionIndex();
     }
+    
+    public function actionVendorPaymentFormat() {
+        $this->report = 'VendorPaymentFormat';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3506,6 +3511,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bmc_collection_summary_devmilk',
                 'scenario' => 'BmcCollectionSummary',
                 'title' => 'Bmc Collection Summary',
+            ],
+            'VendorPaymentFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_vendor_payment_for_cargil',
+                'scenario' => 'VendorPaymentFormat',
+                'title' => '631 - Vendor Payment Format 2',
             ],
         ];
         return $label[$l];

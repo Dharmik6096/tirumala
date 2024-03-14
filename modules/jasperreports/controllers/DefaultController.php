@@ -370,6 +370,16 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBmcCollectionSummary() {
+        $this->report = 'BmcCollectionSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionVendorMilkBillSbd() {
+        $this->report = 'VendorMilkBillSbd';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -884,6 +894,18 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'milkcollection/ProductSaleSummary',
                 'scenario' => 'ProductSaleSummary',
                 'title' => 'Product Sale Summary',
+            ],
+            'BmcCollectionSummary' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'bmccollection/BmccollectionSummary',
+                'scenario' => 'BmcCollectionSummary',
+                'title' => 'Bmc Collection Summary',
+            ],
+            'VendorMilkBillSbd' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'bmccollection/BmccollectionSummary',
+                'scenario' => 'VendorMilkBillSbd',
+                'title' => 'Vendor Milk Bill Sbd',
             ],
         ];
         return $label[$l];
