@@ -19,7 +19,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
             src="<?= $imageIconPath . 'company.png' ?>"> </div>
 </div>
 
-<?php $url = Url::to(['site/get-rmrd-mccs', 'date' => $date, 'union_code' => $union, 'widget_for' => 'rmrd']); ?>
+<?php $url = Url::to(['site/get-rmrd-mccs', 'date' => $date, 'union_code' => $union, 'widget_for' => 'rmrd', 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
@@ -31,7 +31,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
     </div>
 </a>
-<?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'widget_for' => 'rmrd']); ?>
+<?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'widget_for' => 'rmrd', 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
@@ -43,7 +43,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'dcs.png' ?>"> </div>
     </div>
 </a>
-<?php $url = Url::to(['site/get-rmrd-vendor', 'date' => $date, 'union_code' => $union, 'widget_for' => 'rmrd', 'type' => 'BULKVEN']); ?>
+<?php $url = Url::to(['site/get-rmrd-vendor', 'date' => $date, 'union_code' => $union, 'widget_for' => 'rmrd', 'type' => 'BULKVEN', 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?> ">
         <div class="div_dash_block_content">
@@ -56,7 +56,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     </div>
 </a>
 
-<?php $url = Url::to(['site/get-rmrd-vendor', 'date' => $date, 'union_code' => $union, 'type' => 'VLCCVEN']); ?>
+<?php $url = Url::to(['site/get-rmrd-vendor', 'date' => $date, 'union_code' => $union, 'type' => 'VLCCVEN', 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">

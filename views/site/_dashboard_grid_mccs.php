@@ -24,7 +24,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                     <div class="panel panel-default">
                         <div class="col-sm-6 farmer_rmrd_block">
                             <?php
-                            echo $this->render('_dashboard_grid_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union]);
+                            echo $this->render('_dashboard_grid_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union, 'shift' => $shift]);
                             ?>
                         </div>
 
@@ -98,14 +98,14 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                             <div class="<?= $col_class ?> dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Farmer') ?></span></div>
                                                             <?php
                                                             if (\Yii::$app->session->get('hasBMC') == 1) {
-                                                                $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);
+                                                                $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'shift' => $shift]);
                                                                 ?>
                                                                 <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_bmc'] ?></span></span></a></div>
                                                                 <?php }
                                                             ?>
-                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'shift' => $shift]); ?>
                                                             <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
-        <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]); ?>
+        <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'shift' => $shift]); ?>
                                                             <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_farmers'] ?></span></span></a></div>
                                                         </div>
                                                     </div>
@@ -151,13 +151,13 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['mcc_name'] ?></td>
                                                             <?php
                                                             if (\Yii::$app->session->get('hasBMC') == 1) {
-                                                                $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);
+                                                                $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'shift' => $shift]);
                                                                 ?>
                                                                 <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_bmc'] ?></a></td>
         <?php } ?>
-        <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]); ?>
+        <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'shift' => $shift]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
-        <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]); ?>
+        <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'shift' => $shift]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_farmers'] ?></a></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['total_quantity'] ?></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>

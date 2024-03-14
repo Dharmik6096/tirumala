@@ -2458,4 +2458,18 @@ class GeneralFunctions extends Component {
         }
         return $data;
     }
+
+    public function getShiftWithDate($shift, $date) {
+        $date = date('Y-m-d', strtotime($date));
+        if ($shift == 3) {
+            $dateshift['from_date'] = $date . ' ' . Yii::$app->general->getshift(1);
+            $dateshift['to_date'] = $date . ' ' . Yii::$app->general->getshift(2);
+        } else {
+            $setshift = Yii::$app->general->getshift($shift);
+            $dateshift['from_date'] = $date . ' ' . $setshift;
+            $dateshift['to_date'] = $date . ' ' . $setshift;
+        }
+        return $dateshift;
+    }
+
 }

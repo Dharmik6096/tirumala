@@ -18,9 +18,9 @@ if (empty($display_rmrd)) {
 }
 ?>
 
-<div class="col-sm-12 farmer_rmrd_block">
+<div class="col-sm-12 farmer_rmrd_blockqq">
 
-    <?php $url = Url::to([$union, 'date' => $date, 'union_code' => $model->union_code]); ?>
+    <?php $url = Url::to([$union, 'date' => $date, 'union_code' => $model->union_code, 'shift' => $model->shift]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="link_hover_effect">
             <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
@@ -35,7 +35,7 @@ if (empty($display_rmrd)) {
         </div>
     </a>
 
-    <?php $url = Url::to([$mcc, 'date' => $date, 'union_code' => $model->union_code]); ?>
+    <?php $url = Url::to([$mcc, 'date' => $date, 'union_code' => $model->union_code, 'shift' => $model->shift]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">
@@ -48,7 +48,7 @@ if (empty($display_rmrd)) {
         </div>
     </a>
 
-    <?php $url = Url::to([$dcs, 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code]); ?>
+    <?php $url = Url::to([$dcs, 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code, 'shift' => $model->shift]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">
@@ -90,7 +90,7 @@ if (empty($display_rmrd)) {
                 src="<?= $imageIconPath . 'dcs.png' ?>"> </div>
     </div>
 
-    <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code]); ?>
+    <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code, 'shift' => $model->shift]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display ?>">
             <div class="div_dash_block_content">
