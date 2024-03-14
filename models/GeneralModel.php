@@ -430,10 +430,6 @@ class GeneralModel {
                 $modelMappingHistory = Yii::$app->path->getModel($modelName[1]);
                 Yii::$app->operation->history($row, $modelMappingHistory, 'DELETE');
                 $flag[] = $modelMappingHistory->save();
-                /* $modelMappingHistoryData = $modelMappingHistory->find()->where([$fieldName => $modelMappingHistory->{$fieldName}])->one();
-                  if (empty($modelMappingHistoryData)) {
-                  $flag[] = $modelMappingHistory->save();
-                  } */
                 $flag[] = $row->delete();
             }
             if (!in_array(FALSE, $flag)) {

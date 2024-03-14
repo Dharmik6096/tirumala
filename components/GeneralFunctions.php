@@ -2226,8 +2226,8 @@ class GeneralFunctions extends Component {
             }
             reset($objects);
             //  rmdir($dir);
+            }
         }
-    }
 
     public function CreateDirectory($folder_path) {
         if (!is_dir($folder_path)) {
