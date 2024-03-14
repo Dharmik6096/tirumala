@@ -36,8 +36,8 @@ $attribute = [
         'attribute' => 'address',
         'format' => 'raw',
         'value' => function($model) {
-            $address = !empty($model->address) ? $model->address : 'Address';
-            return Yii::$app->controls->openInGoogleMaps($address, $model->latitude . ',' . $model->longitude);
+            $address = $model->address ?: 'Address';
+            return !empty($model->latitude) && !empty($model->longitude) ? Yii::$app->controls->openInGoogleMaps($address, $model->latitude . ',' . $model->longitude) : $model->address;
         }],
 ];
 $grid_option = [
