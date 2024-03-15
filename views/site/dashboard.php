@@ -160,10 +160,10 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
                         <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                 ?>: </span> -->
-                        <div class="col-sm-2 searchFilterHeader">
+                        <div class="col-sm-1 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
-                        <div class="col-sm-2 searchFilterHeader">
+                        <div class="col-sm-1 searchFilterHeader">
                             <?= Yii::$app->dropdown->dropdown('shift', $model, $form, 'form-group padding-right-5 col-sm-12 shift', false, false, ''); ?>
                         </div>
                         <?= Html::activeHiddenInput($model, 'widget_type', ['id' => 'hidden_widget_type']) ?>

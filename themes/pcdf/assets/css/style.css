@@ -3748,7 +3748,7 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
     color: #222 !important;
     background: transparent !important;
     float: inline-start;
-    margin-left: -5%;
+    margin-left: 4%;
 }
 
 .searchFilterValue {
