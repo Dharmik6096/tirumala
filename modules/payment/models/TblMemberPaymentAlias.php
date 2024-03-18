@@ -17,8 +17,6 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\payment\models\TblMilkShortageRecovery;
-use app\modules\payment\models\TblVendorPayment;
-use app\modules\payment\models\TblRemunerationSummary;
 
 /**
  * This is the model class for table "tbl_member_payment_alias".
@@ -93,10 +91,6 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery', 'old_recovery', 'recovery_dcs', 'member_name', 'beneficiary_name', 'dcs_name'], 'safe'],
             [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
             [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
-            [['payment_cycle_code'], 'CheckPendingVspRemunerationDisburse', 'skipOnError' => true, 'on' => ['processpayment'], 'when' => function ($model) {
-                    $vendorAutoRun = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'vendor_payment_auto_run', 'PORTAL');
-                    return ($vendorAutoRun == 1);
-                }],
 //            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
             [['payment_release_type', 'shortage_amount_old'], 'safe']
         ];
@@ -280,6 +274,41 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             $from_date = date('d-m-Y', strtotime($data->from_datetime));
             $to_date = date('d-m-Y', strtotime($data->to_datetime));
             $this->addError($attribute, Yii::t('app', "Please first disburse payment cycle $from_date to $to_date ."));
+           
+        }
+//        $from_date = $data['from_date'];
+//        $to_date = $data['to_date'];
+//        var_dump($from_date.'/'.$to_date);
+        $vendorAutoRun = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'vendor_payment_auto_run', 'PORTAL');
+        if ($vendorAutoRun == 1) {
+            $vendorPayment = TblVspPayment::find()
+                    ->select(['from_datetime', 'to_datetime'])
+                    ->where(['OR',
+                        ['AND', ['status' => ['generated', 'processed', 'locked'], 'billing_types' => 'regular', 'bmc_code' => $this->bmc_code],
+                            ['NOT IN', 'payment_cycle_code', $this->payment_cycle_code]
+                        ],
+//                        ['AND',
+                            ['status' => ['generated', 'processed'], 'billing_type' => 'remuneration', 'bmc_code' => $this->bmc_code],
+//                            ['or',
+//                                [
+//                                    'or',
+//                                    "CAST(from_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'",
+//                                    "CAST(to_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'"
+//                                ],
+//                                [
+//                                    'or',
+//                                    "'$from_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)",
+//                                    "'$to_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)"
+//                                ]
+//                            ]
+//                        ]
+                    ])
+                    ->one();
+            if (!empty($vendorPayment)) {
+                $from_date = date('d-m-Y', strtotime($vendorPayment->from_datetime));
+                $to_date = date('d-m-Y', strtotime($vendorPayment->to_datetime));
+                $this->addError($attribute, Yii::t('app', "Please first disburse Vendor/Remuneration payment from $from_date to $to_date ."));
+            }
         }
     }
 
@@ -354,47 +383,5 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
 
     public function getShortageRecoveryMpgMember() {
         return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
-    }
-
-    public function CheckPendingVspRemunerationDisburse($attribute, $params) {
-        $vendorPayment = TblVspPayment::find()
-                ->select(['from_datetime', 'to_datetime'])
-                ->where(['status' => ['generated', 'processed', 'locked'], 'billing_type' => 'regular', 'bmc_code' => $this->bmc_code,
-                ])
-                ->andWhere(['NOT IN', 'payment_cycle_code', $this->payment_cycle_code])
-                ->one();
-        if (!empty($vendorPayment)) {
-            $from_date = date('d-m-Y', strtotime($vendorPayment->from_datetime));
-            $to_date = date('d-m-Y', strtotime($vendorPayment->to_datetime));
-            $this->addError($attribute, Yii::t('app', "Please first disburse Vendor payment from $from_date to $to_date ."));
-        }
-        $data = $this->find()
-                ->select(['cast(from_datetime as date) from_date', 'cast(to_datetime as date) as to_date'])
-                ->where(['bmc_code' => $this->bmc_code])
-                ->andWhere(['NOT IN', 'payment_cycle_code', $this->payment_cycle_code])
-                ->one();
-        $from_date = $data['from_date'];
-        $to_date = $data['to_date'];
-        $pending_disburse = TblRemunerationSummary::find()
-                ->where([ 'status' => ['generated', 'processed'],'bmc_code' => $this->bmc_code ])
-                ->andWhere(['or',
-                    [
-                        'or',
-                        "CAST(from_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'",
-                        "CAST(to_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'"
-                    ],
-                    [
-                        'or',
-                        "'$from_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)",
-                        "'$to_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)"
-                    ]
-                ])
-                ->one();
-        if (!empty($pending_disburse)) {
-            $from_date = date('d-m-Y', strtotime($pending_disburse->from_datetime));
-            $to_date = date('d-m-Y', strtotime($pending_disburse->to_datetime));
-            $this->addError($attribute, Yii::t('app', "Please first disburse Remuneration payment from $from_date to $to_date ."));
-            return FALSE;
-        }
     }
 }
