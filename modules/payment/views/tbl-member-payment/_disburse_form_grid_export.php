@@ -27,103 +27,125 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
                 'method' => 'post'
     ]);
     ?>
-    <div class="grid-button-wrap" >
-        <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
-        <?= Html::activeHiddenInput($model, 'union_code'); ?>
-        <?= Html::activeHiddenInput($model, 'plant_code'); ?>
-        <?php if (is_array($model->mcc_plant_code)) { ?>
-            <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
-                <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+    <div class="col-sm-12 mt10 padding-left-0">
+        <div class="grid-button-wrap" >
+            <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
+            <?= Html::activeHiddenInput($model, 'union_code'); ?>
+            <?= Html::activeHiddenInput($model, 'plant_code'); ?>
+            <?php if (is_array($model->mcc_plant_code)) { ?>
+                <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
+                    <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+                <?php } ?>
+            <?php } else { ?>
+                <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
             <?php } ?>
-        <?php } else { ?>
-            <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
-        <?php } ?>
-        <?php if (is_array($model->bmc_code)) { ?>
-            <?php foreach ($model->bmc_code as $bmc_code) { ?>
-                <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+            <?php if (is_array($model->bmc_code)) { ?>
+                <?php foreach ($model->bmc_code as $bmc_code) { ?>
+                    <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+                <?php } ?>
+            <?php } else { ?>
+                <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
             <?php } ?>
-        <?php } else { ?>
-            <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
-        <?php } ?>
 
-        <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
-    </div>
-    <div class="col-sm-2">
-        <?php
-        if ($showButtons) {
-            $allow_disburse_without_release = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['allow_disburse_without_release']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['allow_disburse_without_release'] : 0;
-            if ($allow_disburse_without_release == '1') {
-                echo Yii::$app->dropdown->dropdownStatic('payment_release_type', $model, $form, 'form-group', $model->getAttributeLabel('payment_release_type'), FALSE, 'payment_release_type', FALSE, FALSE, FALSE);
-            } else {
-                $model->payment_release_type = '0';
-                echo Html::activeHiddenInput($model, 'payment_release_type');
+            <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
+        </div>
+        <div class="col-sm-2">
+            <?php
+            if ($showButtons) {
+                $allow_disburse_without_release = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['allow_disburse_without_release']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['allow_disburse_without_release'] : 0;
+                if ($allow_disburse_without_release == '1') {
+                    echo Yii::$app->dropdown->dropdownStatic('payment_release_type', $model, $form, 'form-group', $model->getAttributeLabel('payment_release_type'), FALSE, 'payment_release_type', FALSE, FALSE, FALSE);
+                } else {
+                    $model->payment_release_type = '0';
+                    echo Html::activeHiddenInput($model, 'payment_release_type');
+                }
             }
-        }
-        ?>
-    </div>
-    <div class="clearfix"></div>
-    <?php
-    $attribute = [
+            ?>
+        </div>
+        <div class="clearfix"></div>
+        <?php
+        $attribute = [
 //            ['class' => 'kartik\grid\CheckboxColumn',
 //            'rowSelectedClass' => GridView::TYPE_SUCCESS,
 //            'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
 //            'checkboxOptions' => function($model) {
 //                return ['value' => $model['dcs_code']];
 //            }],
-        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function ($model) {
-                return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-            }],
-        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
-                return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
-            }],
-        ['attribute' => 'dcs_code', 'value' => function ($model) {
-                return !empty($model->dcs_name) ? $model->dcs_name : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-            }],
-        ['attribute' => 'member_count'],
-        ['attribute' => 'kg_fat'],
-        ['attribute' => 'kg_snf'],
-        ['attribute' => 'qty', 'pageSummary' => true],
-        ['attribute' => 'total_amount', 'pageSummary' => true],
-        ['attribute' => 'total_addition', 'pageSummary' => true],
-        ['attribute' => 'total_deduction', 'pageSummary' => true],
-        ['attribute' => 'previous_hold', 'pageSummary' => true],
-        ['attribute' => 'previous_due', 'pageSummary' => true],
-        ['attribute' => 'net_payable', 'pageSummary' => true,],
-        ['attribute' => 'hold_amount', 'pageSummary' => true,],
-        ['attribute' => 'additional_pay', 'pageSummary' => true,],
-        ['attribute' => 'final_amount', 'pageSummary' => true,],
-    ];
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                }],
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
+                }],
+            ['attribute' => 'dcs_code', 'value' => function ($model) {
+                    return !empty($model->dcs_name) ? $model->dcs_name : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                }],
+            ['attribute' => 'member_count'],
+            ['attribute' => 'kg_fat'],
+            ['attribute' => 'kg_snf'],
+            ['attribute' => 'qty', 'pageSummary' => true],
+            ['attribute' => 'total_amount', 'pageSummary' => true],
+            ['attribute' => 'total_addition', 'pageSummary' => true],
+            ['attribute' => 'total_deduction', 'pageSummary' => true],
+            ['attribute' => 'previous_hold', 'pageSummary' => true],
+            ['attribute' => 'previous_due', 'pageSummary' => true],
+            ['attribute' => 'net_payable', 'pageSummary' => true,],
+            ['attribute' => 'hold_amount', 'pageSummary' => true,],
+            ['attribute' => 'additional_pay', 'pageSummary' => true,],
+            ['attribute' => 'final_amount', 'pageSummary' => true,],
+        ];
 
-    $grid_option = [
-        'id' => 'member-payment-export-grid',
-        'attributes' => $attribute,
-        'active_column' => false,
-        'showPageSummary' => true,
-        'actions' => [
-            'bill-head' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code];
-                return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code], $options);
-            },
-            'members' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'target' => '_blank', 'data-placement' => 'top', 'data-original-title' => 'View Members'];
-                return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-member-payment/payment-members-list', 'cycle' => $model['payment_cycle_code'], 'dcs_code' => $model['dcs_code']], $options);
-            },
-        ]
-    ];
+        $grid_option = [
+            'id' => 'member-payment-export-grid',
+            'attributes' => $attribute,
+            'active_column' => false,
+            'showPageSummary' => true,
+            'actions' => [
+                'bill-head' => function ($url, $model) {
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code];
+                    return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code], $options);
+                },
+                'members' => function ($url, $model) {
+                    $options = ['data-toggle' => 'tooltip', 'target' => '_blank', 'data-placement' => 'top', 'data-original-title' => 'View Members'];
+                    return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-member-payment/payment-members-list', 'cycle' => $model['payment_cycle_code'], 'dcs_code' => $model['dcs_code']], $options);
+                },
+            ]
+        ];
 
-    Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
-    ?>
-    <div class="clearfix"></div>
-    <?php if ($showButtons) { ?>
-        <div class="col-md-12 mt10" >
-            <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn btn-primary sub', 'name' => 'member']); ?>
-            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'member-file']); ?>
-        </div>
-    <?php } ?>
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
+        ?>
+        <div class="clearfix"></div>
+        <?php if ($showButtons) { ?>
+            <div class="col-md-12 mt10" >
+                <?php
+                if (!empty($bank_show)) {
+                    $array = [];
+                    foreach ($bank_show as $data) {
+                        $array[$data['union_bank_payment_code']] = $data['bank_name'];
+                    }
+                    if (count($array) > 1) {
+                        ?>
+                        <div class="col-sm-2 mr-10">
+                            <?php
+                            echo $form->field($model, 'union_bank_payment_code')->dropDownList($array, ['prompt' => Yii::t('app', 'Select Bank *')])->label(false);
+                            ?>                   
+                            <?php
+                        } else if (!empty($bank_show) && count($bank_show) == 1) {
+                            $model->union_bank_payment_code = $bank_show[0]['union_bank_payment_code'];
+                            echo Html::activeHiddenInput($model, 'union_bank_payment_code');
+                        }
+                    }
+                    ?>
+                </div>
+                <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn btn-primary sub', 'name' => 'member']); ?>
+                <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'member-file']); ?>
+            </div>
+        <?php } ?>
 
-    <div class="clearfix"></div>
+        <div class="clearfix"></div>
 
-    <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
+    </div>
 </div>
 <div id='bill_head_view'></div>
 
@@ -176,7 +198,14 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
         if(flagName == 'member') {
             var negativeCount = " . $negativeValCount . ";
             var message = '" . $message . "';
-
+            var bank = document.getElementById('tblmemberpaymentalias-union_bank_payment_code');
+            var bankCode= bank != null ? bank.value : '';
+            if(bankCode == '' &&  bank != null){
+                 var dispMessage = '" . Yii::t('app', 'Please select bank for disbursement.') . "';
+                 bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
+             }   
+            else
+            {
             if(negativeCount > 0) {
                 var dispMessage = '" . Yii::t('app', 'Net Payable must be Positive for each Member.') . "';
                 bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
@@ -200,7 +229,7 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
                     }
                 });
             }
-
+         }
 
         } else {
             $('form#w1').submit();

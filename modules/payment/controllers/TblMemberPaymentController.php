@@ -764,7 +764,13 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //                    'searchModel' => $searchModel,
 //                    'dataProvider' => $dataProvider
 //        ]);
-
+        $union_bank = [];
+        if (!empty($model->union_code)) {
+            $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
+            if ($is_bank_integrated) {
+                $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
+            }
+        }
         $memberPaymentModel = new TblMemberPaymentAlias();
         $memberPaymentModel->attributes = $model->attributes;
         $negativeValCount = $memberPaymentModel->getNegativeValCount();
@@ -773,7 +779,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'title' => 'Member Payment Disburse : Step 1',
-                    'negativeValCount' => $negativeValCount
+                    'negativeValCount' => $negativeValCount,
+                    'bank_show' => $union_bank
         ]);
     }
 
@@ -792,8 +799,20 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
     public function actionDisburseMemberPayment() {
         if (Yii::$app->request->post()) {
             $model = new TblMemberPaymentAlias();
-//            if (isset($_REQUEST['selection'])) {
             $model->load(Yii::$app->request->post());
+            $fileName = '';
+            $union_bank = '';
+            if (!empty($model->union_bank_payment_code)) {
+                $union_bank = TblUnionBankPayment::find()->where(['union_code' => $model->union_code, 'is_active' => 1, 'union_bank_payment_code' => $model->union_bank_payment_code])->one();
+            }
+            if (!empty($model->union_code)) {
+                $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
+            }
+            if ($is_bank_integrated && empty($union_bank)) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Please select Bank for disbursement.']);
+                return $this->redirect(\yii\helpers\Url::previous());
+            }
             if (!empty($model->payment_cycle_code)) {
                 if (Yii::$app->request->post('flag') == 'member') {
                     if (false) {
@@ -1129,6 +1148,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         } else {
                             $bmc_array[] = $model->bmc_code;
                         }
+                        $unionBankPaymentCode = ($is_bank_integrated && !empty($union_bank)) ?$model->union_bank_payment_code : null;
                         foreach ($bmc_array as $bmc) {
                             $param = [];
                             $param['union_code'] = $model->union_code;
@@ -1138,6 +1158,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             $param['org_code'] = $originating_org_code;
                             $param['org_type'] = 'PORTAL';
                             $param['is_without_release'] = $model->payment_release_type;
+                            $param['p_union_bank_payment_code'] = $unionBankPaymentCode;
                             Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
 
                             $param = [];

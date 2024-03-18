@@ -7,7 +7,7 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Bulk Data LOCK/UNLOCK');
-$button = !empty($searchModel->data_status) && $searchModel->data_status == 0 ? 'LOCK' : 'UNLOCK';
+$button = !empty($searchModel->data_status) && $searchModel->data_status == 1 ? 'UNLOCK' : 'LOCK';
 $data_status = !empty($searchModel->data_status) && $searchModel->data_status == 1 ? 0 : 1;
 $check_for = !empty($searchModel->check_for) ? $searchModel->check_for : '';
 ?>

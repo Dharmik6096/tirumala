@@ -140,5 +140,43 @@ class TblPaymentTransaction extends \app\models\ChildModel {
     public function getSmsRecords() {
         return $this->find()->where(['is_file' => 1, 'sms_status' => NULL])->andWhere(['and', ['IS NOT', 'mobile_no', NULL], ['<>', 'mobile_no', '']])->limit(2000)->all();
     }
+                                                
+     public function getCargillMemberPaymentData($file_name, $debit_account_no, $bank_code,$branch_code,$debit_account_name,$session_id,$security_token,$sec_no) {
+        return (new \yii\db\Query())
+                        ->select(['
+                             \''.$security_token.'\' as "SecurityToken",
+                                \''.$session_id.'\' as "SessionID",
+                                payment_transaction_code as "TransactionID",
+                                \'144\' as "currencyCode",
+                                bank_code as "BenBankCode",
+                                branch_code as "BenBranchCode",
+                                bank_account_no as "BenAccNo",
+                                name as "BenAccName",
+                                right(payment_transaction_code,2) as "TxnCode",
+                                final_amount as "TxnAmount",
+                                \''.$bank_code.'\' as DebitBankCode,
+                                \''.$branch_code.'\' as DebitBankCode,
+                                \'' . $debit_account_no . '\' as "DebitAccountNo",
+                                \''.$debit_account_name.'\' as "DebitAccName",
+                                convert(varchar, getdate(), 12)as "ValueDate",
+                                case when bank_code =\'' . $bank_code . '\' then \'CARG\' else \'CEFT\' end as "TransactionType"'
+                              ])
+                        ->from('tbl_payment_transaction')
+                        ->where('file_name =\'' . $file_name . '\' and final_amount>0.00 and is_file=1')
+                        ->all();
+    }
 
+    public function getPendingData() {
+        return $this->find()->select(['tbl_payment_transaction.union_bank_payment_code', 'ubp.bank_code', 'ubp.bank_name', 'ubp.bank_account_no','ubp.branch_code','ubp.account_holder_name', 'ubp.ftp_username', 'ubp.ftp_password', 'ubp.corporate_code', 'ba.auth_url', 'ba.payment_url', 'ba.reverse_check_url', 'tbl_payment_transaction.file_name', 'tbl_payment_transaction.union_code'])
+                        ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = tbl_payment_transaction.union_bank_payment_code')
+                        ->innerJoin('tbl_bank_api_detail ba', 'ubp.union_bank_payment_code= ba.union_bank_payment_code')
+                        ->where(['is_file' => 0, 'UPPER(ubp.integration_mode)' => 'API', 'ubp.is_active' => 1, 'ba.is_active' => 1])
+                        ->andWhere(['NOT', ['ISNULL(file_name,\'\')' => '']])
+                        ->groupBy(['tbl_payment_transaction.file_name', 'tbl_payment_transaction.union_bank_payment_code', 'tbl_payment_transaction.union_code', 'ubp.bank_code','ubp.branch_code','ubp.account_holder_name', 'ubp.bank_name', 'ubp.bank_account_no', 'ubp.ftp_username', 'ubp.ftp_password', 'ubp.corporate_code', 'ba.auth_url', 'ba.payment_url', 'ba.reverse_check_url'])
+                        ->asArray()->all();
+    }
+
+    public function updateStatus($condition, $updateData) {
+        return $this->updateAll($updateData, $condition);
+    }
 }

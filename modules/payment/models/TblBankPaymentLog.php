@@ -75,4 +75,7 @@ class TblBankPaymentLog extends \app\models\ChildModel {
         return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'dcs_payment_cycle_code']);
     }
 
+    public function updateStatus($condition, $updateData) {
+        return $this->updateAll($updateData, $condition);
+    }
 }

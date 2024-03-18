@@ -71,7 +71,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     public $payment_cycle;
     public $otp_code;
     public $net_amount, $old_recovery, $recovery_dcs, $shortage_amount, $shortage_head_code;
-    public $payment_release_type, $shortage_amount_old;
+    public $payment_release_type, $shortage_amount_old,$union_bank_payment_code;
 
     /**
      * @inheritdoc
@@ -92,7 +92,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
             [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
 //            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
-            [['payment_release_type', 'shortage_amount_old'], 'safe']
+            [['payment_release_type', 'shortage_amount_old','union_bank_payment_code'], 'safe']
         ];
     }
 
