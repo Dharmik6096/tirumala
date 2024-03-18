@@ -14,6 +14,13 @@ class BranchImport extends TblBranch {
 
         $rules = [
             [['hamlet_code'], 'validateHamlet'],
+            [['ifsc'], function ($attribute, $params) {
+                $record = TblBranch::getExistingIfsc($this, $attribute, $params);
+                if(!empty($record)){
+                    $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " '" . $this->ifsc . "'" . ' has alreday been taken in ' . '<b>' . $record['branch_name'] . '</b> branch'));
+                    return false;
+                }
+            }],
         ];
 
         foreach ($rules as $row) {
