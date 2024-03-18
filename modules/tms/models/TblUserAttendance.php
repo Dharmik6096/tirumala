@@ -55,7 +55,7 @@ class TblUserAttendance extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['attendance_date', 'in_time', 'out_time', 'created_at', 'updated_at'], 'safe'],
+            [['attendance_date', 'in_time', 'out_time', 'created_at', 'updated_at', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe'],
             [['day_count'], 'number'],
             [['originating_type'], 'integer'],
             [['union_code'], 'string', 'max' => 3],
@@ -97,6 +97,11 @@ class TblUserAttendance extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'duration' => Yii::t('app', 'Duration'),
+            'api_status' => Yii::t('app', 'API Status'),
+            'pick_datetime' => Yii::t('app', 'Pick Datetime'),
+            'response_datetime' => Yii::t('app', 'Response Datetime'),
+            'response_msg' => Yii::t('app', 'Response Message'),
         ];
     }
 
@@ -127,21 +132,21 @@ class TblUserAttendance extends \app\models\ChildModel {
     public function getAttachment() {
         return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code']);
     }
-    
+
     public function getAttendanceRecords() {
         return $this->find()
-                 ->select(['tbl_user_attendance.*', 'user.name', 'user.employee_id'])
-                ->joinWith(['userCode'])
-                ->where(['=', 'tbl_user_attendance.attendance_date', date('Y-m-d', strtotime('-1 day'))])
-                ->andWhere(['or', ['tbl_user_attendance.api_status' => null], ['tbl_user_attendance.api_status' => 0]])
-                ->limit(50)
-                ->all();
+                        ->select(['tbl_user_attendance.*', 'user.name', 'user.employee_id'])
+                        ->joinWith(['userCode'])
+                        ->where(['=', 'tbl_user_attendance.attendance_date', date('Y-m-d', strtotime('-1 day'))])
+                        ->andWhere(['or', ['tbl_user_attendance.api_status' => null], ['tbl_user_attendance.api_status' => 0]])
+                        ->limit(50)
+                        ->all();
     }
-    
+
     public function updateApiStatus($value) {
         return $this->updateAll(['api_status' => '1', 'pick_datetime' => date('Y-m-d H:i:s')], ['attendance_code' => $value]);
     }
-    
+
     public function updateSuccessApiStatus($msg, $value) {
         return $this->updateAll(['api_status' => '2', 'response_datetime' => date('Y-m-d H:i:s'), 'response_msg' => $msg], ['attendance_code' => $value]);
     }
