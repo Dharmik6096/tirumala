@@ -91,7 +91,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
 //                    }
                     }
                 }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv', 'importDetailCsv']],
-                [['bill_head_code'], 'unique', 'targetAttribute' => ['bill_head_code', 'customer_type', 'transaction_date'], 'message' => Yii::t('app/validation', 'Bill Head Transaction has already been taken.')],
+                [['bill_head_code'], 'unique', 'targetAttribute' => ['bill_head_code', 'customer_type', 'customer_code', 'transaction_date'], 'message' => Yii::t('app/validation', 'Bill Head Transaction has already been taken.')],
         ];
     }
 
