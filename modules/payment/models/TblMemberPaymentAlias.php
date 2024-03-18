@@ -274,34 +274,34 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             $from_date = date('d-m-Y', strtotime($data->from_datetime));
             $to_date = date('d-m-Y', strtotime($data->to_datetime));
             $this->addError($attribute, Yii::t('app', "Please first disburse payment cycle $from_date to $to_date ."));
-           
         }
-//        $from_date = $data['from_date'];
-//        $to_date = $data['to_date'];
-//        var_dump($from_date.'/'.$to_date);
         $vendorAutoRun = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'vendor_payment_auto_run', 'PORTAL');
         if ($vendorAutoRun == 1) {
+            $paycycle = $this->paymentCycleCode;
+            $from_date = date('Y-m-d', strtotime($paycycle->from_date));
+            $to_date = date('Y-m-d', strtotime($paycycle->to_date));
             $vendorPayment = TblVspPayment::find()
                     ->select(['from_datetime', 'to_datetime'])
                     ->where(['OR',
-                        ['AND', ['status' => ['generated', 'processed', 'locked'], 'billing_types' => 'regular', 'bmc_code' => $this->bmc_code],
+                        ['AND',
+                            ['status' => ['generated', 'processed', 'locked'], 'billing_type' => 'regular', 'bmc_code' => $this->bmc_code],
                             ['NOT IN', 'payment_cycle_code', $this->payment_cycle_code]
                         ],
-//                        ['AND',
+                        ['AND',
                             ['status' => ['generated', 'processed'], 'billing_type' => 'remuneration', 'bmc_code' => $this->bmc_code],
-//                            ['or',
-//                                [
-//                                    'or',
-//                                    "CAST(from_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'",
-//                                    "CAST(to_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'"
-//                                ],
-//                                [
-//                                    'or',
-//                                    "'$from_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)",
-//                                    "'$to_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)"
-//                                ]
-//                            ]
-//                        ]
+                            ['or',
+                                [
+                                    'or',
+                                    "CAST(from_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'",
+                                    "CAST(to_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'"
+                                ],
+                                [
+                                    'or',
+                                    "'$from_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)",
+                                    "'$to_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)"
+                                ]
+                            ]
+                        ]
                     ])
                     ->one();
             if (!empty($vendorPayment)) {
