@@ -487,7 +487,7 @@ class TblProductSale extends \app\models\ChildModel {
             }
             $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->customer_code;
             $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : $this->customer_type;
-            if ($config == 0 || $this->scenario == 'productSaleMemberImport') {
+            if ($config != '1' || $this->scenario != 'productSaleImport') {
                 $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
                         ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
                         ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $date])
@@ -504,15 +504,13 @@ class TblProductSale extends \app\models\ChildModel {
                     $model->amount_due = $model->amount - $model->discount;
                 }
             } else {
-                if ($this->scenario == 'productSaleImport') {
-                    if (!empty($model->amount)) {
-                        $rate = $model->amount / $model->quantity;
-                        $detailModel->rate = round($rate, 2);
-                        $detailModel->x_col1 = round($rate, 2);
-                        $model->amount_due = $model->amount - $model->discount;
-                    } else {
-                        $model->addError('amount', Yii::t('app/validation', 'Amount can not be blank'));
-                    }
+                if (!empty($model->amount)) {
+                    $rate = $model->amount / $model->quantity;
+                    $detailModel->rate = round($rate, 2);
+                    $detailModel->x_col1 = round($rate, 2);
+                    $model->amount_due = $model->amount - $model->discount;
+                } else {
+                    $model->addError('amount', Yii::t('app/validation', 'Amount can not be blank'));
                 }
             }
         } else {
@@ -995,7 +993,7 @@ class TblProductSale extends \app\models\ChildModel {
         $data = $this;
         if (!empty($this->product_code) && !empty($data->customer_type) && !empty($data->customer_code)) {
             $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'vendor_product_sale_rate', 'PORTAL');
-            if ($config == 0 || $this->scenario == 'productSaleMemberImport') {
+            if ($config != '1' || $this->scenario == 'productSaleMemberImport') {
                 $date = !empty($data->invoice_date) ? date('Y-m-d', strtotime($data->invoice_date)) : date('Y-m-d');
                 $memberRate = 0;
                 if (strtolower($data->customer_type) == 'member') {
