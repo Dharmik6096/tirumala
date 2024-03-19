@@ -48,6 +48,9 @@ class TblMemberPaymentRestrict extends \app\models\ChildModel {
                 [['dcs_code'], 'validateData'],
                 [['dcs_code'], 'setFieldImport', 'on' => ['importCsv']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'wef_date'], 'required', 'on' => ['searchModel']],
+                [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['wef_date'], 'convertDate', 'on' => ['importCsv']],
         ];
     }
 
@@ -112,11 +115,11 @@ class TblMemberPaymentRestrict extends \app\models\ChildModel {
     }
 
     public function setFieldImport($attribute, $params) {
-        if (empty($this->getErrors()) && !empty($this->dcs_code)) {            
-            $dcs = $this->dcsCode;    
+        if (empty($this->getErrors()) && !empty($this->dcs_code)) {
+            $dcs = $this->dcsCode;
             if (empty($dcs)) {
                 $dcs = TblDcs::findOne(['ref_code' => $this->dcs_code]);
-            }    
+            }
             if (!empty($dcs)) {
                 $this->dcs_code = $dcs->dcs_code;
                 $this->union_code = $dcs->union_code;
@@ -125,8 +128,23 @@ class TblMemberPaymentRestrict extends \app\models\ChildModel {
                 $this->bmc_code = $dcs->bmc_code;
             } else {
                 $this->addError('dcs_code', Yii::t('app/validation', 'Invalid dcs code or ref code.'));
-                return false;                
+                return false;
             }
         }
     }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
 }
