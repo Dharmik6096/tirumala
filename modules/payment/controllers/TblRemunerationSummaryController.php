@@ -314,7 +314,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data->status = 'sent';
             $save_model[] = $data;
         }
-        $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
+        $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Disbursed Successfully', 'info']);
         if ($transaction == 'customRedirect') {
             $bmc_array = [];
             $bmc_array[] = $model->bmc_code;

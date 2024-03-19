@@ -1637,7 +1637,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BmcCollectionShiftReportCommon';
         return $this->actionIndex();
     }
-    
+
     public function actionBmcCollDateShiftWiseSummaryCommon() {
         $this->report = 'BmcCollDateShiftWiseSummaryCommon';
         if (Yii::$app->request->queryParams) {
@@ -1650,7 +1650,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionSocietyWiseCdaCommon() {
         $this->report = 'SocietyWiseCdaCommon';
         if (Yii::$app->request->queryParams) {
@@ -1663,12 +1663,12 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionSapWqFile() {
         $this->report = 'SapWqFile';
         return $this->actionIndex();
     }
-    
+
     public function actionVendorPaymentFormat() {
         $this->report = 'VendorPaymentFormat';
         return $this->actionIndex();
@@ -3516,10 +3516,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Bmc Collection Summary',
             ],
             'VendorPaymentFormat' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_type',
                 'sp_name' => 'mis_vendor_payment_for_cargil',
                 'scenario' => 'VendorPaymentFormat',
                 'title' => '631 - Vendor Payment Format 2',
+                'report_type' => ['all' => Yii::t('app', 'All'), 'dcswise' => Yii::t('app', 'DCS Wise'), 'vspwise' => Yii::t('app', 'VSP Wise'), 'remuneration' => Yii::t('app', 'Remuneration')
+                ],
             ],
         ];
         return $label[$l];

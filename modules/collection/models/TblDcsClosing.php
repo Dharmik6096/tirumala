@@ -74,7 +74,7 @@ class TblDcsClosing extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'dcs_closing_code' => 'Dcs Closing Code',
+            'dcs_closing_code' => Yii::t('app', 'Dcs Closing Code'),
             'transaction_date' => 'Transaction Date',
             'to_date' => 'To Date',
             'to_shift_code' => 'To Shift',

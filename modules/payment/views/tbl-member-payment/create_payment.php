@@ -101,12 +101,13 @@ $post_url = isset($post_url) ? $post_url : Url::to(['create-payment']);
                                                         $(\'#loadercontent\').hide();
                                                         $(\'#pageloader\').hide();
                                                         var cnt=0;
+                                                          $(".error-summary ul").html("");
                                                         $.each(data, function(key, val) {
-                                                            var parent_div = $("#"+key).parent("div");
-                                                            parent_div.find(".help-block").remove();
-                                                            $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
-                                                            $("#"+key).closest(".form-group").addClass("has-error");                                          
+                                                           $.each(val, function(index, value) {
+                                                                    $(".error-summary ul").append("<li>" + value.trim() + "</li>"); 
+                                                             });                                        
                                                         });
+                                                        $(".error-summary").show();
                                                     }
                                      }'),
                         ],
