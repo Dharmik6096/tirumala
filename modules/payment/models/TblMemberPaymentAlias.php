@@ -275,7 +275,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             $to_date = Yii::$app->controls->view_date($data->to_datetime);
             $this->addError($attribute, Yii::t('app', "Please first disburse payment cycle $from_date to $to_date ."));
         }
-        $vendorAutoRun = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'vendor_payment_auto_run', 'PORTAL');
+        $vendorAutoRun = Yii::$app->general->getUnionConfiguration($this->union_code, 'vendor_payment_auto_run', 'PORTAL');
         if ($vendorAutoRun == 1) {
             $paycycle = $this->paymentCycleCode;
             $from_date = date('Y-m-d', strtotime($paycycle->from_date));
