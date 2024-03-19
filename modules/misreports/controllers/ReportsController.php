@@ -3617,8 +3617,25 @@ class ReportsController extends \app\controllers\ChildController {
                 'A1'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
         );
-        array_walk_recursive($this->output, function(&$value) {
-            $value = is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value) ? '="' . $value . '"' : $value;
+        // array_walk_recursive($this->output, function(&$value) {
+        //     $value = is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value) ? '="' . $value . '"' : $value;
+        // });
+        $columnIndex = 1;
+        $columnKey = '';
+        array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$columnKey) {
+            if ($columnKey == $key || $columnKey == '') {
+                $columnKey = $key;
+                $columnIndex = 1;
+            }
+            if (is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value)) {
+                $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
+                $sheet->getStyle($columnLetter)
+                    ->getNumberFormat()
+                    ->setFormatCode(
+                        \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER
+                    );
+            }
+            $columnIndex++;
         });
         $sheet->fromArray(
                 $this->output, // The data to set
