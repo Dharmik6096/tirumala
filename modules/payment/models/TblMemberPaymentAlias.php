@@ -271,8 +271,8 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 ->andWhere(['NOT IN', 'payment_cycle_code', $this->payment_cycle_code])
                 ->one();
         if (!empty($data)) {
-            $from_date = date('d-m-Y', strtotime($data->from_datetime));
-            $to_date = date('d-m-Y', strtotime($data->to_datetime));
+            $from_date = Yii::$app->controls->view_date($data->from_datetime) ;
+            $to_date = Yii::$app->controls->view_date($data->to_datetime);
             $this->addError($attribute, Yii::t('app', "Please first disburse payment cycle $from_date to $to_date ."));
         }
         $vendorAutoRun = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'vendor_payment_auto_run', 'PORTAL');
@@ -288,7 +288,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                             ['NOT IN', 'payment_cycle_code', $this->payment_cycle_code]
                         ],
                         ['AND',
-                            ['status' => ['generated', 'processed'], 'billing_type' => 'remuneration', 'bmc_code' => $this->bmc_code],
+                            ['status' => ['generated', 'processed', 'locked'], 'billing_type' => 'remuneration', 'bmc_code' => $this->bmc_code],
                             ['or',
                                 [
                                     'or',
@@ -305,8 +305,8 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                     ])
                     ->one();
             if (!empty($vendorPayment)) {
-                $from_date = date('d-m-Y', strtotime($vendorPayment->from_datetime));
-                $to_date = date('d-m-Y', strtotime($vendorPayment->to_datetime));
+                $from_date = Yii::$app->controls->view_date($vendorPayment->from_datetime);
+                $to_date = Yii::$app->controls->view_date($vendorPayment->to_datetime);
                 $this->addError($attribute, Yii::t('app', "Please first disburse Vendor/Remuneration payment from $from_date to $to_date ."));
             }
         }
