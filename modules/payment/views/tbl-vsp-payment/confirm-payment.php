@@ -209,7 +209,7 @@ $script = "
             data: postVspDisbData,
             dataType: 'json',
             success: function(data) {
-                if (data.status == 'success') {  
+                if (data.status == 'success') { 
                     window.location=data.url;
                 } else {
                     $('#loadercontent').hide();
