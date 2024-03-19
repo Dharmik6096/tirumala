@@ -85,12 +85,12 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
-            [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'is_verified'], 'integer'],
-            [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay'], 'number'],
-            [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery', 'old_recovery', 'recovery_dcs', 'member_name', 'beneficiary_name', 'dcs_name', 'bmc_code', 'mcc_plant_code'], 'safe'],
-            [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
-            [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+                [['union_code', 'plant_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
+                [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'is_verified'], 'integer'],
+                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay'], 'number'],
+                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery', 'old_recovery', 'recovery_dcs', 'member_name', 'beneficiary_name', 'dcs_name', 'bmc_code', 'mcc_plant_code'], 'safe'],
+                [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
+                [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
 //            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
             [['payment_release_type', 'shortage_amount_old'], 'safe']
         ];
@@ -271,9 +271,44 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 ->andWhere(['NOT IN', 'payment_cycle_code', $this->payment_cycle_code])
                 ->one();
         if (!empty($data)) {
-            $from_date = date('d-m-Y', strtotime($data->from_datetime));
-            $to_date = date('d-m-Y', strtotime($data->to_datetime));
+            $from_date = Yii::$app->controls->view_date($data->from_datetime);
+            $to_date = Yii::$app->controls->view_date($data->to_datetime);
             $this->addError($attribute, Yii::t('app', "Please first disburse payment cycle $from_date to $to_date ."));
+        }
+        $vendorAutoRun = Yii::$app->general->getUnionConfiguration($this->union_code, 'vendor_payment_auto_run', 'PORTAL');
+        if ($vendorAutoRun == 1) {
+            $paycycle = $this->paymentCycleCode;
+            $from_date = date('Y-m-d', strtotime($paycycle->from_date));
+            $to_date = date('Y-m-d', strtotime($paycycle->to_date));
+            $vendorPayment = TblVspPayment::find()
+                    ->select(['from_datetime', 'to_datetime'])
+                    ->where(['OR',
+                            ['AND',
+                                ['status' => ['generated', 'processed', 'locked'], 'billing_type' => 'regular', 'bmc_code' => $this->bmc_code],
+                                ['NOT IN', 'payment_cycle_code', $this->payment_cycle_code]
+                        ],
+                            ['AND',
+                                ['status' => ['generated', 'processed', 'locked'], 'billing_type' => 'remuneration', 'bmc_code' => $this->bmc_code],
+                                ['or',
+                                    [
+                                    'or',
+                                    "CAST(from_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'",
+                                    "CAST(to_datetime as date) NOT BETWEEN '$from_date' AND '$to_date'"
+                                ],
+                                    [
+                                    'or',
+                                    "'$from_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)",
+                                    "'$to_date' NOT BETWEEN CAST(from_datetime as date) AND CAST(to_datetime as date)"
+                                ]
+                            ]
+                        ]
+                    ])
+                    ->one();
+            if (!empty($vendorPayment)) {
+                $from_date = Yii::$app->controls->view_date($vendorPayment->from_datetime);
+                $to_date = Yii::$app->controls->view_date($vendorPayment->to_datetime);
+                $this->addError($attribute, Yii::t('app', "Please first disburse Vendor/Remuneration payment from $from_date to $to_date ."));
+            }
         }
     }
 
@@ -349,4 +384,5 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     public function getShortageRecoveryMpgMember() {
         return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
     }
+
 }
