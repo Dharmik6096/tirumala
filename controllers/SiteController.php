@@ -173,6 +173,7 @@ class SiteController extends Controller {
                 $model->shift = 2;
             }
         }
+        $model->performance_type = !empty(Yii::$app->request->post('performance_type')) ? Yii::$app->request->post('performance_type') : '0';
         $model->widget_type = isset(Yii::$app->request->post('Dashboard')['widget_type']) ? Yii::$app->request->post('Dashboard')['widget_type'] : $defaultWidget;
         $model->mcc_code = isset(Yii::$app->request->post('Dashboard')['mcc_code']) ? Yii::$app->request->post('Dashboard')['mcc_code'] : '';
         $dashboardUserWidgets = new TblDashboardUserWidgets();
@@ -799,12 +800,12 @@ class SiteController extends Controller {
             $variable = explode('~', $data[0]);
             $val_type = explode('|', $data[1]);
             $param = $variable[0];
-
+            
             $param1 = isset($variable[1]) ? $variable[1] : '';
             $value = !empty($post[$param]) ? $post[$param] : $val_type[0];
             $value = (isset($val_type[1]) && $val_type[1] == 'date') ? date('Y-m-d', strtotime($value)) : $value;
             $value = (isset($val_type[1]) && $val_type[1] == 'list') ? str_replace('-', ',', $value) : $value;
-
+           
             if (!empty($val_type[1])) {
                 $checkshift = explode(':', $val_type[1]);
                 if (isset($checkshift[0]) && $checkshift[0] == 'dateshift') {
@@ -878,11 +879,15 @@ class SiteController extends Controller {
         $dcs_code = str_replace(',', '-', $dcs_code);
         $widget_type = '';
         $customer_type = '';
+        $performance_type = '0';
         if (!empty(Yii::$app->request->post('widget_type'))) {
             $widget_type = Yii::$app->request->post('widget_type');
         }
         if (!empty(Yii::$app->request->post('customer_type'))) {
             $customer_type = Yii::$app->request->post('customer_type');
+        }
+        if (!empty(Yii::$app->request->post('performance_type'))) {
+            $performance_type = Yii::$app->request->post('performance_type');
         }
         $array = [
             'fed_union' => [
@@ -989,11 +994,11 @@ class SiteController extends Controller {
             ],
             'top_dcs_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=' . $customer_type,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=' . $customer_type . ',performance_type=' . $performance_type,
             ],
             'top_rmrd_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=DCS',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=DCS' . ',performance_type=' . $performance_type,
             ],
             'dashboard_society_status_pie_chart' => [
                 'name' => 'sp_portal_dashboard_farmer_status',
@@ -1439,7 +1444,7 @@ class SiteController extends Controller {
         $union = $data['union'];
         $union_str = 0;
         $mccc_str = 0;
-
+        
         if (!empty(Yii::$app->request->post('union'))) {
             $union_str = Yii::$app->request->post('union');
         } else if (!empty(Yii::$app->session->get('Unions'))) {
@@ -1456,6 +1461,7 @@ class SiteController extends Controller {
         }
         $type = Yii::$app->request->post('type');
         $customertype = !empty(Yii::$app->request->post('customer_type')) ? Yii::$app->request->post('customer_type') : ($type == 'rmrd' ? 'DCS' : '');
+        $performancetype = !empty(Yii::$app->request->post('performance_type')) ? Yii::$app->request->post('performance_type') : '0';
 
         $sp_param = [];
         $rlsData = $this->setRlsData();
@@ -1469,10 +1475,11 @@ class SiteController extends Controller {
         $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
         $sp_param[] = $type;
         $sp_param[] = $customertype;
+        $sp_param[] = $performancetype;
 //        $sp_param[] = '';
         $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
-        return $this->renderAjax('top_dcs_collection', ['output' => $output, 'union_code' => $union, 'customer_tpye' => $customertype]);
+        return $this->renderAjax('top_dcs_collection', ['output' => $output, 'union_code' => $union, 'customer_tpye' => $customertype, 'performance_type' => $performancetype]);
     }
 
     public function actionBmcCrossTabDetails() {
