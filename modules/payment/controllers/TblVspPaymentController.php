@@ -46,7 +46,7 @@ use yii\widgets\ActiveForm;
 class TblVspPaymentController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['check-mcc-type', 'process-payment'];
-    
+
     /**
      * Creates a new TblVspPayment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -129,7 +129,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     public function actionCreateStopPayment() {
         $model = new TblVspPayment();
-        $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
+        $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') == '1' ? TRUE : FALSE;
         if ($model->load(Yii::$app->request->post())) {
             $bmc_array = [];
             $bmc_array = $model->bmc_code;
@@ -164,8 +164,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionProcessPayment($reGenerate = 0) {
-         $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
-       
+        $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') == '1' ? TRUE : FALSE;
+
         if (Yii::$app->request->get()) {
             $model = new TblVspPayment();
             $model->load(Yii::$app->request->get());
@@ -188,7 +188,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     public function actionPaymentAdjust() {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
-        $model = new TblVspPayment();      
+        $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
         if (Yii::$app->request->post()) {
             $bmc_array = [];
@@ -335,7 +335,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $paymentData = Yii::$app->request->post()['paymentData'];
             $new_product_inst = !empty($paymentData) ? explode(',', $paymentData) : [];
-            $old_product_inst = array_filter(array_map(function($a) {
+            $old_product_inst = array_filter(array_map(function ($a) {
                         return !empty($a->installment_date) ? $a->product_sale_installment_code : '';
                     }, $idataProvider->getModels()));
             $add_inst = array_diff($new_product_inst, $old_product_inst);
@@ -504,8 +504,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                 ->bindValue(':customer_type', $model->customer_type)
                 ->execute();
         /* delete recovery data */
-        return  Yii::$app->ClientPaymentConfig->processPayment('vsp_payment', $data);
-
+        return Yii::$app->ClientPaymentConfig->processPayment('vsp_payment', $data);
     }
 
     public function actionPaymentDisburse() {
@@ -542,7 +541,6 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                                 'bmc_code' => $model->bmc_code,
                                 'customer_type' => $model->customer_type,
                                 'status' => ['locked', 'rejected']])
-
                             ->all();
 
                     $pay_cnt = count($query);
@@ -626,18 +624,22 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->post());
         // $model->dcs_code = Yii::$app->request->post('selection');
-        $this->LockBilling($model);
-
+        $msg = $this->LockBilling($model);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        $msg = '';
         $url = Url::to(['index']);
         $result = 'success';
+        $from_date = Yii::$app->formatter->asDatetime($model->paymentCycleCode->from_date, 'php:d-m-Y');
+        $to_date = Yii::$app->formatter->asDatetime($model->paymentCycleCode->to_date, 'php:d-m-Y');
+        $msg .= '(' . $from_date . ' to ' . $to_date . ') - Payment disbursed successfully';
+        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+            'message' => \Yii::t('app', '' . $msg)]);
         return ['status' => $result, 'url' => $url, 'msg' => $msg];
-//        return $this->redirect(['index']);
+//       return $this->redirect(['index']);
     }
 
     protected function LockBilling($model) {
         $bmc_array = [];
+        $msg = '';
         $bmc_array[] = $model->bmc_code;
         if (is_array($model->bmc_code)) {
             $bmc_array = $model->bmc_code;
@@ -651,8 +653,9 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
             $param['user_code'] = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
             $param['is_without_release'] = $model->payment_release_type;
             Yii::$app->ClientPaymentConfig->processPayment('vsp_payment_disburse', $param);
+            $msg .= $model->customerType->customer_desc . ' - ' . $model->bmcCode->ref_code . ' ' . $model->bmcCode->bmc_name . "<br>";
         }
-
+        return $msg;
     }
 
     protected function exportTxt($model) {
