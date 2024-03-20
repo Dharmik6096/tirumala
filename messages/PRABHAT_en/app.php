@@ -218,4 +218,8 @@ return [
     '208 - Society-Shift Collection Completed' => '208 - VLCC-Shift Collection Completed',
     '102 - Society Wise Milk Collection' => '102 - VLCC Wise Milk Collection',
     'Society Wise Milk Collection' => 'VLCC Wise Milk Collection',
+    'Stock Transfer To DCS' => 'Stock Transfer To VLCC',
+    'Stock At DCS' => 'Stock At VLCC',
+    'Summary Report - DCS' => 'Summary Report - VLCC',
+    'DCS Wise Stock' => 'VLCC Wise Stock',
 ];
