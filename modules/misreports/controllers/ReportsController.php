@@ -3403,7 +3403,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bmc_collection_wq_vrs_newasa',
                 'scenario' => 'SapWqFile',
                 'title' => 'SAP WQ File',
-                'export_file_name' => 'PLANT_CODE_WQ_from_date_from_shift',
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
             ],
             'MemberDailyCollectionCommon' => [
