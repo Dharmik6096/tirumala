@@ -434,7 +434,7 @@ class DropDown extends Component {
 
     public function unionpaymentcycledcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/payment-cycle-dcs-list', 'Select DCS', $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/payment-cycle-dcs-list', Yii::t('app', 'Select Dcs'), $multiple, $model->$name, $readonly);
     }
 
     public function bill_head($model, $form, $depends, $name = 'bill_head_code', $islable = true, $flag = 'D') {
