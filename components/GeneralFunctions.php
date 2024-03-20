@@ -2352,6 +2352,7 @@ class GeneralFunctions extends Component {
         if (!empty($query)) {
             $number = (int) $number + $auto_inc;
         }
+        $number = str_pad($number, 4, '0', STR_PAD_LEFT);
         return $number;
     }
 
