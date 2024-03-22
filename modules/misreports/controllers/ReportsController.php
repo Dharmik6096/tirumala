@@ -3594,10 +3594,10 @@ class ReportsController extends \app\controllers\ChildController {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
                 'extension' => 'xls',
-                'writer' => 'Excel2007',
+                'writer' => IOFactory::WRITER_XLS,
             ];
         }
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         /* $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()
@@ -3628,10 +3628,10 @@ class ReportsController extends \app\controllers\ChildController {
             if (is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value)) {
                 $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
                 $sheet->getStyle($columnLetter)
-                    ->getNumberFormat()
-                    ->setFormatCode(
-                        \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER
-                    );
+                        ->getNumberFormat()
+                        ->setFormatCode(
+                                \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER
+                );
             }
             $columnIndex++;
         });
