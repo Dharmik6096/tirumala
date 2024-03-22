@@ -3405,6 +3405,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'SAP WQ File',
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
+                'downloadFormat' => 'csv',
             ],
             'MemberDailyCollectionCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3583,12 +3584,20 @@ class ReportsController extends \app\controllers\ChildController {
 //        exit();
 
 
-        $header = [
-            'mime' => '	application/vnd.ms-excel',
-            'extension' => 'xls',
-            'writer' => IOFactory::WRITER_XLS,
-        ];
-        $objPHPExcel = new Spreadsheet();
+        if (isset($this->data['downloadFormat']) && $this->data['downloadFormat'] == 'csv') {
+            $header = [
+                'mime' => 'text/csv',
+                'extension' => 'csv',
+                'writer' => 'CSV',
+            ];
+        } else {
+            $header = [
+                'mime' => 'application/vnd.ms-excel',
+                'extension' => 'xls',
+                'writer' => 'Excel2007',
+            ];
+        }
+        $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
         /* $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()
