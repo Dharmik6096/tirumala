@@ -710,6 +710,30 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs#notification_type',
                 'sp' => 'sp_app_eipl_v1_bulk_notification',
             ],
+            'provisional-member/master' => [
+                'param' => 'select_param:*#organization_type#organization_code#table:tbl_member_provisional',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],
+            'bank/master' => [
+                'param' => '',
+                'sp' => 'sp_eipl_app_bank_master_data',
+            ],
+            'branch/master' => [
+                'param' => 'bank_code',
+                'sp' => 'sp_eipl_app_branch_master_data',
+            ],
+            'gender/master' => [
+                'param' => '',
+                'sp' => 'sp_eipl_app_gender_master_data',
+            ],
+            'mapping-document/master' => [
+                'param' => 'master_type',
+                'sp' => 'sp_eipl_app_provisioanl_member_document_master_data',
+            ],
+            'provisional-member' => [
+                'main_table' => 'TblMemberProvisional',
+                'save_child' => true
+            ],
         ];
         return $label;
     }

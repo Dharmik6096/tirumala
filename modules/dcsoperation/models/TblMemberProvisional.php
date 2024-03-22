@@ -25,6 +25,7 @@ use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\document\models\TblAttachment;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblApprovalStagesDetail;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -613,5 +614,30 @@ class TblMemberProvisional extends ChildModel {
     public function getMemberPrivisionalApproval() {
         return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->orderBy('level ASC');
 //        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$childModel) {
+        $model->ex_member_code = !empty($model->ex_member_code) ? str_pad($model->ex_member_code, 4, '0', STR_PAD_LEFT) : '';
+        if(!empty($this->member_code)){
+            $member = TblMember::find()->where(['member_code' => $this->member_code])->one();
+            if(!empty($member)){
+                $member['created_at'] = '';
+                $setField = array_diff_key($member->attributes, $modelSave['content']);
+                $model->setAttributes($setField);   
+            }
+        } else {
+            $model->member_code = $this->getCode();
+        }
+        $model->originating_org_type = 'HO';
+        $model->provisional_member_code = Yii::$app->general->getUuid();
+        $model->dob = empty($model->dob) ? NULL : $model->dob;
+        $model->member_name = ucwords($model->member_name);
+        $model->registration_date = empty($model->registration_date) ? NULL : Yii::$app->controls->view_date($model->registration_date, 'php:Y-m-d');
+        $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
+        if ($config == 1) {
+            $modelStages = new TblApprovalStagesDetail();
+            $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $childModel, $approval_stages);
+            $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
+        }
     }
 }
