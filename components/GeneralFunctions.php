@@ -1568,12 +1568,12 @@ class GeneralFunctions extends Component {
         return $value;
     }
 
-    public function getTransactionCode($model, $primaryCode, $autoInc = 1) {
+    public function getTransactionCode($model, $primaryCode, $autoInc = 1, $autoLength = 4) {
         $primaryKey = $model->tableSchema->primaryKey[0];
         $orgCode = $primaryCode . 'T';
         $len = strlen($orgCode);
         $val = $model->find()
-                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1," . $autoLength . "))) AS " . $primaryKey])
                 ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
