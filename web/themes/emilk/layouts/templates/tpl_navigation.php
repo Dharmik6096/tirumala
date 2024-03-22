@@ -201,14 +201,14 @@ echo GhostMenu::widget([
                             ['label' => 'Payment Head Transaction', 'url' => ['/tankermovement/tbl-payment-head-transaction/index'], 'active' => ($cntrl == 'tbl-payment-head-transaction')],
                     ]
                 ],
-                ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],
-                [
+                    ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],
+                    [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'AMCS - Shift Time Exceed') . '<b class="caret"></b></a>',
                     'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
-                        ['label' => Yii::t('app', 'Pending Approval'), 'url' => ['/configuration/tbl-shift-time-exceed/pending-approval']],
-                        ['label' => Yii::t('app', 'AMCS - Shift Time Exceed'), 'url' => ['/configuration/tbl-shift-time-exceed/index'], 'active' => ($cntrl == 'tbl-shift-time-exceed')],
+                            ['label' => Yii::t('app', 'Pending Approval'), 'url' => ['/configuration/tbl-shift-time-exceed/pending-approval']],
+                            ['label' => Yii::t('app', 'AMCS - Shift Time Exceed'), 'url' => ['/configuration/tbl-shift-time-exceed/index'], 'active' => ($cntrl == 'tbl-shift-time-exceed')],
                     ]
                 ],
             ],
@@ -716,7 +716,7 @@ echo GhostMenu::widget([
                             ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                             ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
                             ['label' => '408-' . Yii::t('app', 'CP liability Report'), 'url' => ['/misreports/reports/cpliability-report']],
-                            ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/default/sap-wq-file']],
+                            ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/reports/sap-wq-file']],
                     ]
                 ],
                     [
