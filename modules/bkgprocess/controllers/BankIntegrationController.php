@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use app\components\SBISecurity;
 use app\modules\webservice\models\TblSbiApiLog;
+use app\components\WebApi;
 
 class BankIntegrationController extends ChildController {
 
@@ -57,8 +58,7 @@ class BankIntegrationController extends ChildController {
 
                         $bank_log = new TblBankPaymentLog();
                         $bank_log->union_code = $payment['union_code'];
-                        $bank_log->payment_transaction_code = $transaction['TransactionId'];
-                        $bank_log->file_path = $fileName;
+                        $bank_log->file_path = $transaction['TransactionID'];
                         $bank_log->file_name = $fileName;
                         $bank_log->status = 1; //created
                         $bank_log->payment_date = date('Y-m-d');
@@ -70,7 +70,7 @@ class BankIntegrationController extends ChildController {
                         $body = json_encode($transaction);
                         $url = $payment['payment_url'];
                         $main_header = array("Content-Type: application/json");
-                        $api = new \app\components\WebApi();
+                        $api = new WebApi();
                         $api->serverUrl = $payment['payment_url'];
                         $api->body = $body;
                         $api->return_actual = TRUE;
@@ -78,11 +78,11 @@ class BankIntegrationController extends ChildController {
                         $curl = $api->ExchangeDataCurl();
 
                         if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
-                             $condition = ['payment_transaction_code'=>$transaction['TransactionId'],'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
+                             $condition = ['payment_transaction_code'=>$transaction['TransactionID'],'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
                              $updateData = ['status' => 2, 'file_status'=>'success','file_status_desc'=>'transaction sent to bank'];
                             $bank_log->updateStatus($condition, $updateData);
                         } else {
-                            $condition = ['payment_transaction_code'=>$transaction['TransactionId'],'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
+                            $condition = ['payment_transaction_code'=>$transaction['TransactionID'],'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
                             $updateData = ['status' => 3, 'file_status'=>'API Failure','file_status_desc'=>'transaction pending'];
                             $bank_log->updateStatus($condition, $updateData);
                             Yii::$app->db->createCommand()
@@ -90,13 +90,13 @@ class BankIntegrationController extends ChildController {
                                         'is_file' => '0',
                                         'response_datetime' => date('Y-m-d H:i:s'),
                                         'response_msg' => 'API Failure'],
-                                           'payment_transaction_code = \''.$transaction['TransactionId'].'\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
+                                           'payment_transaction_code = \''.$transaction['TransactionID'].'\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
                                     ->execute();
                         }
                     }
                 } catch (\Throwable $ex) {
                     // $logData->save(false);
-//                    var_dump($ex);
+                   // var_dump($ex);
                     return;
                 }
             }
