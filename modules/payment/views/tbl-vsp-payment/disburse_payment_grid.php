@@ -125,7 +125,7 @@ $this->title = 'Process for Payment Disburse';
     ?>
     <div class="clearfix"></div>
     <?php if (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) { ?>
-        <div class="col-md-12" >
+        <div class="col-md-12" >              
             <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn btn-primary bank', 'name' => 'vsp']); ?>
             <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'vsp-file']); ?>
         </div>
@@ -147,7 +147,7 @@ $script = "
     $('.bank').on('click',function(){
         $('#error-summary').hide();
         $('#flag').val($(this).prop('name'));
-        $('form#vendor-payment-disburse').submit();
+                  $('form#vendor-payment-disburse').submit();
        /*  $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['tbl-member-payment/check-bank']) . "',

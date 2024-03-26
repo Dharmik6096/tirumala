@@ -70,7 +70,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_tpt_primary_payment_new',
                 ],
                 'vsp_payment_disburse' => [
-                    'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code,is_without_release',
+                    'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code,is_without_release,union_bank_payment_code',
                     'sp_name' => 'sp_disburse_vendor_payment',
                 ],
                 'secondary_tpt_payment' => [
