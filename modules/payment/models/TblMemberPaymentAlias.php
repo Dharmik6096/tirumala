@@ -349,4 +349,13 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     public function getShortageRecoveryMpgMember() {
         return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
     }
+    
+    public function getBmcWiseData() {
+        $query = $this->find()
+                ->where(['payment_cycle_code' => $this->payment_cycle_code, 'bmc_code' => $this->bmc_code]);
+        if (!empty(Yii::$app->session->get('Dcs') !== '')) {
+            $query->andFilterWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        }
+        return $query->all();
+    }
 }

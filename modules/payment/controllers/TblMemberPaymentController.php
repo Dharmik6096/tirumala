@@ -64,7 +64,7 @@ use app\modules\vsp\models\TblBillHead;
  */
 class TblMemberPaymentController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-total-recovery', 'member-payment-adjust-list', 'list-member-payment-summary-data'];
+    public $freeAccessActions = ['validate-total-recovery', 'member-payment-adjust-list', 'list-member-payment-summary-data', 'validate-bank-details', 'send-otp', 'verify-otp'];
 
     /**
      * Finds the TblMemberPayment model based on its primary key value.
@@ -758,6 +758,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $searchModel->attributes = $model->attributes;
         $searchModel->payment_status = 'Lock';
         $dataProvider = $searchModel->search([]);
+        $dataProvider->pagination = false;
+        $d = $dataProvider->getModels();
+        $finalP = 0;
+        foreach ($d as $p) {
+            $pAmt = !empty($p->final_amount) ? $p->final_amount : 0;
+            $finalP = $finalP + $pAmt;
+        }
+
         //  $dataProvider->query->andWhere("(1=CASE WHEN (select COUNT(*) from tbl_member_payment_alias where tbl_member_payment_summary_alias.bmc_code=tbl_member_payment_alias.bmc_code and tbl_member_payment_summary_alias.payment_cycle_code=tbl_member_payment_alias.payment_cycle_code and payment_status != 'Lock' ) > 0 THEN 0 ELSE 1 END)");
 //        return $this->render('process_lock_dcs_payment', [
 //                    'model' => $model,
@@ -780,6 +788,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     'dataProvider' => $dataProvider,
                     'title' => 'Member Payment Disburse : Step 1',
                     'negativeValCount' => $negativeValCount,
+                    'finalP' => $finalP,
                     'bank_show' => $union_bank
         ]);
     }
@@ -1148,7 +1157,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         } else {
                             $bmc_array[] = $model->bmc_code;
                         }
-                        $unionBankPaymentCode = ($is_bank_integrated && !empty($union_bank)) ?$model->union_bank_payment_code : null;
+                        $unionBankPaymentCode = ($is_bank_integrated && !empty($union_bank)) ? $model->union_bank_payment_code : null;
                         foreach ($bmc_array as $bmc) {
                             $param = [];
                             $param['union_code'] = $model->union_code;
@@ -1754,6 +1763,182 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             }
             Yii::$app->response->format = Response::FORMAT_JSON;
             return Json::encode($record);
+        }
+    }
+
+    public function actionValidateBankDetails() {
+        if (Yii::$app->request->post()) {
+            $model = new TblUnionBankPayment();
+            $model->union_code = Yii::$app->request->post('union_code');
+            $modelData = $model->getRecord();
+            $bmcCode = Yii::$app->request->post('bmc_code');
+//            !empty($bmcCode) && $bmcCode == '004' && 
+      
+            if (!empty($bmcCode) && !empty($modelData) && (!empty($modelData->file_path) || $modelData->integration_mode == 'API') && !empty($modelData->mobile_no)) {
+
+                try {
+                    $paymentModel = new TblMemberPaymentAlias();
+                    $paymentModel->payment_cycle_code = Yii::$app->request->post('payment_cycle_code');
+                    $paymentModel->bmc_code = Yii::$app->request->post('bmc_code');
+                    $paymentModelData = $paymentModel->getBmcWiseData();
+                    $totalMemberCount = count($paymentModelData);
+                    $hasBankDetailMemberCount = 0;
+                    $hasVerifiedBankDetailMemberCount = 0;
+                    foreach ($paymentModelData as $member) {
+                        if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code)) {
+                            $hasBankDetailMemberCount++;
+                        }
+                        if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code) && !empty($member->is_verified)) {
+                            $hasVerifiedBankDetailMemberCount++;
+                        }
+                    }
+
+                    if ($hasBankDetailMemberCount == $totalMemberCount && $hasVerifiedBankDetailMemberCount == $hasBankDetailMemberCount) {
+//                        $otp_model = new TblPaymentOtpVerification();
+//                        $otp_model->attributes = $model->attributes;
+//                        $otp_model->otp_code = '1234'; //rand(1000, 9999);
+//                        if ($otp_model->save()) {
+//                            Yii::$app->session->set('otp_id', $otp_model->id);
+////                            $mobile = '918460355410';
+//                            $mobile = '91' . $model->mobile_no;
+////                            $message = 'Your OTP for Payment is ' . $otp_model->otp_code;
+////                            Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
+//
+//                            $templateModel = new TblAlertTemplate();
+//                            $templateData = $templateModel->getTemplateData('vendor_payment');
+//                            $message = str_replace('{otp}', $otp_model->otp_code, $templateData->message);
+//
+//                            $sms_data = [];
+//                            $sms_data['refecence_code'] = (string) $otp_model->id;
+//                            $sms_data['module_type'] = 'farmer_payment';
+//                            if (YII_ENV_DEV) {
+//                                //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+//                            } else {
+//                                Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, true, $templateData->header_info);
+//                            }
+//                        } else {
+//                            $status = 'error';
+//                            $msg = 'SMS Service Not Availabe.';
+//                        }
+                        $status = 'success';
+                        $msg = '';
+                    } else if ($hasBankDetailMemberCount > $hasVerifiedBankDetailMemberCount || $hasBankDetailMemberCount < $hasVerifiedBankDetailMemberCount) {
+                        $errorCount = $hasBankDetailMemberCount - $hasVerifiedBankDetailMemberCount;
+                        $status = 'validate_member_bank_detail_verification_confirmation';
+                        $msg = 'Bank Details not Verified for ' . $errorCount . ' out of ' . $hasBankDetailMemberCount . ' Members.  Are you sure you want to Continue?';
+                    } else {
+                        $errorCount = $totalMemberCount - $hasBankDetailMemberCount;
+                        $status = 'validate_member_bank_detail_confirmation';
+                        $msg = 'Bank Details not Available for ' . $errorCount . ' out of ' . $totalMemberCount . ' Members. Are you sure you want to Continue?';
+                    }
+                } catch (\Throwable $ex) {
+                    $msg = 'SMS Service Not Availabe.';
+                    $status = 'error';
+                }
+
+//                $status = 'success';
+//                $msg = '';
+            } else {
+                $status = 'allow_without_otp';
+                $msg = '';
+//                $status = 'error';
+//                $msg = 'Bank intigration not yet done.';
+            }
+
+
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode(['status' => $status, 'message' => $msg]);
+        }
+    }
+
+    public function actionSendOtp() {
+        if (Yii::$app->request->post()) {
+            $status = 'error';
+            $msg = 'SMS Service Not Availabel.';
+            try {
+                Yii::$app->session->set('otp_id', NULL);
+                $model = new TblUnionBankPayment();
+                $model->union_code = Yii::$app->request->post('union_code');
+                $f_date = !empty(Yii::$app->request->post('from_date')) ? Yii::$app->request->post('from_date') : '';
+                $t_date = !empty(Yii::$app->request->post('to_date')) ? Yii::$app->request->post('to_date') : '';
+                $bmc = !empty(Yii::$app->request->post('bmc_name')) ? Yii::$app->request->post('bmc_name') : '';
+                $amount = !empty(Yii::$app->request->post('amount')) ? Yii::$app->request->post('amount') : '';
+                $from_date = !empty($f_date) ? date('d-m-Y', strtotime($f_date)) : '';
+                $to_date = !empty($t_date) ? date('d-m-Y', strtotime($t_date)) : '';
+                $payment = $from_date . ' to ' . $to_date;
+                $bmcName = $bmc;
+                $model = $model->getRecord();
+                $otp_model = new TblPaymentOtpVerification();
+                $otp_model->attributes = $model->attributes;
+                $otp_model->otp_code = rand(1000, 9999);
+                if ($otp_model->save()) {
+                    Yii::$app->session->set('otp_id', $otp_model->id);
+//                    $mobile = '919879468958';
+                    $mobile = '91' . $model->mobile_no;
+//                            $message = 'Your OTP for Payment is ' . $otp_model->otp_code;
+//                            Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
+
+                    $templateModel = new TblAlertTemplate();
+                    $templateData = $templateModel->getTemplateData('farmer_payment');
+
+                    if (!empty($templateData)) {
+                        $arrFrom = array("{OTP}", "{payment_cycle}", "{bmc}", "{name}", "{amount}");
+                        $arrTo = array($otp_model->otp_code, $payment, $bmcName, 'farmers', $amount);
+                        $word = $templateData->message;
+                        $message = str_replace($arrFrom, $arrTo, $word);
+
+                        $sms_data = [];
+                        $sms_data['refecence_code'] = (string) $otp_model->id;
+                        $sms_data['module_type'] = 'farmer_payment';
+                        if (false && YII_ENV_DEV) {
+                            //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                        } else {
+                            Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, true, $templateData->header_info);
+                        }
+                    }
+                    $status = 'success';
+                    $msg = '';
+                } else {
+                    $status = 'error';
+                    $msg = 'SMS Service Not Availabel.';
+                }
+            } catch (\Throwable $ex) {
+                var_dump($ex);
+                $msg = 'SMS Service Not Available.';
+                $status = 'error';
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode(['status' => $status, 'message' => $msg]);
+        }
+    }
+
+    public function actionVerifyOtp() {
+        if (Yii::$app->session->get('otp_id') != NULL && Yii::$app->request->post()) {
+            try {
+                $msg = 'Please Enter valid otp.';
+                $status = 'error';
+                $otp_data = TblPaymentOtpVerification::findOne(Yii::$app->session->get('otp_id'));
+                if ($otp_data->attempt < 3) {
+                    $otp_data->attempt += 1;
+                    if ($otp_data->otp_code == Yii::$app->request->post('otp_code')) {
+                        $otp_data->status = 'Verified';
+                        $status = 'success';
+                    } else {
+                        $otp_data->status = 'Notverified';
+                        $status = 'error';
+                        $msg = 'Please Enter valid otp.';
+                    }
+                    $otp_data->save();
+                } else {
+                    $status = 'error';
+                    $msg = 'You have already attempted 3 time.';
+                }
+            } catch (\Throwable $ex) {
+                $msg = 'An error occurred on the server while verify opt.';
+                $status = 'error';
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode(['status' => $status, 'message' => $msg]);
         }
     }
 }

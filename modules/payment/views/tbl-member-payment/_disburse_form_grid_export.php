@@ -24,7 +24,8 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
     <?php
     $form = ActiveForm::begin([
                 'action' => $action,
-                'method' => 'post'
+                'method' => 'post',
+                'id' => 'otp-form',
     ]);
     ?>
     <div class="col-sm-12 mt10 padding-left-0">
@@ -141,6 +142,7 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
                 <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'member-file']); ?>
             </div>
         <?php } ?>
+        <?= $this->render('verify-otp', ['model' => $model, 'form' => $form]) ?>
 
         <div class="clearfix"></div>
 
@@ -210,31 +212,179 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
                 var dispMessage = '" . Yii::t('app', 'Net Payable must be Positive for each Member.') . "';
                 bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
             } else {
-                bootbox.confirm({
-                    message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
-                    buttons: {
-                        confirm: {
-                            label: '" . Yii::t('app', 'Yes') . " ',
-                            className: 'btn-primary'
-                        },
-                        cancel: {
-                            label: '" . Yii::t('app', 'No') . "' ,
-                            className: 'btn-danger'
-                        }
-                    },
-                    callback: function (result) {
-                        if(result){
-                            $('form#w1').submit();
+//                bootbox.confirm({
+//                    message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
+//                    buttons: {
+//                        confirm: {
+//                            label: '" . Yii::t('app', 'Yes') . " ',
+//                            className: 'btn-primary'
+//                        },
+//                        cancel: {
+//                            label: '" . Yii::t('app', 'No') . "' ,
+//                            className: 'btn-danger'
+//                        }
+//                    },
+//                    callback: function (result) {
+//                        if(result){
+//                            $('form#w1').submit();
+//                        }
+//                    }
+//                });
+//            }
+//         }
+//
+//        } else {
+//            $('form#w1').submit();
+//        }
+//    });
+        var ucode = '" . $model->union_code . "';
+                var payCycleCode = ' ". $model->payment_cycle_code . "';
+                var bmcCode = ".json_encode($model->bmc_code).";
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['validate-bank-details']) . "',
+                    data: {'union_code':ucode,'payment_cycle_code':payCycleCode,'bmc_code':bmcCode},
+//                    data: 'union_code=" . $model->union_code . "',
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success') {
+                            // $('#OtpModal').modal('toggle'); 
+                           sendotp();
+//                          $('form#w1').submit();
+//allow_without_otp
+                        } else if (obj.status == 'allow_without_otp') { 
+                            $('#otp-form').submit();
+                            $('#loadercontent').show();
+                            $('#pageloader').show();
+                        } else if (obj.status == 'validate_member_bank_detail_confirmation') { 
+                            bootbox.confirm({
+                                message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+obj.message+'</span>',
+                                buttons: {
+                                    confirm: {
+                                        label: '" . Yii::t('app', 'Yes') . " ',
+                                        className: 'btn-primary'
+                                    },
+                                    cancel: {
+                                        label: '" . Yii::t('app', 'No') . "' ,
+                                        className: 'btn-danger'
+                                    }
+                                },
+                                callback: function (result) {
+                                    if(result){
+//                                        $('form#w1').submit();
+                                        sendotp();
+                                    }
+                                }
+                            });
+                        } else if (obj.status == 'validate_member_bank_detail_verification_confirmation') { 
+                            bootbox.confirm({
+                                message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+obj.message+'</span>',
+                                buttons: {
+                                    confirm: {
+                                        label: '" . Yii::t('app', 'Yes') . " ',
+                                        className: 'btn-primary'
+                                    },
+                                    cancel: {
+                                        label: '" . Yii::t('app', 'No') . "' ,
+                                        className: 'btn-danger'
+                                    }
+                                },
+                                callback: function (result) {
+                                    if(result){
+//                                        $('form#w1').submit();
+                                        sendotp();
+                                    }
+                                }
+                            });
+                           // bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.message+'</span>');
+                        } else {
+                           bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.message+'</span>');
                         }
                     }
                 });
+//                bootbox.confirm({
+//                    message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
+//                    buttons: {
+//                        confirm: {
+//                            label: '" . Yii::t('app', 'Yes') . " ',
+//                            className: 'btn-primary'
+//                        },
+//                        cancel: {
+//                            label: '" . Yii::t('app', 'No') . "' ,
+//                            className: 'btn-danger'
+//                        }
+//                    },
+//                    callback: function (result) {
+//                        if(result){
+//                            $('form#w1').submit();
+//                        }
+//                    }
+ //               });
+                } 
             }
-         }
+		  
 
         } else {
             $('form#w1').submit();
         }
     });
+    
+
+//
+            function sendotp(){
+                var ucode = '" . $model->union_code . "';
+                var from_date = '" . $fromDate . "';
+                var to_date = '" . $toDate . "';
+                var amount = '" . $finalP . "';
+                var bmc_name = '" . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . "';
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['send-otp']) . "',
+                    data: {'union_code':ucode,'from_date':from_date,'to_date':to_date,'bmc_name':bmc_name,'amount':amount},
+//                    data: 'union_code=" . $model->union_code . "',
+                    success: function (data) {
+                        $('#loadercontent').hide();
+                        $('#pageloader').hide();
+                            var obj = $.parseJSON(data);
+                            if (obj.status == 'success') {
+                                $('#OtpModal').modal('toggle'); 
+                            } else {
+                                bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.message+'</span>');
+                            }
+                    }
+                });  
+            }
+
+
+            $('.verify').on('click', function () {
+                var otp = $('#tblmemberpaymentalias-otp_code').val();
+                if (otp != '') {
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['verify-otp']) . "',
+                        data: 'otp_code='+otp,
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            if (obj.status == 'success') {
+                                $('#otp-form').submit();
+                                $('#loadercontent').show();
+                                $('#pageloader').show();
+                            } else {
+                                $('#error-summary ul').html('');
+                                $('#error-summary ul').append('<li>' + obj.message + '</li>');
+                                $('#error-summary').show();
+                            }
+                        }
+                    });
+                } else {
+                    $('#error-summary ul').html('');
+                    $('#error-summary ul').append('<li>OTP Can not be blank.</li>');
+                    $('#error-summary').show();
+
+                }
+            });
+    
+
     
     $('.bank').on('click',function(){
         $('#error-summary').hide();
