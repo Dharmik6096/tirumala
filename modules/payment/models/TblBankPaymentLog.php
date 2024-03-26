@@ -78,4 +78,15 @@ class TblBankPaymentLog extends \app\models\ChildModel {
     public function updateStatus($condition, $updateData) {
         return $this->updateAll($updateData, $condition);
     }
+    
+     public function getDataForMIS() {
+        return $this->find()->alias('bl')->select(['bl.union_bank_payment_code','bl.file_path as TransactionID', 'ubp.bank_code', 'ubp.bank_name', 'ubp.bank_account_no', 'ubp.ftp_username', 'ubp.ftp_password', 'ubp.corporate_code', 'ba.auth_url', 'ba.payment_url', 'ba.reverse_check_url', 'bl.file_name', 'bl.union_code'])
+                        ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = bl.union_bank_payment_code')
+                        ->innerJoin('tbl_bank_api_detail ba', 'ubp.union_bank_payment_code= ba.union_bank_payment_code')
+                        ->where(['bl.status' => 2, 'ba.is_active' => 1, 'ubp.is_active' => 1, 'UPPER(ubp.integration_mode)' => 'API'])
+                        ->andWhere(['NOT', ['bl.status' => 4, 'bl.status'=>3]])
+                        ->groupBy(['bl.file_path','bl.file_name', 'bl.union_bank_payment_code', 'bl.union_code', 'ubp.bank_code', 'ubp.bank_name', 'ubp.bank_account_no', 'ubp.ftp_username', 'ubp.ftp_password', 'ubp.corporate_code', 'ba.auth_url', 'ba.payment_url', 'ba.reverse_check_url'])
+                        ->limit(1)->asArray()->all();
+    }
+
 }

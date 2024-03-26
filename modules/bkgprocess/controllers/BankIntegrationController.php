@@ -14,6 +14,7 @@ use yii\web\Controller;
 use app\components\SBISecurity;
 use app\modules\webservice\models\TblSbiApiLog;
 use app\components\WebApi;
+use yii\db\Expression;
 
 class BankIntegrationController extends ChildController {
 
@@ -78,25 +79,25 @@ class BankIntegrationController extends ChildController {
                         $curl = $api->ExchangeDataCurl();
 
                         if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
-                             $condition = ['payment_transaction_code'=>$transaction['TransactionID'],'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
-                             $updateData = ['status' => 2, 'file_status'=>'success','file_status_desc'=>'transaction sent to bank'];
+                            $condition = ['payment_transaction_code' => $transaction['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
+                            $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank'];
                             $bank_log->updateStatus($condition, $updateData);
                         } else {
-                            $condition = ['payment_transaction_code'=>$transaction['TransactionID'],'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
-                            $updateData = ['status' => 3, 'file_status'=>'API Failure','file_status_desc'=>'transaction pending'];
+                            $condition = ['payment_transaction_code' => $transaction['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
+                            $updateData = ['status' => 3, 'file_status' => 'API Failure', 'file_status_desc' => 'transaction pending'];
                             $bank_log->updateStatus($condition, $updateData);
                             Yii::$app->db->createCommand()
                                     ->update('tbl_payment_transaction', [
                                         'is_file' => '0',
                                         'response_datetime' => date('Y-m-d H:i:s'),
                                         'response_msg' => 'API Failure'],
-                                           'payment_transaction_code = \''.$transaction['TransactionID'].'\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
+                                            'payment_transaction_code = \'' . $transaction['TransactionID'] . '\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
                                     ->execute();
                         }
                     }
                 } catch (\Throwable $ex) {
                     // $logData->save(false);
-                   // var_dump($ex);
+                    // var_dump($ex);
                     return;
                 }
             }
@@ -107,49 +108,43 @@ class BankIntegrationController extends ChildController {
 
         $paymentTransaction = new TblBankPaymentLog();
         $paymentTransactionData = $paymentTransaction->getDataForMIS();
+        $params = yii::$app->params['CARGILL_BANK_INTEGRATION'];
         foreach ($paymentTransactionData as $data) {
-            if (!empty($token)) {
+            if (!empty($params)) {
                 try {
                     $matser = [];
-                    $master['CustomerId'] = $data['corporate_code'];
-                    $master['PayloadRefId'] = $data['file_name'];
-                    $request = [];
-                    $request['MISRequest'] = $this->security->RSAEncryption(json_encode($master));
-                    $request_body = json_encode($request);
+                    $master['SecurityToken'] = $params['security_token'];
+                    $master['sessionID'] = $params['session_id'];
+                    $master['TransactionID'] = $data['TransactionID']; //payment_transaction_code stored in file_path column 
+                    $request_body = json_encode($master);
                     $url = $data['reverse_check_url'];
-                    if ($curl['response_code'] == 200) {
-                        $ack = json_decode($curl['response_body'], true);
-                        $logData->enc_response = json_encode($ack);
-                        // $ack = json_decode('{"MISResponse":"JlzmiUgpvuaw9MS/9G3HtIa5U0jznTYKUAkxuXRXjsHDTyBAiBJCz54saRp/UbUV82sTkk2Si7MjRub4u/6L2HJn/lLqBuiKEd5ZogOdlD5heFZwQQa4H0C0BDzemZFMcDGPkQO+Em3b03z90Z3izGedgaSofIl+/wV3cddUc9Ois/r1yvuFEGwjjakhx0eKTagaQ8OjSST3n+SX5PyhAX/67OPKLUZk/WbQKo0KDOjDLvo8oVLWAtZRZNwdB71gdGxB0bOr/2PfNHjTk3k7A2pRXmakguk4fMS+zZIn","SessionKey":"E1ab8hxpHK+UQm4GXhvfXGsSp3XI0wnPbGlsbBUrgkXafx4mpJbLYFkwmYH/ec/SdEnwMd0Zpq1me056xFcr5bWX7UwAnTWMwqdqf6ZNPJmXB+i2ErHq7Gc1XgsnZrPGZNWsGUnMbyE1iSyHfcYYvisTH+Zt25+TGa7A1ohi+kXEZg3GL0wzhWYzNt08huklOOilRwqn0zhHKh18ghAiwk4nJRamCbwVzfFzvd2BedJXbkE0LEtpZohRn6zL0cVHJ6DYLuDNMpP+o2VICNs1ljXlfb2W317gOuPPjo7EfrZxSqi5yHDVjFkQHzMYQtZpg+XgnJVRnD6OEJk+P8kshw=="}', true);
-                        $response = $this->security->decrypt($ack['MISResponse'], $this->security->RSADecryption($ack['SessionKey']));
-                        $logData->plain_response = $response;
-                        $mis_response = json_decode($response, true);
-                        //  $mis_response = json_decode('{"CustomerId":"28xxxx","PayloadRefId":"42342565625","MISData":[{"PaymentReferenceNo":"XXXXX","UTR":"SBIN0012345","ProcessedDate":"31-07-2019","Status":"success","Reason":""},{"PaymentReferenceNo":"XXXXX","UTR":"SBIN0012345","ProcessedDate":"31-07-2019","Status":"success","Reason":""}, { "PaymentReferenceNo":"XXXXX","UTR":"SBIN0012345","ProcessedDate":"31-07-2019","Status":"success","Reason":""}]}', true);
-                        $file_name = $mis_response['PayloadRefId'];
-                        $union_bank_payment_code = $data['union_bank_payment_code'];
-                        foreach ($mis_response['MISData'] as $response) {
-                            if ($response['PaymentReferenceNo'] != '') {
-                                Yii::$app->db->createCommand()
-                                        ->update('tbl_payment_transaction', [
-                                            'disburse_amount' => new \yii\db\Expression("CASE WHEN '" . strtolower($response['Status']) . "' != lower('Success') THEN 0 ELSE final_amount END"),
-                                            'response_datetime' => date('Y-m-d H:i:s'),
-                                            'utr_no' => $response['UTR'],
-                                            'process_date' => $response['ProcessedDate'],
-                                            'bank_status' => $response['Status'],
-                                            'response_msg' => $response['Reason']],
-                                                'payment_transaction_code = \'' . $response['PaymentReferenceNo'] . '\' and union_bank_payment_code =' . $union_bank_payment_code . ' and file_name =\'' . $file_name . '\' and is_file = 1 and ( bank_status = \'Pending\' or ISNULL(bank_status,\'\')=\'\') ')
-                                        ->execute();
-                            }
-                        }
+                    $main_header = array("Content-Type: application/json");
+                    $api = new WebApi();
+                    $api->serverUrl = $url;
+                    $api->body = $request_body;
+                    $api->return_actual = TRUE;
+                    $api->header_info = $main_header;
+                    $curl = $api->ExchangeDataCurl();
 
-                        $response_count = count($mis_response['MISData']);
-                        $transaction_count = TblPaymentTransaction::find()->where('file_name = \'' . $file_name . '\' and ( bank_status !=\'Pending\' OR ISNULL(bank_status,\'\')!= \'\')')->count();
-                        if ($response_count == $transaction_count) {
+                    if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
+                        $response = json_decode($curl, true);
+                        Yii::$app->db->createCommand()
+                                ->update('tbl_payment_transaction', [
+                                    'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['StatusCode']) . "' != lower('Successful') THEN 0 ELSE final_amount END"),
+                                    'status' => new Expression("CASE WHEN '" . strtolower($response['StatusCode']) . "' != lower('Successful') THEN 'Disbursed' ELSE status END"),
+                                    'is_file' => '2',
+                                    'response_datetime' => date('Y-m-d H:i:s'),
+                                    'bank_status' => $response['StatusCode'],
+                                    'response_msg' => $response['StatusDescription'],
+                                        ],
+                                        'payment_transaction_code = \'' . $response['TransactionID'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
+                                ->execute();
+                        if (strtolower($response['StatusCode']) != 'pending') {
                             Yii::$app->db->createCommand()->update('tbl_bank_payment_log', [
                                         'status' => 4,
                                         'updated_at' => date('Y-m-d H:i:s'),
                                         'updated_by' => 'CRON'],
-                                            ['file_name' => $file_name, 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
+                                            ['file_path' => $response['TransactionID'], 'file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
                                     ->execute();
                         }
                     }
@@ -157,9 +152,7 @@ class BankIntegrationController extends ChildController {
                     //$logData->save(false);
                     // var_dump($ex);
                     return;
-                } finally {
-                    $logData->save(false);
-                }
+                } 
             }
         }
     }
