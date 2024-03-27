@@ -469,7 +469,6 @@ class TblPaymentCycleController extends ChildController {
                     'name' => $r);
             }
             return Json::encode(['output' => $out]);
-            return;
         }
         return Json::encode(['output' => '', 'selected' => $selected]);
     }
@@ -503,7 +502,6 @@ class TblPaymentCycleController extends ChildController {
                     'name' => $r);
             }
             return Json::encode(['output' => $out]);
-            return;
         }
         return Json::encode(['output' => '', 'selected' => $selected]);
     }

@@ -439,8 +439,6 @@ class GeneralFunctions extends Component {
                 ->where('(CAST(trim(SUBSTRING(local_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
                 ->one();
 
-
-
         $code1 = (int) $val['local_code'] + 1;
 
         $value = $orgCode . '-' . $code1;
@@ -2444,4 +2442,30 @@ class GeneralFunctions extends Component {
         }
     }
 
+    function getPaymentHeader($model) {
+        $data = [];
+        if (is_array($model->mcc_plant_code)) {
+            $model->plant_code = empty($model->plant_code) ? $model->mccPlantCode->plant_code : $model->plant_code;
+            $detail = $model->plantCode;
+            if (!empty($detail)) {
+                $data['code'] = $detail->ref_code;
+                $data['name'] = $detail->name;
+            }
+        } else {
+            if (is_array($model->bmc_code)) {
+                $detail = $model->mccPlantCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->name;
+                }
+            } else {
+                $detail = $model->bmcCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->bmc_name;
+                }
+            }
+        }
+        return $data;
+    }
 }

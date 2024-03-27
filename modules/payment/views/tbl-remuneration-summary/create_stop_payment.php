@@ -12,6 +12,7 @@ if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
 }
+$multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') == '1' ? TRUE : FALSE;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -35,16 +36,13 @@ if (!empty($_POST)) {
                 <?= Yii::$app->dropdown->union_plant($model, $form, 'tblremunerationsummary-union_code', 'plant_code', TRUE); ?>
             </div> 
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblremunerationsummary-plant_code', 'mcc_plant_code', TRUE); ?>
-            </div>      
-            <div  id="single-bmc" class="col-sm-2">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'bmc_code', 'BMC *'); ?>
-            </div>
-            <div id="multiple-bmc" class="col-sm-2">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'p_bmc_code', 'BMC *', TRUE); ?>
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblremunerationsummary-plant_code', 'mcc_plant_code', TRUE,$multiple); ?>
+            </div> 
+               <div class="col-sm-2">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'bmc_code', 'BMC *',$multiple); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->RemunerationPaymentCycle($model, $form, 'tblremunerationsummary-union_code,tblremunerationsummary-bmc_code,tblremunerationsummary-p_bmc_code', 'payment_cycle_code', 'Payment Cycle'); ?>
+                <?= Yii::$app->dropdown->RemunerationPaymentCycle($model, $form, 'tblremunerationsummary-union_code,tblremunerationsummary-bmc_code', 'payment_cycle_code', 'Payment Cycle'); ?>
             </div>
             <div class="col-sm-2 mt15">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'calculate_milk_recovey'); ?>
@@ -64,31 +62,3 @@ if (!empty($_POST)) {
     </div>
 </div>
 
-<?php
-$script = "
-     $('#single-bmc').hide();
-     $('#multiple-bmc').hide();  
-$('#tblremunerationsummary-mcc_plant_code').on('change',function(){
-     var mcc_plant_code= $(this).val();
-     if(mcc_plant_code !='' && mcc_plant_code != null){
-            $.ajax({
-            type: 'post',
-            url: '" . Url::to(['/payment/tbl-vsp-payment/check-mcc-type']) . "',
-            data: {'mcc_plant_code' : mcc_plant_code},            
-            success: function(data) {
-                var data = $.parseJSON(data);
-                var multiple_bmc = data.multiple_bmc;
-               if(multiple_bmc == '1'){
-                 $('#single-bmc').hide();
-                 $('#multiple-bmc').show();
-               }else{
-                 $('#multiple-bmc').hide();
-                 $('#single-bmc').show();
-               }   
-            }
-        });
-      }
-});
-";
-$this->registerJs($script, View::POS_END, 'check-mcc-type');
-?>
