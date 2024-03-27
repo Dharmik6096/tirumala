@@ -694,14 +694,14 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }
             } else if ($sameMilkType == 1 && $diffMilkType == 1) {
                 $returnModel = $model->find()->where([
-                    'bmc_code' => $this->bmc_code,
-                    'customer_code' => $this->customer_code,
-                    'customer_type' => $this->customer_type,
-                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection)),
-                    'milk_type_code' => $this->milk_type_code,
-                    'milk_quality_type_code' => $this->milk_quality_type_code,
-                    'shift_code' => $this->shift_code,
-                    'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf]);
+                    'bmc_code' => $modelData->bmc_code,
+                    'customer_code' => $modelData->customer_code,
+                    'customer_type' => $modelData->customer_type,
+                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                    'milk_type_code' => $modelData->milk_type_code,
+                    'milk_quality_type_code' => $modelData->milk_quality_type_code,
+                    'shift_code' => $modelData->shift_code,
+                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                 }
