@@ -180,18 +180,22 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             if ($reGenerate == 1) {
                 $bmc_array = [];
                 $bmc_code = $model->bmc_code;
-               
+
                 $customer_array = [];
                 $customer = $model->customer_type;
 
                 if (is_array($model->bmc_code)) {
                     $bmc_array = $model->bmc_code;
+                } else {
+                    $bmc_array[] = $model->bmc_code;
                 }
+                
                 if (is_array($model->customer_type)) {
                     $customer_array = $model->customer_type;
                 } else {
                     $customer_array[0] = $model->customer_type;
                 }
+                
                 foreach ($bmc_array as $bmc) {
                     foreach ($customer_array as $type) {
                         $model->customer_type = $type;
@@ -683,16 +687,16 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         // $model->dcs_code = Yii::$app->request->post('selection');
         $msg = $this->LockBilling($model);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-       // $url = Url::to(['index']);
+        // $url = Url::to(['index']);
         $result = 'success';
         $paymentcycle = $model->paymentCycleCode;
         $from_date = Yii::$app->controls->view_date($paymentcycle->from_date);
         $to_date = Yii::$app->controls->view_date($paymentcycle->to_date);
-        $msg .= '('.$from_date.' to '.$to_date. ') - Payment disbursed successfully';
+        $msg .= '(' . $from_date . ' to ' . $to_date . ') - Payment disbursed successfully';
         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
             'message' => \Yii::t('app', '' . $msg)]);
-       // return ['status' => $result, 'url' => $url, 'msg' => $msg];
-       return $this->redirect(['index']);
+        // return ['status' => $result, 'url' => $url, 'msg' => $msg];
+        return $this->redirect(['index']);
     }
 
     protected function LockBilling($model) {
@@ -717,8 +721,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
             $msg .= $model->customerType->customer_desc . ' - ' . $bmc->ref_code . ' ' . $bmc->bmc_name . "<br>";
         }
 
-       return $msg;
-
+        return $msg;
     }
 
     protected function exportTxt($model) {
@@ -1250,4 +1253,5 @@ where dcs_code IN (:dcs_code) and dcs_payment_cycle_code = :dcs_payment_cycle_co
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['multiple_bmc' => $multiple_bmc]);
     }
+
 }
