@@ -1770,10 +1770,17 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $model = new TblUnionBankPayment();
             $model->union_code = Yii::$app->request->post('union_code');
+            $model->union_bank_payment_code = !empty(Yii::$app->request->post('union_bank_payment_code')) ?Yii::$app->request->post('union_bank_payment_code') :'' ;
             $modelData = $model->getRecord();
             $bmcCode = Yii::$app->request->post('bmc_code');
+            echo '<pre>';
+            print_r($model);
+            die;
+            $type = !empty(Yii::$app->request->post('type'))?Yii::$app->request->post('type') : 'Member';
 //            !empty($bmcCode) && $bmcCode == '004' && 
-      
+            echo '<pre>';
+            print_r($modelData);
+            die;
             if (!empty($bmcCode) && !empty($modelData) && (!empty($modelData->file_path) || $modelData->integration_mode == 'API') && !empty($modelData->mobile_no)) {
 
                 try {

@@ -240,10 +240,11 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
         var ucode = '" . $model->union_code . "';
                 var payCycleCode = ' ". $model->payment_cycle_code . "';
                 var bmcCode = ".json_encode($model->bmc_code).";
+                var unionBankPaymentCode = '".$model->union_bank_payment_code."';
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['validate-bank-details']) . "',
-                    data: {'union_code':ucode,'payment_cycle_code':payCycleCode,'bmc_code':bmcCode},
+                    data: {'union_code':ucode,'union_bank_payment_code':unionBankPaymentCode,'payment_cycle_code':payCycleCode,'bmc_code':bmcCode},
 //                    data: 'union_code=" . $model->union_code . "',
                     success: function (data) {
                         var obj = $.parseJSON(data);

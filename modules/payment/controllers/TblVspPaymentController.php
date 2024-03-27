@@ -683,15 +683,16 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         // $model->dcs_code = Yii::$app->request->post('selection');
         $msg = $this->LockBilling($model);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        $url = Url::to(['index']);
+       // $url = Url::to(['index']);
         $result = 'success';
-        $from_date = Yii::$app->formatter->asDatetime($model->paymentCycleCode->from_date, 'php:d-m-Y');
-        $to_date = Yii::$app->formatter->asDatetime($model->paymentCycleCode->to_date, 'php:d-m-Y');
-        $msg .= '(' . $from_date . ' to ' . $to_date . ') - Payment disbursed successfully';
+        $paymentcycle = $model->paymentCycleCode;
+        $from_date = Yii::$app->controls->view_date($paymentcycle->from_date);
+        $to_date = Yii::$app->controls->view_date($paymentcycle->to_date);
+        $msg .= '('.$from_date.' to '.$to_date. ') - Payment disbursed successfully';
         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
             'message' => \Yii::t('app', '' . $msg)]);
-        return ['status' => $result, 'url' => $url, 'msg' => $msg];
-//       return $this->redirect(['index']);
+       // return ['status' => $result, 'url' => $url, 'msg' => $msg];
+       return $this->redirect(['index']);
     }
 
     protected function LockBilling($model) {
