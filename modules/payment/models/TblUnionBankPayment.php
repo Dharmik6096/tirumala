@@ -69,9 +69,12 @@ class TblUnionBankPayment extends \yii\db\ActiveRecord {
     }
 
     public function getRecord() {
-        return $this->find()->where(['union_code' => $this->union_code,'isnull(union_bank_payment_code,\'\')'=>$this->union_bank_payment_code])->one();
+        return $this->find()->where(['union_code' => $this->union_code])->one();
     }
     
+    public function getUnionBankRecord() {
+        return $this->find()->where(['union_code' => $this->union_code,'isnull(union_bank_payment_code,\'\')'=>$this->union_bank_payment_code , 'is_active'=>1])->one();
+    }
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }

@@ -712,10 +712,12 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
             $param['is_without_release'] = $model->payment_release_type;
             $param['union_bank_payment_code'] = !empty($model->union_bank_payment_code) ? $model->union_bank_payment_code : null;
             Yii::$app->ClientPaymentConfig->processPayment('vsp_payment_disburse', $param);
-            $msg .= $model->customerType->customer_desc . ' - ' . $model->bmcCode->ref_code . ' ' . $model->bmcCode->bmc_name . "<br>";
+            $model->bmc_code = $bmc_code;
+            $bmc = $model->bmcCode;
+            $msg .= $model->customerType->customer_desc . ' - ' . $bmc->ref_code . ' ' . $bmc->bmc_name . "<br>";
         }
 
-        return $msg;
+       return $msg;
 
     }
 

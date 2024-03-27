@@ -58,6 +58,7 @@ use app\modules\payment\models\TblMemberPaymentHeadSummary;
 use app\modules\payment\models\TblPaymentStop;
 use app\modules\payment\models\TblPaymentStopHistory;
 use app\modules\vsp\models\TblBillHead;
+use app\modules\payment\models\TblVspPayment;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -1770,81 +1771,70 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $model = new TblUnionBankPayment();
             $model->union_code = Yii::$app->request->post('union_code');
-            $model->union_bank_payment_code = !empty(Yii::$app->request->post('union_bank_payment_code')) ?Yii::$app->request->post('union_bank_payment_code') :'' ;
-            $modelData = $model->getRecord();
+            $model->union_bank_payment_code = !empty(Yii::$app->request->post('union_bank_payment_code')) ? Yii::$app->request->post('union_bank_payment_code') : '';
+            $modelData = $model->getUnionBankRecord();
             $bmcCode = Yii::$app->request->post('bmc_code');
-            echo '<pre>';
-            print_r($model);
-            die;
-            $type = !empty(Yii::$app->request->post('type'))?Yii::$app->request->post('type') : 'Member';
+
+            $type = !empty(Yii::$app->request->post('type')) ? Yii::$app->request->post('type') : 'Member';
 //            !empty($bmcCode) && $bmcCode == '004' && 
-            echo '<pre>';
-            print_r($modelData);
-            die;
+            $msg_type = '';
             if (!empty($bmcCode) && !empty($modelData) && (!empty($modelData->file_path) || $modelData->integration_mode == 'API') && !empty($modelData->mobile_no)) {
 
                 try {
-                    $paymentModel = new TblMemberPaymentAlias();
-                    $paymentModel->payment_cycle_code = Yii::$app->request->post('payment_cycle_code');
-                    $paymentModel->bmc_code = Yii::$app->request->post('bmc_code');
-                    $paymentModelData = $paymentModel->getBmcWiseData();
-                    $totalMemberCount = count($paymentModelData);
-                    $hasBankDetailMemberCount = 0;
-                    $hasVerifiedBankDetailMemberCount = 0;
-                    foreach ($paymentModelData as $member) {
-                        if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code)) {
-                            $hasBankDetailMemberCount++;
+                    if (strtolower($type) == 'member') {
+                        $paymentModel = new TblMemberPaymentAlias();
+                        $paymentModel->payment_cycle_code = Yii::$app->request->post('payment_cycle_code');
+                        $paymentModel->bmc_code = Yii::$app->request->post('bmc_code');
+                        $paymentModelData = $paymentModel->getBmcWiseData();
+                        $totalMemberCount = count($paymentModelData);
+                        $hasBankDetailMemberCount = 0;
+                        $hasVerifiedBankDetailMemberCount = 0;
+                        $msg_type = 'Members';
+                        foreach ($paymentModelData as $member) {
+                            if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code)) {
+                                $hasBankDetailMemberCount++;
+                            }
+                            if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code) && !empty($member->is_verified)) {
+                                $hasVerifiedBankDetailMemberCount++;
+                            }
                         }
-                        if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code) && !empty($member->is_verified)) {
-                            $hasVerifiedBankDetailMemberCount++;
+                    } else if (strtolower($type) == 'vsp') {
+
+                        $vspModel = new TblVspPayment();
+                        $vspModel->union_code = Yii::$app->request->post('union_code');
+                        $vspModel->payment_cycle_code = Yii::$app->request->post('payment_cycle_code');
+                        $vspModel->bmc_code = Yii::$app->request->post('bmc_code');
+                        $vspModelData = $vspModel->getVendorPaymentRecords();
+                        $totalMemberCount = count($vspModelData);
+                        $hasBankDetailMemberCount = 0;
+                        $hasVerifiedBankDetailMemberCount = 0;
+                        $msg_type = 'Vendors';
+                        foreach ($vspModelData as $member) {
+                            if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code)) {
+                                $hasBankDetailMemberCount++;
+                            }
+                            if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code) && !empty($member->is_verified)) {
+                                $hasVerifiedBankDetailMemberCount++;
+                            }
                         }
                     }
 
                     if ($hasBankDetailMemberCount == $totalMemberCount && $hasVerifiedBankDetailMemberCount == $hasBankDetailMemberCount) {
-//                        $otp_model = new TblPaymentOtpVerification();
-//                        $otp_model->attributes = $model->attributes;
-//                        $otp_model->otp_code = '1234'; //rand(1000, 9999);
-//                        if ($otp_model->save()) {
-//                            Yii::$app->session->set('otp_id', $otp_model->id);
-////                            $mobile = '918460355410';
-//                            $mobile = '91' . $model->mobile_no;
-////                            $message = 'Your OTP for Payment is ' . $otp_model->otp_code;
-////                            Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
-//
-//                            $templateModel = new TblAlertTemplate();
-//                            $templateData = $templateModel->getTemplateData('vendor_payment');
-//                            $message = str_replace('{otp}', $otp_model->otp_code, $templateData->message);
-//
-//                            $sms_data = [];
-//                            $sms_data['refecence_code'] = (string) $otp_model->id;
-//                            $sms_data['module_type'] = 'farmer_payment';
-//                            if (YII_ENV_DEV) {
-//                                //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
-//                            } else {
-//                                Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, true, $templateData->header_info);
-//                            }
-//                        } else {
-//                            $status = 'error';
-//                            $msg = 'SMS Service Not Availabe.';
-//                        }
                         $status = 'success';
                         $msg = '';
                     } else if ($hasBankDetailMemberCount > $hasVerifiedBankDetailMemberCount || $hasBankDetailMemberCount < $hasVerifiedBankDetailMemberCount) {
                         $errorCount = $hasBankDetailMemberCount - $hasVerifiedBankDetailMemberCount;
                         $status = 'validate_member_bank_detail_verification_confirmation';
-                        $msg = 'Bank Details not Verified for ' . $errorCount . ' out of ' . $hasBankDetailMemberCount . ' Members.  Are you sure you want to Continue?';
+                        $msg = 'Bank Details not Verified for ' . $errorCount . ' out of ' . $hasBankDetailMemberCount . ' ' . $msg_type . '  .  Are you sure you want to Continue?';
                     } else {
                         $errorCount = $totalMemberCount - $hasBankDetailMemberCount;
                         $status = 'validate_member_bank_detail_confirmation';
-                        $msg = 'Bank Details not Available for ' . $errorCount . ' out of ' . $totalMemberCount . ' Members. Are you sure you want to Continue?';
+                        $msg = 'Bank Details not Available for ' . $errorCount . ' out of ' . $totalMemberCount . ' ' . $msg_type . ' . Are you sure you want to Continue?';
                     }
                 } catch (\Throwable $ex) {
                     $msg = 'SMS Service Not Availabe.';
                     $status = 'error';
                 }
-
-//                $status = 'success';
-//                $msg = '';
             } else {
                 $status = 'allow_without_otp';
                 $msg = '';
@@ -1866,6 +1856,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 Yii::$app->session->set('otp_id', NULL);
                 $model = new TblUnionBankPayment();
                 $model->union_code = Yii::$app->request->post('union_code');
+                $model->union_bank_payment_code = !empty(Yii::$app->request->post('union_bank_payment_code')) ? Yii::$app->request->post('union_bank_payment_code') : '';
                 $f_date = !empty(Yii::$app->request->post('from_date')) ? Yii::$app->request->post('from_date') : '';
                 $t_date = !empty(Yii::$app->request->post('to_date')) ? Yii::$app->request->post('to_date') : '';
                 $bmc = !empty(Yii::$app->request->post('bmc_name')) ? Yii::$app->request->post('bmc_name') : '';
@@ -1874,7 +1865,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $to_date = !empty($t_date) ? date('d-m-Y', strtotime($t_date)) : '';
                 $payment = $from_date . ' to ' . $to_date;
                 $bmcName = $bmc;
-                $model = $model->getRecord();
+                $model = $model->getUnionBankRecord();
                 $otp_model = new TblPaymentOtpVerification();
                 $otp_model->attributes = $model->attributes;
                 $otp_model->otp_code = rand(1000, 9999);
@@ -1910,7 +1901,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $msg = 'SMS Service Not Availabel.';
                 }
             } catch (\Throwable $ex) {
-                var_dump($ex);
                 $msg = 'SMS Service Not Available.';
                 $status = 'error';
             }

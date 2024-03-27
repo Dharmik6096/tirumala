@@ -42,7 +42,7 @@ class TblVspPayment extends \app\models\ChildModel {
     public $multiple_bmc, $stop_payment_type;
     public $stop_payment_only = 0;
     public $payment_release_type;
-    public $payment_type, $payment_sumary_code,$types_title ;
+    public $payment_type, $payment_sumary_code, $types_title;
     public $union_bank_payment_code;
 
     /**
@@ -58,13 +58,13 @@ class TblVspPayment extends \app\models\ChildModel {
     public function rules() {
         $main_rules = [
             [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'bmc_code', 'customer_type', 'payment_cycle_code', 'multiple_bmc'], 'safe'],
-            [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery','union_bank_payment_code'], 'safe'],
+            [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery', 'union_bank_payment_code'], 'safe'],
             [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
-            [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code','p_customer_type','types_title'], 'safe'],
-            [['plant_code', 'mcc_plant_code','bmc_code'], 'required'],
+            [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code', 'p_customer_type', 'types_title'], 'safe'],
+            [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
             [['bmc_code'], 'required', 'on' => ['remuneration', 'processpayment']],
 //            [['payment_cycle_code'], 'required', 'on' => ['processpayment']],
-            [['payment_cycle_code'], 'required', 'except' =>['remuneration','unreleasepaymentsearch','paymenttypevendor','unreleasePaymentUpdate']],
+            [['payment_cycle_code'], 'required', 'except' => ['remuneration', 'unreleasepaymentsearch', 'paymenttypevendor', 'unreleasePaymentUpdate']],
             [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
             [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name', 'payment_type'], 'safe'],
             [['payment_release_type'], 'safe'],
@@ -212,13 +212,20 @@ class TblVspPayment extends \app\models\ChildModel {
                         ->andWhere(['status' => $status])->count();
     }
 
-    public function validateReleaseDate($attribute, $params)
-    {
+    public function validateReleaseDate($attribute, $params) {
         $disburseDate = date('Y-m-d', strtotime($this->disburse_date));
         $currentDate = date('Y-m-d');
         $release_date = $this->release_date;
         if ($release_date < $disburseDate || $release_date > $currentDate) {
             $this->addError($release_date, 'Invalid release date.');
         }
+    }
+
+    public function getVendorPaymentRecords() {
+        return $this->find()->where(['union_code' => $this->union_code,
+                    'payment_cycle_code' => $this->payment_cycle_code,
+                    'bmc_code' => $this->bmc_code,
+                    'billing_type' => 'regular',
+                    'status' => ['locked']])->orderBy('net_payable')->all();
     }
 }

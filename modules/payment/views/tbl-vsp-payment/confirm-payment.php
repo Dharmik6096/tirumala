@@ -230,10 +230,11 @@ $script = "
                 var ucode = '" . $searchModel->union_code . "';
                 var payCycleCode = ' ". $searchModel->payment_cycle_code . "';
                 var bmcCode = ".json_encode($searchModel->bmc_code).";
+                var type = 'VSP';
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['tbl-member-payment/validate-bank-details']) . "',
-                    data: {'union_code':ucode,'payment_cycle_code':payCycleCode,'bmc_code':bmcCode},
+                    data: {'union_code':ucode,'union_bank_payment_code':bankCode,'payment_cycle_code':payCycleCode,'bmc_code':bmcCode,'type':type},
                     success: function (data) {
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success') {
@@ -320,10 +321,14 @@ $script = "
       //sendotp();
     });
   function sendotp(){
+                var bank = document.getElementById('tblvsppayment-union_bank_payment_code');
+                var bankCode= bank != null ? bank.value : '';
+                var ucode = '".$searchModel->union_code . "';
           $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['tbl-member-payment/send-otp']) . "',
-                                data: 'union_code=" . $searchModel->union_code . "',
+                                data: {'union_code':ucode,'union_bank_payment_code':bankCode},
+//                                data: 'union_code=" . $searchModel->union_code . "',
                                 success: function (data) {
                                     $('#loadercontent').hide();
                                     $('#pageloader').hide();
