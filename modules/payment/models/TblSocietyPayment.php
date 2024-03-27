@@ -42,11 +42,11 @@ class TblSocietyPayment extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'society_payment_code' => 'Society Payment Code',
-            'society_code' => 'Society Code',
-            'total_amount' => 'Total Amount',
-            'payment_cycle_applicabilty_code' => 'Payment Cycle Applicabilty Code',
-            'payment_date' => 'Payment Date',
+            'society_payment_code' => Yii::t('app','Society Payment Code'),
+            'society_code' => Yii::t('app','Society Code'),
+            'total_amount' => Yii::t('app','Total Amount'),
+            'payment_cycle_applicabilty_code' => Yii::t('app','Payment Cycle Applicabilty Code'),
+            'payment_date' => Yii::t('app','Payment Date'),
         ];
     }
 

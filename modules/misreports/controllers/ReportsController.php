@@ -1665,9 +1665,14 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionSapWqFile() {
         $this->report = 'SapWqFile';
+        return $this->actionIndex();
+    }
+
+    public function actionVendorPaymentFormat() {
+        $this->report = 'VendorPaymentFormat';
         return $this->actionIndex();
     }
 
@@ -3406,8 +3411,9 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bmc_collection_wq_vrs_newasa',
                 'scenario' => 'SapWqFile',
                 'title' => 'SAP WQ File',
-                'export_file_name' => 'PLANT_CODE_WQ_from_date_from_shift',
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
+                'downloadFormat' => 'csv',
             ],
             'MemberDailyCollectionCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3518,6 +3524,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'BmcCollectionSummary',
                 'title' => 'Bmc Collection Summary',
             ],
+            'VendorPaymentFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_type',
+                'sp_name' => 'mis_vendor_payment_for_cargil',
+                'scenario' => 'VendorPaymentFormat',
+                'title' => '631 - Vendor Payment Format 2',
+                'report_type' => ['all' => Yii::t('app', 'All'), 'dcswise' => Yii::t('app', 'DCS Wise'), 'vspwise' => Yii::t('app', 'VSP Wise'), 'remuneration' => Yii::t('app', 'Remuneration')
+                ],
+            ],
         ];
         return $label[$l];
     }
@@ -3578,11 +3592,19 @@ class ReportsController extends \app\controllers\ChildController {
 //        exit();
 
 
-        $header = [
-            'mime' => '	application/vnd.ms-excel',
-            'extension' => 'xls',
-            'writer' => 'Excel2007',
-        ];
+        if (isset($this->data['downloadFormat']) && $this->data['downloadFormat'] == 'csv') {
+            $header = [
+                'mime' => 'text/csv',
+                'extension' => 'csv',
+                'writer' => 'CSV',
+            ];
+        } else {
+            $header = [
+                'mime' => 'application/vnd.ms-excel',
+                'extension' => 'xls',
+                'writer' => 'Excel2007',
+            ];
+        }
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
         /* $objPHPExcel->getDefaultStyle()

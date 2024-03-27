@@ -218,6 +218,7 @@ $script = "
 //        $('#otp-form').submit();
 
         var postVspDisbData = $('#otp-form').serializeArray();
+<<<<<<< HEAD
 
             var bank = document.getElementById('tblvsppayment-union_bank_payment_code');
             var bankCode= bank != null ? bank.value : '';
@@ -315,10 +316,6 @@ $script = "
 //                    });
                 
         }
-    
-
-
-
 
    // $('#error-summary').hide();
       //sendotp();

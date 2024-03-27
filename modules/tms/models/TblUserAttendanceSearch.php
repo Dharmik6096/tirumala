@@ -22,7 +22,7 @@ class TblUserAttendanceSearch extends TblUserAttendance
             [['attendance_code', 'originating_type'], 'integer'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_code', 'attendance_date', 'in_time', 'out_time', 'in_lat_long', 'out_lat_long', 'in_desc', 'out_desc', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['day_count'], 'number'],
-            [['from_date', 'to_date'], 'safe']
+            [['from_date', 'to_date', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe']
         ];
     }
 
@@ -72,7 +72,8 @@ class TblUserAttendanceSearch extends TblUserAttendance
             ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code])
             ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
             ->andFilterWhere(['like', '[user].name', $this->user_code])
-            ->andFilterWhere(['like', 'tbl_user_attendance.status', $this->status]);
+            ->andFilterWhere(['like', 'tbl_user_attendance.status', $this->status])
+            ->andFilterWhere(['like', 'tbl_user_attendance.api_status', $this->api_status]);
         return $dataProvider;
     }
 }

@@ -202,7 +202,7 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
     }
 
     public function validateProductSaleRate($attribute, $params) {
-        $this->product_sale_rate_applicability_code = Yii::$app->general->getTransactionCode($this, $this->product_sale_rate_code);
+        $this->product_sale_rate_applicability_code = Yii::$app->general->getTransactionCode($this, $this->product_sale_rate_code, 1, 6);
     }
 
     public function getProductCode() {

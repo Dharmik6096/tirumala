@@ -681,18 +681,22 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->post());
         // $model->dcs_code = Yii::$app->request->post('selection');
-        $this->LockBilling($model);
-
+        $msg = $this->LockBilling($model);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        $msg = '';
         $url = Url::to(['index']);
         $result = 'success';
+        $from_date = Yii::$app->formatter->asDatetime($model->paymentCycleCode->from_date, 'php:d-m-Y');
+        $to_date = Yii::$app->formatter->asDatetime($model->paymentCycleCode->to_date, 'php:d-m-Y');
+        $msg .= '(' . $from_date . ' to ' . $to_date . ') - Payment disbursed successfully';
+        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+            'message' => \Yii::t('app', '' . $msg)]);
         return ['status' => $result, 'url' => $url, 'msg' => $msg];
-//        return $this->redirect(['index']);
+//       return $this->redirect(['index']);
     }
 
     protected function LockBilling($model) {
         $bmc_array = [];
+        $msg = '';
         $bmc_array[] = $model->bmc_code;
         if (is_array($model->bmc_code)) {
             $bmc_array = $model->bmc_code;
@@ -707,8 +711,11 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
             $param['is_without_release'] = $model->payment_release_type;
             $param['union_bank_payment_code'] = !empty($model->union_bank_payment_code) ? $model->union_bank_payment_code : null;
             Yii::$app->ClientPaymentConfig->processPayment('vsp_payment_disburse', $param);
+            $msg .= $model->customerType->customer_desc . ' - ' . $model->bmcCode->ref_code . ' ' . $model->bmcCode->bmc_name . "<br>";
         }
-        
+
+        return $msg;
+
     }
 
     protected function exportTxt($model) {
