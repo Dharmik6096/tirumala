@@ -134,6 +134,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
         $cnt = 0;
         $connection = FALSE;
         $text = '';
+        $msg = '';
 
         //date('YmdHis',)
         //var_dump($Ftpmodel->from_shift);die;
@@ -180,7 +181,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
                 $ftp->ftp_pasv = false;
                 $ftp->isPassiveFtp = !empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active' ? false : true;
                 $connection = $ftp->ConnectServer();
-
+                $msg = 'FTP connection issue';
                 if ($connection) {
                     $local_path = str_replace('\\', '/', $local_path);
                     $ftp->ftp_path = $ftpData->ftp_path;

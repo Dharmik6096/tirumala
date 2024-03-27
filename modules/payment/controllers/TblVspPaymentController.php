@@ -619,6 +619,54 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         }
         echo "</table>";
         exit();
+
+//        $header = [
+//            'mime' => 'application/csv',
+//            'extension' => 'csv',
+//            'writer' => 'CSV',
+//        ];
+//
+//        $objPHPExcel = new Spreadsheet();
+//        $objPHPExcel->setActiveSheetIndex(0);
+//        $objPHPExcel->getDefaultStyle()
+//                ->getNumberFormat()
+//                ->setFormatCode(
+//                        \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//        );
+//        $rowCount = 1;
+//        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Vendor Code');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Vendor Name');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Account No');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Bank');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Branch');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'IFSC');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Total Amount');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Adjsut Amount');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'Final Amount');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'Adjsut Remarks');
+//        foreach ($query as $row) {
+//            // if ($row->final_pay > 0) {
+//            $rowCount++;
+//            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getCustomer($row, $row->customer_type));
+//            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, '="' . $row->bank_account_no . '"');
+//            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->bank_name);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, $row->branch_name);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, $row->ifsc);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->amount);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->adjust_amount);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->final_pay);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->adjust_remark);
+//            //  }
+//        }
+//        $fileName = "payment_disburse_vsp." . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+//        header('Content-Disposition: attachment;filename=' . $fileName);
+//        header('Cache-Control: max-age=0');
+//        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        ob_end_clean();
+//        $objWriter->save('php://output');
+//        exit();
     }
 
     public function actionBankPayment() {
