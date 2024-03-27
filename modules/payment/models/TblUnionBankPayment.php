@@ -4,6 +4,7 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+
 /**
  * This is the model class for table "tbl_union_bank_payment".
  *
@@ -42,7 +43,8 @@ class TblUnionBankPayment extends \yii\db\ActiveRecord {
             [['union_bank_payment_code'], 'required'],
             [['union_bank_payment_code'], 'integer'],
             [['union_code', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'file_path', 'server_type', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'mobile_no', 'ftp_type', 'ftp_server', 'ftp_username', 'ftp_password', 'ftp_port', 'reverse_ftp_path', 'reverse_server_path', 'compare_file_name','bank_email','bank_mobile'], 'safe'],
+            [['created_at', 'updated_at', 'mobile_no', 'ftp_type', 'ftp_server', 'ftp_username', 'ftp_password', 'ftp_port', 'reverse_ftp_path', 'reverse_server_path', 'compare_file_name', 'bank_email', 'bank_mobile'], 'safe'],
+            [['account_holder_name', 'integration_mode'], 'safe'],
         ];
     }
 
@@ -71,12 +73,12 @@ class TblUnionBankPayment extends \yii\db\ActiveRecord {
     public function getRecord() {
         return $this->find()->where(['union_code' => $this->union_code])->one();
     }
-    
+
     public function getUnionBankRecord() {
-        return $this->find()->where(['union_code' => $this->union_code,'isnull(union_bank_payment_code,\'\')'=>$this->union_bank_payment_code , 'is_active'=>1])->one();
+        return $this->find()->where(['union_code' => $this->union_code, 'isnull(union_bank_payment_code,\'\')' => $this->union_bank_payment_code, 'is_active' => 1])->one();
     }
+
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
-
 }
