@@ -3,6 +3,7 @@
 namespace app\modules\payment\models;
 
 use Yii;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tbl_payment_transaction".
