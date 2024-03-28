@@ -81,7 +81,6 @@ class CargillBankIntegrationController extends Controller {
 //                    echo '<pre>';
 //                    print_r($ex);
 //                    die;
-                    return;
                 }
             }
         }
