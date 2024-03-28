@@ -30,7 +30,7 @@ class CargillBankIntegrationController extends Controller {
         $paymentTransaction = new TblPaymentTransaction();
         $paymentTransactiondata = $paymentTransaction->getCargillPendingData();
         if (!empty(($paymentTransactiondata))) {
-            $paymenttransactioncodeList = ArrayHelper::getColumn($paymentTransactiondata, 'payment_transaction_code');
+            $paymenttransactioncodeList = ArrayHelper::getColumn($paymentTransactiondata, 'TransactionID');
             $condition = ['payment_transaction_code' => $paymenttransactioncodeList, 'is_file' => 0];
             $updateData = ['is_file' => 1, 'pick_datetime' => date('Y-m-d H:i:s')];
             $paymentTransaction->updateStatus($condition, $updateData);
@@ -59,27 +59,24 @@ class CargillBankIntegrationController extends Controller {
                     $api->header_info = $main_header;
                     $curl = $api->ExchangeDataCurl();
 
-                    if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
-                        $response = json_decode($curl, true);
-                        if (strtolower($type) != 'slips') {
-                            $this->ReverseUpdate($response, $data);
-                        } else {
-                            $condition = ['file_path' => $payment['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
-                            $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank'];
-                            $bank_log->updateStatus($condition, $updateData);
-                        }
+                    $response = json_decode($curl, true);
+                    if (strtolower($type) != 'slips') {
+                        $this->ReverseUpdate($response, $data);
                     } else {
                         $condition = ['file_path' => $payment['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
-                        $updateData = ['status' => 3, 'file_status' => 'API Failure', 'file_status_desc' => 'transaction pending'];
+                        $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank'];
                         $bank_log->updateStatus($condition, $updateData);
-                        Yii::$app->db->createCommand()
-                                ->update('tbl_payment_transaction', [
-                                    'is_file' => '0',
-                                    'response_datetime' => date('Y-m-d H:i:s'),
-                                    'response_msg' => 'API Failure'], 'payment_transaction_code = \'' . $payment['TransactionID'] . '\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
-                                ->execute();
                     }
                 } catch (\Throwable $ex) {
+                    $condition = ['file_path' => $payment['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
+                    $updateData = ['status' => 3, 'file_status' => 'API Failure', 'file_status_desc' => 'transaction pending'];
+                    $bank_log->updateStatus($condition, $updateData);
+                    Yii::$app->db->createCommand()
+                            ->update('tbl_payment_transaction', [
+                                'is_file' => '3',
+                                'response_datetime' => date('Y-m-d H:i:s'),
+                                'response_msg' => 'API Failure'], 'payment_transaction_code = \'' . $payment['TransactionID'] . '\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
+                            ->execute();
                     // $logData->save(false);
 //                    echo '<pre>';
 //                    print_r($ex);
