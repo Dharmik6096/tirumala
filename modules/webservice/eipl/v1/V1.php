@@ -727,7 +727,7 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_eipl_app_gender_master_data',
             ],
             'mapping-document/master' => [
-                'param' => 'master_type',
+                'param' => 'union#master_type',
                 'sp' => 'sp_eipl_app_provisioanl_member_document_master_data',
             ],
             'provisional-member' => [

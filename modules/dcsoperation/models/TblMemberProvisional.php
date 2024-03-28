@@ -185,8 +185,8 @@ class TblMemberProvisional extends ChildModel {
                 }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
             [['ex_member_code'], 'integer', 'min' => 1, 'max' => 9999, 'except' => ['androidsync']],
             [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync']],
-            [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync', 'MemberApprove']],
-            [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync']],
+            [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync', 'MemberApprove', 'hosyncUpdate']],
+            [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'activityStatus'], 'safe'],
             [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from'], 'safe'],
             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
@@ -622,16 +622,16 @@ class TblMemberProvisional extends ChildModel {
     public function setChildTable(&$model, &$modelSave, &$childModel) {
         $model->ex_member_code = !empty($model->ex_member_code) ? str_pad($model->ex_member_code, 4, '0', STR_PAD_LEFT) : '';
         $content = $modelSave['content'];
+        $model->scenario = 'hosync';
         if(!empty($model->member_code)){
             $member = TblMember::find()->where(['member_code' => $model->member_code])->one();
             if(!empty($member)){
+                $model->scenario = 'hosyncUpdate';
                 $member['originating_type'] = '';
                 $member['created_at'] = '';
                 $member['created_by'] = '';
                 $member['updated_at'] = '';
                 $member['updated_by'] = '';
-                $member['approved_at'] = '';
-                $member['approved_by'] = '';
                 $setField = array_diff_key($member->attributes, $content);
                 $model->setAttributes($setField);   
             }
