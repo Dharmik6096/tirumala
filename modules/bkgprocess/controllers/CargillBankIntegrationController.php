@@ -61,7 +61,7 @@ class CargillBankIntegrationController extends Controller {
 
                     $response = json_decode($curl, true);
                     if (strtolower($type) != 'slips') {
-                        $this->ReverseUpdate($response, $data);
+                        $this->ReverseUpdate($response, $payment);
                     } else {
                         $condition = ['file_path' => $payment['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
                         $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank'];
