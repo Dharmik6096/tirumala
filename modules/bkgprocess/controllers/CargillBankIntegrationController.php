@@ -78,9 +78,9 @@ class CargillBankIntegrationController extends Controller {
                                 'response_msg' => 'API Failure'], 'payment_transaction_code = \'' . $payment['TransactionID'] . '\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
                             ->execute();
                     // $logData->save(false);
-//                    echo '<pre>';
-//                    print_r($ex);
-//                    die;
+                    //                echo '<pre>';
+                    //                print_r($ex);
+                    //                die;
                 }
             }
         }
@@ -108,41 +108,38 @@ class CargillBankIntegrationController extends Controller {
                     $api->header_info = $main_header;
                     $curl = $api->ExchangeDataCurl();
 
-                    if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
-                        $response = json_decode($curl, true);
-                        $this->ReverseUpdate($response, $data);
-                    }
+                    $response = json_decode($curl, true);
+                    $this->ReverseUpdate($response, $data);
                 } catch (\Throwable $ex) {
                     //$logData->save(false);
-                    // var_dump($ex);
-                    return;
+                    var_dump($ex);
                 }
             }
         }
     }
 
     public function ReverseUpdate($response, $data) {
-        $paymentTransaction = new TblPaymentTransaction();
-        Yii::$app->db->createCommand()
-                ->update('tbl_payment_transaction', [
-                    'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND '" . $response['statusCode'] . "' != '000' THEN disburse_amount ELSE final_amount END"),
-                    'status' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND '" . $response['statusCode'] . "'!= '000' THEN status ELSE 'Disburse' END"),
-                    'is_file' => '2',
-                    'response_datetime' => date('Y-m-d H:i:s'),
-                    'bank_status' => $response['status'],
-                    'response_msg' => $response['statusDescription'],
-                    'utr_no' => $response['replyID'],
-                        ], 'payment_transaction_code = \'' . $response['txnID'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
-                ->execute();
-        $paymentTransaction->updateReverseStatus($response);
-        if (strtolower($response['status']) == 'successful') {
+        if (in_array(strtolower($response['status']), ['successful', 'failed'])) {
+            $paymentTransaction = new TblPaymentTransaction();
+            Yii::$app->db->createCommand()
+                    ->update('tbl_payment_transaction', [
+                        'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND '" . $response['statusCode'] . "' != '000' THEN disburse_amount ELSE final_amount END"),
+                        'status' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND '" . $response['statusCode'] . "'!= '000' THEN status ELSE 'Disburse' END"),
+                        'is_file' => '2',
+                        'response_datetime' => date('Y-m-d H:i:s'),
+                        'bank_status' => $response['status'],
+                        'response_msg' => $response['statusDescription'],
+                        'utr_no' => $response['replyID'],
+                            ], 'payment_transaction_code = \'' . $response['txnID'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
+                    ->execute();
+            $paymentTransaction->updateReverseStatus($response);
             Yii::$app->db->createCommand()->update('tbl_bank_payment_log', [
                         'status' => 4,
                         'updated_at' => date('Y-m-d H:i:s'),
                         'updated_by' => 'CRON'], ['file_path' => $response['txnID'], 'file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
                     ->execute();
         }
-        return ;
+        return;
     }
 
     public function prepareJson($payment) {

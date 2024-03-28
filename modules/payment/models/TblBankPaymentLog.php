@@ -86,7 +86,7 @@ class TblBankPaymentLog extends \app\models\ChildModel {
                         ->where(['bl.status' => 2, 'ba.is_active' => 1, 'ubp.is_active' => 1, 'UPPER(ubp.integration_mode)' => 'API'])
                         ->andWhere(['NOT', ['bl.status' => 4, 'bl.status'=>3]])
                         ->groupBy(['bl.file_path','bl.file_name', 'bl.union_bank_payment_code', 'bl.union_code', 'ubp.bank_code', 'ubp.bank_name', 'ubp.bank_account_no', 'ubp.ftp_username', 'ubp.ftp_password', 'ubp.corporate_code', 'ba.auth_url', 'ba.payment_url', 'ba.reverse_check_url'])
-                        ->limit(1)->asArray()->all();
+                        ->limit(100)->asArray()->all();
     }
 
 }

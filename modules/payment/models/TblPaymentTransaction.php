@@ -204,18 +204,18 @@ class TblPaymentTransaction extends \app\models\ChildModel {
             $table = (strtolower($data->type) == 'member') ? 'tbl_member_payment' : 'tbl_vsp_payment';
             $amountColumnName = (strtolower($data->type) == 'member') ? 'final_amount' : 'final_pay';
             $statusColumn = (strtolower($data->type) == 'member') ? 'payment_status' : 'status';
-             Yii::$app->db->createCommand()
-                    ->update('\'' . $table . '\'', [
+            Yii::$app->db->createCommand()
+                    ->update($table, [
                         'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND '" . $response['statusCode'] . "' != '000' THEN disburse_amount ELSE " . $amountColumnName . " END"),
-                        ''.$statusColumn.'' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND '" . $response['statusCode'] . "'!= '000' THEN status ELSE 'Disburse' END"),
-                        'response_datetime' => date('Y-m-d H:i:s'),
+                        '' . $statusColumn . '' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND '" . $response['statusCode'] . "'!= '000' THEN " . $statusColumn . " ELSE 'Disburse' END"),
+//                        'response_datetime' => date('Y-m-d H:i:s'),
                         'bank_status' => $response['status'],
-                        'response_msg' => $response['statusDescription'],
+                        //                       'response_msg' => $response['statusDescription'],
                         'utr_no' => $response['replyID'],
-                            ], 'payment_transaction_code = \'' . $response['txnID'] . '\' and lower(status)=\'sent\'')
+                            ], 'payment_transaction_code = \'' . $response['txnID'] . '\' and lower(' . $statusColumn . ')=\'sent\'')
                     ->execute();
         }
-        return ;
+        return;
     }
 
 }
