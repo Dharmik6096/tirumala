@@ -142,6 +142,7 @@ class CargillBankIntegrationController extends Controller {
                         'updated_by' => 'CRON'], ['file_path' => $response['txnID'], 'file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
                     ->execute();
         }
+        return ;
     }
 
     public function prepareJson($payment) {
