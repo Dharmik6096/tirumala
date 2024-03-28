@@ -112,7 +112,7 @@ class CargillBankIntegrationController extends Controller {
                     $this->ReverseUpdate($response, $data);
                 } catch (\Throwable $ex) {
                     //$logData->save(false);
-                    var_dump($ex);
+                  //  var_dump($ex);
                 }
             }
         }
