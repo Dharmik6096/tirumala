@@ -125,8 +125,8 @@ class CargillBankIntegrationController extends Controller {
         $paymentTransaction = new TblPaymentTransaction();
         Yii::$app->db->createCommand()
                 ->update('tbl_payment_transaction', [
-                    'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND " . $response['statusCode'] . "!= \'000\' THEN disburse_amount ELSE final_amount END"),
-                    'status' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND " . $response['statusCode'] . "!= \'000\' THEN status ELSE 'Disburse' END"),
+                    'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND '" . $response['statusCode'] . "' != '000' THEN disburse_amount ELSE final_amount END"),
+                    'status' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND '" . $response['statusCode'] . "'!= '000' THEN status ELSE 'Disburse' END"),
                     'is_file' => '2',
                     'response_datetime' => date('Y-m-d H:i:s'),
                     'bank_status' => $response['status'],

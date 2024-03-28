@@ -204,8 +204,8 @@ class TblPaymentTransaction extends \app\models\ChildModel {
             $amountColumnName = (strtolower($data) == 'member') ? 'final_amount' : 'final_pay';
             Yii::$app->db->createCommand()
                     ->update('\'' . $table . '\'', [
-                        'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND " . $response['statusCode'] . "!= \'000\' THEN disburse_amount ELSE " . $amountColumnName . " END"),
-                        'status' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND " . $response['statusCode'] . "!= \'000\' THEN status ELSE 'Disburse' END"),
+                        'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND '" . $response['statusCode'] . "' != '000' THEN disburse_amount ELSE " . $amountColumnName . " END"),
+                        'status' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND '" . $response['statusCode'] . "'!= '000' THEN status ELSE 'Disburse' END"),
                         'response_datetime' => date('Y-m-d H:i:s'),
                         'bank_status' => $response['status'],
                         'response_msg' => $response['statusDescription'],
