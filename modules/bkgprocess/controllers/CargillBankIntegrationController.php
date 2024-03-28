@@ -149,7 +149,6 @@ class CargillBankIntegrationController extends Controller {
     }
 
     public function prepareJson($payment) {
-
         $params = yii::$app->params['CARGILL_BANK_INTEGRATION'];
         $body = [];
         $body['SecurityToken'] = $params['security_token'];
@@ -160,14 +159,20 @@ class CargillBankIntegrationController extends Controller {
         $body['BenBranchCode'] = $payment['BenBranchCode'];
         $body['BenAccNo'] = $payment['BenAccNo'];
         $body['BenAccName'] = $payment['BenAccName'];
-        $body['TxnCode'] = $payment['TxnCode'];
+        $body['TxnCode'] = '52';
         $body['TxnAmount'] = $payment['TxnAmount'];
         $body['DebitBankCode'] = $payment['DebitBankCode'];
-        $body['DebitAccountNo'] = $payment['DebitAccountNo'];
+        $body['DebitBranchCode'] = $payment['DebitBranchCode'];
+        $body['DebitAccNo'] = $payment['DebitAccountNo'];
         $body['DebitAccName'] = $payment['DebitAccName'];
         $body['ValueDate'] = $payment['ValueDate'];
         $body['TransactionType'] = $payment['TransactionType'];
+        $body['PTR'] = 'Fund Transfer';
+        $body['SecNo'] = 'SEC_1';
+
         $request_json = json_encode($body);
+
         return $request_json;
     }
+
 }
