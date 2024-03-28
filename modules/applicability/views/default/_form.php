@@ -290,6 +290,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 <?php
 $script = "
     $('.kv-panel-before').hide();
+    var periodic_applicability = $periodic_applicability;
     function checkBoxFilter(val){
         var id = $(val).attr('id');
         var value = $(val).val();
@@ -448,6 +449,9 @@ $script = "
         var fldcode='{$field_code}';
         var mname='{$model_name}';
         var wef_date=$('#{$nameforid}-wef_date').val(); 
+        var from_date=$('#{$nameforid}-from_date').val();    
+        var to_date=$('#{$nameforid}-to_date').val();    
+            
         var checkdate='{$check_wef_date}';
         var login_type='{$login_type}';    
             
@@ -478,7 +482,7 @@ $script = "
         $.ajax({
             type: 'post',
             url: '{$furl}',
-            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute)},
+            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute),'from_date':from_date,'to_date':to_date,'periodic_applicability':periodic_applicability},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if (obj1.status == 'success')
@@ -527,7 +531,7 @@ $script = "
         var top_section='{$top_section}';
         var select_from_all='{$select_from_all}';
         var payment='{$payment}';
-        var wef_date=$('#{$nameforid}-wef_date').val();    
+        var wef_date=$('#{$nameforid}-wef_date').val();       
         var shift_type='{$shift_type}';
         var ratechart='{$ratechart}';    
         $.ajax({
