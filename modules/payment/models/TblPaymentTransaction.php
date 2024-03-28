@@ -141,30 +141,6 @@ class TblPaymentTransaction extends \app\models\ChildModel {
         return $this->find()->where(['is_file' => 1, 'sms_status' => NULL])->andWhere(['and', ['IS NOT', 'mobile_no', NULL], ['<>', 'mobile_no', '']])->limit(2000)->all();
     }
 
-    public function getCargillMemberPaymentData($file_name, $debit_account_no, $bank_code, $branch_code, $debit_account_name, $session_id, $security_token, $sec_no, $type) {
-        return (new \yii\db\Query())
-                        ->select(['
-                             \'' . $security_token . '\' as "SecurityToken",
-                                \'' . $session_id . '\' as "SessionID",
-                                payment_transaction_code as "TransactionID",
-                                \'144\' as "currencyCode",
-                                bank_code as "BenBankCode",
-                                branch_code as "BenBranchCode",
-                                bank_account_no as "BenAccNo",
-                                name as "BenAccName",
-                                right(payment_transaction_code,2) as "TxnCode",
-                                final_amount as "TxnAmount",
-                                \'' . $bank_code . '\' as DebitBankCode,
-                                \'' . $branch_code . '\' as DebitBankCode,
-                                \'' . $debit_account_no . '\' as "DebitAccountNo",
-                                \'' . $debit_account_name . '\' as "DebitAccName",
-                                convert(varchar, getdate(), 12)as "ValueDate",
-                                case when\'' . $type . '\'=\'CEFT\' then (case when bank_code =\'' . $bank_code . '\' then \'CARG\' else \'CEFT\' end) else \'SLIPS\' end as "TransactionType"'
-                        ])
-                        ->from('tbl_payment_transaction')
-                        ->where('file_name =\'' . $file_name . '\' and final_amount>0.00 and is_file=1')
-                        ->all();
-    }
 
     public function getPendingData() {
         return $this->find()->select(['tbl_payment_transaction.union_bank_payment_code', 'ubp.bank_code', 'ubp.bank_name', 'ubp.bank_account_no', 'ubp.branch_code', 'ubp.account_holder_name', 'ubp.ftp_username', 'ubp.ftp_password', 'ubp.corporate_code', 'ba.auth_url', 'ba.payment_url', 'ba.reverse_check_url', 'tbl_payment_transaction.file_name', 'tbl_payment_transaction.union_code'])
@@ -178,6 +154,48 @@ class TblPaymentTransaction extends \app\models\ChildModel {
 
     public function updateStatus($condition, $updateData) {
         return $this->updateAll($updateData, $condition);
+    }
+
+    public function getCargillPendingData() {
+       return  $this->find()
+                ->alias('pt')
+                ->select([                    
+                    'pt.payment_transaction_code as TransactionID',
+                    'case when ISNULL(b.old_bank_code,\'\')!=\'\' then b.old_bank_code else null end as BenBankCode',
+                    'case when ISNULL(pt.ifsc,\'\')!=\'\' then right(pt.ifsc,3)else null end as BenBranchCode',
+                    'pt.bank_account_no as BenAccNo',
+                    'pt.name as BenAccName',
+                    'right(pt.payment_transaction_code,2) as TxnCode',
+                    'pt.final_amount as TxnAmount',
+                    'ubp.bank_code as DebitBankCode',
+                    'ubp.branch_code as DebitBranchCode',
+                    'ubp.bank_account_no as DebitAccountNo',
+                    'ubp.account_holder_name as DebitAccName',
+                    'convert(varchar, getdate(), 12) ValueDate',
+                    'case when lower(ISNULL(ubp.corporate_code,\'slips\'))=\'ceft\' then (case when b.old_bank_code=ubp.bank_code then \'CARG\' else \'CEFT\' end) else \'SLIPS\' end as TransactionType',
+                    'ba.auth_url',
+                    'ba.payment_url',
+                    'ba.reverse_check_url',
+                    'pt.file_name',
+                    'ubp.corporate_code',
+                    'pt.type',
+                    'pt.union_bank_payment_code',
+                    'pt.union_code'
+                ])
+                ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
+                ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
+                ->innerJoin('tbl_banks as b', 'b.bank_code = pt.bank_code')
+                ->where([
+                    'pt.is_file' => 0,
+                    'UPPER(ubp.integration_mode)' => 'API',
+                    'ubp.is_active' => 1,
+                    'ba.is_active' => 1
+                ])
+                ->andWhere(['NOT', ['ISNULL(pt.file_name, \'\')' => '']])
+                ->orderBy(['pt.payment_transaction_code' => SORT_ASC])
+                ->limit(100)
+                ->asArray()
+                ->all();
     }
 
     public function updateReverseStatus($response) {

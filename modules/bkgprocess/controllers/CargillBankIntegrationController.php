@@ -28,66 +28,62 @@ class CargillBankIntegrationController extends Controller {
 
         $master_data = [];
         $paymentTransaction = new TblPaymentTransaction();
-        $paymentTransactiondata = $paymentTransaction->getPendingData();
+        $paymentTransactiondata = $paymentTransaction->getCargillPendingData();
         if (!empty(($paymentTransactiondata))) {
-            $fileList = ArrayHelper::getColumn($paymentTransactiondata, 'file_name');
-            $unionBankList = ArrayHelper::getColumn($paymentTransactiondata, 'union_bank_payment_code');
-            $condition = ['union_bank_payment_code' => $unionBankList, 'file_name' => $fileList, 'is_file' => 0];
+            $paymenttransactioncodeList = ArrayHelper::getColumn($paymentTransactiondata, 'payment_transaction_code');
+            $condition = ['payment_transaction_code' => $paymenttransactioncodeList, 'is_file' => 0];
             $updateData = ['is_file' => 1, 'pick_datetime' => date('Y-m-d H:i:s')];
             $paymentTransaction->updateStatus($condition, $updateData);
             foreach ($paymentTransactiondata as $payment) {
                 $fileName = $payment['file_name'];
                 try {
-                    $params = yii::$app->params['CARGILL_BANK_INTEGRATION'];
                     $type = !empty($payment['corporate_code']) ? $payment['corporate_code'] : 'SLIPS';
-                    $result = $paymentTransaction->getCargillMemberPaymentData($fileName, $payment['bank_account_no'], $payment['bank_code'], $payment['branch_code'], $payment['account_holder_name'], $params['session_id'], $params['security_token'], $params['sec_no'], $type);
-                    foreach ($result as $transaction) {
+                    $bank_log = new TblBankPaymentLog();
+                    $bank_log->union_code = $payment['union_code'];
+                    $bank_log->file_path = $payment['TransactionID'];
+                    $bank_log->file_name = $fileName;
+                    $bank_log->status = 1; //created
+                    $bank_log->payment_date = date('Y-m-d');
+                    $bank_log->payment_for = $payment['type'];
+                    $bank_log->created_by = 'CRON';
+                    $bank_log->created_at = date('Y-m-d H:i:s');
+                    $bank_log->union_bank_payment_code = $payment['union_bank_payment_code'];
+                    $bank_log->save();
+                    $body = $this->prepareJson($payment);
+                    $url = $payment['payment_url'];
+                    $main_header = array("Content-Type: application/json");
+                    $api = new WebApi();
+                    $api->serverUrl = $payment['payment_url'];
+                    $api->body = $body;
+                    $api->return_actual = TRUE;
+                    $api->header_info = $main_header;
+                    $curl = $api->ExchangeDataCurl();
 
-                        $bank_log = new TblBankPaymentLog();
-                        $bank_log->union_code = $payment['union_code'];
-                        $bank_log->file_path = $transaction['TransactionID'];
-                        $bank_log->file_name = $fileName;
-                        $bank_log->status = 1; //created
-                        $bank_log->payment_date = date('Y-m-d');
-                        $bank_log->payment_for = 'member';
-                        $bank_log->created_by = 'CRON';
-                        $bank_log->created_at = date('Y-m-d H:i:s');
-                        $bank_log->union_bank_payment_code = $payment['union_bank_payment_code'];
-                        $bank_log->save();
-                        $body = json_encode($transaction);
-                        $url = $payment['payment_url'];
-                        $main_header = array("Content-Type: application/json");
-                        $api = new WebApi();
-                        $api->serverUrl = $payment['payment_url'];
-                        $api->body = $body;
-                        $api->return_actual = TRUE;
-                        $api->header_info = $main_header;
-                        $curl = $api->ExchangeDataCurl();
-
-                        if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
-                            $response = json_decode($curl, true);
-                            if (strtolower($type) != 'slips') {
-                                $this->ReverseUpdate($response, $data);
-                            } else {
-                                $condition = ['file_path' => $transaction['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
-                                $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank'];
-                                $bank_log->updateStatus($condition, $updateData);
-                            }
+                    if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
+                        $response = json_decode($curl, true);
+                        if (strtolower($type) != 'slips') {
+                            $this->ReverseUpdate($response, $data);
                         } else {
-                            $condition = ['file_path' => $transaction['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
-                            $updateData = ['status' => 3, 'file_status' => 'API Failure', 'file_status_desc' => 'transaction pending'];
+                            $condition = ['file_path' => $payment['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
+                            $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank'];
                             $bank_log->updateStatus($condition, $updateData);
-                            Yii::$app->db->createCommand()
-                                    ->update('tbl_payment_transaction', [
-                                        'is_file' => '0',
-                                        'response_datetime' => date('Y-m-d H:i:s'),
-                                        'response_msg' => 'API Failure'], 'payment_transaction_code = \'' . $transaction['TransactionID'] . '\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
-                                    ->execute();
                         }
+                    } else {
+                        $condition = ['file_path' => $payment['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
+                        $updateData = ['status' => 3, 'file_status' => 'API Failure', 'file_status_desc' => 'transaction pending'];
+                        $bank_log->updateStatus($condition, $updateData);
+                        Yii::$app->db->createCommand()
+                                ->update('tbl_payment_transaction', [
+                                    'is_file' => '0',
+                                    'response_datetime' => date('Y-m-d H:i:s'),
+                                    'response_msg' => 'API Failure'], 'payment_transaction_code = \'' . $payment['TransactionID'] . '\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
+                                ->execute();
                     }
                 } catch (\Throwable $ex) {
                     // $logData->save(false);
-                    var_dump($ex);die;
+//                    echo '<pre>';
+//                    print_r($ex);
+//                    die;
                     return;
                 }
             }
@@ -152,4 +148,26 @@ class CargillBankIntegrationController extends Controller {
         }
     }
 
+    public function prepareJson($payment) {
+
+        $params = yii::$app->params['CARGILL_BANK_INTEGRATION'];
+        $body = [];
+        $body['SecurityToken'] = $params['security_token'];
+        $body['SessionID'] = $params['session_id'];
+        $body['TransactionID'] = $payment['TransactionID'];
+        $body['currencyCode'] = '144';
+        $body['BenBankCode'] = $payment['BenBankCode'];
+        $body['BenBranchCode'] = $payment['BenBranchCode'];
+        $body['BenAccNo'] = $payment['BenAccNo'];
+        $body['BenAccName'] = $payment['BenAccName'];
+        $body['TxnCode'] = $payment['TxnCode'];
+        $body['TxnAmount'] = $payment['TxnAmount'];
+        $body['DebitBankCode'] = $payment['DebitBankCode'];
+        $body['DebitAccountNo'] = $payment['DebitAccountNo'];
+        $body['DebitAccName'] = $payment['DebitAccName'];
+        $body['ValueDate'] = $payment['ValueDate'];
+        $body['TransactionType'] = $payment['TransactionType'];
+        $request_json = json_encode($body);
+        return $request_json;
+    }
 }
