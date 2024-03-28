@@ -2,7 +2,6 @@
 
 namespace app\modules\bkgprocess\controllers;
 
-use app\controllers\ChildController;
 use app\modules\payment\models\TblBankPaymentLog;
 use app\modules\payment\models\TblPaymentTransaction;
 use linslin\yii2\curl\Curl;
@@ -16,26 +15,13 @@ use app\modules\webservice\models\TblSbiApiLog;
 use app\components\WebApi;
 use yii\db\Expression;
 
-class BankIntegrationController extends ChildController {
+class CargillBankIntegrationController extends Controller {
 
     public $freeAccessActions = ['upload-payment-data', 'get-transaction-status'];
     public $errorPath = '';
-    private $security;
 
     public function init() {
         parent::init();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors() {
-
-        return [
-            'ghost-access' => [
-                'class' => 'webvimark\modules\UserManagement\components\GhostAccessControl',
-            ],
-        ];
     }
 
     public function actionUploadPaymentData() {
@@ -81,7 +67,7 @@ class BankIntegrationController extends ChildController {
                         if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
                             $response = json_decode($curl, true);
                             if (strtolower($type) != 'slips') {
-                                $this->ReverseUpdate($response, $data);                
+                                $this->ReverseUpdate($response, $data);
                             } else {
                                 $condition = ['file_path' => $transaction['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
                                 $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank'];
@@ -95,14 +81,13 @@ class BankIntegrationController extends ChildController {
                                     ->update('tbl_payment_transaction', [
                                         'is_file' => '0',
                                         'response_datetime' => date('Y-m-d H:i:s'),
-                                        'response_msg' => 'API Failure'],
-                                            'payment_transaction_code = \'' . $transaction['TransactionID'] . '\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
+                                        'response_msg' => 'API Failure'], 'payment_transaction_code = \'' . $transaction['TransactionID'] . '\' and  union_bank_payment_code =\'' . $payment['union_bank_payment_code'] . '\' and file_name =\'' . $fileName . '\' and is_file = 1 and union_code= \'' . $payment['union_code'] . '\'')
                                     ->execute();
                         }
                     }
                 } catch (\Throwable $ex) {
                     // $logData->save(false);
-                    // var_dump($ex);
+                    var_dump($ex);die;
                     return;
                 }
             }
@@ -155,17 +140,16 @@ class BankIntegrationController extends ChildController {
                     'response_datetime' => date('Y-m-d H:i:s'),
                     'bank_status' => $response['Status'],
                     'response_msg' => $response['StatusDescription'],
-                        ],
-                        'payment_transaction_code = \'' . $response['TransactionID'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
+                        ], 'payment_transaction_code = \'' . $response['TransactionID'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
                 ->execute();
         $paymentTransaction->updateReverseStatus($response);
         if (strtolower($response['Status']) == 'successful') {
             Yii::$app->db->createCommand()->update('tbl_bank_payment_log', [
                         'status' => 4,
                         'updated_at' => date('Y-m-d H:i:s'),
-                        'updated_by' => 'CRON'],
-                            ['file_path' => $response['TransactionID'], 'file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
+                        'updated_by' => 'CRON'], ['file_path' => $response['TransactionID'], 'file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
                     ->execute();
         }
     }
+
 }
