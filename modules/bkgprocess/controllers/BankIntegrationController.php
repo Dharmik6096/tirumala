@@ -53,8 +53,8 @@ class BankIntegrationController extends ChildController {
                 $fileName = $payment['file_name'];
                 try {
                     $params = yii::$app->params['CARGILL_BANK_INTEGRATION'];
-                    $result = $paymentTransaction->getCargillMemberPaymentData($fileName, $payment['bank_account_no'], $payment['bank_code'], $payment['branch_code'], $payment['account_holder_name'], $params['session_id'], $params['security_token'], $params['sec_no']);
-
+                    $type =!empty($payment['corporate_code'])?$payment['corporate_code']:'SLIPS';
+                    $result = $paymentTransaction->getCargillMemberPaymentData($fileName, $payment['bank_account_no'], $payment['bank_code'], $payment['branch_code'], $payment['account_holder_name'], $params['session_id'], $params['security_token'], $params['sec_no'],$type);
                     foreach ($result as $transaction) {
 
                         $bank_log = new TblBankPaymentLog();

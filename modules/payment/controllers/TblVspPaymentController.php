@@ -684,6 +684,11 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
     public function actionBankPayment() {
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->post());
+        $customer= new TblCustomerMaster();
+       if (empty($model->customer_type) && !empty($model->bmc_code)) {
+                    $data = $customer->customerType($model->bmc_code);
+                    $model->customer_type = array_keys($data);
+          }
         // $model->dcs_code = Yii::$app->request->post('selection');
         $msg = $this->LockBilling($model);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
@@ -703,12 +708,19 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         $bmc_array = [];
         $msg = '';
         $bmc_array[] = $model->bmc_code;
+        $customer_array[] = $model->customer_type;
         if (is_array($model->bmc_code)) {
             $bmc_array = $model->bmc_code;
-        }
+        }               
+        if (is_array($model->customer_type)) {
+            $customer_array = $model->customer_type;
+         }
         foreach ($bmc_array as $bmc_code) {
+            $model->bmc_code = $bmc_code;
+            $bmc = $model->bmcCode;
+            foreach($customer_array as $customerType){
             $param = [];
-            $param['customer_type'] = $model->customer_type;
+            $param['customer_type'] = $customerType;
             $param['bmc_code'] = $bmc_code;
             $param['applicable_for'] = 'BMC';
             $param['payment_cycle_code'] = $model->payment_cycle_code;
@@ -716,9 +728,9 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
             $param['is_without_release'] = $model->payment_release_type;
             $param['union_bank_payment_code'] = !empty($model->union_bank_payment_code) ? $model->union_bank_payment_code : null;
             Yii::$app->ClientPaymentConfig->processPayment('vsp_payment_disburse', $param);
-            $model->bmc_code = $bmc_code;
-            $bmc = $model->bmcCode;
+            $model->customer_type = $customerType;
             $msg .= $model->customerType->customer_desc . ' - ' . $bmc->ref_code . ' ' . $bmc->bmc_name . "<br>";
+            }
         }
 
         return $msg;

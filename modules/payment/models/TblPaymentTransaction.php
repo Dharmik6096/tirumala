@@ -141,7 +141,7 @@ class TblPaymentTransaction extends \app\models\ChildModel {
         return $this->find()->where(['is_file' => 1, 'sms_status' => NULL])->andWhere(['and', ['IS NOT', 'mobile_no', NULL], ['<>', 'mobile_no', '']])->limit(2000)->all();
     }
                                                 
-     public function getCargillMemberPaymentData($file_name, $debit_account_no, $bank_code,$branch_code,$debit_account_name,$session_id,$security_token,$sec_no) {
+     public function getCargillMemberPaymentData($file_name, $debit_account_no, $bank_code,$branch_code,$debit_account_name,$session_id,$security_token,$sec_no,$type) {
         return (new \yii\db\Query())
                         ->select(['
                              \''.$security_token.'\' as "SecurityToken",
@@ -159,7 +159,7 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                                 \'' . $debit_account_no . '\' as "DebitAccountNo",
                                 \''.$debit_account_name.'\' as "DebitAccName",
                                 convert(varchar, getdate(), 12)as "ValueDate",
-                                case when bank_code =\'' . $bank_code . '\' then \'CARG\' else \'CEFT\' end as "TransactionType"'
+                                case when\''. $type.'\'=\'CEFT\' then (case when bank_code =\'' . $bank_code . '\' then \'CARG\' else \'CEFT\' end) else \'SLIPS\' end as "TransactionType"'
                               ])
                         ->from('tbl_payment_transaction')
                         ->where('file_name =\'' . $file_name . '\' and final_amount>0.00 and is_file=1')
