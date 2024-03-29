@@ -59,10 +59,10 @@ class TblPaymentTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
-                [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'created_by', 'updated_by', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
-                [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
-                [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status'], 'safe'],
+            [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
+            [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'created_by', 'updated_by', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
+            [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
+            [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status'], 'safe'],
         ];
     }
 
@@ -199,23 +199,43 @@ class TblPaymentTransaction extends \app\models\ChildModel {
     }
 
     public function updateReverseStatus($response) {
-        $data = $this->find()->select(['type'])->where(['payment_transaction_code' => $response['txnID']])->one();
+        $data = $this->find()->where(['payment_transaction_code' => $response['txnID']])->one();
         if (!empty($data)) {
             $table = (strtolower($data->type) == 'member') ? 'tbl_member_payment' : 'tbl_vsp_payment';
             $amountColumnName = (strtolower($data->type) == 'member') ? 'final_amount' : 'final_pay';
             $statusColumn = (strtolower($data->type) == 'member') ? 'payment_status' : 'status';
+            $date = (strtolower($data->type) == 'member') ? date('Y-m-d H:i:s') : date('Y-m-d');
+            $summaryUpadte = (strtolower($data->type) == 'member') ? true : false;
             Yii::$app->db->createCommand()
                     ->update($table, [
                         'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND '" . $response['statusCode'] . "' != '000' THEN disburse_amount ELSE " . $amountColumnName . " END"),
                         '' . $statusColumn . '' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND '" . $response['statusCode'] . "'!= '000' THEN " . $statusColumn . " ELSE 'Disburse' END"),
-//                        'response_datetime' => date('Y-m-d H:i:s'),
+                        'disburse_date' => $date,
                         'bank_status' => $response['status'],
                         //                       'response_msg' => $response['statusDescription'],
                         'utr_no' => $response['replyID'],
                             ], 'payment_transaction_code = \'' . $response['txnID'] . '\' and lower(' . $statusColumn . ')=\'sent\'')
                     ->execute();
+            if ($summaryUpadte) {
+                $memberPaymentModel = new TblMemberPayment();
+                $memberPaymentModel->payment_cycle_code = $data->payment_cycle_code;
+                $memberPaymentModel->dcs_code = $data->dcs_code;
+                $memberPaymentModel->union_code = $data->union_code;
+                $disburseCount = $memberPaymentModel->find()->select('count(*) as count,payment_status')
+                ->where(['union_code' => $this->union_code, 'dcs_payment_cycle_code' => $this->dcs_payment_cycle_code, 'dcs_code' => $this->dcs_code])
+                ->groupBy(['payment_status'])->asArray()->all();
+                $count = count($disburseCount);
+                if ($count == 1 && lower($disburseCount[0]['payment_status']) == 'disburse') {
+                    Yii::$app->db->createCommand()
+                            ->update('tbl_member_payment_summary', [
+                                'disburse_amount' => new Expression('final_amount'),
+                                'disburse_date' => date('Y-m-d H:i:s'),
+                                'payment_status' => 'Disburse',
+                                    ], 'union_code'  => $this->union_code, 'dcs_payment_cycle_code'  => $this->dcs_payment_cycle_code, 'dcs_code'  => $this->dcs_code, 'lower(payment_status)' => 'sent')
+                            ->execute();
+                }
+            }
         }
         return;
     }
-
 }

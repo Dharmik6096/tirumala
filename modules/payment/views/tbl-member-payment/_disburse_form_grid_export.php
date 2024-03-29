@@ -188,13 +188,6 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
 
     $('.kv-panel-before').hide();
     $('.sub').on('click',function(){
-//        var checkBoxCount = $('.kv-row-checkbox:checked').length;
-//        if(checkBoxCount > 0) {
-//            $('#flag').val($(this).prop('name'));
-//            $('form#w1').submit();
-//        } else {
-//            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>" . Yii::t('app', 'Please Select atleast one Record') . "</span>');
-//        }
         var flagName = $(this).prop('name');
         $('#flag').val(flagName);
         if(flagName == 'member') {
@@ -208,35 +201,10 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
              }   
             else
             {
-            if(negativeCount > 0) {
-                var dispMessage = '" . Yii::t('app', 'Net Payable must be Positive for each Member.') . "';
-                bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
-            } else {
-//                bootbox.confirm({
-//                    message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
-//                    buttons: {
-//                        confirm: {
-//                            label: '" . Yii::t('app', 'Yes') . " ',
-//                            className: 'btn-primary'
-//                        },
-//                        cancel: {
-//                            label: '" . Yii::t('app', 'No') . "' ,
-//                            className: 'btn-danger'
-//                        }
-//                    },
-//                    callback: function (result) {
-//                        if(result){
-//                            $('form#w1').submit();
-//                        }
-//                    }
-//                });
-//            }
-//         }
-//
-//        } else {
-//            $('form#w1').submit();
-//        }
-//    });
+                if(negativeCount > 0) {
+                    var dispMessage = '" . Yii::t('app', 'Net Payable must be Positive for each Member.') . "';
+                    bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
+                } else {
                 var ucode = '" . $model->union_code . "';
                 var payCycleCode = ' ". $model->payment_cycle_code . "';
                 var bmcCode = ".json_encode($model->bmc_code).";
@@ -244,14 +212,10 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
                     type: 'post',
                     url: '" . Url::to(['validate-bank-details']) . "',
                     data: {'union_code':ucode,'union_bank_payment_code':bankCode,'payment_cycle_code':payCycleCode,'bmc_code':bmcCode},
-//                    data: 'union_code=" . $model->union_code . "',
                     success: function (data) {
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success') {
-                            // $('#OtpModal').modal('toggle'); 
                            sendotp();
-//                          $('form#w1').submit();
-//allow_without_otp
                         } else if (obj.status == 'allow_without_otp') { 
                             $('#otp-form').submit();
                             $('#loadercontent').show();
@@ -271,7 +235,6 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
                                 },
                                 callback: function (result) {
                                     if(result){
-//                                        $('form#w1').submit();
                                         sendotp();
                                     }
                                 }
@@ -291,41 +254,19 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
                                 },
                                 callback: function (result) {
                                     if(result){
-//                                        $('form#w1').submit();
                                         sendotp();
                                     }
                                 }
                             });
-                           // bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.message+'</span>');
                         } else {
                            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.message+'</span>');
                         }
                     }
                 });
-//                bootbox.confirm({
-//                    message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
-//                    buttons: {
-//                        confirm: {
-//                            label: '" . Yii::t('app', 'Yes') . " ',
-//                            className: 'btn-primary'
-//                        },
-//                        cancel: {
-//                            label: '" . Yii::t('app', 'No') . "' ,
-//                            className: 'btn-danger'
-//                        }
-//                    },
-//                    callback: function (result) {
-//                        if(result){
-//                            $('form#w1').submit();
-//                        }
-//                    }
- //               });
-                } 
-            }
-		  
-
+              } 
+           }
         } else {
-            $('form#w1').submit();
+        $('form#otp-form').submit();
         }
     });
     

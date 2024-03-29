@@ -1822,14 +1822,17 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     if ($hasBankDetailMemberCount == $totalMemberCount && $hasVerifiedBankDetailMemberCount == $hasBankDetailMemberCount) {
                         $status = 'success';
                         $msg = '';
-                    } else if ($hasBankDetailMemberCount > $hasVerifiedBankDetailMemberCount || $hasBankDetailMemberCount < $hasVerifiedBankDetailMemberCount) {
-                        $errorCount = $hasBankDetailMemberCount - $hasVerifiedBankDetailMemberCount;
-                        $status = 'validate_member_bank_detail_verification_confirmation';
-                        $msg = 'Bank Details not Verified for ' . $errorCount . ' out of ' . $hasBankDetailMemberCount . ' ' . $msg_type . '  .  Are you sure you want to Continue?';
                     } else {
-                        $errorCount = $totalMemberCount - $hasBankDetailMemberCount;
-                        $status = 'validate_member_bank_detail_confirmation';
-                        $msg = 'Bank Details not Available for ' . $errorCount . ' out of ' . $totalMemberCount . ' ' . $msg_type . ' . Are you sure you want to Continue?';
+                        if ($hasBankDetailMemberCount > $hasVerifiedBankDetailMemberCount || $hasBankDetailMemberCount < $hasVerifiedBankDetailMemberCount) {
+                            $errorCount = $hasBankDetailMemberCount - $hasVerifiedBankDetailMemberCount;
+                            $status = 'validate_member_bank_detail_verification_confirmation';
+                            $msg .= 'Bank Details not Verified for ' . $errorCount . ' out of ' . $hasBankDetailMemberCount . ' ' . $msg_type . '  .  Are you sure you want to Continue?'.'<br>';
+                        }
+                        if ($hasBankDetailMemberCount < $totalMemberCount) {
+                            $errorCount = $totalMemberCount - $hasBankDetailMemberCount;
+                            $status = 'validate_member_bank_detail_confirmation';
+                            $msg .= 'Bank Details not Available for ' . $errorCount . ' out of ' . $totalMemberCount . ' ' . $msg_type . ' . Are you sure you want to Continue?'.'<br>';
+                        }
                     }
                 } catch (\Throwable $ex) {
                     $msg = 'SMS Service Not Availabe.';
