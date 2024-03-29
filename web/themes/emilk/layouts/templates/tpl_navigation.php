@@ -573,7 +573,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Vehicle Master Register'), 'url' => ['/misreports/reports/vehicle-master']],
                             ['label' => Yii::t('app', 'Rate Master Register'), 'url' => ['/misreports/reports/rate-master-register']],
                             ['label' => Yii::t('app', 'Product Sale Rate Register'), 'url' => ['/misreports/reports/product-sale-rate-master-register']],
-                            ['label' => Yii::t('app', 'BMC Weight Data List'), 'url' => ['/misreports/reports/weight-collection-list']],
                     ]
                 ],
                     [
@@ -626,9 +625,10 @@ echo GhostMenu::widget([
                             'items' => [
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
-                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Testing Data') . '<b class="caret"></b></a>',
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Data') . '<b class="caret"></b></a>',
                                     'items' => [
                                             ['label' => Yii::t('app', 'Quality Collection Report'), 'url' => ['/misreports/reports/quality-collection-report']],
+                                            ['label' => Yii::t('app', 'BMC Weight Data List'), 'url' => ['/misreports/reports/weight-collection-list']],
                                     ]
                                 ],
                                     ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
