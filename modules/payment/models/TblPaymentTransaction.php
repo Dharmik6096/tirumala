@@ -231,8 +231,9 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                                 'disburse_amount' => new Expression('final_amount'),
                                 'disburse_date' => date('Y-m-d H:i:s'),
                                 'payment_status' => 'Disburse',
-                                    ], 'union_code'  => $this->union_code, 'dcs_payment_cycle_code'  => $this->dcs_payment_cycle_code, 'dcs_code'  => $this->dcs_code, 'lower(payment_status)' => 'sent')
+                                    ], ['union_code'  => $this->union_code, 'dcs_payment_cycle_code'  => $this->dcs_payment_cycle_code, 'dcs_code'  => $this->dcs_code,  new Expression('LOWER(payment_status) = "sent"')])
                             ->execute();
+                     
                 }
             }
         }
