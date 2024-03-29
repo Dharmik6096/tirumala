@@ -734,6 +734,22 @@ class V1 extends \yii\base\Module {
                 'main_table' => 'TblMemberProvisional',
                 'save_child' => true
             ],
+            'state/master' => [
+                'param' => '',
+                'sp' => 'sp_app_eipl_state_master_data',
+            ],
+            'district/master' => [
+                'param' => 'state_code',
+                'sp' => 'sp_app_eipl_district_master_data',
+            ],
+            'sub-district/master' => [
+                'param' => 'district_code',
+                'sp' => 'sp_app_eipl_sub_district_master_data',
+            ],
+            'village/master' => [
+                'param' => 'sub_district_code',
+                'sp' => 'sp_app_eipl_village_master_data',
+            ],
         ];
         return $label;
     }
