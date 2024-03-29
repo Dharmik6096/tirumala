@@ -1778,6 +1778,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $type = !empty(Yii::$app->request->post('type')) ? Yii::$app->request->post('type') : 'Member';
 //            !empty($bmcCode) && $bmcCode == '004' && 
             $msg_type = '';
+            $msg='';
             if (!empty($bmcCode) && !empty($modelData) && (!empty($modelData->file_path) || $modelData->integration_mode == 'API') && !empty($modelData->mobile_no)) {
 
                 try {
@@ -1823,16 +1824,16 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         $status = 'success';
                         $msg = '';
                     } else {
-                        if ($hasBankDetailMemberCount > $hasVerifiedBankDetailMemberCount || $hasBankDetailMemberCount < $hasVerifiedBankDetailMemberCount) {
-                            $errorCount = $hasBankDetailMemberCount - $hasVerifiedBankDetailMemberCount;
-                            $status = 'validate_member_bank_detail_verification_confirmation';
-                            $msg .= 'Bank Details not Verified for ' . $errorCount . ' out of ' . $hasBankDetailMemberCount . ' ' . $msg_type . '  .  Are you sure you want to Continue?'.'<br>';
-                        }
                         if ($hasBankDetailMemberCount < $totalMemberCount) {
                             $errorCount = $totalMemberCount - $hasBankDetailMemberCount;
                             $status = 'validate_member_bank_detail_confirmation';
                             $msg .= 'Bank Details not Available for ' . $errorCount . ' out of ' . $totalMemberCount . ' ' . $msg_type . ' . Are you sure you want to Continue?'.'<br>';
                         }
+                        if ($hasBankDetailMemberCount > $hasVerifiedBankDetailMemberCount || $hasBankDetailMemberCount < $hasVerifiedBankDetailMemberCount) {
+                            $errorCount = $hasBankDetailMemberCount - $hasVerifiedBankDetailMemberCount;
+                            $status = 'validate_member_bank_detail_verification_confirmation';
+                            $msg .= 'Bank Details not Verified for ' . $errorCount . ' out of ' . $hasBankDetailMemberCount . ' ' . $msg_type . '  .  Are you sure you want to Continue?'.'<br>';
+                        }                      
                     }
                 } catch (\Throwable $ex) {
                     $msg = 'SMS Service Not Availabe.';
