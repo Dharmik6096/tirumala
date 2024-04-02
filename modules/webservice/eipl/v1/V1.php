@@ -750,6 +750,10 @@ class V1 extends \yii\base\Module {
                 'param' => 'sub_district_code',
                 'sp' => 'sp_app_eipl_village_master_data',
             ],
+            'member/edit' => [
+                'param' => 'select_param:*#organization_type#organization_code#table:tbl_member',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],
         ];
         return $label;
     }
