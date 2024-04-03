@@ -715,16 +715,18 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'bank/master' => [
-                'param' => '',
-                'sp' => 'sp_eipl_app_bank_master_data',
+                'param' => 'select_param:*#organization_type#state_code#table:tbl_banks',
+                'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'branch/master' => [
                 'param' => 'bank_code',
-                'sp' => 'sp_eipl_app_branch_master_data',
+                'param' => 'select_param:*#organization_type:bank_code#bank_code#table:tbl_branch:condition:ifsc IS NOT NULL',
+
+                'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'gender/master' => [
-                'param' => '',
-                'sp' => 'sp_eipl_app_gender_master_data',
+                'param' => 'select_param:*#organization_type#state_code#table:tbl_gender',
+                'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'mapping-document/master' => [
                 'param' => 'union#master_type',
@@ -735,24 +737,24 @@ class V1 extends \yii\base\Module {
                 'save_child' => true
             ],
             'state/master' => [
-                'param' => '',
-                'sp' => 'sp_app_eipl_state_master_data',
+                'param' => 'select_param:*#organization_type#state_code#table:tbl_states',
+                'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'district/master' => [
-                'param' => 'state_code',
-                'sp' => 'sp_app_eipl_district_master_data',
-            ],
+                'param' => 'select_param:*#organization_type:state_code#state_code#table:tbl_districts',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],            
             'sub-district/master' => [
-                'param' => 'district_code',
-                'sp' => 'sp_app_eipl_sub_district_master_data',
+                'param' => 'select_param:*#organization_type:district_code#district_code#table:tbl_sub_districts',
+                'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'village/master' => [
-                'param' => 'sub_district_code',
-                'sp' => 'sp_app_eipl_village_master_data',
+                'param' => 'select_param:*#organization_type:sub_district_code#sub_district_code#table:tbl_villages',
+                'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'member/edit' => [
-                'param' => 'select_param:*#organization_type#organization_code#table:tbl_member',
-                'sp' => 'sp_app_eipl_v1_master_data',
+                'param' => 'member_code',
+                'sp' => 'sp_app_eipl_update_member_data',
             ],
         ];
         return $label;
