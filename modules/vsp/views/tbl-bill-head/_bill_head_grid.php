@@ -27,12 +27,18 @@ $form = ActiveForm::begin([
                             foreach ($head as $s) {
                                 echo "<th class='width1 00px'>" . $s->bill_head_name . "</th>";
                             }
+                            foreach ($criteria as $c) {
+                                echo "<th class='width1 00px'>" . $c['criteria_name'] . "</th>";
+                            }
 //                            echo "<th class='width100px'>" . Yii::t('app', 'Action') . "</th>";
                             echo "</tr>";
                         }
                     }
                     foreach ($head as $h) {
                         echo "<th class='width100px'><input type = 'checkbox' class = 'selectAllHead'  id='{$h->bill_head_code}'></th>";
+                    }
+                    foreach ($criteria as $c) {
+                        echo "<th class='width100px'><input type = 'checkbox' class = 'selectAllHead'  id='{$c['bill_head_code']}'></th>";
                     }
                     echo "</thead>";
                     echo "<tbody>";
@@ -47,9 +53,11 @@ $form = ActiveForm::begin([
                             <?php
                             $fromDate = $model->from_date;
                             $applicability = $model->getApplicabiliytData($model, $code, $fromDate);
+                            $criteriaApplicability = $model->getCriteriaApplicabiliytData($model, $code);
                             $dispBtn = false;
                             $headCount = count($head);
                             $headAppCount = count($head);
+                            $criteriaAppCount = count($criteria);
                             foreach ($head as $s) {
                                 if (in_array($s->bill_head_code, $applicability)) {
                                     echo "<td>" . 'Yes' . "</td>";
@@ -69,6 +77,22 @@ $form = ActiveForm::begin([
                                             <?= Html::hiddenInput('head_for', $model->bill_head_for, ['class' => 'bill_head_row_' . $key, 'id' => 'head_for']); ?>
                                             <input type="checkbox" class="billHeadCheckbox billHeadCheckbox-<?= $key ?> billhead-<?= $s->bill_head_code ?>" id="billheadcheck-<?= $s->bill_head_code . '_' . $code ?>" name="billhead_<?= $code ?>" value="<?= $s->bill_head_code ?>" head_key="<?= $s->bill_head_code ?>">
                                             <label for="billheadcheck-<?= $s->bill_head_code . '_' . $code ?>"></label>
+                                        </div>
+                                    </td>
+                                    <?php
+                                }
+                            }
+                            foreach ($criteria as $c) {
+                                if (in_array($c['bill_head_code'], $criteriaApplicability)) {
+                                    echo "<td>" . 'Yes' . "</td>";
+                                } else {
+                                    $criteriaAppCount--;
+                                    $class = $criteriaAppCount == 0 ? ' highlightParentRow ' : '';
+                                    ?>
+                                    <td class="<?= $class ?>">
+                                        <div class="">
+                                            <input type="checkbox" class="billHeadCheckbox billHeadCheckbox-<?= $key ?> billhead-<?= $c['bill_head_code'] ?>" id="billheadcheck-<?= $c['bill_head_code'] . '_' . $code ?>" name="billhead_<?= $code ?>" value="<?= $c['bill_head_code'] . '###' . $c['vsp_criteria_code'] ?>" head_key="<?= $c['bill_head_code'] ?>">
+                                            <label for="billheadcheck-<?= $c['bill_head_code'] . '_' . $code ?>"></label>
                                         </div>
                                     </td>
                                     <?php

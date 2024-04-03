@@ -24,7 +24,11 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\document\models\TblAttachment;
+use app\modules\document\models\TblDocumentMapping;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\welfarescheme\models\TblDocumentMasterInfo;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -181,8 +185,8 @@ class TblMemberProvisional extends ChildModel {
                 }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
             [['ex_member_code'], 'integer', 'min' => 1, 'max' => 9999, 'except' => ['androidsync']],
             [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync']],
-            [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync', 'MemberApprove']],
-            [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync']],
+            [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync', 'MemberApprove', 'hosyncUpdate']],
+            [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'activityStatus'], 'safe'],
             [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from'], 'safe'],
             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
@@ -613,5 +617,70 @@ class TblMemberProvisional extends ChildModel {
     public function getMemberPrivisionalApproval() {
         return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->orderBy('level ASC');
 //        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$childModel) {
+        $model->ex_member_code = !empty($model->ex_member_code) ? str_pad($model->ex_member_code, 4, '0', STR_PAD_LEFT) : '';
+        $content = $modelSave['content'];
+        $model->scenario = 'hosync';
+        if(!empty($model->member_code)){
+            $member = TblMember::find()->where(['member_code' => $model->member_code])->one();
+            if(!empty($member)){
+                $model->scenario = 'hosyncUpdate';
+                $member['originating_type'] = '';
+                $member['created_at'] = '';
+                $member['created_by'] = '';
+                $member['updated_at'] = '';
+                $member['updated_by'] = '';
+                $setField = array_diff_key($member->attributes, $content);
+                $model->setAttributes($setField);   
+            }
+        } else {
+            $model->member_code = $this->getCode();
+        }
+        $model->originating_org_type = 'HO';
+        $model->provisional_member_code = Yii::$app->general->getUuid();
+        $model->dob = empty($model->dob) ? NULL : $model->dob;
+        $model->member_name = ucwords($model->member_name);
+        $model->registration_date = empty($model->registration_date) ? NULL : Yii::$app->controls->view_date($model->registration_date, 'php:Y-m-d');
+        $model->provisional_status = 'Register';
+        $doc_mapping = TblDocumentMapping::find()->where(['master_type' => 'provisional_member'])->all();
+        if(!empty($doc_mapping)){
+            $error_msg = '';
+            $doc_path = Yii::$app->params['document_upload'] . 'provisional_member';
+            foreach ($doc_mapping as $doc) {
+                $master_doc = $doc->docId;
+                $fileLable = $master_doc->doc_name;
+                if(!empty($_FILES[$fileLable]['name'])){
+                    $attaFile = UploadedFile::getInstanceByName($fileLable);
+                    if ($attaFile && !$attaFile->hasError) {
+                        $file_name = 'provisional_member' . '_' . $model->provisional_member_code . '_' . $doc->doc_id . '_' . time() . '.' . $attaFile->extension;
+                        $attachments = new TblAttachment();
+                        $attachments->attachment = $doc_path . '/' . $file_name;
+                        if ($attaFile->saveAs($attachments->attachment)) {
+                            $attachments->module_code = $model->provisional_member_code;
+                            $attachments->doc_id = $doc->doc_id;
+                            $attachments->is_mandate = $doc->is_mandate;
+                            $attachments->attachment_type = $master_doc->doc_ext;
+                            $attachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachments->attachment;
+                            $attachments->module_name = 'tbl_member_provisional';
+                            $attachments->file_name = $file_name;
+                            $childModel[] = $attachments;
+                        } else {
+                            $error_msg .= $master_doc->doc_name . '<br/>';
+                        }
+                    } else if ($doc->is_mandate == 1) {
+                        $error_msg .= $master_doc->doc_name . '<br/>';
+                    } else {
+                        // Handle case when no file is uploaded
+                    }
+                }
+            }
+        }
+        $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
+        if ($config == 1) {
+            $modelStages = new TblApprovalStagesDetail();
+            $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $childModel, $approval_stages);
+        }
     }
 }
