@@ -18,6 +18,7 @@ use yii\helpers\ArrayHelper;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\vsp\models\TblBillHeadReleaseApplicability;
 use app\modules\vsp\models\TblBillHeadReleaseApplicabilityHistory;
+use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
 
 /**
  * TblBillHeadController implements the CRUD actions for TblBillHead model.
@@ -290,6 +291,7 @@ class TblBillHeadController extends \app\controllers\ChildController {
 
         $dcs = [];
         $head = [];
+        $criteria = [];
         if (!empty(Yii::$app->request->get('TblBillHead'))) {
             $data = Yii::$app->request->get('TblBillHead');
             $model->union_code = $data['union_code'];
@@ -304,6 +306,7 @@ class TblBillHeadController extends \app\controllers\ChildController {
             if ($model->validate()) {
                 $head = $model->getBillHead($model);
                 $dcs = $model->getDcs($data);
+                $criteria = $model->getCriteria($model);
             }
         } else {
             $model->from_date = date('Y-m-d');
@@ -313,6 +316,7 @@ class TblBillHeadController extends \app\controllers\ChildController {
                     'model' => $model,
                     'dcs' => $dcs,
                     'head' => $head,
+                    'criteria' => $criteria,
         ]);
     }
 
@@ -323,8 +327,13 @@ class TblBillHeadController extends \app\controllers\ChildController {
             foreach ($data['bill_head_codes'] as $key => $codes) {
                 foreach ($codes as $code) {
                     $model = new TblBillHeadApplicability();
+                    $bill_head = explode('###', $code);
+                    if (!empty($bill_head[1])) {
+                        $model = new TblVspBillHeadCriteriaApplicability();
+                        $model->vsp_criteria_code = $bill_head[1];
+                    }
                     $model->setAttributes($data);
-                    $model->bill_head_code = $code;
+                    $model->bill_head_code = $bill_head[0];
                     $model->applicable_code = $key;
                     $model->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
                     $model->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);

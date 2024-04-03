@@ -252,6 +252,7 @@ $config = [
         'tms' => ['class' => 'app\modules\tms\Tms',],
         'document' => ['class' => 'app\modules\document\Document',],
         'feedback' => ['class' => 'app\modules\feedback\Feedback',],
+        'clienterp' => ['class' => 'app\modules\clienterp\Clienterp',],
     ],
     'params' => require(__DIR__ . '/params.php'),
 ];
