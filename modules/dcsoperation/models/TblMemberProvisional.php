@@ -644,80 +644,39 @@ class TblMemberProvisional extends ChildModel {
         $model->member_name = ucwords($model->member_name);
         $model->registration_date = empty($model->registration_date) ? NULL : Yii::$app->controls->view_date($model->registration_date, 'php:Y-m-d');
         $model->provisional_status = 'Register';
-
-
-        // if (!empty($content) && !empty($content['files'])) {
-        //     $error_msg = '';
-        //     $doc_path = Yii::$app->params['document_upload'] . 'provisional_member';
-        //     if (Yii::$app->general->checkDirectory($doc_path)) {
-        //         foreach ($content['files'] as $key => $file) {
-        //             $mappingDocs = TblDocumentMapping::find()
-        //                 ->alias('map')
-        //                 ->select(['map.*', 'dm.doc_group', 'dm.doc_name', 'dm.doc_ext'])
-        //                 ->innerJoin('tbl_document_master_info dm', 'map.doc_id = dm.doc_id')
-        //                 ->where(['dm.doc_group' => $key, 'map.master_type' => 'provisional_member', 'map.is_active' => 1])
-        //                 ->asArray()
-        //                 ->one();
-        //             if (!empty($mappingDocs)) {
-        //                 $attachments = new TblAttachment();
-        //                 $attachments->module_code = $model->provisional_member_code;
-        //                 $attachments->module_name = 'tbl_member_provisional';
-        //                 $attachments->attachment_type = $mappingDocs['doc_ext'];
-        //                 $attachments->doc_id = $mappingDocs['doc_id'];
-        //                 $attaFile = UploadedFile::getInstance($file, '[' . $key . ']file_name');
-        //                 if ($attaFile !== null) {
-        //                     $file_name = 'provisional_member' . '_' . $model->provisional_member_code . '_' . $mappingDocs['doc_id'] . '_' . time() . '.' . $attaFile->extension;
-        //                     $attachments->attachment = $doc_path . '/' . $file_name;
-        //                     if (!$attaFile->saveAs($attachments->attachment)) {
-        //                         $error_msg .= $mappingDocs['doc_name'] . '<br/>';
-        //                     }
-        //                     $attachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachments->attachment;
-        //                     $attachments->file_name = $file_name;
-        //                     $childModel[] = $attachments;
-        //                 }  else if ($mappingDocs->is_mandate == 1) {
-        //                     $error_msg .= $mappingDocs->doc_name . '<br/>';
-        //                 } else {
-        //                     // Handle case when no file is uploaded
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        if (!empty($content) && !empty($content['files'])) {
+        $doc_mapping = TblDocumentMapping::find()->where(['master_type' => 'provisional_member'])->all();
+        if(!empty($doc_mapping)){
             $error_msg = '';
             $doc_path = Yii::$app->params['document_upload'] . 'provisional_member';
-            if (Yii::$app->general->checkDirectory($doc_path)) {
-                foreach ($content['files'] as $key => $file) {
-                    $doc_mapping = TblDocumentMapping::find()->where(['master_type' => 'provisional_member'])->all();
-                    foreach ($doc_mapping as $doc) {
-                        $master_doc = $doc->docId; // This line seems incorrect, please correct it as per your schema
+            foreach ($doc_mapping as $doc) {
+                $master_doc = $doc->docId;
+                $fileLable = $master_doc->doc_name;
+                if(!empty($_FILES[$fileLable]['name'])){
+                    $attaFile = UploadedFile::getInstanceByName($fileLable);
+                    if ($attaFile && !$attaFile->hasError) {
+                        $file_name = 'provisional_member' . '_' . $model->provisional_member_code . '_' . $doc->doc_id . '_' . time() . '.' . $attaFile->extension;
                         $attachments = new TblAttachment();
-                        $attachments->module_code = $model->provisional_member_code;
-                        $attachments->doc_id = $doc->doc_id;
-                        $attachments->is_mandate = $doc->is_mandate;
-                        $attachments->attachment_type = $master_doc->doc_ext;
-                        $attaFile = UploadedFile::getInstance($file, '[' . $key . ']file_name');
-                        if ($attaFile !== null) {
-                            $file_name = 'provisional_member' . '_' . $model->provisional_member_code . '_' . $doc->doc_id . '_' . time() . '.' . $attaFile->extension;
-                            $attachments->attachment = $doc_path . '/' . $file_name;
-                            if (!$attaFile->saveAs($attachments->attachment)) {
-                                $error_msg .= $doc->doc_name . '<br/>';
-                            }
+                        $attachments->attachment = $doc_path . '/' . $file_name;
+                        if ($attaFile->saveAs($attachments->attachment)) {
+                            $attachments->module_code = $model->provisional_member_code;
+                            $attachments->doc_id = $doc->doc_id;
+                            $attachments->is_mandate = $doc->is_mandate;
+                            $attachments->attachment_type = $master_doc->doc_ext;
                             $attachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachments->attachment;
                             $attachments->module_name = 'tbl_member_provisional';
                             $attachments->file_name = $file_name;
-                        }  else if ($doc->is_mandate == 1) {
-                            $error_msg .= $doc->doc_name . '<br/>';
+                            $childModel[] = $attachments;
                         } else {
-                            // Handle case when no file is uploaded
+                            $error_msg .= $master_doc->doc_name . '<br/>';
                         }
+                    } else if ($doc->is_mandate == 1) {
+                        $error_msg .= $master_doc->doc_name . '<br/>';
+                    } else {
+                        // Handle case when no file is uploaded
                     }
                 }
             }
         }
-
-
         $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
         if ($config == 1) {
             $modelStages = new TblApprovalStagesDetail();
