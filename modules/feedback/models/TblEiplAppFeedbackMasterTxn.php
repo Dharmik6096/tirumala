@@ -37,7 +37,7 @@ class TblEiplAppFeedbackMasterTxn extends \app\models\ChildModel {
         return [
             [['eipl_app_feedback_master_code'], 'integer'],
             [['feedback_message', 'name', 'originator_type', 'originator_code', 'replier_type', 'replier_code', 'created_by', 'updated_by'], 'safe'],
-            [['eipl_app_feedback_master_code','feedback_message_datetime', 'created_at', 'updated_at','feedback_message', 'name', 'originator_type', 'originator_code', 'replier_type', 'replier_code', 'created_by', 'updated_by','file_code','file_name','file_path'], 'safe'],
+            [['eipl_app_feedback_master_code', 'feedback_message_datetime', 'created_at', 'updated_at', 'feedback_message', 'name', 'originator_type', 'originator_code', 'replier_type', 'replier_code', 'created_by', 'updated_by', 'file_code', 'file_name', 'file_path'], 'safe'],
         ];
     }
 
@@ -63,6 +63,12 @@ class TblEiplAppFeedbackMasterTxn extends \app\models\ChildModel {
             'file_name' => Yii::t('app', 'File Name'),
             'file_path' => Yii::t('app', 'File Path'),
         ];
+    }
+
+    public function getAttachment() {
+        $this->eipl_app_feedback_master_txn_code = (string) $this->eipl_app_feedback_master_txn_code;
+        return $this->hasOne(TblAttachment::className(), ['module_code' => 'eipl_app_feedback_master_txn_code'])
+                        ->andWhere(['module_name' => 'feedback_txn']);
     }
 
 }
