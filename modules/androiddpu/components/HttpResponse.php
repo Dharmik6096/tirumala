@@ -20,8 +20,11 @@ class HttpResponse extends \yii\base\Component {
             $this->response['data'] = ($this->apply_camel_case) ? $this->underscoreToCamelCase($response['data']) : $response['data'];
             $this->response['error']['message'] = !empty($response['error']['message']) ? $response['error']['message'] : $response['message'];
         } else {
+            $parsed_url = parse_url($_SERVER['REQUEST_URI']);
+            $endpoint = basename($parsed_url['path']);
+            $resp = $this->getResponseType($endpoint);
             $this->response['error']['message'] = !empty($response['error']['message']) ? $response['error']['message'] : ['Data Not Available'];
-            $this->response['data'] = new \StdClass();
+            $this->response['data'] = $resp['response_type'];
         }
         $this->response['status'] = !empty($response['status']) ? $response['status'] : 'success';
         $this->response['error']['code'] = !empty($response['error']['code']) ? $response['error']['code'] : Yii::$app->response->statusCode;
@@ -45,6 +48,16 @@ class HttpResponse extends \yii\base\Component {
             return $res_data;
         }
         return $res_data;
+    }
+
+    public function getResponseType($endpoint){
+        $default['response_type'] = new \StdClass();
+        $label = [
+            'product-stock' => [
+                'response_type' => [],
+            ],
+        ];
+        return isset($label[$endpoint]) ? $label[$endpoint] : $default;
     }
 
 }
