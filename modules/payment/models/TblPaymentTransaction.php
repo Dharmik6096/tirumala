@@ -218,11 +218,11 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                     ->execute();
             if ($summaryUpadte) {
                 $memberPaymentModel = new TblMemberPayment();
-                $memberPaymentModel->payment_cycle_code = $data->payment_cycle_code;
-                $memberPaymentModel->dcs_code = $data->dcs_code;
-                $memberPaymentModel->union_code = $data->union_code;
+//                $memberPaymentModel->payment_cycle_code = $data->payment_cycle_code;
+//                $memberPaymentModel->dcs_code = $data->dcs_code;
+//                $memberPaymentModel->union_code = $data->union_code;
                 $disburseCount = $memberPaymentModel->find()->select('count(*) as count,payment_status')
-                ->where(['union_code' => $this->union_code, 'dcs_payment_cycle_code' => $this->dcs_payment_cycle_code, 'dcs_code' => $this->dcs_code])
+                ->where(['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
                 ->groupBy(['payment_status'])->asArray()->all();
                 $count = count($disburseCount);
                 if ($count == 1 && lower($disburseCount[0]['payment_status']) == 'disburse') {
@@ -231,7 +231,7 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                                 'disburse_amount' => new Expression('final_amount'),
                                 'disburse_date' => $date,
                                 'payment_status' => 'Disburse',
-                                    ], ['union_code'  => $this->union_code, 'dcs_payment_cycle_code'  => $this->dcs_payment_cycle_code, 'dcs_code'  => $this->dcs_code,  new Expression('LOWER(payment_status) = "sent"')])
+                                    ], ['union_code'  => $data->union_code, 'dcs_payment_cycle_code'  => $data->dcs_payment_cycle_code, 'dcs_code'  => $data->dcs_code,  new Expression('LOWER(payment_status) = "sent"')])
                             ->execute();
                      
                 }
