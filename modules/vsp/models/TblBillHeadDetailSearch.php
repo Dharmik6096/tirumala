@@ -51,7 +51,12 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'billHeadCode', 'memberCode']);
+//        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'billHeadCode', 'memberCode']);
+        $query->leftJoin('tbl_dcs', 'tbl_dcs.dcs_code = tbl_bill_head_detail.customer_code')
+                ->leftJoin('tbl_customer_master', 'tbl_customer_master.customer_code = tbl_bill_head_detail.customer_code')
+                ->leftJoin('tbl_customer_type', ['tbl_customer_type.customer_type' => 'tbl_bill_head_detail.customer_type', 'tbl_customer_type.union_code' => 'tbl_bill_head_detail.union_code'])
+                ->leftJoin('tbl_bill_head', 'tbl_bill_head.bill_head_code = tbl_bill_head_detail.bill_head_code')
+                ->leftJoin('tbl_member', 'tbl_member.member_code = tbl_bill_head_detail.customer_code');
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bill_head_detail', 'tbl_bill_head_detail', 'tbl_bill_head_detail');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

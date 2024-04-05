@@ -1675,6 +1675,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VendorPaymentFormat';
         return $this->actionIndex();
     }
+    
+    public function actionRootWiseDifference() {
+        $this->report = 'RootWiseDifference';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3531,6 +3536,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '631 - Vendor Payment Format 2',
                 'report_type' => ['all' => Yii::t('app', 'All'), 'dcswise' => Yii::t('app', 'DCS Wise'), 'vspwise' => Yii::t('app', 'VSP Wise'), 'remuneration' => Yii::t('app', 'Remuneration')
                 ],
+            ],
+            'RootWiseDifference' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_summary_anig',
+                'scenario' => 'RootWiseDifference',
+                'title' => 'Root Wise Difference',
             ],
         ];
         return $label[$l];
