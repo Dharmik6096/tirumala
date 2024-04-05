@@ -599,6 +599,7 @@ echo GhostMenu::widget([
                                     ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
                                     ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
                                     ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
+                                    ['label' => '225 -' . Yii::t('app', 'Root Wise Difference'), 'url' => ['/misreports/reports/root-wise-difference']],
                             ]
                         ],
                             [
