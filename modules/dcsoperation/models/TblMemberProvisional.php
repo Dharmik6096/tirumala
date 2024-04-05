@@ -122,9 +122,11 @@ class TblMemberProvisional extends ChildModel {
             [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
             [['member_type_code'], 'default', 'value' => '1'],
             [['bmc_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv', 'collection']],
-            [['dcs_code', 'hamlet_code', 'ex_member_code', 'member_name'], 'required', 'except' => ['collection']],
+            [['dcs_code', 'member_name'], 'required', 'except' => ['collection']],
+            [['ex_member_code'], 'required', 'except' => ['collection','hosync']],
+            [['hamlet_code'], 'required', 'except' => ['collection','hosync','hosyncUpdate']],
             [['gender_code', 'caste_category_code'], 'required', 'on' => ['EIPLAMCS_TEST']],
-            [['dcs_code', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'collection']],
+            [['dcs_code', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'collection','hosync','hosyncUpdate']],
             [['member_code', 'state_code', 'union_code'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
             [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['collection', 'importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
             [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
@@ -620,10 +622,10 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function setChildTable(&$model, &$modelSave, &$childModel) {
-        $model->ex_member_code = !empty($model->ex_member_code) ? str_pad($model->ex_member_code, 4, '0', STR_PAD_LEFT) : '';
         $content = $modelSave['content'];
         $model->scenario = 'hosync';
         if(!empty($model->member_code)){
+            $model->ex_member_code = !empty($model->ex_member_code) ? str_pad($model->ex_member_code, 4, '0', STR_PAD_LEFT) : '';
             $member = TblMember::find()->where(['member_code' => $model->member_code])->one();
             if(!empty($member)){
                 $model->scenario = 'hosyncUpdate';
@@ -636,6 +638,18 @@ class TblMemberProvisional extends ChildModel {
                 $model->setAttributes($setField);   
             }
         } else {
+            $ex_code = TblMember::find()->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
+                        ->where(['dcs_code' => $model->dcs_code])
+                        ->asArray()
+                        ->one();
+            $ex_member_code = $this->find()->where(['ex_member_code' => $ex_code['ex_code']])->one();
+            if(!empty($ex_member_code)){
+                $ex_code = $this->find()->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
+                        ->where(['dcs_code' => $model->dcs_code])
+                        ->asArray()
+                        ->one();
+            }
+            $model->ex_member_code = $ex_code['ex_code'];
             $model->member_code = $this->getCode();
         }
         $model->originating_org_type = 'HO';
