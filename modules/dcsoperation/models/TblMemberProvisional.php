@@ -103,7 +103,7 @@ use yii\web\UploadedFile;
  */
 class TblMemberProvisional extends ChildModel {
 
-    public $cnt, $reference_code, $society_code, $bmc_name, $process_approval_code, $activityStatus, $import_key_pattern;
+    public $cnt, $reference_code, $society_code, $bmc_name, $process_approval_code, $activityStatus;
 
     /**
      * @inheritdoc
