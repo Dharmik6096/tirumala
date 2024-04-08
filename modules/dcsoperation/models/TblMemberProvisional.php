@@ -625,7 +625,7 @@ class TblMemberProvisional extends ChildModel {
         $content = $modelSave['content'];
         $model->scenario = 'hosync';
         if(!empty($model->member_code)){
-            $model->ex_member_code = !empty($model->ex_member_code) ? str_pad($model->ex_member_code, 4, '0', STR_PAD_LEFT) : '';
+            $this->setExMemberCode($model, $model->ex_member_code);
             $member = TblMember::find()->where(['member_code' => $model->member_code])->one();
             if(!empty($member)){
                 $model->scenario = 'hosyncUpdate';
@@ -642,14 +642,15 @@ class TblMemberProvisional extends ChildModel {
                         ->where(['dcs_code' => $model->dcs_code])
                         ->asArray()
                         ->one();
-            $ex_member_code = $this->find()->where(['ex_member_code' => $ex_code['ex_code']])->one();
+            $this->setExMemberCode($model, $ex_code['ex_code']);
+            $ex_member_code = $this->find()->where(['ex_member_code' => $model->ex_member_code])->one();
             if(!empty($ex_member_code)){
                 $ex_code = $this->find()->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
                         ->where(['dcs_code' => $model->dcs_code])
                         ->asArray()
                         ->one();
             }
-            $model->ex_member_code = $ex_code['ex_code'];
+            $this->setExMemberCode($model, $ex_code['ex_code']);
             $model->member_code = $this->getCode();
         }
         $model->originating_org_type = 'HO';
@@ -696,5 +697,9 @@ class TblMemberProvisional extends ChildModel {
             $modelStages = new TblApprovalStagesDetail();
             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $childModel, $approval_stages);
         }
+    }
+
+    public function setExMemberCode(&$model, $code){
+        $model->ex_member_code = !empty($code) ? str_pad($code, 4, '0', STR_PAD_LEFT) : '';
     }
 }

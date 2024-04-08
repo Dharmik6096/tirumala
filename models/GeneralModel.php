@@ -537,15 +537,27 @@ class GeneralModel {
             $master = [];
             foreach ($model as $m) {
                 $master[] = $m->save();
+                echo 'master => <pre>';
+                print_r($m->getErrors());
+                echo '</pre>';
+                // die;
             }
             if (!in_array(FALSE, $master)) {
                 foreach ($saveChild as $m) {
                     $master[] = $m->save();
+                    echo 'child => <pre>';
+                print_r($m->getErrors());
+                echo '</pre>';
+                // die;
                 }
             }
             if (!in_array(FALSE, $master)) {
                 foreach ($deleteChild as $m) {
                     $master[] = $m->delete();
+                    echo 'delete => <pre>';
+                print_r($m->getErrors());
+                echo '</pre>';
+                // die;
                 }
             }
             if (!in_array(FALSE, $master)) {
@@ -554,16 +566,25 @@ class GeneralModel {
                 return 'customRedirect';
             }
             $transaction->rollback();
+            die('rollback');
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
             return 'customRender';
         } catch (UserException $e) {
             $transaction->rollback();
+            echo 'User => <pre>';
+            print_r($e->getMessage());
+            echo '</pre>';
+            die;
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => $e->getMessage()]);
             return false;
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
+            echo 'DB => <pre>';
+            print_r($e->getMessage());
+            echo '</pre>';
+            die;
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
             return false;
