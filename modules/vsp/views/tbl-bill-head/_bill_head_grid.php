@@ -114,7 +114,7 @@ $form = ActiveForm::begin([
                 <?php
                 if (!empty($head) && !empty($dcs)) {
                     echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary btn-login mr-2', 'id' => 'saveApplicability']);
-                    echo Yii::$app->controls->custombutton('Cancel', 'cs-wise-bill-head', '', ' btn-login');
+                    echo Yii::$app->controls->custombutton('Cancel', 'cs-wise-bill-head', '', 'btn-login');
                 }
                 ?>
             </div>
