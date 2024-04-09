@@ -19,7 +19,7 @@ class DashboardController extends RestController {
                 unset($entry['data_type']);
                 $res_data[$dataType][] = ($dataType === 'bmcCollection') ?
                         $entry :
-                        ['collectionDatetime' => $entry['collectionDatetime'], 'totalSample' => $entry['totalSample']] +
+                        ['collectionDatetime' => $entry['collectionDatetime'],'shiftCode' =>$entry['shiftCode'], 'totalSample' => $entry['totalSample']] +
                         (($dataType !== 'qualityCollection') ? ['totalQuantity' => $entry['totalQuantity']] : []);
             }
         }
