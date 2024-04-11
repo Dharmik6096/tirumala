@@ -93,9 +93,9 @@ $mcc_url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $union]);
                                                         <div class="col-sm-8">
                                                             <div class="col-sm-6 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Society') ?></span></div>
                                                             <div class="col-sm-6 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Farmer') ?></span></div>
-                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $data['bmc_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $data['bmc_code'], 'shift' => $shift]); ?>
                                                             <div class="col-sm-6 dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
-                                                            <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $data['bmc_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $data['bmc_code'], 'shift' => $shift]); ?>
                                                             <div class="col-sm-6 dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_farmers'] ?></span></span></a></div>
                                                         </div>
                                                     </div>
@@ -138,9 +138,9 @@ $mcc_url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $union]);
                                                             // $tbl_bmc_model->bmc_code = $data['bmc_code'];
                                                             ?>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['bmc_name'] ?></td>
-                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $data['bmc_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $data['bmc_code'], 'shift' => $shift]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
-                                                            <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $data['bmc_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $data['bmc_code'], 'shift' => $shift]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_farmers'] ?></a></td>
                                                             <td class="number_align custom_grid_normal"><?= $data['total_quantity'] ?></td>
                                                             <td class="number_align custom_grid_normal"><?= $data['avgFAT'] ?></td>

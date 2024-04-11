@@ -2677,7 +2677,7 @@ class SiteController extends Controller {
         $tbl_plant_model = new TblMccPlant();
         $tbl_plant_model->mcc_plant_code = $mcc;
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
-        return $this->render('_dashboard_grid_rmrd_bmc', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_rmrd_bmc', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetDcs() {

@@ -97,12 +97,12 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                             <div class="<?= $col_class ?> dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Society') ?></span></div>
                                                             <?php
                                                             if (\Yii::$app->session->get('hasBMC') == 1) {
-                                                                $url = Url::to(['site/get-rmrd-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd']);
+                                                                $url = Url::to(['site/get-rmrd-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd', 'shift' => $shift]);
                                                                 ?>
                                                                 <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_bmc'] ?></span></span></a></div>
                                                             <?php }
                                                             ?>
-                                                            <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd']); ?>
+                                                            <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd', 'shift' => $shift]); ?>
                                                             <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
                                                         </div>
                                                     </div>
@@ -147,11 +147,11 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['mcc_name'] ?></td>
                                                             <?php
                                                             if (\Yii::$app->session->get('hasBMC') == 1) {
-                                                                $url = Url::to(['site/get-rmrd-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd']);
+                                                                $url = Url::to(['site/get-rmrd-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd', 'shift' => $shift]);
                                                                 ?>
                                                                 <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_bmc'] ?></a></td>
                                                             <?php } ?>
-                                                            <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd']); ?>
+                                                            <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd', 'shift' => $shift]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['total_quantity'] ?></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>
