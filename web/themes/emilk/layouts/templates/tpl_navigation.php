@@ -573,7 +573,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Vehicle Master Register'), 'url' => ['/misreports/reports/vehicle-master']],
                             ['label' => Yii::t('app', 'Rate Master Register'), 'url' => ['/misreports/reports/rate-master-register']],
                             ['label' => Yii::t('app', 'Product Sale Rate Register'), 'url' => ['/misreports/reports/product-sale-rate-master-register']],
-                            ['label' => Yii::t('app', 'BMC Weight Data List'), 'url' => ['/misreports/reports/weight-collection-list']],
                     ]
                 ],
                     [
@@ -626,9 +625,10 @@ echo GhostMenu::widget([
                             'items' => [
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
-                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Testing Data') . '<b class="caret"></b></a>',
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Data') . '<b class="caret"></b></a>',
                                     'items' => [
                                             ['label' => Yii::t('app', 'Quality Collection Report'), 'url' => ['/misreports/reports/quality-collection-report']],
+                                            ['label' => Yii::t('app', 'BMC Weight Data List'), 'url' => ['/misreports/reports/weight-collection-list']],
                                     ]
                                 ],
                                     ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
@@ -657,6 +657,7 @@ echo GhostMenu::widget([
                                     ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
                                     ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
                                     ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
+                                    ['label' => '225 -' . Yii::t('app', 'Root Wise Difference'), 'url' => ['/misreports/reports/root-wise-difference']],
                             ]
                         ],
                             [
