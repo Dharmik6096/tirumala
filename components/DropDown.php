@@ -1968,6 +1968,7 @@ class DropDown extends Component {
             'party_master' => ['name' => 'party_master_code', 'fields' => 'party_master_code,party_name,owner_name', 'prompt' => 'Select Party', 'model' => 'TblPartyMaster'],
             'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name', 'prompt' => Yii::t('app', 'Select User'), 'model' => 'User'],
             'login_user_code' => ['name' => 'login_user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
+            'region' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
