@@ -122,8 +122,8 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
                 ->andFilterWhere(['like', 'tbl_member_provisional.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_member_provisional.provisional_from', $this->provisional_from])
                 ->andFilterWhere(['like', 'user.name', $this->created_by])
-                ->andFilterWhere(['like', 'tbl_member.employee_name', $this->employee_name])
-                ->andFilterWhere(['like', 'tbl_member.employee_code', $this->employee_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.employee_name', $this->employee_name])
+                ->andFilterWhere(['like', 'tbl_member_provisional.employee_code', $this->employee_code])
                 ->andFilterWhere(['like', 'tbl_region.region_name', $this->region_code]);
 
         return $dataProvider;
