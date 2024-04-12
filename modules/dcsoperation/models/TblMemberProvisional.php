@@ -25,6 +25,8 @@ use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\document\models\TblAttachment;
 use app\modules\general\models\TblProcessApproval;
+use webvimark\modules\UserManagement\models\User;
+use app\modules\geo\models\TblRegion;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -184,7 +186,7 @@ class TblMemberProvisional extends ChildModel {
             [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync', 'MemberApprove']],
             [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync']],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'activityStatus'], 'safe'],
-            [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from'], 'safe'],
+            [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from', 'employee_code', 'employee_name', 'region_code'], 'safe'],
             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
                     return $this->is_active;
                 }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected', 'updateProvisionalMember']],
@@ -277,6 +279,9 @@ class TblMemberProvisional extends ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'pro_ex_member_code' => Yii::t('app', 'Pro Ex Member Code'),
             'approved_at' => Yii::t('app', 'Approve Date'),
+            'employee_code' => Yii::t('app', 'Employee Code'),
+            'employee_name' => Yii::t('app', 'Employee Name'),
+            'region_code' => Yii::t('app', 'Region Name'),
         ];
     }
 
@@ -614,4 +619,13 @@ class TblMemberProvisional extends ChildModel {
         return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->orderBy('level ASC');
 //        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
     }
+
+    public function getUserName() {
+        return $this->hasOne(user::className(), ['id' => 'created_by']);
+    }
+
+    public function getRegionCode() {
+        return $this->hasOne(TblRegion::className(), ['region_code' => 'region_code']);
+    }
+
 }
