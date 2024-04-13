@@ -29,6 +29,8 @@ use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use yii\web\UploadedFile;
+use webvimark\modules\UserManagement\models\User;
+use app\modules\geo\models\TblRegion;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -117,42 +119,42 @@ class TblMemberProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['is_download'], 'default', 'value' => '0'],
-            [['is_active'], 'default', 'value' => '1'],
-            [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
-            [['member_type_code'], 'default', 'value' => '1'],
-            [['bmc_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv', 'collection']],
-            [['dcs_code', 'member_name'], 'required', 'except' => ['collection']],
-            [['ex_member_code'], 'required', 'except' => ['collection','hosync']],
-            [['hamlet_code'], 'required', 'except' => ['collection','hosync','hosyncUpdate']],
-            [['gender_code', 'caste_category_code'], 'required', 'on' => ['EIPLAMCS_TEST']],
-            [['dcs_code', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'collection','hosync','hosyncUpdate']],
-            [['member_code', 'state_code', 'union_code'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-            [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['collection', 'importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-            [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-            [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
+                [['is_download'], 'default', 'value' => '0'],
+                [['is_active'], 'default', 'value' => '1'],
+                [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
+                [['member_type_code'], 'default', 'value' => '1'],
+                [['bmc_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv', 'collection']],
+                [['dcs_code', 'member_name'], 'required', 'except' => ['collection']],
+                [['ex_member_code'], 'required', 'except' => ['collection', 'hosync']],
+                [['hamlet_code'], 'required', 'except' => ['collection', 'hosync', 'hosyncUpdate']],
+                [['gender_code', 'caste_category_code'], 'required', 'on' => ['EIPLAMCS_TEST']],
+                [['dcs_code', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'collection', 'hosync', 'hosyncUpdate']],
+                [['member_code', 'state_code', 'union_code'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+                [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['collection', 'importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+                [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+                [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
             /* [['member_name'],'unique', 'when' => function($model) {
               return ($model->isNewRecord)?true:false;
               },'skipOnEmpty'=> true], */
-            [['gender_code'], function ($attribute, $params) {
+                [['gender_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'gender', false);
                 }, 'on' => 'saveCreamyData'],
-            [['email'], 'email', 'except' => ['androidsync']],
-            [['member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id', 'approved_by',], 'string', 'except' => ['androidsync']],
-            [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync']],
-            [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code'], 'safe'],
-            [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync']],
-            [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
+                [['email'], 'email', 'except' => ['androidsync']],
+                [['member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id', 'approved_by',], 'string', 'except' => ['androidsync']],
+                [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync']],
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude'], 'safe'],
+                [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync']],
+                [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['mobile_no'], function ($attribute, $params) {
+                [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => ['androidsync']],
-            [['mobile_no', 'religion_code'], 'integer', 'except' => ['androidsync']],
-            [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
+                [['mobile_no', 'religion_code'], 'integer', 'except' => ['androidsync']],
+                [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
                     return $this->is_active;
                 }, 'except' => ['androidsync']],
-            [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
+                [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
                     return $this->is_active;
                 }, 'except' => ['androidsync']],
             /*    [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
@@ -161,48 +163,49 @@ class TblMemberProvisional extends ChildModel {
               [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }], */
-            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
+                ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
                     return $this->is_active;
                 }, 'except' => ['saveCreamyData', 'androidsync']],
-            [['bank_account_no'], function ($attribute, $params) {
+                [['bank_account_no'], function ($attribute, $params) {
                     $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
                     if ($error !== TRUE)
                         $this->addError($attribute, $error);
                 }, 'except' => ['saveCreamyData', 'androidsync']],
-            [['pan_no'], function ($attribute, $params) {
+                [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
-            [['ifsc'], function ($attribute, $params) {
+                [['ifsc'], function ($attribute, $params) {
                     Yii::$app->general->validateIfsc($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'when' => function () {
                     return (!empty($this->branch_code) || (in_array($this->scenario, ['importLimitedCsv', 'importCsv']) && !empty($this->ifsc)));
                 }, 'except' => ['saveCreamyData', 'androidsync']],
-            [['local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address'], function ($attribute, $params) {
+                [['local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'androidsync']],
-            [['voter_id'], 'string', 'max' => 15, 'skipOnEmpty' => true, 'except' => ['androidsync']],
-            [['payment_mode'], 'string', 'max' => 10, 'skipOnEmpty' => true, 'except' => ['androidsync']],
-            [['dob'], function ($attribute, $params) {
+                [['voter_id'], 'string', 'max' => 15, 'skipOnEmpty' => true, 'except' => ['androidsync']],
+                [['payment_mode'], 'string', 'max' => 10, 'skipOnEmpty' => true, 'except' => ['androidsync']],
+                [['dob'], function ($attribute, $params) {
                     Yii::$app->general->validateAge($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
-            [['ex_member_code'], 'integer', 'min' => 1, 'max' => 9999, 'except' => ['androidsync']],
-            [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync']],
-            [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync', 'MemberApprove', 'hosyncUpdate']],
-            [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'activityStatus'], 'safe'],
-            [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from'], 'safe'],
-            [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
+                [['ex_member_code'], 'integer', 'min' => 1, 'max' => 9999, 'except' => ['androidsync']],
+                [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync']],
+                [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync', 'MemberApprove', 'hosyncUpdate']],
+                [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'activityStatus'], 'safe'],
+                [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from', 'employee_code', 'employee_name', 'region_code'], 'safe'],
+                [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function () {
+
                     return $this->is_active;
                 }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected', 'updateProvisionalMember']],
-            [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
-            [['ex_member_code'], 'setExMember'],
-            [['provisional_member_code'], 'setProvisionalMemberCode', 'on' => 'importCsv'],
-            [['dcs_code'], 'setAddressDetail', 'on' => ['importCsv']],
-            [['ex_member_code'], 'setProExMemberCode', 'on' => ['importCsv']],
-            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
-            [['provisional_from'], 'default', 'value' => 'collection'],
-            [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
-            [['provisional_status'], 'default', 'value' => 'Pending'],
+                [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
+                [['ex_member_code'], 'setExMember'],
+                [['provisional_member_code'], 'setProvisionalMemberCode', 'on' => 'importCsv'],
+                [['dcs_code'], 'setAddressDetail', 'on' => ['importCsv']],
+                [['ex_member_code'], 'setProExMemberCode', 'on' => ['importCsv']],
+                [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+                [['provisional_from'], 'default', 'value' => 'collection'],
+                [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
+                [['provisional_status'], 'default', 'value' => 'Pending'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -283,6 +286,9 @@ class TblMemberProvisional extends ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'pro_ex_member_code' => Yii::t('app', 'Pro Ex Member Code'),
             'approved_at' => Yii::t('app', 'Approve Date'),
+            'employee_code' => Yii::t('app', 'Employee Code'),
+            'employee_name' => Yii::t('app', 'Employee Name'),
+            'region_code' => Yii::t('app', 'Region Name'),
         ];
     }
 
@@ -624,10 +630,10 @@ class TblMemberProvisional extends ChildModel {
     public function setChildTable(&$model, &$modelSave, &$childModel) {
         $content = $modelSave['content'];
         $model->scenario = 'hosync';
-        if(!empty($model->member_code)){
+        if (!empty($model->member_code)) {
             $this->setExMemberCode($model, $model->ex_member_code);
             $member = TblMember::find()->where(['member_code' => $model->member_code])->one();
-            if(!empty($member)){
+            if (!empty($member)) {
                 $model->scenario = 'hosyncUpdate';
                 $member['originating_type'] = '';
                 $member['created_at'] = '';
@@ -635,16 +641,16 @@ class TblMemberProvisional extends ChildModel {
                 $member['updated_at'] = '';
                 $member['updated_by'] = '';
                 $setField = array_diff_key($member->attributes, $content);
-                $model->setAttributes($setField);   
+                $model->setAttributes($setField);
             }
         } else {
             $ex_code = TblMember::find()->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
-                        ->where(['dcs_code' => $model->dcs_code])
-                        ->asArray()
-                        ->one();
+                    ->where(['dcs_code' => $model->dcs_code])
+                    ->asArray()
+                    ->one();
             $this->setExMemberCode($model, $ex_code['ex_code']);
             $ex_member_code = $this->find()->where(['ex_member_code' => $model->ex_member_code])->one();
-            if(!empty($ex_member_code)){
+            if (!empty($ex_member_code)) {
                 $ex_code = $this->find()->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
                         ->where(['dcs_code' => $model->dcs_code])
                         ->asArray()
@@ -660,14 +666,14 @@ class TblMemberProvisional extends ChildModel {
         $model->registration_date = empty($model->registration_date) ? NULL : Yii::$app->controls->view_date($model->registration_date, 'php:Y-m-d');
         $model->provisional_status = 'Register';
         $doc_mapping = TblDocumentMapping::find()->where(['master_type' => 'provisional_member'])->all();
-        if(!empty($doc_mapping)){
+        if (!empty($doc_mapping)) {
             $error_msg = '';
             $doc_path = Yii::$app->params['document_upload'] . 'provisional_member';
             if (Yii::$app->general->checkDirectory($doc_path)) {
                 foreach ($doc_mapping as $doc) {
                     $master_doc = $doc->docId;
                     $fileLable = $master_doc->doc_name;
-                    if(!empty($_FILES[$fileLable]['name'])){
+                    if (!empty($_FILES[$fileLable]['name'])) {
                         $attaFile = UploadedFile::getInstanceByName($fileLable);
                         if ($attaFile && !$attaFile->hasError) {
                             $file_name = 'provisional_member' . '_' . $model->provisional_member_code . '_' . $doc->doc_id . '_' . time() . '.' . $attaFile->extension;
@@ -701,7 +707,16 @@ class TblMemberProvisional extends ChildModel {
         }
     }
 
-    public function setExMemberCode(&$model, $code){
+    public function setExMemberCode(&$model, $code) {
         $model->ex_member_code = !empty($code) ? str_pad($code, 4, '0', STR_PAD_LEFT) : '';
     }
+
+    public function getUserName() {
+        return $this->hasOne(user::className(), ['id' => 'created_by']);
+    }
+
+    public function getRegionCode() {
+        return $this->hasOne(TblRegion::className(), ['region_code' => 'region_code']);
+    }
+
 }

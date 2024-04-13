@@ -164,7 +164,7 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
     }
     
     public function getBillHead() {
-        $bill_head = TblBillHead::find()->where(['default_bill_head_code' => 16])->one();
+        $bill_head = TblBillHead::find()->where(['union_code' => $this->union_code,'bill_head_for'=>'member','default_bill_head_code' => 16,'is_active'=>1])->one();
         return !empty($bill_head) ? $bill_head->bill_head_code : '';
     }    
 }

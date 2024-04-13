@@ -98,6 +98,18 @@ $attribute = [
             return $model->is_dcs_member == '1' ? 'Yes' : 'No';
         },
     ],
+    ['attribute' => 'employee_code', 'visible' => false, 'filter' => true],
+    ['attribute' => 'employee_name', 'visible' => false, 'filter' => true],
+    ['attribute' => 'region_code',
+        'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->regionCode, 'region_name');
+        }, 'visible' => false, 'filter' => true
+    ],
+    ['attribute' => 'created_by',
+        'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->userName, 'name');
+        }, 'visible' => false, 'filter' => true
+    ],
 ];
 
 $grid_option = [

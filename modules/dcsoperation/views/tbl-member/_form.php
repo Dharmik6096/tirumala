@@ -206,6 +206,9 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmember-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Hamlet')); ?>
         </div>
         <div class="col-sm-4">
+            <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'tblmember-union_code', 'form-group col-sm-12', 'Region', 'region_code'); ?>
+        </div>
+        <div class="col-sm-4">
             <!--<? = $form->field($model, 'pincode')->textInput() ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
