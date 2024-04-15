@@ -65,10 +65,10 @@ $this->params['menu'][]=Yii::$app->controls->update($role->description);
                 <div class="form-group">
                     <?=
                     Html::submitButton(
-                            yii::t('app', 'save'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
+                            yii::t('app', 'save'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
                     )
                     ?>
-                    <?php echo Html::a('cancel', ['create'], ['class' => 'btn btn-danger apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']); ?>
+                    <?php echo Html::a('cancel', ['create'], ['class' => 'btn-login btn btn-danger apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']); ?>
                 </div>
             </div>
         </div>
