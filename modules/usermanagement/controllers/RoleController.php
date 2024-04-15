@@ -6,9 +6,10 @@ use Yii;
 use app\modules\usermanagement\components\AuthHelper;
 use app\modules\usermanagement\models\rbacDB\Role;
 use yii\helpers\Html;
+use yii\rbac\DbManager;
 
 class RoleController extends \webvimark\modules\UserManagement\controllers\RoleController {
-    
+
     use \app\controllers\ChildControllerTrait;
 
     public $modelClass = 'app\modules\usermanagement\models\rbacDB\Role';
@@ -84,6 +85,26 @@ class RoleController extends \webvimark\modules\UserManagement\controllers\RoleC
             ]);
         }
         return $this->renderIsAjax('update', compact('model', 'dataProvider', 'searchModel'));
+    }
+
+    public function actionSetChildPermissions($id) {
+        $role = $this->findModel($id);
+
+        $newChildPermissions = Yii::$app->request->post('child_permissions', []);
+
+        $dbManager = Yii::$app->authManager instanceof DbManager ? Yii::$app->authManager : new DbManager();
+
+        $oldChildPermissions = array_keys($dbManager->getPermissionsByRole($role->name));
+
+        $toRemove = array_diff($oldChildPermissions, $newChildPermissions);
+        $toAdd = array_diff($newChildPermissions, $oldChildPermissions);
+
+        Role::addChildren($role->name, $toAdd);
+        Role::removeChildren($role->name, $toRemove);
+
+        Yii::$app->session->setFlash('success', yii::t('app', 'Saved'));
+
+        return $this->redirect(['view', 'id' => $id]);
     }
 
 }
