@@ -114,7 +114,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v3\controllers\
             } else if ($data['ack_type'] == 'MEMBER') {
                 $model = new TblDcs();
                 $model->attributes = $data;
-                if ($this->post_data['organization_type'] = 'BMC') {
+                if ($this->post_data['organization_type'] == 'BMC') {
                     $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 0], ['bmc_code' => $this->post_data['organization_code'], 'is_bmc' => 1]);
                 } else {
                     $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 0], ['dcs_code' => $model->dcs_code]);
