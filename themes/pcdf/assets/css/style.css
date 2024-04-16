@@ -4417,7 +4417,7 @@ td.custom_grid_normal.dynamic_value {
 
 .right_align_date{
     float: right;
-    padding-right: 26px;
+    padding-right: 5px;
 }
 
 .href_link_underline{
@@ -5109,4 +5109,12 @@ tr.highlightRow {
     position: sticky;
     top: 0;
     bottom: 0;
+}
+.right_align_shift{
+    float: right;
+    padding-right: 25px;
+}
+.right_align_mcc_shift{
+    float: right;
+    padding-right: 55px;
 }

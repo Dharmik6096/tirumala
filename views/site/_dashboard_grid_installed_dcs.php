@@ -14,6 +14,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
         <div onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" class="widget_table_search_btn downloadDashboardExcel right_30 mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
 
         <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" ><i class="fa fa-file-excel-o"></i></button> 
+        <span class="right_align_shift"><?= '(' . Yii::$app->general->getShiftName($shift) . ')' ?></span>
         <span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
     <div class="panel-body hide-grid-export overflow_visible">
