@@ -65,10 +65,4 @@ class TblEiplAppFeedbackMasterTxn extends \app\models\ChildModel {
         ];
     }
 
-    public function getAttachment() {
-        $this->eipl_app_feedback_master_txn_code = (string) $this->eipl_app_feedback_master_txn_code;
-        return $this->hasOne(TblAttachment::className(), ['module_code' => 'eipl_app_feedback_master_txn_code'])
-                        ->andWhere(['module_name' => 'feedback_txn']);
-    }
-
 }

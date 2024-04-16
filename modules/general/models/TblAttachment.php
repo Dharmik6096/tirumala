@@ -34,10 +34,10 @@ class TblAttachment extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['attachment', 'thumbnail', 'file_name'], 'safe'],
-                [['created_at'], 'safe'],
-                [['module_code', 'attachment_type', 'created_by'], 'safe'],
-                [['module_name', 'remarks'], 'safe'],
+            [['attachment', 'thumbnail', 'file_name'], 'safe'],
+            [['created_at'], 'safe'],
+            [['module_code', 'attachment_type', 'created_by'], 'safe'],
+            [['module_name', 'remarks'], 'safe'],
         ];
     }
 
@@ -70,7 +70,8 @@ class TblAttachment extends \yii\db\ActiveRecord {
                             'attachment_type',
                             'remarks',
                             'attachment',
-                            'thumbnail'])
+                            'thumbnail',
+                            'file_name'])
                         ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name])
                         ->andFilterWhere(['remarks' => $this->remarks])
                         ->orderBy('created_at desc')->all();

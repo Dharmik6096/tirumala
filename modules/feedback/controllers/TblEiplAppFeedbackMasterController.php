@@ -46,7 +46,8 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
         if (!empty($model)) {
             foreach ($model->feedbackMasterTxn as $key => $value) {
                 if (empty($value->feedback_message)) {
-                    $value->file_path = $this->getViewFile($value->attachment);
+                    $value->eipl_app_feedback_master_txn_code = (string) $value->eipl_app_feedback_master_txn_code;
+                    $value->file_path = Yii::$app->general->getAttachment('feedback_txn', $value->eipl_app_feedback_master_txn_code, FALSE, '', '', TRUE);
                 }
             }
         }
@@ -54,19 +55,6 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
                     'model' => $this->findModel($id),
                     'feedbackMasterTxn' => $model->feedbackMasterTxn
         ]);
-    }
-
-    public function getViewFile($data) {
-        $file = '';
-        if (!empty($data->attachment) && isset($data->attachment)) {
-            $ext = pathinfo($data->attachment, PATHINFO_EXTENSION);
-            $file = '<img src="' . $data->attachment . '">';
-
-            if ($ext == 'pdf') {
-                $file = '<a href="' . $data->attachment . '" download="' . $data->file_name . '"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>' . $data->file_name . '<i class="fa fa-download" aria-hidden="true"></i></a>';
-            }
-        }
-        return $file;
     }
 
     /**
@@ -86,17 +74,19 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
 
     public function actionSendMessage() {
         $post = Yii::$app->request->post();
-        $name = isset(explode('#', $_SESSION['UserName'])[1]) ? explode('#', $_SESSION['UserName'])[1] : '';
+        $name = isset(explode('#', Yii::$app->session->get('UserName'))[1]) ? explode('#', Yii::$app->session->get('UserName'))[1] : '';
         $this->model = new TblEiplAppFeedbackMasterTxn();
         $this->model->load(Yii::$app->request->post());
         $this->model->eipl_app_feedback_master_code = $post['eipl_app_feedback_master_code'];
         $this->model->feedback_message = $post['message'];
         $this->model->feedback_message_datetime = date('Y-m-d H:i:s');
         $this->model->name = $name;
-        $this->model->replier_type = isset($_SESSION['UserType']) ? $_SESSION['UserType'] : '';
-        $this->model->replier_code = isset($_SESSION['UserCode']) ? $_SESSION['UserCode'] : '';
+        $UserType = Yii::$app->session->get('UserType');
+        $this->model->replier_type = isset($UserType) ? $UserType : '';
+        $UserCode = Yii::$app->session->get('UserCode');
+        $this->model->replier_code = isset($UserCode) ? $UserCode : '';
         $this->model->originator_type = 'admin';
-        $this->model->originator_code = isset($_SESSION['UserCode']) ? $_SESSION['UserCode'] : '';
+        $this->model->originator_code = isset($UserCode) ? $UserCode : '';
         $this->model->save();
         $is_close = false;
         $masterModel = $this->findModel($post['eipl_app_feedback_master_code']);
@@ -117,14 +107,15 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
     }
 
     public function actionAttachmentFile() {
-        $path = Yii::$app->basePath . '/' . Yii::$app->params['feedback_upload'];
+        $path = Yii::$app->basePath . '/web/uploads/feedback_upload/';
         if (!is_dir($path)) {
             mkdir($path);
             chmod($path, 0777);
         }
         try {
             $file = \yii\web\UploadedFile::getInstanceByName('file');
-            $name = time() . '.' . $file->extension;
+            $user_code = Yii::$app->session->get('UserCode');
+            $name = 'feedback' . '_' . $user_code . '_' . time() . '.' . $file->extension;
             if ($file->saveAs($path . $name)) {
                 $record = ['status' => 'success', 'msg' => $name];
             } else {
@@ -143,7 +134,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
         try {
             $post = Yii::$app->request->post();
             $attachment_file = $post['filename'];
-            $name = isset(explode('#', $_SESSION['UserName'])[1]) ? explode('#', $_SESSION['UserName'])[1] : '';
+            $name = isset(explode('#', Yii::$app->session->get('UserName'))[1]) ? explode('#', Yii::$app->session->get('UserName'))[1] : '';
             $this->model = new TblEiplAppFeedbackMasterTxn();
             $saveModel = [];
             $this->model->load(Yii::$app->request->post());
@@ -151,10 +142,12 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
             $this->model->feedback_message = '';
             $this->model->feedback_message_datetime = date('Y-m-d H:i:s');
             $this->model->name = $name;
-            $this->model->replier_type = isset($_SESSION['UserType']) ? $_SESSION['UserType'] : '';
-            $this->model->replier_code = isset($_SESSION['UserCode']) ? $_SESSION['UserCode'] : '';
+            $UserType = Yii::$app->session->get('UserType');
+            $this->model->replier_type = isset($UserType) ? $UserType : '';
+            $UserCode = Yii::$app->session->get('UserCode');
+            $this->model->replier_code = isset($UserCode) ? $UserCode : '';
             $this->model->originator_type = 'admin';
-            $this->model->originator_code = isset($_SESSION['UserCode']) ? $_SESSION['UserCode'] : '';
+            $this->model->originator_code = isset($UserCode) ? $UserCode : '';
 
             $saveModel[] = $this->model;
             $file = '';
@@ -163,7 +156,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
                 $attachment = new TblAttachment();
                 $attachment->module_name = 'feedback_txn';
                 $ext = (explode(".", $attachment_file));
-                $file = Yii::$app->urlManager->createAbsoluteUrl('') . Yii::$app->params['feedback_upload'] . $attachment_file;
+                $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/feedback_upload/' . $attachment_file;
                 $attachment->attachment = $file;
                 $attachment->file_name = $attachment_file;
                 $attachment->attachment_type = $ext[1];
@@ -172,8 +165,8 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
             }
 
             $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['feedback', 'create'], $auto_key_config);
-            $file = $this->getViewFile($attachment);
-
+            $attachment->module_code = (string) $attachment->module_code;
+            $file = Yii::$app->general->getAttachment('feedback_txn', $attachment->module_code, FALSE, '', '', TRUE);
             $data = ['name' => $name, 'file' => $file];
             $record = ['status' => 'success', 'msg' => Yii::t('app', 'Uploaded file successfully'), 'data' => $data];
         } catch (\Exception $ex) {
