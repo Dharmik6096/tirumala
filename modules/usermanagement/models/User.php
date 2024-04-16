@@ -108,7 +108,8 @@ class User extends \webvimark\modules\UserManagement\models\User {
                         ->andWhere(['NOT IN', 'u.login_type', ['vsp', 'farmer', '']])->all();
 
         $user = ArrayHelper::map($userData, 'id', function($data) {
-                    return $data->name . ' (' . $data->mobile_no . '-' . $data->login_type . ')';
+                    $mobileNo = !empty($data->mobile_no) ? $data->mobile_no . '-' : '';
+                    return $data->name . ' (' . $mobileNo . $data->login_type . ')';
                 });
         return $user;
     }
