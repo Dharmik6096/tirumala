@@ -320,6 +320,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $model->scenario = 'DeactiveUser';
             if ($model->validate()) {
                 $model->is_active = 0;
+                $model->allow_app_login = 0;
                 $model->wef_date = !empty(Yii::$app->request->post()['User']['wef_date']) ? Yii::$app->formatter->asDate(Yii::$app->request->post()['User']['wef_date'], DATE_FORMAT) : '';
                 $saveModel[] = $model;
                 $contactModel = new TblContactDetails();
@@ -367,6 +368,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         $saveModel[] = $historyModel;
 //        $this->model->scenario = 'deactivate';
         $this->model->is_active = 1;
+        $this->model->allow_app_login = 1;
         $this->model->wef_date = NULL;
         $saveModel[] = $this->model;
         $contactModel = new TblContactDetails();
