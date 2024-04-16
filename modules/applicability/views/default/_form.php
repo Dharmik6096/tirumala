@@ -290,7 +290,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 <?php
 $script = "
     $('.kv-panel-before').hide();
-    var periodic_applicability = $periodic_applicability;
+    var periodic_applicability = '{$periodic_applicability}';
     function checkBoxFilter(val){
         var id = $(val).attr('id');
         var value = $(val).val();
