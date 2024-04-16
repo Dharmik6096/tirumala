@@ -91,6 +91,13 @@ $form = ActiveForm::begin([
                                     ?>
                                     <td class="<?= $class ?>">
                                         <div class="">
+                                            <?= Html::hiddenInput('dcs', $code, ['class' => 'bill_head_row_' . $key, 'id' => 'dcs']); ?>
+                                            <?= Html::hiddenInput('type', $model->customer_type, ['class' => 'bill_head_row_' . $key, 'id' => 'type']); ?>
+                                            <?= Html::hiddenInput('from_date', $model->from_date, ['class' => 'bill_head_row_' . $key, 'id' => 'from_date']); ?>
+                                            <?= Html::hiddenInput('to_date', $model->to_date, ['class' => 'bill_head_row_' . $key, 'id' => 'to_date']); ?>
+                                            <?= Html::hiddenInput('union', $model->union_code, ['class' => 'bill_head_row_' . $key, 'id' => 'union']); ?>
+                                            <?= Html::hiddenInput('bmc', $model->bmc_code, ['class' => 'bill_head_row_' . $key, 'id' => 'bmc']); ?>
+                                            <?= Html::hiddenInput('head_for', $model->bill_head_for, ['class' => 'bill_head_row_' . $key, 'id' => 'head_for']); ?>
                                             <input type="checkbox" class="billHeadCheckbox billHeadCheckbox-<?= $key ?> billhead-<?= $c['bill_head_code'] ?>" id="billheadcheck-<?= $c['bill_head_code'] . '_' . $code ?>" name="billhead_<?= $code ?>" value="<?= $c['bill_head_code'] . '###' . $c['vsp_criteria_code'] ?>" head_key="<?= $c['bill_head_code'] ?>">
                                             <label for="billheadcheck-<?= $c['bill_head_code'] . '_' . $code ?>"></label>
                                         </div>

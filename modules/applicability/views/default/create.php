@@ -38,7 +38,8 @@ $this->title = Yii::$app->label->title('create', 'Mapping');
             'mccList' => $mccList,
             'selectedMccCode' => $selectedMccCode,
             'selectedBmcCode' => $selectedBmcCode,
-            'login_type' => $login_type
+            'login_type' => $login_type,
+            'periodic_applicability' => $periodic_applicability
         ])
         ?>
         <div class="row">

@@ -118,6 +118,7 @@ class DefaultController extends Controller {
         $model = new $model_name();
         $wef_date = !empty(Yii::$app->request->post('wef_date')) ? date('Y-m-d', strtotime(Yii::$app->request->post('wef_date'))) : '';
         $isCheck = Yii::$app->request->post('checkdate');
+        $periodic_applicability = Yii::$app->request->post('periodic_applicability');
         $where = [];
         if ($isCheck == 1 || $isCheck == TRUE) {
             if ($model->hasAttribute('wef_date')) {
@@ -126,8 +127,15 @@ class DefaultController extends Controller {
                 $where = '0=1';
             }
         }
-
-        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where);
+        $condition = '';
+        if (isset($periodic_applicability) && ($periodic_applicability == TRUE)) {
+            $from_date = !empty(Yii::$app->request->post('from_date')) ? date('Y-m-d', strtotime(Yii::$app->request->post('from_date'))) : '';
+            $to_date = !empty(Yii::$app->request->post('to_date')) ? date('Y-m-d', strtotime(Yii::$app->request->post('to_date'))) : '';
+            if (!empty($from_date) && !empty($to_date)) {
+                $condition = '((\'' . $from_date . '\' between from_date  and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\'))';
+            }
+        }
+        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where)->andWhere($condition);
         $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? json_decode(Yii::$app->request->post('selected_mcc')) : [];
         $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? json_decode(Yii::$app->request->post('selected_bmc')) : [];
         $routeCodes = !empty(Yii::$app->request->post('selected_route')) ? json_decode(Yii::$app->request->post('selected_route')) : [];

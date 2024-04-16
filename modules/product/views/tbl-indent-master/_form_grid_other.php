@@ -66,12 +66,16 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->statusBy, 'name');
         }, 'filter' => false],
-    ['attribute' => 'dispatch_qty'],
-    ['attribute' => 'dispatch_qty',
+        ['attribute' => 'dispatch_qty'],
+        ['attribute' => 'dispatch_qty',
         'label' => Yii::t('app', 'Dispatch Amount'),
         'value' => function($model) {
             return (!empty($model->amount) && !empty($model->dispatch_qty)) ? $model->amount * $model->dispatch_qty : '0';
         }, 'filter' => false],
+        ['attribute' => 'created_at', 'filter' => false, 'visible' => FALSE],
+        ['attribute' => 'created_by', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        }, 'filter' => false, 'visible' => FALSE],
 ];
 
 $grid_option = [
