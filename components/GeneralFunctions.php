@@ -2164,10 +2164,11 @@ class GeneralFunctions extends Component {
         }
 
         if ($attachment) {
-            if ($downloadOnly) {
-                return Html::a('<i class="fa fa-download"></i>', $attachment[0]->attachment, [
+            if ($downloadOnly && $attachment[0]->attachment_type == 'pdf') {
+                return Html::a('<i class="fa fa-download"></i> ' . $attachment[0]->file_name, $attachment[0]->attachment, [
                             'title' => 'Download',
                             'download' => $reference_code . $attachment[0]->attachment_type,
+                            'class' => 'text-white hover-black',
                 ]);
             } else if ($link) {
                 return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [
