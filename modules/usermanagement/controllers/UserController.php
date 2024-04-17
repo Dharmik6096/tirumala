@@ -316,11 +316,11 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $historyModel = new UserHistory();
             Yii::$app->operation->history($model, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
+            $delete = [];
             $model->load(Yii::$app->request->post());
             $model->scenario = 'DeactiveUser';
             if ($model->validate()) {
                 $model->is_active = 0;
-                $model->allow_app_login = 0;
                 $model->wef_date = !empty(Yii::$app->request->post()['User']['wef_date']) ? Yii::$app->formatter->asDate(Yii::$app->request->post()['User']['wef_date'], DATE_FORMAT) : '';
                 $saveModel[] = $model;
                 $contactModel = new TblContactDetails();
@@ -334,9 +334,24 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         $saveModel[] = $historyModel;
                         $contactdetail->is_active = 0;
                         $saveModel[] = $contactdetail;
+                        $appModel = new TblEiplAppLogin();
+                        $appModel->mobile_no = $contactdetail->mobile_no;
+                        $appModelData = $appModel->getAppLogin($model->id);
+                        if (!empty($appModelData)) {
+                            $appModelData->is_active = 0;
+                            $saveModel[] = $appModelData;
+                        }
+                        $tempModel = new TblEiplAppLoginTemp();
+                        $tempModel->mobile_no = $contactdetail->mobile_no;
+                        $tempModelData = $tempModel->getAppTempLogin($model->id);
+                        if (!empty($tempModelData)) {
+                            foreach ($tempModelData as $temp) {
+                                $delete[] = $temp;
+                            }
+                        }
                     }
                 }
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['User Deactivated', 'create']);
+                $transaction = $this->generalModel->saveDelete4($saveModel, [], $delete, ['User Deactivated', 'create']);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
                     $record = ['status' => 'success', 'msg' => $msg];
@@ -368,7 +383,6 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         $saveModel[] = $historyModel;
 //        $this->model->scenario = 'deactivate';
         $this->model->is_active = 1;
-        $this->model->allow_app_login = 1;
         $this->model->wef_date = NULL;
         $saveModel[] = $this->model;
         $contactModel = new TblContactDetails();
