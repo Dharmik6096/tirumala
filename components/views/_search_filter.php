@@ -360,6 +360,32 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, ''); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('state_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('state_code', $model, $form, ''); ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('region_code'))) {
+                                        $depend_str = $field_class . '-state_code';
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, $depend_str, 'form-group col-sm-2 padding-right-5 padding-left-0', false, 'region_code'); ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('area_code'))) {
+                                        $depend_str = $field_class . '-region_code';
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, $depend_str, 'form-group col-sm-2 padding-right-5 padding-left-0', false, 'area_code'); ?>
+                                        </div>
+                                    <?php } ?>
                                 <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">
