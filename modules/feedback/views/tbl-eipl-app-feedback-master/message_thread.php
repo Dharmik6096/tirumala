@@ -86,7 +86,7 @@ use yii\web\View;
                 </p>
             </div>
             <!--<div class="button-section">-->
-                <div class="form-group attachment no_pointer message-btn" id="attachment">
+                <div class="form-group attachment message-btn" id="attachment">
                     <i class="fa fa-paperclip" aria-hidden="true"></i>
                 </div>
                 <div class="form-group msg-check message-btn">
