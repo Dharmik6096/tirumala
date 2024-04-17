@@ -280,7 +280,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
 //                    $model->load(Yii::$app->request->post());
 //                    $model->save();
 //                }
-                $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['User', 'edit']);
+                $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['User', 'edit']);
 //                $redirect = $this->getRedirectPage('update', $model);
 //                Yii::$app->getSession()->setFlash('success', [
 //                    'type' => 'success',
@@ -351,7 +351,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         }
                     }
                 }
-                $transaction = $this->generalModel->saveDelete4($saveModel, [], $delete, ['User Deactivated', 'create']);
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $delete, ['User Deactivated', 'create']);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
                     $record = ['status' => 'success', 'msg' => $msg];
