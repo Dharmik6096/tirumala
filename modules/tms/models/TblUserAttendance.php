@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\usermanagement\models\User;
 use app\modules\general\models\TblAttachment;
+use app\modules\geo\models\TblAreaBmcMapping;
 
 /**
  * This is the model class for table "tbl_user_attendance".
@@ -41,7 +42,7 @@ use app\modules\general\models\TblAttachment;
  */
 class TblUserAttendance extends \app\models\ChildModel {
 
-    public $mobile_no, $Attendance_hours, $details_total_hours;
+    public $mobile_no, $Attendance_hours, $details_total_hours, $state_code, $region_code, $area_code;
 
     /**
      * @inheritdoc
@@ -153,6 +154,10 @@ class TblUserAttendance extends \app\models\ChildModel {
 
     public function updateErrorApiStatus($msg, $value) {
         return $this->updateAll(['api_status' => '3', 'response_datetime' => date('Y-m-d H:i:s'), 'response_msg' => $msg], ['attendance_code' => $value]);
+    }
+
+    public function getAreaBmcMapping() {
+        return $this->hasOne(TblAreaBmcMapping::class, ['bmc_code' => 'bmc_code']);
     }
 
 }
