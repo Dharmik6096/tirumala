@@ -141,6 +141,11 @@ class RestController extends ActiveController {
                     $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
                 }
             }
+        } else if ($type == 'ROUTE') {
+            $model = new TblDcs();
+            $model->route_code = $code;
+            $model_data = $model->getRouteDcs($code);
+            $dcs_code = ArrayHelper::getColumn($model_data, 'dcs_code');
         }
         if ($is_string) {
             $dcs_code = implode('\',\'', $dcs_code);
