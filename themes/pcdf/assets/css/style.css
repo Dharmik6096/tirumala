@@ -5105,3 +5105,9 @@ tr.highlightRow {
     top: 0;
     bottom: 0;
 }
+.text-white {
+    color: white;
+}
+.hover-black:hover {
+    color: black;
+}
