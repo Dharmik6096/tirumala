@@ -330,7 +330,7 @@ class DefaultController extends \app\controllers\ChildController {
             $this->change_att = array_merge($this->change_att, $data['new_label']);
         }
         $array = str_replace($this->old_att, $this->change_att, $array);
-        echo (Json::encode($array));
+        return (Json::encode($array));
         //}
     }
 
