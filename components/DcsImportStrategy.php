@@ -286,7 +286,7 @@ class DcsImportStrategy extends ARImportStrategy {
                         foreach ($modelList as $modelRow) {
                             $is_saved = $modelRow->save();
                             $master[] = $is_saved;
-                            if (!$is_saved) {
+                            if (!$is_saved && empty($errors)) {
                                 $errors[] = $modelRow->getErrors();
                             }
                         }
