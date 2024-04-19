@@ -47,8 +47,7 @@ echo $form->errorSummary($model);
     </div>
     <div class="col-sm-8">
         <div class="col-sm-3">
-            <?php echo Html::hiddenInput('code', '', ['id' => 'code']); ?>
-            <?= Yii::$app->dropdown->assign_list($model, $form, 'tbltask-task_performed_for,code', 'user_code', $model->getAttributeLabel('user_code'), false, false); ?>  
+            <?= Yii::$app->dropdown->task_user_selection($model, $form, 'tbltask-task_performed_for,tbltask-mcc_plant_code,tbltask-bmc_code', 'user_code', $model->getAttributeLabel('user_code'), false, false); ?>  
         </div>
         <div class="col-sm-3">
             <?= Yii::$app->controls->date($model, $form, 'start_date', '', FALSE, date('Y-m-d'), FALSE, true); ?>
@@ -88,7 +87,6 @@ $script = "
 
         $('#tbltask-task_performed_for').change(function () {
             showLocation();
-            UserList();
         });
         $('#tbltask-form_type_code').change(function () {
             showForm();
@@ -96,24 +94,7 @@ $script = "
         $('#tbltask-repeat_interval').change(function () {
             showInterval();
         });
-        $('#tbltask-dcs_code, #tbltask-bmc_code, #tbltask-plant_code').change(function () {
-            UserList();
-        });
-        function UserList() {
-            var location_type = $('#tbltask-task_performed_for').val();
-            var code_value = '';
-            if (location_type !== '') {
-                if (location_type == 'DCS') {
-                    code_value = $('#tbltask-dcs_code').val();
-                } else if (location_type == 'BMC') {
-                    code_value = $('#tbltask-bmc_code').val();
-                } else if (location_type == 'PLANT') {
-                    code_value = $('#tbltask-plant_code').val();
-                }
-            }
-
-            $('#code').val(code_value).trigger('change');
-        }        
+       
         function showLocation() {
             $('.location_dcs').hide();
             $('.location_bmc').hide();
