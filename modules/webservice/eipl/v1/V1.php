@@ -713,6 +713,7 @@ class V1 extends \yii\base\Module {
             'provisional-member/master' => [
                 'param' => 'select_param:*#organization_type#organization_code#table:tbl_member_provisional',
                 'sp' => 'sp_app_eipl_v1_master_data',
+                'to_decrypt' => ['dob', 'adhar_no', 'pan_no'],
             ],
             'bank/master' => [
                 'param' => 'select_param:*#organization_type#state_code#table:tbl_banks',
