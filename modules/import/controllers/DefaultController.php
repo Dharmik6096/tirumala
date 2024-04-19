@@ -331,7 +331,7 @@ class DefaultController extends \app\controllers\ChildController {
         }
         $array = str_replace($this->old_att, $this->change_att, $array);
         return (Json::encode($array));
-        //}
+         //} 
     }
 
     private function getCodes() {
