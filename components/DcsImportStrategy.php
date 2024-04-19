@@ -282,7 +282,7 @@ class DcsImportStrategy extends ARImportStrategy {
                         $model->default_milk_type = $model->milk_type_code;
 
 
-                        $master[] = $model->save();
+                        $master[] = $model->save(TRUE, FALSE);
                         foreach ($modelList as $modelRow) {
                             $is_saved = $modelRow->save();
                             $master[] = $is_saved;
