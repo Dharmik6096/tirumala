@@ -34,6 +34,18 @@ class RequestMasterController extends MasterController {
                 $sp_param[] = $param_val;
             }
             $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            if(!empty($response)){
+                $dataToDecrypt = !empty($data['to_decrypt']) ? $data['to_decrypt'] : [];
+                if (!empty($dataToDecrypt)) {
+                    for ($i = 0; $i < count($response); $i++) {
+                        foreach ($dataToDecrypt as $decKey) {
+                            if (!empty($response[$i]) && !empty($response[$i][$decKey])) {
+                                $response[$i][$decKey] = Yii::$app->general->decryptData($response[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($response[$i][$decKey]) : $response[$i][$decKey];
+                            }
+                        }
+                    }
+                }
+            }
             if (isset($data['as_object']) && $data['as_object']) {
                 $response = !empty($response) ? $response[0] : NULL;
             }

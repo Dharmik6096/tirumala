@@ -755,6 +755,7 @@ class V1 extends \yii\base\Module {
             'member/edit' => [
                 'param' => 'member_code',
                 'sp' => 'sp_app_eipl_update_member_data',
+                'to_decrypt' => ['dob', 'adhar_no', 'pan_no'],
             ],
         ];
         return $label;
