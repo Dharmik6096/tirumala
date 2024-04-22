@@ -84,6 +84,7 @@ class DcsImportStrategy extends ARImportStrategy {
                     $deleteModel = [];
                     $model->setModel();
                     $is_update = FALSE;
+                    $existData = NULL;
                     if (!empty($model->dcs_code)) {
                         $dcs_data = $model->getValidDcsModel($model->dcs_code);
                         if (!empty($dcs_data)) {
