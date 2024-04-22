@@ -63,10 +63,10 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
                     }
 
                     $modelList = [];
-                    $model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($model);
 
                     if (empty($model->getErrors()) && $model->validate()) {
-                        $modelList[] = $model;
+                        $model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($model);
+                        //  $modelList[] = $model;
                         $model->is_active = 1;
                         $model->originating_type = 1;
                         $no = !empty($model->no_installment) ? ($model->no_installment) : 1;
@@ -98,14 +98,17 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
 //                                }
 //                            }
                         }
-
+                        $master[] = $model->save(TRUE, FALSE);
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
                         }
 
-                        if ($this->isActiveRecordUnique($uniqueAttributes)) {
-                            $importedPks[] = $model->primaryKey;
-                        }
+                        /*   if ($this->isActiveRecordUnique($uniqueAttributes)) {
+                          $importedPks[] = $model->primaryKey;
+                          } */
+
+                        $importedPks[] = $model->bill_head_detail_code;
+
                         if (!in_array(FALSE, $master)) {
                             $trans->commit();
                             $count++;
@@ -118,6 +121,7 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
                             return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                         }
                     } else {
+                        $trans->rollback();
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
                             $message .= $value[0] . '<br>';
