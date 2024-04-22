@@ -47,7 +47,7 @@ class DefaultController extends \app\controllers\ChildController {
             }
             
             if ($ext == 'csv') {
-                $values = $this->importCsv($post['file_name'], $className, $data, $post['mapping'], $flag);
+                $values = $this->importCsv($post['file_name'], $className, $data, $flag, $post['mapping']);
             } else if ($ext == 'xls' || $ext == 'xlsx') {
                 $values = $this->importExcel($post['file_name'], $className, $data, $flag);
             }
@@ -331,7 +331,7 @@ class DefaultController extends \app\controllers\ChildController {
         }
         $array = str_replace($this->old_att, $this->change_att, $array);
         return (Json::encode($array));
-        //}
+         //} 
     }
 
     private function getCodes() {
