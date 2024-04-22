@@ -47,7 +47,7 @@ class DefaultController extends \app\controllers\ChildController {
             }
             
             if ($ext == 'csv') {
-                $values = $this->importCsv($post['file_name'], $className, $data, $post['mapping'], $flag);
+                $values = $this->importCsv($post['file_name'], $className, $data, $flag, $post['mapping']);
             } else if ($ext == 'xls' || $ext == 'xlsx') {
                 $values = $this->importExcel($post['file_name'], $className, $data, $flag);
             }
