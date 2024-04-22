@@ -56,6 +56,7 @@ class TblRouteMappingSources extends \app\models\ChildModel {
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['route_code', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'customer_type', 'customer_code', 'union_code'], 'safe'],
+            [['is_active'], 'default', 'value' => 1],
             [['is_active'], 'integer'],
             [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code']],
             [['route_code'], 'importData', 'on' => ['importMapping']],
