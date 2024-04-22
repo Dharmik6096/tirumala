@@ -14,11 +14,14 @@ use yii\web\Response;
 use yii\helpers\Json;
 use yii\data\ArrayDataProvider;
 use app\modules\document\models\TblAttachment;
+use app\modules\usermanagement\models\User;
 
 /**
  * TblTaskController implements the CRUD actions for TblTask model.
  */
 class TblTaskController extends ChildController {
+    
+    public $freeAccessActions = ['task-user-selection'];
 
     /**
      * Lists all TblTask models.
@@ -187,5 +190,28 @@ class TblTaskController extends ChildController {
             $i++;
         }
     }
+    
+    public function actionTaskUserSelection() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'][0]) && !empty($_POST['depdrop_parents'][0])) {
+            $parents = $_POST['depdrop_parents'];
+            $user = new User();
+            if (!empty($parents[0]) && $parents[0] == 'PLANT') {
+                $data = $user->getUser();
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            } else if (!empty($parents[1]) && !empty($parents[2])) {
+                $data = $user->getTaskUserSelection($parents[0], $parents[1], $parents[2]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
 
 }
+ 
