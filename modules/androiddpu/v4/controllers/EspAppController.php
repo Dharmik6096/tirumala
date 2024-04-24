@@ -9,6 +9,7 @@ use app\modules\installation\models\TblAndroidInstallationDetails;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\details\models\TblContactDetails;
+use app\modules\configuration\models\TblUnionConfigResult;
 
 class EspAppController extends RestController {
 
@@ -169,18 +170,33 @@ class EspAppController extends RestController {
         $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
         $res_data['rate']['memberApplicableRate'] = "";
         $res_data ['dcsDetail'] = [];
+        $res_data ['config'] = [];
         $dcs_code = [];
         $dcsData = $this->getDcsDetail();
+        $union_code = NULL;
         foreach ($dcsData as $d) {
             $dcsDetail = [];
             $dcs_code[] = $dcsDetail['dcs_code'] = $d['dcs_code'];
             $dcsDetail['memberDownload'] = $d['member_download'];
+            $dcsDetail['m_start_time'] = $d['m_start_time'];
+            $dcsDetail['m_lock_time'] = $d['m_lock_time'];
+            $dcsDetail['e_start_time'] = $d['e_start_time'];
+            $dcsDetail['e_lock_time'] = $d['e_lock_time'];
             $res_data ['dcsDetail'][] = $dcsDetail;
+            $union_code = $d['union_code'];
         }
         $dcs_code = ',' . implode(',', $dcs_code) . ',';
         $member_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_member', [$dcs_code, $data['device_id'], $data['token']]);
         if (!empty($member_rate)) {
             $res_data['rate']['memberApplicableRate'] = implode(',', array_column($member_rate, 'purchase_rate_code'));
+        }
+        if (!empty($union_code)) {
+            $model = new TblUnionConfigResult();
+            $model->union_code = $union_code;
+            $model->config_for = 'ESP';
+            foreach ($model->getConfigList() as $d) {
+                $res_data['config'][$d['config_key']] = $d['config_result_key'];
+            }
         }
         $this->response['data'] = $res_data;
         return $this->response;
