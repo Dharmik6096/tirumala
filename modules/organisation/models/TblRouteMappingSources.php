@@ -58,6 +58,7 @@ class TblRouteMappingSources extends \app\models\ChildModel {
             [['created_at', 'updated_at', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'customer_type', 'customer_code', 'union_code'], 'safe'],
             [['is_active'], 'default', 'value' => 1],
             [['is_active'], 'integer'],
+            [['route_code'], 'validRoute', 'on' => ['importMapping']],
             [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code']],
             [['route_code'], 'importData', 'on' => ['importMapping']],
             [['route_code', 'customer_type', 'customer_code'], 'required', 'on' => ['importMapping']],
@@ -332,6 +333,16 @@ class TblRouteMappingSources extends \app\models\ChildModel {
 
     public function getCustomerMainCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
+    }
+
+    public function validRoute($model) {
+        $Route = new TblRouteMapping();
+        $data = $Route->find()->select('route_code')->where(['or', ['route_code' => $model->route_code], ['route_code_ex' => $model->route_code], ['ref_code' => $model->route_code]])->andWhere(['is_active' => 1])->all();
+        if (!empty($data) && count($data) == 1) {
+            $model->route_code = $data[0]->route_code;
+        } else {
+            $model->addError('route_code', Yii::t('app/validation', Yii::t('app', 'Route Code') . ' is invalid'));
+        }
     }
 
 }
