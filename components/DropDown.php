@@ -634,6 +634,10 @@ class DropDown extends Component {
     public function assign_list($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
+    
+    public function task_user_selection($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tms/tbl-task/task-user-selection', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
+    }
 
     public function asset_bom_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);

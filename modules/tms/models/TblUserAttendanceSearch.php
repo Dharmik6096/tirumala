@@ -22,7 +22,7 @@ class TblUserAttendanceSearch extends TblUserAttendance
             [['attendance_code', 'originating_type'], 'integer'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_code', 'attendance_date', 'in_time', 'out_time', 'in_lat_long', 'out_lat_long', 'in_desc', 'out_desc', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['day_count'], 'number'],
-            [['from_date', 'to_date', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe']
+            [['from_date', 'to_date', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg', 'state_code', 'region_code', 'area_code'], 'safe']
         ];
     }
 
@@ -53,7 +53,7 @@ class TblUserAttendanceSearch extends TblUserAttendance
 
         $this->load($params);
 
-        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'userCode', 'attachment']);
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'userCode', 'attachment', 'areaBmcMapping','areaBmcMapping.mainAreaCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_user_attendance', 'tbl_user_attendance', 'tbl_user_attendance');
         
         $from_date = (!empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d')) . ' 00:00:00';
@@ -73,7 +73,10 @@ class TblUserAttendanceSearch extends TblUserAttendance
             ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
             ->andFilterWhere(['like', '[user].name', $this->user_code])
             ->andFilterWhere(['like', 'tbl_user_attendance.status', $this->status])
-            ->andFilterWhere(['like', 'tbl_user_attendance.api_status', $this->api_status]);
+            ->andFilterWhere(['like', 'tbl_user_attendance.api_status', $this->api_status])
+            ->andFilterWhere(['tbl_area.state_code' => $this->state_code])
+            ->andFilterWhere(['tbl_area.region_code' => $this->region_code])
+            ->andFilterWhere(['tbl_area.area_code' => $this->area_code]);
         return $dataProvider;
     }
 }

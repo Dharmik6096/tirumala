@@ -984,19 +984,19 @@ class GeneralFunctions extends Component {
                 $query->limit(1);
             }
             $records = $query->all();
-        } else
-        if ($numericVal) {
-            $records = $datamodel->find()
-                            ->select([$fields[0]])
-                            ->where([$fields[1] => strval($model->$attribute)])
-                            ->andWhere($where)->all();
         } else {
-            $records = $datamodel->find()
-                            ->select([$fields[0]])
-                            ->where([$fields[0] => $model->$attribute])
-                            ->andWhere($where)->all();
+            if ($numericVal) {
+                $records = $datamodel->find()
+                                ->select([$fields[0]])
+                                ->where([$fields[1] => strval($model->$attribute)])
+                                ->andWhere($where)->all();
+            } else {
+                $records = $datamodel->find()
+                                ->select([$fields[0]])
+                                ->where([$fields[0] => $model->$attribute])
+                                ->andWhere($where)->all();
+            }
         }
-
         if (!empty($records)) {
             if (count($records) == 1) {
                 $model->$attribute = $records[0]->{$fields[0]};
@@ -2156,10 +2156,11 @@ class GeneralFunctions extends Component {
         }
 
         if ($attachment) {
-            if ($downloadOnly) {
-                return Html::a('<i class="fa fa-download"></i>', $attachment[0]->attachment, [
+            if ($downloadOnly && $attachment[0]->attachment_type == 'pdf') {
+                return Html::a('<i class="fa fa-download"></i> ' . $attachment[0]->file_name, $attachment[0]->attachment, [
                             'title' => 'Download',
                             'download' => $reference_code . $attachment[0]->attachment_type,
+                            'class' => 'text-white hover-black',
                 ]);
             } else if ($link) {
                 return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [

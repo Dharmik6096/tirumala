@@ -5118,3 +5118,9 @@ tr.highlightRow {
     float: right;
     padding-right: 55px;
 }
+.text-white {
+    color: white;
+}
+.hover-black:hover {
+    color: black;
+}
