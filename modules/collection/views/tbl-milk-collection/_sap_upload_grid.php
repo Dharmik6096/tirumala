@@ -235,7 +235,7 @@ $('#download,#bulk_download,#bulk_download_shift_wise').click(function() {
 if (!empty($downloadSapFiles)) {
     $scriptDownload .= "
     var timeOut = 500;
-    var baseUrl = '" . $baseUrl . "/web/sap_data_files/';
+    var baseUrl = '" . $baseUrl . "/sap_data_files/';
     var downloadFilesJson = '" . $downloadSapFiles . "';
     var timeOutForLoader = " . $timeOutForLoader . ";
     var downloadFilesJsonAr = JSON.parse(downloadFilesJson);

@@ -1270,8 +1270,30 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         'message' => 'FTP Uploaded Successfully.']);
                 }
             }
+            $q_param = Yii::$app->request->queryParams;
+            if (!empty($q_param) && !empty($q_param['TblMilkCollectionSearch'])) {
+                $search_param = $q_param['TblMilkCollectionSearch'];
+                $query_param = [
+                    'union_code' => !empty($search_param['union_code']) ? $search_param['union_code'] : NULL,
+                    'plant_code' => !empty($search_param['plant_code']) ? $search_param['plant_code'] : NULL,
+                    'mcc_plant_code' => !empty($search_param['mcc_plant_code']) ? $search_param['mcc_plant_code'] : NULL,
+                    'bmc_code' => !empty($search_param['bmc_code']) ? $search_param['bmc_code'] : NULL,
+                    'dcs_code' => !empty($search_param['dcs_code']) ? $search_param['dcs_code'] : NULL,
+                    'from_date' => !empty($search_param['from_date']) ? $search_param['from_date'] : NULL,
+                    'from_shift' => !empty($search_param['from_shift']) ? $search_param['from_shift'] : NULL,
+                    'to_date' => !empty($search_param['to_date']) ? $search_param['to_date'] : NULL,
+                    'to_shift' => !empty($search_param['to_shift']) ? $search_param['to_shift'] : NULL
+                ];
+
+                return $this->redirect(['sap-upload', 'TblMilkCollectionSearch' => $query_param, 'fileDownloadArr' => $this->fileDownloadArr]);
+            } else {
+                return $this->redirect(['sap-upload']);
+            }
         }
         $dataProvider = $searchModel->searchsapupload(Yii::$app->request->queryParams);
+        if (empty($this->fileDownloadArr) && !empty(Yii::$app->request->queryParams['fileDownloadArr'])) {
+            $this->fileDownloadArr = Yii::$app->request->queryParams['fileDownloadArr'];
+        }
         return $this->render('sap_upload', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
