@@ -75,7 +75,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field">
             <?= $form->field($model, 'amount')->textInput(['readOnly' => TRUE]) ?>
         </div>
-        <div class="clearfix"></div>
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?php
@@ -140,12 +139,12 @@ $form = ActiveForm::begin([
                                                                 }
                                                  }'),
                     ],
-                    'options' => ['class' => 'btn btn-default btn-raised',
+                    'options' => ['class' => 'btn btn-default btn-raised btn-login',
                         'type' => 'submit'],
                 ]);
                 AjaxSubmitButton::end();
                 ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
             </div>
         </div>
     </div>
