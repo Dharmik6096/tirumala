@@ -205,6 +205,7 @@ class CustomValidation extends Component {
                             ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                         'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
                     ],
+                        [['ifsc'], 'unique'],
                         [['ifsc'], function ($attribute, $params) {
                             Yii::$app->general->validateIfsc($this, $attribute, $params);
                         }, 'skipOnEmpty' => false],
