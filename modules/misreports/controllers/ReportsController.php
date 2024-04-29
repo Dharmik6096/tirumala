@@ -1675,9 +1675,14 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VendorPaymentFormat';
         return $this->actionIndex();
     }
-    
+
     public function actionRootWiseDifference() {
         $this->report = 'RootWiseDifference';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcCollectionSummaryRahema() {
+        $this->report = 'BmcCollectionSummaryRahema';
         return $this->actionIndex();
     }
 
@@ -3542,6 +3547,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bmc_collection_summary_anig',
                 'scenario' => 'RootWiseDifference',
                 'title' => 'Root Wise Difference',
+            ],
+            'BmcCollectionSummaryRahema' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_date_shift_wise_rheman',
+                'scenario' => 'BmcCollectionSummaryRahema',
+                'title' => 'BMC Collection Summary',
             ],
         ];
         return $label[$l];
