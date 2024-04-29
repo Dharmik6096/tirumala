@@ -121,7 +121,7 @@ class TblContactDetails extends \app\models\ChildModel {
     }
 
     public function CheckDuplicate($attribute, $param) {
-        if (!empty($this->mobile_no)) {
+        if (!empty($this->mobile_no) && $this->is_active == 1) {
             $data = $this->find()->where(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => \Yii::$app->general->encryptData($this->mobile_no)]])
                             ->andWhere(['<>', 'detail_code', $this->detail_code])
                             ->andWhere(['is_active' => 1])->one();

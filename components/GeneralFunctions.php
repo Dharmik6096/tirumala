@@ -984,19 +984,19 @@ class GeneralFunctions extends Component {
                 $query->limit(1);
             }
             $records = $query->all();
-        } else
-        if ($numericVal) {
-            $records = $datamodel->find()
-                            ->select([$fields[0]])
-                            ->where([$fields[1] => strval($model->$attribute)])
-                            ->andWhere($where)->all();
         } else {
-            $records = $datamodel->find()
-                            ->select([$fields[0]])
-                            ->where([$fields[0] => $model->$attribute])
-                            ->andWhere($where)->all();
+            if ($numericVal) {
+                $records = $datamodel->find()
+                                ->select([$fields[0]])
+                                ->where([$fields[1] => strval($model->$attribute)])
+                                ->andWhere($where)->all();
+            } else {
+                $records = $datamodel->find()
+                                ->select([$fields[0]])
+                                ->where([$fields[0] => $model->$attribute])
+                                ->andWhere($where)->all();
+            }
         }
-
         if (!empty($records)) {
             if (count($records) == 1) {
                 $model->$attribute = $records[0]->{$fields[0]};
