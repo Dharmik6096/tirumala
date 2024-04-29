@@ -144,6 +144,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_type', 'from_date', 'to_date'], 'required', 'on' => ['DcsWiseBillHeadApplicability']],
                 [['report_type'], 'default', 'value' => 1, 'on' => 'SapWqFile'],
                 [['union_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapWqFile'],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BmcCollectionSummaryRahema'],
         ];
     }
 
