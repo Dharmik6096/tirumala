@@ -50,7 +50,11 @@ class Warning extends Component {
     public function unique_member($model, $fields, $values, $msg = '') {
 
         $primaryKey = $model->tableSchema->primaryKey[0];
-        $value = $model->find()->where([$fields[0] => isset($values[0]) ? ucwords($values[0]) : null, $fields[1] => isset($values[1]) ? ucwords($values[1]) : null, $fields[2] => isset($values[2]) ? ucwords($values[2]) : null, 'is_active' => 1])->andWhere(['<>', $primaryKey, $model->$primaryKey])->count();
+        $value = $model->find()->where([$fields[0] => isset($values[0]) ? ucwords($values[0]) : null, $fields[1] => isset($values[1]) ? ucwords($values[1]) : null, $fields[2] => isset($values[2]) ? ucwords($values[2]) : null, 'is_active' => 1])->andWhere(['<>', $primaryKey, $model->$primaryKey]);
+        if (!empty($fields[3]) && !empty($values[3])) {
+            $value = $value->andWhere([$fields[3] => $values[3]]);
+        }
+        $value = $value->count();
         if ($value != 0) {
 
             $modleName = StringHelper::basename(get_class($model));
