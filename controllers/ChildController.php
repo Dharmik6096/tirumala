@@ -56,10 +56,10 @@ class ChildController extends Controller {
             define('IMPORT_PATH', Yii::$app->basePath . '/web/import/');
         if (!defined('SENTBOX_FLAG'))
             define('SENTBOX_FLAG', 'Y');
-        if (!defined('QUALITY_PARAM')) {
-            $model = new TblQualityParam();
-            define('QUALITY_PARAM', $model->getParams());
-        }
+        /* if (!defined('QUALITY_PARAM')) {
+          $model = new TblQualityParam();
+          define('QUALITY_PARAM', $model->getParams());
+          } */
         $this->generalModel = new GeneralModel();
     }
 

@@ -218,7 +218,7 @@ class TblContactDetailsController extends \app\controllers\ChildController {
             foreach ($contactDetail as $detail) {
                 $detail->is_default = 0;
                 $detail->is_contact_verified = 0;
-                $detail->save();
+                $detail->save(TRUE, FALSE);
             }
         }
         $this->model->is_default = 1;

@@ -66,14 +66,14 @@ class TblBillHeadDetail extends \app\models\ChildModel {
                 [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv', 'importDetailCsv']],
-                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv', 'importDetailCsv']],
-                [['bill_head_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBillHead::className(), 'targetAttribute' => ['bill_head_code' => 'bill_head_code'], 'on' => ['importCsv']],
+            //  [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv', 'importDetailCsv']],
+            // [['bill_head_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBillHead::className(), 'targetAttribute' => ['bill_head_code' => 'bill_head_code'], 'on' => ['importCsv']],
+            [['bmc_code'], 'importDataOrg', 'skipOnError' => true, 'on' => ['importCsv', 'importDetailCsv']],
                 [['customer_type'], function ($attribute, $params) {
-                    $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
-                [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
-                [['transaction_date'], 'convertDateDot', 'on' => ['importCsv', 'importDetailCsv']],
+            //  [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
+            [['transaction_date'], 'convertDateDot', 'on' => ['importCsv', 'importDetailCsv']],
                 [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importDetailCsv']],
                 [['transaction_date'], 'convertDate', 'on' => ['importCsv', 'importDetailCsv']],
                 [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'importDetailCsv']],
@@ -91,7 +91,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
 //                    }
                     }
                 }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv', 'importDetailCsv']],
-                [['bill_head_code'], 'unique', 'targetAttribute' => ['bill_head_code', 'customer_type', 'customer_code', 'transaction_date'], 'message' => Yii::t('app/validation', 'Bill Head Transaction has already been taken.')],
+                [['bill_head_code'], 'unique', 'targetAttribute' => ['transaction_date', 'customer_code', 'customer_type', 'bill_head_code'], 'message' => Yii::t('app/validation', 'Bill Head Transaction has already been taken.')],
         ];
     }
 
@@ -181,11 +181,19 @@ class TblBillHeadDetail extends \app\models\ChildModel {
         }
     }
 
+    public function importDataOrg($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $bmcData = $this->bmcCode;
+            if (!empty($bmcData)) {
+                $this->union_code = $bmcData->union_code;
+                $this->plant_code = $bmcData->plant_code;
+                $this->mcc_plant_code = $bmcData->mcc_plant_code;
+            }
+        }
+    }
+
     public function importData($attribute, $params) {
         if (empty($this->getErrors())) {
-            $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
-            $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
-            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
             if (!empty($this->dcs_code)) {
                 $dcsModel = new TblDcs();
                 $dcsCode = $dcsModel->validDcs($this->dcs_code, $this->bmc_code);
@@ -212,11 +220,19 @@ class TblBillHeadDetail extends \app\models\ChildModel {
                 $customer_code = $this->customer_code;
                 $flag = ['data_lock_bmc', 'billing_lock_bmc'];
             }
-            $billModel = new TblBillHead();
-            $list = $billModel->billHeadTypeWise($this->union_code, $customer_type, $customer_code, $this->bill_head_for);
-            if (!array_key_exists($this->bill_head_code, $list)) {
+            //$billModel = new TblBillHead();
+            //$list = $billModel->billHeadTypeWise($this->union_code, $customer_type, $customer_code, $this->bill_head_for);
+            $query = TblBillHead::find()
+                    ->joinWith(['billHeadCode apl'])
+                    ->where(['apl.bill_head_code' => $this->bill_head_code, 'tbl_bill_head.is_active' => 1, 'tbl_bill_head.is_default' => 0, 'tbl_bill_head.bill_head_for' => $this->bill_head_for,
+                        'apl.union_code' => $this->union_code, 'apl.applicable_for' => $customer_type, 'apl.applicable_code' => $customer_code])
+                    ->andWhere(['or', ['tbl_bill_head.general_formula_code' => ''], ['tbl_bill_head.general_formula_code' => null]]);
+            $count = $query->count();
+            //  if (!array_key_exists($this->bill_head_code, $list)) {
+            if ($count < 1) {
                 $this->addError('bill_head_code', Yii::t('app/validation', $this->getAttributeLabel('bill_head_code') . ' is invalid'));
             }
+
 //            $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
 //            if ($billingType != 1 && $customer_type != 'DCS') {
             Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
