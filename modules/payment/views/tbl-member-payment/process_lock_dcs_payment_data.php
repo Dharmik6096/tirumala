@@ -355,7 +355,8 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
 }
 
     function calculte(row_number,parent){
-        var adjust = parseFloat($('#tblmemberpaymentalias-adjust_amount-'+row_number).val());
+//        var adjust = parseFloat($('#tblmemberpaymentalias-adjust_amount-'+row_number).val());
+        var adjust = parseFloat($('#tblmemberpaymentalias-additional_pay-'+row_number).val());
          var final = parseFloat(parent.find('.final-amount').text());
         var hold = parseFloat($('#tblmemberpaymentalias-hold_amount-'+row_number).val());
         var adjustRec = parseFloat($('#tblmemberpaymentalias-adjust_recovery-'+row_number).val());
@@ -374,6 +375,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
             rec=0;
         }
         var net = final + adjust - hold + adjustRec - rec; 
+        $('#tblmemberpaymentalias-final_amount-'+row_number).val(net.toFixed(2));
         if(net != '' &&  !isNaN(net)){
             $('#tblmemberpaymentalias-final_amount-'+row_number).val(net.toFixed(2));
             SumAmount();

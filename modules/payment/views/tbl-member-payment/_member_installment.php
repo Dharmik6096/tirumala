@@ -118,7 +118,7 @@ $script = "
             netPay = 0;
         }
         $('#MemberInstallmentModal .kv-panel-before').hide();$('#MemberInstallmentModal .filters').hide();
-        $(document).on('click','#delete',function(){
+         $(document).off('click', '#delete').on('click','#delete',function(){
             var paymentData = [];
             var paymentAmount = 0;
             $('#member-installment-form-aaa .checkbox-collection').each(function () {
