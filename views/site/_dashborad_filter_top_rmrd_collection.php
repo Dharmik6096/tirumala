@@ -44,6 +44,9 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                 <div class="col-sm-3">
                     <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', FALSE, FALSE, 'customer_type'); ?>
                 </div>
+                <div class="col-sm-3">
+                    <?= Yii::$app->dropdown->dropdownStatic('performance_type', $model, $form, ''); ?>
+                </div>
                 <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
                 <div class="col-sm-3 pt5 dashboard_modal_footer">
                     <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
@@ -76,11 +79,12 @@ $script = "
             var union= '" . $unionCode . "';
             var mcc= '" . $mccCode . "';
             var type= 'rmrd';
+            var performance_type = $('#dashboard-performance_type').val();
             if(from_date != '' && to_date != ''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['top-dcs-collection']) . "',
-                    data: {'from_date' : from_date, 'to_date' : to_date, 'union' : union, 'mcc':mcc,'type':type,'customer_type':customer_type} ,
+                    data: {'from_date' : from_date, 'to_date' : to_date, 'union' : union, 'mcc':mcc,'type':type,'customer_type':customer_type,'performance_type':performance_type} ,
                     success: function(data) {                                        
                         $('#" . $id . "_container').html(data);
                     },
