@@ -26,6 +26,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
     <div class="panel-heading">
         <?= $breadcrum_title . $this->title; ?>
         <button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-bs-toggle="collapse" data-bs-target=".grid_card"><i class="fa fa-list"></i></button>
+        <span class="right_align_shift"><?= '(' . Yii::$app->general->getShiftName($shift) . ')' ?></span>
         <span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
     <div class="panel-body hide-grid-export">
@@ -35,7 +36,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                     <div class="panel panel-default">
                         <div class="col-sm-6 farmer_rmrd_block">
                             <?php
-                            echo $this->render('_dashboard_grid_rmrd_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union]);
+                            echo $this->render('_dashboard_grid_rmrd_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union, 'shift' => $shift]);
                             ?>
                         </div>
 

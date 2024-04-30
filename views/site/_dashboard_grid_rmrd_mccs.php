@@ -15,6 +15,8 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
     <div class="panel-heading">
         <?= $breadcrum_title . $this->title; ?>
         <button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-bs-toggle="collapse" data-bs-target=".grid_card"><i class="fa fa-list"></i></button>
+        <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon btn btn-danger apply-shortcut btn-block right_30" ><i class="fa fa-file-excel-o"></i></button> 
+        <span class="right_align_mcc_shift"><?= '(' . Yii::$app->general->getShiftName($shift) . ')' ?></span>
         <span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
     <div class="panel-body hide-grid-export">
@@ -24,7 +26,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                     <div class="panel panel-default">
                         <div class="col-sm-6 farmer_rmrd_block">
                             <?php
-                            echo $this->render('_dashboard_grid_rmrd_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union]);
+                            echo $this->render('_dashboard_grid_rmrd_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union, 'shift' => $shift]);
                             ?>
                         </div>
 
@@ -97,12 +99,12 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                             <div class="<?= $col_class ?> dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Society') ?></span></div>
                                                             <?php
                                                             if (\Yii::$app->session->get('hasBMC') == 1) {
-                                                                $url = Url::to(['site/get-rmrd-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd']);
+                                                                $url = Url::to(['site/get-rmrd-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd', 'shift' => $shift]);
                                                                 ?>
                                                                 <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_bmc'] ?></span></span></a></div>
                                                             <?php }
                                                             ?>
-                                                            <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd']); ?>
+                                                            <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd', 'shift' => $shift]); ?>
                                                             <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
                                                         </div>
                                                     </div>
@@ -114,62 +116,64 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                     ?>
                                 </div>
                             </div>
-
-                            <div id="dash_collapse_grid">
-                                <div class="col-sm-12">
-                                    <div class="table-responsive dashboard_collection_grid_tbl">
-                                        <table class="table overflow_hidden table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th class="custom_grid_header">#</th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'MCC') ?></th>
-                                                    <?php if (\Yii::$app->session->get('hasBMC') == 1) { ?><th class="custom_grid_header"><?= Yii::t('app', 'BMC') ?></th><?php } ?>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Society') ?></th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Avg. FAT') ?></th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Avg. SNF') ?></th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Avg. Rate') ?></th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Amount') ?></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                if (!empty($output)) {
-                                                    $i = 0;
-                                                    foreach ($output as $data) {
-                                                        ?>
-                                                        <tr>
-                                                            <td class="custom_grid_normal"><?= ++$i; ?></td>
-                                                            <?php
-                                                            // $tbl_plant_model = new TblMccPlant();
-                                                            // $tbl_plant_model->mcc_plant_code = $data['mcc_code'];
+                            <div id ="recovery_grid" class="col-sm-6" class="table table-striped">
+                                <div id="dash_collapse_grid">
+                                    <div class="col-sm-12">
+                                        <div class="table-responsive dashboard_collection_grid_tbl">
+                                            <table class="table overflow_hidden table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="custom_grid_header">#</th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'MCC') ?></th>
+                                                        <?php if (\Yii::$app->session->get('hasBMC') == 1) { ?><th class="custom_grid_header"><?= Yii::t('app', 'BMC') ?></th><?php } ?>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Society') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Avg. FAT') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Avg. SNF') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Avg. Rate') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Amount') ?></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    if (!empty($output)) {
+                                                        $i = 0;
+                                                        foreach ($output as $data) {
                                                             ?>
-                                                            <td class="grid_left_align custom_grid_normal"><?= $data['mcc_name'] ?></td>
-                                                            <?php
-                                                            if (\Yii::$app->session->get('hasBMC') == 1) {
-                                                                $url = Url::to(['site/get-rmrd-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd']);
+                                                            <tr>
+                                                                <td class="custom_grid_normal"><?= ++$i; ?></td>
+                                                                <?php
+                                                                // $tbl_plant_model = new TblMccPlant();
+                                                                // $tbl_plant_model->mcc_plant_code = $data['mcc_code'];
                                                                 ?>
-                                                                <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_bmc'] ?></a></td>
-                                                            <?php } ?>
-                                                            <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd']); ?>
-                                                            <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
-                                                            <td class="number_align custom_grid_normal" ><?= $data['total_quantity'] ?></td>
-                                                            <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>
-                                                            <td class="number_align custom_grid_normal" ><?= $data['avgSNF'] ?></td>
-                                                            <td class="number_align custom_grid_normal" ><?= $data['avgRate'] ?></td>
-                                                            <td class="number_align custom_grid_normal" ><?= $data['total_amount'] ?></td>
-                                                        </tr>
-                                                        <?php
-                                                    }
-                                                } else {
+                                                                <td class="grid_left_align custom_grid_normal"><?= $data['mcc_name'] ?></td>
+                                                                <?php
+                                                                if (\Yii::$app->session->get('hasBMC') == 1) {
+                                                                    $url = Url::to(['site/get-rmrd-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd', 'shift' => $shift]);
+                                                                    ?>
+                                                                    <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_bmc'] ?></a></td>
+                                                                <?php } ?>
+                                                                <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'widget_for' => 'rmrd', 'shift' => $shift]); ?>
+                                                                <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['total_quantity'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['avgSNF'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['avgRate'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['total_amount'] ?></td>
+                                                            </tr>
+                                                            <?php
+                                                        }
+                                                    } else {
+                                                        ?>
+                                                        <tr><td colspan="10">No Data Available.</td></tr>
+                                                    <?php }
                                                     ?>
-                                                    <tr><td colspan="10">No Data Available.</td></tr>
-                                                <?php }
-                                                ?>
-                                            </tbody>
-                                        </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
