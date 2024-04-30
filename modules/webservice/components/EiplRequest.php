@@ -11,6 +11,9 @@ class EiplRequest {
     private $req_url;
 
     public function ParseRequest() {
+        if (strpos(Yii::$app->request->headers['content-type'], 'multipart/form-data') === 0 && !empty($_REQUEST['formData'])) {
+            Yii::$app->request->setRawBody($_REQUEST['formData']);
+        }
         //   $this->req_url = Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
         $this->setRequestLog();
         $post_data = Json::decode(Yii::$app->request->getRawBody());

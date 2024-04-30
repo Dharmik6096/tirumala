@@ -133,8 +133,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->model->member_code = $this->model->getCode();
+            $provisionalStatus = ['Register','Pending','Inprogress'];
             if ($_POST['warning'] == 0)
-                $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
+                $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code', 'provisional_status'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code, $provisionalStatus]);
             if ($validate == 1 && $this->model->validate()) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);

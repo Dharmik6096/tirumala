@@ -102,6 +102,7 @@ class TblVspBillHeadCriteriaApplicability extends \app\models\ChildModel {
     }
 
     public function getDcsCode() {
+        $this->applicable_code = (string) $this->applicable_code;
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 

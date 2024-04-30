@@ -200,6 +200,7 @@ class Applicability extends \yii\base\Module {
                     'generateMail' => $this->generateMail,
                     'login_type' => $this->login_type,
                     'is_bulk_notification' => $this->is_bulk_notification,
+                    'periodic_applicability' => $this->periodic_applicability,
         ]);
     }
 

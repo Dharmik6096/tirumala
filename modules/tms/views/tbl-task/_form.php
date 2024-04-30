@@ -2,6 +2,7 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
+use yii\helpers\Html;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -46,7 +47,7 @@ echo $form->errorSummary($model);
     </div>
     <div class="col-sm-8">
         <div class="col-sm-3">
-            <?= Yii::$app->dropdown->dropdown('user', $model, $form, '', $model->getAttributeLabel('user_code'), FALSE, 'user_code'); ?>
+            <?= Yii::$app->dropdown->task_user_selection($model, $form, 'tbltask-task_performed_for,tbltask-mcc_plant_code,tbltask-bmc_code', 'user_code', $model->getAttributeLabel('user_code'), false, false); ?>  
         </div>
         <div class="col-sm-3">
             <?= Yii::$app->controls->date($model, $form, 'start_date', '', FALSE, date('Y-m-d'), FALSE, true); ?>
@@ -92,7 +93,8 @@ $script = "
         });
         $('#tbltask-repeat_interval').change(function () {
             showInterval();
-        });        
+        });
+       
         function showLocation() {
             $('.location_dcs').hide();
             $('.location_bmc').hide();
