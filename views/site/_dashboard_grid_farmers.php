@@ -12,16 +12,17 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Farmer'));
     <div class="panel-heading">
         <?= $breadcrum_title . $this->title; ?>
 <!-- <button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-toggle="collapse" data-target="#dash_collapse_grid"><i class="fa fa-list"></i></button> -->
+        <span class="right_align_shift"><?= '(' . Yii::$app->general->getShiftName($shift) . ')' ?></span>
         <span class="right_align_date right_align_date_rm_padding"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
-    <div class="panel-body hide-grid-export">
+    <div class="panel-body hide-grid-export overflow_visible">
         <div id="plant-list" class="grid-content">
             <div id="plant-list">
                 <div id="w12" class="grid-view hide-resize" >
                     <div class="panel panel-default">
                         <div class="col-sm-6 farmer_rmrd_block">
                             <?php
-                            echo $this->render('_dashboard_grid_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union]);
+                            echo $this->render('_dashboard_grid_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union, 'shift' => $shift]);
                             ?>
                         </div>
 

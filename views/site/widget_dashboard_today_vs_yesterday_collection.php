@@ -8,7 +8,7 @@ $yesterday = date('Y-m-d', strtotime('-1 day', strtotime($date)));
 <div class="col-sm-12 today_vs_yesterday_collection">
     <div class="col-sm-6">
         <div class="cal-header dashboardWidgetHeader"><?= Yii::t('app', 'Today Procurement (') . Yii::$app->controls->view_date($date) . ')'; ?></div>
-        <?php $url = Url::to(['site/get-unions', 'date' => $date, 'union_code' => $model->union_code]); ?>
+        <?php $url = Url::to(['site/get-unions', 'date' => $date, 'union_code' => $model->union_code, 'shift'=>$model->shift]); ?>
         <a href="<?= $url ?>" target="_blank">
             <div class="link_hover_effect">
                 <div class="div_dash_block width_30-10  height_115 dashboardWidgetDetailPortion <?= $class_cols ?>">
@@ -34,7 +34,7 @@ $yesterday = date('Y-m-d', strtotime('-1 day', strtotime($date)));
             </div>
         </a>
 
-        <?php $url = Url::to(['site/get-rmrd-unions', 'date' => $date, 'union_code' => $model->union_code]); ?>
+        <?php $url = Url::to(['site/get-rmrd-unions', 'date' => $date, 'union_code' => $model->union_code, 'shift'=>$model->shift]); ?>
         <a href="<?= $url ?>" target="_blank">
             <div class="div_dash_block width_70-10 height_115 dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display ?>">
                 <div class="">
@@ -73,7 +73,7 @@ $yesterday = date('Y-m-d', strtotime('-1 day', strtotime($date)));
     </div>
     <div class="col-sm-6">
         <div class="cal-header dashboardWidgetHeader"><?= Yii::t('app', 'Yesterday Procurement (') . Yii::$app->controls->view_date($yesterday) . ')'; ?></div>
-        <?php $url = Url::to(['site/get-unions', 'date' => $yesterday, 'union_code' => $model->union_code]); ?>
+        <?php $url = Url::to(['site/get-unions', 'date' => $yesterday, 'union_code' => $model->union_code, 'shift'=>$model->shift]); ?>
         <a href="<?= $url ?>" target="_blank">
             <div class="div_dash_block width_30-10  height_115 dashboardWidgetDetailPortion <?= $class_cols ?>">
                 <div class="">
@@ -97,7 +97,7 @@ $yesterday = date('Y-m-d', strtotime('-1 day', strtotime($date)));
             </div>
         </a>
 
-        <?php $url = Url::to(['site/get-rmrd-unions', 'date' => $yesterday, 'union_code' => $model->union_code]); ?>
+        <?php $url = Url::to(['site/get-rmrd-unions', 'date' => $yesterday, 'union_code' => $model->union_code, 'shift'=>$model->shift]); ?>
         <a href="<?= $url ?>" target="_blank">
             <div class="div_dash_block width_70-10 height_115 dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display ?>">
                 <div class="">

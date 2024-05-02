@@ -19,7 +19,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
             src="<?= $imageIconPath . 'company.png' ?>"> </div>
 </div>
 
-<?php $url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $union]); ?>
+<?php $url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $union, 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
@@ -31,7 +31,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
     </div>
 </a>
-<?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union]); ?>
+<?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
@@ -44,7 +44,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     </div>
 </a>
 
-<?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union]); ?>
+<?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' ?>">
         <div class="div_dash_block_content">
@@ -106,7 +106,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'active_dcs.png' ?>"> </div>
 </div>
-<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Installed']); ?>
+<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Installed', 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
@@ -119,7 +119,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     </div>
 </a>
 
-<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Online']); ?>
+<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Online', 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
@@ -134,7 +134,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     </div>
 </a>
 
-<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Offline']); ?>
+<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Offline', 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">

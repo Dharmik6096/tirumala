@@ -3,6 +3,7 @@
 namespace app\modules\payment\models;
 
 use Yii;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tbl_payment_transaction".
@@ -141,4 +142,101 @@ class TblPaymentTransaction extends \app\models\ChildModel {
         return $this->find()->where(['is_file' => 1, 'sms_status' => NULL])->andWhere(['and', ['IS NOT', 'mobile_no', NULL], ['<>', 'mobile_no', '']])->limit(2000)->all();
     }
 
+    public function getPendingData() {
+        return $this->find()->select(['tbl_payment_transaction.union_bank_payment_code', 'ubp.bank_code', 'ubp.bank_name', 'ubp.bank_account_no', 'ubp.branch_code', 'ubp.account_holder_name', 'ubp.ftp_username', 'ubp.ftp_password', 'ubp.corporate_code', 'ba.auth_url', 'ba.payment_url', 'ba.reverse_check_url', 'tbl_payment_transaction.file_name', 'tbl_payment_transaction.union_code'])
+                        ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = tbl_payment_transaction.union_bank_payment_code')
+                        ->innerJoin('tbl_bank_api_detail ba', 'ubp.union_bank_payment_code= ba.union_bank_payment_code')
+                        ->where(['is_file' => 0, 'UPPER(ubp.integration_mode)' => 'API', 'ubp.is_active' => 1, 'ba.is_active' => 1])
+                        ->andWhere(['NOT', ['ISNULL(file_name,\'\')' => '']])
+                        ->groupBy(['tbl_payment_transaction.file_name', 'tbl_payment_transaction.union_bank_payment_code', 'tbl_payment_transaction.union_code', 'ubp.bank_code', 'ubp.branch_code', 'ubp.account_holder_name', 'ubp.bank_name', 'ubp.bank_account_no', 'ubp.ftp_username', 'ubp.ftp_password', 'ubp.corporate_code', 'ba.auth_url', 'ba.payment_url', 'ba.reverse_check_url'])
+                        ->asArray()->all();
+    }
+
+    public function updateStatus($condition, $updateData) {
+        return $this->updateAll($updateData, $condition);
+    }
+
+    public function getCargillPendingData() {
+        return $this->find()
+                        ->alias('pt')
+                        ->select([
+                            'pt.payment_transaction_code as TransactionID',
+                            'case when ISNULL(b.old_bank_code,\'\')!=\'\' then b.old_bank_code else null end as BenBankCode',
+                            'case when ISNULL(pt.ifsc,\'\')!=\'\' then right(pt.ifsc,3)else null end as BenBranchCode',
+                            'pt.bank_account_no as BenAccNo',
+                            'pt.name as BenAccName',
+                            'right(pt.payment_transaction_code,2) as TxnCode',
+                            'pt.final_amount as TxnAmount',
+                            'ubp.bank_code as DebitBankCode',
+                            'ubp.branch_code as DebitBranchCode',
+                            'ubp.bank_account_no as DebitAccountNo',
+                            'ubp.account_holder_name as DebitAccName',
+                            'convert(varchar, getdate(), 12) ValueDate',
+                            'case when lower(ISNULL(ubp.corporate_code,\'slips\'))=\'ceft\' then (case when b.old_bank_code=ubp.bank_code then \'CARG\' else \'CEFT\' end) else \'SLIPS\' end as TransactionType',
+                            'ba.auth_url',
+                            'ba.payment_url',
+                            'ba.reverse_check_url',
+                            'pt.file_name',
+                            'ubp.corporate_code',
+                            'pt.type',
+                            'pt.union_bank_payment_code',
+                            'pt.union_code'
+                        ])
+                        ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
+                        ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
+                        ->innerJoin('tbl_banks as b', 'b.bank_code = pt.bank_code')
+                        ->where([
+                            'pt.is_file' => 0,
+                            'UPPER(ubp.integration_mode)' => 'API',
+                            'ubp.is_active' => 1,
+                            'ba.is_active' => 1
+                        ])
+                        ->andWhere(['NOT', ['ISNULL(pt.file_name, \'\')' => '']])
+                        ->orderBy(['pt.payment_transaction_code' => SORT_ASC])
+                        ->limit(100)
+                        ->asArray()
+                        ->all();
+    }
+
+    public function updateReverseStatus($response) {
+        $data = $this->find()->where(['payment_transaction_code' => $response['txnID']])->one();
+        if (!empty($data)) {
+            $table = (strtolower($data->type) == 'member') ? 'tbl_member_payment' : 'tbl_vsp_payment';
+            $amountColumnName = (strtolower($data->type) == 'member') ? 'final_amount' : 'final_pay';
+            $statusColumn = (strtolower($data->type) == 'member') ? 'payment_status' : 'status';
+            $date = (strtolower($data->type) == 'member') ? date('Y-m-d H:i:s') : date('Y-m-d');
+            $summaryUpadte = (strtolower($data->type) == 'member') ? true : false;
+            Yii::$app->db->createCommand()
+                    ->update($table, [
+                        'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful') AND '" . $response['statusCode'] . "' != '000' THEN disburse_amount ELSE " . $amountColumnName . " END"),
+                        '' . $statusColumn . '' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('Successful')AND '" . $response['statusCode'] . "'!= '000' THEN " . $statusColumn . " ELSE 'Disburse' END"),
+                        'disburse_date' => $date,
+                        'bank_status' => $response['status'],
+                        //                       'response_msg' => $response['statusDescription'],
+                        'utr_no' => $response['replyID'],
+                            ], 'payment_transaction_code = \'' . $response['txnID'] . '\' and lower(' . $statusColumn . ')=\'sent\'')
+                    ->execute();
+            if ($summaryUpadte) {
+                $memberPaymentModel = new TblMemberPayment();
+//                $memberPaymentModel->payment_cycle_code = $data->payment_cycle_code;
+//                $memberPaymentModel->dcs_code = $data->dcs_code;
+//                $memberPaymentModel->union_code = $data->union_code;
+                $disburseCount = $memberPaymentModel->find()->select('count(*) as count,payment_status')
+                ->where(['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
+                ->groupBy(['payment_status'])->asArray()->all();
+                $count = count($disburseCount);
+                if ($count == 1 && lower($disburseCount[0]['payment_status']) == 'disburse') {
+                    Yii::$app->db->createCommand()
+                            ->update('tbl_member_payment_summary', [
+                                'disburse_amount' => new Expression('final_amount'),
+                                'disburse_date' => $date,
+                                'payment_status' => 'Disburse',
+                                    ], ['union_code'  => $data->union_code, 'dcs_payment_cycle_code'  => $data->dcs_payment_cycle_code, 'dcs_code'  => $data->dcs_code,  new Expression('LOWER(payment_status) = "sent"')])
+                            ->execute();
+                     
+                }
+            }
+        }
+        return;
+    }
 }

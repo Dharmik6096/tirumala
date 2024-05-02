@@ -1834,6 +1834,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Status'),
                 'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error'), 4 => Yii::t('app', 'Blocked')],
             ],
+            'performance_type' => [
+                'name' => 'performance_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['0' => Yii::t('app', 'High'), '1' => Yii::t('app', 'Low')],
+            ],
         ];
         return $records[$l];
     }
