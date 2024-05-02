@@ -301,7 +301,7 @@ class TblUnionsController extends ChildController {
 
         if (!empty(Yii::$app->request->post('file_name'))) {
             $file_name = Yii::$app->request->post('file_name');
-            $base_path = Yii::$app->basePath;
+            $base_path = Yii::getAlias('@webroot');//	 Yii::$app->basePath;
             $base_url = Yii::$app->urlManager->createAbsoluteUrl('');
             $logo_path = Yii::$app->params['logo_path'];
             $file = $base_path . Yii::$app->params['temp_logo_path'] . $file_name;
@@ -388,8 +388,9 @@ class TblUnionsController extends ChildController {
 
     public function actionUploadImg() {
 
-        $path = Yii::$app->basePath . Yii::$app->params['temp_logo_path'];
-        if (!is_dir($path)) {
+        // $path = Yii::$app->basePath . Yii::$app->params['temp_logo_path'];
+$path = Yii::getAlias('@webroot') . Yii::$app->params['temp_logo_path'];        
+if (!is_dir($path)) {
             mkdir($path);
             chmod($path, 0777);
         }
@@ -398,7 +399,7 @@ class TblUnionsController extends ChildController {
 //        $name = 'logo_' . Yii::$app->session->get('organizations_type') . '_' . '002' . '.' . $file->extension;
         if ($file->saveAs($path . $name)) {
             chmod($path . $name, 0777);
-            echo $name;
+            return $name; //echo $name;
         }
     }
 
