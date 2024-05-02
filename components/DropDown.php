@@ -634,7 +634,7 @@ class DropDown extends Component {
     public function assign_list($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
-    
+
     public function task_user_selection($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tms/tbl-task/task-user-selection', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
@@ -1838,6 +1838,11 @@ class DropDown extends Component {
                 'name' => 'performance_type',
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['0' => Yii::t('app', 'High'), '1' => Yii::t('app', 'Low')],
+            ],
+            'billing_type' => [
+                'name' => 'billing_type',
+                'prompt' => Yii::t('app', 'Select Payment Type'),
+                'data' => ['remuneration' => Yii::t('app', 'Remuneration'), 'regular' => Yii::t('app', 'Regular')],
             ],
         ];
         return $records[$l];

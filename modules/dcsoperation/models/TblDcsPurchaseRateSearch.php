@@ -21,9 +21,9 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
      */
     public function rules() {
         return [
-            [['purchase_rate_code', 'wef_date', 'shift_id', 'created_at', 'originating_org_type', 'deleted_at', 'description', 'flg_sentbox_entry', 'shift_applicability', 'originating_org_code', 'rate_gen_method_code', 'sync_status', 'sync_timestamp', 'updated_at', 'created_by', 'deleted_by', 'updated_by', 'federation_code', 'union_code', 'dcs_code', 'reference_code', 'ts_rate'], 'safe'],
-            [['is_active', 'is_delete'], 'integer'],
-            [['rate_type', 'rate_value'], 'safe'],
+                [['purchase_rate_code', 'wef_date', 'shift_id', 'created_at', 'originating_org_type', 'deleted_at', 'description', 'flg_sentbox_entry', 'shift_applicability', 'originating_org_code', 'rate_gen_method_code', 'sync_status', 'sync_timestamp', 'updated_at', 'created_by', 'deleted_by', 'updated_by', 'federation_code', 'union_code', 'dcs_code', 'reference_code', 'ts_rate'], 'safe'],
+                [['is_active', 'is_delete'], 'integer'],
+                [['rate_type', 'rate_value'], 'safe'],
         ];
     }
 
@@ -44,7 +44,7 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
      */
     public function search($params) {
         $query = TblDcsPurchaseRate::find();
-        $query->joinWith(['unionCode', 'dcsCode', 'shiftApplicability', 'rateMethod']);
+        $query->joinWith(['unionCode', 'dcsCode', 'shiftApplicability', 'rateMethod', 'purchaseRateCode']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
