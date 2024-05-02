@@ -8,7 +8,7 @@ use yii\base\Model;
 
 class ManualNotification extends Model {
 
-    public $union_code, $plant_code, $mcc_code, $bmc_code, $route_code, $dcs_code, $customer_code, $from_date, $from_shift, $to_date, $to_shift, $report_type, $date, $shift, $data_type;
+    public $union_code, $plant_code, $mcc_code, $bmc_code, $route_code, $dcs_code, $customer_code, $from_date, $from_shift, $to_date, $to_shift, $report_type, $date, $shift, $data_type, $compare_value, $receiver_type, $compare_type;
 
     function __construct() {
         
@@ -19,14 +19,16 @@ class ManualNotification extends Model {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'route_code', 'dcs_code', 'customer_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type', 'date', 'shift', 'data_type'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'date', 'shift', 'data_type', 'report_type'], 'required', 'on' => ['RmrdCollectionVsp']],
-            [['to_date'], function ($attribute, $params) {
-            Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
-        }, 'skipOnEmpty' => false],
-            [['from_date', 'to_date', 'date'], 'default', 'value' => date('d-m-Y')],
-            [['from_shift', 'to_shift', 'shift'], 'default', 'value' => 1],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'customer_code', 'route_code', 'data_type'], 'default', 'value' => 0],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'route_code', 'dcs_code', 'customer_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type', 'date', 'shift', 'data_type', 'compare_value', 'receiver_type', 'compare_type'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'date', 'shift', 'data_type', 'report_type'], 'required', 'on' => ['RmrdCollectionVsp']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'date', 'shift', 'data_type', 'receiver_type', 'compare_type'], 'required', 'on' => ['RmrdCollectionVspSmsIntegration']],
+                [['to_date'], function ($attribute, $params) {
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+                }, 'skipOnEmpty' => false],
+                [['from_date', 'to_date', 'date'], 'default', 'value' => date('d-m-Y')],
+                [['from_shift', 'to_shift', 'shift'], 'default', 'value' => 1],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'customer_code', 'route_code', 'data_type'], 'default', 'value' => 0],
+                ['compare_value', 'number', 'on' => ['RmrdCollectionVspSmsIntegration']],
         ];
     }
 
@@ -47,6 +49,9 @@ class ManualNotification extends Model {
             'shift' => \Yii::t('app', 'Shift'),
             'report_type' => \Yii::t('app', 'Receiver Type'),
             'data_type' => \Yii::t('app', 'Data Type'),
+            'receiver_type' => \Yii::t('app', 'Receiver Type'),
+            'compare_value' => \Yii::t('app', 'Compare Value'),
+            'compare_type' => \Yii::t('app', 'Compare Type'),
         ];
     }
 

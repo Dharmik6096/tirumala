@@ -41,6 +41,16 @@ class ManualNotificationController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRmrdCollectionVspSmsIntegration() {
+        $this->report = 'RmrdCollectionVspSmsIntegration';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ManualNotification']['compare_type'] == '1') {
+                $this->report = 'RmrdCollectionVspSmsIntegrations';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     private function LoadReport($model) {
         if (empty($model->union_code)) {
             $model->union_code = !empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : 0;
@@ -114,6 +124,22 @@ class ManualNotificationController extends \app\controllers\ChildController {
                 'scenario' => 'RmrdCollectionVsp',
                 'title' => 'RMRD Collection (VSP)',
                 'report_type' => ['SMS' => 'SMS'],
+            ],
+            'RmrdCollectionVspSmsIntegration' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,date:dateshift:shift,data_type:static:data_type_filter,receiver_type,compare_type,compare_value:txt',
+                'sp_name' => 'sp_sms_integration_vsp_without_comparison',
+                'sp_process' => 'sp_sms_integration_vsp_send_msg',
+                'scenario' => 'RmrdCollectionVspSmsIntegration',
+                'title' => 'RMRD Collection (VSP) SMS Integration',
+                'compare_type' => ['0' => Yii::t('app', 'Without Comparison'), '1' => Yii::t('app', 'With Comparison')],
+            ],
+            'RmrdCollectionVspSmsIntegrations' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,date:dateshift:shift,data_type:static:data_type_filter,receiver_type,compare_type,compare_value:txt',
+                'sp_name' => 'sp_sms_integration_vsp_comparison',
+                'sp_process' => 'sp_sms_integration_vsp_send_msg',
+                'scenario' => 'RmrdCollectionVspSmsIntegration',
+                'title' => 'RMRD Collection (VSP) SMS Integration',
+                'compare_type' => ['0' => Yii::t('app', 'Without Comparison'), '1' => Yii::t('app', 'With Comparison')],
             ],
         ];
         return $label[$l];

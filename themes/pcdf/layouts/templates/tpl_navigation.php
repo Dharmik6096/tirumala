@@ -981,6 +981,7 @@ echo GhostMenu::widget([
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Manual Alert<b class="caret"></b></a>',
                             'items' => [
                                     ['label' => Yii::t('app', 'RMRD Collection (VSP)'), 'url' => ['/sms/manual-notification/rmrd-collection-vsp']],
+                                    ['label' => Yii::t('app', 'RMRD Collection (VSP) SMS'), 'url' => ['/sms/manual-notification/rmrd-collection-vsp-sms-integration']],
                             ]
                         ],
                             [
