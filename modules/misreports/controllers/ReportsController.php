@@ -1688,6 +1688,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BmcCollectionSummaryRahema';
         return $this->actionIndex();
     }
+    
+    public function actionMobileAppReport() {
+        $this->report = 'MobileAppReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3556,6 +3561,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bmc_collection_date_shift_wise_rheman',
                 'scenario' => 'BmcCollectionSummaryRahema',
                 'title' => 'BMC Collection Summary',
+            ],
+            'MobileAppReport' => [
+                'param' => 'user_login_type,login_user_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_flutter_app_tracking',
+                'scenario' => 'MobileAppReport',
+                'title' => 'Log report of  the Mobile App',
             ],
         ];
         return $label[$l];
