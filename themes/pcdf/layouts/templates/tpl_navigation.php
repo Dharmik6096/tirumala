@@ -879,6 +879,7 @@ echo GhostMenu::widget([
                             ['label' => 'Group', 'url' => ['/user-management/auth-item-group/index'], 'active' => ($cntrl == 'auth-item-group'),],
                             ['label' => 'Mobile Dashboard Permission', 'url' => ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-widget-mapping'),],
                             ['label' => 'Mobile Menu Permission', 'url' => ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-menu-actions'),],
+                            ['label' => Yii::t('app', 'App Login Detail'), 'url' => ['/webservice/eipl/tbl-eipl-app-login/index'], 'active' => ($cntrl == 'tbl-eipl-app-login')],
                     ],
                 ],
                     [
@@ -1041,7 +1042,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Device SMS Count'), 'url' => ['/dcsoperation/tbl-send-sms-count/index'], 'active' => ($cntrl == 'tbl-send-sms-count')],
                             ['label' => Yii::t('app', 'Device SMS Fail Log'), 'url' => ['/sms/tbl-sms-fail-log/index'], 'active' => ($cntrl == 'tbl-sms-fail-log')],
                             ['label' => Yii::t('app', 'BMC Collection Tranfer'), 'url' => ['/collection/tbl-bmc-collection-transfer/index'], 'active' => ($cntrl == 'tbl-bmc-collection-transfer')],
-                            ['label' => Yii::t('app', 'App Login Detail'), 'url' => ['/webservice/eipl/tbl-eipl-app-login/index'], 'active' => ($cntrl == 'tbl-eipl-app-login')],
                     ]
                 ],
                     [
