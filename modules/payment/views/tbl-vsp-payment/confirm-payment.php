@@ -9,16 +9,20 @@ use kartik\grid\GridView;
 $this->title = 'Process for Payment Disburse';
 $action = Url::to(['bank-payment']);
 $bmc_info = '';
-$code =$name='';
+$code = $name = '';
 if (!empty($searchModel)) {
     $data = Yii::$app->general->getPaymentHeader($searchModel);
     if (!empty($data)) {
         $code = $data['code'];
         $name = $data['name'];
     }
- $bmc_info = $code . ' > ' . $name . ' > ';
-    $bmc_info .= Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .
-            (($searchModel->billing_type == 'remuneration') ? Yii::$app->controls->view_date($searchModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($searchModel->to_datetime) :
+    $bmc_info = $code . ' > ' . $name . ' > ';
+    if (empty($searchModel->customer_type) && !empty($searchModel->types_title)) {
+        $bmc_info .= $searchModel->types_title;
+    } else {
+        $bmc_info .= Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ';
+    }
+    $bmc_info .= (($searchModel->billing_type == 'remuneration') ? Yii::$app->controls->view_date($searchModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($searchModel->to_datetime) :
             Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date')));
 }
 $title = ($searchModel->billing_type == 'remuneration' ? Yii::t('app', 'Remuneration Payment Disburse : Step 2') : Yii::t('app', 'Vendor Payment Disburse : Step 2') ) . ' ' . ' (' . $bmc_info . ')';
@@ -32,19 +36,20 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 Total Payable :: <?= $pay_amount ?>
             </div>
         </div>
+        <?php
+        $form = ActiveForm::begin(['options' => [
+                        'class' => 'popup-form',
+                        'id' => 'otp-form',
+                    ],
+                    'action' => Url::to(['bank-payment'])
+        ]);
+        ?>  
         <div class="panel-body">
             <div class="grid-search no-effect" >
-                <?php
-                $form = ActiveForm::begin(['options' => [
-                                'class' => 'popup-form',
-                                'id' => 'otp-form',
-                            ],
-                            'action' => Url::to(['bank-payment'])
-                ]);
-                ?>   
+
                 <?= Html::activeHiddenInput($searchModel, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($searchModel, 'union_code'); ?>
-                 <?php if (is_array($searchModel->mcc_plant_code)) { ?>
+                <?php if (is_array($searchModel->mcc_plant_code)) { ?>
                     <?php foreach ($searchModel->mcc_plant_code as $mcc_plant_code) { ?>
                         <?= Html::activeHiddenInput($searchModel, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
                     <?php } ?>
@@ -75,11 +80,13 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 <div class="clearfix"></div>
                 <?php
                 $attribute = [
-                  
                     ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
                     ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
                             return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
                         }, 'filter' => false],
+                    ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function ($model) {
+                            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                        },],
                     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function ($model) {
                             return Yii::$app->general->getCustomer($model, $model->customer_type);
                         }],
@@ -148,15 +155,36 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
                 ?>
                 <div class="clearfix"></div>
-                <div class="col-md-12" >    
+                <div class="col-md-12" >   
+                    <?php
+                    if (!empty($bank_show)) {
+                        $array = [];
+                        foreach ($bank_show as $data) {
+                            $array[$data['union_bank_payment_code']] = $data['bank_name'];
+                        }
+                        if (count($array) > 1) {
+                            ?>
+                            <div class="col-sm-2 mr-10">
+                                <?php
+                                echo $form->field($searchModel, 'union_bank_payment_code')->dropDownList($array, ['prompt' => Yii::t('app', 'Select Bank *')])->label(false);
+                                ?>                   
+                                <?php
+                            } else if (!empty($bank_show) && count($bank_show) == 1) {
+                                $searchModel->union_bank_payment_code = $bank_show[0]['union_bank_payment_code'];
+                                echo Html::activeHiddenInput($searchModel, 'union_bank_payment_code');
+                            }
+                        }
+                        ?>
+                    </div>
                     <?= Html::button(Yii::t('app', 'Disburse'), ['class' => 'btn btn-primary disburse', 'name' => 'member']); ?>
                     <?= Yii::$app->controls->custombutton('Cancel', 'payment-disburse'); ?> 
                 </div>
                 <?= $this->render('/tbl-member-payment/verify-otp', ['model' => $searchModel, 'form' => $form]) ?>
                 <div class="clearfix"></div>
-                <?php ActiveForm::end(); ?>
+               
             </div>
         </div>
+         <?php ActiveForm::end(); ?>
     </div>
 </div>
 <?php
@@ -190,41 +218,117 @@ $script = "
 //        $('#otp-form').submit();
 
         var postVspDisbData = $('#otp-form').serializeArray();
-        $('#loadercontent').show();
-        $('#pageloader').show();
-        $.ajax({
-            type: 'post',
-            url: '" . $action . "',
-            data: postVspDisbData,
-            dataType: 'json',
-            success: function(data) {
-                if (data.status == 'success') { 
-                    window.location=data.url;
-                } else {
-                    $('#loadercontent').hide();
-                    $('#pageloader').hide();
-                    bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+data.msg+\"</span></div></div>\");
-                }
-            },
-            error:function(data){
-                $('#loadercontent').hide();
-                $('#pageloader').hide();
-                return false;
-                    //alert('Your data has not been submitted..Please try again');
-            }
-        });
 
+            var bank = document.getElementById('tblvsppayment-union_bank_payment_code');
+            var bankCode= bank != null ? bank.value : '';
+            if(bankCode == '' &&  bank != null){
+                 var dispMessage = '" . Yii::t('app', 'Please select bank for disbursement.') . "';
+                 bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
+             }
+             else
+             {
+                var ucode = '" . $searchModel->union_code . "';
+                var payCycleCode = ' ". $searchModel->payment_cycle_code . "';
+                var bmcCode = ".json_encode($searchModel->bmc_code).";
+                var type = 'VSP';
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['tbl-member-payment/validate-bank-details']) . "',
+                    data: {'union_code':ucode,'union_bank_payment_code':bankCode,'payment_cycle_code':payCycleCode,'bmc_code':bmcCode,'type':type},
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success') {
+                            // $('#OtpModal').modal('toggle'); 
+                           sendotp();
+//                          $('form#w1').submit();
+//allow_without_otp
+                        } else if (obj.status == 'allow_without_otp') { 
+                            $('#otp-form').submit();
+                            $('#loadercontent').show();
+                            $('#pageloader').show();
+                        } else if (obj.status == 'validate_member_bank_detail_confirmation') { 
+                            bootbox.confirm({
+                                message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+obj.message+'</span>',
+                                buttons: {
+                                    confirm: {
+                                        label: '" . Yii::t('app', 'Yes') . " ',
+                                        className: 'btn-primary'
+                                    },
+                                    cancel: {
+                                        label: '" . Yii::t('app', 'No') . "' ,
+                                        className: 'btn-danger'
+                                    }
+                                },
+                                callback: function (result) {
+                                    if(result){
+//                                        $('form#w1').submit();
+                                        sendotp();
+                                    }
+                                }
+                            });
+                        } else if (obj.status == 'validate_member_bank_detail_verification_confirmation') { 
+                            bootbox.confirm({
+                                message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+obj.message+'</span>',
+                                buttons: {
+                                    confirm: {
+                                        label: '" . Yii::t('app', 'Yes') . " ',
+                                        className: 'btn-primary'
+                                    },
+                                    cancel: {
+                                        label: '" . Yii::t('app', 'No') . "' ,
+                                        className: 'btn-danger'
+                                    }
+                                },
+                                callback: function (result) {
+                                    if(result){
+//                                        $('form#w1').submit();
+                                        sendotp();
+                                    }
+                                }
+                            });
+                           // bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.message+'</span>');
+                        } else {
+                           bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.message+'</span>');
+                        }
+                    }
+                });
 
-
+//                    $.ajax({
+//                        type: 'post',
+//                        url: '" . $action . "',
+//                        data: postVspDisbData,
+//                        dataType: 'json',
+//                        success: function(data) {
+//                            if (data.status == 'success') {  
+//                                window.location=data.url;
+//                            } else {
+//                                $('#loadercontent').hide();
+//                                $('#pageloader').hide();
+//                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+data.msg+\"</span></div></div>\");
+//                            }
+//                        },
+//                        error:function(data){
+//                            $('#loadercontent').hide();
+//                            $('#pageloader').hide();
+//                            return false;
+//                                //alert('Your data has not been submitted..Please try again');
+//                        }
+//                    });
+                
+        }
 
    // $('#error-summary').hide();
       //sendotp();
     });
   function sendotp(){
+                var bank = document.getElementById('tblvsppayment-union_bank_payment_code');
+                var bankCode= bank != null ? bank.value : '';
+                var ucode = '".$searchModel->union_code . "';
           $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['tbl-member-payment/send-otp']) . "',
-                                data: 'union_code=" . $searchModel->union_code . "',
+                                data: {'union_code':ucode,'union_bank_payment_code':bankCode},
+//                                data: 'union_code=" . $searchModel->union_code . "',
                                 success: function (data) {
                                     $('#loadercontent').hide();
                                     $('#pageloader').hide();

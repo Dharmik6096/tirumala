@@ -205,6 +205,7 @@ class CustomValidation extends Component {
                             ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                         'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
                     ],
+                        [['ifsc'], 'unique'],
                         [['ifsc'], function ($attribute, $params) {
                             Yii::$app->general->validateIfsc($this, $attribute, $params);
                         }, 'skipOnEmpty' => false],
@@ -282,6 +283,10 @@ class CustomValidation extends Component {
                         [['adhar_no'], function ($attribute, $params) {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
                         }, 'skipOnEmpty' => true],
+                ],
+                'TblVspPayment' => [
+                   // [['customer_type'], 'required', 'on' => ['remuneration', 'processpayment', 'paymenttypevendor','disbursesearch']],
+                    [['customer_type'], 'required', 'except' =>['unreleasepaymentsearch','unreleasePaymentUpdate']],
                 ],
             ],
             'NIFPL' => [
@@ -816,6 +821,7 @@ class CustomValidation extends Component {
                     ],
                 ],
                 'TblVehicleMaster' => [],
+                'TblVspPayment' => [],
             ],
             'KOTMALE' => [
                 'TblContactDetails' => [
@@ -977,6 +983,7 @@ class CustomValidation extends Component {
                     ],
                 ],
                 'TblVehicleMaster' => [],
+                'TblVspPayment' => [],
             ],
         ];
     }
