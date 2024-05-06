@@ -459,6 +459,7 @@ $('.dpu_data_icon').click(function(){
                     'calender',
                     'dashboard_society_status_pie_chart',
                     'dashboard_farmer_rmrd_blocks',
+                    'mobile_analysis_dashboard_blocks',
                     'today_vs_yesterday_collection',
                     'dashboard_farmer_status',
                     'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary'].indexOf(value) == -1) 
@@ -543,7 +544,38 @@ $('.dpu_data_icon').click(function(){
                             //alert('Your data has not been submitted.Please try again');
                         }
                     });
-                }else if(['today_vs_yesterday_collection'].indexOf(value) == 0){
+                }
+                else if(['mobile_analysis_dashboard_blocks'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'proc_mobile_user_count_list';
+                        
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-mobile-data']) . "',
+                        data: blockDataString+'&sp='+id,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                $('#mobile_block_mpp').text(obj1.res.total_app_installed_mpp+'/'+obj1.res.total_mpp);
+                                $('#mobile_block_member').text(obj1.res.total_app_installed_member+'/'+obj1.res.total_member);
+                                $('#mobile_block_employee').text(obj1.res.total_app_installed_employee+'/'+obj1.res.total_employee);
+                                $('#mobile_block_supervisor').text(obj1.res.total_app_installed_supervisor+'/'+obj1.res.total_supervisor);
+                                $('#mobile_block_manager').text(obj1.res.total_app_installed_az_manager+'/'+obj1.res.total_az_manager);
+                                $('#mobile_block_other_staff').text(obj1.res.total_app_installed_other_Staff+'/'+obj1.res.total_other_Staff);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+                else if(['today_vs_yesterday_collection'].indexOf(value) == 0){
                     var blockDataString = $('#collapse1 form').serialize();
                     var id= 'today_vs_yesterday_collection';
                     var union= '" . $unionCode . "';

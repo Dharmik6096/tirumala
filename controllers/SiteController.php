@@ -58,7 +58,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 
 class SiteController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data'];
 
     public function init() {
         parent::init();
@@ -230,7 +230,7 @@ class SiteController extends \app\controllers\ChildController {
 // $dpu_data = $this->DPUDataCollection($model);
 
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
-        ]);
+                    ]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -795,12 +795,12 @@ class SiteController extends \app\controllers\ChildController {
             $variable = explode('~', $data[0]);
             $val_type = explode('|', $data[1]);
             $param = $variable[0];
-            
+
             $param1 = isset($variable[1]) ? $variable[1] : '';
             $value = !empty($post[$param]) ? $post[$param] : $val_type[0];
             $value = (isset($val_type[1]) && $val_type[1] == 'date') ? date('Y-m-d', strtotime($value)) : $value;
             $value = (isset($val_type[1]) && $val_type[1] == 'list') ? str_replace('-', ',', $value) : $value;
-           
+
             if (!empty($val_type[1])) {
                 $checkshift = explode(':', $val_type[1]);
                 if (isset($checkshift[0]) && $checkshift[0] == 'dateshift') {
@@ -1439,7 +1439,7 @@ class SiteController extends \app\controllers\ChildController {
         $union = $data['union'];
         $union_str = 0;
         $mccc_str = 0;
-        
+
         if (!empty(Yii::$app->request->post('union'))) {
             $union_str = Yii::$app->request->post('union');
         } else if (!empty(Yii::$app->session->get('Unions'))) {
@@ -2545,7 +2545,7 @@ class SiteController extends \app\controllers\ChildController {
             $bmc_code = isset($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';;
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
 //            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $sp_param[] = $union;
             $sp_param[] = $plant;
@@ -2581,7 +2581,7 @@ class SiteController extends \app\controllers\ChildController {
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
 //            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
-            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';;
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
             $sp_param[] = $union;
             $sp_param[] = $plant;
@@ -2691,7 +2691,7 @@ class SiteController extends \app\controllers\ChildController {
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
 //            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
-            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';;
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
 
             $sp_param[] = $union;
             $sp_param[] = $plant;
@@ -2957,6 +2957,205 @@ class SiteController extends \app\controllers\ChildController {
     public function actionSchemaRefresh() {
         Yii::$app->db->schema->refresh();
         echo 'Schema Refreshed';
+    }
+
+    public function actionGetInstalledMpps() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_mpp';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_mpp', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledMembers() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_member';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_member', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledEmployees() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_employee';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_employee', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledSupervisors() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_supervisor';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_supervisor', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledManagers() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_az_manager';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_manager', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledOtherStaff() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_other_Staff';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_other_Staff', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+    
+    public function actionGetNotInstalledMpps() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_mpp';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_mpp', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledMembers() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_member';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_member', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledEmployees() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_employee';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_employee', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledSupervisors() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_supervisor';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_supervisor', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledManagers() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_az_manager';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_manager', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledOtherStaff() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_other_Staff';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_other_Staff', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionLoadDashboardMobileData() {
+        $sp_name = 'proc_mobile_user_count_list';
+        $sp_param[] = 1;
+        $sp_param[] = '';
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $res = [];
+        foreach ($results[0] as $key => $value) {
+            $res[$key] = $value;
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $res];
+    }
+
+    public function getMobileBlockStatus($sp_param) {
+        $sp_name = 'proc_mobile_user_count_list';
+        $mobile_status = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        return [$mobile_status];
     }
 
 }
