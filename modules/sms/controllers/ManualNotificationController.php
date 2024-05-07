@@ -21,7 +21,14 @@ class ManualNotificationController extends \app\controllers\ChildController {
     public function actionIndex() {
         $model = new ManualNotification();
         if ($this->report != '') {
-            $this->data = $this->getLabels($this->report);
+            $client_code = \Yii::$app->session->get('eiplCode');
+            if (!empty($client_code) && !empty($this->getLabels($this->report)[$client_code])) {
+                $this->data = $this->getLabels($this->report)[$client_code];
+            } else if (!empty($client_code) && !empty($this->getLabels($this->report)['EIPLCOMMON'])) {
+                $this->data = $this->getLabels($this->report)['EIPLCOMMON'];
+            } else {
+                $this->data = $this->getLabels($this->report);
+            }
             if (!empty($this->data['scenario'])) {
                 $model->scenario = $this->data['scenario'];
             }
@@ -38,14 +45,9 @@ class ManualNotificationController extends \app\controllers\ChildController {
 
     public function actionRmrdCollectionVsp() {
         $this->report = 'RmrdCollectionVsp';
-        return $this->actionIndex();
-    }
-
-    public function actionRmrdCollectionVspSmsIntegration() {
-        $this->report = 'RmrdCollectionVspSmsIntegration';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ManualNotification']['compare_type'] == '1') {
-                $this->report = 'RmrdCollectionVspSmsIntegrations';
+            if (isset(Yii::$app->request->queryParams['ManualNotification']['compare_type']) && Yii::$app->request->queryParams['ManualNotification']['compare_type'] == '1') {
+                $this->report = 'RmrdCollectionVspComparison';
             }
         }
         return $this->actionIndex();
@@ -118,27 +120,29 @@ class ManualNotificationController extends \app\controllers\ChildController {
     private function getLabels($l) {
         $label = [
             'RmrdCollectionVsp' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,date:dateshift:shift,data_type:static:data_type_filter,report_type',
-                'sp_name' => 'sp_alert_eipl_manual_rmrd_collection_vsp_list',
-                'sp_process' => 'sp_alert_eipl_manual_rmrd_collection_vsp_process',
-                'scenario' => 'RmrdCollectionVsp',
-                'title' => 'RMRD Collection (VSP)',
-                'report_type' => ['SMS' => 'SMS'],
+                'EIPLCOMMON' => [
+                    'param' => 'union_code,plant_code,mcc_code,bmc_code,date:dateshift:shift,data_type:static:data_type_filter,report_type',
+                    'sp_name' => 'sp_alert_eipl_manual_rmrd_collection_vsp_list',
+                    'sp_process' => 'sp_alert_eipl_manual_rmrd_collection_vsp_process',
+                    'scenario' => 'RmrdCollectionVsp',
+                    'title' => 'RMRD Collection (VSP)',
+                    'report_type' => ['SMS' => 'SMS'],
+                ],
+                'VRS_GLT' => [
+                    'param' => 'union_code,plant_code,mcc_code,bmc_code,date:dateshift:shift,data_type:static:data_type_filter,receiver_type,compare_type,compare_value:txt',
+                    'sp_name' => 'sp_sms_integration_vsp_without_comparison',
+                    'sp_process' => 'sp_sms_integration_vsp_send_msg',
+                    'scenario' => 'RmrdCollectionVspSmsIntegration',
+                    'title' => 'RMRD Collection (VSP)',
+                    'compare_type' => ['0' => Yii::t('app', 'Without Comparison'), '1' => Yii::t('app', 'With Comparison')],
+                ],
             ],
-            'RmrdCollectionVspSmsIntegration' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,date:dateshift:shift,data_type:static:data_type_filter,receiver_type,compare_type,compare_value:txt',
-                'sp_name' => 'sp_sms_integration_vsp_without_comparison',
-                'sp_process' => 'sp_sms_integration_vsp_send_msg',
-                'scenario' => 'RmrdCollectionVspSmsIntegration',
-                'title' => 'RMRD Collection (VSP) SMS Integration',
-                'compare_type' => ['0' => Yii::t('app', 'Without Comparison'), '1' => Yii::t('app', 'With Comparison')],
-            ],
-            'RmrdCollectionVspSmsIntegrations' => [
+            'RmrdCollectionVspComparison' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,date:dateshift:shift,data_type:static:data_type_filter,receiver_type,compare_type,compare_value:txt',
                 'sp_name' => 'sp_sms_integration_vsp_comparison',
                 'sp_process' => 'sp_sms_integration_vsp_send_msg',
                 'scenario' => 'RmrdCollectionVspSmsIntegration',
-                'title' => 'RMRD Collection (VSP) SMS Integration',
+                'title' => 'RMRD Collection (VSP)',
                 'compare_type' => ['0' => Yii::t('app', 'Without Comparison'), '1' => Yii::t('app', 'With Comparison')],
             ],
         ];
