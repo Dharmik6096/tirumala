@@ -2471,7 +2471,8 @@ div.crystalstyle{
     padding-right: 0px !important
 }
 .min_h_0{
-    min-height: auto !important
+    min-height: auto !important;
+    padding-bottom: 0px !important;
 }
 
 .height_65 {
@@ -5443,4 +5444,15 @@ div#w12 > .card.border-default {
     padding: 5px;
     height: 115px !important;
     text-align: center;
+}
+.div_mobile_dash_block_content {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+.mobile_dash_block_header {
+    color: #00A3DE !important;
+    text-align: center !important;
+    font-weight: 600;
+    font-size: 14px;
 }
