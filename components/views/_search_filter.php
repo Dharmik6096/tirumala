@@ -329,7 +329,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
@@ -384,14 +384,6 @@ if (!empty($filter_data)) {
                                         ?>
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, $depend_str, 'form-group col-sm-2 padding-right-5 padding-left-0', false, 'area_code'); ?>
-                                        </div>
-                                    <?php } ?>
-                                    <?php
-                                    if (in_array($value, array('billing_type'))) {
-                                        $f_cnt++
-                                        ?>
-                                        <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic('billing_type', $model, $form, ''); ?>
                                         </div>
                                     <?php } ?>
                                 <?php } ?>
