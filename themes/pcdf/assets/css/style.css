@@ -5124,3 +5124,25 @@ tr.highlightRow {
 .hover-black:hover {
     color: black;
 }
+.div_mobile_dash_block_content {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+.mobile_dash_block_header {
+    color: #00A3DE !important;
+    text-align: center !important;
+    font-weight: 600;
+    font-size: 14px;
+}
+.div_grid_dash_mobile_block {
+    width: calc(33.3% - 10px);
+    float: left;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    margin: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    padding: 5px;
+    height: 115px !important;
+    text-align: center;
+}

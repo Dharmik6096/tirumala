@@ -853,6 +853,7 @@ echo GhostMenu::widget([
                             ['label' => '914-' . Yii::t('app', 'File Generate Status'), 'url' => ['/misreports/reports/file-generate-status']],
                             ['label' => '915-' . Yii::t('app', 'Society Wise Rate Difference Report'), 'url' => ['/misreports/reports/society-wise-rate-difference-report']],
                             ['label' => '916-' . Yii::t('app', 'Tally Report'), 'url' => ['/misreports/reports/tally-report']],
+                            ['label' => '917-' . Yii::t('app', 'Log report of  the Mobile App'), 'url' => ['/misreports/reports/mobile-app-report']],
                     ]
                 ],
                     [
@@ -948,6 +949,7 @@ echo GhostMenu::widget([
                             ['label' => 'Group', 'url' => ['/user-management/auth-item-group/index'], 'active' => ($cntrl == 'auth-item-group'),],
                             ['label' => 'Mobile Dashboard Permission', 'url' => ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-widget-mapping'),],
                             ['label' => 'Mobile Menu Permission', 'url' => ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-menu-actions'),],
+                            ['label' => Yii::t('app', 'App Login Detail'), 'url' => ['/webservice/eipl/tbl-eipl-app-login/index'], 'active' => ($cntrl == 'tbl-eipl-app-login')],
                     ],
                 ],
                     [
