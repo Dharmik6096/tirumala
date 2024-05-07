@@ -48,7 +48,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Not Installed Area
                                                             <td class="custom_grid_normal"><?= ++$i; ?></td>
                                                             <?php
                                                             $user_model = new User();
-                                                            $uaer_model->user_code = $data['user_code'];
+                                                            $user_model->user_code = $data['user_code'];
                                                             ?>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['user_code'] ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['name'] ?></td>
