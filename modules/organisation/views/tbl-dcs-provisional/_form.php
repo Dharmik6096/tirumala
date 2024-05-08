@@ -40,7 +40,7 @@ if (!empty($model->address)) {
         $model->street2 = $address[1];
     }
 }
-$vendor = ['EIPL' => 'EIPL', 'BIPL' => 'BIPL'];
+$vendor = ['EIPL' => 'EIPL', 'BIPL' => 'BIPL', 'PROMPT' => 'PROMPT'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
 //$disable = !empty($model->bmc_code) ? TRUE : FALSE;
@@ -430,7 +430,7 @@ $form = ActiveForm::begin([
     </div>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="row">
-            <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
                 <?= Yii::$app->controls->reset(); ?>
