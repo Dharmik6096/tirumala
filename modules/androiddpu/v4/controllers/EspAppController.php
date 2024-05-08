@@ -182,6 +182,8 @@ class EspAppController extends RestController {
             $dcsDetail['m_lock_time'] = $d['m_lock_time'];
             $dcsDetail['e_start_time'] = $d['e_start_time'];
             $dcsDetail['e_lock_time'] = $d['e_lock_time'];
+            $dcsDetail['vendor_code'] = $d['vendor_code'];
+            $dcsDetail['dpu_type'] = $d['dpu_type'];
             $res_data ['dcsDetail'][] = $dcsDetail;
             $union_code = $d['union_code'];
         }
