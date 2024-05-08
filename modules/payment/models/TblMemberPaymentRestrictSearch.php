@@ -21,7 +21,7 @@ class TblMemberPaymentRestrictSearch extends TblMemberPaymentRestrict {
         return [
                 [['member_payment_restrict_code', 'originating_type'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'bmc_name', 'dcs_code', 'ex_code', 'dcs_name', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'ref_code'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['deletePaymentRestrict']],
+                [['union_code', 'plant_code'], 'required', 'on' => ['deletePaymentRestrict']],
         ];
     }
 
@@ -94,11 +94,16 @@ class TblMemberPaymentRestrictSearch extends TblMemberPaymentRestrict {
             // $query->where('0=1');
             return $dataProvider;
         }
-
-        if (!empty($this->bmc_code)) {
-            $query->andWhere(['tbl_member_payment_restrict.bmc_code' => $this->bmc_code]);
+        if (!empty($this->plant_code)) {
+            $query->andWhere(['tbl_member_payment_restrict.plant_code' => $this->plant_code]);
         } else {
             $query->andWhere('0=1');
+        }
+        if (!empty($this->mcc_plant_code)) {
+            $query->andWhere(['tbl_member_payment_restrict.mcc_plant_code' => $this->mcc_plant_code]);
+        }
+        if (!empty($this->bmc_code)) {
+            $query->andWhere(['tbl_member_payment_restrict.bmc_code' => $this->bmc_code]);
         }
 
         return $dataProvider;

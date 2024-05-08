@@ -19,6 +19,9 @@ use yii\web\View;
 
 <?php
 $attribute = [
+        ['attribute' => 'purchase_rate', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->purchaseRateCode, 'purchase_rate_code');
+        }, 'filter' => false,],
         ['attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code',],
         ['attribute' => 'reference_code', 'value' => 'reference_code',],
         [

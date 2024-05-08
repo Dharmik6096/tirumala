@@ -21,7 +21,6 @@ $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : 'Search');
                             ],
                             'method' => 'get',
                             'validateOnBlur' => FALSE,
-                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
@@ -104,6 +103,23 @@ $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : 'Search');
                                     <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                 </div>
                                 <?php
+                            }
+                            if (isset($value_array[1]) && $value_array[1] == 'txt') {
+                                ?>
+                                <div class="col-sm-3">
+                                    <?= $form->field($model, $value_array[0])->textInput(['maxlength' => true]) ?>
+                                </div>    
+                                <?php
+                            }
+                            if (in_array($value, array('receiver_type'))) {
+                                ?>
+                                <div class="col-sm-3">
+                                    <?= $form->field($model, 'receiver_type')->dropDownList(['SMS' => 'SMS']); ?>
+                                </div>    
+                                <?php
+                            }
+                            if (in_array($value, array('compare_type')) && isset($data['compare_type'])) {
+                                echo $form->field($model, 'compare_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['compare_type']);
                             }
                         }
                         if (isset($data['report_type'])) {
