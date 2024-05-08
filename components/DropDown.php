@@ -634,7 +634,7 @@ class DropDown extends Component {
     public function assign_list($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
-    
+
     public function task_user_selection($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tms/tbl-task/task-user-selection', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
@@ -1146,7 +1146,7 @@ class DropDown extends Component {
             'dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL'), 1 => Yii::t('app', 'Mobile AMCS')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL'), 1 => Yii::t('app', 'Mobile AMCS'), 92 => Yii::t('app', 'PROMPT')],
             ],
             'file_type' => [
                 'name' => 'source_type',
@@ -1340,10 +1340,15 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select DPU Type'),
                 'data' => [91 => Yii::t('app', 'BIPL')],
             ],
+            'PROMPT_dpu_type' => [
+                'name' => 'dpu_type',
+                'prompt' => Yii::t('app', 'Select DPU Type'),
+                'data' => [92 => Yii::t('app', 'PROMPT')],
+            ],
             'vendor_type' => [
                 'name' => 'vendor_type',
                 'prompt' => Yii::t('app', 'Select Vendor'),
-                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'EIPL' => Yii::t('app', 'EIPL')],
+                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'EIPL' => Yii::t('app', 'EIPL'), 'PROMPT' => Yii::t('app', 'PROMPT')],
             ],
             'action_perform' => [
                 'name' => 'action_perform',
