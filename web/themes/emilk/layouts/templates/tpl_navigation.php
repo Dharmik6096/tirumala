@@ -740,6 +740,14 @@ echo GhostMenu::widget([
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
                     'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Payment') . ' <b class="caret"></b></a>',
                     'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Bills') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/vendor-milk-bill-glt']],
+                                    ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/vendor-milk-bill-summary-glt']],
+                            ]
+                        ],
                             ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
                             ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment']],
                             ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/reports/member-payment']],
