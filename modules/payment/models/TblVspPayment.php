@@ -57,18 +57,18 @@ class TblVspPayment extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'bmc_code', 'customer_type', 'payment_cycle_code', 'multiple_bmc'], 'safe'],
-            [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery', 'union_bank_payment_code'], 'safe'],
-            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
-            [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code', 'p_customer_type', 'types_title'], 'safe'],
-            [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
-            [['bmc_code'], 'required', 'on' => ['remuneration', 'processpayment']],
+                [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'bmc_code', 'customer_type', 'payment_cycle_code', 'multiple_bmc'], 'safe'],
+                [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery', 'union_bank_payment_code'], 'safe'],
+                [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
+                [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code', 'p_customer_type', 'types_title'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
+                [['bmc_code'], 'required', 'on' => ['remuneration', 'processpayment']],
 //            [['payment_cycle_code'], 'required', 'on' => ['processpayment']],
             [['payment_cycle_code'], 'required', 'except' => ['remuneration', 'unreleasepaymentsearch', 'paymenttypevendor', 'unreleasePaymentUpdate']],
-            [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
-            [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name', 'payment_type'], 'safe'],
-            [['payment_release_type'], 'safe'],
-            [['payment_type'], 'required', 'on' => ['unreleasepaymentsearch', 'paymenttypevendor']],
+                [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+                [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name', 'payment_type'], 'safe'],
+                [['payment_release_type'], 'safe'],
+                [['payment_type'], 'required', 'on' => ['unreleasepaymentsearch', 'paymenttypevendor']],
 //            [['customer_type'], 'required', 'on' => ['paymenttypevendor','paymentdisburse']],
             [['release_date'], 'validateReleaseDate', 'on' => 'unreleasePaymentUpdate']
         ];
@@ -120,6 +120,7 @@ class TblVspPayment extends \app\models\ChildModel {
             'p_customer_type' => Yii::t('app', 'Type'),
             'p_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'payment_release_type' => Yii::t('app', 'Disburse Type'),
+            'billing_type' => Yii::t('app', 'Payment Type'),
         ];
     }
 
@@ -228,4 +229,5 @@ class TblVspPayment extends \app\models\ChildModel {
                     'billing_type' => 'regular',
                     'status' => ['locked']])->orderBy('net_payable')->all();
     }
+
 }
