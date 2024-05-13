@@ -635,6 +635,10 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
 
+    public function task_user_selection($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tms/tbl-task/task-user-selection', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
+    }
+
     public function asset_bom_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/asset-bom-list', 'Select', $multiple, $model->$name, $readonly);
@@ -1142,7 +1146,7 @@ class DropDown extends Component {
             'dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL'), 1 => Yii::t('app', 'Mobile AMCS')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL'), 1 => Yii::t('app', 'Mobile AMCS'), 92 => Yii::t('app', 'PROMPT')],
             ],
             'file_type' => [
                 'name' => 'source_type',
@@ -1336,10 +1340,15 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select DPU Type'),
                 'data' => [91 => Yii::t('app', 'BIPL')],
             ],
+            'PROMPT_dpu_type' => [
+                'name' => 'dpu_type',
+                'prompt' => Yii::t('app', 'Select DPU Type'),
+                'data' => [92 => Yii::t('app', 'PROMPT')],
+            ],
             'vendor_type' => [
                 'name' => 'vendor_type',
                 'prompt' => Yii::t('app', 'Select Vendor'),
-                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'EIPL' => Yii::t('app', 'EIPL')],
+                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'EIPL' => Yii::t('app', 'EIPL'), 'PROMPT' => Yii::t('app', 'PROMPT')],
             ],
             'action_perform' => [
                 'name' => 'action_perform',
@@ -1545,7 +1554,7 @@ class DropDown extends Component {
             'tab_type' => [
                 'name' => 'tab_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'EVEREST 7-INCH'), 2 => Yii::t('app', 'EVEREST 8-INCH'), 3 => Yii::t('app', 'STELLAPPS 7-INCH'), 4 => Yii::t('app', 'STELLAPPS 10-INCH'), 5 => Yii::t('app', 'STELLAPPS 8-INCH')],
+                'data' => [1 => Yii::t('app', 'EVEREST 7-INCH'), 2 => Yii::t('app', 'EVEREST 8-INCH'), 3 => Yii::t('app', 'STELLAPPS 7-INCH'), 4 => Yii::t('app', 'STELLAPPS 10-INCH'), 5 => Yii::t('app', 'STELLAPPS 8-INCH'), 6 => Yii::t('app', 'EVEREST ESP')],
             ],
             'applicability_type' => [
                 'name' => 'applicability_type',
@@ -1830,6 +1839,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Status'),
                 'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error'), 4 => Yii::t('app', 'Blocked')],
             ],
+            'performance_type' => [
+                'name' => 'performance_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['0' => Yii::t('app', 'High'), '1' => Yii::t('app', 'Low')],
+            ],
         ];
         return $records[$l];
     }
@@ -1968,6 +1982,7 @@ class DropDown extends Component {
             'party_master' => ['name' => 'party_master_code', 'fields' => 'party_master_code,party_name,owner_name', 'prompt' => 'Select Party', 'model' => 'TblPartyMaster'],
             'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name', 'prompt' => Yii::t('app', 'Select User'), 'model' => 'User'],
             'login_user_code' => ['name' => 'login_user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
+            'region' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }

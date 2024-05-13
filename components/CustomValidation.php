@@ -158,7 +158,9 @@ class CustomValidation extends Component {
                         [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
                         [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
                         [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                            return $model->isAttributeChanged('sap_vendor_code', FALSE);
+                        }],
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
                         [
                             ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
@@ -280,6 +282,10 @@ class CustomValidation extends Component {
                         [['adhar_no'], function ($attribute, $params) {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
                         }, 'skipOnEmpty' => true],
+                ],
+                'TblVspPayment' => [
+                    // [['customer_type'], 'required', 'on' => ['remuneration', 'processpayment', 'paymenttypevendor','disbursesearch']],
+                        [['customer_type'], 'required', 'except' => ['unreleasepaymentsearch', 'unreleasePaymentUpdate']],
                 ],
             ],
             'NIFPL' => [
@@ -815,6 +821,7 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [],
                 'TblBankDetails' => [],
+                'TblVspPayment' => [],
             ],
             'KOTMALE' => [
                 'TblContactDetails' => [
@@ -976,6 +983,7 @@ class CustomValidation extends Component {
                     ],
                 ],
                 'TblVehicleMaster' => [],
+                'TblVspPayment' => [],
             ],
         ];
     }

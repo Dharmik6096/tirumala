@@ -96,18 +96,18 @@ class TblBmcCollection extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'bmc_silos', FALSE, TRUE, ['module_name' => 'BMC', 'module_code' => $this->bmc_code], TRUE);
                 }, 'on' => ['importCsv']],
                 [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
-                [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer']],
-                [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData', 'rejectRespMap', 'DataTransfer']],
+                [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer', 'androidsync_coll']],
+                [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData', 'rejectRespMap', 'DataTransfer', 'androidsync_coll']],
                 [['sample_no'], 'number', 'min' => 0, 'on' => ['importCsv']],
-                [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer']],
+                [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer', 'androidsync_coll']],
                 [['rtpl', 'amount'], 'trim'],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer']],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer', 'androidsync_coll']],
                 [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
                     return $model->collection_type == '2';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
 
-          }", 'except' => ['post_sap_data', 'androidsync', 'importCsv', 'update', 'rejectRespMap', 'DataTransfer']],
+          }", 'except' => ['post_sap_data', 'androidsync', 'importCsv', 'update', 'rejectRespMap', 'DataTransfer', 'androidsync_coll']],
 //            [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create', 'create_allow']],
 //            [['customer_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'customer_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
 //                    return $this->shift_code;
@@ -694,14 +694,14 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }
             } else if ($sameMilkType == 1 && $diffMilkType == 1) {
                 $returnModel = $model->find()->where([
-                    'bmc_code' => $this->bmc_code,
-                    'customer_code' => $this->customer_code,
-                    'customer_type' => $this->customer_type,
-                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection)),
-                    'milk_type_code' => $this->milk_type_code,
-                    'milk_quality_type_code' => $this->milk_quality_type_code,
-                    'shift_code' => $this->shift_code,
-                    'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf]);
+                    'bmc_code' => $modelData->bmc_code,
+                    'customer_code' => $modelData->customer_code,
+                    'customer_type' => $modelData->customer_type,
+                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                    'milk_type_code' => $modelData->milk_type_code,
+                    'milk_quality_type_code' => $modelData->milk_quality_type_code,
+                    'shift_code' => $modelData->shift_code,
+                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                 }

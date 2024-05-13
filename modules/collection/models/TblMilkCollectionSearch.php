@@ -33,7 +33,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection', 'bulkdeleteMilkCollection']],
                 [['to_date'], 'validateToDate', 'on' => ['bulkdeleteMilkCollection']],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['sap-upload']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['sap-upload']],
         ];
     }
 

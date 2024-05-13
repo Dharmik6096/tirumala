@@ -32,7 +32,7 @@ $imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? 
                 </div>
             </div>
         </div>-->
-    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Installed']); ?>
+    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'shift'=>$model->shift , 'status' => 'Installed']); ?>
     <a href="<?= $url; ?>" class='href_link' >  
         <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">
@@ -55,7 +55,7 @@ $imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? 
                 </div>
             </div>
         </div>-->
-    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Online']); ?>
+    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'shift'=>$model->shift, 'status' => 'Online']); ?>
     <a href="<?= $url; ?>" class='href_link' >
         <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">
@@ -82,7 +82,7 @@ $imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? 
             </div>
         </div>-->
 
-    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Offline']); ?>
+    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'shift'=>$model->shift, 'status' => 'Offline']); ?>
     <a href="<?= $url; ?>" class='href_link' >
         <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">

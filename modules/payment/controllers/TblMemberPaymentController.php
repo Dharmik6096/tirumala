@@ -58,13 +58,14 @@ use app\modules\payment\models\TblMemberPaymentHeadSummary;
 use app\modules\payment\models\TblPaymentStop;
 use app\modules\payment\models\TblPaymentStopHistory;
 use app\modules\vsp\models\TblBillHead;
+use app\modules\payment\models\TblVspPayment;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
  */
 class TblMemberPaymentController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-total-recovery', 'member-payment-adjust-list', 'list-member-payment-summary-data'];
+    public $freeAccessActions = ['validate-total-recovery', 'member-payment-adjust-list', 'list-member-payment-summary-data', 'validate-bank-details', 'send-otp', 'verify-otp'];
 
     /**
      * Finds the TblMemberPayment model based on its primary key value.
@@ -621,10 +622,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
                     $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
                     $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
-
-                    $save_model[] = $historyModel;
-                    $save_model[] = $summaryData;
                 }
+                $save_model[] = $historyModel;
+                $save_model[] = $summaryData;
             }
 
             $successMsg = 'Payment of ' . $cnt . ' member adjusted succesfully';
@@ -702,17 +702,36 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
     private function getMemberDcsSpData($model, $reGenerate = 0, $stop_payment_only = 0) {
         // use for generate or regenerate data for Member Payment
         $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-        $data = [];
-        $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
-        $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
-        $data['union_code'] = $model->union_code;
-        $data['bmc_code'] = $model->bmc_code;
-        $data['payment_cycle_code'] = $model->payment_cycle_code;
-        $data['process_stop_payment'] = $stop_payment_only;
-        $data['user_code'] = $user;
+//        $data = [];
+//        $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
+//        $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
+//        $data['union_code'] = $model->union_code;
+//        $data['bmc_code'] = $model->bmc_code;
+//        $data['payment_cycle_code'] = $model->payment_cycle_code;
+//        $data['process_stop_payment'] = $stop_payment_only;
+//        $data['user_code'] = $user;
+//
+//        return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
+        $bmc_array = [];
 
-        return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
+        if (is_array($model->bmc_code)) {
+            $bmc_array = $model->bmc_code;
+        } else {
+            $bmc_array[] = $model->bmc_code;
+        }
 
+        foreach ($bmc_array as $bmc) {
+            $data = [];
+            $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
+            $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
+            $data['union_code'] = $model->union_code;
+            $data['bmc_code'] = $bmc;
+            $data['payment_cycle_code'] = $model->payment_cycle_code;
+            $data['process_stop_payment'] = $stop_payment_only;
+            $data['user_code'] = $user;
+            $result[] = Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
+        }
+        return $result;
         /*
           $fromDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
           $toDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
@@ -740,13 +759,27 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $searchModel->attributes = $model->attributes;
         $searchModel->payment_status = 'Lock';
         $dataProvider = $searchModel->search([]);
+        $dataProvider->pagination = false;
+        $d = $dataProvider->getModels();
+        $finalP = 0;
+        foreach ($d as $p) {
+            $pAmt = !empty($p->final_amount) ? $p->final_amount : 0;
+            $finalP = $finalP + $pAmt;
+        }
+
         //  $dataProvider->query->andWhere("(1=CASE WHEN (select COUNT(*) from tbl_member_payment_alias where tbl_member_payment_summary_alias.bmc_code=tbl_member_payment_alias.bmc_code and tbl_member_payment_summary_alias.payment_cycle_code=tbl_member_payment_alias.payment_cycle_code and payment_status != 'Lock' ) > 0 THEN 0 ELSE 1 END)");
 //        return $this->render('process_lock_dcs_payment', [
 //                    'model' => $model,
 //                    'searchModel' => $searchModel,
 //                    'dataProvider' => $dataProvider
 //        ]);
-
+        $union_bank = [];
+        if (!empty($model->union_code)) {
+            $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
+            if ($is_bank_integrated) {
+                $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
+            }
+        }
         $memberPaymentModel = new TblMemberPaymentAlias();
         $memberPaymentModel->attributes = $model->attributes;
         $negativeValCount = $memberPaymentModel->getNegativeValCount();
@@ -755,7 +788,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'title' => 'Member Payment Disburse : Step 1',
-                    'negativeValCount' => $negativeValCount
+                    'negativeValCount' => $negativeValCount,
+                    'finalP' => $finalP,
+                    'bank_show' => $union_bank
         ]);
     }
 
@@ -774,8 +809,20 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
     public function actionDisburseMemberPayment() {
         if (Yii::$app->request->post()) {
             $model = new TblMemberPaymentAlias();
-//            if (isset($_REQUEST['selection'])) {
             $model->load(Yii::$app->request->post());
+            $fileName = '';
+            $union_bank = '';
+            if (!empty($model->union_bank_payment_code)) {
+                $union_bank = TblUnionBankPayment::find()->where(['union_code' => $model->union_code, 'is_active' => 1, 'union_bank_payment_code' => $model->union_bank_payment_code])->one();
+            }
+            if (!empty($model->union_code)) {
+                $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
+            }
+            if ($is_bank_integrated && empty($union_bank)) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Please select Bank for disbursement.']);
+                return $this->redirect(\yii\helpers\Url::previous());
+            }
             if (!empty($model->payment_cycle_code)) {
                 if (Yii::$app->request->post('flag') == 'member') {
                     if (false) {
@@ -1089,22 +1136,48 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
                         $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
                         $originating_org_code = \Yii::$app->session->get('organizations_code');
-                        $param = [];
-                        $param['union_code'] = $model->union_code;
-                        $param['bmc_code'] = $model->bmc_code;
-                        $param['payment_cycle_code'] = $model->payment_cycle_code;
-                        $param['user_code'] = $user;
-                        $param['org_code'] = $originating_org_code;
-                        $param['org_type'] = 'PORTAL';
-                        $param['is_without_release'] = $model->payment_release_type;
-                        Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
+//                        $param = [];
+//                        $param['union_code'] = $model->union_code;
+//                        $param['bmc_code'] = $model->bmc_code;
+//                        $param['payment_cycle_code'] = $model->payment_cycle_code;
+//                        $param['user_code'] = $user;
+//                        $param['org_code'] = $originating_org_code;
+//                        $param['org_type'] = 'PORTAL';
+//                        $param['is_without_release'] = $model->payment_release_type;
+//                        Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
+//
+//                        $param = [];
+//                        $param['from_datetime'] = $model->from_datetime;
+//                        $param['customer_type'] = 'MEMBER';
+//                        $param['bmc_code'] = $model->bmc_code;
+//                        $param['user_code'] = $user;
+//                        Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                        $bmc_array = [];
+                        if (is_array($model->bmc_code)) {
+                            $bmc_array = $model->bmc_code;
+                        } else {
+                            $bmc_array[] = $model->bmc_code;
+                        }
+                        $unionBankPaymentCode = ($is_bank_integrated && !empty($union_bank)) ? $model->union_bank_payment_code : null;
+                        foreach ($bmc_array as $bmc) {
+                            $param = [];
+                            $param['union_code'] = $model->union_code;
+                            $param['bmc_code'] = $bmc;
+                            $param['payment_cycle_code'] = $model->payment_cycle_code;
+                            $param['user_code'] = $user;
+                            $param['org_code'] = $originating_org_code;
+                            $param['org_type'] = 'PORTAL';
+                            $param['is_without_release'] = $model->payment_release_type;
+                            $param['p_union_bank_payment_code'] = $unionBankPaymentCode;
+                            Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
 
-                        $param = [];
-                        $param['from_datetime'] = $model->from_datetime;
-                        $param['customer_type'] = 'MEMBER';
-                        $param['bmc_code'] = $model->bmc_code;
-                        $param['user_code'] = $user;
-                        Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                            $param = [];
+                            $param['from_datetime'] = $model->from_datetime;
+                            $param['customer_type'] = 'MEMBER';
+                            $param['bmc_code'] = $bmc;
+                            $param['user_code'] = $user;
+                            Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                        }
                         $msg_content = Yii::t('app', 'Member Payment Successfully Disbursed.');
                         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
                             'message' => $msg_content]);
@@ -1195,7 +1268,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         echo "</table>";
         exit();
 
-
 //        $header = [
 //            'mime' => 'application/ms-excel',
 //            'extension' => 'xls',
@@ -1271,6 +1343,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
     public function actionIndex() {
         $searchModel = new TblMemberPaymentSummarySearch();
+//        $searchModel->scenario = 'search_dialog';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 //        $dataProvider->pagination = false;
 
@@ -1411,7 +1484,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $aliasmodel->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $aliasmodel->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
         $dcs = $model->getRecoverDcs();
-        $recoverDcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
+        $recoverDcs = ArrayHelper::map($dcs, 'dcs_code', function ($dcs) {
                     return $dcs['dcs_name'] . '(' . $dcs['ref_code'] . ')';
                 });
         return $this->renderAjax('_recovery', [
@@ -1457,125 +1530,112 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $postData = Yii::$app->request->post()['paymentData'];
             $netPay = Yii::$app->request->post()['netPay'];
-            $saveModel = [];
-            $deleteModel = [];
-            $existAmount = 0;
-            if (!empty($existData)) {
-                foreach ($existData as $delete) {
-                    $historyModel = new TblMemberPaymentInstallmentHistory();
-                    Yii::$app->operation->history($delete, $historyModel, 'DELETE');
-                    $saveModel[] = $historyModel;
-                    $deleteModel[] = $delete;
-                    $existAmount = $existAmount + $delete->installment_amount;
+            $aliasModel = new TblMemberPaymentAlias();
+            $existAliasData = $aliasModel->getExistingData($instModel);
+            if ($existAliasData->net_payable >= 0) {
+                $saveModel = [];
+                $deleteModel = [];
+                $existAmount = 0;
+                if (!empty($existData)) {
+                    foreach ($existData as $delete) {
+                        $historyModel = new TblMemberPaymentInstallmentHistory();
+                        Yii::$app->operation->history($delete, $historyModel, 'DELETE');
+                        $saveModel[] = $historyModel;
+                        $deleteModel[] = $delete;
+                        $existAmount = $existAmount + $delete->installment_amount;
+                    }
                 }
-                //Alias table update
-                $aliasModel = new TblMemberPaymentAlias();
-                $existAliasData = $aliasModel->getExistingData($delete);
+                $details = explode(',', $postData);
 
-                $aliashistoryModel = new TblMemberPaymentAliasHistory();
-                Yii::$app->operation->history($existAliasData, $aliashistoryModel, 'UPDATE');
-                $saveModel[] = $aliashistoryModel;
-
-                $existAliasData->total_deduction = $existAliasData->total_deduction - $existAmount;
-                $existAliasData->final_amount = $existAliasData->final_amount + $existAmount;
-                $existAliasData->net_payable = $existAliasData->net_payable + $existAmount;
-                $saveModel[] = $existAliasData;
-
-                //Summary Alias table update
-                $summryModel = new TblMemberPaymentSummaryAlias();
-                $existSummaryData = $summryModel->getExistingData($delete);
-
-                $summaryhistoryModel = new TblMemberPaymentSummaryAliasHistory();
-                Yii::$app->operation->history($existSummaryData, $summaryhistoryModel, 'UPDATE');
-                $saveModel[] = $summaryhistoryModel;
-
-                $existSummaryData->total_deduction = $existSummaryData->total_deduction - $existAmount;
-                $existSummaryData->final_amount = $existSummaryData->final_amount + $existAmount;
-                $existSummaryData->net_payable = $existSummaryData->net_payable + $existAmount;
-                $saveModel[] = $existSummaryData;
-            }
-            $details = explode(',', $postData);
-
-            $totalAmount = 0;
-            if (!empty($details[0])) {
-                foreach ($details as $data) {
-                    $save = explode('###', $data);
-                    $instModel = new TblMemberPaymentInstallment();
-                    $instModel->product_sale_installment_code = $save[0];
-                    $instModel->payment_cycle_code = $save[1];
-                    $instModel->bmc_code = $save[2];
-                    $instModel->dcs_code = $save[3];
-                    $instModel->customer_code = $save[4];
-                    $instModel->customer_type = 'Member';
-                    $instModel->main_amount = $save[5];
-                    $instModel->installment_amount = $save[6];
-                    $instModel->product_sale_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'product_sale_code');
-                    $instModel->installment_date = Yii::$app->general->getmultiforeignkey($instModel->saleInstallment, ['saleCode'], 'invoice_date');
-                    $instModel->installment_date = Yii::$app->general->getmultiforeignkey($instModel->saleInstallment, ['saleCode'], 'invoice_date');
-                    $instModel->mcc_plant_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'mcc_plant_code');
-                    $instModel->plant_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'plant_code');
-                    $instModel->union_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'union_code');
-                    $existData = $instModel->getExistingData();
-                    $saveModel[] = $instModel;
+                $totalAmount = 0;
+                if (!empty($details[0])) {
+                    foreach ($details as $data) {
+                        $save = explode('###', $data);
+                        $instModel = new TblMemberPaymentInstallment();
+                        $instModel->product_sale_installment_code = $save[0];
+                        $instModel->payment_cycle_code = $save[1];
+                        $instModel->bmc_code = $save[2];
+                        $instModel->dcs_code = $save[3];
+                        $instModel->customer_code = $save[4];
+                        $instModel->customer_type = 'Member';
+                        $instModel->main_amount = $save[5];
+                        $instModel->installment_amount = $save[6];
+                        $instModel->product_sale_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'product_sale_code');
+                        $instModel->installment_date = Yii::$app->general->getmultiforeignkey($instModel->saleInstallment, ['saleCode'], 'invoice_date');
+                        $instModel->installment_date = Yii::$app->general->getmultiforeignkey($instModel->saleInstallment, ['saleCode'], 'invoice_date');
+                        $instModel->mcc_plant_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'mcc_plant_code');
+                        $instModel->plant_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'plant_code');
+                        $instModel->union_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'union_code');
+                        $existData = $instModel->getExistingData();
+                        $saveModel[] = $instModel;
 //                $saleModel = new TblSaleInstallments();
 //                $existData = $saleModel->find()->where(['product_sale_installment_code' => $instModel->product_sale_installment_code])->one();
 //                $existData->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
 //                $saveModel[] = $existData;
 
-                    $totalAmount = $totalAmount + $instModel->installment_amount;
+                        $totalAmount = $totalAmount + $instModel->installment_amount;
+                    }
                 }
 
                 //Alias table update
-                $aliasModel = new TblMemberPaymentAlias();
-                $existAliasData = $aliasModel->getExistingData($instModel);
+               if ((($existAmount + $existAliasData->net_payable) - $totalAmount ) >= 0) {
 
-                $aliashistoryModel = new TblMemberPaymentAliasHistory();
-                Yii::$app->operation->history($existAliasData, $aliashistoryModel, 'UPDATE');
-                $saveModel[] = $aliashistoryModel;
+                    $aliashistoryModel = new TblMemberPaymentAliasHistory();
+                    Yii::$app->operation->history($existAliasData, $aliashistoryModel, 'UPDATE');
+                    $saveModel[] = $aliashistoryModel;
 
-                $existAliasData->total_deduction = $existAliasData->total_deduction - $existAmount + $totalAmount;
-                $existAliasData->final_amount = $netPay - $totalAmount;
-                $existAliasData->net_payable = $existAmount + $existAliasData->net_payable - $totalAmount;
+                    $existAliasData->total_deduction = $existAliasData->total_deduction - $existAmount + $totalAmount;
+                    $existAliasData->final_amount = $existAmount + $existAliasData->final_amount - $totalAmount;
+                    $existAliasData->net_payable = $existAmount + $existAliasData->net_payable - $totalAmount;
 
-                $saveModel[] = $existAliasData;
+                    $saveModel[] = $existAliasData;
 
-                //Summary Alias table update
-                $summryModel = new TblMemberPaymentSummaryAlias();
-                $existSummaryData = $summryModel->getExistingData($instModel);
+                    //Summary Alias table update
+                    $summryModel = new TblMemberPaymentSummaryAlias();
+                    $existSummaryData = $summryModel->getExistingData($instModel);
 
-                $summaryhistoryModel = new TblMemberPaymentSummaryAliasHistory();
-                Yii::$app->operation->history($existSummaryData, $summaryhistoryModel, 'UPDATE');
-                $saveModel[] = $summaryhistoryModel;
+                    $summaryhistoryModel = new TblMemberPaymentSummaryAliasHistory();
+                    Yii::$app->operation->history($existSummaryData, $summaryhistoryModel, 'UPDATE');
+                    $saveModel[] = $summaryhistoryModel;
 
-                $existSummaryData->total_deduction = $existSummaryData->total_deduction - $existAmount + $totalAmount;
-                $existSummaryData->final_amount = $existAmount + $existSummaryData->final_amount - $totalAmount;
-                $existSummaryData->net_payable = $existAmount + $existSummaryData->net_payable - $totalAmount;
-                $saveModel[] = $existSummaryData;
-                
-                   // head table update
-                $pro_sale_head = TblBillHead::find()->where(['default_bill_head_code' => 6, 'bill_head_for' => 'MEMBER', 'union_code' => $instModel->union_code])->one();
-                $headSummary = new TblMemberPaymentHeadSummary();
-                $headSummaryModel = $headSummary::find()
-                        ->where(['bmc_code' => $instModel->bmc_code, 'dcs_code' => $instModel->dcs_code, 'payment_cycle_code' => $instModel->payment_cycle_code, 'bill_head_code' => $pro_sale_head->bill_head_code])
-                        ->one();
-                $headSummaryModel->amount = $headSummaryModel->amount - $existAmount + $totalAmount;
-                $saveModel[] = $headSummaryModel;
+                    $existSummaryData->total_deduction = $existSummaryData->total_deduction - $existAmount + $totalAmount;
+                    $existSummaryData->final_amount = $existAmount + $existSummaryData->final_amount - $totalAmount;
+                    $existSummaryData->net_payable = $existAmount + $existSummaryData->net_payable - $totalAmount;
+                    $saveModel[] = $existSummaryData;
 
-                $memberHead = new TblMemberPaymentHead();
-                $memberHeadModel = $memberHead::find()
-                        ->where(['bmc_code' => $instModel->bmc_code, 'dcs_code' => $instModel->dcs_code, 'member_code' => $instModel->customer_code, 'payment_cycle_code' => $instModel->payment_cycle_code, 'bill_head_code' => $pro_sale_head->bill_head_code])
-                        ->one();
-                $memberHeadModel->amount = $memberHeadModel->amount - $existAmount + $totalAmount;
-                $saveModel[] = $memberHeadModel;
-            }
-            $response = [];
-            $response['status'] = 'error';
-            $response['message'] = 'error';
-            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Member Installment Deduction', 'create']);
-            if ($transaction == 'customRedirect') {
-                $response['status'] = 'success';
+                    $instModel = !empty($instModel) ? $instModel : $delete;
+                    $union_code = !empty($instModel->union_code) ? $instModel->union_code : $delete->union_code;
+                    
+                    // head table update
+                    $pro_sale_head = TblBillHead::find()->where(['default_bill_head_code' => 6, 'bill_head_for' => 'MEMBER', 'union_code' => $union_code])->one();
+                    $headSummary = new TblMemberPaymentHeadSummary();
+                    $headSummaryModel = $headSummary::find()
+                            ->where(['bmc_code' => $instModel->bmc_code, 'dcs_code' => $instModel->dcs_code, 'payment_cycle_code' => $instModel->payment_cycle_code, 'bill_head_code' => $pro_sale_head->bill_head_code])
+                            ->one();
+                    $headSummaryModel->amount = $headSummaryModel->amount - $existAmount + $totalAmount;
+                    $saveModel[] = $headSummaryModel;
+
+                    $memberHead = new TblMemberPaymentHead();
+                    $memberHeadModel = $memberHead::find()
+                            ->where(['bmc_code' => $instModel->bmc_code, 'dcs_code' => $instModel->dcs_code, 'member_code' => $instModel->customer_code, 'payment_cycle_code' => $instModel->payment_cycle_code, 'bill_head_code' => $pro_sale_head->bill_head_code])
+                            ->one();
+                    $memberHeadModel->amount = $memberHeadModel->amount - $existAmount + $totalAmount;
+                    $saveModel[] = $memberHeadModel;
+
+                    $response = [];
+                    $response['status'] = 'error';
+                    $response['message'] = 'error';
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Member Installment Deduction', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $response['status'] = 'success';
+                    } else {
+                        $response['message'] = 'error';
+                    }
+                } else {
+                    $response['message'] = 'Installment recovery amount is more than Final Pay';
+                }
             } else {
-                $response['message'] = 'error';
+                $response['message'] = 'Final Pay must be postive';
             }
             Yii::$app->response->format = Response::FORMAT_JSON;
             return Json::encode($response);
@@ -1694,4 +1754,179 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionValidateBankDetails() {
+        if (Yii::$app->request->post()) {
+            $model = new TblUnionBankPayment();
+            $model->union_code = Yii::$app->request->post('union_code');
+            $model->union_bank_payment_code = !empty(Yii::$app->request->post('union_bank_payment_code')) ? Yii::$app->request->post('union_bank_payment_code') : '';
+            $modelData = $model->getUnionBankRecord();
+            $bmcCode = Yii::$app->request->post('bmc_code');
+
+            $type = !empty(Yii::$app->request->post('type')) ? Yii::$app->request->post('type') : 'Member';
+//            !empty($bmcCode) && $bmcCode == '004' && 
+            $msg_type = '';
+            $msg = '';
+            if (!empty($bmcCode) && !empty($modelData) && (!empty($modelData->file_path) || $modelData->integration_mode == 'API') && !empty($modelData->mobile_no)) {
+
+                try {
+                    if (strtolower($type) == 'member') {
+                        $paymentModel = new TblMemberPaymentAlias();
+                        $paymentModel->payment_cycle_code = Yii::$app->request->post('payment_cycle_code');
+                        $paymentModel->bmc_code = Yii::$app->request->post('bmc_code');
+                        $paymentModelData = $paymentModel->getBmcWiseData();
+                        $totalMemberCount = count($paymentModelData);
+                        $hasBankDetailMemberCount = 0;
+                        $hasVerifiedBankDetailMemberCount = 0;
+                        $msg_type = 'Members';
+                        foreach ($paymentModelData as $member) {
+                            if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code)) {
+                                $hasBankDetailMemberCount++;
+                            }
+                            if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code) && !empty($member->is_verified)) {
+                                $hasVerifiedBankDetailMemberCount++;
+                            }
+                        }
+                    } else if (strtolower($type) == 'vsp') {
+
+                        $vspModel = new TblVspPayment();
+                        $vspModel->union_code = Yii::$app->request->post('union_code');
+                        $vspModel->payment_cycle_code = Yii::$app->request->post('payment_cycle_code');
+                        $vspModel->bmc_code = Yii::$app->request->post('bmc_code');
+                        $vspModelData = $vspModel->getVendorPaymentRecords();
+                        $totalMemberCount = count($vspModelData);
+                        $hasBankDetailMemberCount = 0;
+                        $hasVerifiedBankDetailMemberCount = 0;
+                        $msg_type = 'Vendors';
+                        foreach ($vspModelData as $member) {
+                            if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code)) {
+                                $hasBankDetailMemberCount++;
+                            }
+                            if (!empty($member->bank_account_no) && !empty($member->bank_code) && !empty($member->branch_code) && !empty($member->is_verified)) {
+                                $hasVerifiedBankDetailMemberCount++;
+                            }
+                        }
+                    }
+
+                    if ($hasBankDetailMemberCount == $totalMemberCount && $hasVerifiedBankDetailMemberCount == $hasBankDetailMemberCount) {
+                        $status = 'success';
+                        $msg = '';
+                    } else {
+                        if ($hasBankDetailMemberCount < $totalMemberCount) {
+                            $errorCount = $totalMemberCount - $hasBankDetailMemberCount;
+                            $status = 'validate_member_bank_detail_confirmation';
+                            $msg .= 'Bank Details not Available for ' . $errorCount . ' out of ' . $totalMemberCount . ' ' . $msg_type . ' . Are you sure you want to Continue?' . '<br>';
+                        }
+                        if ($hasBankDetailMemberCount > $hasVerifiedBankDetailMemberCount || $hasBankDetailMemberCount < $hasVerifiedBankDetailMemberCount) {
+                            $errorCount = $hasBankDetailMemberCount - $hasVerifiedBankDetailMemberCount;
+                            $status = 'validate_member_bank_detail_verification_confirmation';
+                            $msg .= 'Bank Details not Verified for ' . $errorCount . ' out of ' . $hasBankDetailMemberCount . ' ' . $msg_type . '  .  Are you sure you want to Continue?' . '<br>';
+                        }
+                    }
+                } catch (\Throwable $ex) {
+                    $msg = 'SMS Service Not Availabe.';
+                    $status = 'error';
+                }
+            } else {
+                $status = 'allow_without_otp';
+                $msg = '';
+//                $status = 'error';
+//                $msg = 'Bank intigration not yet done.';
+            }
+
+
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode(['status' => $status, 'message' => $msg]);
+        }
+    }
+
+    public function actionSendOtp() {
+        if (Yii::$app->request->post()) {
+            $status = 'error';
+            $msg = 'SMS Service Not Availabel.';
+            try {
+                Yii::$app->session->set('otp_id', NULL);
+                $model = new TblUnionBankPayment();
+                $model->union_code = Yii::$app->request->post('union_code');
+                $model->union_bank_payment_code = !empty(Yii::$app->request->post('union_bank_payment_code')) ? Yii::$app->request->post('union_bank_payment_code') : '';
+                $f_date = !empty(Yii::$app->request->post('from_date')) ? Yii::$app->request->post('from_date') : '';
+                $t_date = !empty(Yii::$app->request->post('to_date')) ? Yii::$app->request->post('to_date') : '';
+                $bmc = !empty(Yii::$app->request->post('bmc_name')) ? Yii::$app->request->post('bmc_name') : '';
+                $amount = !empty(Yii::$app->request->post('amount')) ? Yii::$app->request->post('amount') : '';
+                $from_date = !empty($f_date) ? date('d-m-Y', strtotime($f_date)) : '';
+                $to_date = !empty($t_date) ? date('d-m-Y', strtotime($t_date)) : '';
+                $payment = $from_date . ' to ' . $to_date;
+                $bmcName = $bmc;
+                $model = $model->getUnionBankRecord();
+                $otp_model = new TblPaymentOtpVerification();
+                $otp_model->attributes = $model->attributes;
+                $otp_model->otp_code = rand(1000, 9999);
+                if ($otp_model->save()) {
+                    Yii::$app->session->set('otp_id', $otp_model->id);
+//                    $mobile = '919879468958';
+                    $mobile = '91' . $model->mobile_no;
+//                            $message = 'Your OTP for Payment is ' . $otp_model->otp_code;
+//                            Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
+
+                    $templateModel = new TblAlertTemplate();
+                    $templateData = $templateModel->getTemplateData('farmer_payment');
+
+                    if (!empty($templateData)) {
+                        $arrFrom = array("{OTP}", "{payment_cycle}", "{bmc}", "{name}", "{amount}");
+                        $arrTo = array($otp_model->otp_code, $payment, $bmcName, 'farmers', $amount);
+                        $word = $templateData->message;
+                        $message = str_replace($arrFrom, $arrTo, $word);
+
+                        $sms_data = [];
+                        $sms_data['refecence_code'] = (string) $otp_model->id;
+                        $sms_data['module_type'] = 'farmer_payment';
+                        if (false && YII_ENV_DEV) {
+                            //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                        } else {
+                            Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, true, $templateData->header_info);
+                        }
+                    }
+                    $status = 'success';
+                    $msg = '';
+                } else {
+                    $status = 'error';
+                    $msg = 'SMS Service Not Availabel.';
+                }
+            } catch (\Throwable $ex) {
+                $msg = 'SMS Service Not Available.';
+                $status = 'error';
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode(['status' => $status, 'message' => $msg]);
+        }
+    }
+
+    public function actionVerifyOtp() {
+        if (Yii::$app->session->get('otp_id') != NULL && Yii::$app->request->post()) {
+            try {
+                $msg = 'Please Enter valid otp.';
+                $status = 'error';
+                $otp_data = TblPaymentOtpVerification::findOne(Yii::$app->session->get('otp_id'));
+                if ($otp_data->attempt < 3) {
+                    $otp_data->attempt += 1;
+                    if ($otp_data->otp_code == Yii::$app->request->post('otp_code')) {
+                        $otp_data->status = 'Verified';
+                        $status = 'success';
+                    } else {
+                        $otp_data->status = 'Notverified';
+                        $status = 'error';
+                        $msg = 'Please Enter valid otp.';
+                    }
+                    $otp_data->save();
+                } else {
+                    $status = 'error';
+                    $msg = 'You have already attempted 3 time.';
+                }
+            } catch (\Throwable $ex) {
+                $msg = 'An error occurred on the server while verify opt.';
+                $status = 'error';
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode(['status' => $status, 'message' => $msg]);
+        }
+    }
 }

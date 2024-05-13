@@ -2,10 +2,13 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\Url;
+use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\payment\models\TblMemberPaymentSearch */
 /* @var $form yii\widgets\ActiveForm */
+$multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') == '1' ? TRUE : FALSE;
 ?>
 
 <div class="tbl-member-payment-search">
@@ -14,7 +17,6 @@ use yii\widgets\ActiveForm;
     $form = ActiveForm::begin([
                 'method' => 'get',
                 'validateOnBlur' => false,
-                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,
@@ -28,13 +30,13 @@ use yii\widgets\ActiveForm;
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmemberpaymentalias-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
         </div> 
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmemberpaymentalias-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmemberpaymentalias-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), $multiple); ?>
         </div>      
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberpaymentalias-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberpaymentalias-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
         </div>
         <!--<div class="col-sm-2">-->
-        <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblmemberpaymentalias-bmc_code', 'customer_type', TRUE, FALSE); ?>
+        <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblmemberpaymentalias-bmc_code', 'customer_type', TRUE, FALSE);   ?>
         <!--</div>-->
         <div class="col-sm-2">
             <?php
@@ -45,7 +47,6 @@ use yii\widgets\ActiveForm;
             ?>
             <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblmemberpaymentalias-union_code,tblmemberpaymentalias-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
         </div>
-
         <div class=" col-sm-3 form-group mt23">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         </div>
@@ -55,3 +56,4 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+

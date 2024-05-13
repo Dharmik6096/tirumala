@@ -39,6 +39,7 @@ use app\modules\payment\models\TblPaymentStop;
 use app\modules\payment\models\TblPaymentStopHistory;
 use app\modules\payment\models\TblRemunerationSummary;
 use yii\widgets\ActiveForm;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * TblVspPaymentController implements the CRUD actions for TblVspPayment model.
@@ -74,26 +75,22 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     public function actionCreate() {
         $model = new TblVspPayment();
+        $customer = new TblCustomerMaster();
+        $types_title = '';
         if ($model->load(Yii::$app->request->post())) {
-            $multiple_bmc = FALSE;
-            $bmc_array = [];
-            $bmc_array[] = $model->bmc_code;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $model->bmc_code = $model->p_bmc_code;
-                $model->customer_type = $model->p_customer_type;
-                $model->payment_cycle_code = $model->p_payment_cycle_code;
-                $multiple_bmc = TRUE;
-                $bmc_array = $model->p_bmc_code;
-            }
             $model->scenario = 'processpayment';
             if ($model->validate()) {
+                if (empty($model->customer_type) && !empty($model->bmc_code)) {
+                    $data = $customer->customerType($model->bmc_code);
+                    $model->customer_type = array_keys($data);
+                    $model->types_title = 'All (' . implode('/', array_values($data)) . ') ';
+                }
                 $result = 'success';
                 $queryParam = [];
                 $queryParam[] = 'process-payment';
                 $queryParamRegenerate = [];
                 $queryParam['TblVspPayment'] = ['plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code,
-                    'union_code' => $model->union_code, 'customer_type' => $model->customer_type, 'payment_cycle_code' => $model->payment_cycle_code, 'stop_payment_only' => 0];
+                    'union_code' => $model->union_code, 'customer_type' => $model->customer_type, 'payment_cycle_code' => $model->payment_cycle_code, 'stop_payment_only' => 0, 'types_title' => $model->types_title];
                 $queryParamRegenerate = $queryParam;
                 $queryParamRegenerate['reGenerate'] = 0;
                 $msg = '';
@@ -140,18 +137,10 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     public function actionCreateStopPayment() {
         $model = new TblVspPayment();
+        $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') == '1' ? TRUE : FALSE;
         if ($model->load(Yii::$app->request->post())) {
-            $multiple_bmc = FALSE;
             $bmc_array = [];
-            $bmc_array[] = $model->bmc_code;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $model->bmc_code = $model->p_bmc_code;
-                $model->customer_type = $model->p_customer_type;
-                $model->payment_cycle_code = $model->p_payment_cycle_code;
-                $multiple_bmc = TRUE;
-                $bmc_array = $model->p_bmc_code;
-            }
+            $bmc_array = $model->bmc_code;
             $model->scenario = 'processpayment';
             if ($model->validate()) {
                 $model->stop_payment_only = 1;
@@ -166,7 +155,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                         $this->getVspSpData($model);
                     }
                     $model->bmc_code = $bmc_array;
-                    return $this->redirect(['payment-adjust', 'TblVspPayment' => ['multiple_bmc' => $multiple_bmc, 'mcc_plant_code' => $model->mcc_plant_code, 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'union_code' => $model->union_code]]);
+                    return $this->redirect(['payment-adjust', 'TblVspPayment' => ['multiple_bmc' => $multiple_bmc, 'mcc_plant_code' => $model->mcc_plant_code, 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'union_code' => $model->union_code, 'types_title' => $model->types_title]]);
                 } else {
                     $msg = Yii::t('app', 'Stop Payment data is not available');
                     Yii::$app->getSession()->setFlash('success', [
@@ -183,26 +172,41 @@ class TblVspPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionProcessPayment($reGenerate = 0) {
+        $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') == '1' ? TRUE : FALSE;
+
         if (Yii::$app->request->get()) {
             $model = new TblVspPayment();
             $model->load(Yii::$app->request->get());
             if ($reGenerate == 1) {
                 $bmc_array = [];
-                $bmc_array[] = $model->bmc_code;
+                $bmc_code = $model->bmc_code;
+
+                $customer_array = [];
+                $customer = $model->customer_type;
+
                 if (is_array($model->bmc_code)) {
                     $bmc_array = $model->bmc_code;
+                } else {
+                    $bmc_array[] = $model->bmc_code;
                 }
+                
+                if (is_array($model->customer_type)) {
+                    $customer_array = $model->customer_type;
+                } else {
+                    $customer_array[0] = $model->customer_type;
+                }
+                
                 foreach ($bmc_array as $bmc) {
-                    $model->bmc_code = $bmc;
-                    $this->getVspSpData($model);
+                    foreach ($customer_array as $type) {
+                        $model->customer_type = $type;
+                        $model->bmc_code = $bmc;
+                        $this->getVspSpData($model);
+                    }
                 }
+                $model->bmc_code = $bmc_code;
+                $model->customer_type = $customer;
             }
-            $multiple_bmc = FALSE;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $multiple_bmc = TRUE;
-            }
-            return $this->redirect(['payment-adjust', 'TblVspPayment' => ['multiple_bmc' => $multiple_bmc, 'mcc_plant_code' => $model->mcc_plant_code, 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'union_code' => $model->union_code]]);
+            return $this->redirect(['payment-adjust', 'TblVspPayment' => ['multiple_bmc' => $multiple_bmc, 'mcc_plant_code' => $model->mcc_plant_code, 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'union_code' => $model->union_code, 'types_title' => $model->types_title]]);
         }
     }
 
@@ -210,13 +214,13 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
-
         if (Yii::$app->request->post()) {
             $bmc_array = [];
             $postData = Yii::$app->request->post();
             $stop_payment_customer = !empty($postData['selection']) ? $postData['selection'] : [];
             $stop_payment_reason = !empty($postData['TblVspPayment']) ? $postData['TblVspPayment'] : [];
             $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'processed';
+            $types_title = !empty($postData['types_title']) ? $postData['types_title'] : '';
 //        if (Yii::$app->request->post('TblVspPayment')) {
 //            $postData = Yii::$app->request->post();
             $adjust_id = Yii::$app->request->post('TblVspPayment')['vsp_payment_code'];
@@ -311,7 +315,13 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     }
                 }
             }
-            $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $delete_model, ['Payment of ' . Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' ' . $processFlag . ' succesfully', 'info']);
+            $customer_type = '';
+            if (!empty($types_title)) {
+                $customer_type .= $types_title;
+            } else {
+                $customer_type .= Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+            }
+            $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $delete_model, ['Payment of ' . $customer_type . ' ' . $processFlag . ' succesfully', 'info']);
 
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             $msg = '';
@@ -526,37 +536,30 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                 ->execute();
         /* delete recovery data */
         return Yii::$app->ClientPaymentConfig->processPayment('vsp_payment', $data);
-        /*
-          $result = \Yii::$app->db->createCommand("{CALL sp_vsp_payment (:union_code,:from_date,:from_shift,:to_date,:to_shift,:payment_cycle_code,:bmc_code,:customer_type)}")
-          ->bindValue(':from_date', date('Y-m-d H:i:s', strtotime($paymentCycle->from_date)))
-          ->bindValue(':to_date', date('Y-m-d H:i:s', strtotime($paymentCycle->to_date)))
-          ->bindValue(':from_shift', $paymentCycle->from_shift)
-          ->bindValue(':to_shift', $paymentCycle->to_shift)
-          ->bindValue(':union_code', $model->union_code)
-          ->bindValue(':payment_cycle_code', $model->payment_cycle_code)
-          ->bindValue(':bmc_code', $model->bmc_code)
-          ->bindValue(':customer_type', $model->customer_type);
-          $query = $result->execute();
-          return $query; */
     }
 
     public function actionPaymentDisburse() {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
-        $multiple_bmc = FALSE;
-        $mcc_data = $model->mccPlantCode;
-        if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-            $model->bmc_code = $model->p_bmc_code;
-            $model->customer_type = $model->p_customer_type;
-            $model->payment_cycle_code = $model->p_payment_cycle_code;
-            $multiple_bmc = TRUE;
+        $customer = new TblCustomerMaster();
+        $query = $model->find();
+        $types_title = '';
+        if (!$model->validate()) {
+            $query = $query->where('0=1');
+        } else {
+            $query = $query->where(['payment_cycle_code' => $model->payment_cycle_code,
+                'bmc_code' => $model->bmc_code,
+                'status' => ['locked', 'rejected']]);
+            if (empty($model->customer_type) && !empty($model->bmc_code)) {
+                $data = $customer->customerType($model->bmc_code);
+                // $model->customer_type = array_keys($data);
+                $model->types_title = 'All (' . implode('/', array_values($data)) . ') ';
+                $query = $query->andWhere(['customer_type' => array_keys($data)]);
+            } else {
+                $query = $query->andWhere(['customer_type' => $model->customer_type]);
+            }
         }
-        $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code,
-            'bmc_code' => $model->bmc_code,
-            'customer_type' => $model->customer_type,
-            'status' => ['locked', 'rejected']]);
-//  ->andWhere(['>', 'final_pay', 0]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false
@@ -572,33 +575,22 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         if (Yii::$app->request->post()) {
             $model = new TblVspPayment();
-//   if (isset($_REQUEST['selection'])) {
+
             $model->load(Yii::$app->request->post());
+            if (!empty(Yii::$app->request->post()['types_title'])) {
+                $model->types_title = Yii::$app->request->post()['types_title'];
+            }
             if (!empty($model->payment_cycle_code)) {
                 if (Yii::$app->request->post('flag') == 'vsp') {
-//  $model->dcs_code = Yii::$app->request->post('selection');
-                    $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code,
-                                'bmc_code' => $model->bmc_code,
-                                'customer_type' => $model->customer_type,
-                                'status' => ['locked', 'rejected']])
-// ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
-                            ->all();
 
-                    /*   if (Yii::$app->session->get('makerChecker') == 1) {
-                      $payment_cnt = $model->find()->select(['dcs_code', 'final_pay' => 'round(final_pay,0)'])->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected'], 'dcs_code' => $model->dcs_code])
-                      ->andWhere(['<>', 'ifsc', ''])->andWhere(['is not', 'ifsc', NULL])
-                      ->andWhere(['<>', 'bank_account_no', ''])->andWhere(['is not', 'bank_account_no', NULL])
-                      ->andWhere(['is_verified' => [1]])
-                      ->asArray()
-                      ->all();
-                      } else {
-                      $payment_cnt = $model->find()->select(['dcs_code', 'final_pay' => 'round(final_pay,0)'])->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected'], 'dcs_code' => $model->dcs_code])
-                      ->andWhere(['<>', 'ifsc', ''])->andWhere(['is not', 'ifsc', NULL])
-                      ->andWhere(['<>', 'bank_account_no', ''])->andWhere(['is not', 'bank_account_no', NULL])
-                      ->andWhere(['is_verified' => [0, 1]])
-                      ->asArray()
-                      ->all();
-                      } */
+                    $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code,
+                        'bmc_code' => $model->bmc_code,
+                        'status' => ['locked', 'rejected']]);
+                    if (!empty($model->customer_type)) {
+                        $query = $query->andWhere(['customer_type' => $model->customer_type]);
+                    }
+                    $query = $query->all();
+
                     $pay_cnt = count($query);
                     $pay_amount = array_sum(array_column($query, 'final_pay'));
                     $dataProvider = new ArrayDataProvider([
@@ -608,10 +600,19 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                     $tot_cnt = count($query);
                     Yii::$app->getSession()->setFlash('success', ['type' => 'success',
                         'message' => 'Out of (<b>' . $tot_cnt . '</b>) Vendor Payment of (<b>' . $pay_cnt . '</b>)  Vendor will be only done.<br/>Total Payable :: <b>' . $pay_amount . '</b>']);
+
+                    $union_bank = [];
+                    if (!empty($model->union_code)) {
+                        $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated_vendor', 'PORTAL') == 1 ? true : false;
+                        if ($is_bank_integrated) {
+                            $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
+                        }
+                    }
                     return $this->render('confirm-payment', [
                                 'pay_amount' => $pay_amount,
                                 'searchModel' => $model,
                                 'dataProvider' => $dataProvider,
+                                'bank_show' => $union_bank,
                     ]);
                 } else {
                     if ($this->exportCSV($model)) {
@@ -619,22 +620,20 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                     }
                 }
             }
-//            } else {
-//                return $this->redirect(\yii\helpers\Url::previous());
-//            }
         }
     }
 
     protected function exportCSV($model) {
         $newModel = new TblVspPayment();
         $query = $newModel->find()->where(['tbl_vsp_payment.payment_cycle_code' => $model->payment_cycle_code,
-                    'tbl_vsp_payment.bmc_code' => $model->bmc_code,
-                    'tbl_vsp_payment.customer_type' => $model->customer_type,
-                    'tbl_vsp_payment.status' => ['locked', 'rejected'],
-                        // 'tbl_vsp_payment.dcs_code' => $_REQUEST['selection']
-                ])
-// ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
-                ->joinWith(['dcsCode', 'mainCustomerCode'])
+            'tbl_vsp_payment.bmc_code' => $model->bmc_code,
+            'tbl_vsp_payment.status' => ['locked', 'rejected'],
+                // 'tbl_vsp_payment.dcs_code' => $_REQUEST['selection']
+        ]);
+        if (!empty($model->customer_type)) {
+            $query = $query->andWhere(['tbl_vsp_payment.customer_type' => $model->customer_type]);
+        }
+        $query = $query->joinWith(['dcsCode', 'mainCustomerCode'])
                 ->all();
 
         $extention = 'xls';
@@ -651,6 +650,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         echo "<table border='1'>";
         echo "<tr>";
         echo "<td>Vendor Code</td>";
+        echo "<td>Vendor Type</td>";
         echo "<td>Vendor Name</td>";
         echo "<td>Account No</td>";
         echo "<td>Bank</td>";
@@ -665,6 +665,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         foreach ($query as $row) {
             echo "<tr>";
             echo $this->setVal($row->customer_code);
+            echo $this->setVal(Yii::$app->general->getforeignkey($row->customerType, 'customer_desc'));
             echo $this->setVal(Yii::$app->general->getCustomer($row, $row->customer_type));
             echo $this->setVal($row->bank_account_no);
             echo $this->setVal($row->bank_name);
@@ -678,142 +679,61 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         }
         echo "</table>";
         exit();
-
-//        $header = [
-//            'mime' => 'application/csv',
-//            'extension' => 'csv',
-//            'writer' => 'CSV',
-//        ];
-//
-//        $objPHPExcel = new PHPExcel();
-//        $objPHPExcel->setActiveSheetIndex(0);
-//        $objPHPExcel->getDefaultStyle()
-//                ->getNumberFormat()
-//                ->setFormatCode(
-//                        \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-//        );
-//        $rowCount = 1;
-//        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Vendor Code');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Vendor Name');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Account No');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Bank');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Branch');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'IFSC');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Total Amount');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Adjsut Amount');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'Final Amount');
-//        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'Adjsut Remarks');
-//        foreach ($query as $row) {
-//            // if ($row->final_pay > 0) {
-//            $rowCount++;
-//            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);
-//            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getCustomer($row, $row->customer_type));
-//            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, '="' . $row->bank_account_no . '"');
-//            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->bank_name);
-//            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, $row->branch_name);
-//            $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, $row->ifsc);
-//            $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->amount);
-//            $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->adjust_amount);
-//            $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->final_pay);
-//            $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->adjust_remark);
-//            //  }
-//        }
-//        $fileName = "payment_disburse_vsp." . $header['extension'] .
-//                header('Content-Type: ' . $header['mime']);
-//        header('Content-Disposition: attachment;filename=' . $fileName);
-//        header('Cache-Control: max-age=0');
-//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-//        ob_end_clean();
-//        $objWriter->save('php://output');
-//        exit();
     }
 
     public function actionBankPayment() {
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->post());
+        $customer= new TblCustomerMaster();
+       if (empty($model->customer_type) && !empty($model->bmc_code)) {
+                    $data = $customer->customerType($model->bmc_code);
+                    $model->customer_type = array_keys($data);
+          }
         // $model->dcs_code = Yii::$app->request->post('selection');
-       $msg =  $this->LockBilling($model);
+        $msg = $this->LockBilling($model);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        $url = Url::to(['index']);
+        // $url = Url::to(['index']);
         $result = 'success';
-        $from_date = Yii::$app->formatter->asDatetime($model->paymentCycleCode->from_date, 'php:d-m-Y');
-        $to_date = Yii::$app->formatter->asDatetime($model->paymentCycleCode->to_date, 'php:d-m-Y');
-        $msg .= '('.$from_date.' to '.$to_date. ') - Payment disbursed successfully';
+        $paymentcycle = $model->paymentCycleCode;
+        $from_date = Yii::$app->controls->view_date($paymentcycle->from_date);
+        $to_date = Yii::$app->controls->view_date($paymentcycle->to_date);
+        $msg .= '(' . $from_date . ' to ' . $to_date . ') - Payment disbursed successfully';
         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                'message' => \Yii::t('app',''.$msg)]);
-       return ['status' => $result, 'url' => $url, 'msg' => $msg];
-//       return $this->redirect(['index']);
+            'message' => \Yii::t('app', '' . $msg)]);
+        // return ['status' => $result, 'url' => $url, 'msg' => $msg];
+        return $this->redirect(['index']);
     }
 
     protected function LockBilling($model) {
         $bmc_array = [];
         $msg = '';
         $bmc_array[] = $model->bmc_code;
+        $customer_array[] = $model->customer_type;
         if (is_array($model->bmc_code)) {
             $bmc_array = $model->bmc_code;
-        }
+        }               
+        if (is_array($model->customer_type)) {
+            $customer_array = $model->customer_type;
+         }
         foreach ($bmc_array as $bmc_code) {
-            $param = [];             
-            $param['customer_type'] = $model->customer_type;
+            $model->bmc_code = $bmc_code;
+            $bmc = $model->bmcCode;
+            foreach($customer_array as $customerType){
+            $param = [];
+            $param['customer_type'] = $customerType;
             $param['bmc_code'] = $bmc_code;
             $param['applicable_for'] = 'BMC';
             $param['payment_cycle_code'] = $model->payment_cycle_code;
             $param['user_code'] = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
             $param['is_without_release'] = $model->payment_release_type;
+            $param['union_bank_payment_code'] = !empty($model->union_bank_payment_code) ? $model->union_bank_payment_code : null;
             Yii::$app->ClientPaymentConfig->processPayment('vsp_payment_disburse', $param);
-            $msg .=  $model->customerType->customer_desc. ' - '.$model->bmcCode->ref_code. ' '.$model->bmcCode->bmc_name."<br>";
+            $model->customer_type = $customerType;
+            $msg .= $model->customerType->customer_desc . ' - ' . $bmc->ref_code . ' ' . $bmc->bmc_name . "<br>";
+            }
         }
+
         return $msg;
-//        $save_model = [];
-//        $newModel = new TblVspPayment();
-//        $query = $newModel->find()->where([
-//                    'payment_cycle_code' => $model->payment_cycle_code,
-//                    'tbl_vsp_payment.bmc_code' => $model->bmc_code,
-//                    'tbl_vsp_payment.customer_type' => $model->customer_type,
-//                    'status' => ['processed', 'rejected'],
-//                ])
-//                ->all();
-//        $PaymentApp = TblPaymentCycleApplicability::find()
-//                ->where(['payment_cycle_code' => $model->payment_cycle_code,
-//                    'applicable_code' => $model->bmc_code,
-//                    'applicable_for' => 'BMC',
-//                    'applicable_type' => $model->customer_type,
-//                ])
-//                ->one();
-//        if (!empty($PaymentApp)) {
-//            $model->from_datetime = $PaymentApp->from_date;
-//            $PaymentApp->billing_lock_bmc = 1;
-//            $save_model[] = $PaymentApp;
-//        }
-//        foreach ($query as $data) {
-//            $outstanding = TblVspOutstanding::find()->where([
-//                        'customer_type' => $data->customer_type,
-//                        'customer_code' => $data->customer_code
-//                    ])->one();
-//            if (empty($outstanding)) {
-//                $outstanding = new TblVspOutstanding();
-//                $outstanding->attributes = $data->attributes;
-//            } else {
-//                $oshistoryModel = new TblVspOutstandingHistory();
-//                Yii::$app->operation->history($outstanding, $oshistoryModel, UPDATE);
-//                $save_model[] = $oshistoryModel;
-//            }
-//            // $outstanding->scenario = 'payment';
-//            $outstanding->payment_cycle_code = $data->payment_cycle_code;
-//            $outstanding->hold_amount = $data->hold_amount;
-//            $outstanding->due_amount = $data->adjust_amount;
-//            $save_model[] = $outstanding;
-//            $data->status = 'sent';
-//            $save_model[] = $data;
-//            $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
-//            if ($transaction == 'customRedirect') {
-//                $param = [];
-//                $param['from_datetime'] = $model->from_datetime;
-//                $param['customer_type'] = $model->customer_type;
-//                $param['bmc_code'] = $model->bmc_code;
-//                Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
-//            }
-//        }
     }
 
     protected function exportTxt($model) {
@@ -1345,4 +1265,5 @@ where dcs_code IN (:dcs_code) and dcs_payment_cycle_code = :dcs_payment_cycle_co
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['multiple_bmc' => $multiple_bmc]);
     }
+
 }

@@ -35,27 +35,27 @@ class TblContactDetails extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['detail_code'], 'required'],
-            [['detail_code'], 'required', 'on' => ['additional']],
-            [['detail_code'], 'required', 'except' => ['additional']],
-            [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
-            [['detail_code', 'mobile_no'], 'integer'],
-            [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
+                [['detail_code'], 'required'],
+                [['detail_code'], 'required', 'on' => ['additional']],
+                [['detail_code'], 'required', 'except' => ['additional']],
+                [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
+                [['detail_code', 'mobile_no'], 'integer'],
+                [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-            [['mobile_no'], function ($attribute, $params) {
+                [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-            [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
+                [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
             // [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['module_name', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc'], 'safe'],
-            [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
+                [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc'], 'safe'],
+                [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
                     Yii::$app->general->validateEmail($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-            [['is_verified', 'is_contact_verified'], 'default', 'value' => 0]
+                [['is_verified', 'is_contact_verified'], 'default', 'value' => 0]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -121,7 +121,7 @@ class TblContactDetails extends \app\models\ChildModel {
     }
 
     public function CheckDuplicate($attribute, $param) {
-        if (!empty($this->mobile_no)) {
+        if (!empty($this->mobile_no) && $this->is_active == 1) {
             $data = $this->find()->where(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => \Yii::$app->general->encryptData($this->mobile_no)]])
                             ->andWhere(['<>', 'detail_code', $this->detail_code])
                             ->andWhere(['is_active' => 1])->one();
@@ -170,6 +170,16 @@ class TblContactDetails extends \app\models\ChildModel {
         return $this->find()
                         ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name, 'is_active' => $status])
                         ->all();
+    }
+
+    public function getOrgDetail() {
+        $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
+        return $OrgContacts = TblContactDetails::find()
+                ->where(['or',
+                        ['mobile_no' => $encryptedmobile],
+                        ['mobile_no' => $this->mobile_no]
+                ])->andWhere(['module_name' => $this->module_name, 'is_active' => 1, 'is_default' => 1])
+                ->all();
     }
 
 }

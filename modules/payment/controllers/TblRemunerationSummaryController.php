@@ -5,6 +5,7 @@ namespace app\modules\payment\controllers;
 use Yii;
 use app\modules\payment\models\TblRemunerationSummary;
 use app\modules\payment\models\TblRemunerationSummaryHistory;
+use app\modules\organisation\models\TblDcsBmc;
 use app\modules\payment\models\TblVspPayment;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Json;
@@ -20,21 +21,13 @@ use yii\web\Response;
 class TblRemunerationSummaryController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['remuneration-payment-cycle', 'process-remuneration'];
-
+   
     public function actionCreate() {
         $model = new TblRemunerationSummary();
+        $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
         if ($model->load(Yii::$app->request->post())) {
             $result = 'success';
             $model->scenario = 'processpayment';
-            $multiple_bmc = FALSE;
-            $bmc_array = [];
-            $bmc_array[] = $model->bmc_code;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $model->bmc_code = $model->p_bmc_code;
-                $multiple_bmc = TRUE;
-                $bmc_array = $model->p_bmc_code;
-            }
             if ($model->validate()) {
                 $validate = $model->ValidateDate('from_datetime', NULL, TRUE);
                 $queryParam = [];
@@ -75,6 +68,8 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
 
     public function actionCreateStopPayment() {
         $model = new TblRemunerationSummary();
+         $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
+       
         if ($model->load(Yii::$app->request->post())) {
             if (!empty($model->payment_cycle_code)) {
                 $payment_cycle_code = explode('#', $model->payment_cycle_code);
@@ -83,15 +78,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             }
             $model->stop_payment_only = 1;
             $model->scenario = 'processpaymentstop';
-            $multiple_bmc = FALSE;
-            $bmc_array = [];
-            $bmc_array[] = $model->bmc_code;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $model->bmc_code = $model->p_bmc_code;
-                $multiple_bmc = TRUE;
-                $bmc_array = $model->p_bmc_code;
-            }
+
             if ($model->validate()) {
                 $stopModel = new TblPaymentStop();
                 $stopModel->bmc_code = $model->bmc_code;
@@ -103,7 +90,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                     $model->from_datetime = date('Y-m-d', strtotime($model->from_datetime)) . ' ' . \Yii::$app->general->getshift(1);
                     $model->to_datetime = date('Y-m-d', strtotime($model->to_datetime)) . ' ' . \Yii::$app->general->getshift(2);
                     $this->getRemunerationSpData($model);
-                    $model->bmc_code = $bmc_array;
                     return $this->redirect(['tbl-vsp-payment/payment-adjust', 'TblVspPayment' => ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'mcc_plant_code' => $model->mcc_plant_code, 'union_code' => $model->union_code, 'billing_type' => 'remuneration', 'customer_type' => 'DCS', 'multiple_bmc' => $multiple_bmc]]);
                 } else {
                     $msg = Yii::t('app', 'Stop Payment data is not available');
@@ -121,6 +107,8 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
     }
 
     public function actionProcessRemuneration($reGenerate = 0) {
+         $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') =='1' ? TRUE : FALSE;
+       
         if (Yii::$app->request->get()) {
             $model = new TblRemunerationSummary();
             $model->load(Yii::$app->request->get());
@@ -128,11 +116,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $model->to_datetime = date('Y-m-d', strtotime($model->to_datetime)) . ' ' . \Yii::$app->general->getshift(2);
             if ($reGenerate == 1) {
                 $this->getRemunerationSpData($model);
-            }
-            $multiple_bmc = FALSE;
-            $mcc_data = $model->mccPlantCode;
-            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-                $multiple_bmc = TRUE;
             }
             return $this->redirect(['tbl-vsp-payment/payment-adjust', 'TblVspPayment' => ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'mcc_plant_code' => $model->mcc_plant_code, 'union_code' => $model->union_code, 'billing_type' => 'remuneration', 'customer_type' => 'DCS', 'multiple_bmc' => $multiple_bmc]]);
         }
@@ -152,24 +135,14 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data['union_code'] = $model->union_code;
             $data['bmc_code'] = $bmc_code;
             $data['plant_code'] = $model->plant_code;
-            $data['mcc_plant_code'] = $model->mcc_plant_code;
+            $result = TblDcsBmc::find()->select(['mcc_plant_code'])->where(['bmc_code'=>$bmc_code])->one();
+            $data['mcc_plant_code'] = $result['mcc_plant_code'];
             $data['calculate_milk_recovey'] = $model->calculate_milk_recovey;
             $data['calculate_other_head'] = $model->calculate_other_head;
             $data['process_stop_payment'] = $model->stop_payment_only;
             $data['user_code'] = $user;
             Yii::$app->ClientPaymentConfig->processPayment('remuneration_payment', $data);
         }
-        /* $result = \Yii::$app->db->createCommand("{CALL sp_remuneration_payment (:union_code,:plant_code,:mcc_plant_code,:bmc_code,:from_date,:to_date,:calculate_milk_recovey,:calculate_other_head)}")
-          ->bindValue(':from_date', $model->from_datetime)
-          ->bindValue(':to_date', $model->to_datetime)
-          ->bindValue(':union_code', $model->union_code)
-          ->bindValue(':bmc_code', $model->bmc_code)
-          ->bindValue(':plant_code', $model->plant_code)
-          ->bindValue(':mcc_plant_code', $model->mcc_plant_code)
-          ->bindValue(':calculate_milk_recovey', $model->calculate_milk_recovey)
-          ->bindValue(':calculate_other_head', $model->calculate_other_head);
-          $query = $result->execute();
-          return $query; */
     }
 
     public function actionPaymentDisburse() {
@@ -181,10 +154,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $payment_cycle_code = explode('#', $model->payment_cycle_code);
             $model->from_datetime = $payment_cycle_code[0];
             $model->to_datetime = $payment_cycle_code[1];
-        }
-        $mcc_data = $model->mccPlantCode;
-        if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
-            $model->bmc_code = $model->p_bmc_code;
         }
         $query = $model->find()->where(['from_datetime' => $model->from_datetime,
             'to_datetime' => $model->to_datetime,
@@ -397,11 +366,8 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && (!empty($parents[1]) || !empty($parents[2]))) {
-                $bmc_array = !empty($parents[2]) ? $parents[2] : [];
-                if (!empty($parents[1])) {
-                    $bmc_array[] = $parents[1];
-                }
+            if (!empty($parents[0]) &&  !empty($parents[1])) {
+                $bmc_array = !empty($parents[1]) ? $parents[1] : [];
                 $model = new TblRemunerationSummary();
                 $data = $model->RemunerationPaymentCycle($parents[0], $bmc_array);
                 foreach ($data as $key => $val) {

@@ -21,7 +21,13 @@ $this->title = 'Process for Payment Disburse';
     <div class="grid-button-wrap" >
         <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
         <?= Html::activeHiddenInput($model, 'union_code'); ?>
-        <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+         <?php if (is_array($model->mcc_plant_code)) { ?>
+            <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
+                <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+        <?php } ?>
         <?php if (is_array($model->bmc_code)) { ?>
             <?php foreach ($model->bmc_code as $bmc_code) { ?>
                 <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
@@ -31,6 +37,7 @@ $this->title = 'Process for Payment Disburse';
         <?php } ?>
         <?= Html::activeHiddenInput($model, 'customer_type'); ?>
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
+        <?= Html::activeHiddenInput($model, 'types_title'); ?>
     </div>
     <?php
     $billing_type = 'remuneration';
@@ -52,6 +59,9 @@ $this->title = 'Process for Payment Disburse';
             ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
             }, 'filter' => false],
+             ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                },],
             ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                 return !empty($model->customer_name) ? $model->customer_name : Yii::$app->general->getCustomer($model, $model->customer_type);
             }],
@@ -115,7 +125,7 @@ $this->title = 'Process for Payment Disburse';
     ?>
     <div class="clearfix"></div>
     <?php if (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) { ?>
-        <div class="col-md-12" >
+        <div class="col-md-12" >              
             <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn btn-primary bank', 'name' => 'vsp']); ?>
             <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'vsp-file']); ?>
         </div>
@@ -137,7 +147,7 @@ $script = "
     $('.bank').on('click',function(){
         $('#error-summary').hide();
         $('#flag').val($(this).prop('name'));
-        $('form#vendor-payment-disburse').submit();
+                  $('form#vendor-payment-disburse').submit();
        /*  $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['tbl-member-payment/check-bank']) . "',

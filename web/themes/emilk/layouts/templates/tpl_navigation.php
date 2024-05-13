@@ -44,11 +44,11 @@ echo GhostMenu::widget([
     'items' => [
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Master <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Master <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="masterDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Master <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='masterDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
-                //                ['label' => Yii::t('app', 'PCDF Info'), 'url' => ['/organisation/tbl-federations/view', 'id' => Yii::$app->session->get('Federations')], 'active' => ($cntrl == 'tbl-federations')],
+//                ['label' => Yii::t('app', 'PCDF Info'), 'url' => ['/organisation/tbl-federations/view', 'id' => Yii::$app->session->get('Federations')], 'active' => ($cntrl == 'tbl-federations')],
                 ['label' => Yii::t('app', 'Union'), 'url' => $url_action, 'active' => ($cntrl == 'tbl-unions')],
                 ['label' => Yii::t('app', 'Plant'), 'url' => ['/organisation/tbl-plant/index'], 'active' => ($cntrl == 'tbl-plant')],
                 ['label' => Yii::t('app', 'Cluster'), 'url' => ['/organisation/tbl-cluster/index'], 'active' => ($cntrl == 'tbl-cluster')],
@@ -115,7 +115,7 @@ echo GhostMenu::widget([
         ],
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Transporter <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Transporter <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="transporterDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Transporter <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='transporterDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -141,7 +141,7 @@ echo GhostMenu::widget([
         ],
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="milkCollDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
             'items' => [
@@ -171,9 +171,9 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'BMC Testing Data'), 'url' => ['/collection/tbl-quality-collection/index'], 'active' => ($cntrl == 'tbl-quality-collection')],
                 ['label' => Yii::t('app', 'BMC Weight Data'), 'url' => ['/collection/tbl-weight-collection/index'], 'active' => ($cntrl == 'tbl-weight-collection')],
                 //['label' => 'Manual Milk Collection', 'url' => ['/collection/tbl-milk-collection-temp/index'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'index')],
-                // ['label' => 'Milk Collection Approve', 'url' => ['/collection/tbl-milk-collection-temp/get-temp-data'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'get-temp-data')],
-                //                ['label' => 'Cleaning', 'url' => ['/collection/tbl-m-a-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
-                //                ['label' => 'Calibration', 'url' => ['/collection/tbl-m-a-c-alibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
+// ['label' => 'Milk Collection Approve', 'url' => ['/collection/tbl-milk-collection-temp/get-temp-data'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'get-temp-data')],
+//                ['label' => 'Cleaning', 'url' => ['/collection/tbl-m-a-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
+//                ['label' => 'Calibration', 'url' => ['/collection/tbl-m-a-c-alibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
                 ['label' => 'Cleaning', 'url' => ['/collection/tbl-analyzer-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
                 ['label' => 'Calibration', 'url' => ['/collection/tbl-analyzer-calibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
                 ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
@@ -206,7 +206,7 @@ echo GhostMenu::widget([
         ],
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Rate <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Rate <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="milkRateDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Milk Rate <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='milkRateDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -232,7 +232,7 @@ echo GhostMenu::widget([
         ],
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Product <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Product <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="productDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Product <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='productDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -269,10 +269,8 @@ echo GhostMenu::widget([
                     'template' => '<a  class="dropdown-toggle" href="#">Indent <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Indent Product'), 'url' => ['/product/tbl-indent-product/index'], 'active' => ($cntrl == 'tbl-indent-product')],
-                        ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
-                        ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index-other'], 'active' => ($cntrl == 'tbl-indent-master'), 'visible' => ($eiplCode == 'DODLA') ? FALSE : TRUE],
-                        ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index'], 'active' => ($cntrl == 'tbl-indent-dispatch'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
-                        ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index-other'], 'active' => ($cntrl == 'tbl-indent-dispatch'), 'visible' => ($eiplCode == 'DODLA') ? FALSE : TRUE],
+                        ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index-other'], 'active' => ($cntrl == 'tbl-indent-master')],
+                        ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index-other'], 'active' => ($cntrl == 'tbl-indent-dispatch')],
                         ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
                     ]
                 ],
@@ -280,7 +278,7 @@ echo GhostMenu::widget([
         ],
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Payment <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Payment <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="paymentDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Payment <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='paymentDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -303,7 +301,7 @@ echo GhostMenu::widget([
         //        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Staff<b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Staff<b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="staffDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Staff<b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='staffDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -319,7 +317,7 @@ echo GhostMenu::widget([
         ],
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Billing<b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Billing<b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="billingDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Billing<b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='billingDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -349,205 +347,205 @@ echo GhostMenu::widget([
             ],
         ],
         //            [
-        //            'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-        //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports <b class="caret"></b></a>',
-        //            'template' => '<a  class="nav-link dropdown-toggle" href="#" id="reportsOldDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Reports <b class="caret"></b></a>',
-        //            'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='reportsOldDropdownToggle'>\n{items}\n</ul>\n",
-        //            'items' => [
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">Master Register <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        //                            ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/default/dcs-master']],
-        //                            ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/default/member-master']],
-        //                    ]
-        //                ],
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Mobile Report <b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">Mobile Report <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        //                            ['label' => 'M01-' . Yii::t('app', 'Member Collection Passbook'), 'url' => ['/misreports/default/member-collection-passbook']],
-        //                            ['label' => 'M02-' . Yii::t('app', 'Member Collection Day Wise'), 'url' => ['/misreports/default/member-collection-day-wise']],
-        //                            ['label' => 'M03-' . Yii::t('app', 'Member Collection Summary'), 'url' => ['/misreports/default/member-collection-summary']],
-        //                            ['label' => 'M04-' . Yii::t('app', 'Member Collection Payment Cycle Wise'), 'url' => ['/misreports/default/member-collection-paymentcycle-wise']],
-        //                            ['label' => 'M05-' . Yii::t('app', 'Member Collection Month Wise'), 'url' => ['/misreports/default/member-collection-month-wise']],
-        //                            ['label' => 'M06-' . Yii::t('app', 'Member Application Detail'), 'url' => ['/misreports/default/member-mobile-app-detail']],
-        //                    ]
-        //                ],
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Collection <b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">Accounting Master <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        ////                        ['label' => '101-' . Yii::t('app', 'Member Milk Collection Summary'), 'url' => ['/jasperreports/default/member-milk-collection-summary']],
-        //                            ['label' => '101-' . Yii::t('app', 'Member Milk Collection'), 'url' => ['/misreports/default/member-milk-collection']],
-        ////                       ['label' => '102-' . Yii::t('app', 'Consolidated Milk Collection'), 'url' => ['/jasperreports/default/consolidated-milk-collection']],
-        //                        ['label' => '102-' . Yii::t('app', 'Society Wise Milk Collection'), 'url' => ['/misreports/default/dcs-wise-milk-collection']],
-        ////                        ['label' => '103-' . Yii::t('app', 'Shift Report (Name Wise)'), 'url' => ['/jasperreports/default/shift-report-name-wise']],
-        //                        ['label' => '103-' . Yii::t('app', 'Shift Report (Name Wise)'), 'url' => ['/misreports/default/shift-report-name-wise']],
-        ////                        ['label' => '104-' . Yii::t('app', 'Member Milk Collection Register'), 'url' => ['/jasperreports/default/member-milk-collection-register']],
-        //                        ['label' => '104-' . Yii::t('app', 'Member Milk Collection Register'), 'url' => ['/misreports/default/member-milk-collection-register']],
-        ////                        ['label' => '105-' . Yii::t('app', 'Consolited Milk Collection Union Wise – Table'), 'url' => ['/jasperreports/default/consolidated-dcs-milk-collection']],
-        //                        ['label' => '105-' . Yii::t('app', 'Consolited Milk Collection Union Wise – Table'), 'url' => ['/misreports/default/consolidated-union-milk-collection']],
-        ////                        ['label' => '106-' . Yii::t('app', 'Consolited Milk Collection Union Wise – Graph'), 'url' => ['/jasperreports/default/consolidated-union-milk-collection']],
-        //                        ['label' => '107-' . Yii::t('app', 'Society Wise Collection and Dispatch Difference Report'), 'url' => ['/jasperreports/default/dcs-collection-dispatch-difference-report']],
-        ////                        ['label' => '108-' . Yii::t('app', 'Union Wise Collection and Dispatch Difference Report'), 'url' => ['/jasperreports/default/union-collection-dispatch-diff-report']],
-        //                        ['label' => '108-' . Yii::t('app', 'Company Wise Collection vs Dispatch'), 'url' => ['/misreports/default/union-wise-collection-vs-dispatch']],
-        ////                        ['label' => '109-' . Yii::t('app', 'Society Wise Payment Register'), 'url' => ['/jasperreports/default/society-wise-member-register']],
-        ////                        ['label' => '110-' . Yii::t('app', 'Union Wise Payment Register'), 'url' => ['/jasperreports/default/union-wise-member-register']],
-        ////                        ['label' => '111-' . Yii::t('app', 'Member Wise Payment register'), 'url' => ['/jasperreports/default/member-wise-payment-register']],
-        ////                        ['label' => '112-' . Yii::t('app', 'Member Classification Register'), 'url' => ['/jasperreports/default/member-classification-register']],
-        ////                        ['label' => '113-' . Yii::t('app', 'Member Payment Held Up'), 'url' => ['/jasperreports/default/member-payment-heldup']],
-        ////                        ['label' => '114-' . Yii::t('app', 'Consolidated Milk Collection Block Wise'), 'url' => ['/jasperreports/default/block-wise-collection']],
-        ////                        ['label' => '115-' . Yii::t('app', 'Payment Authorization'), 'url' => ['/jasperreports/default/payment-authorization']],
-        ////                        ['label' => '116-' . Yii::t('app', 'Society Wise Collection vs Dispatch - Graph'), 'url' => ['/jasperreports/default/dcs-collection-vs-dispatch-graph']],
-        //                        ['label' => '116-' . Yii::t('app', 'Society Wise Collection vs Dispatch - Graph'), 'url' => ['/misreports/default/dcs-collection-vs-dispatch-graph']],
-        ////                        ['label' => '117-' . Yii::t('app', 'Society Details'), 'url' => ['/jasperreports/default/society-details']],
-        //                        ['label' => '118-' . Yii::t('app', 'MCC Wise Collection Summary'), 'url' => ['/misreports/default/total-milk-collection-date-shift']],
-        //                            ['label' => '119-' . Yii::t('app', 'Collection Data Summary'), 'url' => ['/misreports/default/collection-data-summary']],
-        //                            ['label' => '120-' . Yii::t('app', 'MCC-Shift Collection Count'), 'url' => ['/misreports/default/mcc-shift-cross-tab']],
-        //                            ['label' => '121-' . Yii::t('app', 'CDA Date And Shift Wise'), 'url' => ['/misreports/default/cda-date-and-shift-wise']],
-        //                            ['label' => '122-' . Yii::t('app', 'CDA Date Wise'), 'url' => ['/misreports/default/cda-date-wise']],
-        //                            ['label' => '123-' . Yii::t('app', 'CDA Consolidated'), 'url' => ['/misreports/default/cda-consolidated']],
-        //                            ['label' => '124-' . Yii::t('app', 'BMC Collection Consolidated'), 'url' => ['/misreports/default/bmc-collection-consolidated']],
-        //                    ]
-        //                ],
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'MIS') . '<b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'MIS') . ' <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        //                            ['label' => '201-' . Yii::t('app', 'Union Collection Report'), 'url' => ['/report/default/union-count']],
-        //                            ['label' => '202-' . Yii::t('app', 'Society Collection Data Report'), 'url' => ['/report/default/list']],
-        //                            ['label' => '203-' . Yii::t('app', 'Society Collection Summary Report'), 'url' => ['/report/default/index']],
-        ////                        ['label' => '204-' . Yii::t('app', 'No Collection Summary Report'), 'url' => ['/report/default/no-collection-society']],
-        ////                        ['label' => '205-' . Yii::t('app', 'No Collection Society Report'), 'url' => ['/report/default/no-collection-shifts']],
-        ////                        ['label' => '206-' . Yii::t('app', 'No Network Summary Report'), 'url' => ['/report/default/dpu-request-summary']],
-        ////                        ['label' => '207-' . Yii::t('app', 'No Network Detail Report'), 'url' => ['/report/default/dpu-request']],
-        //                        ['label' => '208-' . Yii::t('app', 'Society-Shift Collection Completed'), 'url' => ['/report/default/shift-report']],
-        //                            ['label' => '209-' . Yii::t('app', 'Society-Day Crosstab'), 'url' => ['/report/default/daily-report']],
-        //                            ['label' => '210-' . Yii::t('app', 'Union-Day Crosstab'), 'url' => ['/report/default/union-report']],
-        //                            ['label' => '211-' . Yii::t('app', 'Society Shift Report'), 'url' => ['/report/default/dcs-shift-report']],
-        //                            ['label' => '212-' . Yii::t('app', 'Union Shift Report'), 'url' => ['/report/default/union-shift-report']],
-        //                            ['label' => '213-' . Yii::t('app', 'Union Shift Summary Report'), 'url' => ['/report/default/union-shift-summary-report']],
-        //                            ['label' => '214-' . Yii::t('app', 'DPMCU Working Status'), 'url' => ['/report/default/dpmcu-working-status']],
-        //                            ['label' => '215-' . Yii::t('app', 'DPMCU Information'), 'url' => ['/report/default/shift-a-report']],
-        //                            ['label' => '216-' . Yii::t('app', 'BMC Shift Report'), 'url' => ['/misreports/default/bmc-shift-report']],
-        //                            ['label' => '217-' . Yii::t('app', 'BMC Consolidate Report'), 'url' => ['/misreports/default/bmc-consolidate-report']],
-        ////                        ['label' => '218-' . Yii::t('app', 'BMC Summary Report'), 'url' => ['/misreports/default/bmc-summary-report']],
-        //                        ['label' => '219-' . Yii::t('app', 'Society Summary Report'), 'url' => ['/misreports/default/society-summary-report']],
-        //                            ['label' => '220-' . Yii::t('app', 'Date/Shift wise BMC Collection'), 'url' => ['/misreports/default/date-shift-bmc-collection']],
-        //                            ['label' => '221-' . Yii::t('app', 'Shift Wise Auto Manual'), 'url' => ['/misreports/default/shift-wise-auto-manual']],
-        //                        //  ['label' => Yii::t('app', 'Cleaning Not Done'), 'url' => ['/report/default/cleaning-not-done']],
-        //// ['label' => Yii::t('app', 'Calibration Change Report'), 'url' => ['/report/default/calibration-change-report']],
-        //                        ['label' => '222-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/default/rate-applicability-details']],
-        //                            ['label' => '223-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/default/rate-acknowledgement']],
-        //                            ['label' => '224-' . Yii::t('app', 'AMCS Sync Pending'), 'url' => ['/misreports/default/amcs-sync-pending']],
-        //                    ]
-        //                ],
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'BMC Collection') . ' <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        //                        /*                       ['label' => '301-' . Yii::t('app', 'Actual BMC Collection'), 'url' => ['/crystalreports/default/actual-bmc-collection']],
-        //                          ['label' => '302-' . Yii::t('app', 'RMRD Milk Collection'), 'url' => ['/crystalreports/default/rmrd-milk-collection']],
-        //                          ['label' => '303-' . Yii::t('app', 'BMC Summary'), 'url' => ['/crystalreports/default/bmc-summary-report']],
-        //                          ['label' => '304-' . Yii::t('app', 'Milk Type Variation Date Wise'), 'url' => ['/crystalreports/default/variation-milk-type-date-wise']],
-        //                          ['label' => '305-' . Yii::t('app', 'Milk Type Variation Village Wise'), 'url' => ['/crystalreports/default/variation-milk-type-village-wise']],
-        //                          ['label' => '306-' . Yii::t('app', 'Date Wise Variation'), 'url' => ['/crystalreports/default/variation-date-wise']],
-        //                          ['label' => '307-' . Yii::t('app', 'Village Wise Variation'), 'url' => ['/crystalreports/default/variation-village-wise']],
-        //                          ['label' => '308-' . Yii::t('app', 'Percentage Wise Variation'), 'url' => ['/crystalreports/default/variation-percentage-wise']],
-        //                          ['label' => '309-' . Yii::t('app', 'Difference Report'), 'url' => ['/crystalreports/default/difference-report']],
-        //                          ['label' => '310-' . Yii::t('app', 'Date Wise Difference Report'), 'url' => ['/crystalreports/default/difference-report-date-wise']],
-        //                          ['label' => '311-' . Yii::t('app', 'Village Wise Difference Report'), 'url' => ['/crystalreports/default/difference-report-village-wise']],
-        //                          ['label' => '312-' . Yii::t('app', 'BMC Collection'), 'url' => ['/crystalreports/default/bmc-collection']],
-        //                          ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/crystalreports/default/gprs-data-reconciliation']], */
-        //                            ['label' => '301-' . Yii::t('app', 'Actual BMC Collection'), 'url' => ['/jasperreports/default/actual-bmc-collection']],
-        ////                        ['label' => '302-' . Yii::t('app', 'RMRD Milk Collection'), 'url' => ['/jasperreports/default/rmrd-milk-collection']],
-        //                        ['label' => '303-' . Yii::t('app', 'BMC Summary'), 'url' => ['/jasperreports/default/bmc-summary-report']],
-        //                            ['label' => '304-' . Yii::t('app', 'Milk Type Variation Date Wise'), 'url' => ['/jasperreports/default/variation-milk-type-date-wise']],
-        //                            ['label' => '305-' . Yii::t('app', 'Milk Type Variation Village Wise'), 'url' => ['/jasperreports/default/variation-milk-type-village-wise']],
-        //                            ['label' => '306-' . Yii::t('app', 'Date Wise Variation'), 'url' => ['/jasperreports/default/variation-date-wise']],
-        ////                        ['label' => '307-' . Yii::t('app', 'Village Wise Variation'), 'url' => ['/jasperreports/default/variation-village-wise']],
-        //                        ['label' => '307-' . Yii::t('app', 'Village Wise Variation'), 'url' => ['/misreports/default/variation-village-wise']],
-        ////                        ['label' => '308-' . Yii::t('app', 'Percentage Wise Variation'), 'url' => ['/jasperreports/default/variation-percentage-wise']],
-        //                        ['label' => '308-' . Yii::t('app', 'Percentage Wise Variation'), 'url' => ['/misreports/default/variation-percentage-wise']],
-        //////                        ['label' => '309-' . Yii::t('app', 'Difference Report'), 'url' => ['/jasperreports/default/difference-report']],
-        ////                        ['label' => '310-' . Yii::t('app', 'Date Wise Difference Report'), 'url' => ['/jasperreports/default/difference-report-date-wise']],
-        ////                        ['label' => '311-' . Yii::t('app', 'Village Wise Difference Report'), 'url' => ['/jasperreports/default/difference-report-village-wise']],
-        //                        ['label' => '312-' . Yii::t('app', 'BMC Collection'), 'url' => ['/jasperreports/default/bmc-collection']],
-        ////                        ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/jasperreports/default/gprs-data-reconciliation']],
-        //                        ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/misreports/default/gprs-data-reconciliation']],
-        //                    ]
-        //                ],
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'SAP') . '<b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'SAP') . ' <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        //                            ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/default/sap-status-report']],
-        //                            ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
-        //                            ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/default/dispatch-vs-receipt']],
-        //                            ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/cpmilk-sap-report']],
-        //                    ]
-        //                ],
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Cleaning & Calibration') . '<b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Cleaning & Calibration') . ' <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        //                            ['label' => Yii::t('app', '501 - Analyzer Cleaning Review'), 'url' => ['/misreports/default/analyzer-cleaning-review']],
-        //                            ['label' => Yii::t('app', '502 - Analyzer Cleaning Pending Activity'), 'url' => ['/misreports/default/analyzer-cleaning-pending-activity']],
-        //                            ['label' => Yii::t('app', '503 - Analyzer PCB Replacement'), 'url' => ['/misreports/default/analyzer-pcb-replacement']],
-        //                            ['label' => Yii::t('app', '504 - Cleaning Flag Report'), 'url' => ['/misreports/default/cleaning-flag']],
-        //                            ['label' => Yii::t('app', '505 - Eko Milk Calibration'), 'url' => ['/misreports/default/eko-milk-calibration']],
-        //                            ['label' => Yii::t('app', '506 - Calibration Flag'), 'url' => ['/misreports/default/calibration-flag']],
-        //                            ['label' => Yii::t('app', '507 - Cleaning Flag Bmc'), 'url' => ['/misreports/default/cleaning-flag-bmc']],
-        //                    ]
-        //                ],
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Payment') . ' <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        //                            ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
-        //                            ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/default/vendor-payment']],
-        //                            ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/default/member-payment']],
-        //                            ['label' => '604-' . Yii::t('app', 'Vendor Milk Payment'), 'url' => ['/jasperreports/default/vendor-milk-payment']],
-        //                            ['label' => '605-' . Yii::t('app', 'Member Milk Payment'), 'url' => ['/jasperreports/default/member-milk-payment']],
-        //                            ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/default/vendor-bank-payment']],
-        //                            ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/default/member-bank-payment']],
-        //                            ['label' => '608-' . Yii::t('app', 'Member Outstanding Detail'), 'url' => ['/misreports/default/member-outstanding-detail']],
-        //                            ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill']],
-        //                            ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill']],
-        //                    ]
-        //                ],
-        //                    [
-        //                    'options' => ['class' => 'dropdown-submenu'],
-        //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Staff Reports') . '<b class="caret"></b></a>',
-        //        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Staff Reports') . ' <b class="caret"></b></a>',
-        //        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-        //                    'items' => [
-        //                            ['label' => '701-' . Yii::t('app', 'Staff Salary'), 'url' => ['/jasperreports/default/staff-salary']],
-        //                    ]
-        //                ],
-        //                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
-        //            ],
-        //        ],
+//            'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports <b class="caret"></b></a>',
+//            'template' => '<a  class="nav-link dropdown-toggle" href="#" id="reportsOldDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Reports <b class="caret"></b></a>',
+//            'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='reportsOldDropdownToggle'>\n{items}\n</ul>\n",
+//            'items' => [
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">Master Register <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+//                            ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/default/dcs-master']],
+//                            ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/default/member-master']],
+//                    ]
+//                ],
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Mobile Report <b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">Mobile Report <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+//                            ['label' => 'M01-' . Yii::t('app', 'Member Collection Passbook'), 'url' => ['/misreports/default/member-collection-passbook']],
+//                            ['label' => 'M02-' . Yii::t('app', 'Member Collection Day Wise'), 'url' => ['/misreports/default/member-collection-day-wise']],
+//                            ['label' => 'M03-' . Yii::t('app', 'Member Collection Summary'), 'url' => ['/misreports/default/member-collection-summary']],
+//                            ['label' => 'M04-' . Yii::t('app', 'Member Collection Payment Cycle Wise'), 'url' => ['/misreports/default/member-collection-paymentcycle-wise']],
+//                            ['label' => 'M05-' . Yii::t('app', 'Member Collection Month Wise'), 'url' => ['/misreports/default/member-collection-month-wise']],
+//                            ['label' => 'M06-' . Yii::t('app', 'Member Application Detail'), 'url' => ['/misreports/default/member-mobile-app-detail']],
+//                    ]
+//                ],
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Collection <b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">Accounting Master <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+////                        ['label' => '101-' . Yii::t('app', 'Member Milk Collection Summary'), 'url' => ['/jasperreports/default/member-milk-collection-summary']],
+//                            ['label' => '101-' . Yii::t('app', 'Member Milk Collection'), 'url' => ['/misreports/default/member-milk-collection']],
+////                       ['label' => '102-' . Yii::t('app', 'Consolidated Milk Collection'), 'url' => ['/jasperreports/default/consolidated-milk-collection']],
+//                        ['label' => '102-' . Yii::t('app', 'Society Wise Milk Collection'), 'url' => ['/misreports/default/dcs-wise-milk-collection']],
+////                        ['label' => '103-' . Yii::t('app', 'Shift Report (Name Wise)'), 'url' => ['/jasperreports/default/shift-report-name-wise']],
+//                        ['label' => '103-' . Yii::t('app', 'Shift Report (Name Wise)'), 'url' => ['/misreports/default/shift-report-name-wise']],
+////                        ['label' => '104-' . Yii::t('app', 'Member Milk Collection Register'), 'url' => ['/jasperreports/default/member-milk-collection-register']],
+//                        ['label' => '104-' . Yii::t('app', 'Member Milk Collection Register'), 'url' => ['/misreports/default/member-milk-collection-register']],
+////                        ['label' => '105-' . Yii::t('app', 'Consolited Milk Collection Union Wise – Table'), 'url' => ['/jasperreports/default/consolidated-dcs-milk-collection']],
+//                        ['label' => '105-' . Yii::t('app', 'Consolited Milk Collection Union Wise – Table'), 'url' => ['/misreports/default/consolidated-union-milk-collection']],
+////                        ['label' => '106-' . Yii::t('app', 'Consolited Milk Collection Union Wise – Graph'), 'url' => ['/jasperreports/default/consolidated-union-milk-collection']],
+//                        ['label' => '107-' . Yii::t('app', 'Society Wise Collection and Dispatch Difference Report'), 'url' => ['/jasperreports/default/dcs-collection-dispatch-difference-report']],
+////                        ['label' => '108-' . Yii::t('app', 'Union Wise Collection and Dispatch Difference Report'), 'url' => ['/jasperreports/default/union-collection-dispatch-diff-report']],
+//                        ['label' => '108-' . Yii::t('app', 'Company Wise Collection vs Dispatch'), 'url' => ['/misreports/default/union-wise-collection-vs-dispatch']],
+////                        ['label' => '109-' . Yii::t('app', 'Society Wise Payment Register'), 'url' => ['/jasperreports/default/society-wise-member-register']],
+////                        ['label' => '110-' . Yii::t('app', 'Union Wise Payment Register'), 'url' => ['/jasperreports/default/union-wise-member-register']],
+////                        ['label' => '111-' . Yii::t('app', 'Member Wise Payment register'), 'url' => ['/jasperreports/default/member-wise-payment-register']],
+////                        ['label' => '112-' . Yii::t('app', 'Member Classification Register'), 'url' => ['/jasperreports/default/member-classification-register']],
+////                        ['label' => '113-' . Yii::t('app', 'Member Payment Held Up'), 'url' => ['/jasperreports/default/member-payment-heldup']],
+////                        ['label' => '114-' . Yii::t('app', 'Consolidated Milk Collection Block Wise'), 'url' => ['/jasperreports/default/block-wise-collection']],
+////                        ['label' => '115-' . Yii::t('app', 'Payment Authorization'), 'url' => ['/jasperreports/default/payment-authorization']],
+////                        ['label' => '116-' . Yii::t('app', 'Society Wise Collection vs Dispatch - Graph'), 'url' => ['/jasperreports/default/dcs-collection-vs-dispatch-graph']],
+//                        ['label' => '116-' . Yii::t('app', 'Society Wise Collection vs Dispatch - Graph'), 'url' => ['/misreports/default/dcs-collection-vs-dispatch-graph']],
+////                        ['label' => '117-' . Yii::t('app', 'Society Details'), 'url' => ['/jasperreports/default/society-details']],
+//                        ['label' => '118-' . Yii::t('app', 'MCC Wise Collection Summary'), 'url' => ['/misreports/default/total-milk-collection-date-shift']],
+//                            ['label' => '119-' . Yii::t('app', 'Collection Data Summary'), 'url' => ['/misreports/default/collection-data-summary']],
+//                            ['label' => '120-' . Yii::t('app', 'MCC-Shift Collection Count'), 'url' => ['/misreports/default/mcc-shift-cross-tab']],
+//                            ['label' => '121-' . Yii::t('app', 'CDA Date And Shift Wise'), 'url' => ['/misreports/default/cda-date-and-shift-wise']],
+//                            ['label' => '122-' . Yii::t('app', 'CDA Date Wise'), 'url' => ['/misreports/default/cda-date-wise']],
+//                            ['label' => '123-' . Yii::t('app', 'CDA Consolidated'), 'url' => ['/misreports/default/cda-consolidated']],
+//                            ['label' => '124-' . Yii::t('app', 'BMC Collection Consolidated'), 'url' => ['/misreports/default/bmc-collection-consolidated']],
+//                    ]
+//                ],
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'MIS') . '<b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'MIS') . ' <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+//                            ['label' => '201-' . Yii::t('app', 'Union Collection Report'), 'url' => ['/report/default/union-count']],
+//                            ['label' => '202-' . Yii::t('app', 'Society Collection Data Report'), 'url' => ['/report/default/list']],
+//                            ['label' => '203-' . Yii::t('app', 'Society Collection Summary Report'), 'url' => ['/report/default/index']],
+////                        ['label' => '204-' . Yii::t('app', 'No Collection Summary Report'), 'url' => ['/report/default/no-collection-society']],
+////                        ['label' => '205-' . Yii::t('app', 'No Collection Society Report'), 'url' => ['/report/default/no-collection-shifts']],
+////                        ['label' => '206-' . Yii::t('app', 'No Network Summary Report'), 'url' => ['/report/default/dpu-request-summary']],
+////                        ['label' => '207-' . Yii::t('app', 'No Network Detail Report'), 'url' => ['/report/default/dpu-request']],
+//                        ['label' => '208-' . Yii::t('app', 'Society-Shift Collection Completed'), 'url' => ['/report/default/shift-report']],
+//                            ['label' => '209-' . Yii::t('app', 'Society-Day Crosstab'), 'url' => ['/report/default/daily-report']],
+//                            ['label' => '210-' . Yii::t('app', 'Union-Day Crosstab'), 'url' => ['/report/default/union-report']],
+//                            ['label' => '211-' . Yii::t('app', 'Society Shift Report'), 'url' => ['/report/default/dcs-shift-report']],
+//                            ['label' => '212-' . Yii::t('app', 'Union Shift Report'), 'url' => ['/report/default/union-shift-report']],
+//                            ['label' => '213-' . Yii::t('app', 'Union Shift Summary Report'), 'url' => ['/report/default/union-shift-summary-report']],
+//                            ['label' => '214-' . Yii::t('app', 'DPMCU Working Status'), 'url' => ['/report/default/dpmcu-working-status']],
+//                            ['label' => '215-' . Yii::t('app', 'DPMCU Information'), 'url' => ['/report/default/shift-a-report']],
+//                            ['label' => '216-' . Yii::t('app', 'BMC Shift Report'), 'url' => ['/misreports/default/bmc-shift-report']],
+//                            ['label' => '217-' . Yii::t('app', 'BMC Consolidate Report'), 'url' => ['/misreports/default/bmc-consolidate-report']],
+////                        ['label' => '218-' . Yii::t('app', 'BMC Summary Report'), 'url' => ['/misreports/default/bmc-summary-report']],
+//                        ['label' => '219-' . Yii::t('app', 'Society Summary Report'), 'url' => ['/misreports/default/society-summary-report']],
+//                            ['label' => '220-' . Yii::t('app', 'Date/Shift wise BMC Collection'), 'url' => ['/misreports/default/date-shift-bmc-collection']],
+//                            ['label' => '221-' . Yii::t('app', 'Shift Wise Auto Manual'), 'url' => ['/misreports/default/shift-wise-auto-manual']],
+//                        //  ['label' => Yii::t('app', 'Cleaning Not Done'), 'url' => ['/report/default/cleaning-not-done']],
+//// ['label' => Yii::t('app', 'Calibration Change Report'), 'url' => ['/report/default/calibration-change-report']],
+//                        ['label' => '222-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/default/rate-applicability-details']],
+//                            ['label' => '223-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/default/rate-acknowledgement']],
+//                            ['label' => '224-' . Yii::t('app', 'AMCS Sync Pending'), 'url' => ['/misreports/default/amcs-sync-pending']],
+//                    ]
+//                ],
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'BMC Collection') . ' <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+//                        /*                       ['label' => '301-' . Yii::t('app', 'Actual BMC Collection'), 'url' => ['/crystalreports/default/actual-bmc-collection']],
+//                          ['label' => '302-' . Yii::t('app', 'RMRD Milk Collection'), 'url' => ['/crystalreports/default/rmrd-milk-collection']],
+//                          ['label' => '303-' . Yii::t('app', 'BMC Summary'), 'url' => ['/crystalreports/default/bmc-summary-report']],
+//                          ['label' => '304-' . Yii::t('app', 'Milk Type Variation Date Wise'), 'url' => ['/crystalreports/default/variation-milk-type-date-wise']],
+//                          ['label' => '305-' . Yii::t('app', 'Milk Type Variation Village Wise'), 'url' => ['/crystalreports/default/variation-milk-type-village-wise']],
+//                          ['label' => '306-' . Yii::t('app', 'Date Wise Variation'), 'url' => ['/crystalreports/default/variation-date-wise']],
+//                          ['label' => '307-' . Yii::t('app', 'Village Wise Variation'), 'url' => ['/crystalreports/default/variation-village-wise']],
+//                          ['label' => '308-' . Yii::t('app', 'Percentage Wise Variation'), 'url' => ['/crystalreports/default/variation-percentage-wise']],
+//                          ['label' => '309-' . Yii::t('app', 'Difference Report'), 'url' => ['/crystalreports/default/difference-report']],
+//                          ['label' => '310-' . Yii::t('app', 'Date Wise Difference Report'), 'url' => ['/crystalreports/default/difference-report-date-wise']],
+//                          ['label' => '311-' . Yii::t('app', 'Village Wise Difference Report'), 'url' => ['/crystalreports/default/difference-report-village-wise']],
+//                          ['label' => '312-' . Yii::t('app', 'BMC Collection'), 'url' => ['/crystalreports/default/bmc-collection']],
+//                          ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/crystalreports/default/gprs-data-reconciliation']], */
+//                            ['label' => '301-' . Yii::t('app', 'Actual BMC Collection'), 'url' => ['/jasperreports/default/actual-bmc-collection']],
+////                        ['label' => '302-' . Yii::t('app', 'RMRD Milk Collection'), 'url' => ['/jasperreports/default/rmrd-milk-collection']],
+//                        ['label' => '303-' . Yii::t('app', 'BMC Summary'), 'url' => ['/jasperreports/default/bmc-summary-report']],
+//                            ['label' => '304-' . Yii::t('app', 'Milk Type Variation Date Wise'), 'url' => ['/jasperreports/default/variation-milk-type-date-wise']],
+//                            ['label' => '305-' . Yii::t('app', 'Milk Type Variation Village Wise'), 'url' => ['/jasperreports/default/variation-milk-type-village-wise']],
+//                            ['label' => '306-' . Yii::t('app', 'Date Wise Variation'), 'url' => ['/jasperreports/default/variation-date-wise']],
+////                        ['label' => '307-' . Yii::t('app', 'Village Wise Variation'), 'url' => ['/jasperreports/default/variation-village-wise']],
+//                        ['label' => '307-' . Yii::t('app', 'Village Wise Variation'), 'url' => ['/misreports/default/variation-village-wise']],
+////                        ['label' => '308-' . Yii::t('app', 'Percentage Wise Variation'), 'url' => ['/jasperreports/default/variation-percentage-wise']],
+//                        ['label' => '308-' . Yii::t('app', 'Percentage Wise Variation'), 'url' => ['/misreports/default/variation-percentage-wise']],
+//////                        ['label' => '309-' . Yii::t('app', 'Difference Report'), 'url' => ['/jasperreports/default/difference-report']],
+////                        ['label' => '310-' . Yii::t('app', 'Date Wise Difference Report'), 'url' => ['/jasperreports/default/difference-report-date-wise']],
+////                        ['label' => '311-' . Yii::t('app', 'Village Wise Difference Report'), 'url' => ['/jasperreports/default/difference-report-village-wise']],
+//                        ['label' => '312-' . Yii::t('app', 'BMC Collection'), 'url' => ['/jasperreports/default/bmc-collection']],
+////                        ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/jasperreports/default/gprs-data-reconciliation']],
+//                        ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/misreports/default/gprs-data-reconciliation']],
+//                    ]
+//                ],
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'SAP') . '<b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'SAP') . ' <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+//                            ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/default/sap-status-report']],
+//                            ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
+//                            ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/default/dispatch-vs-receipt']],
+//                            ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/cpmilk-sap-report']],
+//                    ]
+//                ],
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Cleaning & Calibration') . '<b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Cleaning & Calibration') . ' <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+//                            ['label' => Yii::t('app', '501 - Analyzer Cleaning Review'), 'url' => ['/misreports/default/analyzer-cleaning-review']],
+//                            ['label' => Yii::t('app', '502 - Analyzer Cleaning Pending Activity'), 'url' => ['/misreports/default/analyzer-cleaning-pending-activity']],
+//                            ['label' => Yii::t('app', '503 - Analyzer PCB Replacement'), 'url' => ['/misreports/default/analyzer-pcb-replacement']],
+//                            ['label' => Yii::t('app', '504 - Cleaning Flag Report'), 'url' => ['/misreports/default/cleaning-flag']],
+//                            ['label' => Yii::t('app', '505 - Eko Milk Calibration'), 'url' => ['/misreports/default/eko-milk-calibration']],
+//                            ['label' => Yii::t('app', '506 - Calibration Flag'), 'url' => ['/misreports/default/calibration-flag']],
+//                            ['label' => Yii::t('app', '507 - Cleaning Flag Bmc'), 'url' => ['/misreports/default/cleaning-flag-bmc']],
+//                    ]
+//                ],
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Payment') . ' <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+//                            ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
+//                            ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/default/vendor-payment']],
+//                            ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/default/member-payment']],
+//                            ['label' => '604-' . Yii::t('app', 'Vendor Milk Payment'), 'url' => ['/jasperreports/default/vendor-milk-payment']],
+//                            ['label' => '605-' . Yii::t('app', 'Member Milk Payment'), 'url' => ['/jasperreports/default/member-milk-payment']],
+//                            ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/default/vendor-bank-payment']],
+//                            ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/default/member-bank-payment']],
+//                            ['label' => '608-' . Yii::t('app', 'Member Outstanding Detail'), 'url' => ['/misreports/default/member-outstanding-detail']],
+//                            ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill']],
+//                            ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill']],
+//                    ]
+//                ],
+//                    [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Staff Reports') . '<b class="caret"></b></a>',
+//        'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Staff Reports') . ' <b class="caret"></b></a>',
+//        'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+//                    'items' => [
+//                            ['label' => '701-' . Yii::t('app', 'Staff Salary'), 'url' => ['/jasperreports/default/staff-salary']],
+//                    ]
+//                ],
+//                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
+//            ],
+//        ],
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports - New <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports - New <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="reportsNewDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Reports - New <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-menu-end' aria-labelledby='reportsNewDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [[
@@ -573,7 +571,6 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Vehicle Master Register'), 'url' => ['/misreports/reports/vehicle-master']],
                         ['label' => Yii::t('app', 'Rate Master Register'), 'url' => ['/misreports/reports/rate-master-register']],
                         ['label' => Yii::t('app', 'Product Sale Rate Register'), 'url' => ['/misreports/reports/product-sale-rate-master-register']],
-                        ['label' => Yii::t('app', 'BMC Weight Data List'), 'url' => ['/misreports/reports/weight-collection-list']],
                     ]
                 ],
                 [
@@ -626,9 +623,10 @@ echo GhostMenu::widget([
                             'items' => [
                                 [
                                     'options' => ['class' => 'dropdown-submenu'],
-                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Testing Data') . '<b class="caret"></b></a>',
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Data') . '<b class="caret"></b></a>',
                                     'items' => [
                                         ['label' => Yii::t('app', 'Quality Collection Report'), 'url' => ['/misreports/reports/quality-collection-report']],
+                                        ['label' => Yii::t('app', 'BMC Weight Data List'), 'url' => ['/misreports/reports/weight-collection-list']],
                                     ]
                                 ],
                                 ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
@@ -657,17 +655,19 @@ echo GhostMenu::widget([
                                 ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
                                 ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
                                 ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
+                                ['label' => '225 -' . Yii::t('app', 'Root Wise Difference'), 'url' => ['/misreports/reports/root-wise-difference']],
                             ]
                         ],
                         [
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Qty Conversion') . '<b class="caret"></b></a>',
                             'items' => [
-                                ['label' => '101 -' . Yii::t('app', 'Member Collection Detail'), 'url' => ['/misreports/reports/member-daily-collection-common']],
-                                ['label' => '102 -' . Yii::t('app', 'Society Collection Detail'), 'url' => ['/misreports/reports/dcs-coll-date-shift-summary-common']],
-                                ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report-common']],
-                                ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary-common']],
-                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA Format 1'), 'url' => ['/misreports/reports/society-wise-cda-common']],
+                                ['label' => Yii::t('app', 'Member Collection Detail'), 'url' => ['/misreports/reports/member-daily-collection-common']],
+                                ['label' => Yii::t('app', 'Society Collection Detail'), 'url' => ['/misreports/reports/dcs-coll-date-shift-summary-common']],
+                                ['label' => Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report-common']],
+                                ['label' => Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary-common']],
+                                ['label' => Yii::t('app', 'Society Wise CDA Format 1'), 'url' => ['/misreports/reports/society-wise-cda-common']],
+                                ['label' => Yii::t('app', 'BMC Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary-rahema']],
                             ]
                         ],
                         ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -707,7 +707,7 @@ echo GhostMenu::widget([
                         ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                         ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
                         ['label' => '408-' . Yii::t('app', 'CP liability Report'), 'url' => ['/misreports/reports/cpliability-report']],
-                        ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/reports/sap-wq-file']],
+                        ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/default/sap-wq-file']],
                     ]
                 ],
                 [
@@ -723,6 +723,7 @@ echo GhostMenu::widget([
                         ['label' => '506 -' . Yii::t('app', 'BMC Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment-cycle-wise-bmc-wise']],
                         ['label' => '507 -' . Yii::t('app', 'Company Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment-cycle-wise-union-wise']],
                         ['label' => '508 -' . Yii::t('app', 'Company Total Payment'), 'url' => ['/misreports/reports/total-payment-company-wise-payment-cycle-wise']],
+                        ['label' => '509 -' . Yii::t('app', 'DCS Wise Bill Head Applicability'), 'url' => ['/misreports/reports/dcs-wise-bill-head-applicability']],
                     ]
                 ],
                 [
@@ -730,6 +731,14 @@ echo GhostMenu::widget([
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
                     'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Payment') . ' <b class="caret"></b></a>',
                     'items' => [
+                        [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Bills') . '<b class="caret"></b></a>',
+                            'items' => [
+                                ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/vendor-milk-bill-glt']],
+                                ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/vendor-milk-bill-summary-glt']],
+                            ]
+                        ],
                         ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
                         ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment']],
                         ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/reports/member-payment']],
@@ -852,6 +861,7 @@ echo GhostMenu::widget([
                         ['label' => '914-' . Yii::t('app', 'File Generate Status'), 'url' => ['/misreports/reports/file-generate-status']],
                         ['label' => '915-' . Yii::t('app', 'Society Wise Rate Difference Report'), 'url' => ['/misreports/reports/society-wise-rate-difference-report']],
                         ['label' => '916-' . Yii::t('app', 'Tally Report'), 'url' => ['/misreports/reports/tally-report']],
+                        ['label' => '917-' . Yii::t('app', 'Log report of  the Mobile App'), 'url' => ['/misreports/reports/mobile-app-report']],
                     ]
                 ],
                 [
@@ -947,6 +957,7 @@ echo GhostMenu::widget([
                         ['label' => 'Group', 'url' => ['/user-management/auth-item-group/index'], 'active' => ($cntrl == 'auth-item-group'),],
                         ['label' => 'Mobile Dashboard Permission', 'url' => ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-widget-mapping'),],
                         ['label' => 'Mobile Menu Permission', 'url' => ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-menu-actions'),],
+                        ['label' => Yii::t('app', 'App Login Detail'), 'url' => ['/webservice/eipl/tbl-eipl-app-login/index'], 'active' => ($cntrl == 'tbl-eipl-app-login')],
                     ],
                 ],
                 [

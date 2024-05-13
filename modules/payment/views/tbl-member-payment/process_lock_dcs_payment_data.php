@@ -10,13 +10,20 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $this->title = Yii::t('app', 'Member Payment Process : Step 2');
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
 $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
-$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
+$code = $name = '';
+$data = Yii::$app->general->getPaymentHeader($model);
+if (!empty($data)) {
+    $code = $data['code'];
+    $name = $data['name'];
+}
+
+$bmc_info = $code . ' > ' . $name . ' > ' .
         $fromDate . ' to ' . $toDate;
-$message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+$message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . $name . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 ?>
 <?php
 $array = $dataProvider->getModels();
-$tot_amt = array_sum(array_map(function($array) {
+$tot_amt = array_sum(array_map(function ($array) {
             return $array['final_amount'];
         }, $array));
 $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['milk_short_recovery_member']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['milk_short_recovery_member'] : 0;
@@ -48,59 +55,73 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                 <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($model, 'union_code'); ?>
                 <?= Html::activeHiddenInput($model, 'plant_code'); ?>
-                <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
-                <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+                <!-- Html::activeHiddenInput($model, 'mcc_plant_code'); -->
+                <?php if (is_array($model->mcc_plant_code)) { ?>
+                    <?php foreach ($model->mcc_plant_code as $mcc_plant_code) { ?>
+                        <?= Html::activeHiddenInput($model, 'mcc_plant_code[]', ['value' => $mcc_plant_code]); ?>
+                    <?php } ?>
+                <?php } else { ?>
+                    <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+                <?php } ?>
+                <?php if (is_array($model->bmc_code)) { ?>
+                    <?php foreach ($model->bmc_code as $bmc_code) { ?>
+                        <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+                    <?php } ?>
+                <?php } else { ?>
+                    <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+                <?php } ?>
+
                 <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($model, 'dcs_code'); ?>
                 <?= Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']); ?>
                 <?php
                 $attribute = [
-                        ['class' => 'kartik\grid\CheckboxColumn',
+                    ['class' => 'kartik\grid\CheckboxColumn',
                         'rowSelectedClass' => GridView::TYPE_DANGER,
                         'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                        'checkboxOptions' => function($model) {
+                        'checkboxOptions' => function ($model) {
                             return ['value' => $model['dcs_code']];
                         }, 'visible' => $allow_stop_payment_member == '1'],
-                        ['attribute' => 'stop_reason',
+                    ['attribute' => 'stop_reason',
                         'format' => 'raw',
                         'value' => function ($model) {
                             return Yii::$app->dropdown->dropdownfilterStatic('stop_payment_type', $model, '[' . $model->dcs_code . ']stop_payment_type', '');
                         }, 'visible' => $allow_stop_payment_member == '1'
                     ],
-                        ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function($model) {
+                    ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function ($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
                         }],
-                        ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                         }],
-                        ['attribute' => 'dcs_code', 'value' => function($model) {
+                    ['attribute' => 'dcs_code', 'value' => function ($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                         }],
-                        ['attribute' => 'member_count'],
-                        ['attribute' => 'kg_fat'],
-                        ['attribute' => 'kg_snf'],
-                        ['attribute' => 'qty', 'pageSummary' => true],
-                        ['attribute' => 'shortage_amount',
+                    ['attribute' => 'member_count'],
+                    ['attribute' => 'kg_fat'],
+                    ['attribute' => 'kg_snf'],
+                    ['attribute' => 'qty', 'pageSummary' => true],
+                    ['attribute' => 'shortage_amount',
                         'label' => Yii::t('app', 'Shortage Amount'),
-                        'value' => function($model, $key, $index) {
+                        'value' => function ($model, $key, $index) {
                             $other_member_amount = Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount');
                             $mpg_member_amount = Yii::$app->general->getforeignkey($model->shortageRecoveryMpgMember, 'recovery_amount');
                             $member_recovered_amount = Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount');
                             $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
                             $amount = $total_shortage_amount - (!empty($member_recovered_amount) ? $member_recovered_amount : 0);
                             $options = ['class' => 'shortage-recovery-amount'];
-                            echo Html::hiddenInput('shortage-recovery-amount', $amount,$options);
+                            echo Html::hiddenInput('shortage-recovery-amount', $amount, $options);
                             return $total_shortage_amount;
                         }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
-                        ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
-                        ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
-                        ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
-                        ['attribute' => 'previous_hold', 'pageSummary' => true],
-                        ['attribute' => 'previous_due', 'pageSummary' => true],
-                        ['attribute' => 'net_payable', 'pageSummary' => true,],
-                        ['attribute' => 'hold_amount', 'pageSummary' => true,],
-                        ['attribute' => 'additional_pay', 'pageSummary' => true,],
-                        ['attribute' => 'final_amount', 'pageSummary' => true,],
+                    ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
+                    ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
+                    ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
+                    ['attribute' => 'previous_hold', 'pageSummary' => true],
+                    ['attribute' => 'previous_due', 'pageSummary' => true],
+                    ['attribute' => 'net_payable', 'pageSummary' => true,],
+                    ['attribute' => 'hold_amount', 'pageSummary' => true,],
+                    ['attribute' => 'additional_pay', 'pageSummary' => true,],
+                    ['attribute' => 'final_amount', 'pageSummary' => true,],
                 ];
 
                 $grid_option = [
@@ -334,7 +355,8 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
 }
 
     function calculte(row_number,parent){
-        var adjust = parseFloat($('#tblmemberpaymentalias-adjust_amount-'+row_number).val());
+//        var adjust = parseFloat($('#tblmemberpaymentalias-adjust_amount-'+row_number).val());
+        var adjust = parseFloat($('#tblmemberpaymentalias-additional_pay-'+row_number).val());
          var final = parseFloat(parent.find('.final-amount').text());
         var hold = parseFloat($('#tblmemberpaymentalias-hold_amount-'+row_number).val());
         var adjustRec = parseFloat($('#tblmemberpaymentalias-adjust_recovery-'+row_number).val());
@@ -353,6 +375,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
             rec=0;
         }
         var net = final + adjust - hold + adjustRec - rec; 
+        $('#tblmemberpaymentalias-final_amount-'+row_number).val(net.toFixed(2));
         if(net != '' &&  !isNaN(net)){
             $('#tblmemberpaymentalias-final_amount-'+row_number).val(net.toFixed(2));
             SumAmount();

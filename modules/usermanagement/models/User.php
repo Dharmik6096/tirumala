@@ -5,6 +5,7 @@ namespace app\modules\usermanagement\models;
 use Yii;
 use yii\helpers\ArrayHelper;
 use webvimark\modules\UserManagement\UserManagementModule;
+use app\modules\organisation\models\TblDcs;
 
 class User extends \webvimark\modules\UserManagement\models\User {
 
@@ -142,6 +143,40 @@ class User extends \webvimark\modules\UserManagement\models\User {
             $value = $code . str_pad($newcode, 5, '0', STR_PAD_LEFT);
             return $value;
         }
+    }
+
+    public function getTaskUserSelection($location_type, $mcccode, $bmccode) {
+        $model = new TblDcs();
+        $value = $model->getBMCDCS($bmccode);
+        $values = ArrayHelper::map($value, 'dcs_code', function ($value) {
+                    return $value->dcs_code;
+                });
+        $userData = $this->find()
+                ->alias('u')
+                ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
+                ->select(['u.id', 'u.mobile_no', 'u.name'])
+                ->distinct()
+                ->orWhere(['AND', ['tbl_user_organization_mapping.organization_code' => $values], ['tbl_user_organization_mapping.organization_type' => 'DCS']])
+                ->orWhere(['AND', ['tbl_user_organization_mapping.organization_code' => $bmccode], ['tbl_user_organization_mapping.organization_type' => 'BMC']])
+                ->orWhere(['AND', ['tbl_user_organization_mapping.organization_code' => $mcccode], ['tbl_user_organization_mapping.organization_type' => 'MCC']])
+                ->all();
+
+        $user = ArrayHelper::map($userData, 'id', function($data) {
+                    $mobileNo = !empty($data->mobile_no) ? $data->mobile_no : '';
+                    return $data->name . ($mobileNo !== '' ? ' (' . $mobileNo . ')' : '');
+                });
+                
+        return $user;
+    }
+
+    public function getUser() {
+        $userData = $this->find()->where(['portal_type' => 'portal', 'is_active' => 1])->all();
+        $user = ArrayHelper::map($userData, 'id', function($data) {
+                    $mobileNo = !empty($data->mobile_no) ? $data->mobile_no : '';
+                    return $data->name . ($mobileNo !== '' ? ' (' . $mobileNo . ')' : '');
+                });
+
+        return $user;
     }
 
 }

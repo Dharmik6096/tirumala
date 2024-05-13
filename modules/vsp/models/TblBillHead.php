@@ -10,6 +10,7 @@ use yii\helpers\ArrayHelper;
 use app\modules\payment\models\TblPaymentCycle;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
 
 /**
  * This is the model class for table "tbl_bill_head".
@@ -183,6 +184,24 @@ class TblBillHead extends \app\models\ChildModel {
 
     public function getMilkTypeCode() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+    public function getCriteria($model) {
+        $query = TblBillHead::find()
+                ->select(['tbl_bill_head.bill_head_code', 'tbl_vsp_bill_head_criteria.criteria_name', 'tbl_vsp_bill_head_criteria.vsp_criteria_code'])
+                ->innerJoin('tbl_vsp_bill_head_criteria', 'tbl_bill_head.bill_head_code = tbl_vsp_bill_head_criteria.bill_head_code')
+                ->where(['tbl_bill_head.is_active' => 1, 'tbl_bill_head.union_code' => $model->union_code, 'tbl_bill_head.bill_head_for' => $model->bill_head_for,
+        ]);
+
+        return $query->asArray()->all();
+    }
+
+    public function getCriteriaApplicabiliytData($searchData, $code) {
+        $applicable = new TblVspBillHeadCriteriaApplicability();
+        $query = $applicable->find()
+                        ->where(['union_code' => $searchData->union_code, 'bmc_code' => $searchData->bmc_code, 'applicable_code' => $code, 'applicable_for' => $searchData->customer_type, 'bill_head_for' => $searchData->bill_head_for])->all();
+
+        return ArrayHelper::map($query, 'bill_head_code', 'bill_head_code');
     }
 
 }

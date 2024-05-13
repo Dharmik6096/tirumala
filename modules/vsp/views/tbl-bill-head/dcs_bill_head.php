@@ -7,7 +7,7 @@ $this->title = Yii::t('app', 'DCS Wise Bill Head Applicability');
         <?php echo $this->render('_search_bill_head', ['model' => $model]); ?>
         <div class="clearfix"></div>
         <?=
-        $this->render('_bill_head_grid', ['model' => $model, 'dcs' => $dcs, 'head' => $head]);
+        $this->render('_bill_head_grid', ['model' => $model, 'dcs' => $dcs, 'head' => $head, 'criteria' => $criteria]);
         ?>
 
     </div>

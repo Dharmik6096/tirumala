@@ -710,6 +710,54 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs#notification_type',
                 'sp' => 'sp_app_eipl_v1_bulk_notification',
             ],
+            'provisional-member/master' => [
+                'param' => 'select_param:*#organization_type#organization_code#table:tbl_member_provisional',
+                'sp' => 'sp_app_eipl_v1_master_data',
+                'to_decrypt' => ['dob', 'adhar_no', 'pan_no'],
+            ],
+            'bank/master' => [
+                'param' => 'select_param:*#organization_type#state_code#table:tbl_banks',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],
+            'branch/master' => [
+                'param' => 'bank_code',
+                'param' => 'select_param:*#organization_type:bank_code#bank_code#table:tbl_branch:condition:ifsc IS NOT NULL',
+
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],
+            'gender/master' => [
+                'param' => 'select_param:*#organization_type#state_code#table:tbl_gender',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],
+            'mapping-document/master' => [
+                'param' => 'union#master_type',
+                'sp' => 'sp_eipl_app_provisioanl_member_document_master_data',
+            ],
+            'provisional-member' => [
+                'main_table' => 'TblMemberProvisional',
+                'save_child' => true
+            ],
+            'state/master' => [
+                'param' => 'select_param:*#organization_type#state_code#table:tbl_states',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],
+            'district/master' => [
+                'param' => 'select_param:*#organization_type:state_code#state_code#table:tbl_districts',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],            
+            'sub-district/master' => [
+                'param' => 'select_param:*#organization_type:district_code#district_code#table:tbl_sub_districts',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],
+            'village/master' => [
+                'param' => 'select_param:*#organization_type:sub_district_code#sub_district_code#table:tbl_villages',
+                'sp' => 'sp_app_eipl_v1_master_data',
+            ],
+            'member/edit' => [
+                'param' => 'member_code',
+                'sp' => 'sp_app_eipl_update_member_data',
+                'to_decrypt' => ['dob', 'adhar_no', 'pan_no'],
+            ],
         ];
         return $label;
     }

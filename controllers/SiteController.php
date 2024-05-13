@@ -63,7 +63,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data'];
 
     public function init() {
         parent::init();
@@ -89,7 +89,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -162,6 +162,18 @@ class SiteController extends Controller {
         if (Yii::$app->session->get('eiplCode') == 'GYAN') {
             $defaultWidget = 'rmrd';
         }
+        if (!empty(Yii::$app->request->post('Dashboard')['shift'])) {
+            $model->shift = Yii::$app->request->post('Dashboard')['shift'];
+        } else {
+            $cur_time = date_create(date('H:i:s'));
+            $morning_time = date_create('16:00:00');
+            $diff = date_diff($morning_time, $cur_time);
+            $model->shift = 1;
+            if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
+                $model->shift = 2;
+            }
+        }
+        $model->performance_type = !empty(Yii::$app->request->post('performance_type')) ? Yii::$app->request->post('performance_type') : '0';
         $model->widget_type = isset(Yii::$app->request->post('Dashboard')['widget_type']) ? Yii::$app->request->post('Dashboard')['widget_type'] : $defaultWidget;
         $model->mcc_code = isset(Yii::$app->request->post('Dashboard')['mcc_code']) ? Yii::$app->request->post('Dashboard')['mcc_code'] : '';
         $dashboardUserWidgets = new TblDashboardUserWidgets();
@@ -223,7 +235,7 @@ class SiteController extends Controller {
 // $dpu_data = $this->DPUDataCollection($model);
 
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
-        ]);
+                    ]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -770,10 +782,19 @@ class SiteController extends Controller {
         if (!empty($post['mag_to_shift'])) {
             $post['mav_to_shift'] = $post['mag_to_shift'];
         }
+        if (!empty($post['shift'])) {
+            $post['from_shift'] = $post['shift'];
+            $post['to_shift'] = $post['shift'];
+            if ($post['shift'] == 3) {
+                $post['from_shift'] = 1;
+                $post['to_shift'] = 2;
+            }
+        }
         $input = $this->SpInput($sp_name, $post);
         $spname = $input['name'];
         $in_array = explode(',', str_replace(' ', '', $input['input']));
         $param_str = '';
+        $is_from_date = true;
         foreach ($in_array as $in) {
             $data = explode('=', $in);
             $variable = explode('~', $data[0]);
@@ -800,19 +821,15 @@ class SiteController extends Controller {
                     $value = ',' . $value . ',';
                 }
             }
-            if (isset($val_type[1]) && $val_type[1] == 'date' && isset($input['appendTime']) && $input['appendTime']) {
-                $cur_time = date_create(date('H:i:s'));
-                $morning_time = date_create('16:00:00');
-                $diff = date_diff($morning_time, $cur_time);
-                $time = '06:00:00';
-                if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
-                    $time = '18:00:00';
+            if (isset($val_type[1]) && $val_type[1] == 'date') {
+                if (isset($post['from_shift'])) {
+                    if ($is_from_date) {
+                        $value .= ' ' . \Yii::$app->general->getshift($post['from_shift']);
+                        $is_from_date = FALSE;
+                    } else {
+                        $value .= ' ' . \Yii::$app->general->getshift($post['to_shift']);
+                    }
                 }
-                $value = $value . ' ' . $time;
-            }
-
-            if ($param1 == 'shift') {
-                $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
             }
             $param_str .= "'" . $value . "',";
         }
@@ -862,11 +879,15 @@ class SiteController extends Controller {
         $dcs_code = str_replace(',', '-', $dcs_code);
         $widget_type = '';
         $customer_type = '';
+        $performance_type = '0';
         if (!empty(Yii::$app->request->post('widget_type'))) {
             $widget_type = Yii::$app->request->post('widget_type');
         }
         if (!empty(Yii::$app->request->post('customer_type'))) {
             $customer_type = Yii::$app->request->post('customer_type');
+        }
+        if (!empty(Yii::$app->request->post('performance_type'))) {
+            $performance_type = Yii::$app->request->post('performance_type');
         }
         $array = [
             'fed_union' => [
@@ -973,11 +994,11 @@ class SiteController extends Controller {
             ],
             'top_dcs_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=' . $customer_type,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=' . $customer_type . ',performance_type=' . $performance_type,
             ],
             'top_rmrd_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=DCS',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=DCS' . ',performance_type=' . $performance_type,
             ],
             'dashboard_society_status_pie_chart' => [
                 'name' => 'sp_portal_dashboard_farmer_status',
@@ -1440,6 +1461,7 @@ class SiteController extends Controller {
         }
         $type = Yii::$app->request->post('type');
         $customertype = !empty(Yii::$app->request->post('customer_type')) ? Yii::$app->request->post('customer_type') : ($type == 'rmrd' ? 'DCS' : '');
+        $performancetype = !empty(Yii::$app->request->post('performance_type')) ? Yii::$app->request->post('performance_type') : '0';
 
         $sp_param = [];
         $rlsData = $this->setRlsData();
@@ -1453,10 +1475,11 @@ class SiteController extends Controller {
         $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
         $sp_param[] = $type;
         $sp_param[] = $customertype;
+        $sp_param[] = $performancetype;
 //        $sp_param[] = '';
         $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
-        return $this->renderAjax('top_dcs_collection', ['output' => $output, 'union_code' => $union, 'customer_tpye' => $customertype]);
+        return $this->renderAjax('top_dcs_collection', ['output' => $output, 'union_code' => $union, 'customer_tpye' => $customertype, 'performance_type' => $performancetype]);
     }
 
     public function actionBmcCrossTabDetails() {
@@ -2460,22 +2483,23 @@ class SiteController extends Controller {
             $bmc_code = isset($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $widget_for = 'farmer';
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = $widget_for;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
             $blocks_data = $this->getFarmerBlockStatus($union, $plant, $mcc, $bmc_code, $dcs, $date);
         }
 // var_dump($output);die;
-        return $this->render('_dashboard_grid_union', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_union', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetRmrdUnions() {
@@ -2492,22 +2516,23 @@ class SiteController extends Controller {
             $bmc_code = isset($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $widget_for = 'rmrd';
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = $widget_for;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
             $blocks_data = $this->getFarmerBlockStatus($union, $plant, $mcc, $bmc_code, $dcs, $date, 'rmrd');
         }
 // var_dump($output);die;
-        return $this->render('_dashboard_grid_rmrd_union', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_rmrd_union', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetMccs() {
@@ -2525,15 +2550,15 @@ class SiteController extends Controller {
             $bmc_code = isset($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
-
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = '';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
@@ -2542,7 +2567,7 @@ class SiteController extends Controller {
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
         $tbl_union_model = new TblUnions();
         $tbl_union_model->union_code = $union;
-        return $this->render('_dashboard_grid_mccs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'union_name' => Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_mccs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'union_name' => Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetRmrdMccs() {
@@ -2560,15 +2585,16 @@ class SiteController extends Controller {
             $bmc_code = isset($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = $status;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
@@ -2577,7 +2603,7 @@ class SiteController extends Controller {
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
         $tbl_union_model = new TblUnions();
         $tbl_union_model->union_code = $union;
-        return $this->render('_dashboard_grid_rmrd_mccs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'union_name' => Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_rmrd_mccs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'union_name' => Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetBmcs() {
@@ -2595,15 +2621,16 @@ class SiteController extends Controller {
             $bmc_code = isset($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
 
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = '';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
@@ -2613,7 +2640,7 @@ class SiteController extends Controller {
         $tbl_plant_model = new TblMccPlant();
         $tbl_plant_model->mcc_plant_code = $mcc;
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
-        return $this->render('_dashboard_grid_bmc', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_bmc', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetRmrdBmcs() {
@@ -2631,15 +2658,16 @@ class SiteController extends Controller {
             $bmc_code = isset($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = $status;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
@@ -2649,7 +2677,7 @@ class SiteController extends Controller {
         $tbl_plant_model = new TblMccPlant();
         $tbl_plant_model->mcc_plant_code = $mcc;
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
-        return $this->render('_dashboard_grid_rmrd_bmc', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_rmrd_bmc', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetDcs() {
@@ -2667,15 +2695,16 @@ class SiteController extends Controller {
             $bmc_code = !empty($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
 
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = '';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
@@ -2686,7 +2715,7 @@ class SiteController extends Controller {
         $tbl_plant_model = new TblMccPlant();
         $tbl_plant_model->mcc_plant_code = $mcc;
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
-        return $this->render('_dashboard_grid_dcs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_dcs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetRmrdDcs() {
@@ -2704,7 +2733,8 @@ class SiteController extends Controller {
             $bmc_code = !empty($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
 
             $sp_param[] = $union;
@@ -2712,8 +2742,8 @@ class SiteController extends Controller {
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = $status;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
@@ -2724,7 +2754,7 @@ class SiteController extends Controller {
         $tbl_plant_model = new TblMccPlant();
         $tbl_plant_model->mcc_plant_code = $mcc;
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
-        return $this->render('_dashboard_grid_rmrd_dcs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+        return $this->render('_dashboard_grid_rmrd_dcs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'shift' => $data['shift']]);
     }
 
     public function actionGetRmrdVendor() {
@@ -2742,7 +2772,8 @@ class SiteController extends Controller {
             $bmc_code = !empty($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $status = !empty($data['type']) ? $data['type'] : '';
 
             $sp_param[] = $union;
@@ -2750,8 +2781,8 @@ class SiteController extends Controller {
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = $status;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
@@ -2763,7 +2794,7 @@ class SiteController extends Controller {
         $tbl_plant_model->mcc_plant_code = $mcc;
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
         $title = ($status == 'BULKVEN' ? 'BULK Vendor' : 'VLCC Vendor');
-        return $this->render('_dashboard_grid_vendor', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'title' => $title]);
+        return $this->render('_dashboard_grid_vendor', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'title' => $title, 'shift' => $data['shift']]);
     }
 
     public function actionGetSocietyStatus() {
@@ -2781,7 +2812,8 @@ class SiteController extends Controller {
             $bmc_code = !empty($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
             $status = !empty($data['status']) ? $data['status'] : '';
 
             $sp_param[] = $union;
@@ -2789,8 +2821,8 @@ class SiteController extends Controller {
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $sp_param[] = $status;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
@@ -2802,7 +2834,7 @@ class SiteController extends Controller {
         $tbl_plant_model->mcc_plant_code = $mcc;
         $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
         $title = ($status == 'Installed' ? 'Installed Society' : ($status == 'Online' ? 'Online Society' : 'Offline Society'));
-        return $this->render('_dashboard_grid_installed_dcs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'title' => $title]);
+        return $this->render('_dashboard_grid_installed_dcs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'title' => $title, 'shift' => $data['shift']]);
     }
 
     public function actionGetFarmers() {
@@ -2820,15 +2852,16 @@ class SiteController extends Controller {
             $bmc_code = !empty($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
-            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+//            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $date = !empty($data['shift']) ? Yii::$app->general->getShiftWithDate($data['shift'], $data['date']) : date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
 
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
             $sp_param[] = $bmc_code;
             $sp_param[] = $dcs;
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
-            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+            $sp_param[] = is_array($date) ? $date['to_date'] : $date;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
             $blocks_data = $this->getFarmerBlockStatus($union, $plant, $mcc, $bmc_code, $dcs, $date);
@@ -2836,7 +2869,7 @@ class SiteController extends Controller {
         $dcs = !empty($data['dcs_code']) ? $data['dcs_code'] : '0';
         $tbl_dcs_model = new TblDcs();
         $tbl_dcs_model->dcs_code = $dcs;
-        return $this->render('_dashboard_grid_farmers', ['output' => $output, 'date' => $data['date'], 'dcs_name' => Yii::$app->general->getforeignkey($tbl_dcs_model->tblDcs, 'dcs_name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'union' => $union]);
+        return $this->render('_dashboard_grid_farmers', ['output' => $output, 'date' => $data['date'], 'dcs_name' => Yii::$app->general->getforeignkey($tbl_dcs_model->tblDcs, 'dcs_name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'union' => $union, 'shift' => $data['shift']]);
     }
 
     public function getFarmerBlockStatus($union = '0', $plant = '0', $mcc = '0', $bmc_code = '0', $dcs = '0', $date = '0', $widget_for = 'farmer') {
@@ -2847,8 +2880,8 @@ class SiteController extends Controller {
         $sp_param[] = $mcc;
         $sp_param[] = $bmc_code;
         $sp_param[] = $dcs;
-        $sp_param[] = $date;
-        $sp_param[] = $date;
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date;
         $sp_name = 'sp_portal_dashboard_farmer_status';
         $farmer_status = \Yii::$app->general->getSpData($sp_name, $sp_param);
         $sp_name = 'sp_portal_dashboard_farmer_rmrd_blocks';
@@ -2929,6 +2962,205 @@ class SiteController extends Controller {
     public function actionSchemaRefresh() {
         Yii::$app->db->schema->refresh();
         echo 'Schema Refreshed';
+    }
+
+    public function actionGetInstalledMpps() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_mpp';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_mpp', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledMembers() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_member';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_member', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledEmployees() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_employee';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_employee', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledSupervisors() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_supervisor';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_supervisor', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledManagers() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_az_manager';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_manager', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetInstalledOtherStaff() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_installed_other_Staff';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_other_Staff', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+    
+    public function actionGetNotInstalledMpps() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_mpp';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_mpp', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledMembers() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_member';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_member', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledEmployees() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_employee';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_employee', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledSupervisors() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_supervisor';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_supervisor', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledManagers() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_az_manager';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_manager', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionGetNotInstalledOtherStaff() {
+        $output = [];
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data);
+            $sp_param = [];
+            $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = 0;
+            $sp_param[] = 'total_app_not_installed_other_Staff';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $blocks_data = $this->getMobileBlockStatus([1, '']);
+        }
+        return $this->render('_dashboard_grid_not_installed_other_Staff', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
+    }
+
+    public function actionLoadDashboardMobileData() {
+        $sp_name = 'proc_mobile_user_count_list';
+        $sp_param[] = 1;
+        $sp_param[] = '';
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $res = [];
+        foreach ($results[0] as $key => $value) {
+            $res[$key] = $value;
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $res];
+    }
+
+    public function getMobileBlockStatus($sp_param) {
+        $sp_name = 'proc_mobile_user_count_list';
+        $mobile_status = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        return [$mobile_status];
     }
 
 }

@@ -11,24 +11,27 @@ $this->title = $title;
 ?>
 <?php
 $array = $dataProvider->getModels();
-$tot_amt = array_sum(array_map(function($array) {
+$tot_amt = array_sum(array_map(function ($array) {
             return $array['net_payable'] + $array['adjust_recovery'] - $array['recovery'];
         }, $array));
-$final_amt = array_sum(array_map(function($array) {
+$final_amt = array_sum(array_map(function ($array) {
             return $array['net_payable'] + $array['adjust_recovery'] - $array['recovery'] + $array['adjust_amount'] - $array['hold_amount'];
         }, $array));
 
 $recovery_from_other_vendor = ($model->billing_type != 'remuneration' && isset(Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor']) && Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor'] == 1) ? TRUE : FALSE;
-
-if ($model->multiple_bmc) {
-    $mcc_data = $model->mccPlantCode;
-    $bmc_info = $mcc_data->mcc_plant_code . ' > ' . $mcc_data->name . ' > ';
-} else {
-    $bmc_data = $model->bmcCode;
-    $bmc_info = $bmc_data->bmc_code . ' > ' . $bmc_data->bmc_name . ' > ';
+$code = $name = '';
+$data = Yii::$app->general->getPaymentHeader($model);
+if (!empty($data)) {
+    $code = $data['code'];
+    $name = $data['name'];
 }
-$bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
-        (($model->billing_type == 'remuneration') ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) :
+$bmc_info = $code . ' > ' . $name . ' > ';
+if (is_array($model->customer_type) && !empty($model->types_title)) {
+    $bmc_info .= $model->types_title;
+} else {
+    $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ';
+}
+$bmc_info .= (($model->billing_type == 'remuneration') ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) :
         Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')));
 $allow_stop_payment_vendor = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['allow_stop_payment_vendor']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['allow_stop_payment_vendor'] : 0;
 ?>
@@ -50,73 +53,77 @@ $allow_stop_payment_vendor = isset(Yii::$app->session->get('unionConfig')[$model
         ]);
         ?>
         <?= Html::hiddenInput('process_lock_flag', 'processed', ['class' => 'process_lock_flag']); ?>
+        <?= Html::hiddenInput('types_title', $model->types_title); ?>
         <?php
         $attribute = [
-                ['class' => 'kartik\grid\CheckboxColumn',
+            ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_DANGER,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                'checkboxOptions' => function($model) {
+                'checkboxOptions' => function ($model) {
                     return ['value' => $model['customer_code']];
                 }, 'visible' => $allow_stop_payment_vendor == '1'],
-                ['attribute' => 'stop_reason',
+            ['attribute' => 'stop_reason',
                 'format' => 'raw',
                 'value' => function ($model) {
                     return Yii::$app->dropdown->dropdownfilterStatic('stop_payment_type', $model, '[' . $model->customer_code . ']stop_payment_type', '');
                 }, 'visible' => $allow_stop_payment_vendor == '1'
             ],
-                ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
-                ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
                     return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
                 }, 'filter' => false],
-                ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+            ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                },],
+            ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function ($model) {
                     return !empty($model->customer_name) ? $model->customer_name : Yii::$app->general->getCustomer($model, $model->customer_type);
                 }],
-                ['attribute' => 'kg_fat'],
-                ['attribute' => 'kg_snf'],
-                ['attribute' => 'total_qty', 'value' => 'total_qty',
+            ['attribute' => 'kg_fat'],
+            ['attribute' => 'kg_snf'],
+            ['attribute' => 'total_qty', 'value' => 'total_qty',
                 'pageSummary' => true
             ],
-                ['attribute' => 'amount', 'value' => 'amount',
+            ['attribute' => 'amount', 'value' => 'amount',
                 'pageSummary' => true
             ],
-                ['attribute' => 'addition', 'value' => 'addition',
+            ['attribute' => 'addition', 'value' => 'addition',
                 'pageSummary' => true
             ],
-                ['attribute' => 'deduction', 'value' => 'deduction',
+            ['attribute' => 'deduction', 'value' => 'deduction',
                 'pageSummary' => true
             ],
-                ['attribute' => 'previous_hold', 'pageSummary' => true
+            ['attribute' => 'previous_hold', 'pageSummary' => true
             ],
-                ['attribute' => 'previous_due', 'pageSummary' => true
+            ['attribute' => 'previous_due', 'pageSummary' => true
             ],
-                ['attribute' => 'final_pay', 'value' => 'net_payable',
+            ['attribute' => 'final_pay', 'value' => 'net_payable',
                 'pageSummary' => true,
                 'contentOptions' => ['class' => 'final-amount'],
             ],
-                ['attribute' => 'adjust_recovery', 'contentOptions' => ['class' => 'adjust-recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
-                ['attribute' => 'recovery', 'contentOptions' => ['class' => 'recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
-                ['attribute' => 'hold_amount',
+            ['attribute' => 'adjust_recovery', 'contentOptions' => ['class' => 'adjust-recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
+            ['attribute' => 'recovery', 'contentOptions' => ['class' => 'recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
+            ['attribute' => 'hold_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
                     return Html::activeHiddenInput($model, 'vsp_payment_code[' . $index . ']', ['value' => $model->vsp_payment_code]) . $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'adjust_amount',
+            ['attribute' => 'adjust_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
                     return Html::activeHiddenInput($model, 'vsp_payment_code[' . $index . ']', ['value' => $model->vsp_payment_code]) . $form->field($model, 'adjust_amount[' . $index . ']')->textInput(['value' => $model->adjust_amount, 'class' => 'number-validate adjust-amount cal-amount form-control',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'net_payable',
+            ['attribute' => 'net_payable',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
                     return $form->field($model, 'net_payable[' . $index . ']')->textInput(['class' => 'number-validate net-amount form-control', "disabled" => TRUE, 'value' => $model->final_pay])->label(FALSE);
                 },
             ],
-                ['attribute' => 'adjust_remark',
+            ['attribute' => 'adjust_remark',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {

@@ -417,8 +417,7 @@ class GeneralFunctions extends Component {
                     $result = $result + $this->array_flatten($value);
                 else
                     $result = array_merge($result, $this->array_flatten($value));
-            }
-            else {
+            } else {
                 $result[$key] = $value;
             }
         }
@@ -438,8 +437,6 @@ class GeneralFunctions extends Component {
                 ->from($tableName)
                 ->where('(CAST(trim(SUBSTRING(local_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
                 ->one();
-
-
 
         $code1 = (int) $val['local_code'] + 1;
 
@@ -829,7 +826,7 @@ class GeneralFunctions extends Component {
     }
 
     public function base64url_decode($data) {
-        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess', 'dataexchange'])) {
+        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess', 'dataexchange', 'clienterp'])) {
             return $data;
         }
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
@@ -987,19 +984,19 @@ class GeneralFunctions extends Component {
                 $query->limit(1);
             }
             $records = $query->all();
-        } else
-        if ($numericVal) {
-            $records = $datamodel->find()
-                            ->select([$fields[0]])
-                            ->where([$fields[1] => strval($model->$attribute)])
-                            ->andWhere($where)->all();
         } else {
-            $records = $datamodel->find()
-                            ->select([$fields[0]])
-                            ->where([$fields[0] => $model->$attribute])
-                            ->andWhere($where)->all();
+            if ($numericVal) {
+                $records = $datamodel->find()
+                                ->select([$fields[0]])
+                                ->where([$fields[1] => strval($model->$attribute)])
+                                ->andWhere($where)->all();
+            } else {
+                $records = $datamodel->find()
+                                ->select([$fields[0]])
+                                ->where([$fields[0] => $model->$attribute])
+                                ->andWhere($where)->all();
+            }
         }
-
         if (!empty($records)) {
             if (count($records) == 1) {
                 $model->$attribute = $records[0]->{$fields[0]};
@@ -1149,12 +1146,12 @@ class GeneralFunctions extends Component {
 
     public function &camelCaseToUnderscore(&$post_data) {
         if (is_array($post_data)) {
-            $post_data = array_combine(array_map(function($str) {
+            $post_data = array_combine(array_map(function ($str) {
                         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
                     }, array_keys($post_data)), array_values($post_data));
             foreach ($post_data as $key => $val) {
                 if (is_array($post_data[$key])) {
-                    $arr1 = array_combine(array_map(function($str) {
+                    $arr1 = array_combine(array_map(function ($str) {
                                 return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
                             }, array_keys($post_data[$key])), array_values($post_data[$key]));
                     $post_data[$key] = $arr1;
@@ -1425,14 +1422,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -2159,10 +2156,11 @@ class GeneralFunctions extends Component {
         }
 
         if ($attachment) {
-            if ($downloadOnly) {
-                return Html::a('<i class="fa fa-download"></i>', $attachment[0]->attachment, [
+            if ($downloadOnly && $attachment[0]->attachment_type == 'pdf') {
+                return Html::a('<i class="fa fa-download"></i> ' . $attachment[0]->file_name, $attachment[0]->attachment, [
                             'title' => 'Download',
                             'download' => $reference_code . $attachment[0]->attachment_type,
+                            'class' => 'text-white hover-black',
                 ]);
             } else if ($link) {
                 return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [
@@ -2261,16 +2259,16 @@ class GeneralFunctions extends Component {
         $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
         $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
         $query->andFilterWhere(['or',
-                ['pd.union_code' => $unions],
-                ['ms.union_code' => $unions],
-                ['md.union_code' => $unions],
-                ['cs.union_code' => $unions],
-                ['cd.union_code' => $unions]
+            ['pd.union_code' => $unions],
+            ['ms.union_code' => $unions],
+            ['md.union_code' => $unions],
+            ['cs.union_code' => $unions],
+            ['cd.union_code' => $unions]
         ]);
         $form_to = !empty($mccs) ? $mccs : $plants;
         $query->andFilterWhere(['or',
-                [$main_table . '.' . $from_dest => $form_to],
-                [$main_table . '.' . $to_dest => $form_to],
+            [$main_table . '.' . $from_dest => $form_to],
+            [$main_table . '.' . $to_dest => $form_to],
         ]);
     }
 
@@ -2434,6 +2432,56 @@ class GeneralFunctions extends Component {
         } else {
             return '';
         }
+    }
+
+    function getPaymentHeader($model) {
+        $data = [];
+        if (is_array($model->mcc_plant_code)) {
+            $model->plant_code = empty($model->plant_code) ? $model->mccPlantCode->plant_code : $model->plant_code;
+            $detail = $model->plantCode;
+            if (!empty($detail)) {
+                $data['code'] = $detail->ref_code;
+                $data['name'] = $detail->name;
+            }
+        } else {
+            if (is_array($model->bmc_code)) {
+                $detail = $model->mccPlantCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->name;
+                }
+            } else {
+                $detail = $model->bmcCode;
+                if (!empty($detail)) {
+                    $data['code'] = $detail->ref_code;
+                    $data['name'] = $detail->bmc_name;
+                }
+            }
+        }
+        return $data;
+    }
+
+    public function getShiftWithDate($shift, $date) {
+        $date = date('Y-m-d', strtotime($date));
+        if ($shift == 3) {
+            $dateshift['from_date'] = $date . ' ' . Yii::$app->general->getshift(1);
+            $dateshift['to_date'] = $date . ' ' . Yii::$app->general->getshift(2);
+        } else {
+            $setshift = Yii::$app->general->getshift($shift);
+            $dateshift['from_date'] = $date . ' ' . $setshift;
+            $dateshift['to_date'] = $date . ' ' . $setshift;
+        }
+        return $dateshift;
+    }
+
+    public function getShiftName($shift) {
+        $shift_time = 'A';
+        if ($shift == 1) {
+            $shift_time = 'M';
+        } else if ($shift == 2) {
+            $shift_time = 'E';
+        }
+        return $shift_time;
     }
 
 }

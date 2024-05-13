@@ -17,6 +17,7 @@ $union = !empty($output[0]['union_code']) ? $output[0]['union_code'] : '';
     <div class="panel-heading">
         <?= $breadcrum_title . $this->title; ?>
         <button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-toggle="collapse" data-target=".grid_card"><i class="fa fa-list"></i></button>
+        <span class="right_align_shift"><?= '(' . Yii::$app->general->getShiftName($shift) . ')' ?></span>
         <span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
     <div class="panel-body hide-grid-export">
@@ -27,7 +28,7 @@ $union = !empty($output[0]['union_code']) ? $output[0]['union_code'] : '';
 
                         <div class="col-sm-6 farmer_rmrd_block">
                             <?php
-                            echo $this->render('_dashboard_grid_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union]);
+                            echo $this->render('_dashboard_grid_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union' => $union, 'shift' => $shift]);
                             ?>
                         </div>
 
@@ -91,11 +92,11 @@ $union = !empty($output[0]['union_code']) ? $output[0]['union_code'] : '';
                                                             <div class="col-sm-4 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'MCC') ?></span></div>
                                                             <div class="col-sm-4 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Society') ?></span></div>
                                                             <div class="col-sm-4 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Farmer') ?></span></div>
-                                                            <?php $url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $data['union_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $data['union_code'], 'shift' => $shift]); ?>
                                                             <div class="col-sm-4 dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" class='href_link' ><span class="dash_grid_block_desc_title"><span><?= $data['total_mcc'] ?></span></span></a></div>
-                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $data['union_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $data['union_code'], 'shift' => $shift]); ?>
                                                             <div class="col-sm-4 dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" class='href_link' ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
-                                                            <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $data['union_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $data['union_code'], 'shift' => $shift]); ?>
                                                             <div class="col-sm-4 dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" class='href_link' ><span class="dash_grid_block_desc_title"><span><?= $data['total_farmers'] ?></span></span></a></div>
                                                         </div>
                                                     </div>
@@ -140,11 +141,11 @@ $union = !empty($output[0]['union_code']) ? $output[0]['union_code'] : '';
                                                             // $union_name =  !empty(Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name'))? Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name') : 'N/A';
                                                             ?>
                                                             <td class="grid_left_align custom_grid_normal" title="<?= $data['union_name'] ?>"><?= $data['union_short_name'] ?> - <?= $data['union_code'] ?></td>
-                                                            <?php $url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $data['union_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $data['union_code'], 'shift' => $shift]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url; ?>" ><?= $data['total_mcc'] ?></a></td>
-                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $data['union_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $data['union_code'], 'shift' => $shift]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url; ?>" ><?= $data['total_dcs'] ?></a></td>
-                                                            <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $data['union_code']]); ?>
+                                                            <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $data['union_code'], 'shift' => $shift]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url; ?>" ><?= $data['total_farmers'] ?></a></td>
                                                             <td class="number_align custom_grid_normal "><?= $data['total_quantity'] ?></td>
                                                             <td class="number_align custom_grid_normal "><?= $data['avgFAT'] ?></td>
