@@ -984,6 +984,7 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [],
                 'TblVspPayment' => [],
+                'TblBankDetails' => [],
             ],
         ];
     }
