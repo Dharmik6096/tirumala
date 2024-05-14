@@ -171,7 +171,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         }
         $transaction = $this->generalModel->saveTransaction($master, ['Rate Recalculation', 'create']);
         if ($transaction == 'customRedirect') {
-            $trans = \Yii::$app->db->beginTransaction();
+            //      $trans = \Yii::$app->db->beginTransaction();
             try {
                 if ($rtype == 'custom') {
                     foreach ($data as $code) {
@@ -192,13 +192,13 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }
                 }
-                $trans->commit();
+                //  $trans->commit();
             } catch (UserException $e) {
-                $trans->rollback();
+                // $trans->rollback();
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $e->getMessage()]);
             } catch (\yii\db\Exception $e) {
-                $trans->rollback();
+                // $trans->rollback();
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
             }
