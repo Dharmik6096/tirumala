@@ -93,6 +93,7 @@ class TblWeightCollection extends \app\models\ChildModel {
                 [['date_time_of_collection', 'shift_code'], 'backendData', 'except' => ['androidsync']],
                 [['uuid'], 'validateBmcCode'],
                 [['uuid'], 'validateRouteCode'],
+                [['rtpl', 'amount', 'purchase_rate_code'], 'safe'],
         ];
     }
 
