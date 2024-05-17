@@ -166,7 +166,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         ]);
 //        $query->joinWith(['installmentCode']);
         $query->join('LEFT JOIN', 'tbl_bill_head_installment', 'tbl_bill_head_installment.bill_head_detail_code = tbl_bill_head_detail.bill_head_detail_code')
-              ->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bill_head_detail.customer_code');
+              ->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bill_head_detail.dcs_code');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
