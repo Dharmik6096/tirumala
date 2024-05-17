@@ -19,7 +19,6 @@ $model->date = empty($model->date) ? date('d-m-Y') : $model->date;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
-$fileDownloadArr = '';
 $downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
@@ -667,7 +666,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
         </div>
         <?php
         if (!empty($fileDownloadArr)) {
-            echo GhostHtml::submitButton('<i class="text-white fae fa-file"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
+            echo GhostHtml::submitButton('<i class="text-white fas fa-file"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
             echo GhostHtml::submitButton('FTP Upload', ['class' => 'btn btn-default apply-shortcut uploadSapFiles', 'name' => 'ftp-upload', 'value' => 'ftp-upload', 'id' => 'ftp-upload', 'title' => Yii::t('app', 'Ftp Upload')]);
         }
         ?>
@@ -800,20 +799,8 @@ $this->registerJs($script, View::POS_READY, 'mis-report-script');
 
 <?php
 $baseUrl = Yii::$app->request->baseUrl;
-if (is_array($fileDownloadArr)) {
-    $count = count($fileDownloadArr);
-} else {
-    
-}
-
-$fileDownloadArr = array();
-if (is_array($fileDownloadArr)) {
-    $count = count($fileDownloadArr);
-    $timeOutForLoader = ($count * 1000) + 2000;
-} else {
-    
-}
-//$timeOutForLoader = ($count * 1000) + 2000;
+$count = count($fileDownloadArr);
+$timeOutForLoader = ($count * 1000) + 2000;
 $scriptDownload = "
 
 var timeOut = 500;
@@ -822,7 +809,7 @@ $(document).on('click', '.downloadSapFiles', function(e){
     $('#loadercontent').show();
     $('#pageloader').show();
     timeOut = 500;
-    var baseUrl = '" . $baseUrl . "/web/sap_data_files/';
+    var baseUrl = '" . $baseUrl . "/sap_data_files/';
     var downloadFilesJson = '" . $downloadSapFiles . "';
     var timeOutForLoader = " . $timeOutForLoader . ";
     var downloadFilesJsonAr = JSON.parse(downloadFilesJson);
