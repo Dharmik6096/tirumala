@@ -921,13 +921,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
                 'path' => 'vsp/VendorMilkBillGLT',
                 'scenario' => 'VendorMilkBillGLT',
-                'title' => 'Vendor Milk Bill GLT',
+                'title' => 'Vendor Milk Bill',
             ],
             'VendorMilkBillSummaryGLT' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
                 'path' => 'vsp/VendorMilkBillSummaryForGLT',
                 'scenario' => 'VendorMilkBillSummaryGLT',
-                'title' => 'Vendor Milk Bill Summary GLT',
+                'title' => 'Vendor Milk Bill Summary',
             ],
         ];
         return $label[$l];
