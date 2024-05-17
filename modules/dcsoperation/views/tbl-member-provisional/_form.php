@@ -45,7 +45,7 @@ if ($model->isNewRecord) {
 <?php echo $form->errorSummary($model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-6 padding_10_0 theme_border_right">
+    <div class="row col-md-6 padding_10_0 theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Member Details') ?></h4>
         </div>
@@ -186,7 +186,7 @@ if ($model->isNewRecord) {
             <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'tblmemberprovisional-union_code', 'form-group col-sm-12', 'Region', 'region_code'); ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                         ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                  ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -209,12 +209,12 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
         </div>
         <div class="col-sm-12">
-        <div class="col-sm-4">
-            <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
-        </div>
-        <div class="col-sm-4">
-            <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
-        </div>        
+            <div class="col-sm-4">
+                <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
+            </div>        
         </div>
     </div>
 
@@ -233,7 +233,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                         ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                  ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2">
@@ -243,12 +243,12 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
         <div class="col-sm-12">
-        <div class="col-sm-2">
-            <?= $form->field($model, 'voter_id')->textInput() ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'annual_income')->textInput() ?>
-        </div>        
+            <div class="col-sm-2">
+                <?= $form->field($model, 'voter_id')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'annual_income')->textInput() ?>
+            </div>        
         </div>
         <!--    <div class="col-sm-4">
         <?php // $form->field($model, 'payment_mode')->textInput() ?>
@@ -259,8 +259,9 @@ if ($model->isNewRecord) {
 <div class="row">           
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
-            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve']) ?>
+            <?= Html::submitButton(Yii::t('app', 'NEXT'), ['class' => 'btn btn-primary apply-shortcut btn-login', 'name' => 'submitBtn', 'value' => 'save']); ?>
+            <?php // Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+            <?php //Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve']) ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>

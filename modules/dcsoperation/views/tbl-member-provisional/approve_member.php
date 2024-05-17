@@ -190,7 +190,7 @@ $approval_detail = $member_provisional->memberPrivisionalApproval;
                             <div class="form-group">
                                 <?= Yii::$app->controls->save('save', $model); ?>
                                 <?= Yii::$app->controls->reset(); ?>
-                                <?= Yii::$app->controls->custombutton('cancel', 'pending-approval'); ?>
+                                <?= Yii::$app->controls->custombutton('cancel', 'pending-approval', '', 'btn-login'); ?>
                             </div>  
                         </div>
                     </div>

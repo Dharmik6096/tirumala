@@ -5456,3 +5456,9 @@ div#w12 > .card.border-default {
     font-weight: 600;
     font-size: 14px;
 }
+.pull-right{
+    float: right;
+}
+.bg-success{
+    background-color: rgb(0, 163, 222) !important;
+}

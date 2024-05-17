@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -83,13 +83,13 @@ $btn = $type == 'create' ? 'create' : 'update';
     <?php $form = ActiveForm::begin(['id' => 'add-animal-detail']); ?>
     <?php echo $form->errorSummary($model); ?>
     <?php // echo $form->errorSummary([$model,$member_animal_model, $memberShareDetail]); ?>
-
+    <div class="clearfix"></div>
     <div class="row hr10">
         <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        <a class="pull-right" data-toggle="collapse" href="#animalDetailsCollapse">
+                        <a class="pull-right" data-bs-toggle="collapse" href="#animalDetailsCollapse">
                             <i id="collapseIcon" class="fa fa-chevron-up"></i>
                         </a>
                         <?= Yii::t('app', 'Animal Details') ?>
@@ -166,7 +166,7 @@ $btn = $type == 'create' ? 'create' : 'update';
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        <a class="pull-right" data-toggle="collapse" href="#shareDetailsCollapse">
+                        <a class="pull-right" data-bs-toggle="collapse" href="#shareDetailsCollapse">
                             <i id="shareCollapseIcon" class="fa fa-chevron-up"></i>
                         </a>
                         <?= Yii::t('app', 'Share Details') ?>
@@ -259,7 +259,7 @@ $btn = $type == 'create' ? 'create' : 'update';
                                                                 }
                                                  }'),
                 ],
-                'options' => ['class' => 'btn btn-default btn-raised',
+                'options' => ['class' => 'btn btn-default btn-raised btn-login',
                     'type' => 'submit'],
             ]);
             AjaxSubmitButton::end();

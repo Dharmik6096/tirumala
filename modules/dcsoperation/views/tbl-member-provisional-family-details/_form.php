@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -16,7 +16,7 @@ echo $form->errorSummary($memberFamilyDetail);
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="panel-title">
-                    <a class="pull-right" data-toggle="collapse" href="#familyDetailsCollapse">
+                    <a class="pull-right" data-bs-toggle="collapse" href="#familyDetailsCollapse">
                         <i id="collapse" class="fa fa-chevron-up"></i>
                     </a>
                     <?= Yii::t('app', 'Family Details') ?>
@@ -49,7 +49,7 @@ echo $form->errorSummary($memberFamilyDetail);
                         <?= $form->field($memberFamilyDetail, 'remarks')->textarea() ?>
                     </div>
                     <div class="col-sm-2 mt15 ">
-                        <?= $form->field($memberFamilyDetail, 'is_nominee', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+                        <?= Yii::$app->controls->checkTemplateBootstrap5($memberFamilyDetail, $form, 'is_nominee'); ?>
                     </div>
                     <div class="col-sm-2">
                         <?= $form->field($memberFamilyDetail, 'nominee_address')->textarea() ?>
@@ -109,7 +109,7 @@ echo $form->errorSummary($memberFamilyDetail);
                                             }
                                             } '),
                                 ],
-                                'options' => ['class' => 'btn btn-default btn-raised submit_family',
+                                'options' => ['class' => 'btn btn-default btn-raised submit_family btn-login',
                                     'type' => 'submit'],
                             ]);
                             AjaxSubmitButton::end();
