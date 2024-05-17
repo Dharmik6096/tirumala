@@ -592,7 +592,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
         $memberShareDetail = new TblMemberProvisionalShareDetails();
         $memberShareDetail->provisional_member_code = $id;
-        $memberShareDetail->gender_code = $this->model->gender_code;
 
         $memberShareSearchModel = new TblMemberProvisionalShareDetailsSearch();
         $memberShareSearchModel->provisional_member_code = $id;
@@ -612,6 +611,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $memberShareDetail->per_share_rate = $shares['per_share_rate'];
         }
         $this->setShareModelData($memberShareDetail, $h_model, $id);
+        $memberShareDetail->gender_code = $this->model->gender_code;
+
         //   
         if (Yii::$app->request->post()) {
             Yii::$app->response->format = Response::FORMAT_JSON;

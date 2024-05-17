@@ -255,10 +255,6 @@ $btn = $type == 'create' ? 'create' : 'update';
                                                                     $(\'#loadercontent\').hide();
                                                                     $(\'#pageloader\').hide();
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-success\'><i class=\'fa fa-check\'></i></div><span>"+successMessage+"</span></div></div>");
-                                                                    $(".remove_cols tr td:nth-child(1)").remove();
-                                                                    $(".remove_cols tr th:nth-child(1)").remove();
-                                                                    $(".remove_cols tr td:nth-last-child(1)").remove();
-                                                                    $(".remove_cols tr th:nth-last-child(1)").remove();
                                                                 }
                                                  }'),
                 ],
