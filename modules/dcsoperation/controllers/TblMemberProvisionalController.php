@@ -630,10 +630,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $this->setShareDetails($share_details, $master_model);
             $msg = '';
             $memberShareDetail->validate();
-            echo '<pre>';
-            print_r($memberShareDetail->getErrors());
-            echo '</pre>';
-            die;
             if (empty($memberShareDetail->getErrors()) && empty($this->model->getErrors()) && empty($member_animal_model->getErrors()) && $memberShareDetail->validate() && $member_animal_model->validate() && $this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction($master_model, $h_model, ['member provisional', 'create']);
                 $msg = '';
