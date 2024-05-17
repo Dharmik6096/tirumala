@@ -43,7 +43,6 @@ class TblMemberProvisionalAnimalDetails extends ChildModel {
     public function rules() {
         return [
                 [['union_code', 'provisional_member_code', 'daily_milk_production', 'animal_type_code', 'heifers_count', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'created_at', 'updated_at', 'milch_animal_count', 'dry_animal_count', 'total_animal', 'originating_type', 'no_of_heifers_count', 'no_of_milch_animal_count', 'no_of_dry_animal_count', 'no_of_total_animal'], 'safe'],
-//                [[ 'daily_milk_production', 'heifers_count', 'milch_animal_count', 'dry_animal_count', 'total_animal'], 'required', 'on' => ['provisional_animal_detail']],
         ];
     }
 

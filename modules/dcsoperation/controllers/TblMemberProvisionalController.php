@@ -566,13 +566,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         if (!empty($memberData)) {
             $this->model = $memberData;
         }
-        $this->model->scenario = 'enrollemnet_provisional_member';
         $animal_model = new TblMemberAnimalType();
         $animals = $animal_model->getAnimal();
         $member_animal_model_data = [];
         $member_animal_model = new TblMemberProvisionalAnimalDetails();
         $member_animal_model->provisional_member_code = $id;
-//        $member_animal_model->scenario = 'provisional_animal_detail';
 
         $h_model = [];
         $msearchModel = new TblMemberProvisionalSearch();
@@ -594,19 +592,27 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
         $memberShareDetail = new TblMemberProvisionalShareDetails();
         $memberShareDetail->provisional_member_code = $id;
-//        $memberShareDetail->scenario = 'provisional_share_detail';
+        $memberShareDetail->gender_code = $this->model->gender_code;
 
         $memberShareSearchModel = new TblMemberProvisionalShareDetailsSearch();
         $memberShareSearchModel->provisional_member_code = $id;
         $memberShareDataProvider = $memberShareSearchModel->search(Yii::$app->request->queryParams);
+        $memberShareDetail->scenario = 'provisional_share_detail';
 
         $memberShareDetail = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $id])->one();
-        if ($memberShareDetail == '') {
+        if (empty($memberShareDetail)) {
             $memberShareDetail = new TblMemberProvisionalShareDetails();
             $memberShareDetail->provisional_member_code = $id;
+            $memberShareDetail->no_of_share_req = $shares['min_share'];
+            $memberShareDetail->no_of_share_apply = $shares['max_share'];
+            $memberShareDetail->admission_fee = $shares['admission_fee'];
+            $memberShareDetail->payable_share_amount = $shares['max_share'] * $shares['per_share_rate'];
+            $memberShareDetail->amount_payable = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee'];
+            $memberShareDetail->total_amount = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee'];
+            $memberShareDetail->per_share_rate = $shares['per_share_rate'];
         }
         $this->setShareModelData($memberShareDetail, $h_model, $id);
-        //        
+        //   
         if (Yii::$app->request->post()) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             $master_model = [];
@@ -629,7 +635,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $share_details = $post_data['TblMemberProvisionalShareDetails'];
             $this->setShareDetails($share_details, $master_model);
             $msg = '';
-            $memberShareDetail->validate();
             if (empty($memberShareDetail->getErrors()) && empty($this->model->getErrors()) && empty($member_animal_model->getErrors()) && $memberShareDetail->validate() && $member_animal_model->validate() && $this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction($master_model, $h_model, ['member provisional', 'create']);
                 $msg = '';

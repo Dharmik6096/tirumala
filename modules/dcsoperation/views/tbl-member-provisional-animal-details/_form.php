@@ -81,8 +81,7 @@ $btn = $type == 'create' ? 'create' : 'update';
     </div>
 
     <?php $form = ActiveForm::begin(['id' => 'add-animal-detail']); ?>
-    <?php echo $form->errorSummary($model); ?>
-    <?php // echo $form->errorSummary([$model,$member_animal_model, $memberShareDetail]); ?>
+    <?php echo $form->errorSummary([$model,$member_animal_model, $memberShareDetail]); ?>
 
     <div class="row hr10">
         <div class="col-sm-12">
@@ -193,25 +192,25 @@ $btn = $type == 'create' ? 'create' : 'update';
                                 <?= $form->field($memberShareDetail, 'amount_deposit')->textInput() ?>
                             </div>
                             <div class="col-sm-2 default_hide">
-                                <?= $form->field($memberShareDetail, 'no_of_share_req')->textInput(['readonly' => true, 'value' => $shares['min_share']]) ?>
+                                <?= $form->field($memberShareDetail, 'no_of_share_req')->textInput(['readonly' => true]) ?>
                             </div>
                             <div class="col-sm-2 number-validate">
-                                <?= $form->field($memberShareDetail, 'no_of_share_apply')->textInput(['value' => $shares['max_share']]) ?>
+                                <?= $form->field($memberShareDetail, 'no_of_share_apply')->textInput() ?>
                             </div>
                             <div class="col-sm-2 number-validate">
-                                <?= $form->field($memberShareDetail, 'admission_fee')->textInput(['readonly' => TRUE, 'value' => $shares['admission_fee']]) ?>
+                                <?= $form->field($memberShareDetail, 'admission_fee')->textInput(['readonly' => TRUE]) ?>
+                            </div>
+                            <div class="col-sm-2 number-validate disp_none">
+                                <?= $form->field($memberShareDetail, 'per_share_rate')->textInput() ?>
                             </div>
                             <div class="col-sm-2 number-validate">
-                                <?php $share_amount = $shares['max_share'] * $shares['per_share_rate']; ?>
-                                <?= $form->field($memberShareDetail, 'payable_share_amount')->textInput(['readonly' => TRUE, 'value' => $share_amount]) ?>
+                                <?= $form->field($memberShareDetail, 'payable_share_amount')->textInput(['readonly' => TRUE]) ?>
                             </div>
                             <div class="col-sm-2 number-validate">
-                                <?php $amount_payable = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee']; ?>
-                                <?= $form->field($memberShareDetail, 'amount_payable')->textInput(['readonly' => TRUE, 'value' => $amount_payable]) ?>
+                                <?= $form->field($memberShareDetail, 'amount_payable')->textInput(['readonly' => TRUE]) ?>
                             </div>
                             <div class="col-sm-2 number-validate">
-                                <?php $total_amount = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee']; ?>
-                                <?= $form->field($memberShareDetail, 'total_amount')->textInput(['readonly' => TRUE, 'value' => $total_amount]) ?>
+                                <?= $form->field($memberShareDetail, 'total_amount')->textInput(['readonly' => TRUE]) ?>
                             </div>
                         </div>
 
@@ -256,6 +255,10 @@ $btn = $type == 'create' ? 'create' : 'update';
                                                                     $(\'#loadercontent\').hide();
                                                                     $(\'#pageloader\').hide();
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-success\'><i class=\'fa fa-check\'></i></div><span>"+successMessage+"</span></div></div>");
+                                                                    $(".remove_cols tr td:nth-child(1)").remove();
+                                                                    $(".remove_cols tr th:nth-child(1)").remove();
+                                                                    $(".remove_cols tr td:nth-last-child(1)").remove();
+                                                                    $(".remove_cols tr th:nth-last-child(1)").remove();
                                                                 }
                                                  }'),
                 ],
@@ -434,8 +437,8 @@ $script = "
     
     $('#tblmemberprovisionalsharedetails-no_of_share_apply').on('change', function() {
         var noOfShareApply = parseFloat($(this).val());
-        var perShareRate = parseFloat(" . $shares['per_share_rate'] . ");
-        var admissionFee = parseFloat(" . $shares['admission_fee'] . ");
+        var perShareRate = parseFloat($('#tblmemberprovisionalsharedetails-per_share_rate').val());
+        var admissionFee = parseFloat($('#tblmemberprovisionalsharedetails-admission_fee').val());
         var payableShareAmount = noOfShareApply * perShareRate;
         $('#tblmemberprovisionalsharedetails-payable_share_amount').val(payableShareAmount.toFixed(2));
         var amountPayable = payableShareAmount + admissionFee;

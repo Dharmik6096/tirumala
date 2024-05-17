@@ -4,6 +4,7 @@ namespace app\modules\dcsoperation\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblUnionShareConfig;
 
 /**
  * This is the model class for table "tbl_member_provisional_share_details".
@@ -34,6 +35,8 @@ use app\models\ChildModel;
  */
 class TblMemberProvisionalShareDetails extends ChildModel {
 
+    public $gender_code;
+
     /**
      * @inheritdoc
      */
@@ -46,9 +49,10 @@ class TblMemberProvisionalShareDetails extends ChildModel {
      */
     public function rules() {
         return [
-                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'union_code', 'provisional_member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'union_code', 'provisional_member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'per_share_rate', 'gender_code'], 'safe'],
                 [['balance_amount', 'admission_fee_recovery'], 'default', 'value' => 0],
-//                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'deposit_date', 'no_of_share_req', 'no_of_share_apply', 'mode_of_payment', 'bank_name', 'ref_no'], 'required', 'on' => ['provisional_share_detail']],
+                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'no_of_share_req', 'no_of_share_apply'], 'required'],
+//            [['no_of_share_apply'], 'validateMaxShare', 'on' => ['provisional_share_detail']],
         ];
     }
 
@@ -89,6 +93,16 @@ class TblMemberProvisionalShareDetails extends ChildModel {
 
     public function getShareData($pro_member_code) {
         return $this->find()->where(['provisional_member_code' => $pro_member_code])->one();
+    }
+
+    public function validateMaxShare($attribute, $params) {
+        $maxShare = TblUnionShareConfig::find()->select('max_share')
+                ->where(['process_type' => 'member', 'gender_code' => $this->gender_code])
+                ->one();
+
+        if ($this->no_of_share_apply > $maxShare) {
+            $this->addError($attribute, 'The number of shares applied can not be greter than maximum share limit.');
+        }
     }
 
 }

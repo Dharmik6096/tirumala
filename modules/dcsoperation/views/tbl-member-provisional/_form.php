@@ -104,7 +104,7 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= Yii::$app->controls->date($model, $form, 'dob'); ?>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'age')->textInput() ?>
         </div>
         <div class="col-sm-4">
@@ -134,7 +134,7 @@ if ($model->isNewRecord) {
         <!--    <div class="col-sm-4">
                 <? //$form->field($model, 'land_class')->textInput() ?>
             </div>-->
-        <div class="col-sm-4">
+        <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
         <div class="col-sm-4 number-validate">
@@ -186,7 +186,7 @@ if ($model->isNewRecord) {
             <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'tblmemberprovisional-union_code', 'form-group col-sm-12', 'Region', 'region_code'); ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                         ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                           ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -232,7 +232,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                         ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                           ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2">
