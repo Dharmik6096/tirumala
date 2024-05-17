@@ -1006,7 +1006,7 @@ class DropDown extends Component {
             'member_class' => [
                 'name' => 'member_class',
                 'prompt' => Yii::t('app', 'Select Class'),
-                'data' => [1 => Yii::t('app', 'APL'), 2 => Yii::t('app', 'BPL')],
+                'data' => [1 => Yii::t('app', 'APL'), 2 => Yii::t('app', 'BPL'), 3 => Yii::t('app', 'Class A'), 4 => Yii::t('app', 'Class B'), 5 => Yii::t('app', 'Class C')],
             ],
             'bank_status' => [
                 'name' => 'bank_status',
@@ -1844,6 +1844,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Payment Type'),
                 'data' => ['remuneration' => Yii::t('app', 'Remuneration'), 'regular' => Yii::t('app', 'Regular')],
             ],
+            'mode_of_payment' => [
+                'name' => 'mode_of_payment',
+                'prompt' => Yii::t('app', 'Select Payment Mode'),
+                'data' => ['0' => Yii::t('app', 'Cash Deposited In Bank'), '1' => Yii::t('app', 'Cash Submited to Officer')],
+            ],
         ];
         return $records[$l];
     }
@@ -1983,6 +1988,7 @@ class DropDown extends Component {
             'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name', 'prompt' => Yii::t('app', 'Select User'), 'model' => 'User'],
             'login_user_code' => ['name' => 'login_user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
             'region' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'union_code'],
+            'relation_code' => ['name' => 'relationship_code', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
         ];
         return $label[$l];
     }
