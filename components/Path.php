@@ -65,7 +65,8 @@ class Path extends Component {
         '\\app\modules\dcsoperation\models\\' =>
             ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
             'TblMemberTypes', 'TblMember', 'MemberImport', 'TblMemberHistory',
-            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending', 'TblMemberProvisional', 'TblMemberDeactive', 'TblSendSmsCount', 'TblDcsPurchaseRateApplicabilityAlias', 'TblPurchaseRateApplicabilityAlias', 'TblSchemeRate', 'TblSchemeRateApplicability', 'TblSchemeRateMcc', 'TblSchemeRateApplicabilityAlias'],
+            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending', 'TblMemberProvisional', 'TblMemberDeactive', 'TblSendSmsCount', 'TblDcsPurchaseRateApplicabilityAlias', 'TblPurchaseRateApplicabilityAlias', 'TblSchemeRate', 'TblSchemeRateApplicability', 'TblSchemeRateMcc', 'TblSchemeRateApplicabilityAlias'
+            , 'TblMemberAnimalDetails', 'TblMemberAnimalDetailsHistory', 'TblMemberAnimalType', 'TblMemberFamilyDetails', 'TblMemberFamilyDetailsHistory', 'TblMemberProvisionalAnimalDetails', 'TblMemberProvisionalAnimalDetailsHistory', 'TblMemberProvisionalFamilyDetails', 'TblMemberProvisionalFamilyDetailsHistory', 'TblUnionShareConfig', 'TblMemberProvisionalShareDetails', 'TblMemberProvisionalShareDetailsHistory', 'TblMemberShareDetails', 'TblMemberShareDetailsHistory'],
         '\\app\modules\product\models\\' =>
             ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory', 'TblProductRequisition', 'TblProductRequisitionHistory', 'TblProductRequisitionTransaction', 'TblProductRequisitionTransactionHistory', 'TblProductReceipt', 'TblProductReceiptHistory', 'TblProductReceiptTransaction', 'TblProductReceiptTransactionHistory', 'TblProductReceiptTaxCalculated', 'TblProductReceiptTaxCalculatedHistory', 'TblProductDispatch', 'TblProductDispatchHistory', 'TblProductDispatchTransaction', 'TblProductDispatchTransactionHistory', 'TblProductSaleRate', 'TblProductSaleRateHistory', 'TblProductPurchaseRate', 'TblProductPurchaseRateApplicability', 'TblProductSaleRateApplicability', 'TblProductSaleRateApplicabilityHistory', 'TblProductStock', 'TblProductStockHistory', 'TblProductStockTransaction', 'TblProductStockTransactionHistory', 'TblVendorMaster', 'TblInventoryTransfer', 'TblInventoryTransferTxn',
             'TblGrn', 'TblGrnTxn', 'TblPlantDispatch', 'TblPlantDispatchTxn', 'TblIndentMaster', 'TblIndentDispatch', 'TblIndentDispatchTransaction', 'TblIndentProduct', 'TblProductStockPhysical', 'TblProductStockSap', 'TblGrnInstallment'],
@@ -97,8 +98,8 @@ class Path extends Component {
         '\\webvimark\modules\UserManagement\models\\' => ['User'],
         '\\app\modules\tms\models\\' => ['TblFormType', 'TblTaskType', 'TblTask', 'TblTaskActivity'],
         '\\app\modules\document\models\\' => ['TblDocumentMapping', 'TblAttachment'],
-    '\\app\modules\webservice\eipl\models\\' =>
-        ['TblEiplAppLogin'],
+        '\\app\modules\webservice\eipl\models\\' =>
+            ['TblEiplAppLogin'],
     ];
 
     public function get($model) {

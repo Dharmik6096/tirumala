@@ -233,6 +233,9 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             $cnt = 0;
             foreach ($adjust_id as $key => $value) {
                 $data = TblVspPayment::findOne($adjust_id[$key]);
+                if ($data->billing_type == 'remuneration') {
+                    $data->scenario = 'remuneration';
+                }
                 $oldData = $data->oldAttributes;
                 $historyModel = new TblVspPaymentHistory();
                 Yii::$app->operation->history($data, $historyModel, UPDATE);
@@ -242,9 +245,6 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $data->adjust_remark = $adjust_remark[$key];
                     $data->hold_amount = $hold_amt[$key];
                     $data->final_pay = (float) $data->net_payable + (float) $adjust_amt[$key] - (float) $hold_amt[$key];
-                    if ($data->billing_type == 'remuneration') {
-                        $data->scenario = 'remuneration';
-                    }
                     $data->status = in_array($data->customer_code, $stop_payment_customer) ? 'processed' : $processFlag;
                     if (!empty($oldData) && ($oldData['status'] != $data->status || $oldData['hold_amount'] != $data->hold_amount || $oldData['adjust_amount'] != $data->adjust_amount || $oldData['adjust_remark'] != $data->adjust_remark)) {
                         $updateData = true;
