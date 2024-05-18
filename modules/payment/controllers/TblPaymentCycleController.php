@@ -403,6 +403,16 @@ class TblPaymentCycleController extends ChildController {
         Yii::$app->operation->history($modelData, $historyModel, UPDATE);
         $title = $modelData->{$updateField} == 1 ? $unlockMessage : $lockMessage;
         $modelData->{$updateField} = $modelData->{$updateField} == 1 ? 0 : 1;
+        if ($updateField == 'billing_lock_member' && $modelData->{$updateField} == 1) {
+            $modelData->sync_lock_member = 1;
+            $modelData->data_lock_member = 1;
+        }
+        if ($updateField == 'data_lock_member' && $modelData->{$updateField} == 1) {
+            $modelData->sync_lock_member = 1;
+        }
+        if ($updateField == 'data_lock_bmc' && $modelData->{$updateField} == 1) {
+            $modelData->sync_lock_bmc = 1;
+        }
         $modelData->scenario = 'lockUnlock';
         $transaction = $this->generalModel->saveTransaction([$modelData, $historyModel], [$title, 'edit']);
         return $this->redirect(['payment-cycle-applicability', 'id' => $payment_cycle_code]);
