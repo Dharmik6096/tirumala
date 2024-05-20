@@ -33,9 +33,9 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
                 <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvsppayment-union_code', 'plant_code', TRUE); ?>
             </div> 
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblvsppayment-plant_code', 'mcc_plant_code', TRUE,$multiple); ?>
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblvsppayment-plant_code', 'mcc_plant_code', TRUE, $multiple); ?>
                 <?php
-                $where = json_encode(['data_lock_bmc' => 1, 'billing_lock_bmc' => 0]);
+                $where = json_encode(['data_lock_bmc' => 1, 'sync_lock_bmc' => 1, 'billing_lock_bmc' => 0]);
                 echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                 echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                 echo Html::hiddenInput('member_billing_lock_check', 1, ['id' => 'member_billing_lock_check']);
@@ -43,13 +43,13 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
                 ?>
             </div>    
             <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'bmc_code', TRUE,$multiple); ?>
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'bmc_code', TRUE, $multiple); ?>
             </div>
             <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-bmc_code', 'customer_type', TRUE, FALSE); ?>
+                <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-bmc_code', 'customer_type', TRUE, FALSE); ?>
             </div>
             <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-bmc_code,tblvsppayment-customer_type,applicable_for,data_lock_bmc,member_billing_lock_check,customer_type_depend', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code') . ' *', FALSE, FALSE); ?>
+                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-bmc_code,tblvsppayment-customer_type,applicable_for,data_lock_bmc,member_billing_lock_check,customer_type_depend', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code') . ' *', FALSE, FALSE); ?>
             </div>
 
             <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
