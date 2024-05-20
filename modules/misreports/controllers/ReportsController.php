@@ -1688,7 +1688,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BmcCollectionSummaryRahema';
         return $this->actionIndex();
     }
-    
+
     public function actionMobileAppReport() {
         $this->report = 'MobileAppReport';
         return $this->actionIndex();
@@ -2236,6 +2236,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_vendor_payment',
                 'scenario' => 'VendorPayment',
                 'title' => '602 - Vendor Payment',
+                'bkg_export' => TRUE,
             ],
             'MemberPaymentDcsWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2243,6 +2244,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPayment',
                 'title' => '603 - Member Payment',
                 'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+                'bkg_export' => TRUE,
             ],
             'MemberPaymentMemberWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2250,6 +2252,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPayment',
                 'title' => '603 - Member Payment',
                 'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+                'bkg_export' => TRUE,
             ],
             'VendorBankPayment' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,payment_cycle_code:type_check,bank_type:static:bank_type',
@@ -2321,6 +2324,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Milk Collection Register',
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
+                'bkg_export' => TRUE,
             ],
             'BmcCollectionRegister' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2329,6 +2333,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'BMC Collection Register',
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
+                'bkg_export' => TRUE,
             ],
             'TransporterMaster' => [
                 'param' => 'union_code,transporter_code:union_code',
@@ -2381,6 +2386,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '611 - Member Payment(Drafted)',
                 'to_decrypt' => ['Account No', 'IFSC'],
                 'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
+                'bkg_export' => TRUE,
             ],
             'MemberPaymentWoBank' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2388,6 +2394,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPaymentDrafted',
                 'title' => '611 - Member Payment(Drafted)',
                 'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
+                'bkg_export' => TRUE,
             ],
             'CollectionPendriveFile' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,dcs_code:route_code,date:string:shift',
@@ -3325,12 +3332,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_milk_shortage_recovery',
                 'scenario' => 'MilkShortageRecovery',
                 'title' => '626 - Milk Shortage Recovery',
+                'bkg_export' => TRUE,
             ],
             'CdaReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_cda_date_shift_wise_shivprasad',
                 'scenario' => 'CDAReport',
                 'title' => '626 - CDA Report',
+                'bkg_export' => TRUE,
             ],
             'VehicleMasterHistory' => [
                 'param' => 'transporter_code',
@@ -3386,6 +3395,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_vsp_payment_for_glt',
                 'scenario' => 'PurchaseSummary',
                 'title' => '628 - Purchase Summary',
+                'bkg_export' => TRUE,
             ],
             'PurchaseSummaryFormat' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code:type_check',
@@ -3423,6 +3433,7 @@ class ReportsController extends \app\controllers\ChildController {
                     'vspwise' => Yii::t('app', 'VSP Wise'),
                     'remuneration' => Yii::t('app', 'Remuneration')
                 ],
+                'bkg_export' => TRUE,
             ],
             'SapWqFile' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
