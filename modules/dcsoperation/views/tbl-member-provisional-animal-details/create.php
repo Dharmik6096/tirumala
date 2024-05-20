@@ -17,9 +17,6 @@ $this->title = Yii::$app->label->title('create', 'Member Provisional Details');
             'memberFamilySearchModel' => $memberFamilySearchModel,
             'memberFamilyDataProvider' => $memberFamilyDataProvider,
             'memberShareDetail' => $memberShareDetail,
-            'memberShareSearchModel' => $memberShareSearchModel,
-            'memberShareDataProvider' => $memberShareDataProvider,
-            'shares' => $shares,
         ])
         ?>
 

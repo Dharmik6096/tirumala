@@ -593,11 +593,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $memberShareDetail = new TblMemberProvisionalShareDetails();
         $memberShareDetail->provisional_member_code = $id;
 
-        $memberShareSearchModel = new TblMemberProvisionalShareDetailsSearch();
-        $memberShareSearchModel->provisional_member_code = $id;
-        $memberShareDataProvider = $memberShareSearchModel->search(Yii::$app->request->queryParams);
-        $memberShareDetail->scenario = 'provisional_share_detail';
-
         $memberShareDetail = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $id])->one();
         if (empty($memberShareDetail)) {
             $memberShareDetail = new TblMemberProvisionalShareDetails();
@@ -612,6 +607,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         }
         $this->setShareModelData($memberShareDetail, $h_model, $id);
         $memberShareDetail->gender_code = $this->model->gender_code;
+        $this->model->scenario = 'member_detail';
 
         //   
         if (Yii::$app->request->post()) {
@@ -671,9 +667,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     'memberFamilySearchModel' => $memberFamilySearchModel,
                     'memberFamilyDataProvider' => $memberFamilyDataProvider,
                     'memberShareDetail' => $memberShareDetail,
-                    'memberShareSearchModel' => $memberShareSearchModel,
-                    'memberShareDataProvider' => $memberShareDataProvider,
-                    'shares' => $shares,
         ]);
     }
 

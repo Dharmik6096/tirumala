@@ -95,7 +95,7 @@ echo $form->errorSummary($memberFamilyDetail);
                                                                     });
                                                                 } else {
                                                                     var successMessage = data.message ? data.message : "' . Yii::t('app', 'Member Family Details Successfully Created') . '";
-                                                                   if($("#member_family_details_code").val()!=""){
+                                                                   if($("#tblmemberprovisionalfamilydetails-member_provisional_family_detail_code").val()!=""){
                                                                     successMessage = "' . Yii::t('app', 'Member Family Details Successfully Updated') . '";
                                                                         }
                                                                     $(".help-block").text("");
