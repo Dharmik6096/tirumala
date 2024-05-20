@@ -169,6 +169,13 @@ class TblBillHeadController extends \app\controllers\ChildController {
                         return Yii::$app->general->getmultiforeignkey($model->mainCustomerCode, ['bmcCode'], 'ref_code');
                     }
                 }],
+            'bmc_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Name'), 'value' => function($model) {
+                    if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getmultiforeignkey($model->dcsName, ['bmcCode'], 'bmc_name');
+                    } else {
+                        return Yii::$app->general->getmultiforeignkey($model->mainCustomerCode, ['bmcCode'], 'bmc_name');
+                    }
+                }],
             'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
                 }],

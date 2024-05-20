@@ -75,6 +75,7 @@ class TblMemberPaymentRestrictSearch extends TblMemberPaymentRestrict {
                 ->andFilterWhere(['like', 'tbl_member_payment_restrict.bmc_code', $this->bmc_code])
                 ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_name])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
+                ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->ref_code])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->ex_code]);
         return $dataProvider;
     }
