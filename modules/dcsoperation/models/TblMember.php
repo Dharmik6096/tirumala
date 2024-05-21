@@ -146,7 +146,7 @@ class TblMember extends ChildModel {
                 }, 'except' => ['androidsync', 'verification']],
                 [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
-                }, 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
+                }, 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'member_detail']],
             /*    [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }], */
@@ -695,6 +695,11 @@ class TblMember extends ChildModel {
 
     public function getRegionCode() {
         return $this->hasOne(TblRegion::className(), ['region_code' => 'region_code']);
+    }
+
+    public function getProvisionalMemberList() {
+        $provisional_status = ['Inprogress', 'Register'];
+        return $this->hasOne(TblMemberProvisional::className(), ['member_code' => 'member_code'])->andOnCondition(['provisional_status' => $provisional_status]);
     }
 
 }

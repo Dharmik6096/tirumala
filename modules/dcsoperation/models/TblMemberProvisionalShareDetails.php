@@ -51,7 +51,7 @@ class TblMemberProvisionalShareDetails extends ChildModel {
         return [
                 [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'union_code', 'provisional_member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'per_share_rate', 'gender_code'], 'safe'],
                 [['balance_amount', 'admission_fee_recovery'], 'default', 'value' => 0],
-                [['payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'no_of_share_req', 'no_of_share_apply'], 'required'],
+                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'no_of_share_req', 'no_of_share_apply'], 'required'],
                 [['no_of_share_apply'], 'validateMaxShare'],
         ];
     }

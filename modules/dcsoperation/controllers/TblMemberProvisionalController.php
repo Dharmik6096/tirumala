@@ -41,6 +41,9 @@ use app\modules\dcsoperation\models\TblMemberFamilyDetails;
 use app\modules\dcsoperation\models\TblMemberAnimalDetails;
 use app\modules\dcsoperation\models\TblMemberShareDetails;
 use app\modules\dcsoperation\models\TblMemberProvisionalAnimalDetailsSearch;
+use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
+use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
+use app\modules\dcsoperation\models\TblMemberFamilyDetailsHistory;
 
 /**
  * TblMemberProvisionalController implements the CRUD actions for TblMemberProvisional model.
@@ -327,7 +330,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $memberdoc = [];
                                 if (strtolower($model->provisional_status) == 'approve') {
                                     $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message, $unlink_files);
-                                    $this->memberEnrollmentApprove($status, $save_model, $model);
+                                    $this->memberEnrollmentApprove($status, $save_model, $model, $deleteModel);
                                 }
                                 if (!empty($message)) {
                                     foreach ($message as $msg) {
@@ -434,7 +437,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $unlink_files = [];
                 if ($memberModel->provisional_status == 'Approve') {
                     $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
-                    $this->memberEnrollmentApprove($status, $model_save, $memberModel);
+                    $this->memberEnrollmentApprove($status, $model_save, $memberModel, $deleteModel);
                 }
                 if (!empty($message)) {
                     foreach ($message as $msg) {
@@ -606,7 +609,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $memberShareDetail->per_share_rate = $shares['per_share_rate'];
         }
         $this->setShareModelData($memberShareDetail, $h_model, $id);
-        $memberShareDetail->gender_code = $this->model->gender_code;
         $this->model->scenario = 'member_detail';
 
         //   
@@ -630,6 +632,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $this->setAnimalDetails($animal_details, $master_model, $member_animal_model_data);
 
             $share_details = $post_data['TblMemberProvisionalShareDetails'];
+            $memberShareDetail->load($post_data);
+            $share_details['gender_code'] = $this->model->gender_code;
             $this->setShareDetails($share_details, $master_model);
             $msg = '';
             if (empty($memberShareDetail->getErrors()) && empty($this->model->getErrors()) && empty($member_animal_model->getErrors()) && $memberShareDetail->validate() && $member_animal_model->validate() && $this->model->validate()) {
@@ -817,24 +821,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionDeleteSahre() {
-        if (Yii::$app->request->post('id')) {
-            $id = $_POST['id'];
-            $deleteModel = [];
-            $history_model = [];
-            $shareDelmodel = TblMemberProvisionalSahreDetails::find()->where(['member_provisional_share_detail_code' => $id])->one();
-            if (!empty($shareDelmodel)) {
-                $historyModel = new TblMemberProvisionalSahreDetailsHistory();
-                Yii::$app->operation->history($shareDelmodel, $historyModel, DELETE);
-                $deleteModel[] = $shareDelmodel;
-                $history_model[] = $historyModel;
-            }
-            $record = $this->generalModel->deleteTransaction([$shareDelmodel, $historyModel]);
-            Yii::$app->response->format = trim(Response::FORMAT_JSON);
-            return Json::encode($record);
-        }
-    }
-
     public function actionGetFamilyData() {
         $data = [];
         $data['status'] = 'error';
@@ -852,10 +838,19 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         return ['data' => $data, 'modelData' => $modelData];
     }
 
-    public function memberEnrollmentApprove($status, &$model_save, $memberModel) {
+    public function memberEnrollmentApprove($status, &$model_save, $memberModel, &$deleteModel) {
         if (strtolower($status) == 'approve' && strtolower($memberModel->provisional_status) == 'approve') {
             $familyData = new TblMemberProvisionalFamilyDetails();
             $familyData = $familyData->getFamilyData($memberModel->provisional_member_code);
+            $existingFamilyDetail = TblMemberFamilyDetails::find()->where(['member_code' => $memberModel->member_code])->all();
+            if (!empty($existingFamilyDetail)) {
+                foreach ($existingFamilyDetail as $value) {
+                    $historyModel = new TblMemberFamilyDetailsHistory();
+                    Yii::$app->operation->history($value, $historyModel, DELETE);
+                    $deleteModel[] = $value;
+                    $model_save[] = $historyModel;
+                }
+            }
             if (!empty($familyData)) {
                 foreach ($familyData as $key => $value) {
                     $memberFamilyModel = new TblMemberFamilyDetails();
@@ -867,6 +862,15 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
             $animalData = new TblMemberProvisionalAnimalDetails();
             $animalData = $animalData->getAnimalData($memberModel->provisional_member_code);
+            $existingAnimalDetail = TblMemberAnimalDetails::find()->where(['member_code' => $memberModel->member_code])->all();
+            if (!empty($existingAnimalDetail)) {
+                foreach ($existingAnimalDetail as $value) {
+                    $familyHistoryModel = new TblMemberAnimalDetailsHistory();
+                    Yii::$app->operation->history($value, $familyHistoryModel, DELETE);
+                    $deleteModel[] = $value;
+                    $model_save[] = $familyHistoryModel;
+                }
+            }
             if (!empty($animalData)) {
                 foreach ($animalData as $key => $value) {
                     $memberAnimalModel = new TblMemberAnimalDetails();
@@ -878,6 +882,13 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
             $shareData = new TblMemberProvisionalShareDetails();
             $shareData = $shareData->getShareData($memberModel->provisional_member_code);
+            $existingShareData = TblMemberShareDetails::find()->where(['member_code' => $memberModel->member_code])->one();
+            if (!empty($existingShareData)) {
+                $shareHistoryModel = new TblMemberShareDetailsHistory();
+                Yii::$app->operation->history($existingShareData, $shareHistoryModel, DELETE);
+                $deleteModel[] = $existingShareData;
+                $model_save[] = $shareHistoryModel;
+            }
             if (!empty($shareData)) {
                 $memberShareModel = new TblMemberShareDetails();
                 $memberShareModel->attributes = $shareData->attributes;
