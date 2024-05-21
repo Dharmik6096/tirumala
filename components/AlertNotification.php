@@ -147,9 +147,8 @@ class AlertNotification {
                 $email->setBcc($bcc);
             }
             if (!empty($filepath)) {
-                $email->attach($filepath, ['fileName' => $filename]);
-            } else
-            if ($attachment) {
+                $email->attach(Yii::$app->basePath . $filepath, ['fileName' => $filename]);
+            } else if ($attachment) {
                 $email->attachContent($attachment, [
                     'fileName' => $filename,
                     'contentType' => 'application/pdf'
