@@ -666,8 +666,8 @@ $downloadSapFiles = json_encode($fileDownloadArr);
         </div>
         <?php
         if (!empty($fileDownloadArr)) {
-            echo GhostHtml::submitButton('<i class="text-white fas fa-file"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
-            echo GhostHtml::submitButton('FTP Upload', ['class' => 'btn btn-default apply-shortcut uploadSapFiles', 'name' => 'ftp-upload', 'value' => 'ftp-upload', 'id' => 'ftp-upload', 'title' => Yii::t('app', 'Ftp Upload')]);
+            echo GhostHtml::submitButton('<i class="text-white fas fa-file"></i>', ['class' => 'btn-login btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
+            echo GhostHtml::submitButton('FTP Upload', ['class' => 'btn-login btn btn-default apply-shortcut uploadSapFiles ms-2', 'name' => 'ftp-upload', 'value' => 'ftp-upload', 'id' => 'ftp-upload', 'title' => Yii::t('app', 'Ftp Upload')]);
         }
         ?>
     </div>
