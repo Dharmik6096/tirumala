@@ -101,7 +101,6 @@ class TblMemberShareDetails extends ChildModel {
 
         if ($this->no_of_share_apply > $maxShare['max_share']) {
             $this->addError($attribute, 'The number of shares applied can not be greter than maximum share limit.');
-            die;
         }
     }
 

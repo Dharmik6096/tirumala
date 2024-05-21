@@ -454,9 +454,7 @@ class TblMemberController extends \app\controllers\ChildController {
         $this->setShareModelData($memberShareDetail, $h_model, $id);
         $this->model->scenario = 'member_detail';
 
-        //   
         if (Yii::$app->request->post()) {
-//            Yii::$app->response->format = Response::FORMAT_JSON;
             $master_model = [];
             $post_data = Yii::$app->request->post();
             $member_details = $post_data['TblMember'];
@@ -482,11 +480,7 @@ class TblMemberController extends \app\controllers\ChildController {
             }
             $memberShareDetail['gender_code'] = $this->model->gender_code;
             $master_model[] = $memberShareDetail;
-
-//            $this->setShareDetails($share_details, $master_model, $memberShareDetail);
-
             $msg = '';
-
             if (empty($memberShareDetail->getErrors()) && empty($this->model->getErrors()) && empty($member_animal_model->getErrors()) && $memberShareDetail->validate() && $member_animal_model->validate() && $this->model->validate()) {
 
                 $transaction = $this->generalModel->saveTransaction($master_model, $h_model, ['member', 'create']);
@@ -505,10 +499,6 @@ class TblMemberController extends \app\controllers\ChildController {
                     return $data;
                 }
             } else {
-                echo 'ss<pre>';
-                print_r($this);
-                echo '</pre>';
-                die;
                 $data = [];
                 $data['status'] = 'error';
                 $data['errors'] = ActiveForm::validate($this->model, $memberShareDetail, $member_animal_model);
@@ -585,19 +575,6 @@ class TblMemberController extends \app\controllers\ChildController {
                 }
             }
         }
-    }
-
-    private function setShareDetails($share_details, &$master_model) {
-        $share_detail_model = new TblMemberShareDetails();
-        $share_detail_model->member_code = $this->model->member_code;
-        $share_detail_model->union_code = $this->model->union_code;
-        $share_model_data = $share_detail_model->getMemberShare();
-        if (!empty($share_model_data)) {
-            $share_detail_model = $share_model_data;
-        }
-        $share_detail_model->setAttributes($share_details);
-        $share_detail_model->deposit_date = empty($share_detail_model->deposit_date) ? NULL : Yii::$app->formatter->asDate($share_detail_model->deposit_date, DATE_FORMAT);
-        $master_model[] = $share_detail_model;
     }
 
     public function actionCreateFamily() {
