@@ -53,7 +53,7 @@ var userType = '$userType';
     $(document).ready(function(){
         $('#from_mcc').hide(); 
         $('#from_bmc').hide(); 
-        $('#from_dcs').hide(); 
+//        $('#from_dcs').hide(); 
         $('#to_mcc').hide(); 
         $('#to_bmc').hide(); 
         $('#to_dcs').hide();
@@ -61,12 +61,12 @@ var userType = '$userType';
             $('#tblinventorytransfer-from_type').val('MCC');
             $('#tblinventorytransfer-from_type').trigger('select2:select');
             $('#tblinventorytransfer-from_type').trigger('change');
-            $('.field-tblinventorytransfer-from_type').addClass('disabledDiv');
+//            $('.field-tblinventorytransfer-from_type').addClass('disabledDiv');
             
             $('#tblinventorytransfer-to_type').val('DCS');
             $('#tblinventorytransfer-to_type').trigger('select2:select');
             $('#tblinventorytransfer-to_type').trigger('change');
-            $('.field-tblinventorytransfer-to_type').addClass('disabledDiv');
+//            $('.field-tblinventorytransfer-to_type').addClass('disabledDiv');
         }
     });
     
@@ -77,7 +77,7 @@ var userType = '$userType';
             $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
             $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
             $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
-            $('.field-tblinventorytransfer-to_mcc_plant_code').addClass('disabledDiv');
+//            $('.field-tblinventorytransfer-to_mcc_plant_code').addClass('disabledDiv');
             
             $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                     let varValBMC = $('#tblinventorytransfer-to_bmc_code option:nth-child(2)').val();

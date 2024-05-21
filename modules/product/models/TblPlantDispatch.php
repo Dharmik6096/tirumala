@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\product\models\TblProduct;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_plant_dispatch".
@@ -59,7 +60,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
                      return $batchNoWiseInventory == 1;
                 }],
                 [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
-                [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no'], 'safe'],
+                [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no', 'bmc_code'], 'safe'],
                 [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['status'], 'default', 'value' => '0'],
                 [['document_no'], 'unique', 'except' => ['importCsv']],
@@ -99,6 +100,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'bmc_code' => Yii::t('app', 'BMC'),
         ];
     }
 
@@ -192,6 +194,10 @@ class TblPlantDispatch extends \app\models\ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+    
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

@@ -25,6 +25,9 @@ $attribute = [
         ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'visible' => TRUE, 'filter' => false],
+        ['attribute' => 'bmc_code', 'filter' => false, 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'visible' => TRUE, 'filter' => false],
         ['attribute' => 'vendor_master_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name');
         }, 'visible' => $vendor,],

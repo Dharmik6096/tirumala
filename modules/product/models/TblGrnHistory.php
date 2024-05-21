@@ -42,16 +42,16 @@ class TblGrnHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['grn_code'], 'safe'],
-                [['grn_date', 'invoice_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-                [['remarks'], 'safe'],
-                [['originating_type'], 'safe'],
-                [['grn_code', 'grn_no', 'vendor_master_code', 'mcc_plant_code', 'invoice_no', 'ref_no'], 'safe'],
-                [['union_code'], 'safe'],
-                [['created_by', 'updated_by', 'history_created_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['operation_type'], 'safe'],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'amount', 'payment_mode', 'no_of_installment', 'deduction_start_date'], 'safe']
+            [['grn_code'], 'safe'],
+            [['grn_date', 'invoice_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['remarks'], 'safe'],
+            [['originating_type'], 'safe'],
+            [['grn_code', 'grn_no', 'vendor_master_code', 'mcc_plant_code', 'invoice_no', 'ref_no', 'bmc_code'], 'safe'],
+            [['union_code'], 'safe'],
+            [['created_by', 'updated_by', 'history_created_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type'], 'safe'],
+            [['operation_type'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'amount', 'payment_mode', 'no_of_installment', 'deduction_start_date'], 'safe']
         ];
     }
 
@@ -80,6 +80,7 @@ class TblGrnHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'bmc_code' => Yii::t('app', 'BMC'),
         ];
     }
 

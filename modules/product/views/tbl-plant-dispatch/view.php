@@ -46,33 +46,38 @@ $this->title = Yii::$app->label->title('view', 'Plant Dispatch');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'bmc_code',
+                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
                                 'attribute' => 'document_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'document_date',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->document_date)),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'dispatch_date',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->dispatch_date)),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
-                                'attribute' => 'status',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
                         ],
                     ],
                     [
                         'columns' => [
+                            [
+                                'attribute' => 'status',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                             [
                                 'attribute' => 'remarks',
                                 'valueColOptions' => ['style' => 'width:80%']

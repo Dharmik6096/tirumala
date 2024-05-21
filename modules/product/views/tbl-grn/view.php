@@ -21,61 +21,66 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
             <div class="table-responsive">
                 <?php
                 $attributes = [
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'union_code',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
+                                'attribute' => 'bmc_code',
+                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'vendor_master_code',
                                 'label' => $batchNoWiseInventory == 1 ? 'Plant' : 'Vendor',
                                 'value' => $batchNoWiseInventory == 1 ? Yii::$app->general->getforeignkey($model->plantCode, 'name') : Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
-                                [
+                            [
                                 'attribute' => 'grn_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'grn_date',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->grn_date)),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
-                                [
+                            [
                                 'attribute' => 'invoice_date',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->invoice_date)),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'invoice_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
-                                [
+                            [
                                 'attribute' => 'remarks',
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
