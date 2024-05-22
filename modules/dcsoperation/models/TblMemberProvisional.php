@@ -641,6 +641,9 @@ class TblMemberProvisional extends ChildModel {
     public function setChildTable(&$model, &$modelSave, &$childModel) {
         $content = $modelSave['content'];
         $model->scenario = 'hosync';
+        if (isset($modelSave['operation_type']) && strtolower($modelSave['operation_type']) == 'update') {
+            $model->provisional_from = 'mobile_update';
+        }
         if (!empty($model->member_code)) {
             $this->setExMemberCode($model, $model->ex_member_code);
             $member = TblMember::find()->where(['member_code' => $model->member_code])->one();

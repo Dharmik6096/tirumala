@@ -51,6 +51,12 @@ class AlertNotification {
                 }
             }
             try {
+                foreach ($param as $p) {
+                    if (strpos($p, "%")) {
+                        $param = urldecode(http_build_query($param));
+                        break;
+                    }
+                }
                 $response = $client->request($request_param['method'], $url, [$request_param['param'] => $param]);     //send request with method,url,request_param
                 $data = $response->getBody(); //get response . guzzle return respone in stream object
                 $stream = Psr7\stream_for($data); //convert stream response to string
