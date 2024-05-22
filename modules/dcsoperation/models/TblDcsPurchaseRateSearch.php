@@ -78,7 +78,7 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
         if (!empty($this->wef_date))
             $query->andFilterWhere(['like', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]);
 
-        $query->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])
+        $query->andFilterWhere(['like', 'tbl_dcs_purchase_rate.purchase_rate_code', $this->purchase_rate_code])
                 ->andFilterWhere(['like', 'description', $this->description])
                 // ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
                 ->andFilterWhere(['like', 'tbl_rate_generate_method.method', $this->rate_gen_method_code])
