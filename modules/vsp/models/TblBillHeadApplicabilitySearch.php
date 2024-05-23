@@ -12,15 +12,15 @@ use app\modules\vsp\models\TblBillHeadApplicability;
  */
 class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
 
-    public $mcc_name, $code_ex, $ref_code, $bmc_code;
+    public $mcc_name, $code_ex, $ref_code, $bmc_code, $bmc_name;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['bill_head_applicabilty_code'], 'integer'],
-                [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'bill_head_code', 'union_code', 'applicable_for', 'applicable_code', 'mcc_name', 'code_ex', 'ref_code', 'bmc_code'], 'safe'],
+            [['bill_head_applicabilty_code'], 'integer'],
+            [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'bill_head_code', 'union_code', 'applicable_for', 'applicable_code', 'mcc_name', 'code_ex', 'ref_code', 'bmc_code', 'bmc_name'], 'safe'],
         ];
     }
 
@@ -63,26 +63,31 @@ class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
         // grid filtering conditions
 
         $query->andFilterWhere(['or',
-                ['like', 'tbl_dcs.dcs_name', $this->mcc_name],
-                ['like', 'tbl_customer_master.customer_name', $this->mcc_name],
-                ['like', 'tbl_plant.name', $this->mcc_name],
-                ['like', 'tbl_mcc_plant.name', $this->mcc_name],
-                ['like', 'tbl_bmc.bmc_name', $this->mcc_name]
+            ['like', 'tbl_dcs.dcs_name', $this->mcc_name],
+            ['like', 'tbl_customer_master.customer_name', $this->mcc_name],
+            ['like', 'tbl_plant.name', $this->mcc_name],
+            ['like', 'tbl_mcc_plant.name', $this->mcc_name],
+            ['like', 'tbl_bmc.bmc_name', $this->mcc_name]
         ]);
 
         $query->andFilterWhere(['or',
-                ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
-                ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex],
+            ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+            ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex],
         ]);
 
         $query->andFilterWhere(['or',
-                ['like', 'tbl_dcs.ref_code', $this->ref_code],
-                ['like', 'tbl_customer_master.ref_code', $this->ref_code],
+            ['like', 'tbl_dcs.ref_code', $this->ref_code],
+            ['like', 'tbl_customer_master.ref_code', $this->ref_code],
         ]);
 
         $query->andFilterWhere(['or',
-                ['like', 'dcs.ref_code', $this->bmc_code],
-                ['like', 'vendor.ref_code', $this->bmc_code],
+            ['like', 'dcs.ref_code', $this->bmc_code],
+            ['like', 'vendor.ref_code', $this->bmc_code],
+        ]);
+
+        $query->andFilterWhere(['or',
+            ['like', 'dcs.bmc_name', $this->bmc_name],
+            ['like', 'vendor.bmc_name', $this->bmc_name],
         ]);
 
         $query->andFilterWhere(['like', 'tbl_bill_head_applicability.applicable_code', $this->applicable_code])
