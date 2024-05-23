@@ -23,6 +23,9 @@ $attribute = [
         ['attribute' => 'is_nominee', 'value' => function($model) {
             return ($model->is_nominee == 1) ? 'Yes' : 'No';
         }, 'filter' => false],
+        ['attribute' => 'nominee_address', 'filter' => false],
+        ['attribute' => 'guardian_name', 'filter' => false],
+        ['attribute' => 'remarks', 'filter' => false],
 ];
 
 $grid_option = [
