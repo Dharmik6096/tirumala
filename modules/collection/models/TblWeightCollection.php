@@ -94,6 +94,16 @@ class TblWeightCollection extends \app\models\ChildModel {
                 [['uuid'], 'validateBmcCode'],
                 [['uuid'], 'validateRouteCode'],
                 [['rtpl', 'amount', 'purchase_rate_code'], 'safe'],
+                [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc', 'sync_lock_bmc']);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync']],
+                [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'bmc_lock');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync']],
         ];
     }
 
