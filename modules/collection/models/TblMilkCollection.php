@@ -108,13 +108,13 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
             //[['sms_status'],'default','n'],
-            //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
+//[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
             [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long', 'is_sms_sent', 'dcs_name'], 'safe'],
                 [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
                 [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync', 'importCsv', 'androidsync_coll']],
                 [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
             //  [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
-            // [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code'], 'except' => ['sendsms']],
+// [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code'], 'except' => ['sendsms']],
 //            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
 //            [['milk_collection_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkCollection::className(), 'targetAttribute' => ['milk_collection_code' => 'milk_collection_code']],
             [['fat', 'snf', 'clr', 'water', 'qty', 'is_sms_sent'], 'default', 'value' => '0'],
@@ -164,6 +164,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['antibiotic_sms_sent', 'antibiotic', 'is_antibiotic'], 'safe'],
                 [['antibiotic_sms_sent'], 'default', 'value' => 0],
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
+                [['qty'], 'qtyValidate', 'on' => ['create', 'update']],
         ];
     }
 
@@ -424,7 +425,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 $this->own_bmc_code = $this->bmc_code;
 //                $this->milkTypeWiseUnique($this, $this, FALSE, FALSE);
                 Yii::$app->general->validateRateRange($this);
-                //set rtpl,rate_code and amount
+//set rtpl,rate_code and amount
                 if (empty($this->getErrors()) && $this->amount === '' && $this->rtpl === '') {
                     $data['milk_type'] = $this->milk_type_code;
                     $data['milk_quality_type'] = $this->milk_quality_type_code;
@@ -753,6 +754,13 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function getShiftLock() {
         return $this->hasOne(TblMccShiftLock::className(), ['mcc_plant_code' => 'mcc_plant_code', 'cast(date_time_of_collection as date)' => 'cast(date_time_of_collection as date)', 'shift_code' => 'shift_code'])->andOnCondition(['member_lock' => 1])->select('tset');
+    }
+
+    public function qtyValidate($attribute, $params) {
+        $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'max_qty_limit_member', 'PORTAL');
+        if ($config > 0 && $this->qty > $config) {
+            $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' must not be greater than ' . $config));
+        }
     }
 
 }
