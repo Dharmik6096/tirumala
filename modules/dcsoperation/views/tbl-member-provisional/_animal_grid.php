@@ -8,12 +8,14 @@ use yii\web\View;
 <?php
 
 $attribute = [
-        ['attribute' => 'animal_type_code', 'value' => 'animalTypeCode.animal_type_name', 'filter' => false],
+        ['attribute' => 'animal_type_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->animalTypeCode, 'animal_type_name');
+        }, 'filter' => false],
         ['attribute' => 'heifers_count', 'filter' => false],
         ['attribute' => 'milch_animal_count', 'filter' => false],
+        ['attribute' => 'dry_animal_count', 'filter' => false],
         ['attribute' => 'total_animal', 'filter' => false],
         ['attribute' => 'daily_milk_production', 'filter' => false],
-        ['attribute' => 'heifers_count', 'filter' => false]
 ];
 
 $grid_option = [

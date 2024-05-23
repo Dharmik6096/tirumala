@@ -11,6 +11,7 @@ $attribute = [
         ['attribute' => 'mode_of_payment', 'value' => function ($model) {
             return isset($model->mode_of_payment) ? Yii::$app->dropdown->getRecords('mode_of_payment')['data'][$model->mode_of_payment] : '';
         }, 'filter' => false,],
+        ['attribute' => 'ref_no', 'filter' => false],
         ['attribute' => 'bank_name', 'filter' => false],
         ['attribute' => 'amount_deposit', 'filter' => false],
         ['attribute' => 'deposit_date', 'vAlign' => 'middle', 'value' => function($model) {
@@ -21,7 +22,8 @@ $attribute = [
         ['attribute' => 'payable_share_amount', 'filter' => false],
         ['attribute' => 'admission_fee', 'filter' => false],
         ['attribute' => 'amount_payable', 'filter' => false],
-        ['attribute' => 'total_amount', 'filter' => false]
+        ['attribute' => 'total_amount', 'filter' => false],
+        ['attribute' => 'per_share_rate', 'filter' => false]
 ];
 
 $grid_option = [

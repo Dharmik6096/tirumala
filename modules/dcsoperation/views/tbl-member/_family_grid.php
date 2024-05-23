@@ -8,14 +8,15 @@ use yii\web\View;
 <?php
 
 $attribute = [
-        ['attribute' => 'family_member_name', 'value' => 'family_member_name', 'filter' => false],
-        ['attribute' => 'local_family_member_name', 'value' => 'local_family_member_name', 'filter' => false, 'visible' => false],
+        ['attribute' => 'family_member_name', 'filter' => false],
+        ['attribute' => 'local_family_member_name', 'filter' => false],
         ['attribute' => 'relationship_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->relationship, 'relationship');
         }, 'filter' => false],
         ['attribute' => 'dob', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->dob);
         }, 'filter' => false],
+        ['attribute' => 'age', 'filter' => false],
         ['attribute' => 'gender_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->genderCode, 'gender');
         }, 'filter' => false],
