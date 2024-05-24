@@ -24,6 +24,7 @@ $form = ActiveForm::begin([
     echo Html::activeHiddenInput($model, 'union_code', ['id' => 'set_union_code']);
     echo Html::activeHiddenInput($model, 'plant_code', ['id' => 'set_plant_code']);
     echo Html::activeHiddenInput($model, 'mcc_plant_code', ['id' => 'set_mcc_plant_code']);
+    echo Html::activeHiddenInput($model, 'bmc_code', ['id' => 'set_bmc_code']);
     echo Html::activeHiddenInput($model, 'grn_no', ['id' => 'set_grn_no']);
     echo Html::activeHiddenInput($model, 'grn_date', ['id' => 'set_grn_date']);
     echo Html::activeHiddenInput($model, 'invoice_date', ['id' => 'set_invoice_date']);
