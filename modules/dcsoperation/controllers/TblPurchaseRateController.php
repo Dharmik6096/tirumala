@@ -462,8 +462,11 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $appModel->trans_label = 'purchase rate applicability';
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = [
-            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC ref. Code'), 'value' => function($model) {
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function($model) {
                     return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode'], 'ref_code');
+                }],
+            'bmc_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Name'), 'value' => function($model) {
+                    return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode'], 'bmc_name');
                 }],
             'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);

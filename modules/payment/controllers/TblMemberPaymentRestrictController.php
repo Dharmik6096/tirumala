@@ -13,6 +13,7 @@ use yii\base\Model;
 use app\modules\payment\models\TblMemberPaymentRestrictHistory;
 use yii\web\Response;
 use yii\helpers\Json;
+use yii\helpers\Url;
 
 /**
  * TblMemberPaymentRestrictController implements the CRUD actions for TblMemberPaymentRestrict model.
@@ -140,7 +141,7 @@ class TblMemberPaymentRestrictController extends \app\controllers\ChildControlle
                 }
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
                 if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
+                    return $this->redirect(Url::previous());
                 }
             }
         }
