@@ -66,12 +66,12 @@ class TblFtpTxnLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['file_status', 'status'], 'default', 'value' => 0],
-            [['txn_type'], 'default', 'value' => 'EIPL'],
-            [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path','zip_filename','file_date'], 'safe'],
-            [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
-            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime', 'ftp_mode'], 'safe'],
-            [['file_name'],'unique','targetAttribute' => ['txn_type','file_name'],'on'=>'EKOMILKZIP','message' => Yii::t('app/validation', 'File already uploaded')],
+                [['file_status', 'status'], 'default', 'value' => 0],
+                [['txn_type'], 'default', 'value' => 'EIPL'],
+                [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path', 'zip_filename', 'file_date'], 'safe'],
+                [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
+                [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime', 'ftp_mode'], 'safe'],
+                [['file_name'], 'unique', 'targetAttribute' => ['txn_type', 'file_name'], 'on' => 'EKOMILKZIP', 'message' => Yii::t('app/validation', 'File already uploaded')],
         ];
     }
 
@@ -108,7 +108,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             'old_file_path' => Yii::t('app', 'Old File Path'),
             'old_local_path' => Yii::t('app', 'Old Local Path'),
             'file_creator_id' => Yii::t('app', 'File Creator ID'),
-            'zip_filename' =>Yii::t('app','Zip File Name'),
+            'zip_filename' => Yii::t('app', 'Zip File Name'),
         ];
     }
 
@@ -196,7 +196,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
         $ftpPath = !empty($mccRefCode) ? $mccRefCode : $FTPProcess['ftp_path'];
-        
+
         $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
         $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
         $skip_header = isset($FTPProcess['skip_header']) ? TRUE : FALSE;
@@ -220,7 +220,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                         //    we want to set these values (default is A1)
                 );
                 $successfilePath = $filePath . $fileName;
-                $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
+                $objWriter = IOFactory::createWriter($objPHPExcel, ($FTPProcess['ext'] == '.xlsx') ? IOFactory::WRITER_XLSX : IOFactory::WRITER_XLS);
                 $objWriter->save($successfilePath);
             } else {
                 $header = array_keys($output[0]);
@@ -462,8 +462,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 //        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
-    public function UserMatchingRecords($user,$txntype)
-    {
-        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => $txntype, 'module_name' => 'TblMilkCollection' ])->count();
+    public function UserMatchingRecords($user, $txntype) {
+        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => $txntype, 'module_name' => 'TblMilkCollection'])->count();
     }
+
 }
