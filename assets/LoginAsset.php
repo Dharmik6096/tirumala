@@ -24,6 +24,7 @@ class LoginAsset extends AssetBundle {
         'themes/emilk/assets/css/style.css',
     ];
     public $js = [
+        'themes/emilk/assets/js/crypto-js.min.js',
         'themes/emilk/assets/js/liveloaderLogin.js',
         'themes/emilk/assets/js/style.js',
     ];
@@ -37,4 +38,5 @@ class LoginAsset extends AssetBundle {
         parent::init();
         \Yii::$app->general->setDesignTheme($this);
     }
+
 }

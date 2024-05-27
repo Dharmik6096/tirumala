@@ -11,7 +11,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
     <div class="container-fluid">
         <a class="navbar-brand" href="javascript:void(0)">
             <img src="<?= $this->theme->getUrl('/assets/images/nav_logo.png') ?>" alt="AMCS Logo"
-                class="logo img-responsive" />
+                 class="logo img-responsive" />
         </a>
     </div>
 </div>
@@ -28,27 +28,27 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
             <div class="modal-body">
                 <?php
                 $form = ActiveForm::begin([
-                    'id' => 'login-form',
-                    'options' => ['autocomplete' => 'off'],
-                    'validateOnBlur' => false,
-                    'fieldConfig' => [
-                        'template' => "{label}\n{input}\n{error}",
-                    ],
-                ])
-                    ?>
+                            'id' => 'login-form',
+                            'options' => ['autocomplete' => 'off'],
+                            'validateOnBlur' => false,
+                            'fieldConfig' => [
+                                'template' => "{label}\n{input}\n{error}",
+                            ],
+                        ])
+                ?>
                 <?php echo $form->errorSummary($model); ?>
                 <div class="row">
                     <div class="col-sm-12">
                         <?=
-                            $form->field($model, 'username')
+                                $form->field($model, 'username')
                                 ->textInput(['placeholder' => $model->getAttributeLabel('username'), 'autocomplete' => 'off'])
-                            ?>
+                        ?>
                     </div>
                     <div class="col-sm-12">
                         <?=
-                            $form->field($model, 'password')
+                                $form->field($model, 'password')
                                 ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
-                            ?>
+                        ?>
                     </div>
                     <div id="org" class="col-sm-12">
                         <?= Html::activeHiddenInput($model, 'organization'); ?>
@@ -59,11 +59,10 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     </div>
                     <div class="col-sm-12">
                         <?=
-                            Html::submitButton(
-                                Yii::t('app', 'Login'),
-                                ['class' => 'btn-login-second btn btn-primary btn-block']
-                            )
-                            ?>
+                        Html::button(
+                                Yii::t('app', 'Login'), ['class' => 'btn-login-second btn btn-primary btn-block login-submit']
+                        )
+                        ?>
                     </div>
                 </div>
                 <?php ActiveForm::end() ?>
@@ -115,7 +114,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                                 we do. Our endeavor is to be the personification of the concept of
                                                 "Precision Behind Purity"</p>
                                             <a href="javascript:void(0)" class="btn btn-danger btn-login"
-                                                data-bs-toggle="modal" data-bs-target="#loginModal"><i
+                                               data-bs-toggle="modal" data-bs-target="#loginModal"><i
                                                     class="fas fa-sign-in-alt"></i> Login</a>
                                         </div>
                                     </div>

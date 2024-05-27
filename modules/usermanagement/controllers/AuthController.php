@@ -44,12 +44,17 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         }
 
         if ($model->load(Yii::$app->request->post())) {
+            $username = $model->username = \Yii::$app->EIPLSecurity->UrlDecrypt($model->username, TRUE);
+            $model->password = \Yii::$app->EIPLSecurity->UrlDecrypt($model->password, TRUE);
             $model->username = $identity->organization_code . '#' . $model->username;
-            if ($model->login())
+            Yii::$app->session->set('login_enc_key', NULL);
+            if ($model->login()) {
                 return $this->redirect(['/site/dashboard']);
-            else
-                $model->username = $_POST['LoginForm']['username'];
+            } else
+                $model->username = $username;
         }
+        $login_enc_key = substr(bin2hex(random_bytes(10)), -16);
+        Yii::$app->session->set('login_enc_key', $login_enc_key);
         Yii::$app->session->set('Login-sess', 'User');
         return $this->renderIsAjax($loginFile, compact('model'));
     }

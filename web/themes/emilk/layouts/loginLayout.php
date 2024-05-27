@@ -3,6 +3,8 @@
 use app\assets\LoginAsset;
 use yii\bootstrap5\BootstrapAsset;
 use yii\helpers\Html;
+use yii\web\View;
+use Yii;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -29,7 +31,22 @@ BootstrapAsset::register($this);
         <?= $content ?>
 
         <?php $this->endBody() ?>
-        
+
     </body>
 </html>
 <?php $this->endPage() ?>
+<script type="text/javascript">
+    $('.login-submit').on('click', function () {
+        var login_enc_key = '<?= Yii::$app->session->get('login_enc_key'); ?>';
+        var username = $('#loginform-username').val();
+        var password = $('#loginform-password').val();
+        if (username != '' && password != '') {
+            var KeyObj = CryptoJS.enc.Utf8.parse(login_enc_key);
+            username = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(username), KeyObj, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.ZeroPadding});
+            password = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(password), KeyObj, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.ZeroPadding});
+            $('#loginform-username').val(username);
+            $('#loginform-password').val(password);
+        }
+        $('#login-form').submit();
+    });
+</script>

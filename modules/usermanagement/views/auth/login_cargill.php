@@ -75,8 +75,8 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     </div>
                     <div class="col-sm-12">
                         <?=
-                        Html::submitButton(
-                                Yii::t('app', 'Login'), ['class' => 'btn-login btn btn-primary btn-block']
+                        Html::button(
+                                Yii::t('app', 'Login'), ['class' => 'btn-login btn btn-primary btn-block login-submit']
                         )
                         ?>
                     </div>

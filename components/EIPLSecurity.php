@@ -3,6 +3,7 @@
 namespace app\components;
 
 use yii\base\Component;
+use Yii;
 
 class EIPLSecurity extends Component {
 
@@ -63,6 +64,16 @@ class EIPLSecurity extends Component {
             $plaintext_dec = FALSE;
         }
         return $plaintext_dec;
+    }
+
+    function UrlDecrypt($encryptedData, $login_session_key = FALSE) {
+        $key = ($login_session_key) ? Yii::$app->session->get('login_enc_key') : 'eipl1234567891';
+        $encryptedData = base64_decode($encryptedData);
+        $decryptedData = openssl_decrypt(
+                $encryptedData, 'aes-128-ecb', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
+        );
+        $decryptedData = rtrim($decryptedData, "\0");
+        return $decryptedData;
     }
 
 }
