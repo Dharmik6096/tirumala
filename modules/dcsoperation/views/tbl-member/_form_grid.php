@@ -10,6 +10,15 @@ use yii\web\View;
 <?php
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false, 'visible' => false],
+    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode'], 'ref_code');
+        }, 'vAlign' => 'middle'],
+    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC Name'), 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode'], 'bmc_name');
+        }, 'filter' => false],
+    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Ref. Code'),  'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        }, 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
     ['attribute' => 'member_code', 'value' => 'member_code'],
     ['attribute' => 'reference_code',

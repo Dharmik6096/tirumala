@@ -76,16 +76,16 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
 
 
         if (!empty($this->wef_date))
-            $query->andFilterWhere(['like', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]);
+            $query->andFilterWhere(['like', 'tbl_dcs_purchase_rate.wef_date', date('Y-m-d', strtotime($this->wef_date))]);
 
-        $query->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])
-                ->andFilterWhere(['like', 'description', $this->description])
+        $query->andFilterWhere(['like', 'tbl_dcs_purchase_rate.purchase_rate_code', $this->purchase_rate_code])
+                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate.description', $this->description])
                 // ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
                 ->andFilterWhere(['like', 'tbl_rate_generate_method.method', $this->rate_gen_method_code])
                 ->andFilterWhere(['like', 'tbl_dcs_purchase_rate.shift_id', $this->shift_id])
                 ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability])
-                ->andFilterWhere(['like', 'reference_code', $this->reference_code])
-                ->andFilterWhere(['like', 'ts_rate', $this->ts_rate]);
+                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate.reference_code', $this->reference_code])
+                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate.ts_rate', $this->ts_rate]);
 
         return $dataProvider;
     }
