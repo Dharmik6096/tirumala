@@ -757,7 +757,7 @@ class TblMilkCollection extends \app\models\ChildModel {
     }
 
     public function qtyValidate($attribute, $params) {
-        $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'max_qty_limit_member', 'PORTAL');
+        $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'max_qty_limit_member');
         if ($config > 0 && $this->qty > $config) {
             $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' must not be greater than ' . $config));
         }
