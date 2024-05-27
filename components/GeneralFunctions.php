@@ -1905,7 +1905,12 @@ class GeneralFunctions extends Component {
 
             $payment_model = new \app\modules\collection\models\TblMccShiftLock();
             $data = $payment_model->find()
-                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, $lock_flag => 1])
+                    ->where([
+                        'cast(date_time_of_collection as date)' => $date, 
+                        'shift_code' => $model->shift_code, 
+                        $lock_flag => 1,
+                        'mcc_plant_code' => $model->$codeParam
+                        ])
                     ->one();
             if (!empty($data)) {
                 $model->addError($showError, "Shift Is Already Lock");

@@ -365,7 +365,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $type = 'edit';
         if (Yii::$app->request->post()) {
             $conversion_const = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'ltr_to_kg_constant', 'BMC');
-            $collection_approval = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval', 'PORTAL');
+            $collection_approval = Yii::$app->general->getUnionConfigResult($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval');
+            // $collection_approval = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval', 'PORTAL');
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
                 $detail->rtpl = '';
