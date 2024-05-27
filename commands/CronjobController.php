@@ -57,6 +57,7 @@ class CronjobController extends \yii\console\Controller {
                         }
                     } else {
                         $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
+                        $clientJasper->setRequestTimeout(600);
                         $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->model->sp_name, 'pdf', null, null, $controls);
                         $this->SaveJasperPdf();
                         $status = 2;
