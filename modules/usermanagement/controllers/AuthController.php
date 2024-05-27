@@ -50,8 +50,9 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
             Yii::$app->session->set('login_enc_key', NULL);
             if ($model->login()) {
                 return $this->redirect(['/site/dashboard']);
-            } else
+            } else {
                 $model->username = $username;
+            }
         }
         $login_enc_key = substr(bin2hex(random_bytes(10)), -16);
         Yii::$app->session->set('login_enc_key', $login_enc_key);
