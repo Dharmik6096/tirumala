@@ -205,7 +205,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                         ],
                             [
                             'attribute' => 'member_class',
-                            'value' => ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : ''),
+                            'value' => isset($model->member_class) ? Yii::$app->dropdown->getRecords('member_class')['data'][$model->member_class] : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -227,6 +227,46 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             [
                             'attribute' => 'created_by',
                             'value' => Yii::$app->general->getforeignkey($model->userName, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'member_identity_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'aadhaar_card_address',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'applicant_relation',
+                            'value' => isset($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'is_contact_verified',
+                            'value' => ($model->is_contact_verified == 0) ? 'Pending' : ($model->is_contact_verified == 1 ? 'Verify' : ''),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'is_email_verify',
+                            'value' => ($model->is_email_verify == 0) ? 'Pending' : ($model->is_email_verify == 1 ? 'Verify' : ''),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'is_verify',
+                            'value' => ($model->is_verify == 0) ? 'Pending' : ($model->is_verify == 1 ? 'Verify' : ''),
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],

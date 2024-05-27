@@ -119,7 +119,7 @@ class TblMemberProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['is_download'], 'default', 'value' => '0'],
+                [['is_download', 'is_contact_verified', 'is_verify', 'is_email_verify'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
                 [['member_type_code'], 'default', 'value' => '1'],
@@ -142,7 +142,7 @@ class TblMemberProvisional extends ChildModel {
                 [['email'], 'email', 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id', 'approved_by',], 'string', 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour'], 'safe'],
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation'], 'safe'],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
@@ -291,6 +291,10 @@ class TblMemberProvisional extends ChildModel {
             'employee_name' => Yii::t('app', 'Employee Name'),
             'region_code' => Yii::t('app', 'Region Name'),
             'annual_milk_pour' => Yii::t('app', 'Annual Milk Pour Commitment'),
+            'is_contact_verified' => Yii::t('app', 'Is Contact Verify ?'),
+            'is_verify' => Yii::t('app', 'Is Bank Verify ?'),
+            'is_email_verify' => Yii::t('app', 'Is Email Verify ?'),
+            'email_relation' => Yii::t('app', 'Email Relation with Applicant'),
         ];
     }
 

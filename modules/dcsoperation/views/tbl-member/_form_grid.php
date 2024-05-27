@@ -109,6 +109,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->userName, 'name');
         }, 'visible' => false, 'filter' => true
     ],
+        ['attribute' => 'member_identity_no', 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [

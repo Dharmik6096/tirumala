@@ -330,7 +330,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $memberdoc = [];
                                 if (strtolower($model->provisional_status) == 'approve') {
                                     $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message, $unlink_files);
-                                    $this->memberEnrollmentApprove($status, $save_model, $model, $deleteModel);
                                 }
                                 if (!empty($message)) {
                                     foreach ($message as $msg) {
@@ -436,8 +435,22 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $memberdoc = [];
                 $unlink_files = [];
                 if ($memberModel->provisional_status == 'Approve') {
-                    $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
-                    $this->memberEnrollmentApprove($status, $model_save, $memberModel, $deleteModel);
+                    $eipl_code = Yii::$app->session->get('eiplCode');
+                    if ($eipl_code == 'SAAHAJ') {
+                        $config = Yii::$app->general->getUnionConfigResult($memberModel->union_code, 'allow_member_other_detail');
+                        if ($config == 1) {
+                            if ($memberModel->is_contact_verified == 1 && $memberModel->is_verify == 1 && $memberModel->is_email_verify == 1) {
+                                $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
+                                $this->memberEnrollmentApprove($status, $model_save, $memberModel, $deleteModel);
+                            } else {
+                                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                                    'message' => 'Please verify Email address, Mobile no, Bank detail.']);
+                                return $this->redirect(['approve-member', 'id' => $model->process_approval_code]);
+                            }
+                        }
+                    } else {
+                        $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
+                    }
                 }
                 if (!empty($message)) {
                     foreach ($message as $msg) {
@@ -581,15 +594,15 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $mdataProvider = $msearchModel->search(Yii::$app->request->queryParams);
         $this->setAnimalModelData($animals, $member_animal_model_data, $h_model, $id);
 
-        // family detail 
+// family detail 
         $memberFamilyDetail = new TblMemberProvisionalFamilyDetails();
         $memberFamilyDetail->provisional_member_code = $id;
         $memberFamilyDetail->scenario = 'member_family_detail';
         $memberFamilySearchModel = new TblMemberProvisionalFamilyDetailsSearch();
         $memberFamilySearchModel->provisional_member_code = $id;
         $memberFamilyDataProvider = $memberFamilySearchModel->search(Yii::$app->request->queryParams);
-        //
-        // share detail 
+//
+// share detail 
         $shareConfig = new TblUnionShareConfig();
         $shares = $shareConfig->getShareDetail('member', $this->model->gender_code);
 
@@ -611,7 +624,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->setShareModelData($memberShareDetail, $h_model, $id);
         $this->model->scenario = 'member_detail';
 
-        //   
+//   
         if (Yii::$app->request->post()) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             $master_model = [];
@@ -631,10 +644,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $animal_details = $post_data['TblMemberProvisionalAnimalDetails'];
             $this->setAnimalDetails($animal_details, $master_model, $member_animal_model_data);
 
-            $share_details = $post_data['TblMemberProvisionalShareDetails'];
             $memberShareDetail->load($post_data);
-            $share_details['gender_code'] = $this->model->gender_code;
-            $this->setShareDetails($share_details, $master_model);
+            $memberShareDetail->gender_code = $this->model->gender_code;
+            $memberShareDetail->union_code = $this->model->union_code;
+            $memberShareDetail->deposit_date = empty($memberShareDetail->deposit_date) ? NULL : Yii::$app->formatter->asDate($memberShareDetail->deposit_date, DATE_FORMAT);
+            $master_model[] = $memberShareDetail;
             $msg = '';
             if (empty($memberShareDetail->getErrors()) && empty($this->model->getErrors()) && empty($member_animal_model->getErrors()) && $memberShareDetail->validate() && $member_animal_model->validate() && $this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction($master_model, $h_model, ['member provisional', 'create']);
@@ -893,6 +907,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $memberShareModel = new TblMemberShareDetails();
                 $memberShareModel->attributes = $shareData->attributes;
                 $memberShareModel->member_code = $memberModel->member_code;
+                $memberShareModel->gender_code = $memberModel->gender_code;
                 $model_save[] = $memberShareModel;
             }
         }
