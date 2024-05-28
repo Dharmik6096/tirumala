@@ -1,5 +1,8 @@
 <?php
 
+ini_set("memory_limit", "-1");
+set_time_limit(3600);
+
 $params = require(__DIR__ . '/params.php');
 $db = require(__DIR__ . '/db.php');
 
