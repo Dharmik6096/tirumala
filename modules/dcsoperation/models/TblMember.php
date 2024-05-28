@@ -697,9 +697,4 @@ class TblMember extends ChildModel {
         return $this->hasOne(TblRegion::className(), ['region_code' => 'region_code']);
     }
 
-    public function getProvisionalMemberList() {
-        $provisional_status = ['Inprogress', 'Register'];
-        return $this->hasOne(TblMemberProvisional::className(), ['member_code' => 'member_code'])->andOnCondition(['provisional_status' => $provisional_status]);
-    }
-
 }

@@ -434,22 +434,17 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $all_doc = [];
                 $memberdoc = [];
                 $unlink_files = [];
-                if ($memberModel->provisional_status == 'Approve') {
-                    $eipl_code = Yii::$app->session->get('eiplCode');
-                    if ($eipl_code == 'SAAHAJ') {
-                        $config = Yii::$app->general->getUnionConfigResult($memberModel->union_code, 'allow_member_other_detail');
-                        if ($config == 1) {
-                            if ($memberModel->is_contact_verified == 1 && $memberModel->is_verify == 1 && $memberModel->is_email_verify == 1) {
-                                $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
-                                $this->memberEnrollmentApprove($status, $model_save, $memberModel, $deleteModel);
-                            } else {
-                                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                                    'message' => 'Please verify Email address, Mobile no, Bank detail.']);
-                                return $this->redirect(['approve-member', 'id' => $model->process_approval_code]);
-                            }
-                        }
-                    } else {
+                $config = Yii::$app->general->getUnionConfigResult($memberModel->union_code, 'allow_member_other_detail');
+                if ($memberModel->validate()) {
+                    if ($memberModel->provisional_status == 'Approve') {
                         $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
+                        if ($config == 1) {
+                            $this->memberEnrollmentApprove($status, $model_save, $memberModel, $deleteModel);
+                        }
+                    }
+                } else {
+                    foreach ($memberModel->getErrors() as $errorkey => $value) {
+                        $message = $value;
                     }
                 }
                 if (!empty($message)) {
@@ -583,6 +578,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $this->model = $memberData;
         }
         $animal_model = new TblMemberAnimalType();
+        $animal_model->union_code = $this->model->union_code;
         $animals = $animal_model->getAnimal();
         $member_animal_model_data = [];
         $member_animal_model = new TblMemberProvisionalAnimalDetails();

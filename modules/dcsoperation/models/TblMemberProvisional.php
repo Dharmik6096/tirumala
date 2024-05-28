@@ -735,4 +735,10 @@ class TblMemberProvisional extends ChildModel {
         return $this->hasOne(TblRegion::className(), ['region_code' => 'region_code']);
     }
 
+    public function validateFlag($attribute, $param) {
+        if ($this->is_contact_verified != 1 || $this->is_verify != 1 || $this->is_email_verify != 1) {
+            $this->addError($attribute, Yii::t('app/validation', 'Please verify Email address, Mobile no, Bank detail.'));
+        }
+    }
+
 }

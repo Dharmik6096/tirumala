@@ -413,6 +413,7 @@ class TblMemberController extends \app\controllers\ChildController {
             $this->model = $memberData;
         }
         $animal_model = new TblMemberAnimalType();
+        $animal_model->union_code = $this->model->union_code;
         $animals = $animal_model->getAnimal();
         $member_animal_model_data = [];
         $member_animal_model = new TblMemberAnimalDetails();

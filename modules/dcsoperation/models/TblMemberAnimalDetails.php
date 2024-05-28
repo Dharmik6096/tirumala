@@ -78,7 +78,7 @@ class TblMemberAnimalDetails extends ChildModel {
     }
 
     public function getAnimalTypeCode() {
-        return $this->hasOne(TblMemberAnimalType::className(), ['animal_type_code' => 'animal_type_code']);
+        return $this->hasOne(TblMemberAnimalType::className(), ['animal_type_code' => 'animal_type_code'])->andOnCondition(['union_code' => $this->union_code]);
     }
 
 }
