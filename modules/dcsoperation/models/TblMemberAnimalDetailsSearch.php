@@ -5,19 +5,19 @@ namespace app\modules\dcsoperation\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\dcsoperation\models\TblMemberProvisionalShareDetails;
+use app\modules\dcsoperation\models\TblMemberAnimalDetails;
 
 /**
  * TblMemberProvisionalFamilyDetailsSearch represents the model behind the search form about `app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetails`.
  */
-class TblMemberProvisionalShareDetailsSearch extends TblMemberProvisionalShareDetails {
+class TblMemberanimalDetailsSearch extends TblMemberAnimalDetails {
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'union_code', 'provisional_member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'per_share_rate'], 'safe'],
+                [['union_code', 'member_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'daily_milk_production', 'created_at', 'updated_at', 'animal_type_code', 'heifers_count', 'milch_animal_count', 'dry_animal_count', 'total_animal', 'originating_type'], 'safe'],
         ];
     }
 
@@ -37,7 +37,7 @@ class TblMemberProvisionalShareDetailsSearch extends TblMemberProvisionalShareDe
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblMemberProvisionalShareDetails::find();
+        $query = TblMemberAnimalDetails::find();
 
         // add conditions that should always apply here
 
@@ -55,7 +55,7 @@ class TblMemberProvisionalShareDetailsSearch extends TblMemberProvisionalShareDe
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'provisional_member_code' => $this->provisional_member_code,
+            'member_code' => $this->member_code,
         ]);
 
         return $dataProvider;

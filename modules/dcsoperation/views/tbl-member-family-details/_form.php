@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use app\components\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -16,7 +16,7 @@ echo $form->errorSummary($memberFamilyDetail);
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="panel-title">
-                    <a class="pull-right" data-bs-toggle="collapse" href="#familyDetailsCollapse">
+                    <a class="pull-right" data-toggle="collapse" href="#familyDetailsCollapse">
                         <i id="collapse" class="fa fa-chevron-up"></i>
                     </a>
                     <?= Yii::t('app', 'Family Details') ?>
@@ -24,9 +24,9 @@ echo $form->errorSummary($memberFamilyDetail);
             </div>
             <div id="familyDetailsCollapse" class="panel-collapse collapse">
                 <div class="panel-body">
-                    <?= Html::activeHiddenInput($memberFamilyDetail, 'member_provisional_family_detail_code', ['id' => 'tblmemberprovisionalfamilydetails-member_provisional_family_detail_code']) ?>
-                    <?= Html::activeHiddenInput($memberFamilyDetail, 'provisional_member_code', ['id' => 'provisional_member_code']) ?>
-                    <?= Html::activeHiddenInput($memberFamilyDetail, 'union_code', ['id' => 'provisional_member_code', 'value' => $model->union_code]) ?>
+                    <?= Html::activeHiddenInput($memberFamilyDetail, 'member_family_detail_code', ['id' => 'tblmemberfamilydetails-member_family_detail_code']) ?>
+                    <?= Html::activeHiddenInput($memberFamilyDetail, 'member_code', ['id' => 'member_code']) ?>
+                    <?= Html::activeHiddenInput($memberFamilyDetail, 'union_code', ['id' => 'member_code', 'value' => $model->union_code]) ?>
                     <div class="col-sm-2">
                         <?= $form->field($memberFamilyDetail, 'family_member_name')->textInput() ?>
                     </div>
@@ -49,7 +49,7 @@ echo $form->errorSummary($memberFamilyDetail);
                         <?= $form->field($memberFamilyDetail, 'remarks')->textarea() ?>
                     </div>
                     <div class="col-sm-2 mt15 ">
-                        <?= Yii::$app->controls->checkTemplateBootstrap5($memberFamilyDetail, $form, 'is_nominee'); ?>
+                        <?= $form->field($memberFamilyDetail, 'is_nominee', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
                     </div>
                     <div class="col-sm-2">
                         <?= $form->field($memberFamilyDetail, 'nominee_address')->textarea() ?>
@@ -95,7 +95,7 @@ echo $form->errorSummary($memberFamilyDetail);
                                                                     });
                                                                 } else {
                                                                     var successMessage = data.message ? data.message : "' . Yii::t('app', 'Member Family Details Successfully Created') . '";
-                                                                   if($("#tblmemberprovisionalfamilydetails-member_provisional_family_detail_code").val()!=""){
+                                                                   if($("#tblmemberfamilydetails-member_family_detail_code").val()!=""){
                                                                     successMessage = "' . Yii::t('app', 'Member Family Details Successfully Updated') . '";
                                                                         }
                                                                     $(".help-block").text("");
@@ -104,12 +104,12 @@ echo $form->errorSummary($memberFamilyDetail);
                                                                     $(\'#pageloader\').hide();
                                                                     $.pjax.reload({container: "#member-family-details-grid"});
                                                                     $("#add-famliy-detail").trigger("reset");
-                                                                    $("#tblmemberprovisionalfamilydetails-gender_code").val("").trigger("change");
+                                                                    $("#tblmemberfamilydetails-gender_code").val("").trigger("change");
                                             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-success\'><i class=\'fa fa-check\'></i></div><span>"+successMessage+"</span></div></div>");
                                             }
                                             } '),
                                 ],
-                                'options' => ['class' => 'btn btn-default btn-raised submit_family btn-login',
+                                'options' => ['class' => 'btn btn-default btn-raised submit_family',
                                     'type' => 'submit'],
                             ]);
                             AjaxSubmitButton::end();
@@ -152,5 +152,5 @@ $script = "
                                 });
                                 });
                                 ";
-$this->registerJs($script, View::POS_END, 'member-provisional-family-details');
+$this->registerJs($script, View::POS_END, 'member-family-details');
 ?>

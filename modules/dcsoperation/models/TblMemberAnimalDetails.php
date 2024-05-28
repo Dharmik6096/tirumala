@@ -27,6 +27,8 @@ use app\models\ChildModel;
  */
 class TblMemberAnimalDetails extends ChildModel {
 
+    public $no_of_heifers_count, $no_of_milch_animal_count, $no_of_dry_animal_count, $no_of_total_animal;
+
     /**
      * @inheritdoc
      */
@@ -39,7 +41,7 @@ class TblMemberAnimalDetails extends ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'member_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'daily_milk_production', 'created_at', 'updated_at', 'animal_type_code', 'heifers_count', 'milch_animal_count', 'dry_animal_count', 'total_animal', 'originating_type'], 'safe'],
+                [['union_code', 'member_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'daily_milk_production', 'created_at', 'updated_at', 'animal_type_code', 'heifers_count', 'milch_animal_count', 'dry_animal_count', 'total_animal', 'originating_type', 'no_of_heifers_count', 'no_of_milch_animal_count', 'no_of_dry_animal_count', 'no_of_total_animal'], 'safe'],
         ];
     }
 
@@ -65,6 +67,18 @@ class TblMemberAnimalDetails extends ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
+    }
+
+    public function getMemberAnimals() {
+        return $this->find()->where(['animal_type_code' => $this->animal_type_code, 'member_code' => $this->member_code])->one();
+    }
+
+    public function getAnimalData($member_code) {
+        return $this->find()->where(['member_code' => $member_code])->all();
+    }
+
+    public function getAnimalTypeCode() {
+        return $this->hasOne(TblMemberAnimalType::className(), ['animal_type_code' => 'animal_type_code'])->andOnCondition(['union_code' => $this->union_code]);
     }
 
 }

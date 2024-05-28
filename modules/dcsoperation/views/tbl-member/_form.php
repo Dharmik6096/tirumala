@@ -70,21 +70,21 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
                 </div>
             <?php } ?>
         <?php } ?>
-        
+
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel('member_type_code')); ?>
         </div>
         <div class="col-sm-12">
-        <div class="col-sm-4">
-            <?= $form->field($model, 'member_name')->textInput() ?>
-        </div>
-        <div class="col-sm-4">
-            <?= $form->field($model, 'local_name')->textInput() ?>
-        </div>
-        
-        <div class="col-sm-4">
-            <?= $form->field($model, 'father_name')->textInput() ?>
-        </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'member_name')->textInput() ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'local_name')->textInput() ?>
+            </div>
+
+            <div class="col-sm-4">
+                <?= $form->field($model, 'father_name')->textInput() ?>
+            </div>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'local_father_name')->textInput() ?>
@@ -108,15 +108,21 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?= Yii::$app->controls->date($model, $form, 'dob'); ?>
         </div>
         <div class="col-sm-12">
-        <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdown('blood-group', $model, $form, '', 'Blood Group'); ?>
+            <div class="col-sm-4 number-validate">
+                <?= $form->field($model, 'age')->textInput() ?>
+            </div>
+            <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdown('blood-group', $model, $form, '', 'Blood Group'); ?>
+            </div>
+            <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', 'Gender'); ?>
+            </div>
+            <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdown('qualification', $model, $form, '', 'Qualification'); ?>
+            </div>        
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', 'Gender'); ?>
-        </div>
-        <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdown('qualification', $model, $form, '', 'Qualification'); ?>
-        </div>        
+            <?= $form->field($model, 'occupation')->textInput() ?>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', Yii::t('app', 'Caste/Category')); ?>
@@ -128,21 +134,30 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?= Yii::$app->controls->date($model, $form, 'registration_date'); ?>
         </div>
         <div class="col-sm-12">
-        <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdownStatic('member_class', $model, $form, 'form-group', $model->getAttributeLabel('member_class'), false, 'member_class', false); ?>
-        </div>
-        <!--    <div class="col-sm-4">
-                <? //$form->field($model, 'land_class')->textInput() ?>
-            </div>-->
-        <div class="col-sm-4">
-            <?= $form->field($model, 'total_land')->textInput() ?>
-        </div>
-        <div class="col-sm-4 number-validate">
-            <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 10]) ?>   
-        </div>   
+            <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdownStatic('member_class', $model, $form, 'form-group', $model->getAttributeLabel('member_class'), false, 'member_class', false); ?>
+            </div>
+            <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdownStatic('applicant_relation', $model, $form, 'form-group', $model->getAttributeLabel('applicant_relation'), false, 'applicant_relation', false); ?>
+            </div>
+            <!--    <div class="col-sm-4">
+                    <? //$form->field($model, 'land_class')->textInput() ?>
+                </div>-->
+            <div class="col-sm-4">
+                <?= $form->field($model, 'total_land')->textInput() ?>
+            </div>
+            <div class="col-sm-4 number-validate">
+                <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 10]) ?>   
+            </div>   
         </div>
         <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'sap_farmer_code')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'employee_name')->textInput() ?>
+        </div>
+        <div class="col-sm-4 number-validate">
+            <?= $form->field($model, 'annual_milk_pour')->textInput() ?>
         </div>
         <?php if ($config == 1) { ?>
             <div class="col-sm-4">
@@ -218,7 +233,12 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-4">
             <?= $form->field($model, 'email')->textInput() ?>
         </div>
-
+        <div class="col-sm-4">
+            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->dropdown('relation', $model, $form, '', $model->getAttributeLabel('email_relation'), false, 'email_relation'); ?>
+        </div>
         <div class="col-md-12 padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                 <h4 class="theme-box-heading">Animal Details</h4>
@@ -233,12 +253,12 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
                 <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
             </div>
             <div class="col-sm-12">
-            <div class="col-sm-4">
-                <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
-            </div>
-            <div class="col-sm-4">
-                <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
-            </div>            
+                <div class="col-sm-4">
+                    <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
+                </div>
+                <div class="col-sm-4">
+                    <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
+                </div>            
             </div>
         </div>
     </div>
@@ -266,15 +286,15 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?= $form->field($model, 'pan_no')->textInput() ?>
         </div>
         <div class="col-sm-12">
-        <div class="col-sm-2">
-            <?= $form->field($model, 'adhar_no')->textInput() ?>
-        </div>
-        <div class="col-sm-2 hidden-for-specific-client">
-            <?= $form->field($model, 'voter_id')->textInput() ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'annual_income')->textInput() ?>
-        </div>       
+            <div class="col-sm-2">
+                <?= $form->field($model, 'adhar_no')->textInput() ?>
+            </div>
+            <div class="col-sm-2 hidden-for-specific-client">
+                <?= $form->field($model, 'voter_id')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'annual_income')->textInput() ?>
+            </div>       
         </div>
         <!--    <div class="col-sm-3">
                 <? = $form->field($model, 'payment_mode')->textInput() ?>

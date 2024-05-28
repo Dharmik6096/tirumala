@@ -1,6 +1,6 @@
 <?php
 
-use app\modules\usermanagement\components\GhostHtml;
+use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
 ?>
@@ -30,10 +30,10 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'update' => function ($url, $model) {
-            $options = ['class' => 'edit_family_detail', 'title' => Yii::t('app', 'Edit Family Details'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'data-member_provisional_family_detail_code' => $model->member_provisional_family_detail_code, 'data-val' => $model->member_provisional_family_detail_code, 'class' => 'edit-family-detail'];
-            return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/dcsoperation/tbl-member-provisional/get-family-data', 'member_provisional_family_detail_code' => $model->member_provisional_family_detail_code], $options);
+            $options = ['class' => 'edit_family_detail', 'title' => Yii::t('app', 'Edit Family Details'), 'data-original-title' => Yii::t('app', 'Family Details'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-member_family_detail_code' => $model->member_family_detail_code, 'data-val' => $model->member_family_detail_code, 'class' => 'edit-family-detail'];
+            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/dcsoperation/tbl-member/get-family-data', 'member_family_detail_code' => $model->member_family_detail_code], $options);
         },
-        'delete' => ['option' => 'member_provisional_family_detail_code,member_provisional_family_detail_code,/dcsoperation/tbl-member-provisional/delete-family'],
+        'delete' => ['option' => 'member_family_detail_code,member_family_detail_code,/dcsoperation/tbl-member/delete-family'],
     ]
 ];
 
@@ -49,7 +49,7 @@ $(document).ready(function(){
         if(id != ''){         
             $.ajax({
                 type: 'post',
-                url: '" . Url::to(['/dcsoperation/tbl-member-provisional/get-family-data']) . "',
+                url: '" . Url::to(['/dcsoperation/tbl-member/get-family-data']) . "',
                 data: {'id' : id},
                 beforeSend:function(data) {
                     $('#loadercontent').show();
@@ -59,20 +59,20 @@ $(document).ready(function(){
                     $('#collapse').trigger('click');
                     $.each(data.modelData, function(index, value) {
                         if(index == 'is_nominee'){
-                            $('#tblmemberprovisionalfamilydetails-is_nominee').prop('checked', false);
+                            $('#tblmemberfamilydetails-is_nominee').prop('checked', false);
                             if(value == 1){
-                                $('#tblmemberprovisionalfamilydetails-is_nominee').prop('checked', true);
+                                $('#tblmemberfamilydetails-is_nominee').prop('checked', true);
                             }
                         } else {
-                            $('#tblmemberprovisionalfamilydetails-'+index).val(value);
+                            $('#tblmemberfamilydetails-'+index).val(value);
                         }
-                    });
-                    $('#tblmemberprovisionalfamilydetails-relationship_code').trigger('change');
-                    $('#tblmemberprovisionalfamilydetails-relationship_code').trigger('select2:select');
-                    $('#tblmemberprovisionalfamilydetails-relationship_code').trigger('change');
-                    $('#tblmemberprovisionalfamilydetails-gender_code').trigger('change');
-                    $('#tblmemberprovisionalfamilydetails-gender_code').trigger('select2:select');
-                    $('#tblmemberprovisionalfamilydetails-gender_code').trigger('change');
+                   });
+                    $('#tblmemberfamilydetails-relationship_code').trigger('change');
+                    $('#tblmemberfamilydetails-relationship_code').trigger('select2:select');
+                    $('#tblmemberfamilydetails-relationship_code').trigger('change');
+                    $('#tblmemberfamilydetails-gender_code').trigger('change');
+                    $('#tblmemberfamilydetails-gender_code').trigger('select2:select');
+                    $('#tblmemberfamilydetails-gender_code').trigger('change');
                     $('#loadercontent').hide();
                     $('#pageloader').hide();
                     $(window).scrollTop(0);

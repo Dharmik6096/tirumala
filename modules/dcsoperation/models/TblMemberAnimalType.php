@@ -64,7 +64,7 @@ class TblMemberAnimalType extends ChildModel {
     }
 
     public function getAnimal() {
-        return $this->find()->where(['is_active' => 1])->all();
+        return $this->find()->where(['is_active' => 1, 'union_code' => $this->union_code])->all();
     }
 
 }
