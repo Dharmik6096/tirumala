@@ -12,17 +12,17 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 $disable = $readonly ? 'disabled' : '';
 $list = array('0' => 'No', '1' => 'Yes');
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;
-$sapBatchDisable=$batchNoWiseInventory==1?'':'disp_none';
+$sapBatchDisable = $batchNoWiseInventory == 1 ? '' : 'disp_none';
 ?>
 
 <?php
 $form = ActiveForm::begin([
-            'options' => ['id' => 'grn-form'],
-            'validateOnBlur' => FALSE,
-            'validateOnChange' => FALSE,
-            'enableClientValidation' => true,
-            'validateOnSubmit' => true,
-        ]);
+    'options' => ['id' => 'grn-form'],
+    'validateOnBlur' => FALSE,
+    'validateOnChange' => FALSE,
+    'enableClientValidation' => true,
+    'validateOnSubmit' => true,
+]);
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
@@ -40,7 +40,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblplantdispatch-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblplantdispatch-union_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblplantdispatch-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
             <?= $form->field($model, 'document_no')->textInput() ?>
@@ -66,14 +66,14 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblplantdispatch-union_code,x_col3', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product', 'product_code', FALSE); ?>
         </div>
         <?php
-         if ($batchNoWiseInventory == 1) { 
+        if ($batchNoWiseInventory == 1) {
         ?>
-        <div class="col-sm-2 sap_batch_no">
-            <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
-        </div>
-         <?php } ?>
+            <div class="col-sm-2 sap_batch_no">
+                <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
+            </div>
+        <?php } ?>
         <div class=" col-sm-1 reset_field unit disabledDiv">
-            <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
+            <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>
         </div>
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'rate')->textInput() ?>
@@ -94,7 +94,7 @@ $form = ActiveForm::begin([
                 Html::a(Yii::t('app', 'Add'), 'javascript:void(0)', ['class' => 'btn btn-primary add-asset-record disabled no_pointer'])
                 ?>
                 <?php
-//                Html::a(Yii::t('app', 'Add Sr. No.'), 'javascript:void(0)', ['class' => 'btn btn-primary add-serial-record disabled no_pointer'])
+                //                Html::a(Yii::t('app', 'Add Sr. No.'), 'javascript:void(0)', ['class' => 'btn btn-primary add-serial-record disabled no_pointer'])
                 ?>
             </div>
 
@@ -108,14 +108,15 @@ $form = ActiveForm::begin([
                 <th><?= Yii::t('app', 'Product Code') ?></th>
                 <th><?= $txModel->getAttributeLabel('product_code') ?></th>
                 <th><?= $txModel->getAttributeLabel('unit_code') ?></th>
-                <th><?php if($batchNoWiseInventory){
-                echo $txModel->getAttributeLabel('sap_batch_no'); }?></th>
+                <th><?php if ($batchNoWiseInventory) {
+                        echo $txModel->getAttributeLabel('sap_batch_no');
+                    } ?></th>
                 <th><?= $txModel->getAttributeLabel('rate') ?></th>
                 <th><?= $txModel->getAttributeLabel('qty') ?></th>
                 <th><?= $txModel->getAttributeLabel('amount') ?></th>
                 <th><?= $txModel->getAttributeLabel('lr_no') ?></th>
                 <th><?= Yii::t('app', 'Action') ?></th>
-            </tr> 
+            </tr>
         </thead>
         <tbody>
 
@@ -147,8 +148,10 @@ $form = ActiveForm::begin([
                                                                 }
                                                  }'),
             ],
-            'options' => ['class' => 'btn btn-default btn-save-txn disabled no_pointer',
-                'type' => 'submit'],
+            'options' => [
+                'class' => 'btn btn-default btn-save-txn disabled no_pointer',
+                'type' => 'submit'
+            ],
         ]);
         AjaxSubmitButton::end();
         ?>
@@ -158,4 +161,3 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
-

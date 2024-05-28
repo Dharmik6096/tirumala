@@ -23,10 +23,17 @@ $attribute = [
         ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        }, 'filter' => FALSE],
         ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC Code'), 'vAlign' => 'middle'],
         ['attribute' => 'bmc_name', 'label' => Yii::t('app', 'BMC'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle'],
+        ['label' => Yii::t('app', 'Ref. Code'), 'attribute' => 'ref_code',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        },],
         ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'vAlign' => 'middle'],
         ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');

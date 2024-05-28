@@ -38,7 +38,7 @@ if (isset($address[1])) {
     $model->street2 = $address[1];
 }
 
-$vendor = ['EIPL' => 'EIPL', 'BIPL' => 'BIPL'];
+$vendor = ['EIPL' => 'EIPL', 'BIPL' => 'BIPL', 'PROMPT' => 'PROMPT'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
 //$disable = !empty($model->bmc_code) ? TRUE : FALSE;
@@ -262,7 +262,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'phone_no')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
-            <?= $form->field($model, 'aadhaar_no')->textInput()->label(Yii::t('app', 'aadhaar_no'))?>
+            <?= $form->field($model, 'aadhaar_no')->textInput()->label(Yii::t('app', 'aadhaar_no')) ?>
         </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box theme_border_top">

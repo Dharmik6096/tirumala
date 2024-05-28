@@ -557,11 +557,18 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->options = ['tanker_rate'];
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = [
-            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Ref. Code'), 'value' => function($model) {
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function($model) {
                     if ($model->applicable_for == 'DCS') {
                         return Yii::$app->general->getmultiforeignkey($model->dcsName, ['bmcCode'], 'ref_code');
                     } else {
                         return Yii::$app->general->getmultiforeignkey($model->customerMasterCode, ['bmcCode'], 'ref_code');
+                    }
+                }],
+            'bmc_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Name'), 'value' => function($model) {
+                    if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getmultiforeignkey($model->dcsName, ['bmcCode'], 'bmc_name');
+                    } else {
+                        return Yii::$app->general->getmultiforeignkey($model->customerMasterCode, ['bmcCode'], 'bmc_name');
                     }
                 }],
             'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {

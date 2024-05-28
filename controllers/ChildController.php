@@ -99,6 +99,7 @@ class ChildController extends Controller {
         $controls['REPORT_LOCALE'] = 'en';
         $controls['digit_config'] = 0;
         $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
+        $clientJasper->setRequestTimeout(300);
         $output = $clientJasper->reportService()->runReport(preg_replace('#/+#', '/', Yii::$app->params['report_path'] . $path), $type, null, null, $controls);
         if ($out == 'mail') {
             return $output;

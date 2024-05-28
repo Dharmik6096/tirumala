@@ -380,6 +380,16 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVendorMilkBillGlt() {
+        $this->report = 'VendorMilkBillGLT';
+        return $this->actionIndex();
+    }
+
+    public function actionVendorMilkBillSummaryGlt() {
+        $this->report = 'VendorMilkBillSummaryGLT';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -734,24 +744,28 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VspPaymentBill',
                 'scenario' => 'VendorMilkPayment',
                 'title' => '604 - Vendor Milk Payment',
+                'bkg_export' => TRUE,
             ],
             'MemberMilkPayment' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
                 'path' => 'vsp/MemberPaymentBill',
                 'scenario' => 'MemberMilkPayment',
                 'title' => '605 - Member Milk Payment',
+                'bkg_export' => TRUE,
             ],
             'VendorMilkBill' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
                 'path' => 'vsp/VendorMilkBill',
                 'scenario' => 'VendorMilkBill',
                 'title' => '609 - Vendor Milk Bill',
+                'bkg_export' => TRUE,
             ],
             'MemberMilkBill' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
                 'path' => 'vsp/MemberMilkBill',
                 'scenario' => 'MemberMilkBill',
                 'title' => '610 - Member Milk Bill',
+                'bkg_export' => TRUE,
             ],
             'StaffSalary' => [
                 'param' => 'p_union_code,p_staff_member_code,p_month:month,p_language_code,p_report_name',
@@ -906,6 +920,20 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VendorMilkBillSBD',
                 'scenario' => 'VendorMilkBillSbd',
                 'title' => 'Vendor Milk Bill Sbd',
+            ],
+            'VendorMilkBillGLT' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VendorMilkBillGLT',
+                'scenario' => 'VendorMilkBillGLT',
+                'title' => 'Vendor Milk Bill',
+                'bkg_export' => TRUE,
+            ],
+            'VendorMilkBillSummaryGLT' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VendorMilkBillSummaryForGLT',
+                'scenario' => 'VendorMilkBillSummaryGLT',
+                'title' => 'Vendor Milk Bill Summary',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];

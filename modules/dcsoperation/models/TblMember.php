@@ -28,6 +28,7 @@ use yii\helpers\ArrayHelper;
 use app\modules\dcsoperation\models\TblMemberProvisional;
 use app\modules\geo\models\TblRegion;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_member".
@@ -95,7 +96,7 @@ use webvimark\modules\UserManagement\models\User;
  */
 class TblMember extends ChildModel {
 
-    public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern;
+    public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern, $bmc_code;
     public $operation, $verifie_for, $file_name;
     public $check_is_dcs_member = 1;
 
@@ -695,6 +696,10 @@ class TblMember extends ChildModel {
 
     public function getRegionCode() {
         return $this->hasOne(TblRegion::className(), ['region_code' => 'region_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }
