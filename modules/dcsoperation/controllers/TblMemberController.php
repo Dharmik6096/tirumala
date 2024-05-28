@@ -30,7 +30,7 @@ use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
 use app\modules\dcsoperation\models\TblUnionShareConfig;
 use app\modules\dcsoperation\models\TblMemberAnimalDetails;
 use app\modules\dcsoperation\models\TblMemberAnimalType;
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberShareDetailsSearch;
 use app\modules\dcsoperation\models\TblMemberAnimalDetailsSearch;

@@ -29,7 +29,7 @@ use app\modules\dcsoperation\models\TblMemberHistory;
 use app\modules\dcsoperation\models\TblMemberAnimalType;
 use app\modules\dcsoperation\models\TblMemberProvisionalAnimalDetails;
 use app\modules\dcsoperation\models\TblMemberProvisionalAnimalDetailsHistory;
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetails;
 use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetailsSearch;

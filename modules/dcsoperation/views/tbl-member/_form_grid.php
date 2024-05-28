@@ -169,7 +169,7 @@ $grid_option = [
             $name = $model->member_name;
             $class = ( $config != 1 || (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 || !empty($model->provisionalMember))) ? 'link-disable' : '';
             $url = ['/dcsoperation/tbl-member/member-details', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Member Other Deatils', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Member Other Deatils', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-info-circle"></i>', $url, $options);
         },
     ]

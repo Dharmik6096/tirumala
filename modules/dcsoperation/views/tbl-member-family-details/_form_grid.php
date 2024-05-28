@@ -1,6 +1,6 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
 ?>
@@ -30,8 +30,8 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'update' => function ($url, $model) {
-            $options = ['class' => 'edit_family_detail', 'title' => Yii::t('app', 'Edit Family Details'), 'data-original-title' => Yii::t('app', 'Family Details'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-member_family_detail_code' => $model->member_family_detail_code, 'data-val' => $model->member_family_detail_code, 'class' => 'edit-family-detail'];
-            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/dcsoperation/tbl-member/get-family-data', 'member_family_detail_code' => $model->member_family_detail_code], $options);
+            $options = ['class' => 'edit_family_detail', 'title' => Yii::t('app', 'Edit Family Details'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'data-member_family_detail_code' => $model->member_family_detail_code, 'data-val' => $model->member_family_detail_code, 'class' => 'edit-family-detail'];
+            return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/dcsoperation/tbl-member/get-family-data', 'member_family_detail_code' => $model->member_family_detail_code], $options);
         },
         'delete' => ['option' => 'member_family_detail_code,member_family_detail_code,/dcsoperation/tbl-member/delete-family'],
     ]

@@ -79,7 +79,7 @@ $btn = $type == 'create' ? 'create' : 'update';
         ])
         ?>
     </div>
-
+    <div class="clearfix"></div>
     <?php $form = ActiveForm::begin(['id' => 'add-animal-detail']); ?>
     <?php echo $form->errorSummary([$model, $member_animal_model, $memberShareDetail]); ?>
     <div class="row hr10">
