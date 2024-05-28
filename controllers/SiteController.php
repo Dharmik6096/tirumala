@@ -89,7 +89,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -235,7 +235,7 @@ class SiteController extends Controller {
 // $dpu_data = $this->DPUDataCollection($model);
 
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
-                    ]);
+        ]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -1913,7 +1913,7 @@ class SiteController extends Controller {
                                         }
                                     } else {
                                         if ($transaction_data->table_name == 'tbl_bmc_collection') {
-                                            if ($model->hasAttribute('vehicle_no')) {
+                                            if ($model->hasAttribute('vehicle_no') && !empty($model->vehicle_no)) {
                                                 $model->vehicle_no = str_replace('\n', '', $model->vehicle_no);
                                                 $model->vehicle_no = trim(preg_replace('/\n/', '', $model->vehicle_no));
                                                 $model->vehicle_no = trim(preg_replace('/\s/', '', $model->vehicle_no));
@@ -3053,7 +3053,7 @@ class SiteController extends Controller {
         }
         return $this->render('_dashboard_grid_other_Staff', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
-    
+
     public function actionGetNotInstalledMpps() {
         $output = [];
         if (!empty($_GET)) {
