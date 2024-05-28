@@ -1854,6 +1854,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Payment Mode'),
                 'data' => ['0' => Yii::t('app', 'Cash Deposited In Bank'), '1' => Yii::t('app', 'Cash Submited to Officer')],
             ],
+            'applicant_relation' => [
+                'name' => 'applicant_relation',
+                'prompt' => Yii::t('app', 'Select Applicant Relation'),
+                'data' => [1 => Yii::t('app', 'Father'), 2 => Yii::t('app', 'Husband'), 3 => Yii::t('app', 'Mother')],
+            ],
         ];
         return $records[$l];
     }

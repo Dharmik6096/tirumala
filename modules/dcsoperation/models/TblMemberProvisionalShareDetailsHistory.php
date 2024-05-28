@@ -49,7 +49,7 @@ class TblMemberProvisionalShareDetailsHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['member_provisional_share_detail_code', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'history_created_at', 'union_code', 'provisional_member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type'], 'safe'],
+                [['member_provisional_share_detail_code', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'history_created_at', 'union_code', 'provisional_member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'per_share_rate'], 'safe'],
         ];
     }
 

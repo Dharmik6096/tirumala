@@ -22,6 +22,18 @@ use yii\web\UploadedFile;
 use app\modules\general\models\TblAttachment;
 use app\modules\dcsoperation\models\TblMemberDeactiveSearch;
 use app\modules\document\controllers\TblAttachmentController;
+use app\modules\dcsoperation\models\TblMemberFamilyDetails;
+use app\modules\dcsoperation\models\TblMemberFamilyDetailsHistory;
+use app\modules\dcsoperation\models\TblMemberFamilyDetailsSearch;
+use app\modules\dcsoperation\models\TblMemberShareDetails;
+use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
+use app\modules\dcsoperation\models\TblUnionShareConfig;
+use app\modules\dcsoperation\models\TblMemberAnimalDetails;
+use app\modules\dcsoperation\models\TblMemberAnimalType;
+use yii\bootstrap\ActiveForm;
+use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
+use app\modules\dcsoperation\models\TblMemberShareDetailsSearch;
+use app\modules\dcsoperation\models\TblMemberAnimalDetailsSearch;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -54,9 +66,29 @@ class TblMemberController extends \app\controllers\ChildController {
         $searchModel = new TblMemberDeactiveSearch();
         $searchModel->member_code = $id;
         $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
+
+        $familyMemberModel = new TblMemberFamilyDetailsSearch();
+        $familyMemberModel->member_code = $id;
+        $fDataProvider = $familyMemberModel->search(Yii::$app->request->queryParams);
+
+        $animalMemberModel = new TblMemberAnimalDetailsSearch();
+        $animalMemberModel->member_code = $id;
+        $animalDataProvider = $animalMemberModel->search(Yii::$app->request->queryParams);
+
+        $shareMemberModel = new TblMemberShareDetailsSearch();
+        $shareMemberModel->member_code = $id;
+        $shareDataProvider = $shareMemberModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
-                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'familyMemberModel' => $familyMemberModel,
+                    'fDataProvider' => $fDataProvider,
+                    'animalMemberModel' => $animalMemberModel,
+                    'animalDataProvider' => $animalDataProvider,
+                    'shareMemberModel' => $shareMemberModel,
+                    'shareDataProvider' => $shareDataProvider,
         ]);
     }
 
@@ -356,7 +388,7 @@ class TblMemberController extends \app\controllers\ChildController {
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('member', $id, $model, $module_code, $module_name);
     }
-    
+
     public function actionActivateMemberCodeList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
@@ -371,6 +403,272 @@ class TblMemberController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionMemberDetails($id) {
+        $this->model = new TblMember();
+        $this->model->member_code = $id;
+        $memberData = $this->model->findOne($id);
+        if (!empty($memberData)) {
+            $this->model = $memberData;
+        }
+        $animal_model = new TblMemberAnimalType();
+        $animal_model->union_code = $this->model->union_code;
+        $animals = $animal_model->getAnimal();
+        $member_animal_model_data = [];
+        $member_animal_model = new TblMemberAnimalDetails();
+        $member_animal_model->member_code = $id;
+
+        $h_model = [];
+        $msearchModel = new TblMemberSearch();
+        $msearchModel->member_code = $id;
+        $mdataProvider = $msearchModel->search(Yii::$app->request->queryParams);
+        $this->setAnimalModelData($animals, $member_animal_model_data, $h_model, $id);
+
+        // family detail 
+        $memberFamilyDetail = new TblMemberFamilyDetails();
+        $memberFamilyDetail->member_code = $id;
+        $memberFamilyDetail->scenario = 'member_family_detail';
+        $memberFamilySearchModel = new TblMemberFamilyDetailsSearch();
+        $memberFamilySearchModel->member_code = $id;
+        $memberFamilyDataProvider = $memberFamilySearchModel->search(Yii::$app->request->queryParams);
+        //
+        // share detail 
+        $shareConfig = new TblUnionShareConfig();
+        $shares = $shareConfig->getShareDetail('member', $this->model->gender_code);
+
+        $memberShareDetail = new TblMemberShareDetails();
+        $memberShareDetail->member_code = $id;
+
+        $memberShareDetail = TblMemberShareDetails::find()->where(['member_code' => $id])->one();
+        if (empty($memberShareDetail)) {
+            $memberShareDetail = new TblMemberShareDetails();
+            $memberShareDetail->member_code = $id;
+            $memberShareDetail->no_of_share_req = $shares['min_share'];
+            $memberShareDetail->no_of_share_apply = $shares['max_share'];
+            $memberShareDetail->admission_fee = $shares['admission_fee'];
+            $memberShareDetail->payable_share_amount = $shares['max_share'] * $shares['per_share_rate'];
+            $memberShareDetail->amount_payable = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee'];
+            $memberShareDetail->total_amount = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee'];
+            $memberShareDetail->per_share_rate = $shares['per_share_rate'];
+        }
+        $this->setShareModelData($memberShareDetail, $h_model, $id);
+        $this->model->scenario = 'member_detail';
+
+        if (Yii::$app->request->post()) {
+            $master_model = [];
+            $post_data = Yii::$app->request->post();
+            $member_details = $post_data['TblMember'];
+            $this->model->load($post_data);
+            if (!empty($memberData)) {
+                $historyModel = new TblMemberHistory();
+                Yii::$app->operation->history($memberData, $historyModel, UPDATE);
+                $h_model[] = $historyModel;
+                $memberData->attributes = $this->model->attributes;
+                $memberData->setAttributes($member_details);
+                $master_model[] = $memberData;
+            }
+            $animal_details = $post_data['TblMemberAnimalDetails'];
+            $this->setAnimalDetails($animal_details, $master_model, $member_animal_model_data);
+
+            $share_details = $post_data['TblMemberShareDetails'];
+            $memberShareDetail->load($post_data);
+            $share_model_data = $memberShareDetail->getMemberShare();
+            if (!empty($share_model_data)) {
+                $memberShareDetail = $share_model_data;
+                $memberShareDetail->deposit_date = empty($memberShareDetail->deposit_date) ? NULL : Yii::$app->formatter->asDate($memberShareDetail->deposit_date, DATE_FORMAT);
+                $memberShareDetail->load($post_data);
+            }
+            $memberShareDetail['gender_code'] = $this->model->gender_code;
+            $master_model[] = $memberShareDetail;
+            $msg = '';
+            if (empty($memberShareDetail->getErrors()) && empty($this->model->getErrors()) && empty($member_animal_model->getErrors()) && $memberShareDetail->validate() && $member_animal_model->validate() && $this->model->validate()) {
+
+                $transaction = $this->generalModel->saveTransaction($master_model, $h_model, ['member', 'create']);
+                $msg = '';
+                if (Yii::$app->session->hasFlash('success')) {
+                    $msg = Yii::$app->session->getFlash('success');
+                    $msg = $msg['message'];
+                }
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                } else {
+                    $data = [];
+                    $data['status'] = 'error';
+                    $data['errors'] = ActiveForm::validate($this->model, $memberShareDetail, $member_animal_model);
+                    $data['message'] = $msg;
+                    return $data;
+                }
+            } else {
+                $data = [];
+                $data['status'] = 'error';
+                $data['errors'] = ActiveForm::validate($this->model, $memberShareDetail, $member_animal_model);
+                $data['message'] = $msg;
+                return $data;
+            }
+        }
+        return Yii::$app->controller->render('@app/modules/dcsoperation/views/tbl-member-animal-details/create', [
+                    'model' => $this->model,
+                    'animals' => $animals,
+                    'member_animal_model' => $member_animal_model,
+                    'member_animal_model_data' => $member_animal_model_data,
+                    'msearchModel' => $msearchModel,
+                    'mdataProvider' => $mdataProvider,
+                    'memberFamilyDetail' => $memberFamilyDetail,
+                    'memberFamilySearchModel' => $memberFamilySearchModel,
+                    'memberFamilyDataProvider' => $memberFamilyDataProvider,
+                    'memberShareDetail' => $memberShareDetail,
+        ]);
+    }
+
+    private function setAnimalDetails($animal_details, &$master_model, &$provisional_animal_model_data) {
+        unset($animal_details['no_of_heifers_count']);
+        unset($animal_details['no_of_milch_animal_count']);
+        unset($animal_details['no_of_dry_animal_count']);
+        unset($animal_details['no_of_total_animal']);
+        foreach ($animal_details as $animal_detail) {
+            $animal_detail_model = new TblMemberAnimalDetails();
+            $animal_detail_model->member_code = $this->model->member_code;
+            $animal_detail_model->animal_type_code = $animal_detail['animal_type_code'];
+            $animal_detail_model->union_code = $this->model->union_code;
+            $animal_model_data = $animal_detail_model->getMemberAnimals();
+            if (!empty($animal_model_data)) {
+                $animal_detail_model = $animal_model_data;
+            }
+            $animal_detail_model->setAttributes($animal_detail);
+            $provisional_animal_model_data[$animal_detail_model->animal_type_code] = $animal_detail_model;
+            $master_model[] = $animal_detail_model;
+        }
+    }
+
+    private function setAnimalModelData($animals, &$member_animal_model_data, &$h_model, $id = '') {
+        if (!empty($animals)) {
+            foreach ($animals as $animal) {
+                $animal_model = new TblMemberAnimalDetails();
+                $animal_model->animal_type_code = $animal->animal_type_code;
+                if (!empty($id)) {
+                    $animal_model->member_code = $id;
+                    $animal_model_data = $animal_model->getMemberAnimals();
+                    if (!empty($animal_model_data)) {
+                        $animal_model = $animal_model_data;
+                        $historyModel = new TblMemberAnimalDetailsHistory();
+                        Yii::$app->operation->history($animal_model_data, $historyModel, UPDATE);
+                        $h_model[] = $historyModel;
+                    }
+                }
+                $member_animal_model_data[$animal->animal_type_code] = $animal_model;
+            }
+        }
+    }
+
+    private function setShareModelData($memberShareDetail, &$h_model, $id = '') {
+
+        if (!empty($memberShareDetail)) {
+            $share_model = new TblMemberShareDetails();
+            if (!empty($id)) {
+                $share_model->member_code = $id;
+                $share_model_data = $share_model->getMemberShare();
+                if (!empty($share_model_data)) {
+                    $share_model = $share_model_data;
+                    $historyModel = new TblMemberShareDetailsHistory();
+                    Yii::$app->operation->history($share_model_data, $historyModel, UPDATE);
+                    $h_model[] = $historyModel;
+                }
+            }
+        }
+    }
+
+    public function actionCreateFamily() {
+        $id = $_POST['TblMemberFamilyDetails']['member_code'];
+        $memberFamilyDetail = new TblMemberFamilyDetails();
+        $memberFamilyDetail->scenario = 'member_family_detail';
+        $memberFamilySearchModel = new TblMemberFamilyDetailsSearch();
+        $memberFamilyDataProvider = null;
+        $memberFamilyHistory = [];
+        $saveModel = [];
+        if (Yii::$app->request->post()) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $data = Yii::$app->request->post()['TblMemberFamilyDetails'];
+
+            $existData = TblMemberFamilyDetails::find()->where(['member_family_detail_code' => $data['member_family_detail_code']])->one();
+
+            $memberFamilyDetail->load(Yii::$app->request->post());
+            if ($memberFamilyDetail->validate()) {
+                $memberFamilyDetail->dob = empty($memberFamilyDetail->dob) ? NULL : Yii::$app->formatter->asDate($memberFamilyDetail->dob, DATE_FORMAT);
+
+                if (!empty($existData)) {
+                    $historyModel = new TblMemberFamilyDetailsHistory();
+                    Yii::$app->operation->history($existData, $historyModel, UPDATE);
+                    $memberFamilyHistory[] = $historyModel;
+                    $existData->load(Yii::$app->request->post());
+                    $saveModel[] = $existData;
+                } else {
+                    $saveModel[] = $memberFamilyDetail;
+                }
+                $transaction = $this->generalModel->saveTransaction($saveModel, $memberFamilyHistory, ['member family details', 'edit']);
+                $msg = '';
+                if (Yii::$app->session->hasFlash('success')) {
+                    $msg = Yii::$app->session->getFlash('success');
+                    $msg = $msg['message'];
+                }
+                if ($transaction == 'customRedirect') {
+                    $data = [];
+                    $data['status'] = 'success';
+                    $data['errors'] = [];
+                    $data['message'] = 'Member Family Details Successfully Created';
+                    return $data;
+                } else {
+                    $data = [];
+                    $data = [
+                        'status' => 'error',
+                        'errors' => $memberFamilyDetail->errors,
+                    ];
+                    return $data;
+                }
+            } else {
+                $data = [];
+                $data = [
+                    'status' => 'error',
+                    'errors' => $memberFamilyDetail->errors,
+                ];
+                return $data;
+            }
+        }
+    }
+
+    public function actionDeleteFamily() {
+        if (Yii::$app->request->post('id')) {
+            $id = $_POST['id'];
+            $deleteModel = [];
+            $history_model = [];
+            $FamilyDelmodel = TblMemberFamilyDetails::find()->where(['member_family_detail_code' => $id])->one();
+            if (!empty($FamilyDelmodel)) {
+                $historyModel = new TblMemberFamilyDetailsHistory();
+                Yii::$app->operation->history($FamilyDelmodel, $historyModel, DELETE);
+                $deleteModel[] = $FamilyDelmodel;
+                $history_model[] = $historyModel;
+            }
+            $record = $this->generalModel->deleteTransaction([$FamilyDelmodel, $historyModel]);
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+
+    public function actionGetFamilyData() {
+        $data = [];
+        $data['status'] = 'error';
+        $data['message'] = '';
+        $modelData = [];
+        if (!empty($_POST['id'])) {
+            $modelData = TblMemberFamilyDetails::find()->where(['member_family_detail_code' => $_POST['id']])->one();
+            if (!empty($modelData)) {
+                $data['status'] = 'success';
+                $modelData->dob = !empty($modelData->dob) ? date('d-m-Y', strtotime($modelData->dob)) : '';
+            }
+        }
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return ['data' => $data, 'modelData' => $modelData];
     }
 
 }

@@ -20,10 +20,6 @@ $btn = $type == 'create' ? 'create' : 'update';
                 [
                 'columns' => [
                         [
-                        'attribute' => 'provisional_member_code',
-                        'valueColOptions' => ['style' => 'width:15%']
-                    ],
-                        [
                         'attribute' => 'member_code',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
@@ -37,10 +33,6 @@ $btn = $type == 'create' ? 'create' : 'update';
                 'columns' => [
                         [
                         'attribute' => 'ex_member_code',
-                        'valueColOptions' => ['style' => 'width:15%']
-                    ],
-                        [
-                        'attribute' => 'pro_ex_member_code',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
@@ -69,7 +61,7 @@ $btn = $type == 'create' ? 'create' : 'update';
     </div>
     <div class="form-grid hide-grid-settings">
         <?=
-        $this->render('@app/modules/dcsoperation/views/tbl-member-provisional-family-details/create', [
+        $this->render('@app/modules/dcsoperation/views/tbl-member-family-details/create', [
             'msearchModel' => $msearchModel,
             'mdataProvider' => $mdataProvider,
             'memberFamilyDetail' => $memberFamilyDetail,
@@ -226,11 +218,11 @@ $btn = $type == 'create' ? 'create' : 'update';
         <div class="form-group mt20">
             <?php
             AjaxSubmitButton::begin([
-                'label' => Yii::t('app', Yii::t('app', 'NEXT')),
+                'label' => Yii::t('app', Yii::t('app', 'SAVE')),
                 'useWithActiveForm' => 'add-animal-detail',
                 'ajaxOptions' => [
                     'type' => 'POST',
-                    'url' => Url::to(['member-detail', 'id' => $member_animal_model->provisional_member_code]),
+                    'url' => Url::to(['member-details', 'id' => $member_animal_model->member_code]),
                     'beforeSend' => new JsExpression("function(data){
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
@@ -241,16 +233,12 @@ $btn = $type == 'create' ? 'create' : 'update';
                                                                 if (data.status == "error"){ 
                                                                     $("p.help-block").text("");
                                                                     var cnt=0;
-                                                                    var errorMessage = "";
-                                                                    $.each(data.errors, function(key, value) {
-                                                                        errorMessage += value + "<br>";
-                                                                        $(".field-" + key + " .help-block").text(value);
-                                                                        $("#" + key).closest(".form-group").addClass("has-error");
+                                                                    $.each(data.errors, function(key, val) {
+                                                                        $(".field-"+key+" p").text(val);
+                                                                        $("#"+key).closest(".form-group").addClass("has-error");
                                                                     });
-                                                                    bootbox.alert({
-                                                                        title: "Validation Error",
-                                                                        message: errorMessage
-                                                                    });
+                                                                    if(cnt==0 && typeof data.message != "undefined")                                           
+                                                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+data.message+"</span></div></div>");
                                                                 }else{
                                                                   var successMessage = "' . Yii::t('app', 'Member Animal Details Successfully Created') . '";
                                                                     $(".help-block").text("");
@@ -292,21 +280,21 @@ $script = "
                 amount = parseFloat(amount) + parseFloat(obj.value);
             }
         });
-        $('#tblmemberprovisional-daily_milk_total').val(amount);
+        $('#tblmember-daily_milk_total').val(amount);
         setRemainMilk();
     }
     
-    $('#tblmemberprovisional-home_consumption_milk').change(function(){
+    $('#tblmember-home_consumption_milk').change(function(){
         setRemainMilk();
     });
     
     function setRemainMilk(){
-        var daily_milk_use = $('#tblmemberprovisional-home_consumption_milk').val();
-        var remaining_daily_milk = $('#tblmemberprovisional-daily_milk_total').val();
+        var daily_milk_use = $('#tblmember-home_consumption_milk').val();
+        var remaining_daily_milk = $('#tblmember-daily_milk_total').val();
         if(daily_milk_use != '' && !isNaN(daily_milk_use)){
             remaining_daily_milk = parseFloat(remaining_daily_milk) - parseFloat(daily_milk_use);
         }
-        $('#tblmemberprovisional-market_surplus_milk').val(remaining_daily_milk);
+        $('#tblmember-market_surplus_milk').val(remaining_daily_milk);
     }
     
     $('.dry_animal_count').change(function(){
@@ -371,7 +359,7 @@ $script = "
                 amount = parseFloat(amount) + parseFloat(obj.value);
             }
         });
-        $('#tblmemberprovisionalanimaldetails-no_of_heifers_count').val(amount);
+        $('#tblmemberanimaldetails-no_of_heifers_count').val(amount);
     }
     
     function setMilchCount(){
@@ -382,7 +370,7 @@ $script = "
                 amount = parseFloat(amount) + parseFloat(obj.value);
             }
         });
-        $('#tblmemberprovisionalanimaldetails-no_of_milch_animal_count').val(amount);
+        $('#tblmemberanimaldetails-no_of_milch_animal_count').val(amount);
     }
     
     function setDryCount(){
@@ -393,7 +381,7 @@ $script = "
                 amount = parseFloat(amount) + parseFloat(obj.value);
             }
         });
-        $('#tblmemberprovisionalanimaldetails-no_of_dry_animal_count').val(amount);
+        $('#tblmemberanimaldetails-no_of_dry_animal_count').val(amount);
     }
     
     function setTotalCount(){
@@ -404,7 +392,7 @@ $script = "
                 amount = parseFloat(amount) + parseFloat(obj.value);
             }
         });
-        $('#tblmemberprovisionalanimaldetails-no_of_total_animal').val(amount);
+        $('#tblmemberanimaldetails-no_of_total_animal').val(amount);
     }
     
     //collapse icon up & down   
@@ -435,15 +423,15 @@ $script = "
         });
     });
     
-    $('#tblmemberprovisionalsharedetails-no_of_share_apply').on('change', function() {
+    $('#tblmembersharedetails-no_of_share_apply').on('change', function() {
         var noOfShareApply = parseFloat($(this).val());
-        var perShareRate = parseFloat($('#tblmemberprovisionalsharedetails-per_share_rate').val());
-        var admissionFee = parseFloat($('#tblmemberprovisionalsharedetails-admission_fee').val());
+        var perShareRate = parseFloat($('#tblmembersharedetails-per_share_rate').val());
+        var admissionFee = parseFloat($('#tblmembersharedetails-admission_fee').val());
         var payableShareAmount = noOfShareApply * perShareRate;
-        $('#tblmemberprovisionalsharedetails-payable_share_amount').val(payableShareAmount.toFixed(2));
+        $('#tblmembersharedetails-payable_share_amount').val(payableShareAmount.toFixed(2));
         var amountPayable = payableShareAmount + admissionFee;
-        $('#tblmemberprovisionalsharedetails-amount_payable').val(amountPayable.toFixed(2));
-        $('#tblmemberprovisionalsharedetails-total_amount').val(amountPayable.toFixed(2));
+        $('#tblmembersharedetails-amount_payable').val(amountPayable.toFixed(2));
+        $('#tblmembersharedetails-total_amount').val(amountPayable.toFixed(2));
 
 });   
 

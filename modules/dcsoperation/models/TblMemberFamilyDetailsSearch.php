@@ -5,19 +5,19 @@ namespace app\modules\dcsoperation\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\dcsoperation\models\TblMemberProvisionalShareDetails;
+use app\modules\dcsoperation\models\TblMemberFamilyDetails;
 
 /**
  * TblMemberProvisionalFamilyDetailsSearch represents the model behind the search form about `app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetails`.
  */
-class TblMemberProvisionalShareDetailsSearch extends TblMemberProvisionalShareDetails {
+class TblMemberFamilyDetailsSearch extends TblMemberFamilyDetails {
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'union_code', 'provisional_member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'per_share_rate'], 'safe'],
+                [['age', 'union_code', 'local_family_member_name', 'dob', 'remarks', 'nominee_address', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'local_nominee_address', 'member_code', 'gender_code', 'family_member_name', 'guardian_name', 'local_guardian_name', 'relationship_code', 'is_nominee', 'originating_type', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -37,7 +37,7 @@ class TblMemberProvisionalShareDetailsSearch extends TblMemberProvisionalShareDe
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblMemberProvisionalShareDetails::find();
+        $query = TblMemberFamilyDetails::find();
 
         // add conditions that should always apply here
 
@@ -55,7 +55,7 @@ class TblMemberProvisionalShareDetailsSearch extends TblMemberProvisionalShareDe
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'provisional_member_code' => $this->provisional_member_code,
+            'member_code' => $this->member_code,
         ]);
 
         return $dataProvider;
