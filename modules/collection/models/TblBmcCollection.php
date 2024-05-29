@@ -552,16 +552,16 @@ class TblBmcCollection extends \app\models\ChildModel {
             $existTableData = $ApprovalModel->find()->where([
                 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 
                 'shift_code' => $this->shift_code, 
-                'customer_type' => $this->customer_type, 
                 'old_customer_code' => $this->oldAttributes['customer_code'], 
+                'customer_type' => $this->customer_type, 
                 'old_milk_type_code' => $this->oldAttributes['milk_type_code'], 
+                'table_name' => 'tbl_bmc_collection', 
+                'bmc_code' => $this->bmc_code, 
+                'old_route_code' => $this->oldAttributes['route_code'],
                 'old_milk_quality_type_code' => $this->oldAttributes['milk_quality_type_code'], 
                 'old_qty' => $this->oldAttributes['qty'], 
                 'old_fat' => $this->oldAttributes['fat'], 
-                'old_snf' => $this->oldAttributes['snf'], 
-                'table_name' => 'tbl_bmc_collection', 
-                'bmc_code' => $this->bmc_code, 
-                'old_route_code' => $this->oldAttributes['route_code']
+                'old_snf' => $this->oldAttributes['snf'] 
             ])->one();
             if ($flag == 1 && !empty($existTableData)) {
                 $this->addError($attribute, "Record is Already Exist For Approval");
@@ -641,8 +641,8 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $returnModel = $model->find()->where([
                     'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                     'shift_code' => $modelData->shift_code,
-                    'customer_type' => $modelData->customer_type,
                     'customer_code' => $modelData->customer_code,
+                    'customer_type' => $modelData->customer_type,
                     'bmc_code' => $modelData->bmc_code]);
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
@@ -701,12 +701,15 @@ class TblBmcCollection extends \app\models\ChildModel {
                     $returnModel = $model->find()->where([
                         'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                         'shift_code' => $modelData->shift_code,
-                        'milk_type_code' => $modelData->milk_type_code,
-                        'customer_type' => $modelData->customer_type,
                         'customer_code' => $modelData->customer_code,
+                        'customer_type' => $modelData->customer_type,
+                        'bmc_code' => $modelData->bmc_code,
+                        'milk_type_code' => $modelData->milk_type_code,
                         'milk_quality_type_code' => $modelData->milk_quality_type_code,
-                        'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf,
-                        'bmc_code' => $modelData->bmc_code]);
+                        'qty' => $modelData->qty, 
+                        'fat' => $modelData->fat, 
+                        'snf' => $modelData->snf
+                    ]);
                     if ($approval) {
                         $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                     }
@@ -719,12 +722,15 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $returnModel = $model->find()->where([
                     'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                     'shift_code' => $modelData->shift_code,
-                    'milk_type_code' => $modelData->milk_type_code,
                     'customer_code' => $modelData->customer_code,
                     'customer_type' => $modelData->customer_type,
+                    'bmc_code' => $modelData->bmc_code,
+                    'milk_type_code' => $modelData->milk_type_code,
                     'milk_quality_type_code' => $modelData->milk_quality_type_code,
-                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf,
-                    'bmc_code' => $modelData->bmc_code]);
+                    'qty' => $modelData->qty, 
+                    'fat' => $modelData->fat, 
+                    'snf' => $modelData->snf
+                ]);
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                 }

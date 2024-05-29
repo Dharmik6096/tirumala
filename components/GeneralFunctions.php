@@ -2489,4 +2489,9 @@ class GeneralFunctions extends Component {
         return $shift_time;
     }
 
+    public function getUnionConfigResult($union, $field) {
+        $data = Yii::$app->session->get('unionConfig')[$union][$field];
+        return !empty($data) ? $data : '';
+    }
+
 }
