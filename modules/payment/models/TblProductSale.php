@@ -316,7 +316,8 @@ class TblProductSale extends \app\models\ChildModel {
                         $this->addError($attribute, "Payment Cycle is locked for Sale Date.");
                         return false;
                     }
-                    $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_credit_limit', 'PORTAL');
+                    // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_credit_limit', 'PORTAL');
+                    $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'check_credit_limit', $this);
                     if ($config == 1) {
                         $fromDate = date('Y-m-d', strtotime($modelData->from_date));
                         $toDate = date('Y-m-d', strtotime($modelData->to_date));
@@ -470,7 +471,8 @@ class TblProductSale extends \app\models\ChildModel {
 
     public function setChildTable(&$model, &$modelSave, &$errors) {
         $model->product_sale_code = Yii::$app->general->getUuid();
-        $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'vendor_product_sale_rate', 'PORTAL');
+        // $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'vendor_product_sale_rate', 'PORTAL');
+        $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'vendor_product_sale_rate', $this);
         $detailModel = new TblProductSaleTransaction();
         $detailModel->attributes = $model->attributes;
         $detailModel->sap_batch_no = $model->sap_batch_no;
@@ -955,7 +957,8 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function validateQty($attribute, $param) {
-        $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'stock_check_on_sale', 'PORTAL');
+        // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'stock_check_on_sale', 'PORTAL');
+        $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'stock_check_on_sale', $this);
         //   $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
         $productType = Yii::$app->general->getforeignkey($this->productCode, 'x_col3');
         if ($config == 1 && $productType != 1) {
@@ -970,7 +973,8 @@ class TblProductSale extends \app\models\ChildModel {
             $stockModel->product_code = $this->product_code;
             $stockModel->union_code = $this->union_code;
             //   $stockModel->sap_batch_no = $this->sap_batch_no;
-            $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($this->union_code, 'batch_no_wise_inventory', 'PORTAL');
+            // $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($this->union_code, 'batch_no_wise_inventory', 'PORTAL');
+            $batchNoWiseInventory = Yii::$app->general->getUnionConfigResult($this->union_code, 'batch_no_wise_inventory', $this);
             $batchNoWiseInventory == '1' ? TRUE : FALSE;
 
             $checkMccStock = FALSE;
@@ -992,7 +996,8 @@ class TblProductSale extends \app\models\ChildModel {
         }
         $data = $this;
         if (!empty($this->product_code) && !empty($data->customer_type) && !empty($data->customer_code)) {
-            $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'vendor_product_sale_rate', 'PORTAL');
+            $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'vendor_product_sale_rate', $this);
+            // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'vendor_product_sale_rate', 'PORTAL');
             if ($config != '1' || $this->scenario == 'productSaleMemberImport') {
                 $date = !empty($data->invoice_date) ? date('Y-m-d', strtotime($data->invoice_date)) : date('Y-m-d');
                 $memberRate = 0;
@@ -1004,7 +1009,12 @@ class TblProductSale extends \app\models\ChildModel {
                 $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
                         ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
                         ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $date])
-                        ->where(['tbl_product_sale_rate.product_code' => $this->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $applicable_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $applicable_code]);
+                        ->where([
+                            'tbl_product_sale_rate.product_code' => $this->product_code, 
+                            'tbl_product_sale_rate_applicability.applicable_code' => $applicable_code,
+                            'tbl_product_sale_rate_applicability.applicable_for' => $applicable_type, 
+                            'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate 
+                        ]);
                 $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
                 if (empty($app)) {
                     $this->addError('rate', Yii::t('app/validation', ' Product Sale Rate not Applicable'));
@@ -1049,7 +1059,8 @@ class TblProductSale extends \app\models\ChildModel {
                 ->andWhere(['tbl_product_sale.invoice_date' => date('Y-m-d', strtotime($this->invoice_date))])
                 ->all();
         if (!empty($data)) {
-            $allow_config = Yii::$app->general->getUnionConfiguration($this->union_code, 'allowed_multi_product_sale', 'PORTAL');
+            // $allow_config = Yii::$app->general->getUnionConfiguration($this->union_code, 'allowed_multi_product_sale', 'PORTAL');
+            $allow_config = Yii::$app->general->getUnionConfigResult($this->union_code, 'allowed_multi_product_sale', $this);
             if (empty($allow_config)) {
                 $this->addError('customer_code', 'Product ' . Yii::$app->general->getforeignkey($this->productCode, 'product_name') . ' Is Already Available..');
             }
@@ -1064,7 +1075,8 @@ class TblProductSale extends \app\models\ChildModel {
         $type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
         $code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->bmc_code;
 
-        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($this->union_code, 'batch_no_wise_inventory', 'PORTAL');
+        // $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($this->union_code, 'batch_no_wise_inventory', 'PORTAL');
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfigResult($this->union_code, 'batch_no_wise_inventory', $this);
         $batchNoWiseInventory == '1' ? TRUE : FALSE;
         $checkMccStock = FALSE;
         if ($batchNoWiseInventory && strtoupper($type) == 'BMC') {

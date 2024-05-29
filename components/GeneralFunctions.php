@@ -2489,9 +2489,22 @@ class GeneralFunctions extends Component {
         return $shift_time;
     }
 
-    public function getUnionConfigResult($union, $field) {
-        $data = Yii::$app->session->get('unionConfig')[$union][$field];
+    public function getUnionConfigResult($union, $field, $model = '') {
+        if(!empty(Yii::$app->session->get('unionConfig'))){
+            $data = Yii::$app->session->get('unionConfig')[$union][$field];
+        } else {
+            $data = is_object($model) && property_exists($model, 'union_config') ? $model->union_config[$field] : '';
+        }
         return !empty($data) ? $data : '';
+    }
+
+    public function getAllUnionConfiguration($union, $for) {
+        $model = new TblUnionConfigResult();
+        $data = $model->find()->select('config_key, config_result_key')->where(['union_code' => $union, 'config_for' => $for])->all();
+        $data = ArrayHelper::map($data, 'config_key', function ($data) {
+            return $data->config_result_key;
+        });
+        return $data;
     }
 
 }

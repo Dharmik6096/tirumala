@@ -220,8 +220,8 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
 
     public function getApplicablePaymentCycle($date) {
         return $this->find()
-                        ->where(['applicable_type' => $this->applicable_type, 'applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for])
-                        ->andWhere('\'' . $date . '\' between cast(from_date as date) and cast(to_date as date)')
+        ->where('\'' . $date . '\' between cast(from_date as date) and cast(to_date as date)')
+        ->andWhere(['applicable_code' => $this->applicable_code, 'applicable_type' => $this->applicable_type, 'applicable_for' => $this->applicable_for])
                         ->one();
     }
 

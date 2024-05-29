@@ -480,6 +480,7 @@ class SchedulerController extends ChildController {
             $className = Yii::$app->path->getModel($modelName);
             $eiplcode = Yii::$app->general->getClientCode($row->union_code);
             $unionKeyPattern = Yii::$app->general->getUnionKeyPattern($row->union_code);
+            $data['union_config'] = Yii::$app->general->getAllUnionConfiguration($row->union_code, 'PORTAL');
             $data['import_union_code'] = $row->union_code;
             $data['import_eipl_code'] = $eiplcode;
             $data['import_key_pattern'] = $unionKeyPattern;
@@ -1039,9 +1040,9 @@ class SchedulerController extends ChildController {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-            $update = $model->updateFileStatus($ids);
+            // $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
-                $model->updateCronPickedDate($row);
+                // $model->updateCronPickedDate($row);
                 if (strtolower($row->process_type) == 'background') {
                     $this->bulk_files_data($row);
                 } else {
