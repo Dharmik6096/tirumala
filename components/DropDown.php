@@ -948,7 +948,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1859,6 +1859,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Applicant Relation'),
                 'data' => [1 => Yii::t('app', 'Father'), 2 => Yii::t('app', 'Husband'), 3 => Yii::t('app', 'Mother')],
             ],
+            'machine_owned_type' => [
+                'name' => 'machine_owned_type',
+                'prompt' => Yii::t('app', 'Select Machine Owned Type'),
+                'data' => [1 => Yii::t('app', 'Self'), 2 => Yii::t('app', 'Company')],
+            ],
         ];
         return $records[$l];
     }
@@ -2085,7 +2090,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

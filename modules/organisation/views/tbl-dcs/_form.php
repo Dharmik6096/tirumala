@@ -209,6 +209,9 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'is_bmc', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
             </div>
         <?php } ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdownStatic('machine_owned_type', $model, $form, 'form-group', $model->getAttributeLabel('machine_owned'), false, 'machine_owned', false); ?>
+        </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
