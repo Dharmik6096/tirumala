@@ -357,12 +357,16 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 
     public function actionUpdateBmcCollection() {
         $searchModel = new TblBmcCollectionSearch();
-        $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams);
+        $queryParams = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->updatesarch($queryParams);
         $searchModel->scenario = 'deleteMilkCollection';
         $detailModel = $dataProvider->getModels();
         $message = 'BMC Collection';
         $type = 'edit';
         if (Yii::$app->request->post()) {
+            $conversion_const = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'ltr_to_kg_constant', 'BMC');
+            $collection_approval = Yii::$app->general->getUnionConfigResult($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval');
+            // $collection_approval = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval', 'PORTAL');
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
                 $detail->rtpl = '';
@@ -371,7 +375,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             Model::loadMultiple($detailModel, Yii::$app->request->post());
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
-                $conversion_const = Yii::$app->general->getUnionConfiguration($detail->union_code, 'ltr_to_kg_constant', 'BMC');
+                // $conversion_const = Yii::$app->general->getUnionConfiguration($detail->union_code, 'ltr_to_kg_constant', 'BMC');
                 $detail->converted_qty = $detail->qty_mode == 1 ? $detail->qty / $conversion_const : $detail->qty * $conversion_const;
                 $modelData[] = $detail;
             }
@@ -379,7 +383,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
                     if (!empty($detalData->oldAttributes) && ($detalData->customer_code != $detalData->oldAttributes['customer_code'] || $detalData->route_code != $detalData->oldAttributes['route_code'] || $detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'] || $detalData->antibiotic != $detalData->oldAttributes['antibiotic'])) {
-                        if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                        // if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                        if ($collection_approval == 1) {
                             $approvalModel = new TblCollectionDataAlias();
                             $approvalModel->attributes = $detalData->attributes;
                             $approvalModel->old_qty = $detalData->oldAttributes['qty'];

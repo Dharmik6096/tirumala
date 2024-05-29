@@ -223,24 +223,23 @@ class TblBmcCollectionSearch extends TblBmcCollection {
 
     public function updatesarch($params) {
         $this->load($params);
-        $query = TblBmcCollection::find()->where(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
+        $query = TblBmcCollection::find();
+        // ->where(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
 
         // add conditions that should always apply here
 
 
         $query->joinWith(['mccPlantCode.plantCode']);
-        $query->andWhere([
-            'tbl_bmc_collection.union_code' => $this->union_code,
-            'tbl_bmc_collection.plant_code' => $this->plant_code,
-            'tbl_bmc_collection.mcc_plant_code' => $this->mcc_plant_code,
-            'tbl_bmc_collection.bmc_code' => $this->bmc_code,
-        ]);
-        $query->andWhere(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => FALSE,
         ]);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
         if (empty($this->from_date)) {
             $this->from_date = date('d-m-Y');
             $this->from_shift = 1;
@@ -267,11 +266,13 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         $query->andFilterWhere(['tbl_bmc_collection.customer_code' => $this->customer_code]);
         $query->andFilterWhere(['tbl_bmc_collection.customer_type' => $this->customer_type]);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+        $query->andWhere([
+            'tbl_bmc_collection.bmc_code' => $this->bmc_code,
+            'tbl_bmc_collection.mcc_plant_code' => $this->mcc_plant_code,
+            'tbl_bmc_collection.plant_code' => $this->plant_code,
+            'tbl_bmc_collection.union_code' => $this->union_code,
+        ]);
+        $query->andWhere(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
 
         return $dataProvider;
     }
