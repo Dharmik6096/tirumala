@@ -472,7 +472,7 @@ class TblProductSale extends \app\models\ChildModel {
     public function setChildTable(&$model, &$modelSave, &$errors) {
         $model->product_sale_code = Yii::$app->general->getUuid();
         // $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'vendor_product_sale_rate', 'PORTAL');
-        $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'vendor_product_sale_rate', $this);
+        $config = Yii::$app->general->getUnionConfigResult($model->union_code, 'vendor_product_sale_rate', $model);
         $detailModel = new TblProductSaleTransaction();
         $detailModel->attributes = $model->attributes;
         $detailModel->sap_batch_no = $model->sap_batch_no;
@@ -480,6 +480,7 @@ class TblProductSale extends \app\models\ChildModel {
         $detailModel->product_code = $model->product_code;
         $detailModel->quantity = $model->quantity;
         $detailModel->discount = $model->discount;
+        $detailModel->import_union_config = $model->import_union_config;
 //        $this->loadRate($model, $detailModel);
         if (!empty($detailModel->product_code) && !empty($model->customer_type) && !empty($model->customer_code)) {
             $date = !empty($model->invoice_date) ? date('Y-m-d', strtotime($model->invoice_date)) : date('Y-m-d');
