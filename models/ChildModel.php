@@ -24,7 +24,7 @@ class ChildModel extends \yii\db\ActiveRecord {
     public $grid_filter = TRUE;
     public $form_validation_type = 'default';
     public $hasImport = FALSE;
-    public $union_config;
+    public $import_union_config;
 
     //put your code here
     public function beforeSave($insert) {

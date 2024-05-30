@@ -978,8 +978,8 @@ class GeneralFunctions extends Component {
         if (!preg_match('/^[0-9]*$/', $model->$attribute)) {
             $query = $datamodel->find()
                     ->select([$fields[0]])
-                    ->where(['UPPER(SUBSTRING(' . $fields[1] . ', 1, ' . $len . '))' => strtoupper($model->$attribute)])
-                    ->andWhere($where);
+                    ->where($where)
+                    ->andWhere(['UPPER(SUBSTRING(' . $fields[1] . ', 1, ' . $len . '))' => strtoupper($model->$attribute)]);
             if ($limit) {
                 $query->limit(1);
             }
@@ -2493,18 +2493,8 @@ class GeneralFunctions extends Component {
         if(!empty(Yii::$app->session->get('unionConfig'))){
             $data = Yii::$app->session->get('unionConfig')[$union][$field];
         } else {
-            $data = is_object($model) && property_exists($model, 'union_config') ? $model->union_config[$field] : '';
+            $data = is_object($model) && property_exists($model, 'import_union_config') ? $model->import_union_config[$field] : '';
         }
         return !empty($data) ? $data : '';
     }
-
-    public function getAllUnionConfiguration($union, $for) {
-        $model = new TblUnionConfigResult();
-        $data = $model->find()->select('config_key, config_result_key')->where(['union_code' => $union, 'config_for' => $for])->all();
-        $data = ArrayHelper::map($data, 'config_key', function ($data) {
-            return $data->config_result_key;
-        });
-        return $data;
-    }
-
 }

@@ -778,7 +778,8 @@ class TblProductSale extends \app\models\ChildModel {
                 }
             }
         }
-        $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'stock_check_on_sale', 'PORTAL');
+        // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'stock_check_on_sale', 'PORTAL');
+        $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'stock_check_on_sale', $this);
         if ($config == 1) {
             $fstockModel = new TblProductStock();
             $sale_type = strtoupper($model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
@@ -792,7 +793,8 @@ class TblProductSale extends \app\models\ChildModel {
             $fstockModel->union_code = $model->union_code;
             $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
             $fstockModel->sap_batch_no = $model->sap_batch_no;
-            $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($this->union_code, 'batch_no_wise_inventory', 'PORTAL');
+            // $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($this->union_code, 'batch_no_wise_inventory', 'PORTAL');
+            $batchNoWiseInventory = Yii::$app->general->getUnionConfigResult($this->union_code, 'batch_no_wise_inventory', $this);
             $batchNoWiseInventory == '1' ? TRUE : FALSE;
             $checkMccStock = FALSE;
             if (strtoupper($sale_type) == 'BMC') {
@@ -1055,8 +1057,8 @@ class TblProductSale extends \app\models\ChildModel {
         $data = $this->find()
                 ->joinWith('tblProductSaleDetails')
                 ->select(['tbl_product_sale_transaction.*', 'tbl_product_sale.*'])
-                ->andWhere(['tbl_product_sale.customer_code' => $this->customer_code, 'tbl_product_sale_transaction.product_code' => $this->product_code])
                 ->andWhere(['tbl_product_sale.invoice_date' => date('Y-m-d', strtotime($this->invoice_date))])
+                ->andWhere(['tbl_product_sale_transaction.product_code' => $this->product_code, 'tbl_product_sale.customer_code' => $this->customer_code])
                 ->all();
         if (!empty($data)) {
             // $allow_config = Yii::$app->general->getUnionConfiguration($this->union_code, 'allowed_multi_product_sale', 'PORTAL');
