@@ -42,7 +42,7 @@ use app\modules\staffmanagement\models\TblStaffSalaryHoldDue;
  */
 class TblStaffSalaryProcess extends \app\models\ChildModel {
 
-    public $salary, $Status, $net_payable;
+    public $salary, $Status, $net_payable, $additional_pay;
 
     /**
      * @inheritdoc
