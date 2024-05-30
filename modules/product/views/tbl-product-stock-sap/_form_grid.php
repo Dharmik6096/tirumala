@@ -1,11 +1,11 @@
 <?php
 
 $attribute = [
-    ['attribute' => 'mcc_ref_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->tblMccPlant, 'ref_code');
+    ['attribute' => 'bmc_ref_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
         }, 'filter' => false],
-    ['attribute' => 'mcc_name', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->tblMccPlant, 'name');
+    ['attribute' => 'bmc_name', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => false],
     ['attribute' => 'product_code', 'filter' => true],
     ['attribute' => 'item_code', 'value' => function($model) {

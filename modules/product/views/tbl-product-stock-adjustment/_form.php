@@ -102,7 +102,7 @@ $form = ActiveForm::begin([
                 </label>
             </div>
             <div class="col-sm-2 create_fields reset_field" id="new_sap_batch_no" style="display:none;">
-                <?= $form->field($txModel, 'sap_batch_no')->textInput(['class'=>'form-control','disabled'=>'disabled', 'id'=>'sap_batch_no'])->label(Yii::t('app', 'Sap Batch No')) ?>
+                <?= $form->field($txModel, 'sap_batch_no')->textInput(['class' => 'form-control', 'disabled' => 'disabled', 'id' => 'sap_batch_no'])->label(Yii::t('app', 'Sap Batch No')) ?>
             </div>
         <?php }
         ?>
@@ -118,11 +118,10 @@ $form = ActiveForm::begin([
         <thead>
             <tr>
                 <th>Product</th>
-                <?php
-                if($batchNoWiseInventory == 1){ ?>
+                <?php if ($batchNoWiseInventory == 1) { ?>
                     <th>Sap Batch No</th>
-                <?php
-                } ?>
+                    <?php }
+                ?>
                 <th>Unit</th>
                 <th>Stock</th>
                 <th>Quantity</th>
@@ -226,7 +225,7 @@ $(document).ready(function(){
         $('#tblproductstockadjustment-type').val('MCC');
         $('#tblproductstockadjustment-type').trigger('select2:select');
         $('#tblproductstockadjustment-type').trigger('change');
-        $('.field-tblproductstockadjustment-type').addClass('disabledDiv');
+//        $('.field-tblproductstockadjustment-type').addClass('disabledDiv');
     }
     $('#add_product').on('click', function(){
         var err = '';

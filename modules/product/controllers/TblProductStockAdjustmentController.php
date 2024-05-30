@@ -21,35 +21,32 @@ use app\modules\product\models\TblProductStockAdjustmentTransactionSearch;
 /**
  * TblProductStockAdjustmentController implements the CRUD actions for TblProductStockAdjustment model.
  */
-class TblProductStockAdjustmentController extends \app\controllers\ChildController
-{
+class TblProductStockAdjustmentController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblProductStockAdjustment models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblProductStockAdjustmentSearch();
         $adjustment_type = 'Good Issue';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $adjustment_type);
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'adjustment_type' => $adjustment_type,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'adjustment_type' => $adjustment_type,
         ]);
     }
-    
-    public function actionReceiptIndex()
-    {
+
+    public function actionReceiptIndex() {
         $searchModel = new TblProductStockAdjustmentSearch();
         $adjustment_type = 'Good Receipt';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $adjustment_type);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'adjustment_type' => $adjustment_type,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'adjustment_type' => $adjustment_type,
         ]);
     }
 
@@ -58,8 +55,7 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         $searchModel = new TblProductStockAdjustmentTransactionSearch();
         $searchModel->product_stock_adjustment_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -77,9 +73,8 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
      * Creates a new TblProductStockAdjustment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
-     */    
-    public function actionCreate()
-    {
+     */
+    public function actionCreate() {
         $this->model = new TblProductStockAdjustment();
         $txModel = new TblProductStockAdjustmentTransaction();
 
@@ -90,7 +85,7 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
             $transaction_type = 'Good Receipt';
             $saveModel = [];
             $this->model->load(Yii::$app->request->post());
-            if($this->model->transaction_date == ''){
+            if ($this->model->transaction_date == '') {
                 $this->model->transaction_date = Yii::$app->formatter->asDate(date('Y-m-d'), DATE_FORMAT);
             } else {
                 $this->model->transaction_date = Yii::$app->formatter->asDate($this->model->transaction_date, DATE_FORMAT);
@@ -104,39 +99,41 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
             unset($txnData['unit']);
             unset($txnData['reason']);
             unset($txnData['remarks']);
-            if($this->model->adjustment_type == 'Good Issue'){
+            if ($this->model->adjustment_type == 'Good Issue') {
                 unset($txnData['reason']);
                 $transaction_type = 'Good Issue';
             }
             unset($txnData['remarks']);
             $i = 1;
+            $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
             foreach ($txnData as $key => $product) {
                 $txModel = new TblProductStockAdjustmentTransaction();
                 $txModel->product_code = $product['product_code'];
                 $txModel->qty = $product['qty'];
                 $txModel->stock = $product['stock'];
                 $txModel->unit = $product['unit'];
-                $txModel->sap_batch_no = $product['sap_batch_no'];
+                if ($batchNoWiseInventory == 1) {
+                    $txModel->sap_batch_no = $product['sap_batch_no'];
+                }
                 $txModel->transaction_date = $this->model->transaction_date;
                 $txModel->adjustment_type = $this->model->adjustment_type;
                 $txModel->reason = '';
-                if($transaction_type == 'Good Issue'){
+                if ($transaction_type == 'Good Issue') {
                     $txModel->reason = $product['reason'];
                 }
                 $txModel->remarks = $product['remarks'];
                 $txModel->union_code = $this->model->union_code;
                 $saveModel[] = $txModel;
-                
+
                 $stockModel = new TblProductStock();
                 $stockModel->setCodes($this->model->type, $this->model->code);
                 $stockModel->product_code = $txModel->product_code;
                 $stockModel->union_code = $txModel->union_code;
-                $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                 $existStock = '';
-                if($batchNoWiseInventory == 1){
-                   $stockModel->sap_batch_no = $product['sap_batch_no'];
-                   $existStock = $stockModel->getExistStock($this->model->type, $product['sap_batch_no']);
-                   if(empty($existStock)){
+                if ($batchNoWiseInventory == 1) {
+                    $stockModel->sap_batch_no = $product['sap_batch_no'];
+                    $existStock = $stockModel->getExistStock($this->model->type, $product['sap_batch_no']);
+                    if (empty($existStock)) {
                         $record = ['status' => 'success', 'msg' => 'Please enter valid sap batch number'];
                         Yii::$app->response->format = Response::FORMAT_JSON;
                         return Json::encode($record);
@@ -145,15 +142,15 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
                     $existStock = $stockModel->getExistStock($this->model->type, '');
                 }
                 $stock = $existStock->stock;
-                if($this->model->adjustment_type != 'Good Issue'){
+                if ($this->model->adjustment_type != 'Good Issue') {
                     $existStock->stock = $stock + $product['qty'];
                 } else {
                     $existStock->stock = $stock - $product['qty'];
                 }
-                
+
                 $stockModel = $existStock;
                 $saveModel[] = $stockModel;
-                
+
                 $stockTxnModel = new TblProductStockTransaction();
                 $stockTxnModel->attributes = $stockModel->attributes;
                 unset($stockTxnModel->created_at);
@@ -161,7 +158,7 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
                 $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
                 $stockTxnModel->old_value = $stock;
                 $stockTxnModel->new_value = $product['qty'];
-                if($this->model->adjustment_type != 'Good Issue'){
+                if ($this->model->adjustment_type != 'Good Issue') {
                     $stockTxnModel->final_value = $stock + $product['qty'];
                 } else {
                     $stockTxnModel->final_value = $stock - $product['qty'];
@@ -176,7 +173,7 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
                 $auto_key_config['TblProductStockTransaction'][] = ['self_key' => 'reference_code', 'parent_key' => 'product_stock_adjustment_transaction_code', 'parent_index' => 1];
                 $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, [$transaction_type, 'create'], $auto_key_config);
                 if ($transaction == 'customRedirect') {
-                    if($transaction_type == 'Good Issue') {
+                    if ($transaction_type == 'Good Issue') {
                         return $this->redirect(['index']);
                     } else {
                         return $this->redirect(['receipt-index']);
@@ -202,9 +199,8 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
                     'txModel' => $txModel,
         ]);
     }
-    
-    public function actionReceiptCreate()
-    {
+
+    public function actionReceiptCreate() {
         $this->model = new TblProductStockAdjustment();
         $txModel = new TblProductStockAdjustmentTransaction();
         $this->viewFile = 'create';
@@ -222,15 +218,14 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->product_stock_adjustment_code]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -241,8 +236,7 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -255,15 +249,14 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
      * @return TblProductStockAdjustment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblProductStockAdjustment::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
+
     public function actionGetUnit() {
         $product = Yii::$app->request->post('product');
         $productModel = new TblProduct();
@@ -274,7 +267,7 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
             return Json::encode(['status' => 'error']);
         }
     }
-    
+
     public function actionGetAvailableStock() {
         $product = Yii::$app->request->post('product');
         $from_type = Yii::$app->request->post('from_type');
@@ -294,4 +287,5 @@ class TblProductStockAdjustmentController extends \app\controllers\ChildControll
             return Json::encode(['status' => 'success', 'stock' => 0]);
         }
     }
+
 }

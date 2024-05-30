@@ -51,9 +51,9 @@ class TblGrn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['mcc_plant_code', 'grn_date', 'vendor_code', 'invoice_date', 'invoice_no', 'product_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'required', 'on' => 'importCsv'],
+            [['mcc_plant_code', 'grn_date', 'vendor_code', 'invoice_date', 'invoice_no', 'product_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'bmc_code'], 'required', 'on' => 'importCsv'],
             [['vendor_code'], 'checkVendorCode', 'on' => ['importCsv']],
-            [['grn_date', 'mcc_plant_code', 'invoice_date'], 'required', 'on' => ['batchcreate']],
+            [['grn_date', 'bmc_code', 'invoice_date'], 'required'],
             [['plant_code'], 'required', 'on' => ['batchcreate']],
             [['plant_code'], 'required', 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
@@ -68,9 +68,9 @@ class TblGrn extends \app\models\ChildModel {
             [['remarks', 'originating_type', 'union_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
             [['grn_no', 'invoice_no'], 'string', 'max' => 30],
             [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_master_code'], 'on' => 'importCsv'],
-            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+//            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
+            [['bmc_code'], 'setImport', 'on' => ['importCsv']],
             [['grn_date', 'invoice_date', 'deduction_start_date'], 'convertDateDot', 'on' => ['importCsv']],
             [['grn_date', 'invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['grn_date', 'invoice_date', 'deduction_start_date'], 'convertDate', 'on' => ['importCsv']],
@@ -82,6 +82,7 @@ class TblGrn extends \app\models\ChildModel {
                 'whenClient' => "function (attribute, value) { return $('#tblgrn-payment_mode').is(':checked') }"
             ],
             [['deduction_start_date'], 'dateValidate'],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
         ];
     }
 
@@ -141,7 +142,7 @@ class TblGrn extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $this->grn_code = (string) Yii::$app->general->getPrimaryCode($this, 1);
             $this->unit_code = Yii::$app->general->getforeignkey($this->productCode, 'unit_code');
-            $this->union_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'union_code');
+            $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
             $this->grn_no = (string) rand(1000, 9999);
             $this->no_of_installment = $this->payment_mode == 1 ? $this->no_of_installment : 0;
             if ($this->payment_mode == 1 && !empty($this->deduction_start_date)) {
