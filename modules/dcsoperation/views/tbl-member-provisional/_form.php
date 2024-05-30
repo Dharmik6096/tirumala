@@ -104,7 +104,7 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= Yii::$app->controls->date($model, $form, 'dob'); ?>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'age')->textInput() ?>
         </div>
         <div class="col-sm-4">
@@ -131,10 +131,13 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdownStatic('member_class', $model, $form, 'form-group', $model->getAttributeLabel('member_class'), false, 'member_class', false); ?>
         </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->dropdownStatic('applicant_relation', $model, $form, 'form-group', $model->getAttributeLabel('applicant_relation'), false, 'applicant_relation', false); ?>
+        </div>
         <!--    <div class="col-sm-4">
                 <? //$form->field($model, 'land_class')->textInput() ?>
             </div>-->
-        <div class="col-sm-4">
+        <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
         <div class="col-sm-4 number-validate">
@@ -186,14 +189,26 @@ if ($model->isNewRecord) {
             <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'tblmemberprovisional-union_code', 'form-group col-sm-12', 'Region', 'region_code'); ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                         ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                     ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
         </div>
-        <div class="col-sm-4 padding-bottom-32">
+        <div class="col-sm-4">
             <?= $form->field($model, 'email')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->dropdown('relation', $model, $form, '', $model->getAttributeLabel('email_relation'), false, 'email_relation'); ?>
+        </div>
+        <div class="col-sm-4 mt10">
+            <?= $form->field($model, 'is_contact_verified', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-4 mt10">
+            <?= $form->field($model, 'is_email_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
 
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -232,7 +247,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                         ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                     ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2">
@@ -246,6 +261,9 @@ if ($model->isNewRecord) {
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'annual_income')->textInput() ?>
+        </div>
+        <div class="col-sm-4 mt10">
+            <?= $form->field($model, 'is_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
         <!--    <div class="col-sm-4">
         <?php // $form->field($model, 'payment_mode')->textInput() ?>

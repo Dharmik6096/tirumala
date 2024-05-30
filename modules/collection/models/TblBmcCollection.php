@@ -179,10 +179,12 @@ class TblBmcCollection extends \app\models\ChildModel {
                 [['antibiotic', 'tare_weight', 'gross_weight', 'rejection_responsibility_code', 'can_no'], 'safe'],
                 [['bmc_code'], 'setNoOfCan', 'except' => ['rejectRespMap', 'DataTransfer']],
                 [['can_no'], 'required', 'when' => function ($model) {
-                    return Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_can_selection', 'PORTAL') == 1;
+                    return Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_can_selection') == 1;
+                    // return Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_can_selection', 'PORTAL') == 1;
                 }, 'on' => ['create']],
                 [['route_code'], 'required', 'when' => function ($model) {
-                    return Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1;
+                    return Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_route_selection') == 1;
+                    // return Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1;
                 }, 'on' => ['create']],
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
                 [['bmc_code'], 'convertedAmount'],
@@ -530,7 +532,8 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function validateUnique($attribute, $params) {
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $flag = Yii::$app->general->getUnionConfigResult($this->union_code, 'collection_approval');
+        // $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
 
         Yii::$app->general->validateRateRange($this);
 
@@ -540,12 +543,26 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function validateUpdate($attribute, $params) {
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $flag = Yii::$app->general->getUnionConfigResult($this->union_code, 'collection_approval');
+        // $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
 
         $ApprovalModel = new TblCollectionDataAlias();
         if (!empty($this->oldAttributes) && ($this->customer_code != $this->oldAttributes['customer_code'] || $this->fat != $this->oldAttributes['fat'] || $this->snf != $this->oldAttributes['snf'] || $this->qty != $this->oldAttributes['qty'] || $this->milk_type_code != $this->oldAttributes['milk_type_code'] || $this->milk_quality_type_code != $this->oldAttributes['milk_quality_type_code'] || $this->no_of_can != $this->oldAttributes['no_of_can'] || $this->route_code != $this->oldAttributes['route_code'])) {
 
-            $existTableData = $ApprovalModel->find()->where(['bmc_code' => $this->bmc_code, 'customer_type' => $this->customer_type, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'shift_code' => $this->shift_code, 'old_customer_code' => $this->oldAttributes['customer_code'], 'old_milk_type_code' => $this->oldAttributes['milk_type_code'], 'old_milk_quality_type_code' => $this->oldAttributes['milk_quality_type_code'], 'old_qty' => $this->oldAttributes['qty'], 'old_fat' => $this->oldAttributes['fat'], 'old_snf' => $this->oldAttributes['snf'], 'table_name' => 'tbl_bmc_collection', 'old_route_code' => $this->oldAttributes['route_code']])->one();
+            $existTableData = $ApprovalModel->find()->where([
+                'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 
+                'shift_code' => $this->shift_code, 
+                'old_customer_code' => $this->oldAttributes['customer_code'], 
+                'customer_type' => $this->customer_type, 
+                'old_milk_type_code' => $this->oldAttributes['milk_type_code'], 
+                'table_name' => 'tbl_bmc_collection', 
+                'bmc_code' => $this->bmc_code, 
+                'old_route_code' => $this->oldAttributes['route_code'],
+                'old_milk_quality_type_code' => $this->oldAttributes['milk_quality_type_code'], 
+                'old_qty' => $this->oldAttributes['qty'], 
+                'old_fat' => $this->oldAttributes['fat'], 
+                'old_snf' => $this->oldAttributes['snf'] 
+            ])->one();
             if ($flag == 1 && !empty($existTableData)) {
                 $this->addError($attribute, "Record is Already Exist For Approval");
             }
@@ -573,7 +590,8 @@ class TblBmcCollection extends \app\models\ChildModel {
         $datetime = date('Y-m-d H:i:s');
         $model->status = 'Accept';
         $model->sms_status = 'n';
-        $allowRouteSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1 ? TRUE : FALSE;
+        $allowRouteSelection = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_route_selection') == 1 ? TRUE : FALSE;
+        // $allowRouteSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1 ? TRUE : FALSE;
         $dcs_code = $model->dcsCode;
         $customer_code = $model->mainCustomerCode;
 
@@ -597,7 +615,8 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
         if (empty($modelData->getErrors())) {
-            $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
+            // $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
+            $flag = Yii::$app->general->getUnionConfigResult($modelData->union_code, 'collection_approval');
             if (strtolower($modelData->customer_type) == 'dcs') {
                 $modelData->dcs_code = !empty($modelData->dcs_code) ? $modelData->dcs_code : $modelData->customer_code;
                 $xclol = Yii::$app->general->getforeignkey($modelData->dcsCode, 'x_col1');
@@ -619,11 +638,12 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $oldMilkqlttype = $modelData->old_milk_quality_type_code;
             }
             if ($sameMilkType != 1 && $diffMilkType != 1) {
-                $returnModel = $model->find()->where(['bmc_code' => $modelData->bmc_code,
+                $returnModel = $model->find()->where([
+                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                    'shift_code' => $modelData->shift_code,
                     'customer_code' => $modelData->customer_code,
                     'customer_type' => $modelData->customer_type,
-                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
-                    'shift_code' => $modelData->shift_code]);
+                    'bmc_code' => $modelData->bmc_code]);
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                 }
@@ -642,12 +662,14 @@ class TblBmcCollection extends \app\models\ChildModel {
                     $returnModel = $returnModel->one();
                 }
             } else if ($sameMilkType != 1 && $diffMilkType == 1) {
-                $returnModel = $model->find()->where(['bmc_code' => $modelData->bmc_code,
+                $returnModel = $model->find()->where([
+                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                    'shift_code' => $modelData->shift_code,                    
                     'customer_code' => $modelData->customer_code,
                     'customer_type' => $modelData->customer_type,
-                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
-                    'shift_code' => $modelData->shift_code,
-                    'milk_type_code' => $modelData->milk_type_code]);
+                    'milk_type_code' => $modelData->milk_type_code,
+                    'bmc_code' => $modelData->bmc_code
+                ]);
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                 }
@@ -660,11 +682,12 @@ class TblBmcCollection extends \app\models\ChildModel {
                     return FALSE;
                 }
             } else if ($sameMilkType == 1 && $diffMilkType != 1) {
-                $returnModel = $model->find()->where(['bmc_code' => $modelData->bmc_code,
+                $returnModel = $model->find()->where([
+                            'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                            'shift_code' => $modelData->shift_code,
                             'customer_code' => $modelData->customer_code,
                             'customer_type' => $modelData->customer_type,
-                            'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
-                            'shift_code' => $modelData->shift_code])
+                            'bmc_code' => $modelData->bmc_code])
                         ->andWhere(['!=', 'milk_type_code', $modelData->milk_type_code]);
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
@@ -676,14 +699,17 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }
                 if (empty($returnModel)) {
                     $returnModel = $model->find()->where([
-                        'bmc_code' => $modelData->bmc_code,
-                        'customer_code' => $modelData->customer_code,
-                        'customer_type' => $modelData->customer_type,
                         'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                         'shift_code' => $modelData->shift_code,
+                        'customer_code' => $modelData->customer_code,
+                        'customer_type' => $modelData->customer_type,
+                        'bmc_code' => $modelData->bmc_code,
                         'milk_type_code' => $modelData->milk_type_code,
                         'milk_quality_type_code' => $modelData->milk_quality_type_code,
-                        'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+                        'qty' => $modelData->qty, 
+                        'fat' => $modelData->fat, 
+                        'snf' => $modelData->snf
+                    ]);
                     if ($approval) {
                         $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                     }
@@ -694,14 +720,17 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }
             } else if ($sameMilkType == 1 && $diffMilkType == 1) {
                 $returnModel = $model->find()->where([
-                    'bmc_code' => $modelData->bmc_code,
+                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                    'shift_code' => $modelData->shift_code,
                     'customer_code' => $modelData->customer_code,
                     'customer_type' => $modelData->customer_type,
-                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                    'bmc_code' => $modelData->bmc_code,
                     'milk_type_code' => $modelData->milk_type_code,
                     'milk_quality_type_code' => $modelData->milk_quality_type_code,
-                    'shift_code' => $modelData->shift_code,
-                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+                    'qty' => $modelData->qty, 
+                    'fat' => $modelData->fat, 
+                    'snf' => $modelData->snf
+                ]);
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                 }

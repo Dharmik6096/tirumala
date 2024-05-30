@@ -990,7 +990,14 @@ class CustomValidation extends Component {
                 'TblMemberProvisional' => [
                     'default' => [
                             [['gender_code'], 'required'],
-                            [['daily_milk_total', 'home_consumption_milk', 'market_surplus_milk'], 'required', 'on' => ['enrollemnet_provisional_member']],
+                            [['daily_milk_total', 'home_consumption_milk', 'market_surplus_milk'], 'required', 'on' => ['member_detail']],
+                            [['is_contact_verified', 'is_verify', 'is_email_verify'], 'validateFlag', 'on' => ['MemberApprove']],
+                    ],
+                ],
+                'TblMember' => [
+                    'default' => [
+                            [['gender_code'], 'required'],
+                            [['daily_milk_total', 'home_consumption_milk', 'market_surplus_milk'], 'required', 'on' => ['member_detail']],
                     ],
                 ],
             ],
