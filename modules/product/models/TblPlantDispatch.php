@@ -51,9 +51,9 @@ class TblPlantDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['plant_dispatch_code', 'union_code'], 'required', 'except' => ['importCsv']],
+            [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv']],
             [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
-            [['mcc_plant_code', 'plant_code', 'document_no', 'document_date', 'dispatch_date', 'bmc_code'], 'required'],
+            [['bmc_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
             [['product_code', 'rate', 'qty'], 'required', 'on' => ['importCsv']],
             [['sap_batch_no'], 'required', 'on' => ['importCsv'], 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
@@ -67,11 +67,10 @@ class TblPlantDispatch extends \app\models\ChildModel {
             [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv']],
             [['dispatch_date', 'document_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['dispatch_date', 'document_date'], 'convertDate', 'on' => ['importCsv']],
-            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'on' => 'importCsv'],
-            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
-            [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, TRUE);
+                }, 'on' => ['importCsv']],
         ];
     }
 
@@ -187,10 +186,6 @@ class TblPlantDispatch extends \app\models\ChildModel {
             $this->dispatch_date = !empty($this->dispatch_date) ? Yii::$app->controls->view_date($this->dispatch_date, 'php:Y-m-d') : NULL;
             $this->document_date = !empty($this->document_date) ? Yii::$app->controls->view_date($this->document_date, 'php:Y-m-d') : NULL;
         }
-    }
-
-    public function setImport($attribute, $params) {
-        $this->union_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'union_code');
     }
 
     public function getUserCode() {

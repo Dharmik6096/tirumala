@@ -1422,14 +1422,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -1906,11 +1906,11 @@ class GeneralFunctions extends Component {
             $payment_model = new \app\modules\collection\models\TblMccShiftLock();
             $data = $payment_model->find()
                     ->where([
-                        'cast(date_time_of_collection as date)' => $date, 
-                        'shift_code' => $model->shift_code, 
+                        'cast(date_time_of_collection as date)' => $date,
+                        'shift_code' => $model->shift_code,
                         $lock_flag => 1,
                         'mcc_plant_code' => $model->$codeParam
-                        ])
+                    ])
                     ->one();
             if (!empty($data)) {
                 $model->addError($showError, "Shift Is Already Lock");
@@ -1919,11 +1919,16 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function validateBMC($model, $attribute) {
+    public function validateBMC($model, $attribute, $hierarchy = FALSE) {
         $bmcModel = new TblDcsBmc();
-        $records = $bmcModel->find()->select('bmc_code')->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
+        $records = $bmcModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'])->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->bmc_code;
+            if ($hierarchy) {
+                $model->union_code = $records[0]->union_code;
+                $model->plant_code = $records[0]->plant_code;
+                $model->mcc_plant_code = $records[0]->mcc_plant_code;
+            }
         } else {
             $model->addError('bmc_code', Yii::t('app/validation', Yii::t('app', 'BMC') . ' Is Invalid.'));
             return false;
@@ -2264,16 +2269,16 @@ class GeneralFunctions extends Component {
         $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
         $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
         $query->andFilterWhere(['or',
-                ['pd.union_code' => $unions],
-                ['ms.union_code' => $unions],
-                ['md.union_code' => $unions],
-                ['cs.union_code' => $unions],
-                ['cd.union_code' => $unions]
+            ['pd.union_code' => $unions],
+            ['ms.union_code' => $unions],
+            ['md.union_code' => $unions],
+            ['cs.union_code' => $unions],
+            ['cd.union_code' => $unions]
         ]);
         $form_to = !empty($mccs) ? $mccs : $plants;
         $query->andFilterWhere(['or',
-                [$main_table . '.' . $from_dest => $form_to],
-                [$main_table . '.' . $to_dest => $form_to],
+            [$main_table . '.' . $from_dest => $form_to],
+            [$main_table . '.' . $to_dest => $form_to],
         ]);
     }
 
@@ -2490,11 +2495,12 @@ class GeneralFunctions extends Component {
     }
 
     public function getUnionConfigResult($union, $field, $model = '') {
-        if(!empty(Yii::$app->session->get('unionConfig'))){
+        if (!empty(Yii::$app->session->get('unionConfig'))) {
             $data = Yii::$app->session->get('unionConfig')[$union][$field];
         } else {
             $data = is_object($model) && property_exists($model, 'import_union_config') ? $model->import_union_config[$field] : '';
         }
         return !empty($data) ? $data : '';
     }
+
 }
