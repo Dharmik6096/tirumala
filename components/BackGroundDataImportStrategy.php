@@ -101,6 +101,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                     $model->import_eipl_code = !empty($this->details['import_eipl_code']) ? $this->details['import_eipl_code'] : '';
                     $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
                     $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
+                    $model->import_union_config = !empty($this->details['import_union_config']) ? $this->details['import_union_config'] : '';
                     $error = ActiveForm::validate($model);
 
                     $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
@@ -161,6 +162,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                     $model->import_eipl_code = !empty($this->details['import_eipl_code']) ? $this->details['import_eipl_code'] : '';
                     $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
                     $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
+                    $model->import_union_config = !empty($this->details['import_union_config']) ? $this->details['import_union_config'] : '';
                     if ($model->hasAttribute('created_by') && $model->created_by == NULL)
                         $model->created_by = !empty($this->details['created_by']) ? $this->details['created_by'] : NULL;
                     if ($model->hasAttribute('updated_by') && $model->updated_by == NULL) {

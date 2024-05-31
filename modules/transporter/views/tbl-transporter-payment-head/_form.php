@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'transporter_payment_head')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('calc_type', $model, $form, '', 'Type *', $readonly, 'type', false); ?>  
+        <?= Yii::$app->dropdown->dropdownStatic('calc_type', $model, $form, '', 'Type', $readonly, 'type', false); ?>  
     </div>
     <!--    <div class="col-sm-2 mt25">
     <?php // Yii::$app->controls->active($model, $form);   ?>

@@ -979,8 +979,8 @@ class GeneralFunctions extends Component {
         if (!preg_match('/^[0-9]*$/', $model->$attribute)) {
             $query = $datamodel->find()
                     ->select([$fields[0]])
-                    ->where(['UPPER(SUBSTRING(' . $fields[1] . ', 1, ' . $len . '))' => strtoupper($model->$attribute)])
-                    ->andWhere($where);
+                    ->where($where)
+                    ->andWhere(['UPPER(SUBSTRING(' . $fields[1] . ', 1, ' . $len . '))' => strtoupper($model->$attribute)]);
             if ($limit) {
                 $query->limit(1);
             }
@@ -2498,9 +2498,12 @@ class GeneralFunctions extends Component {
         return $shift_time;
     }
 
-    public function getUnionConfigResult($union, $field) {
-        $data = Yii::$app->session->get('unionConfig')[$union][$field];
+    public function getUnionConfigResult($union, $field, $model = '') {
+        if(!empty(Yii::$app->session->get('unionConfig'))){
+            $data = Yii::$app->session->get('unionConfig')[$union][$field];
+        } else {
+            $data = is_object($model) && property_exists($model, 'import_union_config') ? $model->import_union_config[$field] : '';
+        }
         return !empty($data) ? $data : '';
     }
-
 }

@@ -7,6 +7,9 @@ use app\modules\dcsoperation\models\TblSchemeRate;
 use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_scheme_rate_applicability".
@@ -50,16 +53,16 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'is_active', 'originating_type', 'approved_at', 'approved_by'], 'safe'],
-                [['from_shift', 'to_shift'], 'integer'],
-                [['rtpl'], 'number'],
-                [['rtpl'], 'number', 'on' => ['androidsync']],
-                [['scheme_rate_code', 'applicable_for', 'applicable_code'], 'safe'],
-                [['union_code', 'rate_class'], 'safe'],
-                [['created_by', 'updated_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type', 'is_member_rate'], 'safe'],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'tab_download_datetime'], 'safe'],
-                [['is_active'], 'default', 'value' => 1],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'is_active', 'originating_type', 'approved_at', 'approved_by'], 'safe'],
+            [['from_shift', 'to_shift'], 'integer'],
+            [['rtpl'], 'number'],
+            [['rtpl'], 'number', 'on' => ['androidsync']],
+            [['scheme_rate_code', 'applicable_for', 'applicable_code'], 'safe'],
+            [['union_code', 'rate_class'], 'safe'],
+            [['created_by', 'updated_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'is_member_rate'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'tab_download_datetime'], 'safe'],
+            [['is_active'], 'default', 'value' => 1],
 //                [['applicable_code'], 'unique', 'targetAttribute' => ['applicable_code', 'from_date', 'to_date', 'applicable_for'], 'message' => Yii::t('app/validation', 'Record Is Alredy Exist.'), 'on' => ['approval']],
             [['applicable_code'], 'rangeValidate', 'on' => ['approval']],
         ];
@@ -103,6 +106,18 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasMany(TblPlant::className(), ['plant_code' => 'applicable_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasMany(TblMccPlant::className(), ['mcc_plant_code' => 'applicable_code']);
     }
 
     public function getDcsName() {

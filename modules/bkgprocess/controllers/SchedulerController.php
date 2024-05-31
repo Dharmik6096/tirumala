@@ -481,6 +481,10 @@ class SchedulerController extends ChildController {
             $className = Yii::$app->path->getModel($modelName);
             $eiplcode = Yii::$app->general->getClientCode($row->union_code);
             $unionKeyPattern = Yii::$app->general->getUnionKeyPattern($row->union_code);
+            $unionConfigData = Yii::$app->general->getAllUnionWiseConfig($row->union_code, 'PORTAL');
+            foreach ($unionConfigData as $configData) {
+                $data['import_union_config'][$configData->config_key] = $configData->config_result_key;
+            }
             $data['import_union_code'] = $row->union_code;
             $data['import_eipl_code'] = $eiplcode;
             $data['import_key_pattern'] = $unionKeyPattern;
