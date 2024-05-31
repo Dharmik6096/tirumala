@@ -1690,6 +1690,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MobileAppReport';
         return $this->actionIndex();
     }
+    
+    public function actionFarmerRegister() {
+        $this->report = 'FarmerRegister';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3575,6 +3580,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'proc_flutter_app_tracking',
                 'scenario' => 'MobileAppReport',
                 'title' => 'Log report of  the Mobile App',
+            ],
+            'FarmerRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_member_register_format_2',
+                'scenario' => 'FarmerRegister',
+                'title' => 'Farmer Register Format 2',
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
+//                'output_type' => FALSE
             ],
         ];
         return $label[$l];
