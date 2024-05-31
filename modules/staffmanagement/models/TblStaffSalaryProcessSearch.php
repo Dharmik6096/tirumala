@@ -12,6 +12,8 @@ use app\modules\staffmanagement\models\TblStaffSalaryProcess;
  */
 class TblStaffSalaryProcessSearch extends TblStaffSalaryProcess {
 
+    public $additional_pay;
+
     /**
      * @inheritdoc
      */

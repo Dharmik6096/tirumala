@@ -63,7 +63,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
                 [['sap_batch_no'], 'required', 'when' => function ($model) {
                     $product = $model->productCode;
-                    $batchNoWiseInventory = !empty($product) ? Yii::$app->general->getUnionConfiguration($product->union_code, 'batch_no_wise_inventory', 'PORTAL') : '';
+                    $batchNoWiseInventory = !empty($product) ? Yii::$app->general->getUnionConfigResult($product->union_code, 'batch_no_wise_inventory', $this) : '';
+                    // $batchNoWiseInventory = !empty($product) ? Yii::$app->general->getUnionConfiguration($product->union_code, 'batch_no_wise_inventory', 'PORTAL') : '';
                     $product_type = !empty($product) ? $product->x_col3 : '';
                     return ($batchNoWiseInventory == 1 && $product_type == 2);
                 },
