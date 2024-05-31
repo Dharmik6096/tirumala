@@ -56,16 +56,16 @@ class TblUserAttendance extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['attendance_date', 'in_time', 'out_time', 'created_at', 'updated_at', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe'],
-            [['day_count'], 'number'],
-            [['originating_type'], 'integer'],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code'], 'string', 'max' => 6],
-            [['mcc_plant_code', 'bmc_code'], 'string', 'max' => 12],
-            [['dcs_code', 'status', 'created_by', 'updated_by'], 'string', 'max' => 20],
-            [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['in_lat_long', 'out_lat_long', 'in_desc', 'out_desc', 'remarks'], 'string', 'max' => 255],
-            [['attendance_date', 'user_code'], 'unique', 'targetAttribute' => ['attendance_date', 'user_code'], 'message' => 'The combination of User Code and Attendance Date has already been taken.'],
+                [['attendance_date', 'in_time', 'out_time', 'created_at', 'updated_at', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe'],
+                [['day_count'], 'number'],
+                [['originating_type'], 'integer'],
+                [['union_code'], 'string', 'max' => 3],
+                [['plant_code'], 'string', 'max' => 6],
+                [['mcc_plant_code', 'bmc_code'], 'string', 'max' => 12],
+                [['dcs_code', 'status', 'created_by', 'updated_by'], 'string', 'max' => 20],
+                [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['in_lat_long', 'out_lat_long', 'in_desc', 'out_desc', 'remarks'], 'string', 'max' => 255],
+                [['attendance_date', 'user_code'], 'unique', 'targetAttribute' => ['attendance_date', 'user_code'], 'message' => 'The combination of User Code and Attendance Date has already been taken.'],
         ];
     }
 
@@ -131,7 +131,7 @@ class TblUserAttendance extends \app\models\ChildModel {
     }
 
     public function getAttachment() {
-        return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code']);
+        return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code'])->andOnCondition(['module_name' => ['tbl_user_attendance_detail_in', 'tbl_user_attendance_detail_out']]);
     }
 
     public function getAttendanceRecords() {
