@@ -49,6 +49,7 @@ class TblMemberProvisionalFamilyDetails extends ChildModel {
         return [
                 [['age', 'union_code', 'local_family_member_name', 'dob', 'remarks', 'nominee_address', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'local_nominee_address', 'provisional_member_code', 'gender_code', 'family_member_name', 'guardian_name', 'local_guardian_name', 'relationship_code', 'is_nominee', 'originating_type', 'created_at', 'updated_at'], 'safe'],
                 [['age', 'dob', 'nominee_address', 'gender_code', 'family_member_name', 'guardian_name', 'relationship_code'], 'required', 'on' => ['member_family_detail']],
+                [['is_nominee'], 'validateIsNomineeRequired', 'on' => ['member_family_detail']],
                 [['is_nominee'], 'validateIsNominee', 'on' => ['member_family_detail']],
                 [['dob'], 'validateAge', 'on' => ['member_family_detail']],
         ];
@@ -120,6 +121,16 @@ class TblMemberProvisionalFamilyDetails extends ChildModel {
             if ($existingNomineeCount > 0) {
                 $this->addError($attribute, 'Only one nominee is allowed per provisional member.');
             }
+        }
+    }
+
+    public function validateIsNomineeRequired($attribute, $params) {
+        $nomineeCount = $this::find()
+                ->where(['provisional_member_code' => $this->provisional_member_code, 'is_nominee' => 1])
+                ->count();
+
+        if ($nomineeCount == 0 && $this->is_nominee == 0) {
+            $this->addError($attribute, 'At Least One Nominee Is Required Per Provisional Member.');
         }
     }
 
