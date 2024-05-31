@@ -56,7 +56,7 @@ class TblUserAttendance extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['attendance_date', 'in_time', 'out_time', 'created_at', 'updated_at', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg', 'attendance_code'], 'safe'],
+                [['attendance_date', 'in_time', 'out_time', 'created_at', 'updated_at', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe'],
                 [['day_count'], 'number'],
                 [['originating_type'], 'integer'],
                 [['union_code'], 'string', 'max' => 3],
