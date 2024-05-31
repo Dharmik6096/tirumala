@@ -62,7 +62,7 @@ class TblTankerRateApplicabilityController extends \app\controllers\ChildControl
         $this->model->union_code = $purchaseRate->union_code;
         $this->model->tanker_rate_code = $id;
         $this->model->wef_date = $purchaseRate->wef_date;
-        $this->model->shift_code = $this->routes['shiftCode'];
+        $this->model->shift_code = $purchaseRate->shift_code;
         if ($this->model->load(Yii::$app->request->post())) {
 
             if ($this->model->validate()) {

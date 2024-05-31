@@ -7,7 +7,7 @@ $attribute = [
         },
         'filter' => false],
     ['attribute' => 'config_code', 'label' => Yii::t('app', 'Is Adultration'), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->configCode, 'is_adultration') == 1 ? 'Yes' : 'No';
+            return Yii::$app->general->getforeignkey($model->configCode, 'is_adulteration') == 1 ? 'Yes' : 'No';
         },
         'filter' => false],
     ['attribute' => 'config_code', 'label' => Yii::t('app', 'Expected Value'), 'value' => function($model) {
