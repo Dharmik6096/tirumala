@@ -166,6 +166,7 @@ use yii\web\View;
                 ?>
             </div>
         </div>
+        <div class="clearfix"></div>
         <div class="row">
             <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
                 <div class="col-sm-12">
