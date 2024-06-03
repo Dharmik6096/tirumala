@@ -53,7 +53,7 @@ class TblGrn extends \app\models\ChildModel {
         return [
             [['bmc_code', 'grn_date', 'vendor_code', 'invoice_date', 'invoice_no', 'product_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'required', 'on' => 'importCsv'],
             [['vendor_code'], 'checkVendorCode', 'on' => ['importCsv']],
-            [['grn_date', 'bmc_code', 'invoice_date'], 'required'],
+            [['grn_date', 'mcc_plant_code', 'bmc_code', 'invoice_date'], 'required'],
             [['plant_code'], 'required', 'on' => ['batchcreate']],
             [['plant_code'], 'required', 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
@@ -258,27 +258,20 @@ class TblGrn extends \app\models\ChildModel {
         $instAmount = floatval($this->amount / $no);
         $ai = 1;
 
-        $bmcDatas = TblDcsBmc::find()->select('union_code,plant_code,mcc_plant_code, bmc_code')->where(['bmc_code' => $this->bmc_code, 'is_active' => 1, 'is_mcc' => 1])->one();
-
-        if (!empty($bmcDatas)) {
-
-            for ($i = 0; $i < $no; $i++) {
-                $installmentModel = new TblGrnInstallment();
-                $installmentModel->grn_code = $this->grn_code;
-                $installmentModel->union_code = $bmcDatas->union_code;
-                $installmentModel->plant_code = $bmcDatas->plant_code;
-                $installmentModel->mcc_plant_code = $bmcDatas->mcc_plant_code;
-                $installmentModel->bmc_code = $bmcDatas->bmc_code;
-                $installmentModel->main_amount = $this->amount;
-                $installmentModel->installment_amount = $instAmount;
-                $installmentModel->installment_status = 0;
-                $installmentModel->grn_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $this->grn_code, $ai);
-                $installmentModel->installment_date = NULL;
-                $modelSave[] = $installmentModel;
-                $ai++;
-            }
-        } else {
-            $this->addError('plant_code', Yii::t('app/validation', 'BMC Not Found for Installment Adjustment.'));
+        for ($i = 0; $i < $no; $i++) {
+            $installmentModel = new TblGrnInstallment();
+            $installmentModel->grn_code = $this->grn_code;
+            $installmentModel->union_code = $this->union_code;
+            $installmentModel->plant_code = $this->plant_code;
+            $installmentModel->mcc_plant_code = $this->mcc_plant_code;
+            $installmentModel->bmc_code = $this->bmc_code;
+            $installmentModel->main_amount = $this->amount;
+            $installmentModel->installment_amount = $instAmount;
+            $installmentModel->installment_status = 0;
+            $installmentModel->grn_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $this->grn_code, $ai);
+            $installmentModel->installment_date = NULL;
+            $modelSave[] = $installmentModel;
+            $ai++;
         }
     }
 

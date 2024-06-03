@@ -276,6 +276,7 @@ class TblGrnController extends \app\controllers\ChildController {
         $type = 'create';
         $updateDispatch = TRUE;
         $this->model->grn_date = date('d-m-Y');
+        $this->model->scenario = 'batchcreate';
         if (Yii::$app->request->post()) {
             $grnData = Yii::$app->request->post()['TblGrn'];
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
@@ -291,7 +292,6 @@ class TblGrnController extends \app\controllers\ChildController {
                 $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                 $this->model->deduction_start_date = $dedStartDate;
             }
-            $this->model->scenario = 'batchcreate';
             $modelSave[] = $this->model;
 
             $i = 1;

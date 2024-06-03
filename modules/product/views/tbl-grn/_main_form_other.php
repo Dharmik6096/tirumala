@@ -41,7 +41,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblgrn-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblgrn-union_code', 'mcc_plant_code', Yii::t('app', 'Own MCC')); ?>
+            <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblgrn-union_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblgrn-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
