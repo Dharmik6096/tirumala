@@ -3688,29 +3688,49 @@ class ReportsController extends \app\controllers\ChildController {
         // array_walk_recursive($this->output, function(&$value) {
         //     $value = is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value) ? '="' . $value . '"' : $value;
         // });
+
+
         $columnIndex = 1;
-        $columnKey = '';
-        array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$columnKey) {
-            if ($columnKey == $key || $columnKey == '') {
-                $columnKey = $key;
-                $columnIndex = 1;
-            }
-            if (is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value)) {
-                $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
-                $sheet->getStyle($columnLetter)
-                        ->getNumberFormat()
-                        ->setFormatCode(
-                                \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER
-                );
+        $rowIndex = 2;
+        array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$rowIndex) {
+            $cell = $sheet->getCellByColumnAndRow($columnIndex, $rowIndex);
+            if (is_numeric($value) && preg_match('/^([0-9]+)$/', $value)) {
+                $sheet->setCellValueExplicit($cell->getCoordinate(), $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            } else {
+                $sheet->setCellValue($cell->getCoordinate(), $value);
             }
             $columnIndex++;
+            if ($columnIndex > count($this->output[$rowIndex - 2])) {
+                $rowIndex++;
+                $columnIndex = 1; // Reset column index
+            }
         });
-        $sheet->fromArray(
-                $this->output, // The data to set
-                NULL, // Array values with this value will not be set
-                'A2'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
-        );
+
+
+//         $columnIndex = 1;
+//         $columnKey = '';
+//         array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$columnKey) {
+//             if ($columnKey == $key || $columnKey == '') {
+//                 $columnKey = $key;
+//                 $columnIndex = 1;
+//             }
+//             if (is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value)) {
+//                 $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
+//                 $sheet->getStyle($columnLetter)
+//                         ->getNumberFormat()
+//                         ->setFormatCode(
+//                                 \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER
+//                 );
+//             }
+//             $columnIndex++;
+//         });
+//         $sheet->fromArray(
+//                 $this->output, // The data to set
+//                 NULL, // Array values with this value will not be set
+//                 'A2'         // Top left coordinate of the worksheet range where
+// //    we want to set these values (default is A1)
+//         );
+
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'] .
