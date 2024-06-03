@@ -368,6 +368,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
 </div>
+<div class="clearfix"></div>
 <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
 <div class="row">
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
