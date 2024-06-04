@@ -15,7 +15,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
     <div class="panel-heading">
         <?= $breadcrum_title . $this->title; ?>
         <button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-bs-toggle="collapse" data-bs-target=".grid_card"><i class="fa fa-list"></i></button>
-        <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon btn btn-danger apply-shortcut btn-block right_30" ><i class="fa fa-file-excel-o"></i></button> 
+        <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon btn btn-danger apply-shortcut btn-block right_30" ><i class="far fa-file-excel"></i></button> 
         <span class="right_align_mcc_shift"><?= '(' . Yii::$app->general->getShiftName($shift) . ')' ?></span>
         <span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>

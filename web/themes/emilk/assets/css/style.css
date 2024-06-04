@@ -5462,3 +5462,7 @@ div#w12 > .card.border-default {
 .bg-success{
     background-color: rgb(0, 163, 222) !important;
 }
+.right_align_mcc_shift{
+    float: right;
+    padding-right: 55px;
+}
