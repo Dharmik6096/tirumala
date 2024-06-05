@@ -777,8 +777,8 @@ class TblMilkCollection extends \app\models\ChildModel {
           //  $model->other_reading = '{"CAL":"\u001b@#####----------------------------------------##########        Calibration Log Report ##########CP Name: Benny Impex Private Limited #####CP Code: CPOINT_1 #####Date / Time: 03/06/24 18:01:18#####Record :6/6##########RNO  Date   Time  M C P Input Total User###############MLMS SN:020021040387#####  1 280524 163530 M M S +2.00 +2.00 ADMIN#####  2 280524 163525 M M F +1.00 +1.00 ADMIN#####  3 280524 163517 M B S +0.00 +0.00 ADMIN#####  4 280524 163503 M B F +1.00 +1.00 ADMIN#####  5 280524 163257 M C S +0.20 +1.10 ADMIN#####  6 280524 163248 M C F +0.10 -0.60 ADMIN#####Calibration Log End"}';
          */
         $otherReading = json_decode($model->other_reading);
-        $cal = !empty($otherReading->CAL) ? $otherReading->CAL : null;
-        $cle = !empty($otherReading->CLE) ? $otherReading->CLE : null;
+        $cal = !empty($otherReading->CAL) ? preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $otherReading->CAL) : null;
+        $cle = !empty($otherReading->CLE) ? preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $otherReading->CLE) : null;
         if (!empty($cal) && substr($model->member_code, -4) == '2097') {
             $this->setCalibrationData($model, $modelSave, $cal);
         } else if (!empty($cle) && substr($model->member_code, -4) == '2098') {
