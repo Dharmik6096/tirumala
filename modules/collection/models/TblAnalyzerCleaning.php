@@ -59,7 +59,7 @@ class TblAnalyzerCleaning extends \app\models\ChildModel {
                 [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
                 [['created_by', 'updated_by'], 'safe'],
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['data_inserted_from'], 'safe'],
+                [['data_inserted_from', 'milk_analyser_type_code'], 'safe'],
         ];
     }
 

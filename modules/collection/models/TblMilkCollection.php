@@ -26,6 +26,7 @@ use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
 use app\modules\collection\models\TblMccShiftLock;
 use app\modules\collection\models\TblAnalyzerCleaning;
 use app\modules\collection\models\TblAnalyzerCalibration;
+use app\modules\collection\models\TblAnalyzerSerialNo;
 
 /**
  * This is the model class for table "tbl_milk_collection".
@@ -804,6 +805,9 @@ class TblMilkCollection extends \app\models\ChildModel {
         $cleaning->originating_org_code = $model->originating_org_code;
         $cleaning->counter = 1;
         $cleaning->measuring = 0;
+        $cleaning->milk_analyser_type_code = $model->milk_analyser_type_code;
+        $cleaning->x_col1 = $model->x_col1;
+
         $pk_data = explode('-', $cleaning->analyzer_cleaning_code);
         $pk_code = $pk_data[2];
         $auto_inc = 0;
@@ -879,6 +883,8 @@ class TblMilkCollection extends \app\models\ChildModel {
         $calibration->analyzer_calibration_code = Yii::$app->general->getPrimaryCode($calibration);
         $calibration->originating_org_code = $model->originating_org_code;
         $calibration->water_offset = $calibration->fat_offset = $calibration->snf_offset = 0.00;
+        $calibration->milk_analyser_type_code = $model->milk_analyser_type_code;
+        $calibration->x_col1 = $model->x_col1;
         $pk_data = explode('-', $calibration->analyzer_calibration_code);
         $pk_code = $pk_data[2];
         $auto_inc = 0;
@@ -891,8 +897,22 @@ class TblMilkCollection extends \app\models\ChildModel {
             $strArr = explode('#####', $cal_bipl);
             $count = count($strArr);
             if (is_array($strArr) && $count > 2) {
+                $srno_data = explode(':', $strArr[0]);
+                /* BIPL Sr No Parsing */
+                if (isset($srno_data[1])) {
+                    $sr_model = new TblAnalyzerSerialNo();
+                    $sr_model->attributes = $calibration->attributes;
+                    $sr_model->originating_org_code = $model->union_code;
+                    $sr_model->analyzer_serial_no_code = Yii::$app->general->getPrimaryCode($sr_model);
+                    $sr_model->originating_org_code = $model->originating_org_code;
+                    $sr_model->date_time_of_serial_no = $model->date_time_of_collection;
+                    $sr_model->serial_no = $srno_data[1];
+                    array_push($modelSave, $sr_model);
+                }
+                /* BIPL Sr No Parsing */
                 unset($strArr[0]);
                 unset($strArr[$count - 1]);
+                $strArr = array_reverse($strArr);
                 $cal_data = [];
                 foreach ($strArr as $strVal) {
                     $strVal = ltrim($strVal);
@@ -900,20 +920,20 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $data = explode(' ', $strVal);
                     if (count($data) > 8) {
                         if (in_array($data[4], ['C', 'B', 'M'])) {
-                            if (!isset($cal_data[$data[4]])) {
-                                $cal_data[$data[4]] = [];
+                            $key = $data[4] . $data[1];
+                            if (!isset($cal_data[$key])) {
+                                $cal_data[$key] = [];
                             }
                             if ($data[5] == 'F') {
-                                $cal_data[$data[4]]['fat_offset'] = $data[6];
+                                $cal_data[$key]['fat_offset'] = $data[6];
                             } elseif ($data[5] == 'S') {
-                                $cal_data[$data[4]]['snf_offset'] = $data[6];
+                                $cal_data[$key]['snf_offset'] = $data[6];
                             }
-                            $cal_data[$data[4]]['date'] = $data[1];
-                            $cal_data[$data[4]]['time'] = $data[2];
+                            $cal_data[$key]['date'] = $data[1];
+                            $cal_data[$key]['time'] = $data[2];
                         }
                     }
                 }
-
                 foreach ($cal_data as $m => $c) {
                     $cal_model = new TblAnalyzerCalibration();
                     $cal_model->attributes = $calibration->attributes;
@@ -921,7 +941,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $cal_model->analyzer_calibration_code = implode('-', $pk_data);
                     $datetime = \DateTime::createFromFormat('dmyHis', $c['date'] . $c['time'])->format('Y-m-d H:i:s');
                     $cal_model->date_time_of_actual_calibration = $datetime;
-                    $cal_model->milk_type_code = $m;
+                    $cal_model->milk_type_code = substr($m, 0, 1);
                     Yii::$app->general->validateGlobalData($cal_model, 'milk_type_code', 'milk_type_code');
                     $cal_model->fat_offset = !empty($c['fat_offset']) ? $c['fat_offset'] : $cal_model->fat_offset;
                     $cal_model->snf_offset = !empty($c['snf_offset']) ? $c['snf_offset'] : $cal_model->snf_offset;
