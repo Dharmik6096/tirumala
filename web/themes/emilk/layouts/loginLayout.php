@@ -4,7 +4,6 @@ use app\assets\LoginAsset;
 use yii\bootstrap5\BootstrapAsset;
 use yii\helpers\Html;
 use yii\web\View;
-use Yii;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
