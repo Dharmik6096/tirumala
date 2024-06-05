@@ -51,15 +51,15 @@ class TblAnalyzerCleaning extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['analyzer_cleaning_code'], 'required'],
-            [['date_time_of_cleaning', 'date_time_of_actual_cleaning', 'created_at', 'updated_at'], 'safe'],
-            [['shift_code', 'cycle', 'counter', 'measuring', 'originating_type', 'txfarmer_id'], 'integer'],
-            [['analyzer_cleaning_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['data_inserted_from'], 'string', 'max' => 50],
+                [['analyzer_cleaning_code'], 'required'],
+                [['date_time_of_cleaning', 'date_time_of_actual_cleaning', 'created_at', 'updated_at'], 'safe'],
+                [['shift_code', 'cycle', 'counter', 'measuring', 'originating_type', 'txfarmer_id'], 'safe'],
+                [['analyzer_cleaning_code', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['union_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['created_by', 'updated_by'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['data_inserted_from'], 'safe'],
         ];
     }
 
