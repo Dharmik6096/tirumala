@@ -63,7 +63,7 @@ class TblGrn extends \app\models\ChildModel {
             [['vendor_master_code'], 'required', 'when' => function ($model) {
                     $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
                     return $withoutDispatch != 1;
-                }, 'except' => ['batchcreate', 'importCsv']],
+                }, 'except' => ['batchcreate']],
             [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'vendor_code', 'ref_no', 'plant_code'], 'safe'],
             [['remarks', 'originating_type', 'union_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
             [['grn_no', 'invoice_no'], 'string', 'max' => 30],
