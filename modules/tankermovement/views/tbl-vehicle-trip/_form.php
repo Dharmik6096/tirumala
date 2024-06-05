@@ -130,19 +130,21 @@ $('#vehicle-trip-form').submit(function(e) {
 ";
 $script .= "$('#tblvehicletrip-bmc_code').change(function () {
 var mccarray =  $('#tblvehicletrip-bmc_code option:selected');
-var nonselarray =  $('#tblvehicletrip-bmc_code option:not(:selected)').map(function () {return this.value;}).get();                        
 var bmc_array_sel = {};
     mccarray.each(function(){
-                var val = $(this).attr('value');
-                        var txt = $(this).text();
-                        bmc_array_sel[val]=txt;
-                    });   
+        var val = $(this).attr('value');
+        var txt = $(this).text();
+        bmc_array_sel[val]=txt;
+    });   
+    var options='';
     $.each(bmc_array_sel, function(index, value) {
-            if(jQuery.inArray(index,nonselarray) == -1){
-                $('#tblvehicletrip-bmc_code').append($('<option></option>').attr('value', index).text(value)); 
-            }
-            nonselarray.push(index);
-    });  
+        if(jQuery.inArray(index,mccarray) == -1){   
+            options += '<option value=\"'+index+'\">'+value+'</option>';
+       }else{
+            options += '<option value=\"'+index+'\" selected>'+value+'</option>';
+       }
+    });
+    $('#tbluserorganizationmapping-bmc_code').html(options);
     $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);      
 });
 ";
