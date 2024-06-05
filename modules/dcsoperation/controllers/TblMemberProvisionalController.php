@@ -434,10 +434,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $all_doc = [];
                 $memberdoc = [];
                 $unlink_files = [];
+                $attachments = [];
                 $config = Yii::$app->general->getUnionConfigResult($memberModel->union_code, 'allow_member_other_detail');
                 if ($memberModel->validate()) {
                     if ($memberModel->provisional_status == 'Approve') {
-                        $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files);
+                        $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachments);
                         if ($config == 1) {
                             $this->memberEnrollmentApprove($status, $model_save, $memberModel, $deleteModel);
                         }
@@ -470,7 +471,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             for ($i = 0; $i < count($all_doc); $i++) {
                                 $fileName = basename($memberdoc[$i]);
                                 $file = $memberDir . '/' . $fileName;
-                                $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
+                                file_put_contents($file, file_get_contents($attachments[$i]));
+                                $upload = Yii::$app->response->sendFile($file);
                                 if ($upload) {
                                     if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
                                         unlink($proMemberDir . '/' . $all_doc[$i]);
@@ -494,7 +496,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = [], &$message, &$unlink_files) {
+    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = [], &$message, &$unlink_files, &$attachments) {
         if (strtolower($status) == 'approve' && strtolower($memberModel->provisional_status) == 'approve') {
             $memberModel->is_approved = 1;
             $memberModel->approved_at = date('Y-m-d H:i:s');
@@ -540,11 +542,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     }
                     $tblAttachment = new TblAttachment();
                     $memberProvisionalCode = (string) $memberModel->provisional_member_code;
-                    $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc, $deleteModel, $deleteAttachment, $unlink_files);
+                    $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc, $deleteModel, $deleteAttachment, $unlink_files, $attachments);
 
                     if (!empty($save_member_doc)) {
                         foreach ($save_member_doc as $key => $member_attach) {
                             $all_attachment[] = $member_attach->file_name;
+                            $attachments[] = $member_attach->attachment;
                             $tblAttachments = new TblAttachment();
                             $tblAttachments->attributes = $member_attach->attributes;
                             $doc_path = Yii::$app->params['document_upload'] . 'member';
