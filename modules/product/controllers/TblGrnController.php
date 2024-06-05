@@ -88,7 +88,7 @@ class TblGrnController extends \app\controllers\ChildController {
         $modelSave = [];
         $message = 'GRN';
         $type = 'create';
-
+        $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
         if (Yii::$app->request->post()) {
             $masterData = Yii::$app->request->post()['TblGrn'];
             $txnData = Yii::$app->request->post()['TblGrnTxn'];
@@ -98,6 +98,7 @@ class TblGrnController extends \app\controllers\ChildController {
                 $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : '';
                 $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : '';
                 $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
+                $this->model->is_stock_posted = $grnWithoutStockEntry;
                 if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
                     $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                     $this->model->deduction_start_date = $dedStartDate;
@@ -140,43 +141,44 @@ class TblGrnController extends \app\controllers\ChildController {
                         $this->model->installment($modelSave);
                     }
                 }
-                $stockModel = new TblProductStock();
-                $stockModel->attributes = $this->model->attributes;
-                $stockModel->attributes = $txModel->attributes;
-                unset($stockModel->created_at);
-                unset($stockModel->created_by);
-                $existStock = $stockModel->getExistStock('MCC', $txModel->sap_batch_no);
-                $stock = 0;
-                $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
-//                $qty = $txModel->received_qty - $rejectedQty;
-                $qty = $txModel->received_qty;
-                if (!empty($existStock)) {
-                    $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existStock, $historyModel, UPDATE);
-                    $modelSave[] = $historyModel;
-                    $stock = $existStock->stock;
-                    $existStock->stock = $stock + $qty;
-                    $stockModel = $existStock;
-                } else {
-                    $stockModel->product_stock_code = $stockModel->getCode();
-                    $stockModel->stock = $stock + $qty;
-                    $stockModel->x_col1 = Yii::$app->general->getUuid();
-                    $stockModel->plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'plant_code');
+                if ($grnWithoutStockEntry == 0) {
+                    $stockModel = new TblProductStock();
+                    $stockModel->attributes = $this->model->attributes;
+                    $stockModel->attributes = $txModel->attributes;
+                    unset($stockModel->created_at);
+                    unset($stockModel->created_by);
+                    $existStock = $stockModel->getExistStock('BMC', $txModel->sap_batch_no);
+                    $stock = 0;
+                    $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
+                    //                $qty = $txModel->received_qty - $rejectedQty;
+                    $qty = $txModel->received_qty;
+                    if (!empty($existStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existStock, $historyModel, UPDATE);
+                        $modelSave[] = $historyModel;
+                        $stock = $existStock->stock;
+                        $existStock->stock = $stock + $qty;
+                        $stockModel = $existStock;
+                    } else {
+                        $stockModel->product_stock_code = $stockModel->getCode();
+                        $stockModel->stock = $stock + $qty;
+                        $stockModel->x_col1 = Yii::$app->general->getUuid();
+                        $stockModel->plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'plant_code');
+                    }
+                    $modelSave[] = $stockModel;
+                    $stockTxnModel = new TblProductStockTransaction();
+                    $stockTxnModel->attributes = $stockModel->attributes;
+                    unset($stockTxnModel->created_at);
+                    unset($stockTxnModel->created_by);
+                    $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode();
+                    $stockTxnModel->old_value = $stock;
+                    $stockTxnModel->new_value = $qty;
+                    $stockTxnModel->final_value = $stockModel->stock;
+                    $stockTxnModel->transaction_type = 'GRN';
+                    $stockTxnModel->transaction_date = date('Y-m-d');
+                    $stockTxnModel->reference_code = $txModel->grn_txn_code;
+                    $modelSave[] = $stockTxnModel;
                 }
-                $modelSave[] = $stockModel;
-                $stockTxnModel = new TblProductStockTransaction();
-                $stockTxnModel->attributes = $stockModel->attributes;
-                unset($stockTxnModel->created_at);
-                unset($stockTxnModel->created_by);
-                $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode();
-                $stockTxnModel->old_value = $stock;
-                $stockTxnModel->new_value = $qty;
-                $stockTxnModel->final_value = $stockModel->stock;
-                $stockTxnModel->transaction_type = 'GRN';
-                $stockTxnModel->transaction_date = date('Y-m-d');
-                $stockTxnModel->reference_code = $txModel->grn_txn_code;
-                $modelSave[] = $stockTxnModel;
-
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -277,6 +279,8 @@ class TblGrnController extends \app\controllers\ChildController {
         $updateDispatch = TRUE;
         $this->model->grn_date = date('d-m-Y');
         $this->model->scenario = 'batchcreate';
+        $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
+
         if (Yii::$app->request->post()) {
             $grnData = Yii::$app->request->post()['TblGrn'];
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
@@ -288,6 +292,7 @@ class TblGrnController extends \app\controllers\ChildController {
             $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : $dispatchData->document_date;
             $this->model->invoice_no = !empty($this->model->invoice_no) ? $this->model->invoice_no : $dispatchData->document_no;
             $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
+            $this->model->is_stock_posted = $grnWithoutStockEntry;
             if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
                 $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                 $this->model->deduction_start_date = $dedStartDate;
@@ -309,42 +314,44 @@ class TblGrnController extends \app\controllers\ChildController {
                 if (!$txModel->validate()) {
                     $errors[] = $txModel->getErrors();
                 }
-                $stockModel = new TblProductStock();
-                $stockModel->attributes = $this->model->attributes;
-                $stockModel->attributes = $txModel->attributes;
-                unset($stockModel->created_at);
-                unset($stockModel->created_by);
-                $existStock = $stockModel->getExistStock('MCC', $txModel->sap_batch_no);
-                $stock = 0;
-                $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
-//                $qty = $txModel->received_qty - $rejectedQty;
-                $qty = $txModel->received_qty;
-                if (!empty($existStock)) {
-                    $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existStock, $historyModel, UPDATE);
-                    $modelSave[] = $historyModel;
-                    $stock = $existStock->stock;
-                    $existStock->stock = $stock + $qty;
-                    $stockModel = $existStock;
-                } else {
-                    $stockModel->product_stock_code = $stockModel->getCode($i);
-                    $stockModel->stock = $stock + $qty;
-                    $stockModel->x_col1 = Yii::$app->general->getUuid();
-                    $stockModel->plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'plant_code');
+                if ($grnWithoutStockEntry == 0) {
+                    $stockModel = new TblProductStock();
+                    $stockModel->attributes = $this->model->attributes;
+                    $stockModel->attributes = $txModel->attributes;
+                    unset($stockModel->created_at);
+                    unset($stockModel->created_by);
+                    $existStock = $stockModel->getExistStock('BMC', $txModel->sap_batch_no);
+                    $stock = 0;
+                    $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
+                    //                $qty = $txModel->received_qty - $rejectedQty;
+                    $qty = $txModel->received_qty;
+                    if (!empty($existStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existStock, $historyModel, UPDATE);
+                        $modelSave[] = $historyModel;
+                        $stock = $existStock->stock;
+                        $existStock->stock = $stock + $qty;
+                        $stockModel = $existStock;
+                    } else {
+                        $stockModel->product_stock_code = $stockModel->getCode($i);
+                        $stockModel->stock = $stock + $qty;
+                        $stockModel->x_col1 = Yii::$app->general->getUuid();
+                        $stockModel->plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'plant_code');
+                    }
+                    $modelSave[] = $stockModel;
+                    $stockTxnModel = new TblProductStockTransaction();
+                    $stockTxnModel->attributes = $stockModel->attributes;
+                    unset($stockTxnModel->created_at);
+                    unset($stockTxnModel->created_by);
+                    $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
+                    $stockTxnModel->old_value = $stock;
+                    $stockTxnModel->new_value = $qty;
+                    $stockTxnModel->final_value = $stockModel->stock;
+                    $stockTxnModel->transaction_type = 'GRN';
+                    $stockTxnModel->transaction_date = date('Y-m-d');
+                    $stockTxnModel->reference_code = $txModel->grn_txn_code;
+                    $modelSave[] = $stockTxnModel;
                 }
-                $modelSave[] = $stockModel;
-                $stockTxnModel = new TblProductStockTransaction();
-                $stockTxnModel->attributes = $stockModel->attributes;
-                unset($stockTxnModel->created_at);
-                unset($stockTxnModel->created_by);
-                $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
-                $stockTxnModel->old_value = $stock;
-                $stockTxnModel->new_value = $qty;
-                $stockTxnModel->final_value = $stockModel->stock;
-                $stockTxnModel->transaction_type = 'GRN';
-                $stockTxnModel->transaction_date = date('Y-m-d');
-                $stockTxnModel->reference_code = $txModel->grn_txn_code;
-                $modelSave[] = $stockTxnModel;
                 $i++;
                 $dispatchTxnModel = new TblPlantDispatchTxn();
                 $dispatchTxnData = $dispatchTxnModel->find()->where(['plant_dispatch_txn_code' => $txn['plant_dispatch_txn_code']])->one();

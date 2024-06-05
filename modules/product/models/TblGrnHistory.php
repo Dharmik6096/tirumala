@@ -51,7 +51,7 @@ class TblGrnHistory extends \yii\db\ActiveRecord {
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['operation_type'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'amount', 'payment_mode', 'no_of_installment', 'deduction_start_date'], 'safe']
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'amount', 'payment_mode', 'no_of_installment', 'deduction_start_date', 'is_stock_posted', 'data_post_status', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe']
         ];
     }
 

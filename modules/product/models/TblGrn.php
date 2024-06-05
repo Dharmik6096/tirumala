@@ -53,17 +53,17 @@ class TblGrn extends \app\models\ChildModel {
         return [
             [['bmc_code', 'grn_date', 'vendor_code', 'invoice_date', 'invoice_no', 'product_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'required', 'on' => 'importCsv'],
             [['vendor_code'], 'checkVendorCode', 'on' => ['importCsv']],
-            [['grn_date', 'mcc_plant_code', 'bmc_code', 'invoice_date'], 'required'],
+            [['grn_date', 'mcc_plant_code', 'bmc_code', 'invoice_date'], 'required', 'except' => ['importCsv']],
             [['plant_code'], 'required', 'on' => ['batchcreate']],
             [['plant_code'], 'required', 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
                     return $batchNoWiseInventory == 1 && $withoutDispatch == 1;
-                }, 'except' => ['batchcreate']],
+                }, 'except' => ['batchcreate', 'importCsv']],
             [['vendor_master_code'], 'required', 'when' => function ($model) {
                     $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
                     return $withoutDispatch != 1;
-                }, 'except' => ['batchcreate']],
+                }, 'except' => ['batchcreate', 'importCsv']],
             [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'vendor_code', 'ref_no', 'plant_code'], 'safe'],
             [['remarks', 'originating_type', 'union_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
             [['grn_no', 'invoice_no'], 'string', 'max' => 30],
@@ -77,13 +77,14 @@ class TblGrn extends \app\models\ChildModel {
             [['grn_date', 'invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['grn_date', 'invoice_date', 'deduction_start_date'], 'convertDate', 'on' => ['importCsv']],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'amount', 'payment_mode', 'no_of_installment', 'deduction_start_date'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'amount', 'payment_mode', 'no_of_installment', 'deduction_start_date', 'is_stock_posted', 'data_post_status', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe'],
             [['deduction_start_date', 'no_of_installment'], 'required', 'when' => function ($model) {
                     return $this->payment_mode == 1;
                 },
                 'whenClient' => "function (attribute, value) { return $('#tblgrn-payment_mode').is(':checked') }"
             ],
             [['deduction_start_date'], 'dateValidate'],
+            [['data_post_status'], 'default', 'value' => 0],
         ];
     }
 
@@ -178,37 +179,41 @@ class TblGrn extends \app\models\ChildModel {
                 if (!empty($this->payment_mode)) {
                     $this->installment($saveModel);
                 }
-                $stockModel = new TblProductStock();
-                $stockModel->attributes = $this->attributes;
-                $stockModel->attributes = $txn_model->attributes;
-                $existStock = $stockModel->getExistStock('MCC');
-                $stock = 0;
-                $rejectedQty = !empty($txn_model->rejected_qty) ? $txn_model->rejected_qty : 0;
-                $qty = $txn_model->received_qty - $rejectedQty;
-                if (!empty($existStock)) {
-                    $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existStock, $historyModel, UPDATE);
-                    array_push($saveModel, $historyModel);
-                    $stock = $existStock->stock;
-                    $existStock->stock = $stock + $qty;
-                    $stockModel = $existStock;
-                } else {
-                    $stockModel->product_stock_code = $stockModel->getCode();
-                    $stockModel->stock = $stock + $qty;
-                    $stockModel->x_col1 = Yii::$app->general->getUuid();
-                    $stockModel->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
+                $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
+                $model->is_stock_posted = $grnWithoutStockEntry;
+                if ($grnWithoutStockEntry == 0) {
+                    $stockModel = new TblProductStock();
+                    $stockModel->attributes = $this->attributes;
+                    $stockModel->attributes = $txn_model->attributes;
+                    $existStock = $stockModel->getExistStock('BMC');
+                    $stock = 0;
+                    $rejectedQty = !empty($txn_model->rejected_qty) ? $txn_model->rejected_qty : 0;
+                    $qty = $txn_model->received_qty - $rejectedQty;
+                    if (!empty($existStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existStock, $historyModel, UPDATE);
+                        array_push($saveModel, $historyModel);
+                        $stock = $existStock->stock;
+                        $existStock->stock = $stock + $qty;
+                        $stockModel = $existStock;
+                    } else {
+                        $stockModel->product_stock_code = $stockModel->getCode();
+                        $stockModel->stock = $stock + $qty;
+                        $stockModel->x_col1 = Yii::$app->general->getUuid();
+                        $stockModel->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
+                    }
+                    array_push($saveModel, $stockModel);
+                    $stockTxnModel = new TblProductStockTransaction();
+                    $stockTxnModel->attributes = $stockModel->attributes;
+                    $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode();
+                    $stockTxnModel->old_value = $stock;
+                    $stockTxnModel->new_value = $qty;
+                    $stockTxnModel->final_value = $stockModel->stock;
+                    $stockTxnModel->transaction_type = 'GRN';
+                    $stockTxnModel->transaction_date = date('Y-m-d');
+                    $stockTxnModel->reference_code = $txn_model->grn_txn_code;
+                    array_push($saveModel, $stockTxnModel);
                 }
-                array_push($saveModel, $stockModel);
-                $stockTxnModel = new TblProductStockTransaction();
-                $stockTxnModel->attributes = $stockModel->attributes;
-                $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode();
-                $stockTxnModel->old_value = $stock;
-                $stockTxnModel->new_value = $qty;
-                $stockTxnModel->final_value = $stockModel->stock;
-                $stockTxnModel->transaction_type = 'GRN';
-                $stockTxnModel->transaction_date = date('Y-m-d');
-                $stockTxnModel->reference_code = $txn_model->grn_txn_code;
-                array_push($saveModel, $stockTxnModel);
             }
         }
     }

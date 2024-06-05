@@ -52,12 +52,13 @@ class TblProductStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_stock_code'], 'required', 'on' => ['androidsync']],
-                [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['stock', 'sap_batch_no'], 'safe'],
-                [['created_at', 'updated_at'], 'safe'],
-                [['originating_type'], 'safe'],
-                [['qty', 'type'], 'safe']
+            [['product_stock_code'], 'required', 'on' => ['androidsync']],
+            [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['stock', 'sap_batch_no'], 'safe'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['originating_type'], 'safe'],
+            [['qty', 'type', 'rate'], 'safe'],
+            [['rate'], 'default', 'value' => 0.00],
         ];
     }
 
@@ -131,7 +132,7 @@ class TblProductStock extends \app\models\ChildModel {
 
     public function getCode($autoInc = 1) {
         $primaryKey = 'product_stock_code';
-        $orgCode = 'MCC-' . $this->mcc_plant_code . '-';
+        $orgCode = 'BMC-' . $this->bmc_code . '-';
         $len = strlen($orgCode);
         $val = $this->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
