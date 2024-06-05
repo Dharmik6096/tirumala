@@ -1835,7 +1835,6 @@ class SiteController extends \app\controllers\ChildController {
                 foreach ($modelData as $transaction_data) {
                     try {
                         $process_record = TRUE;
-                        $is_insert = TRUE;
                         $delete = [];
                         $childModel = [];
                         $delete [] = $transaction_data;
@@ -1866,7 +1865,6 @@ class SiteController extends \app\controllers\ChildController {
                                 $unique_value = $model->$unique_key;
                                 $model_data = $model->find()->where([$unique_key => $unique_value])->one();
                                 if (!empty($model_data)) {
-                                    $is_insert = FALSE;
                                     $model = $model_data;
                                     $history = $model_name . 'History';
                                     $historyModel = new $history();
@@ -1951,7 +1949,7 @@ class SiteController extends \app\controllers\ChildController {
                                                 $model->other_reading = str_replace('\r\n', '#####', $model->other_reading);
                                                 $model->other_reading = str_replace('\r', '#####', $model->other_reading);
                                                 $model->other_reading = str_replace('\n', '#####', $model->other_reading);
-                                                if (in_array(substr($model->member_code, -4), ['2097', '2098']) && $is_insert) {
+                                                if (in_array(substr($model->member_code, -4), ['2097', '2098'])) {
                                                     $model->setCleaningCalibration($model, $childModel);
                                                 }
                                             }
