@@ -510,12 +510,22 @@ class SchedulerController extends ChildController {
                             'A1'         // Top left coordinate of the worksheet range where
                             //    we want to set these values (default is A1)
                     );
-                    $sheet->fromArray(
-                            $error_lines, // The data to set
-                            NULL, // Array values with this value will not be set
-                            'A2'         // Top left coordinate of the worksheet range where
-                            //    we want to set these values (default is A1)
-                    );
+                    $columnIndex = 1;
+                    $rowIndex = 2;
+                    $count = count($error_lines[$rowIndex - 2]);
+                    array_walk_recursive($error_lines, function (&$value, $key) use ($sheet, &$columnIndex, &$rowIndex, $count) {
+                        $cell = $sheet->getCellByColumnAndRow($columnIndex, $rowIndex);
+                        if (is_numeric($value) && preg_match('/^([0-9]+)$/', $value)) {
+                            $sheet->setCellValueExplicit($cell->getCoordinate(), $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                        } else {
+                            $sheet->setCellValue($cell->getCoordinate(), $value);
+                        }
+                        $columnIndex++;
+                        if ($columnIndex > $count) {
+                            $rowIndex++;
+                            $columnIndex = 1; // Reset column index
+                        }
+                    });
                     $filePath = $path . 'error_' . $row->file_name;
                     $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                     $objWriter->save($filePath);
