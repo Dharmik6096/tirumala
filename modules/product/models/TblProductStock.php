@@ -132,7 +132,7 @@ class TblProductStock extends \app\models\ChildModel {
 
     public function getCode($autoInc = 1) {
         $primaryKey = 'product_stock_code';
-        $orgCode = 'BMC-' . $this->bmc_code . '-';
+        $orgCode = 'PORTAL-' . $this->bmc_code . '-';
         $len = strlen($orgCode);
         $val = $this->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
