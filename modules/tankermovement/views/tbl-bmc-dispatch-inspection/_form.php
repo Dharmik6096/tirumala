@@ -71,7 +71,7 @@ $form = ActiveForm::begin([
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->custombutton('SKIP', ['/tankermovement/tbl-vehicle-trip/index']); ?>
+            <?= Yii::$app->controls->custombutton('SKIP', ['/tankermovement/tbl-vehicle-trip/index'], '', 'btn-login'); ?>
         </div>
     </div>
 </div>
