@@ -2500,7 +2500,7 @@ class GeneralFunctions extends Component {
 
     public function getUnionConfigResult($union, $field, $model = '') {
         if(!empty(Yii::$app->session->get('unionConfig'))){
-            $data = Yii::$app->session->get('unionConfig')[$union][$field];
+            $data = isset(Yii::$app->session->get('unionConfig')[$union][$field]) ? Yii::$app->session->get('unionConfig')[$union][$field] : '';
         } else {
             $data = is_object($model) && property_exists($model, 'import_union_config') ? $model->import_union_config[$field] : '';
         }
