@@ -50,15 +50,15 @@ class TblAnalyzerCalibration extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['analyzer_calibration_code'], 'required'],
-            [['date_time_of_calibration', 'created_at', 'updated_at'], 'safe'],
-            [['shift_code', 'milk_type_code', 'originating_type'], 'integer'],
-            [['fat_offset', 'snf_offset', 'water_offset'], 'number'],
-            [['analyzer_calibration_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['analyzer_calibration_code'], 'required'],
+                [['date_time_of_calibration', 'created_at', 'updated_at', 'date_time_of_actual_calibration'], 'safe'],
+                [['shift_code', 'milk_type_code', 'originating_type'], 'safe'],
+                [['fat_offset', 'snf_offset', 'water_offset'], 'safe'],
+                [['analyzer_calibration_code', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['union_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['created_by', 'updated_by'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_analyser_type_code'], 'safe'],
         ];
     }
 

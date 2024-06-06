@@ -24,6 +24,9 @@ use app\modules\dcsoperation\models\TblMemberProvisional;
 use app\modules\collection\models\TblProvisionalMilkCollection;
 use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
 use app\modules\collection\models\TblMccShiftLock;
+use app\modules\collection\models\TblAnalyzerCleaning;
+use app\modules\collection\models\TblAnalyzerCalibration;
+use app\modules\collection\models\TblAnalyzerSerialNo;
 
 /**
  * This is the model class for table "tbl_milk_collection".
@@ -163,7 +166,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
                 [['antibiotic_sms_sent', 'antibiotic', 'is_antibiotic'], 'safe'],
                 [['antibiotic_sms_sent'], 'default', 'value' => 0],
-                [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
+                [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'other_reading'], 'safe'],
                 [['qty'], 'qtyValidate', 'on' => ['create', 'update']],
         ];
     }
@@ -760,6 +763,217 @@ class TblMilkCollection extends \app\models\ChildModel {
         $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'max_qty_limit_member');
         if ($config > 0 && $this->qty > $config) {
             $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' must not be greater than ' . $config));
+        }
+    }
+
+    public function setCleaningCalibration($model, &$modelSave) {
+        /*
+          //FATSCAN Format Clening Calibration
+          //  $model->other_reading = '{"CLE":"##EIPL-MA##\u0003dw04/06/24 14:20 01 006,04/06/24 12:33 01 000,04/06/24 12:23 01 005,12/03/24 15:48 01000,12/03/24 16:04 01 000,2","CAL":"##EIPL-MA##\u0003cc 0.00, 0.00,  0.0, 0.00,  0.0,2#####cb 0.00, 0.00,  0.0, 0.00,  0.0,2#####cm 0.00, 0.00,  0.0, 0.00,  0.0,2"}';
+
+          //BIPL Format Clening
+          //  $model->other_reading = '{"CLE":"\u001b@#####----------------------------------------##########          Cleaning Log Report ##########CP Name: Benny Impex Private Limited #####CP Code: CPOINT_1 #####Date / Time: 03/06/24 18:04:35#####Record :10/10##########RNO  Date  Time OP SR CY   Results   Mea###############MLMS SN:020021040387#####  1 270224 1143 CL WA  1  N/A   N/A    0#####  2 270224 1129 CL WA  1  N/A   N/A    0#####  3 270224 1121 CL WA  5  N/A   N/A    2#####  4 200224 1214 CL WA  2  N/A   N/A    2#####  5 200224 1211 RT NA NA  N/A   N/A    2#####  6 200224 1209 RT NA NA  N/A   N/A    2#####  7 200224 1207 RT NA NA  N/A   N/A    2#####  8 090124 1218 CL WA  2  N/A   N/A   12#####  9 090124 1216 RT NA NA  N/A   N/A   12##### 10 090124 1119 RT NA NA  N/A   N/A   12#####Cleaning Log End"}';
+
+          // BIPL Format Calibration
+          //  $model->other_reading = '{"CAL":"\u001b@#####----------------------------------------##########        Calibration Log Report ##########CP Name: Benny Impex Private Limited #####CP Code: CPOINT_1 #####Date / Time: 03/06/24 18:01:18#####Record :6/6##########RNO  Date   Time  M C P Input Total User###############MLMS SN:020021040387#####  1 280524 163530 M M S +2.00 +2.00 ADMIN#####  2 280524 163525 M M F +1.00 +1.00 ADMIN#####  3 280524 163517 M B S +0.00 +0.00 ADMIN#####  4 280524 163503 M B F +1.00 +1.00 ADMIN#####  5 280524 163257 M C S +0.20 +1.10 ADMIN#####  6 280524 163248 M C F +0.10 -0.60 ADMIN#####Calibration Log End"}';
+         */
+        $otherReading = json_decode($model->other_reading);
+        $cal = !empty($otherReading->CAL) ? preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $otherReading->CAL) : null;
+        $cle = !empty($otherReading->CLE) ? preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $otherReading->CLE) : null;
+        if (!empty($cal) && substr($model->member_code, -4) == '2097') {
+            $this->setCalibrationData($model, $modelSave, $cal);
+        } else if (!empty($cle) && substr($model->member_code, -4) == '2098') {
+            $this->setCleaningData($model, $modelSave, $cle);
+        }
+    }
+
+    public function setCleaningData($model, &$modelSave, $cle) {
+        $cleaning = new TblAnalyzerCleaning();
+        $cleaning->date_time_of_cleaning = $model->date_time_of_collection;
+        $cleaning->shift_code = $model->shift_code;
+        $cleaning->union_code = $model->union_code;
+        $cleaning->plant_code = $model->plant_code;
+        $cleaning->mcc_plant_code = $model->mcc_plant_code;
+        $cleaning->bmc_code = $model->bmc_code;
+        $cleaning->dcs_code = $model->dcs_code;
+        $cleaning->created_at = $model->created_at;
+        $cleaning->created_by = $model->created_by;
+        $cleaning->originating_org_code = $model->union_code;
+        $cleaning->originating_org_type = $model->originating_org_type;
+        $cleaning->originating_type = $model->originating_type;
+        $cleaning->analyzer_cleaning_code = Yii::$app->general->getPrimaryCode($cleaning);
+        $cleaning->originating_org_code = $model->originating_org_code;
+        $cleaning->counter = 1;
+        $cleaning->measuring = 0;
+        $cleaning->milk_analyser_type_code = $model->milk_analyser_type_code;
+        $cleaning->x_col1 = $model->x_col1;
+
+        $pk_data = explode('-', $cleaning->analyzer_cleaning_code);
+        $pk_code = $pk_data[2];
+        $auto_inc = 0;
+        $cle_bipl = strstr($cle, 'MLMS SN');
+        $cle_eipl = strstr($cle, 'dw');
+        if ($cle_bipl) {
+            /* BIPL Cleaning Parsing */
+            $strArr = explode('#####', $cle_bipl);
+            $count = count($strArr);
+            if (is_array($strArr) && $count > 2) {
+                unset($strArr[0]);
+                unset($strArr[$count - 1]);
+
+                foreach ($strArr as $strVal) {
+                    $strVal = ltrim($strVal);
+                    $strVal = rtrim($strVal);
+                    $strVal = preg_replace('!\s+!', ' ', $strVal);
+                    $data = explode(' ', $strVal);
+                    if (count($data) > 8) {
+                        if (in_array($data[3], ['CL'])) {
+                            $cel_model = new TblAnalyzerCleaning();
+                            $cel_model->attributes = $cleaning->attributes;
+                            $pk_data[2] = $pk_code + $auto_inc;
+                            $cel_model->analyzer_cleaning_code = implode('-', $pk_data);
+                            $datetime = \DateTime::createFromFormat('dmyHi', $data[1] . $data[2])->format('Y-m-d H:i:s');
+                            $cel_model->date_time_of_actual_cleaning = $datetime;
+                            $cel_model->cycle = $data[5];
+                            $cel_model->measuring = $data[8];
+                            array_push($modelSave, $cel_model);
+                            $auto_inc++;
+                        }
+                    }
+                }
+            }
+            /* BIPL Cleaning Parsing */
+        } else if ($cle_eipl) {
+            /* FATSCAN Cleaning Parsing */
+            $cle_eipl = substr($cle_eipl, 2);
+            $strArr = explode(',', $cle_eipl);
+            foreach ($strArr as $strVal) {
+                $data = explode(' ', $strVal);
+                if (count($data) > 3) {
+                    $cel_model = new TblAnalyzerCleaning();
+                    $cel_model->attributes = $cleaning->attributes;
+                    $pk_data[2] = $pk_code + $auto_inc;
+                    $cel_model->analyzer_cleaning_code = implode('-', $pk_data);
+                    $datetime = \DateTime::createFromFormat('d/m/yH:i', $data[0] . $data[1])->format('Y-m-d H:i:s');
+                    $cel_model->date_time_of_actual_cleaning = $datetime;
+                    $cel_model->cycle = $data[2];
+                    $cel_model->counter = $data[3];
+                    array_push($modelSave, $cel_model);
+                    $auto_inc++;
+                }
+            }
+            /* FATSCAN Cleaning Parsing */
+        }
+    }
+
+    public function setCalibrationData($model, &$modelSave, $cal) {
+        $calibration = new TblAnalyzerCalibration();
+        $calibration->date_time_of_calibration = $calibration->date_time_of_actual_calibration = $model->date_time_of_collection;
+        $calibration->shift_code = $model->shift_code;
+        $calibration->union_code = $model->union_code;
+        $calibration->plant_code = $model->plant_code;
+        $calibration->mcc_plant_code = $model->mcc_plant_code;
+        $calibration->bmc_code = $model->bmc_code;
+        $calibration->dcs_code = $model->dcs_code;
+        $calibration->created_at = $model->created_at;
+        $calibration->created_by = $model->created_by;
+        $calibration->originating_org_code = $model->union_code;
+        $calibration->originating_org_type = $model->originating_org_type;
+        $calibration->originating_type = $model->originating_type;
+        $calibration->analyzer_calibration_code = Yii::$app->general->getPrimaryCode($calibration);
+        $calibration->originating_org_code = $model->originating_org_code;
+        $calibration->water_offset = $calibration->fat_offset = $calibration->snf_offset = 0.00;
+        $calibration->milk_analyser_type_code = $model->milk_analyser_type_code;
+        $calibration->x_col1 = $model->x_col1;
+        $pk_data = explode('-', $calibration->analyzer_calibration_code);
+        $pk_code = $pk_data[2];
+        $auto_inc = 0;
+
+        $cal_bipl = strstr($cal, 'MLMS SN');
+        $cal_eipl = strstr($cal, 'cc');
+
+        if ($cal_bipl) {
+            /* BIPL Calibration Parsing */
+            $strArr = explode('#####', $cal_bipl);
+            $count = count($strArr);
+            if (is_array($strArr) && $count > 2) {
+                $srno_data = explode(':', $strArr[0]);
+                /* BIPL Sr No Parsing */
+                if (isset($srno_data[1])) {
+                    $sr_model = new TblAnalyzerSerialNo();
+                    $sr_model->attributes = $calibration->attributes;
+                    $sr_model->originating_org_code = $model->union_code;
+                    $sr_model->analyzer_serial_no_code = Yii::$app->general->getPrimaryCode($sr_model);
+                    $sr_model->originating_org_code = $model->originating_org_code;
+                    $sr_model->date_time_of_serial_no = $model->date_time_of_collection;
+                    $sr_model->serial_no = $srno_data[1];
+                    array_push($modelSave, $sr_model);
+                }
+                /* BIPL Sr No Parsing */
+                unset($strArr[0]);
+                unset($strArr[$count - 1]);
+                $strArr = array_reverse($strArr);
+                $cal_data = [];
+                foreach ($strArr as $strVal) {
+                    $strVal = ltrim($strVal);
+                    $strVal = rtrim($strVal);
+                    $data = explode(' ', $strVal);
+                    if (count($data) > 8) {
+                        if (in_array($data[4], ['C', 'B', 'M'])) {
+                            $key = $data[4] . $data[1];
+                            if (!isset($cal_data[$key])) {
+                                $cal_data[$key] = [];
+                            }
+                            if ($data[5] == 'F') {
+                                $cal_data[$key]['fat_offset'] = $data[6];
+                            } elseif ($data[5] == 'S') {
+                                $cal_data[$key]['snf_offset'] = $data[6];
+                            }
+                            $cal_data[$key]['date'] = $data[1];
+                            $cal_data[$key]['time'] = $data[2];
+                        }
+                    }
+                }
+                foreach ($cal_data as $m => $c) {
+                    $cal_model = new TblAnalyzerCalibration();
+                    $cal_model->attributes = $calibration->attributes;
+                    $pk_data[2] = $pk_code + $auto_inc;
+                    $cal_model->analyzer_calibration_code = implode('-', $pk_data);
+                    $datetime = \DateTime::createFromFormat('dmyHis', $c['date'] . $c['time'])->format('Y-m-d H:i:s');
+                    $cal_model->date_time_of_actual_calibration = $datetime;
+                    $cal_model->milk_type_code = substr($m, 0, 1);
+                    Yii::$app->general->validateGlobalData($cal_model, 'milk_type_code', 'milk_type_code');
+                    $cal_model->fat_offset = !empty($c['fat_offset']) ? $c['fat_offset'] : $cal_model->fat_offset;
+                    $cal_model->snf_offset = !empty($c['snf_offset']) ? $c['snf_offset'] : $cal_model->snf_offset;
+                    array_push($modelSave, $cal_model);
+                    $auto_inc++;
+                }
+            }
+
+            /* BIPL Calibration Parsing */
+        } else if ($cal_eipl) {
+            /* FATSCAN Calibration Parsing */
+            $strArr = explode('#####', $cal_eipl);
+            $auto_inc = 0;
+            foreach ($strArr as $strVal) {
+                $milk_type = substr($strVal, 1, 1);
+                $strVal = substr($strVal, 3);
+                $data = explode(',', $strVal);
+                if (count($data) > 4) {
+                    $cal_model = new TblAnalyzerCalibration();
+                    $cal_model->attributes = $calibration->attributes;
+                    $pk_data[2] = $pk_code + $auto_inc;
+                    $cal_model->analyzer_calibration_code = implode('-', $pk_data);
+                    $cal_model->milk_type_code = $milk_type;
+                    Yii::$app->general->validateGlobalData($cal_model, 'milk_type_code', 'milk_type_code');
+                    $cal_model->fat_offset = $data[0];
+                    $cal_model->snf_offset = $data[1];
+                    $cal_model->water_offset = $data[3];
+                    array_push($modelSave, $cal_model);
+                    $auto_inc++;
+                }
+            }
+            /* FATSCAN Calibration Parsing */
         }
     }
 
