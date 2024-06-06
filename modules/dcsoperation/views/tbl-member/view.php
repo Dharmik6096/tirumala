@@ -243,7 +243,7 @@ if ($model->is_active == 1) {
                         ],
                             [
                             'attribute' => 'applicant_relation',
-                            'value' => isset($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'value' => !empty(($model->applicant_relation)) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
