@@ -472,7 +472,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $fileName = basename($memberdoc[$i]);
                                 $file = $memberDir . '/' . $fileName;
                                 file_put_contents($file, file_get_contents($attachments[$i]));
-                                $upload = Yii::$app->response->sendFile($file);
                                 if ($upload) {
                                     if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
                                         unlink($proMemberDir . '/' . $all_doc[$i]);
