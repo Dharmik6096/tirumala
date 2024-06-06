@@ -58,7 +58,7 @@ class TblAnalyzerCalibration extends \app\models\ChildModel {
                 [['union_code'], 'safe'],
                 [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
                 [['created_by', 'updated_by'], 'safe'],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_analyser_type_code'], 'safe'],
         ];
     }
 
