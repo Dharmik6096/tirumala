@@ -13,6 +13,8 @@ $type = !empty($type) ? $type : '';
 $cashSale = isset($cashSale) ? $cashSale : '';
 //memberWiseSale
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+$batchNoWiseProductRate = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_product_rate', 'PORTAL');
+$setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRate == 1) ? 'TRUE' : 'FALSE';
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -66,12 +68,12 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                     <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', true); ?>
                 </div>
                 <div class="clearfix"></div>
-                    <?php
-                    $lable = Yii::t('app', 'Code');
+                <?php
+                $lable = Yii::t('app', 'Code');
                     if($type === 'memberWiseSale'){
-                        $lable = Yii::t('app', 'Member Code');
-                    }
-                    ?>
+                    $lable = Yii::t('app', 'Member Code');
+                }
+                ?>
                 <div class="col-sm-2 reset_field">
                     <?= $form->field($model, 'ex_code')->textInput()->label($lable) ?>
                 </div>
@@ -120,6 +122,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                         <?= Yii::$app->dropdown->productBatch($detailModel, $form, 'batch_type_depends,' . $depends . ',tblproductsaletransaction-product_code,check_is_mcc_depends', 'sap_batch_no', $detailModel->getAttributeLabel('sap_batch_no'), FALSE); ?> 
                     </div>
                 <?php } ?>
+                <?= Html::hiddenInput('batch_no_wise_rate', $setProductRateBatchWise, ['id' => 'batch_no_wise_rate']); ?>
                 <div class=" col-sm-1 reset_field unit disabledDiv">
                     <?= Yii::$app->dropdown->dropdown('unit_code', $detailModel, $form, 'form-group col-sm-2', $detailModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
                 </div>
@@ -260,8 +263,11 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
 
 <?php
 $script = "
+    var batchNoWiseRate = $('#batch_no_wise_rate').val();
     $(document).on('change','#tblproductsale-invoice_date',function(){
-        setRate();
+        if(batchNoWiseRate == 'FALSE') {
+            setRate();
+        }
         setDeductionStartDate();
         if($('#tblproductsale-ex_code').val() != '') {
           reloadGrid('show_loader');
@@ -270,27 +276,37 @@ $script = "
     $(document).on('change','#tblproductsale-bmc_code',function(){
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
-        setRate();
+        if(batchNoWiseRate == 'FALSE') {
+            setRate();
+        }
 //        reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-dcs_code',function(){
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
-        setRate();
+        if(batchNoWiseRate == 'FALSE') {
+            setRate();
+        }
         reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-customer_type',function(){
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
-        setRate();
+        if(batchNoWiseRate == 'FALSE') {
+            setRate();
+        }
 //        reloadGrid();
     });
     $(document).on('change','#tblproductsale-customer_code',function(){
-        setRate();
+        if(batchNoWiseRate == 'FALSE') {
+            setRate();
+        }
         reloadGrid();
     });
     $(document).on('change','#tblproductsaletransaction-product_code',function(){
-        setRate();
+        if(batchNoWiseRate == 'FALSE') {
+            setRate();
+        }
     });
     $(document).on('change','#tblproductsaletransaction-quantity',function(){
         setAmount();
@@ -631,6 +647,7 @@ $script = "
         var union = $('#tblproductsale-union_code').val();
         var sap_batch_no = $('#tblproductsaletransaction-sap_batch_no').val();
         var code ='';
+        $('#tblproductsaletransaction-x_col1').val('');
         if(type=='Member'){
             var code = $('#tblproductsale-dcs_code').val();
         }else{
@@ -647,6 +664,13 @@ $script = "
                         if (obj.status == 'success')
                         {
                             $('#tblproductsaletransaction-available_stock').val(obj.stock);
+                            if(batchNoWiseRate == 'TRUE') {
+                                $('#tblproductsaletransaction-rate').val(obj.sale_rate);
+                                $('#tblproductsaletransaction-x_col1').val(obj.sale_rate);
+                                $('#tblproductsaletransaction-unit_code').val(obj.unit_code);
+                                $('#tblproductsaletransaction-unit_code').trigger('change');
+                                $('#tblproductsaletransaction-unit_code').trigger('select2:select');
+                            }
                         }
                     },
                     error:function(data){

@@ -179,7 +179,7 @@ class TblGrn extends \app\models\ChildModel {
                 if (!empty($this->payment_mode)) {
                     $this->installment($saveModel);
                 }
-                $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
+                $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', $this);
                 $model->is_stock_posted = $grnWithoutStockEntry;
                 if ($grnWithoutStockEntry == 0) {
                     $stockModel = new TblProductStock();
