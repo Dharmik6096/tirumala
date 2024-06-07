@@ -98,7 +98,7 @@ class TblAttachment extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc, &$deleteModel = [], $deleteAttachment = [], &$unlink_files = []) {
+    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc, &$deleteModel = [], $deleteAttachment = [], &$unlink_files = [], &$attachments = []) {
 
         $tblAttachment = $this->getAttachment($provisional_code, $module_name);
         $doc_path = Yii::$app->params['document_upload'] . $process_name;
@@ -106,6 +106,7 @@ class TblAttachment extends \app\models\ChildModel {
         if (!empty($tblAttachment)) {
             foreach ($tblAttachment as $key => $doc) {
                 $all_attachment[] = $doc->file_name;
+                $attachments[] = $doc->attachment;
                 $tblAttachments = new TblAttachment();
                 $tblAttachments->attributes = $doc->attributes;
                 if (Yii::$app->general->checkDirectory($doc_path)) {
@@ -153,7 +154,7 @@ class TblAttachment extends \app\models\ChildModel {
             'query' => $this->find()->where(['module_code' => (string) $id, 'module_name' => $name]),
         ]);
     }
-    
+
     public function attachmentDelete() {
         $user = Yii::$app->session->get('UserCode');
         $attachment = TblComplain::find()->where(['created_by' => $user])->one();

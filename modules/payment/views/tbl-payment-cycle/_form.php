@@ -18,6 +18,7 @@ $form = ActiveForm::begin([
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
         ]);
+echo $form->errorSummary($model);
 ?>
 
 <div class="row">   

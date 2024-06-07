@@ -104,11 +104,12 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                     ['attribute' => 'shortage_amount',
                         'label' => Yii::t('app', 'Shortage Amount'),
                         'value' => function ($model, $key, $index) {
-                            $other_member_amount = Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount');
-                            $mpg_member_amount = Yii::$app->general->getforeignkey($model->shortageRecoveryMpgMember, 'recovery_amount');
-                            $member_recovered_amount = Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount');
+                            $other_member_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount'));
+                            $mpg_member_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveryMpgMember, 'recovery_amount'));
+                            $member_recovered_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount'));
                             $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
                             $amount = $total_shortage_amount - (!empty($member_recovered_amount) ? $member_recovered_amount : 0);
+                            $amount = round($amount, 2);
                             $options = ['class' => 'shortage-recovery-amount'];
                             echo Html::hiddenInput('shortage-recovery-amount', $amount, $options);
                             return $total_shortage_amount;
