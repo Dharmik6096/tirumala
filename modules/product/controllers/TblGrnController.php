@@ -88,7 +88,6 @@ class TblGrnController extends \app\controllers\ChildController {
         $modelSave = [];
         $message = 'GRN';
         $type = 'create';
-        $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
         if (Yii::$app->request->post()) {
             $masterData = Yii::$app->request->post()['TblGrn'];
             $txnData = Yii::$app->request->post()['TblGrnTxn'];
@@ -98,7 +97,8 @@ class TblGrnController extends \app\controllers\ChildController {
                 $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : '';
                 $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : '';
                 $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
-                $this->model->is_stock_posted = $grnWithoutStockEntry;
+                $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'grn_without_stock_entry');
+                $this->model->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
                 if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
                     $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                     $this->model->deduction_start_date = $dedStartDate;
@@ -141,7 +141,7 @@ class TblGrnController extends \app\controllers\ChildController {
                         $this->model->installment($modelSave);
                     }
                 }
-                if ($grnWithoutStockEntry == 0) {
+                if ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') {
                     $stockModel = new TblProductStock();
                     $stockModel->attributes = $this->model->attributes;
                     $stockModel->attributes = $txModel->attributes;
@@ -279,7 +279,6 @@ class TblGrnController extends \app\controllers\ChildController {
         $updateDispatch = TRUE;
         $this->model->grn_date = date('d-m-Y');
         $this->model->scenario = 'batchcreate';
-        $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
 
         if (Yii::$app->request->post()) {
             $grnData = Yii::$app->request->post()['TblGrn'];
@@ -292,7 +291,8 @@ class TblGrnController extends \app\controllers\ChildController {
             $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : $dispatchData->document_date;
             $this->model->invoice_no = !empty($this->model->invoice_no) ? $this->model->invoice_no : $dispatchData->document_no;
             $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
-            $this->model->is_stock_posted = $grnWithoutStockEntry;
+            $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'grn_without_stock_entry');
+            $this->model->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
             if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
                 $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                 $this->model->deduction_start_date = $dedStartDate;
@@ -314,7 +314,7 @@ class TblGrnController extends \app\controllers\ChildController {
                 if (!$txModel->validate()) {
                     $errors[] = $txModel->getErrors();
                 }
-                if ($grnWithoutStockEntry == 0) {
+                if ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') {
                     $stockModel = new TblProductStock();
                     $stockModel->attributes = $this->model->attributes;
                     $stockModel->attributes = $txModel->attributes;
