@@ -81,7 +81,7 @@ class TblProductSale extends \app\models\ChildModel {
             [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
             [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
-            [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit', 'sap_batch_no', 'is_cash_sale'], 'safe'],
+            [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit', 'sap_batch_no', 'is_cash_sale', 'product_stock_rate'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
             [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
             [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
@@ -1004,7 +1004,7 @@ class TblProductSale extends \app\models\ChildModel {
                 $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $available_stock));
             } else {
                 $this->sap_batch_no = $existtoStock[0]->sap_batch_no;
-                $this->product_stock_rate = $existtoStock[0]->product_stock_rate;
+                $this->product_stock_rate = $existtoStock[0]->rate;
             }
         }
         $data = $this;
