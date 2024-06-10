@@ -76,7 +76,7 @@ class ReportsModel extends Model {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'p_from_date', 'p_to_date');
                 }, 'skipOnEmpty' => false],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['BMCPayment', 'MilkReceiptForMember', 'ProductSaleInvoiceForMember']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment', 'VendorMilkBillGLT', 'VendorMilkBillSummaryGLT']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment', 'VendorMilkBillGLT', 'VendorMilkBillSummaryGLT', 'VspPaymentVrs']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill', 'VendorMilkBillVardaan', 'VendorMilkBillSnmilk', 'VendorMilkBillJgf', 'VendorMilkBillAnig', 'VendorMilkBillShivPrasad', 'PaymentSummary']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkBill', 'MemberMilkBillShivPrasad']],
@@ -84,7 +84,7 @@ class ReportsModel extends Model {
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBill']],
             [['union_code', 'p_plant_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['InchargeRemuneration']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd', 'MemberPaymentVrs']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => ['FarmerIncentive', 'VlccTransactionDataReport']],
             [['p_from_date', 'p_to_date', 'p_bmc_code'], 'required', 'on' => ['MccDayBookDispatchHub']],
             [['p_union_code', 'state_code', 'region_code', 'area_code', 'p_bmc_code'], 'required', 'on' => ['VlccTransactionDataReportRegion']],
