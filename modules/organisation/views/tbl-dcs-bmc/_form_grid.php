@@ -157,7 +157,7 @@ $grid_option = [
         },
         'chiller-info' => function ($url, $model) {
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Chiller Info.'];
-            return GhostHtml::a('<i class="fa fa-snowflake-o"></i>', ['/organisation/tbl-dcs-bmc/bmc-chiller-info', 'id' => $model->bmc_code], $options);
+            return GhostHtml::a('<i class="fa fa-snowflake"></i>', ['/organisation/tbl-dcs-bmc/bmc-chiller-info', 'id' => $model->bmc_code], $options);
         },
     ]
 ];
