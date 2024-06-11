@@ -403,7 +403,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
 
                         if ($response) {
                             $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
-                            $this->dcsSentboxGenerate($data);
+                            /* commenting dcsSentboxGenerate as impact already in generate identity logic */
+                            // $this->dcsSentboxGenerate($data);
                         } else {
                             $res_data['db_path'] = NULL;
                         }
