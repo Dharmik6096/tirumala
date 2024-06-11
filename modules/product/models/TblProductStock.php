@@ -52,13 +52,13 @@ class TblProductStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_stock_code'], 'required', 'on' => ['androidsync']],
-            [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['stock', 'sap_batch_no'], 'safe'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['originating_type'], 'safe'],
-            [['qty', 'type', 'rate'], 'safe'],
-            [['rate'], 'default', 'value' => 0.00],
+                [['product_stock_code'], 'required', 'on' => ['androidsync']],
+                [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['stock', 'sap_batch_no'], 'safe'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['originating_type'], 'safe'],
+                [['qty', 'type', 'rate'], 'safe'],
+                [['rate'], 'default', 'value' => 0.00],
         ];
     }
 
@@ -119,7 +119,7 @@ class TblProductStock extends \app\models\ChildModel {
         if (!empty($batch)) {
             $query->andWhere(['sap_batch_no' => $batch]);
         }
-        if (strtoupper($type) == 'MCC' || $checkMccStock) {
+        if (strtoupper($type) == 'MCC') {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])
@@ -208,22 +208,22 @@ class TblProductStock extends \app\models\ChildModel {
                     'product_code' => $product])
                 ->andWhere(['>', 'tbl_product_stock.stock', 0])
                 ->andWhere(['!=', "ISNULL(tbl_product_stock.sap_batch_no, '')", '']);
-        $isMcc = FALSE;
-        if ($check_is_mcc && strtoupper($type) == 'BMC') {
-            $this->setCodes(strtoupper($type), $code);
-            $this->bmc_code = $code;
-            $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
-            $code = ($isMcc) ? $this->mcc_plant_code : $code;
-        }
-        if ((strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC')) {
-            $this->setCodes(strtoupper($type), $code);
-            $isBmc = Yii::$app->general->getforeignkey($this->dcsCode, 'is_bmc');
-            $isBmcMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc');
-            $isMcc = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
-            $code = ($isMcc) ? $this->mcc_plant_code : $code;
-        }
+        /* $isMcc = FALSE;
+          if ($check_is_mcc && strtoupper($type) == 'BMC') {
+          $this->setCodes(strtoupper($type), $code);
+          $this->bmc_code = $code;
+          $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+          $code = ($isMcc) ? $this->mcc_plant_code : $code;
+          }
+          if ((strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC')) {
+          $this->setCodes(strtoupper($type), $code);
+          $isBmc = Yii::$app->general->getforeignkey($this->dcsCode, 'is_bmc');
+          $isBmcMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc');
+          $isMcc = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
+          $code = ($isMcc) ? $this->mcc_plant_code : $code;
+          } */
         $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-        if (strtoupper($type) == 'MCC' || $isMcc) {
+        if (strtoupper($type) == 'MCC') {
             $query->andWhere(['mcc_plant_code' => $code])
                     ->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
@@ -244,15 +244,15 @@ class TblProductStock extends \app\models\ChildModel {
                     'product_code' => $product])
                 ->andWhere(['>', 'tbl_product_stock.stock', 0])
                 ->andWhere(['!=', "ISNULL(tbl_product_stock.sap_batch_no, '')", '']);
-        $isMcc = FALSE;
-        if ($check_is_mcc && strtoupper($type) == 'BMC') {
-            $this->setCodes(strtoupper($type), $code);
-            $this->bmc_code = $code;
-            $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
-            $code = ($isMcc) ? $this->mcc_plant_code : $code;
-        }
+        /*  $isMcc = FALSE;
+          if ($check_is_mcc && strtoupper($type) == 'BMC') {
+          $this->setCodes(strtoupper($type), $code);
+          $this->bmc_code = $code;
+          $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+          $code = ($isMcc) ? $this->mcc_plant_code : $code;
+          } */
         $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-        if (strtoupper($type) == 'MCC' || $isMcc) {
+        if (strtoupper($type) == 'MCC') {
             $query->andWhere(['mcc_plant_code' => $code])
                     ->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
@@ -278,7 +278,7 @@ class TblProductStock extends \app\models\ChildModel {
         if (!empty($batch)) {
             $query->andWhere(['sap_batch_no' => $batch]);
         }
-        if (strtoupper($type) == 'MCC' || $checkMccStock) {
+        if (strtoupper($type) == 'MCC') {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])
@@ -292,7 +292,7 @@ class TblProductStock extends \app\models\ChildModel {
     public function getExistStockDelete($type, $batch = '', $checkMccStock = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
         $query->andWhere(["ISNULL(sap_batch_no,'')" => empty($batch) ? '' : $batch]);
-        if (strtoupper($type) == 'MCC' || $checkMccStock) {
+        if (strtoupper($type) == 'MCC') {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])
