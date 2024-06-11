@@ -19,10 +19,10 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
      */
     public function rules() {
         return [
-            [['rate_recalculation_code', 'rate_code', 'from_shift', 'to_shift', 'shift_applicability'], 'safe'],
-            [['rate_type', 'from_date', 'to_date', 'dcs_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'mcc_plant_code', 'bmc_code', 'plant_code', 'recalc_for', 'customer_code', 'customer_type', 'module_type', 'recalc_type'], 'safe'],
-            [['recalc_for', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required', 'on' => 'recalculation_search'],
-            [['recalc_type', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code', 'from_shift', 'to_shift', 'from_date', 'to_date'], 'required', 'on' => 'recalculation_dispatch'],
+                [['rate_recalculation_code', 'rate_code', 'from_shift', 'to_shift', 'shift_applicability'], 'safe'],
+                [['rate_type', 'from_date', 'to_date', 'dcs_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'mcc_plant_code', 'bmc_code', 'plant_code', 'recalc_for', 'customer_code', 'customer_type', 'module_type', 'recalc_type'], 'safe'],
+                [['recalc_for', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required', 'on' => 'recalculation_search'],
+                [['recalc_type', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code', 'from_shift', 'to_shift', 'from_date', 'to_date'], 'required', 'on' => 'recalculation_dispatch'],
         ];
     }
 
@@ -143,6 +143,9 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
                 ],
             ]);
         }
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
         //var_dump($output); exit;
         return $dataProvider;
     }
@@ -166,7 +169,6 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
         }
 //        $query->joinWith(['dcsCode']);
 //        $query->andWhere(['tbl_dcs.mcc_plant_code' => $this->mcc_plant_code]);
-
 //        Yii::$app->general->filterByOrg($query, $this);
 
         if (!empty($this->from_date))
