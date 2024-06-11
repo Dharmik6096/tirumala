@@ -139,7 +139,7 @@ class TblUserAttendance extends \app\models\ChildModel {
                         ->select(['tbl_user_attendance.*', 'user.name', 'user.employee_id'])
                         ->joinWith(['userCode'])
                         ->where(['=', 'tbl_user_attendance.attendance_date', date('Y-m-d', strtotime('-1 day'))])
-                        ->andWhere('duration is not null')
+                        ->andWhere(['is not', 'duration ', null])
                         ->andWhere(['or', ['tbl_user_attendance.api_status' => null], ['tbl_user_attendance.api_status' => 0]])
                         ->limit(50)
                         ->all();
