@@ -62,7 +62,7 @@ class TblPaymentTransaction extends \app\models\ChildModel {
             [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
             [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'created_by', 'updated_by', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
             [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
-            [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status'], 'safe'],
+            [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code'], 'safe'],
         ];
     }
 
@@ -189,7 +189,8 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                             'pt.is_file' => 0,
                             'UPPER(ubp.integration_mode)' => 'API',
                             'ubp.is_active' => 1,
-                            'ba.is_active' => 1
+                            'ba.is_active' => 1,
+                            'pt.is_approved' => 1
                         ])
                         ->andWhere(['NOT', ['ISNULL(pt.file_name, \'\')' => '']])
                         ->orderBy(['pt.payment_transaction_code' => SORT_ASC])
