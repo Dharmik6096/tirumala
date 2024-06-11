@@ -181,7 +181,7 @@ class TblGrn extends \app\models\ChildModel {
                 }
                 $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', $this);
                 $this->model->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
-                if ($grnWithoutStockEntry == 0) {
+                if ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') {
                     $stockModel = new TblProductStock();
                     $stockModel->attributes = $this->attributes;
                     $stockModel->attributes = $txn_model->attributes;
