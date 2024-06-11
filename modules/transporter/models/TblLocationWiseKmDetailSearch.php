@@ -58,7 +58,7 @@ class TblLocationWiseKmDetailSearch extends TblLocationWiseKmDetail {
 
         $this->load($params);
         $query->joinWith(['plantCodeSource ps', 'plantCodeDest pd', 'mccPlantCodeSource ms', 'mccPlantCodeDest md', 'customerCodeSource cs', 'customerCodeDest cd']);
-        Yii::$app->general->DeliveryChallanOrgFilter($query, 'tbl_location_wise_km_detail', 'from_dest', 'to_dest');
+        Yii::$app->general->DeliveryChallanOrgFilter($query, 't', 'from_dest', 'to_dest');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
