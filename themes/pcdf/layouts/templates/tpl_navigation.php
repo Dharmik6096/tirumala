@@ -674,8 +674,23 @@ echo GhostMenu::widget([
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Bills') . '<b class="caret"></b></a>',
                             'items' => [
-                                ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/vendor-milk-bill-glt']],
-                                ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/vendor-milk-bill-summary-glt']],
+                                [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'VSP') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                        ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/vendor-milk-bill-glt']],
+                                        ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/vendor-milk-bill-summary-glt']],
+                                        ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/vsp-payment-vrs']],
+                                    ]
+                                ],
+                                [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Farmer') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                        ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/member-payment-vrs']],
+                                    ]
+                                ],
+                                ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
                         ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
