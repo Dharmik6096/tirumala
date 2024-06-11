@@ -43,6 +43,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblplantdispatch-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
+	        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblplantdispatch-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
             <?= $form->field($model, 'document_no')->textInput() ?>
         </div>
         <div class="col-sm-2 create_fields">

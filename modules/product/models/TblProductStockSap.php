@@ -5,6 +5,7 @@ namespace app\modules\product\models;
 use Yii;
 use app\models\ChildModel;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
 
 class TblProductStockSap extends ChildModel {
 
@@ -21,12 +22,12 @@ class TblProductStockSap extends ChildModel {
     public function rules() {
         return [
             [['product_code', 'qty', 'stock_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['mcc_plant_code', 'product_code', 'qty', 'stock_date'], 'required', 'on' => ['importCsv']],
+            [['bmc_code', 'product_code', 'qty', 'stock_date'], 'required', 'on' => ['importCsv']],
             [['stock_date'], 'convertDateDot', 'on' => ['importCsv']],
             [['stock_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['stock_date'], 'convertDate', 'on' => ['importCsv']],
             [['product_code'], 'validProductCode', 'on' => ['importCsv']],
-            [['product_code', 'stock_date', 'mcc_plant_code'], 'setData', 'on' => ['importCsv']],
+            [['product_code', 'stock_date', 'bmc_code'], 'setData', 'on' => ['importCsv']],
             [['product_code', 'stock_date'], 'validateUniqueStockEntry', 'on' => ['importCsv']],
         ];
     }
@@ -82,14 +83,15 @@ class TblProductStockSap extends ChildModel {
     }
 
     public function setData() {
-        $mccData = TblMccPlant::find()->where(['or', ['ref_code' => $this->mcc_plant_code], ['mcc_plant_code' => $this->mcc_plant_code]])->one();
+        $bmcData = TblDcsBmc::find()->where(['or', ['ref_code' => $this->bmc_code], ['bmc_code' => $this->bmc_code]])->one();
         if (!empty($mccData)) {
-            $this->union_code = $mccData->union_code;
-            $this->plant_code = $mccData->plant_code;
-            $this->mcc_plant_code = $mccData->mcc_plant_code;
+            $this->union_code = $bmcData->union_code;
+            $this->plant_code = $bmcData->plant_code;
+            $this->mcc_plant_code = $bmcData->mcc_plant_code;
+            $this->bmc_code = $bmcData->bmc_code;
             return true;
         } else {
-            $this->addError('mcc_plant_code', 'MCC plant code is invalid.');
+            $this->addError('bmc_code', 'BMC code is invalid.');
             return false;
         }
     }
@@ -114,6 +116,10 @@ class TblProductStockSap extends ChildModel {
             $this->addError($attribute, 'Product Code is invalid.');
             return false;
         }
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

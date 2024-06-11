@@ -1056,7 +1056,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
 
         $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no, $checkMccStock);
         if (!empty($existtoStock->stock)) {
-            return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
+            return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock, 'sale_rate' => $existtoStock->rate, 'unit_code' => $existtoStock->productCode->unit_code]);
         } else {
             return Json::encode(['status' => 'success', 'stock' => 0]);
         }
