@@ -61,7 +61,8 @@ class TblGrnTxn extends \app\models\ChildModel {
                 [['sap_batch_no'], 'required', 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
-                    return $batchNoWiseInventory == 1 && $withoutDispatch == 1;
+                    $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
+                    return $batchNoWiseInventory == 1 && $withoutDispatch == 1 && $grnWithoutStockEntry != 1;
                 },
             ],
         ];

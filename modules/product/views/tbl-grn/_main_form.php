@@ -13,6 +13,7 @@ $disable = $readonly ? 'disabled' : '';
 $list = array('0' => 'No', '1' => 'Yes');
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
+$grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
 ?>
 
 <?php
@@ -83,7 +84,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 reset_field">
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblgrn-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
         </div>
-        <?php if ($batchNoWiseInventory == 1 && $withoutDispatch == 1) { ?>
+        <?php if ($batchNoWiseInventory == 1 && $withoutDispatch == 1 && $grnWithoutStockEntry != 1) { ?>
             <div class="col-sm-2 reset_field number-validate">
                 <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
             </div>
