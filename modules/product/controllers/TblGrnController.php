@@ -92,13 +92,13 @@ class TblGrnController extends \app\controllers\ChildController {
             $masterData = Yii::$app->request->post()['TblGrn'];
             $txnData = Yii::$app->request->post()['TblGrnTxn'];
             $this->model->setAttributes($masterData);
+            $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'grn_without_stock_entry');
+            $this->model->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
             if (empty(Yii::$app->request->post()['TblGrn']['grn_code'])) {
                 $this->model->grn_code = Yii::$app->general->getPrimaryCode($this->model, 1);
                 $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : '';
                 $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : '';
                 $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
-                $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'grn_without_stock_entry');
-                $this->model->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
                 if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
                     $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                     $this->model->deduction_start_date = $dedStartDate;
