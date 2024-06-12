@@ -84,6 +84,14 @@ $this->title = Yii::$app->label->title('view', 'Plant Dispatch');
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'vendor_name',
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
                 ];
 
                 // View file rendering the widget

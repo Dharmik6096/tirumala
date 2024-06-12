@@ -54,7 +54,7 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
             [['plant_dispatch_txn_code', 'plant_dispatch_code', 'received_qty', 'rejected_qty', 'grn_missing_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks'], 'safe'],
             [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
             [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'po_itemno'], 'safe'],
             [['sap_batch_no'], 'required', 'when' => function ($model) use ($batchNoWiseInventory, $grnWithoutStockEntry) {
                     return $batchNoWiseInventory == 1 && $grnWithoutStockEntry != 1;
                 }],
@@ -95,6 +95,7 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'po_itemno' => Yii::t('app', 'PO Item No'),
         ];
     }
 

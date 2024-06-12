@@ -61,7 +61,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
                 }],
             [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
             [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no', 'bmc_code'], 'safe'],
-            [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'vendor_name'], 'safe'],
             [['status'], 'default', 'value' => '0'],
             [['document_no'], 'unique', 'except' => ['importCsv']],
             [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv']],
@@ -101,6 +101,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'bmc_code' => Yii::t('app', 'BMC'),
+            'vendor_name' => Yii::t('app', 'Vendor Name'),
         ];
     }
 

@@ -58,6 +58,7 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
         }, 'filter' => false],
+        ['attribute' => 'vendor_name'],
 ];
 
 $grid_option = [
