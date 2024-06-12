@@ -10,6 +10,7 @@ use app\components\Model;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\payment\models\TblPaymentTransactionApprovalHistory;
+use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\widgets\ActiveForm;
@@ -69,7 +70,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
             if(!empty($modelSave)){
                 $transaction = $this->generalModel->saveTransaction($modelSave, ['Payment Transaction Approve Successfully', 'info']);
                 if ($transaction == 'customRedirect') {
-                    if($status == 'Approve'){
+                    if(strtolower($status) == 'approve'){
                         $transationModel = new TblPaymentTransaction();
                         $condition = ['payment_transaction_approval_code' => $paymentTransactionApprovalCodes];
                         $updateData = ['is_approved' => 1, 'approved_at' => date('Y-m-d H:i:s')];
@@ -99,8 +100,15 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
      */
     public function actionView($payment_transaction_approval_code)
     {
+        $this->model = $this->findModel($payment_transaction_approval_code);
+        $transaction = new TblPaymentTransaction();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $transaction->find()->where(['payment_transaction_approval_code' => $payment_transaction_approval_code]),
+        ]);
         return $this->render('view', [
-            'model' => $this->findModel($payment_transaction_approval_code),
+            'model' => $this->model,
+            'dataProvider' => $dataProvider,
+            'transaction' => $transaction
         ]);
     }
 

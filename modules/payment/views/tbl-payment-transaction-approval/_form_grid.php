@@ -51,7 +51,6 @@ $attributes = [
     ['attribute' => 'total_count',],
     ['attribute' => 'customer_type',],
     ['attribute' => 'approval_status',],
-    ['attribute' => 'remarks',],
 ];
 
 $grid_option = [

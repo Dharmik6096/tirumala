@@ -2,7 +2,7 @@
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Payment Transaction Pending Approvals'));
 ?>
 
-<div class="panel panel-default panel-grid panel-main">
+<div class="panel panel-default panel-grid">
     <div class="panel-heading">
         <?= $this->title; ?>
     </div>

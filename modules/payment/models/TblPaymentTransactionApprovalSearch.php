@@ -13,13 +13,15 @@ use app\modules\payment\models\TblPaymentTransactionApproval;
  */
 class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
 {
+    public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code;
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['payment_transaction_approval_code','union_code','plant_code','mcc_plant_code','bmc_code','customer_type','total_amount','total_deduction','final_amount','payment_date','qty','avg_fat','avg_snf','kg_fat','kg_snf','avg_rate','from_date','to_date','total_count','approval_status','remarks','status_date','status_by','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe']
+            [['payment_transaction_approval_code','union_code','plant_code','mcc_plant_code','bmc_code','customer_type','total_amount','total_deduction','final_amount','payment_date','qty','avg_fat','avg_snf','kg_fat','kg_snf','avg_rate','from_date','to_date','total_count','approval_status','remarks','status_date','status_by','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'safe']
         ];
     }
 
@@ -39,58 +41,8 @@ class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
      *
      * @return ActiveDataProvider
      */
-    public function searchPending($params)
-    {
-        $query = TblPaymentTransactionApproval::find();
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'total_amount' => $this->total_amount,
-            'total_deduction' => $this->total_deduction,
-            'final_amount' => $this->final_amount,
-            'payment_date' => $this->payment_date,
-            'qty' => $this->qty,
-            'avg_fat' => $this->avg_fat,
-            'avg_snf' => $this->avg_snf,
-            'kg_fat' => $this->kg_fat,
-            'kg_snf' => $this->kg_snf,
-            'avg_rate' => $this->avg_rate,
-            'from_date' => $this->from_date,
-            'to_date' => $this->to_date,
-            'total_count' => $this->total_count,
-            'status_date' => $this->status_date,
-            'originating_type' => $this->originating_type,
-        ]);
-
-        $query->andFilterWhere(['like', 'payment_transaction_approval_code', $this->payment_transaction_approval_code])
-            ->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-            ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-            ->andFilterWhere(['like', 'customer_type', $this->customer_type])
-            ->andFilterWhere(['like', 'approval_status', $this->approval_status])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'status_by', $this->status_by]);
-
-        return $dataProvider;
-    }
-
     public function search($params, $pending_approval = false) {
-        $query = TblPaymentTransactionApproval::find()->alias('pta');
+        $query = TblPaymentTransactionApproval::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -99,43 +51,53 @@ class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
 
         $this->load($params);
 
-        if ($pending_approval) {
-            $approval = new TblProcessApproval();
-            $subQuery = $approval->getApproveLavel('payment_transaction_approval');
-            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),pta.payment_transaction_approval_code) = convert(varchar(max),ap.process_code)');
-            $query->addSelect(['pta.*', 'ap.process_approval_code as process_approval_code']);
-            $this->approval_status = ['Pending','Inprogress'];
-            $query->where(['pta.approval_status' => $this->approval_status]);
-        }
-
-        Yii::$app->general->filterByOrg($query, $this);
-
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['=', 'CAST(pta.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
+        if ($pending_approval) {
+            $approval = new TblProcessApproval();
+            $subQuery = $approval->getApproveLavel('payment_transaction_approval');
+            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_payment_transaction_approval.payment_transaction_approval_code) = convert(varchar(max),ap.process_code)')
+                    ->addSelect(['tbl_payment_transaction_approval.*', 'ap.process_approval_code as process_approval_code'])
+                    ->where(['tbl_payment_transaction_approval.approval_status' => ['Pending','Inprogress']]);
+        } else {
+            $query->andFilterWhere(['like', 'tbl_payment_transaction_approval.approval_status', $this->approval_status]);
+        }
+
+        // Yii::$app->general->filterByOrg($query, $this, 'tbl_payment_transaction_approval', 'tbl_payment_transaction_approval', 'tbl_payment_transaction_approval');
+        
+        if(!empty($this->from_date)){
+            $query->andFilterWhere(['>=', 'CAST(tbl_payment_transaction_approval.created_at as date)', date('Y-m-d', strtotime($this->from_date))]);
+        }
+        if(!empty($this->to_date)){
+            $query->andFilterWhere(['<=', 'CAST(tbl_payment_transaction_approval.created_at as date)', date('Y-m-d', strtotime($this->to_date))]);
+        }
+
+        $query->andFilterWhere(['=', 'CAST(tbl_payment_transaction_approval.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
 
         $query->andFilterWhere([
-            'pta.total_amount' => $this->total_amount,
-            'pta.total_deduction' => $this->total_deduction,
-            'pta.final_amount' => $this->final_amount,
-            'pta.qty' => $this->qty,
-            'pta.avg_fat' => $this->avg_fat,
-            'pta.avg_snf' => $this->avg_snf,
-            'pta.kg_fat' => $this->kg_fat,
-            'pta.kg_snf' => $this->kg_snf,
-            'pta.avg_rate' => $this->avg_rate,
-            'pta.from_date' => $this->from_date,
-            'pta.to_date' => $this->to_date,
-            'pta.total_count' => $this->total_count,
-            'pta.status_date' => $this->status_date,
-            'pta.originating_type' => $this->originating_type,
-        ]);
-        $query->andFilterWhere(['like', 'pta.customer_type', $this->customer_type])
-                ->andFilterWhere(['like', 'pta.remarks', $this->remarks]);
+            'tbl_payment_transaction_approval.union_code' => $this->f_union_code,
+            'tbl_payment_transaction_approval.plant_code' => $this->f_plant_code,
+            'tbl_payment_transaction_approval.mcc_plant_code' => $this->f_mcc_code,
+            'tbl_payment_transaction_approval.bmc_code' => $this->f_bmc_code,
+            'tbl_payment_transaction_approval.total_amount' => $this->total_amount,
+            'tbl_payment_transaction_approval.total_deduction' => $this->total_deduction,
+            'tbl_payment_transaction_approval.final_amount' => $this->final_amount,
+            'tbl_payment_transaction_approval.qty' => $this->qty,
+            'tbl_payment_transaction_approval.avg_fat' => $this->avg_fat,
+            'tbl_payment_transaction_approval.avg_snf' => $this->avg_snf,
+            'tbl_payment_transaction_approval.kg_fat' => $this->kg_fat,
+            'tbl_payment_transaction_approval.kg_snf' => $this->kg_snf,
+            'tbl_payment_transaction_approval.avg_rate' => $this->avg_rate,
+            'tbl_payment_transaction_approval.total_count' => $this->total_count,
+            'tbl_payment_transaction_approval.status_date' => $this->status_date,
+            'tbl_payment_transaction_approval.originating_type' => $this->originating_type,
+        ])
+        ->andFilterWhere(['like', 'tbl_payment_transaction_approval.customer_type', $this->customer_type])
+        ->andFilterWhere(['like', 'tbl_payment_transaction_approval.remarks', $this->remarks]);
 
         return $dataProvider;
     }
