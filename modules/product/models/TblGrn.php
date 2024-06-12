@@ -179,8 +179,8 @@ class TblGrn extends \app\models\ChildModel {
                 if (!empty($this->payment_mode)) {
                     $this->installment($saveModel);
                 }
-                $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', $this);
-                $this->model->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
+                $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->union_code, 'grn_without_stock_entry', $this);
+                $this->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
                 if ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') {
                     $stockModel = new TblProductStock();
                     $stockModel->attributes = $this->attributes;
