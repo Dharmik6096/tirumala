@@ -100,13 +100,11 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), download_date_time, 126)', date('Y-m-d', strtotime($this->download_date_time))]);
 
         // grid filtering conditions
-        if (!empty($this->from_date)) {
-            $query->andFilterWhere(['>=', 'CAST(tbl_member_provisional.created_at as date)', date('Y-m-d', strtotime($this->from_date))]);
-        }
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'tbl_member_provisional.created_at', $from_date]);
 
-        if (!empty($this->to_date)) {
-            $query->andFilterWhere(['<=', 'CAST(tbl_member_provisional.created_at as date)', date('Y-m-d', strtotime($this->to_date))]);
-        }
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'tbl_member_provisional.created_at', $to_date]);
 
         $query->andFilterWhere([
             'tbl_member_provisional.is_active' => $this->is_active,

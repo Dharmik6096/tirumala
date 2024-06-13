@@ -237,7 +237,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
     }
 
     public function indentdispatchothersearch($params) {
-        $query = TblIndentMaster::find()->select(['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)']);
+        $query = TblIndentMaster::find()->select(['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)', 'tbl_indent_master.status_date']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -263,7 +263,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->groupBy(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code']);
+        $query->groupBy(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date']);
         // $query->andWhere('tbl_product_requisition.status="2" OR tbl_product_requisition.status="6" OR tbl_product_requisition.status="7"');
         return $dataProvider;
     }
