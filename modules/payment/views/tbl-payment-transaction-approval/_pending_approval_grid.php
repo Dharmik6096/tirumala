@@ -1,34 +1,28 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 
-// $action = Url::to(['confirm-payment']);
 $form = ActiveForm::begin([
     'id' => 'payment-transaction-approval',
 ]);
+?>
+<div class="no-effect table_form" >
+<?php
 $attributes = [
-    // ['attribute' => 'union_code', 'value' => function($model, $key, $index) use ($form) {
-    //     echo Html::activeHiddenInput($model, '[' . $index . ']payment_transaction_approval_code', ['value' => $model->payment_transaction_approval_code]);
-    //     $cnt = $index+1;
-    //     echo Html::activeHiddenInput($model, '[' . $cnt . ']payment_transaction_approval_code', ['value' => $model->payment_transaction_approval_code]);
-    //     return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-    // }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    // ['attribute' => 'plant_code', 'value' => function($model) {
-    //     return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-    // }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    // ['attribute' => 'mcc_plant_code', 'value' => function($model) {
-    //     return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-    // }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['class' => 'kartik\grid\CheckboxColumn',
+        'rowSelectedClass' => GridView::TYPE_SUCCESS,
+        'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+        'checkboxOptions' => function ($model, $key, $index) {
+            if($index == 0){
+                echo Html::hiddenInput('remarks', null, ['id' => 'remarks']);
+            }
+            return ['value' => $model['process_approval_code']];
+        }],
     ['attribute' => 'bmc_code',
-    'label' => Yii::t('app', 'BMC Code'),
-    'value' => function($model, $key, $index) use ($form){
-        echo Html::activeHiddenInput($model, '[' . $index . ']process_approval_code', ['value' => $model->process_approval_code]);
-        echo Html::activeHiddenInput($model, '[' . $index . ']payment_transaction_approval_code', ['value' => $model->payment_transaction_approval_code]);
+    'value' => function($model){
         return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
     },
     'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
@@ -40,6 +34,7 @@ $attributes = [
     ['attribute' => 'payment_cycle', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
         }, 'filter' => false, 'format' => 'raw'],
+    ['attribute' => 'customer_type','filter' => false],
     [
         'attribute' => 'payment_date',
         'value' => function($model) {
@@ -55,9 +50,8 @@ $attributes = [
     ['attribute' => 'total_deduction','filter' => false],
     ['attribute' => 'final_amount','filter' => false],
     ['attribute' => 'total_count','filter' => false],
-    ['attribute' => 'customer_type','filter' => false],
     ['attribute' => 'approval_status','filter' => false],
-    // ['attribute' => 'remarks',],
+    ['attribute' => 'remarks','filter' => false],
 ];
 
 $grid_option = [
@@ -67,11 +61,16 @@ $grid_option = [
     'default_sorting' => FALSE,
 ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
 ?>
+</div>
 <div class="panel-footer" >
     <?php
     if (!empty($dataProvider->getModels())) {
+        echo '<div class = "form-group">';
+        echo Html::label('Remarks', 'remarks', ['class' => 'control-label']);
+        echo Html::textArea('add_remarks','', ['class'=>'form-control', 'id' => 'add_remarks', 'style'=>'width:450px; margin-bottom:10px;']);
+        echo '</div>';
         echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary', 'id' => 'approve']);
     }
     ?>
@@ -83,7 +82,31 @@ $script = "
 $('.kv-panel-before').hide();
 $('#approve').click(function(e) {
     e.preventDefault();
-    $('#payment-transaction-approval').submit();
+    var checkBoxCount = $('.kv-row-checkbox:checked').length;
+    if(checkBoxCount > 0) {
+        var remarks = $('#add_remarks').val();
+        $('#remarks').val(remarks);
+        bootbox.confirm({
+            message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>Aye you sure payment transaction approve?</span>',
+            buttons: {
+                confirm: {
+                    label: '" . Yii::t('app', 'Yes') . " ',
+                    className: 'btn-primary'
+                },
+                cancel: {
+                    label: '" . Yii::t('app', 'No') . "' ,
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if(result){
+                    $('#payment-transaction-approval').submit();
+                }
+            }
+        });
+    } else {
+        bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>" . Yii::t('app', 'Please Select atleast one Record') . "</span>');
+    }
 });
 ";
 $this->registerJs($script, View::POS_END, 'payment-transaction-approval');

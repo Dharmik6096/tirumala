@@ -2,8 +2,6 @@
 
 use yii\helpers\Html;
 use kartik\detail\DetailView;
-use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
 
 $this->title = Yii::$app->label->title('view', 'Member Provisional Approval');
 $approval_detail = $model->processApprovalCode;
@@ -124,6 +122,18 @@ $approval_detail = $model->processApprovalCode;
                     'columns' => [
                             [
                             'attribute' => 'approval_status',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'customer_type',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                            [
+                            'attribute' => 'remarks',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
@@ -138,9 +148,6 @@ $approval_detail = $model->processApprovalCode;
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [// your ajax delete parameters
-                    'params' => ['id' => 1000, 'kvdelete' => true],
-                ],
                 'container' => ['id' => 'kv-demo'],
             ]);
             ?>
@@ -162,6 +169,7 @@ $approval_detail = $model->processApprovalCode;
                                     <th><?= Yii::t('app', 'Status By') ?></th>
                                     <th><?= Yii::t('app', 'Status') ?></th>
                                     <th><?= Yii::t('app', 'Date') ?></th>
+                                    <th><?= Yii::t('app', 'Remarks') ?></th>
 
                                 </tr>
                             </thead>
@@ -175,7 +183,7 @@ $approval_detail = $model->processApprovalCode;
                                     <td>
                                         <?php
                                         if ($approval->status == '1') {
-                                            $approval->status = 'Approve';
+                                            $approval->status = 'Approved';
                                         } else {
                                             $approval->status = 'Pending';
                                         }
@@ -183,6 +191,7 @@ $approval_detail = $model->processApprovalCode;
                                         ?>
                                     </td>
                                     <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
+                                    <td><?= $approval->remarks; ?></td>
                                 </tr>
                             <?php } ?>
                         </tbody>
@@ -191,7 +200,7 @@ $approval_detail = $model->processApprovalCode;
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12 view-subtitle padding_10_0 theme-box hide-grid-settings">
+            <div class="col-md-12 view-subtitle padding_10_0 theme-box">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                     <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Payment Transaction Detail') ?></h4>
                 </div>

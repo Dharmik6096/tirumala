@@ -1,6 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Payment Transaction Approvals'));
-$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'My Pending Payment Transaction Approval'), ['/payment/tbl-payment-transaction-approval/pending-approval'], true);
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Payment Transaction Approval'));
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'My Pending Approval'), ['/payment/tbl-payment-transaction-approval/pending-approval'], true);
 ?>
 
 <div class="panel panel-default panel-grid panel-main">

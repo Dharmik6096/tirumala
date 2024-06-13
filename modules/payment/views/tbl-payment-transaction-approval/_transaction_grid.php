@@ -1,8 +1,4 @@
 <?php
-
-use yii\bootstrap\ActiveForm;
-use yii\web\View;
-use yii\helpers\Html;
 $attributes = [
     ['attribute' => 'code','filter' => false],
     ['attribute' => 'name','filter' => false],
@@ -21,8 +17,19 @@ $attributes = [
     ['attribute' => 'total_amount','filter' => false],
     ['attribute' => 'total_deduction','filter' => false],
     ['attribute' => 'final_amount','filter' => false],
-    ['attribute' => 'member_count','filter' => false],
-    ['attribute' => 'type','filter' => false],
+    ['attribute' => 'is_file', 'value' => function($model){
+        $is_file = '';
+        if($model->is_file == 0){
+            $is_file = 'Pending';
+        } else if($model->is_file == 1){
+            $is_file = 'Sent';
+        } else if($model->is_file == 2){
+            $is_file = 'Processed';
+        } else if($model->is_file == 3){
+            $is_file = 'Error';
+        }
+        return $is_file;
+    }, 'filter' => false],
     ['attribute' => 'bank_name','filter' => false],
     ['attribute' => 'bank_code','filter' => false],
     ['attribute' => 'branch_name','filter' => false],    

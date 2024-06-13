@@ -96,7 +96,7 @@ class TblPaymentTransactionApproval extends \app\models\ChildModel
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'Mcc Plant'),
             'bmc_code' => Yii::t('app', 'Bmc'),
-            'customer_type' => Yii::t('app', 'Customer Type'),
+            'customer_type' => Yii::t('app', 'Payment Type'),
             'total_amount' => Yii::t('app', 'Total Amount'),
             'total_deduction' => Yii::t('app', 'Total Deduction'),
             'final_amount' => Yii::t('app', 'Final Amount'),

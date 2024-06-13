@@ -16,7 +16,6 @@ $attributes = [
         return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
     }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
     ['attribute' => 'bmc_code',
-    'label' => Yii::t('app', 'BMC Code'),
     'value' => function($model) {
         return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
     },
@@ -29,6 +28,7 @@ $attributes = [
     ['attribute' => 'payment_cycle', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
         }, 'filter' => false, 'format' => 'raw'],
+    ['attribute' => 'customer_type'],
     [
         'attribute' => 'payment_date',
         'filterType' => GridView::FILTER_DATE,
@@ -49,8 +49,8 @@ $attributes = [
     ['attribute' => 'total_deduction',],
     ['attribute' => 'final_amount',],
     ['attribute' => 'total_count',],
-    ['attribute' => 'customer_type',],
     ['attribute' => 'approval_status',],
+    ['attribute' => 'remarks',],
 ];
 
 $grid_option = [
