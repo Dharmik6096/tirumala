@@ -8,6 +8,7 @@ use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
 $this->title = Yii::$app->label->title('create', 'Plant Dispatch');
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
 ?>
 <div class="panel panel-default panel-main">
@@ -24,6 +25,7 @@ $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Y
 </div>
 <?php
 $script = "
+    var batchNoWiseInventory = '" . $batchNoWiseInventory . "';
     var grnWithoutStockEntry = '" . $grnWithoutStockEntry . "';
     $('#tblplantdispatch-dispatch_date').on('change', function(){
         addBtnEnable();
@@ -133,10 +135,10 @@ $script = "
         var sap_batch_no = $('#tblplantdispatchtxn-sap_batch_no').val();
         
         if(dispatch_date != '' && plant_code != '' && mcc_plant_code != '' && document_no != '' && document_date != '' && product_code != '' && unit_code != '' && qty != '' && rate != '' && amount != '') {
-            if((grnWithoutStockEntry == '0' || grnWithoutStockEntry == '') && sap_batch_no != '') {
+            if(batchNoWiseInventory == '1' && grnWithoutStockEntry != '1' && sap_batch_no != '') {
                 $('.add-asset-record').removeClass('disabled no_pointer');
             }
-            else if(grnWithoutStockEntry == '1') {
+            else if(batchNoWiseInventory == '0' || grnWithoutStockEntry == '1') {
                  $('.add-asset-record').removeClass('disabled no_pointer');
             }
         } else {
@@ -164,7 +166,7 @@ $script = "
             }
         }
         var flag=true;
-        if(sap_batch_no != '' && (grnWithoutStockEntry=='0' || grnWithoutStockEntry == '')){
+        if(sap_batch_no != '' && grnWithoutStockEntry != '1' && batchNoWiseInventory == '1')){
             $('.added_sap_batch_no').each(function (index, field){
                 if(field.value == sap_batch_no){
                     var msg = '" . Yii::t('app', 'SAP batch no already exists for another product') . "';
@@ -198,7 +200,7 @@ $script = "
             $('#tblplantdispatchtxn-rate').val('');
             $('#tblplantdispatchtxn-qty').val('');
             $('#tblplantdispatchtxn-amount').val('');
-            if(grnWithoutStockEntry=='0' || grnWithoutStockEntry == ''){
+            if(grnWithoutStockEntry != '1' && batchNoWiseInventory == '1'){
             $('#tblplantdispatchtxn-sap_batch_no').val('');}
             $('#tblplantdispatchtxn-lr_no').val('');
             $('tbody tr.edit_product').remove();
