@@ -47,7 +47,7 @@ use app\modules\product\models\TblIndentMaster;
  */
 class TblIndentDispatch extends \app\models\ChildModel {
 
-    public $vehicle, $ref_no, $lrno, $remaining_qty;
+    public $vehicle, $ref_no, $lrno, $remaining_qty, $status_date;
 
     /**
      * @inheritdoc
@@ -65,7 +65,7 @@ class TblIndentDispatch extends \app\models\ChildModel {
                 [['challan_date', 'dispatch_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'customer_type', 'customer_code', 'reference_no', 'route_code', 'vehicle_no', 'indent_code', 'product_code', 'status', 'rate', 'amount', 'discount_amount', 'dispatch_qty', 'lr_no', 'remaining_qty'], 'safe'],
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['vehicle', 'ref_no', 'lrno'], 'safe'],
+                [['vehicle', 'ref_no', 'lrno', 'status_date'], 'safe'],
         ];
     }
 
@@ -100,6 +100,7 @@ class TblIndentDispatch extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'status_date' => Yii::t('app', 'Indent Approve Date'),
         ];
     }
 
