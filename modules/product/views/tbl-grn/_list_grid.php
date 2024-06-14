@@ -5,6 +5,7 @@ use kartik\grid\GridView;
 
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 $visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
+$posting_date_visible = (isset($view) && $view == 1) ? TRUE : FALSE;
 ?>
 <div class="col-sm-12 padding-left-0 padding-right-0 hide-grid-settings ">
     <h5 class="panel-heading"><?= Yii::t('app', 'Product Details') ?></h5>
@@ -36,7 +37,7 @@ $visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
         ['attribute' => 'posting_date',
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->posting_date);
-            }],
+            }, 'visible' => $posting_date_visible],
     ];
 
 

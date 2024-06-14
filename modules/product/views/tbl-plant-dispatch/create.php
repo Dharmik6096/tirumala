@@ -135,10 +135,10 @@ $script = "
         var sap_batch_no = $('#tblplantdispatchtxn-sap_batch_no').val();
         
         if(dispatch_date != '' && plant_code != '' && mcc_plant_code != '' && document_no != '' && document_date != '' && product_code != '' && unit_code != '' && qty != '' && rate != '' && amount != '') {
-            if(batchNoWiseInventory == '1' && grnWithoutStockEntry != '1' && sap_batch_no != '') {
+            if(batchNoWiseInventory == '1' && (grnWithoutStockEntry == '1' || sap_batch_no != '')) {
                 $('.add-asset-record').removeClass('disabled no_pointer');
             }
-            else if(batchNoWiseInventory == '0' || grnWithoutStockEntry == '1') {
+            else if(batchNoWiseInventory == '0') {
                  $('.add-asset-record').removeClass('disabled no_pointer');
             }
         } else {
@@ -166,7 +166,7 @@ $script = "
             }
         }
         var flag=true;
-        if(sap_batch_no != '' && grnWithoutStockEntry != '1' && batchNoWiseInventory == '1')){
+        if(batchNoWiseInventory == '1' && (grnWithoutStockEntry == '1' || sap_batch_no != '')){
             $('.added_sap_batch_no').each(function (index, field){
                 if(field.value == sap_batch_no){
                     var msg = '" . Yii::t('app', 'SAP batch no already exists for another product') . "';
@@ -183,7 +183,9 @@ $script = "
             add_row += '<td>' + product_code + '<input type=\"hidden\" class=\"added_product_code\" value=\"'+product_code+'\" name=\"TblPlantDispatchTxn['+product_code+'][product_code]\" ></td>';
             add_row += '<td class=\"product_name\">' + productName + '</td>';
             add_row += '<td class=\"unit_name\">' + unitName + '<input type=\"hidden\" class=\"added_unit_code\" value=\"'+unit_code+'\" name=\"TblPlantDispatchTxn['+product_code+'][unit_code]\" ></td>';
-            add_row += '<td>' + sap_batch_no + '<input type=\"hidden\" class=\"added_sap_batch_no\" value=\"'+sap_batch_no+'\" name=\"TblPlantDispatchTxn['+product_code+'][sap_batch_no]\" ></td>';
+            if(batchNoWiseInventory == '1') {
+                add_row += '<td>' + sap_batch_no + '<input type=\"hidden\" class=\"added_sap_batch_no\" value=\"'+sap_batch_no+'\" name=\"TblPlantDispatchTxn['+product_code+'][sap_batch_no]\" ></td>';
+            }
             add_row += '<td>' + rate + '<input type=\"hidden\" class=\"added_rate\" value=\"'+rate+'\" name=\"TblPlantDispatchTxn['+product_code+'][rate]\" ></td>';
             add_row += '<td>' + qty + '<input type=\"hidden\" class=\"added_qty\" value=\"'+qty+'\" name=\"TblPlantDispatchTxn['+product_code+'][qty]\" ></td>';
             add_row += '<td>' + amount + '<input type=\"hidden\" class=\"added_amount\" value=\"'+amount+'\" name=\"TblPlantDispatchTxn['+product_code+'][amount]\" ></td>';
@@ -200,8 +202,9 @@ $script = "
             $('#tblplantdispatchtxn-rate').val('');
             $('#tblplantdispatchtxn-qty').val('');
             $('#tblplantdispatchtxn-amount').val('');
-            if(grnWithoutStockEntry != '1' && batchNoWiseInventory == '1'){
-            $('#tblplantdispatchtxn-sap_batch_no').val('');}
+            if(batchNoWiseInventory == '1'){
+                $('#tblplantdispatchtxn-sap_batch_no').val('');
+            }
             $('#tblplantdispatchtxn-lr_no').val('');
             $('tbody tr.edit_product').remove();
             $('.single_entry_area').addClass('disabled no_pointer');

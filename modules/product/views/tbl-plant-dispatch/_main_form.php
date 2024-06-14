@@ -17,12 +17,12 @@ $sapBatchDisable = $batchNoWiseInventory == 1 ? '' : 'disp_none';
 
 <?php
 $form = ActiveForm::begin([
-    'options' => ['id' => 'grn-form'],
-    'validateOnBlur' => FALSE,
-    'validateOnChange' => FALSE,
-    'enableClientValidation' => true,
-    'validateOnSubmit' => true,
-]);
+            'options' => ['id' => 'grn-form'],
+            'validateOnBlur' => FALSE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
@@ -43,7 +43,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblplantdispatch-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
-	        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblplantdispatch-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblplantdispatch-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
             <?= $form->field($model, 'document_no')->textInput() ?>
@@ -70,7 +70,7 @@ $form = ActiveForm::begin([
         </div>
         <?php
         if ($batchNoWiseInventory == 1) {
-        ?>
+            ?>
             <div class="col-sm-2 sap_batch_no">
                 <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
             </div>
@@ -111,9 +111,7 @@ $form = ActiveForm::begin([
                 <th><?= Yii::t('app', 'Product Code') ?></th>
                 <th><?= $txModel->getAttributeLabel('product_code') ?></th>
                 <th><?= $txModel->getAttributeLabel('unit_code') ?></th>
-                <th><?php if ($batchNoWiseInventory) {
-                        echo $txModel->getAttributeLabel('sap_batch_no');
-                    } ?></th>
+                <?php if ($batchNoWiseInventory) {echo '<th>' . $txModel->getAttributeLabel('sap_batch_no') . '</th>'; } ?>
                 <th><?= $txModel->getAttributeLabel('rate') ?></th>
                 <th><?= $txModel->getAttributeLabel('qty') ?></th>
                 <th><?= $txModel->getAttributeLabel('amount') ?></th>
@@ -159,7 +157,7 @@ $form = ActiveForm::begin([
         AjaxSubmitButton::end();
         ?>
         <?= Yii::$app->controls->reset(); ?>
-        <?= Yii::$app->controls->cancel($model); ?>
+<?= Yii::$app->controls->cancel($model); ?>
     </div>
 </div>
 
