@@ -172,7 +172,7 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                             'ubp.bank_account_no as DebitAccountNo',
                             'ubp.account_holder_name as DebitAccName',
                             'convert(varchar, getdate(), 12) ValueDate',
-                            'case when lower(ISNULL(ubp.corporate_code,\'slips\'))=\'ceft\' then (case when b.old_bank_code=ubp.bank_code then \'CARG\' else \'CEFT\' end) else \'SLIPS\' end as TransactionType',
+                            'case when b.old_bank_code=ubp.bank_code then \'CARG\' when lower(ISNULL(ubp.corporate_code,\'slips\'))=\'ceft\' then \'CEFT\' else \'SLIPS\' end as TransactionType',
                             'ba.auth_url',
                             'ba.payment_url',
                             'ba.reverse_check_url',
@@ -223,8 +223,8 @@ class TblPaymentTransaction extends \app\models\ChildModel {
 //                $memberPaymentModel->dcs_code = $data->dcs_code;
 //                $memberPaymentModel->union_code = $data->union_code;
                 $disburseCount = $memberPaymentModel->find()->select('count(*) as count,payment_status')
-                ->where(['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
-                ->groupBy(['payment_status'])->asArray()->all();
+                                ->where(['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
+                                ->groupBy(['payment_status'])->asArray()->all();
                 $count = count($disburseCount);
                 if ($count == 1 && lower($disburseCount[0]['payment_status']) == 'disburse') {
                     Yii::$app->db->createCommand()
@@ -232,12 +232,12 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                                 'disburse_amount' => new Expression('final_amount'),
                                 'disburse_date' => $date,
                                 'payment_status' => 'Disburse',
-                                    ], ['union_code'  => $data->union_code, 'dcs_payment_cycle_code'  => $data->dcs_payment_cycle_code, 'dcs_code'  => $data->dcs_code,  new Expression('LOWER(payment_status) = "sent"')])
+                                    ], ['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code, new Expression('LOWER(payment_status) = "sent"')])
                             ->execute();
-                     
                 }
             }
         }
         return;
     }
+
 }
