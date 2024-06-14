@@ -191,16 +191,18 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= $form->field($model, 'post_office')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="clearfix"></div>
+
+        <div class="col-sm-4 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['currentAddressProof']) ?>
+            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
+        </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                      ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                     ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
-        </div>
-        <div class="col-sm-4 icon-set">
-            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['currentAddressProof']) ?>
-            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'email')->textInput() ?>
@@ -238,7 +240,7 @@ if ($model->isNewRecord) {
     </div>
 
 
-    <div class="col-md-12 padding_10_0 theme-box ">
+    <div class="row col-md-12 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Bank Details</h4>
         </div>
@@ -253,7 +255,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                      ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                     ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2 icon-set">
@@ -264,17 +266,6 @@ if ($model->isNewRecord) {
             <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCard', 'aadharCardBack']) ?>
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
-        <div class="col-sm-12">
-            <div class="col-sm-2">
-                <?= $form->field($model, 'voter_id')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'annual_income')->textInput() ?>
-            </div>        
-        </div>
-        <div class="col-sm-4 mt10">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_verify'); ?>
-        </div>
         <div class="col-sm-2 icon-set">
             <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['voterID']) ?>
             <?= $form->field($model, 'voter_id')->textInput() ?>
@@ -283,10 +274,10 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'annual_income')->textInput() ?>
         </div>
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'is_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_verify'); ?>
         </div>
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'is_aadhar_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_aadhar_verify'); ?>
         </div>
         <!--    <div class="col-sm-4">
         <?php // $form->field($model, 'payment_mode')->textInput() ?>

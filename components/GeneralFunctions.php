@@ -2521,7 +2521,7 @@ class GeneralFunctions extends Component {
             if ($links != '') {
                 $class = 'icon-set-right';
             }
-            $links .= ' ' . Html::a('<i class="fa fa-picture-o"></i>', $record['attachment'], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank', 'class' => $class]);
+            $links .= ' ' . Html::a('<i class="fas fa-image"></i>', $record['attachment'], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank', 'class' => $class]);
         }
         return $links;
     }

@@ -227,15 +227,16 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <!--<? = $form->field($model, 'pincode')->textInput() ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-4 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['currentAddressProof']) ?>
+            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
+        </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'email')->textInput() ?>
-        </div>
-        <div class="col-sm-4 icon-set">
-            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['currentAddressProof']) ?>
-            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('relation', $model, $form, '', $model->getAttributeLabel('email_relation'), false, 'email_relation'); ?>
