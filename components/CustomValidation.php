@@ -989,9 +989,9 @@ class CustomValidation extends Component {
             'SAAHAJ' => [
                 'TblMemberProvisional' => [
                     'default' => [
-                            [['gender_code'], 'required'],
+                            [['gender_code', 'branch_code', 'bank_account_no', 'bank_code', 'adhar_no', 'email', 'mobile_no'], 'required'],
                             [['daily_milk_total', 'home_consumption_milk', 'market_surplus_milk'], 'required', 'on' => ['member_detail']],
-                            [['is_contact_verified', 'is_verify', 'is_email_verify'], 'validateFlag', 'on' => ['MemberApprove']],
+                            [['is_contact_verified', 'is_verify', 'is_email_verify', 'is_aadhar_verify'], 'validateFlag'],
                     ],
                 ],
                 'TblMember' => [

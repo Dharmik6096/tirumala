@@ -189,17 +189,21 @@ if ($model->isNewRecord) {
             <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'tblmemberprovisional-union_code', 'form-group col-sm-12', 'Region', 'region_code'); ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                   ?>-->
+            <?= $form->field($model, 'post_office')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-4">
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                   ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
         </div>
-        <div class="col-sm-4">
-            <?= $form->field($model, 'email')->textInput() ?>
+        <div class="col-sm-4 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['currentAddressProof']) ?>
+            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
+            <?= $form->field($model, 'email')->textInput() ?>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('relation', $model, $form, '', $model->getAttributeLabel('email_relation'), false, 'email_relation'); ?>
@@ -244,29 +248,34 @@ if ($model->isNewRecord) {
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tblmemberprovisional-bank_code', '', 'Branch', 'branch_code'); ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['bankPassbook']) ?>
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                        ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                   ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['panCard']) ?>
             <?= $form->field($model, 'pan_no')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCard', 'aadharCardBack']) ?>
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
-        <div class="col-sm-12">
-            <div class="col-sm-2">
-                <?= $form->field($model, 'voter_id')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'annual_income')->textInput() ?>
-            </div>        
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['voterID']) ?>
+            <?= $form->field($model, 'voter_id')->textInput() ?>
         </div>
-        <div class="col-sm-4 mt10">
+        <div class="col-sm-2">
+            <?= $form->field($model, 'annual_income')->textInput() ?>
+        </div>
+        <div class="col-sm-2 mt10">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_verify'); ?>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'is_aadhar_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
         <!--    <div class="col-sm-4">
         <?php // $form->field($model, 'payment_mode')->textInput() ?>

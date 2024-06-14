@@ -239,9 +239,16 @@ $script = "
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success') {
                             // $('#OtpModal').modal('toggle'); 
-                           sendotp();
-//                          $('form#w1').submit();
-//allow_without_otp
+                            //sendotp();
+                            //$('form#w1').submit();
+                            //allow_without_otp
+                            if(obj.is_send_otp == 'yes'){
+                                sendotp();
+                            } else {
+                                $('#otp-form').submit();
+                                $('#loadercontent').show();
+                                $('#pageloader').show();
+                            }
                         } else if (obj.status == 'allow_without_otp') { 
                             $('#otp-form').submit();
                             $('#loadercontent').show();
@@ -261,8 +268,15 @@ $script = "
                                 },
                                 callback: function (result) {
                                     if(result){
-//                                        $('form#w1').submit();
-                                        sendotp();
+                                        //$('form#w1').submit();
+                                        // sendotp();
+                                        if(obj.is_send_otp == 'yes'){
+                                            sendotp();
+                                        } else {
+                                            $('#otp-form').submit();
+                                            $('#loadercontent').show();
+                                            $('#pageloader').show();
+                                        }
                                     }
                                 }
                             });
@@ -281,8 +295,15 @@ $script = "
                                 },
                                 callback: function (result) {
                                     if(result){
-//                                        $('form#w1').submit();
-                                        sendotp();
+                                        //$('form#w1').submit();
+                                        // sendotp();
+                                        if(obj.is_send_otp == 'yes'){
+                                            sendotp();
+                                        } else {
+                                            $('#otp-form').submit();
+                                            $('#loadercontent').show();
+                                            $('#pageloader').show();
+                                        }
                                     }
                                 }
                             });
