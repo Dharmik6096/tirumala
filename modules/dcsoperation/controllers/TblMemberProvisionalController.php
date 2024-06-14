@@ -260,6 +260,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $doc_model[] = $attachments;
         }
         if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
             $doc_path = Yii::$app->params['document_upload'] . 'provisional_member';
 
             if (Yii::$app->general->checkDirectory($doc_path)) {
@@ -326,6 +327,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $status = 'Approve';
                                 $model->scenario = 'MemberApprove';
                                 $save_model[] = $model;
+                                if (!empty(Yii::$app->request->post()['TblMemberProvisional']['is_operator_aggre'])) {
+                                    $save_model[] = $model;
+                                }
+
                                 $all_doc = [];
                                 $memberdoc = [];
                                 if (strtolower($model->provisional_status) == 'approve') {

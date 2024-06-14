@@ -5146,3 +5146,20 @@ tr.highlightRow {
     height: 115px !important;
     text-align: center;
 }
+
+.icon-set, .icon-set-checkbox {
+    position: relative;
+}
+
+.icon-set a{
+    position: absolute;
+    right: 10px;
+}
+.icon-set-checkbox a{
+    position: absolute;
+    right: 68px;
+    top: 10px;
+}
+.icon-set a.icon-set-right, .icon-set-checkbox a.icon-set-right {
+    margin-right: 15px;
+}

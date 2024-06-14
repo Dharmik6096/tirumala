@@ -111,6 +111,7 @@ use yii\web\View;
                                     <?php } ?>
                                 </tbody>
                             </table>
+                    
                         </div>
                         <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                             <div class="form-group">
