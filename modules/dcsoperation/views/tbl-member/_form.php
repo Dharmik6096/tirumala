@@ -288,16 +288,18 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['panCard']) ?>
             <?= $form->field($model, 'pan_no')->textInput() ?>
         </div>
-        <div class="col-sm-2 icon-set">
-            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['aadharCard', 'aadharCardBack']) ?>
-            <?= $form->field($model, 'adhar_no')->textInput() ?>
-        </div>
-        <div class="col-sm-2 hidden-for-specific-client icon-set">
-            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['voterID']) ?>
-            <?= $form->field($model, 'voter_id')->textInput() ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'annual_income')->textInput() ?>
+        <div class="col-sm-12">
+            <div class="col-sm-2 icon-set">
+                <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['aadharCard', 'aadharCardBack']) ?>
+                <?= $form->field($model, 'adhar_no')->textInput() ?>
+            </div>
+            <div class="col-sm-2 hidden-for-specific-client icon-set">
+                <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['voterID']) ?>
+                <?= $form->field($model, 'voter_id')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'annual_income')->textInput() ?>
+            </div>
         </div>
         <!--    <div class="col-sm-3">
                 <? = $form->field($model, 'payment_mode')->textInput() ?>

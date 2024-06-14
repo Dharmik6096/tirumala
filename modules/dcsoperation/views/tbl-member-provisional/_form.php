@@ -253,7 +253,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                   ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                      ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2 icon-set">
