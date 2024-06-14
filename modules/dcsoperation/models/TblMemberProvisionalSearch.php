@@ -70,7 +70,6 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['created_at' => SORT_ASC]],
         ]);
 
         $this->load($params);
@@ -123,7 +122,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
                 ->andFilterWhere(['like', 'tbl_member_provisional.employee_name', $this->employee_name])
                 ->andFilterWhere(['like', 'tbl_member_provisional.employee_code', $this->employee_code])
                 ->andFilterWhere(['like', 'tbl_region.region_name', $this->region_code]);
-
+        $query->orderBy(['tbl_member_provisional.created_at' => SORT_DESC]);
         return $dataProvider;
     }
 

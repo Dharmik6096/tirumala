@@ -260,7 +260,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $doc_model[] = $attachments;
         }
         if (Yii::$app->request->post()) {
-            $model->load(Yii::$app->request->post());
             $doc_path = Yii::$app->params['document_upload'] . 'provisional_member';
 
             if (Yii::$app->general->checkDirectory($doc_path)) {
@@ -316,6 +315,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $unlink_files = [];
                         $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
                         $deleteModel = [];
+                        $model->load(Yii::$app->request->post());
                         if ($config == 1) {
                             $modelStages = new TblApprovalStagesDetail();
                             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
@@ -327,10 +327,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $status = 'Approve';
                                 $model->scenario = 'MemberApprove';
                                 $save_model[] = $model;
-                                if (!empty(Yii::$app->request->post()['TblMemberProvisional']['is_operator_aggre'])) {
-                                    $save_model[] = $model;
-                                }
-
                                 $all_doc = [];
                                 $memberdoc = [];
                                 if (strtolower($model->provisional_status) == 'approve') {
