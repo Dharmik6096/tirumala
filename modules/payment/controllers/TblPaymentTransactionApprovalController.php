@@ -106,10 +106,16 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
         $dataProvider = new ActiveDataProvider([
             'query' => $transaction->find()->where(['payment_transaction_approval_code' => $payment_transaction_approval_code]),
         ]);
+        $approval = new TblProcessApproval();
+        $approvalDataProvider = new ActiveDataProvider([
+            'query' => $approval->find()->where(['process_code' => $payment_transaction_approval_code]),
+        ]);
         return $this->render('view', [
             'model' => $this->model,
             'dataProvider' => $dataProvider,
-            'transaction' => $transaction
+            'transaction' => $transaction,
+            'approvalDataProvider' => $approvalDataProvider,
+            'approval' => $approval
         ]);
     }
 

@@ -158,44 +158,12 @@ $approval_detail = $model->processApprovalCode;
                     <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Payment Transaction Approval Detail') ?></h4>
                 </div>
                 <div class="col-sm-12">
-                    <table class="table table-bordered table-hover kv-grid-table kv-table-w">
-                        <tbody>
-                            <thead>
-                                <tr>
-                                    <th><?= Yii::t('app', 'Level') ?></th>
-                                    <th><?= Yii::t('app', 'Mode') ?></th>
-                                    <th><?= Yii::t('app', 'User') ?></th>
-                                    <th><?= Yii::t('app', 'Login Type') ?></th>
-                                    <th><?= Yii::t('app', 'Status By') ?></th>
-                                    <th><?= Yii::t('app', 'Status') ?></th>
-                                    <th><?= Yii::t('app', 'Date') ?></th>
-                                    <th><?= Yii::t('app', 'Remarks') ?></th>
-
-                                </tr>
-                            </thead>
-                            <?php foreach ($approval_detail as $approval) { ?>
-                                <tr>
-                                    <td><?= $approval->level; ?></td>
-                                    <td><?= $approval->approval_mode; ?></td>
-                                    <td><?= Yii::$app->general->getforeignkey($approval->userCode, 'name') ?></td>
-                                    <td><?= $approval->login_type; ?></td>
-                                    <td><?= Yii::$app->general->getforeignkey($approval->updatedBy, 'name') ?></td>
-                                    <td>
-                                        <?php
-                                        if ($approval->status == '1') {
-                                            $approval->status = 'Approved';
-                                        } else {
-                                            $approval->status = 'Pending';
-                                        }
-                                        echo $approval->status;
-                                        ?>
-                                    </td>
-                                    <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
-                                    <td><?= $approval->remarks; ?></td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+                    <?=
+                    $this->render('_approval_process_grid', [
+                        'approvalDataProvider' => $approvalDataProvider,
+                        'approval' => $approval
+                    ])
+                    ?>
                 </div>
             </div>
         </div>
