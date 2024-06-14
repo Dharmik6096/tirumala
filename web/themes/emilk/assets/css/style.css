@@ -5466,3 +5466,7 @@ div#w12 > .card.border-default {
     float: right;
     padding-right: 55px;
 }
+.remark-text-aria{
+    margin-bottom: 10px;
+    height: 43px !important;
+}
