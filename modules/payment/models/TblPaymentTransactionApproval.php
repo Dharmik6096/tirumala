@@ -65,23 +65,7 @@ class TblPaymentTransactionApproval extends \app\models\ChildModel
     public function rules()
     {
         return [
-            // [['payment_transaction_approval_code'], 'required'],
-            // [['total_amount', 'total_deduction', 'final_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
-            // [['payment_date', 'from_date', 'to_date', 'status_date', 'created_at', 'updated_at'], 'safe'],
-            // [['total_count', 'originating_type'], 'integer'],
-            // [['payment_transaction_approval_code'], 'string', 'max' => 50],
-            // [['union_code'], 'string', 'max' => 3],
-            // [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            // [['bmc_code'], 'string', 'max' => 12],
-            // [['customer_type'], 'string', 'max' => 10],
-            // [['approval_status', 'status_by'], 'string', 'max' => 20],
-            // [['remarks'], 'string', 'max' => 1000],
-            // [['created_by', 'updated_by'], 'string', 'max' => 14],
-            // [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            // [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            // [['bmc_code', 'customer_type', 'from_date', 'to_date'], 'unique', 'targetAttribute' => ['bmc_code', 'customer_type', 'from_date', 'to_date'], 'message' => 'The combination of Bmc Code, Customer Type, From Date and To Date has already been taken.'],
             [['payment_transaction_approval_code','union_code','plant_code','mcc_plant_code','bmc_code','customer_type','total_amount','total_deduction','final_amount','payment_date','qty','avg_fat','avg_snf','kg_fat','kg_snf','avg_rate','from_date','to_date','total_count','approval_status','remarks','status_date','status_by','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5','process_approval_code'],'safe'],
-            // [['payment_transaction_approval_code','approval_status'],'required', 'on' => ['approve']]
         ];
     }
 

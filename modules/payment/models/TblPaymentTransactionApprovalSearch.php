@@ -13,7 +13,6 @@ use app\modules\payment\models\TblPaymentTransactionApproval;
  */
 class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
 {
-    public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code;
     /**
      * @inheritdoc
      */
@@ -21,7 +20,6 @@ class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
     {
         return [
             [['payment_transaction_approval_code','union_code','plant_code','mcc_plant_code','bmc_code','customer_type','total_amount','total_deduction','final_amount','payment_date','qty','avg_fat','avg_snf','kg_fat','kg_snf','avg_rate','from_date','to_date','total_count','approval_status','remarks','status_date','status_by','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
-            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'safe']
         ];
     }
 
@@ -65,9 +63,8 @@ class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
                     ->where(['tbl_payment_transaction_approval.approval_status' => ['Pending','Inprogress']]);
         } else {
             $query->andFilterWhere(['like', 'tbl_payment_transaction_approval.approval_status', $this->approval_status]);
+            Yii::$app->general->filterByOrg($query, $this, 'tbl_payment_transaction_approval', 'tbl_payment_transaction_approval', 'tbl_payment_transaction_approval');
         }
-
-        // Yii::$app->general->filterByOrg($query, $this, 'tbl_payment_transaction_approval', 'tbl_payment_transaction_approval', 'tbl_payment_transaction_approval');
         
         if(!empty($this->from_date)){
             $query->andFilterWhere(['>=', 'CAST(tbl_payment_transaction_approval.created_at as date)', date('Y-m-d', strtotime($this->from_date))]);
@@ -79,10 +76,6 @@ class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
         $query->andFilterWhere(['=', 'CAST(tbl_payment_transaction_approval.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
 
         $query->andFilterWhere([
-            'tbl_payment_transaction_approval.union_code' => $this->f_union_code,
-            'tbl_payment_transaction_approval.plant_code' => $this->f_plant_code,
-            'tbl_payment_transaction_approval.mcc_plant_code' => $this->f_mcc_code,
-            'tbl_payment_transaction_approval.bmc_code' => $this->f_bmc_code,
             'tbl_payment_transaction_approval.total_amount' => $this->total_amount,
             'tbl_payment_transaction_approval.total_deduction' => $this->total_deduction,
             'tbl_payment_transaction_approval.final_amount' => $this->final_amount,

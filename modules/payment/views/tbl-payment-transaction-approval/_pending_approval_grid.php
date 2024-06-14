@@ -4,6 +4,7 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 $form = ActiveForm::begin([
     'id' => 'payment-transaction-approval',
@@ -59,6 +60,12 @@ $grid_option = [
     'attributes' => $attributes,
     'active_column' => false,
     'default_sorting' => FALSE,
+    'actions' => [
+        'detail-view' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View'), 'class' => '', 'target' => '_blank'];
+            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/payment/tbl-payment-transaction-approval/view', 'payment_transaction_approval_code' => $model->payment_transaction_approval_code, 'bmc_code' => $model->bmc_code], $options);
+        },
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
@@ -69,7 +76,7 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
     if (!empty($dataProvider->getModels())) {
         echo '<div class = "form-group">';
         echo Html::label('Remarks', 'remarks', ['class' => 'control-label']);
-        echo Html::textArea('add_remarks','', ['class'=>'form-control', 'id' => 'add_remarks', 'style'=>'width:450px; margin-bottom:10px;']);
+        echo Html::textArea('add_remarks','', ['class'=>'form-control remark-text-aria', 'id' => 'add_remarks']);
         echo '</div>';
         echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary', 'id' => 'approve']);
     }

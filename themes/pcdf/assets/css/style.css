@@ -5146,3 +5146,8 @@ tr.highlightRow {
     height: 115px !important;
     text-align: center;
 }
+
+.remark-text-aria{
+    margin-bottom: 10px;
+    height: 43px !important;
+}
