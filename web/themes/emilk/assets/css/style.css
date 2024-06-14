@@ -717,7 +717,6 @@ label{
 }
 .required > .form-label:after{
     content: "*";
-    margin-left: 3px;
 }
 .has-error .control-label{
     color: #607188;

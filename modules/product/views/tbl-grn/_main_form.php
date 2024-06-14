@@ -75,7 +75,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-1"></div>
-    <div class="col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
+    <div class="row col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Product Details</h4>
         </div>

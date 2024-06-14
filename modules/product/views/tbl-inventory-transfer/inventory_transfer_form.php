@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Inventory Transfer Details</h4>
         </div>
-        <div class="col-md-10">
+        <div class="row col-md-10">
             <div class="col-sm-2 create_fields">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
             </div>
