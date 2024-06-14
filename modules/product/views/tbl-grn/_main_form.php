@@ -109,6 +109,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field">
             <?= $form->field($txModel, 'gross_amount')->textInput(['readonly' => TRUE]) ?>
         </div>
+        <div class="col-sm-2 reset_field">
+            <?= Yii::$app->controls->date($txModel, $form, 'manuf_date', '', date('Y-m-d'), false, false, true); ?>
+        </div>
 
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">

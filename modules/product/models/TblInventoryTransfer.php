@@ -350,7 +350,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         if ($this->from_type == $this->to_type && $this->from_code == $this->to_code) {
             $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' Not Allow to Transfer to its self.'));
         }
-        if (strtoupper($this->to_type) == 'BMC') {
+        /* if (strtoupper($this->to_type) == 'BMC') {
             $is_mcc = Yii::$app->general->getforeignkey($this->bmcToCode, 'is_mcc');
             $bmc_name = Yii::$app->general->getforeignkey($this->bmcToCode, 'bmc_name');
             if ($is_mcc == '1') {
@@ -361,7 +361,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             if (!empty($dcs_detail) && $dcs_detail->is_bmc == '1') {
                 $this->addError('to_code', Yii::t('app/validation', ' Not Allow to Transfer to DCS ' . $dcs_detail->dcs_name));
             }
-        }
+        } */
     }
 
     public function validateSapBatchNo($attribute, $param) {

@@ -243,8 +243,6 @@ $script = "
                         {
                             $('#tblgrn-invoice_no').val(obj.document_no);
                             $('#tblgrn-invoice_date').parent().kvDatepicker('update',obj.document_date);
-                             var date = $('#tblgrn-invoice_date').val();
-                            console.log(date);
                         }
                     },
                     error:function(data){

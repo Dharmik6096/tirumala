@@ -51,24 +51,24 @@ class TblPlantDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv']],
-                [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
-                [['bmc_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
-                [['product_code', 'rate', 'qty'], 'required', 'on' => ['importCsv']],
-                [['sap_batch_no'], 'required', 'on' => ['importCsv'], 'when' => function ($model) {
+            [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv']],
+            [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
+            [['bmc_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
+            [['product_code', 'rate', 'qty'], 'required', 'on' => ['importCsv']],
+            [['sap_batch_no'], 'required', 'on' => ['importCsv'], 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     return $batchNoWiseInventory == 1;
                 }],
-                [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
-                [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no', 'bmc_code'], 'safe'],
-                [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['status'], 'default', 'value' => '0'],
-                [['document_no'], 'unique', 'except' => ['importCsv']],
-                [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv']],
-                [['dispatch_date', 'document_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['dispatch_date', 'document_date'], 'convertDate', 'on' => ['importCsv']],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
-                [['bmc_code'], function ($attribute, $params) {
+            [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
+            [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no', 'bmc_code'], 'safe'],
+            [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'vendor_name'], 'safe'],
+            [['status'], 'default', 'value' => '0'],
+            [['document_no'], 'unique', 'except' => ['importCsv']],
+            [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['dispatch_date', 'document_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['dispatch_date', 'document_date'], 'convertDate', 'on' => ['importCsv']],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
+            [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, TRUE);
                 }, 'on' => ['importCsv']],
         ];
@@ -101,6 +101,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'bmc_code' => Yii::t('app', 'BMC'),
+            'vendor_name' => Yii::t('app', 'Vendor Name'),
         ];
     }
 

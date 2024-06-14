@@ -117,6 +117,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                     'model' => $model,
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
+                    'view' => TRUE
                 ])
                 ?>
             </div> 

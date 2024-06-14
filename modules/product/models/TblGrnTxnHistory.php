@@ -53,7 +53,7 @@ class TblGrnTxnHistory extends \yii\db\ActiveRecord {
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['operation_type'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe']
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'manuf_date', 'posting_date'], 'safe']
         ];
     }
 
@@ -84,6 +84,8 @@ class TblGrnTxnHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'manuf_date' => Yii::t('app', 'Manufacturing Date'),
+            'posting_date' => Yii::t('app', 'Posting Date'),
         ];
     }
 

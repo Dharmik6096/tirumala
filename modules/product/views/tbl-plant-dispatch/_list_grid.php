@@ -23,6 +23,7 @@ $visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
         ['attribute' => 'qty', 'filter' => false],
         ['attribute' => 'amount', 'filter' => FALSE],
         ['attribute' => 'lr_no', 'filter' => FALSE],
+        ['attribute' => 'po_itemno', 'filter' => FALSE],
     ];
 
 
