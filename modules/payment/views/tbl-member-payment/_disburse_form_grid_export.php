@@ -218,7 +218,13 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
                     success: function (data) {
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success') {
-                           sendotp();
+                            if(obj.is_send_otp == 'yes'){
+                                sendotp();
+                            } else {
+                                $('#otp-form').submit();
+                                $('#loadercontent').show();
+                                $('#pageloader').show();
+                            }
                         } else if (obj.status == 'allow_without_otp') { 
                             $('#otp-form').submit();
                             $('#loadercontent').show();
@@ -238,7 +244,13 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
                                 },
                                 callback: function (result) {
                                     if(result){
-                                        sendotp();
+                                        if(obj.is_send_otp == 'yes'){
+                                            sendotp();
+                                        } else {
+                                            $('#otp-form').submit();
+                                            $('#loadercontent').show();
+                                            $('#pageloader').show();
+                                        }
                                     }
                                 }
                             });
@@ -257,7 +269,13 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
                                 },
                                 callback: function (result) {
                                     if(result){
-                                        sendotp();
+                                        if(obj.is_send_otp == 'yes'){
+                                            sendotp();
+                                        } else {
+                                            $('#otp-form').submit();
+                                            $('#loadercontent').show();
+                                            $('#pageloader').show();
+                                        }
                                     }
                                 }
                             });

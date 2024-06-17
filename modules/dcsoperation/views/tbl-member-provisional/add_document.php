@@ -22,33 +22,33 @@ use yii\web\View;
 
             <?php
             $attributes = [
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'provisional_member_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                        [
+                            [
                             'attribute' => 'member_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                        [
+                            [
                             'attribute' => 'ref_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'ex_member_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                        [
+                            [
                             'attribute' => 'pro_ex_member_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                        [
+                            [
                             'attribute' => 'member_name',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
@@ -111,6 +111,9 @@ use yii\web\View;
                                     <?php } ?>
                                 </tbody>
                             </table>
+                            <div class="col-sm-4 mt15">
+                                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_operator_aggre'); ?>
+                            </div>
                         </div>
                         <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                             <div class="form-group">

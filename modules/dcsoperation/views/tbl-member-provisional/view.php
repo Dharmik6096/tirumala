@@ -243,7 +243,20 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                         ],
                             [
                             'attribute' => 'applicant_relation',
-                            'value' => isset($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'value' => !empty($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'post_office',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'is_aadhar_verify',
+                            'value' => ($model->is_aadhar_verify == 0) ? 'Pending' : ($model->is_aadhar_verify == 1 ? 'Verify' : ''),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -267,7 +280,12 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             [
                             'attribute' => 'is_verify',
                             'value' => ($model->is_verify == 0) ? 'Pending' : ($model->is_verify == 1 ? 'Verify' : ''),
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'is_operator_aggre',
+                            'value' => ($model->is_operator_aggre == 0) ? 'Pending' : ($model->is_operator_aggre == 1 ? 'Verify' : ''),
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],

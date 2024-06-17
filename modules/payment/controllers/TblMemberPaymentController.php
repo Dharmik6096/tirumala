@@ -1767,6 +1767,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            !empty($bmcCode) && $bmcCode == '004' && 
             $msg_type = '';
             $msg = '';
+            $is_send_otp = 'yes';
+            $payment_disburse_with_workflow = Yii::$app->general->getUnionConfiguration($model->union_code, 'payment_disburse_with_workflow', 'PORTAL') == 1 ? true : false;
+            if ($payment_disburse_with_workflow) {
+                $is_send_otp = 'no';
+            }
             if (!empty($bmcCode) && !empty($modelData) && (!empty($modelData->file_path) || $modelData->integration_mode == 'API') && !empty($modelData->mobile_no)) {
 
                 try {
@@ -1836,7 +1841,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
 
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
-            return Json::encode(['status' => $status, 'message' => $msg]);
+            return Json::encode(['status' => $status, 'message' => $msg, 'is_send_otp' => $is_send_otp]);
         }
     }
 
