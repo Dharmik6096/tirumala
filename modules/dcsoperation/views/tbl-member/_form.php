@@ -188,7 +188,8 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
 
         <div class="col-sm-4 padding_left_right_0">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-12 icon-set">
+                    <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['aadharCard', 'aadharCardBack']) ?>
                     <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
                 </div>
                 <div class="col-sm-12">
