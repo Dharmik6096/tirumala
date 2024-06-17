@@ -100,10 +100,10 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
 
         // grid filtering conditions
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $query->andFilterWhere(['>=', 'tbl_member_provisional.created_at', $from_date]);
+        $query->andFilterWhere(['>=', 'CAST(tbl_member_provisional.created_at as date)', $from_date]);
 
         $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'tbl_member_provisional.created_at', $to_date]);
+        $query->andFilterWhere(['<=', 'CAST(tbl_member_provisional.created_at as date)', $to_date]);
 
         $query->andFilterWhere([
             'tbl_member_provisional.is_active' => $this->is_active,
