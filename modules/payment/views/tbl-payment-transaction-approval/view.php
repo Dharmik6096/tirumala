@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 
-$this->title = Yii::$app->label->title('view', 'Member Provisional Approval');
+$this->title = Yii::$app->label->title('view', 'Payment Transaction Approval');
 $approval_detail = $model->processApprovalCode;
 ?>
 <div class="panel panel-default panel-grid panel-main">
