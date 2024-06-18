@@ -193,7 +193,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'post_office')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                             ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                   ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -253,7 +253,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                             ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                   ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2 icon-set">
@@ -370,28 +370,28 @@ $(document).ready(function() {
         enableDisableField();
     });
     function enableDisableField(){
-        $('#tblmemberprovisional-mobile_no').prop('disabled', false);
-        $('#tblmemberprovisional-email').prop('disabled', false);
-        $('#tblmemberprovisional-adhar_no').prop('disabled', false);
+        $('.field-tblmemberprovisional-mobile_no').removeClass('disabled no_pointer');
+        $('.field-tblmemberprovisional-email').removeClass('disabled no_pointer');
+        $('.field-tblmemberprovisional-adhar_no').removeClass('disabled no_pointer');
         $('.field-tblmemberprovisional-bank_code').removeClass('disabled no_pointer');
         $('.field-tblmemberprovisional-branch_code').removeClass('disabled no_pointer');
-        $('#tblmemberprovisional-bank_account_no').prop('disabled', false);
+        $('.field-tblmemberprovisional-bank_account_no').removeClass('disabled no_pointer');
         $('#tblmemberprovisional-ifsc').prop('disabled', false);
         
         if ($('#tblmemberprovisional-is_contact_verified').is(':checked')) {
-            $('#tblmemberprovisional-mobile_no').prop('disabled', true);
+            $('.field-tblmemberprovisional-mobile_no').addClass('disabled no_pointer');
         }
         if ($('#tblmemberprovisional-is_email_verify').is(':checked')) {
-           $('#tblmemberprovisional-email').prop('disabled', true);
+            $('.field-tblmemberprovisional-email').addClass('disabled no_pointer');
         }
         if ($('#tblmemberprovisional-is_aadhar_verify').is(':checked')) {
-           $('#tblmemberprovisional-adhar_no').prop('disabled', true);
+           $('.field-tblmemberprovisional-adhar_no').addClass('disabled no_pointer');
         }
         if ($('#tblmemberprovisional-is_verify').is(':checked')) {
             $('.field-tblmemberprovisional-bank_code').addClass('disabled no_pointer');
             $('.field-tblmemberprovisional-branch_code').addClass('disabled no_pointer');
-           $('#tblmemberprovisional-bank_account_no').prop('disabled', true);
-           $('#tblmemberprovisional-ifsc').prop('disabled', true);
+            $('.field-tblmemberprovisional-bank_account_no').addClass('disabled no_pointer');
+            $('.field-tblmemberprovisional-ifsc').addClass('disabled no_pointer');
         }
     }
 ";
