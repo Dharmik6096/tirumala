@@ -128,10 +128,10 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['from_date', 'to_date', 'bmc_code'], 'required', 'on' => ['MccDayBookDispatchHubHorizontal']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['StockDispatchToMccFromStore', 'StockReceivedToMcc', 'StockDispatchToSale', 'StockRegisterToSap', 'StockRegisterMccToSap']],
                 [['union_code', 'p_date'], 'required', 'on' => ['StockTransferToDcs', 'StockAtMcc']],
-                [['union_code', 'p_date'], 'required', 'on' => ['StockAtDcs']],
+                [['union_code', 'p_date'], 'required', 'on' => ['StockAtDcs', 'MemberProvisionalFamilyDetail']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportFarmer']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportVendor', 'RMRDDataExport']],
-                [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SummaryReportMcc', 'SummaryReportDcs']],
+                [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SummaryReportMcc', 'SummaryReportDcs', 'MemberProvisionalSapExport']],
                 [['union_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MemberCollectionReportForSap', 'RmrdMilkCollectionForSap']],
                 [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MilkCollectionAbsent']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['LeftPourer']],
@@ -146,6 +146,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapWqFile'],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BmcCollectionSummaryRahema'],
                 [['user_login_type'], 'required', 'on' => 'MobileAppReport'],
+                [['union_code', 'user_code', 'from_date', 'to_date'], 'required', 'on' => ['FieldStaffActivity']],
         ];
     }
 

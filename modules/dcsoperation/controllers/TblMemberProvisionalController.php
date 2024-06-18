@@ -315,6 +315,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $unlink_files = [];
                         $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
                         $deleteModel = [];
+                        $all_doc = [];
                         $model->load(Yii::$app->request->post());
                         if ($config == 1) {
                             $modelStages = new TblApprovalStagesDetail();
@@ -327,7 +328,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $status = 'Approve';
                                 $model->scenario = 'MemberApprove';
                                 $save_model[] = $model;
-                                $all_doc = [];
                                 $memberdoc = [];
                                 if (strtolower($model->provisional_status) == 'approve') {
                                     $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message, $unlink_files);
@@ -347,7 +347,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
                             if ($transaction == 'customRedirect') {
                                 if (strtolower($model->provisional_status) == 'approve') {
-                                    $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
+                                    $baseDir = Yii::getAlias('@webroot') . '/' . Yii::$app->params['document_upload'];
                                     $memberDir = $baseDir . 'member';
                                     $proMemberDir = $baseDir . 'provisional_member';
                                     if (!empty($unlink_files)) {
@@ -458,7 +458,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $transaction = $this->generalModel->saveDeleteTransaction([], $model_save, $deleteModel, ['Member Provisional Approval', 'edit']);
                     if ($transaction == 'customRedirect') {
                         if ($memberModel->provisional_status == 'Approve') {
-                            $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
+                            $baseDir = Yii::getAlias('@webroot') . '/' . Yii::$app->params['document_upload'];
                             $memberDir = $baseDir . 'member';
                             $proMemberDir = $baseDir . 'provisional_member';
 
