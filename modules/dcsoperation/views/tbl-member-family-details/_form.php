@@ -48,8 +48,7 @@ echo $form->errorSummary($memberFamilyDetail);
                     <div class="col-sm-2">
                         <?= $form->field($memberFamilyDetail, 'remarks')->textarea() ?>
                     </div>
-                    <div class="col-sm-2 mt15 icon-set-checkbox">
-                        <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['nAddressProofback', 'nAddressProof']) ?>
+                    <div class="col-sm-2 mt15">
                         <?= Yii::$app->controls->checkTemplateBootstrap5($memberFamilyDetail, $form, 'is_nominee'); ?>
                     </div>
                     <div class="col-sm-2">
