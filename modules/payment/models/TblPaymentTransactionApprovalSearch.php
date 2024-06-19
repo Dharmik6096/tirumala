@@ -57,7 +57,7 @@ class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
 
         if ($pending_approval) {
             $approval = new TblProcessApproval();
-            $subQuery = $approval->getApproveLavel('payment_transaction_approval');
+            $subQuery = $approval->getApproveLavel('tbl_payment_transaction_approval');
             $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_payment_transaction_approval.payment_transaction_approval_code) = convert(varchar(max),ap.process_code)')
                     ->addSelect(['tbl_payment_transaction_approval.*', 'ap.process_approval_code as process_approval_code'])
                     ->where(['tbl_payment_transaction_approval.approval_status' => ['Pending','Inprogress']]);
