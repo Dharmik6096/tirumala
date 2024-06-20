@@ -44,6 +44,7 @@ use app\modules\dcsoperation\models\TblMemberProvisionalAnimalDetailsSearch;
 use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberFamilyDetailsHistory;
+use Exception;
 
 /**
  * TblMemberProvisionalController implements the CRUD actions for TblMemberProvisional model.
@@ -321,11 +322,17 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $modelStages = new TblApprovalStagesDetail();
                             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
                             $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
+                            if(strtolower($model->provisional_status) == 'approve'){
+                                $model->member_status = 'Approved';
+                            }
                             $save_model[] = $model;
                         } else {
                             if (Yii::$app->request->post('request_button') === 'approve') {
                                 $model->provisional_status = 'Approve';
                                 $status = 'Approve';
+                                if(strtolower($status) == 'approve'){
+                                    $model->member_status = 'Creacted';
+                                }
                                 $model->scenario = 'MemberApprove';
                                 $save_model[] = $model;
                                 $memberdoc = [];
@@ -430,6 +437,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $model_save[] = $historyModel;
                 $memberModel->provisional_status = $status;
                 $memberModel->remarks = $model->remarks;
+                if(strtolower($status) == 'approve'){
+                    $memberModel->member_status = 'Approved';
+                }
                 $memberModel->scenario = 'MemberApprove';
                 $model_save[] = $memberModel;
                 $all_doc = [];
@@ -438,7 +448,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $attachments = [];
                 $config = Yii::$app->general->getUnionConfigResult($memberModel->union_code, 'allow_member_other_detail');
                 if ($memberModel->validate()) {
-                    if ($memberModel->provisional_status == 'Approve') {
+                    $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
+                    if ($memberModel->provisional_status == 'Approve' && $memberCreationPendingForSapApproval != '1') {
                         $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachments);
                         if ($config == 1) {
                             $this->memberEnrollmentApprove($status, $model_save, $memberModel, $deleteModel);
@@ -907,6 +918,124 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $memberShareModel->gender_code = $memberModel->gender_code;
                 $model_save[] = $memberShareModel;
             }
+        }
+    }
+
+    public function actionExportProvisionalMemberBankReceipt(){
+        try {
+            $model = new TblMemberProvisionalSearch();
+            $model->scenario = 'export_search';
+            if(Yii::$app->request->post() && $model->load(Yii::$app->request->post()) && $model->validate()){ 
+                $sp_param = [
+                    $model->union_code,
+                    $model->plant_code,
+                    $model->mcc_plant_code,
+                    $model->bmc_code,
+                    $model->dcs_code,
+                    date('Y-m-d', strtotime($model->as_on_date)),
+                ];
+                $directory = Yii::getAlias('@app') . '/web/uploads/provisional_member_export/';
+                if(Yii::$app->general->checkDirectory($directory)){
+                    $fileFullPath = $directory.'farmer_bank_receipt_data_'.date('Ymd').'.xlsx';
+                    $output = \Yii::$app->general->getSpData('mis_member_bank_receipt_data_saahaj', $sp_param);
+                    if(!empty($output)){
+                        \Yii::$app->general->downloadExcelFile($output, $fileFullPath);
+                    } else {
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                        'message' => Yii::t('app', 'No data found')]);
+                    }
+                }
+            }
+            return $this->render('export_search', [
+                'model' => $model,
+            ]);
+        } catch (Exception $e) {
+            echo 'Caught exception: ', $e->getMessage(), "\n";
+            return false;
+        }
+    }
+
+    public function actionImportProvisionalMemberBankReceipt() {
+
+        $model = new TblMemberProvisionalShareDetails();
+
+        $model->scenario = 'import_receipt_detail';
+
+        if ($model->load(Yii::$app->request->post())) {
+            $message = '';
+            $masterModel = [];
+            if ($model->validate()) {
+                $this->uploadExcel($model, $_POST['file_name'], $masterModel, $message);
+                if ($message == '') {
+                    $transaction = $this->generalModel->saveTransaction($masterModel, ['member provisional share detail', 'edit']);
+                    if ($transaction == 'customRedirect') {
+                        return $this->redirect(['import-provisional-member-bank-receipt']);
+                    }
+                } else {
+                    return ['status' => 'error', 'message' => $message];
+                }
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($model));
+            }
+        }
+        return $this->render('import_receipt_detail', [
+                    'model' => $model,
+        ]);
+    }
+
+    private function uploadExcel($model, $fileName, &$masterModel, &$message) {
+        $importPath = Yii::$app->basePath . '/web/import/';
+        $objPHPExcel = \PHPExcel_IOFactory::load($importPath . $fileName);
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+            $column_one = $worksheet->getCell('A1')->getValue();
+            if ($column_one == 'provisional_member_code') {
+                for ($row = 2; $row <= $worksheet->getHighestRow(); $row ++) {
+                    $provisionalMemberCode = $worksheet->getCell('A' . $row)->getValue();
+                    $existData = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $provisionalMemberCode])->one();
+                    if(!empty($existData)){
+                        $historyModel = new TblMemberProvisionalShareDetailsHistory();
+                        Yii::$app->operation->history($existData, $historyModel, UPDATE);
+                        $masterModel[] = $historyModel;
+                        $existData->scenario = 'import_receipt_detail';
+                        $existData->bank_name = $model->bank_name;
+                        $existData->amount_deposit = $existData->amount_payable;
+                        $existData->deposit_date = empty($model->deposit_date) ? NULL : Yii::$app->formatter->asDate($model->deposit_date, DATE_FORMAT);
+                        $existData->mode_of_payment = $model->mode_of_payment;
+                        $masterModel[] = $existData;
+                    } else {
+                        $message .= 'Import data some record is invalid.';
+                    }
+                }
+            } else {
+                $message .= 'Provisional Applicant Uniuqe ID Not Available in Sheet.';
+            }
+            if ((int) $worksheet->getHighestRow() <= 1) {
+                $message .= 'Please Upload Valid Excel Sheet.';
+            }
+        }
+    }
+
+    public function actionImportBankReceiptDetail() {
+        $path = Yii::$app->basePath . '/web/import/';
+        if (!is_dir($path)) {
+            mkdir($path);
+            chmod($path, 0777);
+        }
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = 'excel_' . time() . '.' . $file->extension;
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
         }
     }
 
