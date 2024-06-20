@@ -22,6 +22,9 @@ $attribute = [
         ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'visible' => TRUE, 'filter' => false],
+        ['attribute' => 'bmc_code', 'filter' => false, 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'visible' => TRUE, 'filter' => false],
         ['label' => Yii::t('app', 'Dispatch Date'), 'attribute' => 'dispatch_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -55,6 +58,7 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
         }, 'filter' => false],
+        ['attribute' => 'vendor_name'],
 ];
 
 $grid_option = [

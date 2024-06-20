@@ -1919,11 +1919,16 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function validateBMC($model, $attribute) {
+    public function validateBMC($model, $attribute, $hierarchy = FALSE) {
         $bmcModel = new TblDcsBmc();
-        $records = $bmcModel->find()->select('bmc_code')->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
+        $records = $bmcModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'])->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->bmc_code;
+            if ($hierarchy == 'TRUE') {
+                $model->union_code = $records[0]->union_code;
+                $model->plant_code = $records[0]->plant_code;
+                $model->mcc_plant_code = $records[0]->mcc_plant_code;
+            }
         } else {
             $model->addError('bmc_code', Yii::t('app/validation', Yii::t('app', 'BMC') . ' Is Invalid.'));
             return false;

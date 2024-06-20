@@ -55,9 +55,9 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['mccPlantCode']);
+        $query->joinWith(['mccPlantCode', 'bmcCode']);
 
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_plant_dispatch', 'tbl_mcc_plant');
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_plant_dispatch', 'tbl_mcc_plant', 'tbl_bmc');
 
         // grid filtering conditions
         if (!empty($this->document_date)) {

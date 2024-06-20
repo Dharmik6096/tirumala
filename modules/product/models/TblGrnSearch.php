@@ -20,9 +20,9 @@ class TblGrnSearch extends TblGrn {
      */
     public function rules() {
         return [
-                [['grn_code', 'grn_no', 'grn_date', 'vendor_master_code', 'mcc_plant_code', 'invoice_date', 'invoice_no', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['originating_type'], 'integer'],
-                [['from_date', 'to_date'], 'safe'],
+            [['grn_code', 'grn_no', 'grn_date', 'vendor_master_code', 'mcc_plant_code', 'bmc_code', 'invoice_date', 'invoice_no', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['originating_type'], 'integer'],
+            [['from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -49,8 +49,8 @@ class TblGrnSearch extends TblGrn {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        $query->joinWith(['vendorCode', 'mccPlantCode']);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_grn', 'tbl_mcc_plant');
+        $query->joinWith(['vendorCode', 'mccPlantCode', 'bmcCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_grn', 'tbl_mcc_plant', 'tbl_bmc');
 
         $this->load($params);
 

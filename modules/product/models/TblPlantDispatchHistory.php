@@ -48,8 +48,8 @@ class TblPlantDispatchHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
-            [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no'], 'safe'],
-            [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by', 'history_created_at'], 'safe'],
+            [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no', 'bmc_code'], 'safe'],
+            [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by', 'history_created_at', 'vendor_name'], 'safe'],
         ];
     }
 
@@ -83,6 +83,8 @@ class TblPlantDispatchHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'vendor_name' => Yii::t('app', 'Vendor Name'),
         ];
     }
 

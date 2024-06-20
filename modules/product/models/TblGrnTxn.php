@@ -42,26 +42,27 @@ class TblGrnTxn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_code', 'unit_code', 'rate', 'received_qty', 'basic_amount', 'gross_amount'], 'required'],
-                [['grn_txn_code', 'sap_batch_no', 'dispatch_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks'], 'safe'],
-                [['unit_code', 'originating_type'], 'integer'],
-                [['rate', 'received_qty', 'rejected_qty', 'basic_amount', 'tax', 'gross_amount'], 'number'],
-                [['created_at', 'updated_at'], 'safe'],
-                [['grn_txn_code', 'grn_code', 'product_code'], 'string', 'max' => 30],
-                [['union_code'], 'string', 'max' => 3],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['rejected_qty', 'received_qty', 'missing_qty'], 'default', 'value' => 0],
-                [['rejected_qty'], 'number', 'min' => 0],
-                [['received_qty', 'rate', 'tax', 'basic_amount', 'gross_amount'], 'number', 'min' => 1, 'except' => ['batchcreate']],
-                [['received_qty'], 'number', 'min' => 1],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
-                [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code']],
-                [['sap_batch_no'], 'required', 'when' => function ($model) {
+            [['product_code', 'unit_code', 'rate', 'received_qty', 'basic_amount', 'gross_amount'], 'required'],
+            [['grn_txn_code', 'sap_batch_no', 'dispatch_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks'], 'safe'],
+            [['unit_code', 'originating_type'], 'integer'],
+            [['rate', 'received_qty', 'rejected_qty', 'basic_amount', 'tax', 'gross_amount'], 'number'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['grn_txn_code', 'grn_code', 'product_code'], 'string', 'max' => 30],
+            [['union_code'], 'string', 'max' => 3],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'manuf_date', 'posting_date'], 'safe'],
+            [['rejected_qty', 'received_qty', 'missing_qty'], 'default', 'value' => 0],
+            [['rejected_qty'], 'number', 'min' => 0],
+            [['received_qty', 'rate', 'tax', 'basic_amount', 'gross_amount'], 'number', 'min' => 1, 'except' => ['batchcreate']],
+            [['received_qty'], 'number', 'min' => 1],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
+            [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code']],
+            [['sap_batch_no'], 'required', 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
-                    return $batchNoWiseInventory == 1 && $withoutDispatch == 1;
+                    $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
+                    return $batchNoWiseInventory == 1 && $withoutDispatch == 1 && $grnWithoutStockEntry != 1;
                 },
             ],
         ];
@@ -90,6 +91,8 @@ class TblGrnTxn extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'manuf_date' => Yii::t('app', 'Manufacturing Date'),
+            'posting_date' => Yii::t('app', 'Posting Date'),
         ];
     }
 

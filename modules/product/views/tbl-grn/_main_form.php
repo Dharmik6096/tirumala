@@ -52,6 +52,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblgrn-union_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblgrn-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
             <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', date('Y-m-d'), false, false, true); ?>
         </div>
         <div class="col-sm-2 create_fields">
@@ -105,6 +108,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-1 reset_field">
             <?= $form->field($txModel, 'gross_amount')->textInput(['readonly' => TRUE]) ?>
+        </div>
+        <div class="col-sm-2 reset_field">
+            <?= Yii::$app->controls->date($txModel, $form, 'manuf_date', '', date('Y-m-d'), false, false, true); ?>
         </div>
 
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
