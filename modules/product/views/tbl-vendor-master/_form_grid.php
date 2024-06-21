@@ -12,13 +12,19 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 <?php
 
 $attribute = [
-        ['attribute' => 'union_code', 'label' => 'Union', 'value' => function($model) {
+    ['attribute' => 'union_code', 'label' => 'Union', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true],
-        ['attribute' => 'vendor_name'],
-        ['attribute' => 'vendor_code'],
-        ['attribute' => 'aadhaar_no', 'visible' => true, 'filter' => false],
-        ['attribute' => 'pan_no', 'filter' => false],
+    ['attribute' => 'vendor_name'],
+    ['attribute' => 'vendor_code'],
+    ['attribute' => 'adhar_no', 'visible' => true, 'filter' => false],
+    ['attribute' => 'pan_no', 'visible' => true, 'filter' => false],
+    ['attribute' => 'vendor_type', 'filter' => true],
+    ['attribute' => 'is_active', 'label' => Yii::t('app', 'Status'), 'filter' => false,
+        'value' => function($model) {
+            return Yii::$app->general->getRecordStatus($model->is_active);
+        }, 'filter' => false, 'visible' => true
+    ],
 ];
 
 $grid_option = [
