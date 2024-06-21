@@ -3630,7 +3630,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Member Provisional SAP Export',
             ],
             'ExportProvisionalMemberBankReceipt' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
                 'sp_name' => 'mis_member_bank_receipt_data_saahaj',
                 'scenario' => 'ExportProvisionalMemberBankReceipt',
                 'title' => 'Export Provisional Member Bank Receipt',
