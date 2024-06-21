@@ -16,6 +16,7 @@ use app\modules\collection\models\TblBmcCollectionHistory;
 use app\modules\collection\models\TblDcsMilkDispatch;
 use app\modules\collection\models\TblDcsMilkDispatchTxn;
 use app\modules\collection\models\TblMilkCollectionHistory;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * TblCollectionDataAliasController implements the CRUD actions for TblCollectionDataAlias model.
@@ -29,6 +30,10 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                 $errorCount = 0;
                 $deletedata = Yii::$app->request->post('selection');
                 foreach ($deletedata as $key => $value) {
+                // foreach ($deletedata as $key => $value_code) {
+                    //$codes = explode('###', $value_code);
+                    //$value = $codes[0];
+                    //$approval_code = !empty($codes[1]) ? $codes[1] : '';
                     $saveModel = [];
                     $deleteModel = [];
                     $action = Yii::$app->request->post('TblCollectionDataAlias')['action_perform'];
@@ -73,7 +78,15 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     }
                     if ($existData->validate()) {
                         $succCount++;
-                        $deleteModel[] = $existData;
+                        $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL');
+                        if($collectionApprovalConfig == 2){
+                            // $approvalModel = TblProcessApproval::findOne($approval_code);
+                            // $status = '';
+                            //process approval nu model ave
+                            // $approvalModel->ApprovalList($approvalModel, $saveModel, $status);
+                        } else {
+                            $deleteModel[] = $existData;
+                        }
                     } else {
                         $errorCount++;
                         $errorMsg = [];
@@ -102,7 +115,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $showFarmer = TRUE;
         $searchModel = new TblCollectionDataAliasSearch();
         $searchModel->table_name = 'tbl_milk_collection';
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
         $searchModel->scenario = 'approvalCollection';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
         $id = 'milk-collection-approve-' . strtolower($searchModel->action_perform);
@@ -208,7 +221,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $showType = TRUE;
         $searchModel = new TblCollectionDataAliasSearch();
         $searchModel->table_name = 'tbl_bmc_collection';
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
         $searchModel->scenario = 'approvalCollection';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
         $id = 'bmc-collection-approve-' . strtolower($searchModel->action_perform);

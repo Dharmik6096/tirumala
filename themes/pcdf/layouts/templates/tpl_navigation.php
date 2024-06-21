@@ -19,7 +19,9 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
 } else if (Yii::$app->session->get('Login-sess') == 'Rail') {
     $logout_url[] = '/site/rail-logout';
 }
-$collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
+// $collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
+$collectionApprovalConfig = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL');
+$collectionApproval = in_array($collectionApprovalConfig, [1, 2]);
 $eiplCode = Yii::$app->session->get('eiplCode');
 $rateAppApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'rate_approval', 'PORTAL') == 1 ? TRUE : FALSE;
 $batchNoWise = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;

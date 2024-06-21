@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\collection\models\TblCollectionDataAlias;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * TblCollectionDataAliasSearch represents the model behind the search form about `app\modules\collection\models\TblCollectionDataAlias`.
@@ -41,7 +42,7 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params, $pending_approval = false) {
         $query = TblCollectionDataAlias::find();
 
         // add conditions that should always apply here
@@ -57,6 +58,13 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
+        }
+        if ($pending_approval) {
+            $approval = new TblProcessApproval();
+            $subQuery = $approval->getApproveLavel('tbl_bmc_collection');
+            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_collection_data_alias.collection_data_alias_code) = convert(varchar(max),ap.process_code)')
+                    ->addSelect(['tbl_collection_data_alias.*', 'ap.process_approval_code as process_approval_code'])
+                    ->where(['tbl_collection_data_alias.approval_status' => ['Pending','Inprogress']]);
         }
 //        $query->joinWith(['mccPlantCode.plantCode']);
         // grid filtering conditions
