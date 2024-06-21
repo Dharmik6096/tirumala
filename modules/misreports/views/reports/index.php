@@ -488,13 +488,6 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('as_on_date'))) {
-                                            ?>
-                                            <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->controls->date($model, $form, 'as_on_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, Yii::t('app', 'As On Date')); ?>
-                                            </div>
-                                            <?php
-                                        }
                                     }
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
