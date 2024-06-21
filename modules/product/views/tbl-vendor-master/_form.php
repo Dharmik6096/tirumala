@@ -92,7 +92,7 @@ $form = ActiveForm::begin([
     <?php
     $script = "
     $('#tblvendormaster-bank_code').on('change', function() {
-        $('#tblmemberprovisional-ifsc').val('');
+        $('#tblvendormaster-ifsc').val('');
     });
 
     $('#tblvendormaster-branch_code').on('change', function() {

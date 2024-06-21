@@ -47,9 +47,6 @@ class TblVendorMaster extends \app\models\ChildModel {
     public function rules() {
         $main_rules = [
             [['vendor_code', 'vendor_name', 'is_active'], 'required'],
-            [['vendor_code'], function ($attribute, $params) {
-                    $this->vendor_master_code = (string) Yii::$app->general->getCodeAutoIncrement($this);
-                }],
             [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active'], 'safe'],
             [['contact_person', 'mobile_no'], 'required', 'on' => 'importCsv'],
             [['vendor_code'], 'integer'],
@@ -60,15 +57,12 @@ class TblVendorMaster extends \app\models\ChildModel {
             [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
             [['ifsc', 'pan_no'], 'trim'],
             [['pan_no', 'adhar_no', 'vendor_code'], 'unique'],
-            [['bank_account_no'], 'required', 'when' => function ($model) {
-                    return !empty($model->ifsc);
-                }, 'on' => ['importCsv']],
-            [['ifsc'], 'required', 'when' => function ($model) {
-                    return !empty($model->bank_account_no);
+            [['bank_account_no', 'ifsc'], 'required', 'when' => function ($model) {
+                    return !empty($model->bank_account_no) || !empty($model->ifsc);
                 }, 'on' => ['importCsv']],
             [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'when' => function ($model) {
-                    return !empty($model->branch_code);
-                }, 'whenClient' => "function (attribute, value) { 
+                    return !empty($model->bank_code);
+                }, 'except' => ['importCsv'], 'whenClient' => "function (attribute, value) { 
                             return $('#tblvendormaster-bank_code').val() != ''; 
                         }"],
             [['bank_account_no'], function ($attribute, $params) {
@@ -83,7 +77,7 @@ class TblVendorMaster extends \app\models\ChildModel {
                 }],
             [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
             [['ifsc'], 'setBankDetail', 'when' => function ($model) {
                     return !empty($model->ifsc);
                 }, 'on' => ['importCsv']],
