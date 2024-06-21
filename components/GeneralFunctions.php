@@ -2519,44 +2519,4 @@ class GeneralFunctions extends Component {
         return $links;
     }
 
-    public function generateExcelFile($output, $fileFullPath){
-        $header = [
-            'mime' => '	application/vnd.ms-excel',
-            'extension' => 'xls',
-            'writer' => 'Excel2007',
-        ];
-        $objPHPExcel = new PHPExcel();
-        $sheet = $objPHPExcel->getActiveSheet();
-        $file_header = !empty($output) ? array_keys($output[0]) : [];
-        $sheet->fromArray($file_header, null, 'A1');
-        $sheet->fromArray($output, NULL, 'A2');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        try {
-            $objWriter->save($fileFullPath);
-            return true;
-        } catch (Exception $e) {
-            error_log('Error saving Excel file: ' . $e->getMessage());
-            return false;
-        }
-    }
-
-    public function downloadExcelFile($output, $fileFullPath) {        
-        if ($this->generateExcelFile($output, $fileFullPath)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment; filename="' . basename($fileFullPath) . '"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($fileFullPath));
-            ob_clean();
-            flush();
-            readfile($fileFullPath);
-            // unlink($fileFullPath);
-            exit;
-        } else {
-            echo "Failed to generate Excel file.";
-        }
-    }
-
 }

@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('edit', 'Provisional Members');
+$this->title = Yii::$app->label->title('edit', 'Provisional Members').' > '.$model->application_no;
 
 use yii\web\View;
 ?>

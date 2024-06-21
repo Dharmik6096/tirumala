@@ -323,7 +323,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
                             $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
                             if(strtolower($model->provisional_status) == 'approve'){
-                                $model->member_status = 'Approved';
+                                $model->member_status = 'Created';
                             }
                             $save_model[] = $model;
                         } else {
@@ -331,7 +331,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $model->provisional_status = 'Approve';
                                 $status = 'Approve';
                                 if(strtolower($status) == 'approve'){
-                                    $model->member_status = 'Creacted';
+                                    $model->member_status = 'Created';
                                 }
                                 $model->scenario = 'MemberApprove';
                                 $save_model[] = $model;
@@ -437,8 +437,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $model_save[] = $historyModel;
                 $memberModel->provisional_status = $status;
                 $memberModel->remarks = $model->remarks;
-                if(strtolower($status) == 'approve'){
-                    $memberModel->member_status = 'Approved';
+                $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
+                $memberModel->member_status = 'Approved';
+                if(strtolower($status) == 'approve' && ($memberCreationPendingForSapApproval != '1' || $memberModel->provisional_from == 'mobile_update')){
+                    $memberModel->member_status = 'Created';
                 }
                 $memberModel->scenario = 'MemberApprove';
                 $model_save[] = $memberModel;
@@ -448,7 +450,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $attachments = [];
                 $config = Yii::$app->general->getUnionConfigResult($memberModel->union_code, 'allow_member_other_detail');
                 if ($memberModel->validate()) {
-                    $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
                     if ($memberModel->provisional_status == 'Approve' && $memberCreationPendingForSapApproval != '1') {
                         $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachments);
                         if ($config == 1) {
@@ -921,40 +922,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionExportProvisionalMemberBankReceipt(){
-        try {
-            $model = new TblMemberProvisionalSearch();
-            $model->scenario = 'export_search';
-            if(Yii::$app->request->post() && $model->load(Yii::$app->request->post()) && $model->validate()){ 
-                $sp_param = [
-                    $model->union_code,
-                    $model->plant_code,
-                    $model->mcc_plant_code,
-                    $model->bmc_code,
-                    $model->dcs_code,
-                    date('Y-m-d', strtotime($model->as_on_date)),
-                ];
-                $directory = Yii::getAlias('@app') . '/web/uploads/provisional_member_export/';
-                if(Yii::$app->general->checkDirectory($directory)){
-                    $fileFullPath = $directory.'farmer_bank_receipt_data_'.date('Ymd').'.xlsx';
-                    $output = \Yii::$app->general->getSpData('mis_member_bank_receipt_data_saahaj', $sp_param);
-                    if(!empty($output)){
-                        \Yii::$app->general->downloadExcelFile($output, $fileFullPath);
-                    } else {
-                        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                        'message' => Yii::t('app', 'No data found')]);
-                    }
-                }
-            }
-            return $this->render('export_search', [
-                'model' => $model,
-            ]);
-        } catch (Exception $e) {
-            echo 'Caught exception: ', $e->getMessage(), "\n";
-            return false;
-        }
-    }
-
     public function actionImportProvisionalMemberBankReceipt() {
 
         $model = new TblMemberProvisionalShareDetails();
@@ -985,7 +952,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     }
 
     private function uploadExcel($model, $fileName, &$masterModel, &$message) {
-        $importPath = Yii::$app->basePath . '/web/import/';
+        $importPath = Yii::getAlias('@webroot') . '/' . Yii::$app->params['import_path'];
         $objPHPExcel = \PHPExcel_IOFactory::load($importPath . $fileName);
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $column_one = $worksheet->getCell('A1')->getValue();
@@ -994,15 +961,19 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $provisionalMemberCode = $worksheet->getCell('A' . $row)->getValue();
                     $existData = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $provisionalMemberCode])->one();
                     if(!empty($existData)){
-                        $historyModel = new TblMemberProvisionalShareDetailsHistory();
-                        Yii::$app->operation->history($existData, $historyModel, UPDATE);
-                        $masterModel[] = $historyModel;
-                        $existData->scenario = 'import_receipt_detail';
-                        $existData->bank_name = $model->bank_name;
-                        $existData->amount_deposit = $existData->amount_payable;
-                        $existData->deposit_date = empty($model->deposit_date) ? NULL : Yii::$app->formatter->asDate($model->deposit_date, DATE_FORMAT);
-                        $existData->mode_of_payment = $model->mode_of_payment;
-                        $masterModel[] = $existData;
+                        if(empty($existData->bank_name) && (empty($existData->amount_deposit) || $existData->amount_deposit == 0)){
+                            $historyModel = new TblMemberProvisionalShareDetailsHistory();
+                            Yii::$app->operation->history($existData, $historyModel, UPDATE);
+                            $masterModel[] = $historyModel;
+                            $existData->scenario = 'import_receipt_detail';
+                            $existData->bank_name = $model->bank_name;
+                            $existData->amount_deposit = $existData->amount_payable;
+                            $existData->deposit_date = empty($model->deposit_date) ? NULL : Yii::$app->formatter->asDate($model->deposit_date, DATE_FORMAT);
+                            $existData->mode_of_payment = $model->mode_of_payment;
+                            $date = empty($model->deposit_date) ? '' : Yii::$app->formatter->asDate($model->deposit_date, 'Ymd');
+                            $existData->ref_no = $model->bank_name.$date;
+                            $masterModel[] = $existData;
+                        }
                     } else {
                         $message .= 'Import data some record is invalid.';
                     }
@@ -1017,7 +988,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     }
 
     public function actionImportBankReceiptDetail() {
-        $path = Yii::$app->basePath . '/web/import/';
+        $path = Yii::getAlias('@webroot') . '/' . Yii::$app->params['import_path'];
         if (!is_dir($path)) {
             mkdir($path);
             chmod($path, 0777);
