@@ -21,43 +21,88 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fas fa-user-c
                 <?php
                 // DetailView Attributes Configuration
                 $attributes = [
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'vendor_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'vendor_name',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
-                                'attribute' => 'aadhaar_no',
+                            [
+                                'attribute' => 'adhar_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'pan_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'union_code',
-                                    'label'=>'Union',
+                                'label' => 'Union',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'vendor_type',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'bank_code',
+                                'value' => !empty($model->bankCode) ? $model->bankCode->bank_name : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'branch_code',
+                                'value' => !empty($model->branchCode) ? $model->branchCode->branch_name : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'bank_account_no',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'ifsc',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'beneficiary_name',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'is_active',
+                                'label' => 'Status',
+                                'format' => 'html',
+                                'value' => GeneralFunctions::getRecordStatus($model->is_active),
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
                 ];
 
-// View file rendering the widget
+                // View file rendering the widget
                 echo DetailView::widget([
                     'model' => $model,
                     'attributes' => $attributes,
@@ -87,7 +132,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fas fa-user-c
                     'searchModel' => $csearchModel,
                 ])
                 ?>
-            </div>       
-        </div> 
+            </div>
+        </div>
     </div>
 </div>

@@ -6,7 +6,7 @@ use kartik\detail\DetailView;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
-$this->title = Yii::$app->label->title('view', 'provisional member');
+$this->title = Yii::$app->label->title('view', 'provisional member').' > '.$model->application_no;
 if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 0) {
     $this->params['menu'][] = Yii::$app->controls->add('provisional member');
     if ($model->is_approved != 1) {

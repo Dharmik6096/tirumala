@@ -12,7 +12,7 @@ use Yii;
  * @property string $vendor_code
  * @property string $vendor_name
  * @property string $pan_no
- * @property string $aadhaar_no
+ * @property string $adhar_no
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -43,16 +43,16 @@ class TblVendorMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['vendor_master_code', 'union_code'], 'safe'],
-                [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-                [['originating_type'], 'safe'],
-                [['vendor_master_code'], 'safe'],
-                [['vendor_code'], 'safe'],
-                [['vendor_name'], 'safe'],
-                [['pan_no', 'aadhaar_no'], 'safe'],
-                [['created_by', 'updated_by', 'history_created_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['operation_type'], 'safe'],
+            [['vendor_master_code', 'union_code'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['originating_type'], 'safe'],
+            [['vendor_master_code'], 'safe'],
+            [['vendor_code'], 'safe'],
+            [['vendor_name'], 'safe'],
+            [['pan_no', 'aadhaar_no'], 'safe'],
+            [['created_by', 'updated_by', 'history_created_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type'], 'safe'],
+            [['operation_type', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active'], 'safe'],
         ];
     }
 
@@ -82,6 +82,13 @@ class TblVendorMasterHistory extends \yii\db\ActiveRecord {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'bank_code' => Yii::t('app', 'Bank'),
+            'branch_code' => Yii::t('app', 'Branch'),
+            'bank_account_no' => Yii::t('app', 'Bank Account No'),
+            'ifsc' => Yii::t('app', 'Ifsc'),
+            'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
+            'vendor_type' => Yii::t('app', 'Vendor Type'),
+            'is_active' => Yii::t('app', 'Is Active'),
         ];
     }
 

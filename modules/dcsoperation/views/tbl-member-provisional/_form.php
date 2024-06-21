@@ -299,6 +299,21 @@ if ($model->isNewRecord) {
 
 <?php
 $script = "
+$(document).ready(function() {
+    function setDefaultHamletCode() {
+        var hamletDropdown = $('#tblmemberprovisional-hamlet_code');
+        var options = hamletDropdown.find('option');
+        if (options.length == 2) {
+            var singleOption = options.eq(1).val();
+            hamletDropdown.val(singleOption).trigger('change');
+        }
+    }
+    $('#tblmemberprovisional-village_code').on('change', function() {
+        $('#tblmemberprovisional-hamlet_code').on('depdrop.afterChange', function(event, id, value) {
+            setDefaultHamletCode();
+        });
+    });
+});
 
 $(document).ready(function() {
     $('.btn-toolbar.kv-grid-toolbar').hide();

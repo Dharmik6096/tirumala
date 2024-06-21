@@ -1714,6 +1714,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionExportProvisionalMemberBankReceipt(){
+        $this->report = 'ExportProvisionalMemberBankReceipt';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3626,6 +3631,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_member_pib_upload_saahaj',
                 'scenario' => 'MemberProvisionalSapExport',
                 'title' => 'Member Provisional SAP Export',
+            ],
+            'ExportProvisionalMemberBankReceipt' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date',
+                'sp_name' => 'mis_member_bank_receipt_data_saahaj',
+                'scenario' => 'ExportProvisionalMemberBankReceipt',
+                'title' => 'Export Provisional Member Bank Receipt',
             ],
         ];
         return $label[$l];

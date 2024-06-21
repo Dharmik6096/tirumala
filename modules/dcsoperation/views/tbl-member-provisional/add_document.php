@@ -14,7 +14,8 @@ use yii\web\View;
     <div class="panel-heading">
         <ul class="progressbar">
             <li class="inactive">Member Provisional No. <?= $model->provisional_member_code ?>  > </li>
-            <li>  Upload Documents</li>
+            <li>  Upload Documents > </li>
+            <li>  <?php echo $model->application_no; ?></li>
         </ul>
     </div>
     <div class="panel-body">
