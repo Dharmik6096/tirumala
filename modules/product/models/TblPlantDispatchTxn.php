@@ -50,6 +50,7 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
         $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
         return [
             [['plant_dispatch_txn_code'], 'required'],
+            [['product_code'], 'validateProduct', 'on' => ['product']],
             [['product_code', 'unit_code', 'rate', 'amount', 'qty'], 'required'],
             [['plant_dispatch_txn_code', 'plant_dispatch_code', 'received_qty', 'rejected_qty', 'grn_missing_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks', 'manuf_date'], 'safe'],
             [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
@@ -120,6 +121,17 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
             asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         }
         return $data;
+    }
+
+    public function validateProduct($attribute) {
+        $record = TblProduct::find()->select(['union_code', 'product_code', 'unit_code'])->where(['or', ['ref_code' => $this->product_code], ['product_code' => $this->product_code]])->andWhere(['is_active' => 1])->one();
+        if (!empty($record)) {
+            $this->product_code = $record->product_code;
+            $this->unit_code = $record->unit_code;
+            $this->union_code = $record->union_code;
+        } else {
+            $this->addError($attribute, Yii::t('app/validation', 'Is Invalid'));
+        }
     }
 
 }

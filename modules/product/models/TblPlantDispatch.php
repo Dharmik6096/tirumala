@@ -51,6 +51,9 @@ class TblPlantDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['bmc_code'], function ($attribute) {
+                    Yii::$app->general->validateBMC($this, $attribute, TRUE);
+                }, 'on' => ['bmc']],
             [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv']],
             [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
             [['bmc_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
@@ -64,9 +67,9 @@ class TblPlantDispatch extends \app\models\ChildModel {
             [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'vendor_name'], 'safe'],
             [['status'], 'default', 'value' => '0'],
             [['document_no'], 'unique', 'except' => ['importCsv']],
-            [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['dispatch_date', 'document_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['dispatch_date', 'document_date'], 'convertDate', 'on' => ['importCsv']],
+            [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv', 'bmc']],
+            [['dispatch_date', 'document_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'bmc']],
+            [['dispatch_date', 'document_date'], 'convertDate', 'on' => ['importCsv', 'bmc']],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
             [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, TRUE);
