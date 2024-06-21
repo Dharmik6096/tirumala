@@ -953,7 +953,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
     private function uploadExcel($model, $fileName, &$masterModel, &$message) {
         $importPath = Yii::getAlias('@webroot') . '/' . Yii::$app->params['import_path'];
-        $objPHPExcel = \PHPExcel_IOFactory::load($importPath . $fileName);
+        $objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load($importPath . $fileName);
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $column_one = $worksheet->getCell('A1')->getValue();
             if ($column_one == 'provisional_member_code') {

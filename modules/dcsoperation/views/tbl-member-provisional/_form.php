@@ -309,7 +309,7 @@ $(document).ready(function() {
         }
     }
     $('#tblmemberprovisional-village_code').on('change', function() {
-        $('#tblmemberprovisional-hamlet_code').on('depdrop.afterChange', function(event, id, value) {
+        $('#tblmemberprovisional-hamlet_code').on('depdrop:afterChange', function(event, id, value) {
             setDefaultHamletCode();
         });
     });

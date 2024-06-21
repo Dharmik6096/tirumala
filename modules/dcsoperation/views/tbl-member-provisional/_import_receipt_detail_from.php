@@ -1,11 +1,12 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\helpers\Html;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
+use yii\web\View;
 
 $form = ActiveForm::begin([
     'id' => 'import-provisional-member-bank-receipt-form',
@@ -36,7 +37,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 import_area dropzone_height_130">
             <div class="row">
                 <?php
-                echo Dropzone::widget([
+                echo DropZone::widget([
                     'id' => 'mainDrop',
                     'options' => [
                         'acceptedMimeTypes' => ".xls,.xlsx",
@@ -130,3 +131,10 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
+
+<?php
+$script = "
+    Dropzone.autoDiscover = false;
+";
+$this->registerJs($script, View::POS_END, 'import-manager');
+?>
