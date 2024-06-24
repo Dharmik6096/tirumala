@@ -157,6 +157,14 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa fa-file"></i>', ['/dcsoperation/tbl-member-provisional/document-upload', 'id' => $model->provisional_member_code], $options);
             }
         },
+        'report' => function ($url, $model) use ($pending_approval) {
+            if (!$pending_approval) {
+                $disable = (strtolower($model->provisional_status) == 'approve') ? '' : 'disabled';
+                $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable];
+                // return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register'], $options);
+                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register', 'provisional_member_code' => $model->provisional_member_code], $options);
+            }
+        },
     ]
 ];
 

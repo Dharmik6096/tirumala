@@ -319,12 +319,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $all_doc = [];
                         $model->load(Yii::$app->request->post());
                         if ($config == 1) {
-                            $existDataApproval = TblProcessApproval::find()->where(['process_code' => $model->provisional_member_code, 'process_name' => 'member'])->count();
-                            if ($existDataApproval == 0) {
-                                $modelStages = new TblApprovalStagesDetail();
-                                $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
-                                $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
-                            }
+                            $modelStages = new TblApprovalStagesDetail();
+                            $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
+                            $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
                             if(strtolower($model->provisional_status) == 'approve'){
                                 $model->member_status = 'Created';
                             }

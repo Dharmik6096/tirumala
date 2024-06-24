@@ -1864,6 +1864,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Machine Owned Type'),
                 'data' => [1 => Yii::t('app', 'Self'), 2 => Yii::t('app', 'Company')],
             ],
+            'language_list' => [
+                'name' => 'language_code',
+                'prompt' => Yii::t('app', 'Select Language'),
+                'data' => [0 => Yii::t('app', 'English'), 1 => Yii::t('app', 'Hindi')],
+            ],
         ];
         return $records[$l];
     }
@@ -2004,6 +2009,7 @@ class DropDown extends Component {
             'login_user_code' => ['name' => 'login_user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
             'region' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'union_code'],
             'relation_code' => ['name' => 'relationship_code', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
+            'provisional_member_list' => ['name' => 'provisional_member_code', 'fields' => 'provisional_member_code,member_name', 'prompt' => 'Select Provisional Member', 'model' => 'TblMemberProvisional', 'whereCondition' => ['provisional_status' => ['Approve']]],
         ];
         return $label[$l];
     }
