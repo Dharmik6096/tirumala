@@ -544,7 +544,9 @@ class DefaultController extends \app\controllers\ChildController {
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
         $eipl_code = \Yii::$app->session->get('eiplCode');
-        if ($this->report == 'SdReportSap' && $eipl_code = 'ANANDA') {
+        $skip_header = (isset($this->data['skip_header']) && $this->data['skip_header'] == TRUE) ? TRUE : FALSE;
+
+        if ($skip_header) {
             $sheet->fromArray(
                     $download, // The data to set
                     NULL, // Array values with this value will not be set
@@ -687,7 +689,8 @@ class DefaultController extends \app\controllers\ChildController {
                     'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                     'sap_download' => true,
                     'multiArray' => ['mcc_code', 'bmc_code'],
-                    'module_name' => 'TblMilkCollection_Ananda'
+                    'module_name' => 'TblMilkCollection_Ananda',
+                    'skip_header' => TRUE,
                 ],
             ],
             'DateBmcCollection' => [

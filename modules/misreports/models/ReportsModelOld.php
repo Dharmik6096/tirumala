@@ -92,13 +92,13 @@ class ReportsModelOld extends Model {
     public function getMccCode($mccCode) {
         $mccModel = new TblMccPlant();
         $mccData = $mccModel->find()->select('ref_code')->where(['mcc_plant_code' => $mccCode])->one();
-        return $mccData->ref_code;
+        return !empty($mccData->ref_code) ? $mccData->ref_code : 'All';
     }
 
     public function getBmcCode($bmcCode) {
         $bmcModel = new TblDcsBmc();
         $bmcData = $bmcModel->find()->select('ref_code')->where(['bmc_code' => $bmcCode])->one();
-        return $bmcData->ref_code;
+        return !empty($bmcData->ref_code) ? $bmcData->ref_code : 'All';
     }
 
 }
