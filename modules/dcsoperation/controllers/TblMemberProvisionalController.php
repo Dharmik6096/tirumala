@@ -319,9 +319,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $all_doc = [];
                         $model->load(Yii::$app->request->post());
                         if ($config == 1) {
-                            $modelStages = new TblApprovalStagesDetail();
-                            $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
-                            $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
+                            $existDataApproval = TblProcessApproval::find()->where(['process_code' => $model->provisional_member_code, 'process_name' => 'member'])->count();
+                            if ($existDataApproval == 0) {
+                                $modelStages = new TblApprovalStagesDetail();
+                                $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
+                                $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
+                            }
                             if(strtolower($model->provisional_status) == 'approve'){
                                 $model->member_status = 'Created';
                             }
@@ -437,7 +440,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $model_save[] = $historyModel;
                 $memberModel->provisional_status = $status;
                 $memberModel->remarks = $model->remarks;
-                $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
+                $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($memberModel->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
                 $memberModel->member_status = 'Approved';
                 if(strtolower($status) == 'approve' && ($memberCreationPendingForSapApproval != '1' || $memberModel->provisional_from == 'mobile_update')){
                     $memberModel->member_status = 'Created';
