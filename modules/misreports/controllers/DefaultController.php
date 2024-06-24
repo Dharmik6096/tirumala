@@ -28,10 +28,9 @@ class DefaultController extends \app\controllers\ChildController {
             $client_code = \Yii::$app->session->get('eiplCode');
             if (!empty($client_code) && !empty($this->getLabels($this->report)[$client_code])) {
                 $this->data = $this->getLabels($this->report)[$client_code];
-            }else  if (!empty($client_code) && !empty($this->getLabels($this->report)['EIPLCOMMON'])) {
+            } else if (!empty($client_code) && !empty($this->getLabels($this->report)['EIPLCOMMON'])) {
                 $this->data = $this->getLabels($this->report)['EIPLCOMMON'];
-            }
-            else {
+            } else {
                 $this->data = $this->getLabels($this->report);
             }
             if (!empty($this->data['scenario'])) {
@@ -544,19 +543,30 @@ class DefaultController extends \app\controllers\ChildController {
         ];
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $sheet->fromArray(
-                $file_header, // The data to set
-                NULL, // Array values with this value will not be set
-                'A1'         // Top left coordinate of the worksheet range where
+        $skip_header = (isset($this->data['skip_header']) && $this->data['skip_header'] == TRUE) ? TRUE : FALSE;
+
+        if ($skip_header) {
+            $sheet->fromArray(
+                    $download, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A1'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
-        );
-        $sheet->fromArray(
-                $download, // The data to set
-                NULL, // Array values with this value will not be set
-                'A2'         // Top left coordinate of the worksheet range where
+            );
+        } else {
+            $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $sheet->fromArray(
+                    $file_header, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A1'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
-        );
+            );
+            $sheet->fromArray(
+                    $download, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+            );
+        }
         $file_name = $title . '.' . 'xls';
         $path = Yii::$app->basePath . '/web/sap_data_files/';
         Yii::$app->general->checkDirectory($path);
@@ -576,7 +586,7 @@ class DefaultController extends \app\controllers\ChildController {
         } else {
             $data_array['module_name'] = $this->data['module_name'];
         }
-        // tblmilkcollection_collection
+// tblmilkcollection_collection
         $data_array['module_code'] = $bmc;
         $data_array['mcc_plant_code'] = $bmc;
         $data_array['union_code'] = $model->union_code;
@@ -678,7 +688,8 @@ class DefaultController extends \app\controllers\ChildController {
                     'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                     'sap_download' => true,
                     'multiArray' => ['mcc_code', 'bmc_code'],
-                    'module_name' => 'TblMilkCollection_Ananda'
+                    'module_name' => 'TblMilkCollection_Ananda',
+                    'skip_header' => TRUE,
                 ],
             ],
             'DateBmcCollection' => [
@@ -1070,4 +1081,5 @@ class DefaultController extends \app\controllers\ChildController {
         ];
         return $label[$l];
     }
+
 }
