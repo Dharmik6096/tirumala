@@ -695,6 +695,13 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/member-payment-vrs']],
                                     ]
                                 ],
+                                    [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', ' VSP Bill') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                            ['label' => Yii::t('app', 'Remuneration Bill'), 'url' => ['/jasperreports/default/vsp-payment-online-vrs']],
+                                    ]
+                                ],
                                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],

@@ -399,6 +399,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VspPaymentVrs';
         return $this->actionIndex();
     }
+    
+    public function actionVspPaymentOnlineVrs() {
+        $this->report = 'VspPaymentOnlineVrs';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -957,6 +962,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VSPPaymentVRS',
                 'scenario' => 'VspPaymentVrs',
                 'title' => 'Vsp Payment',
+                'bkg_export' => TRUE,
+            ],
+            'VspPaymentOnlineVrs' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VSPPaymentOnlineVRS',
+                'scenario' => 'VspPaymentOnlineVrs',
+                'title' => 'Vsp Payment Online',
                 'bkg_export' => TRUE,
             ],
         ];
