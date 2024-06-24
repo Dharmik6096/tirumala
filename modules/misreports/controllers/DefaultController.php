@@ -543,7 +543,6 @@ class DefaultController extends \app\controllers\ChildController {
         ];
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
-        $eipl_code = \Yii::$app->session->get('eiplCode');
         $skip_header = (isset($this->data['skip_header']) && $this->data['skip_header'] == TRUE) ? TRUE : FALSE;
 
         if ($skip_header) {
