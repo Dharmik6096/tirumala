@@ -543,8 +543,8 @@ class DefaultController extends \app\controllers\ChildController {
         ];
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
-        $excelHeaderRemoveConfig = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'excel_header_remove', 'PORTAL');
-        if ($excelHeaderRemoveConfig == 1) {
+        $eipl_code = \Yii::$app->session->get('eiplCode');
+        if ($this->report == 'SdReportSap' && $eipl_code = 'ANANDA') {
             $sheet->fromArray(
                     $download, // The data to set
                     NULL, // Array values with this value will not be set
@@ -585,7 +585,7 @@ class DefaultController extends \app\controllers\ChildController {
         } else {
             $data_array['module_name'] = $this->data['module_name'];
         }
-        // tblmilkcollection_collection
+// tblmilkcollection_collection
         $data_array['module_code'] = $bmc;
         $data_array['mcc_plant_code'] = $bmc;
         $data_array['union_code'] = $model->union_code;
