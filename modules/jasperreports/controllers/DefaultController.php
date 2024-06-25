@@ -407,6 +407,10 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VspPaymentOnlineVrs';
         return $this->actionIndex();
     }
+    public function actionProvisionalMemberRegister() {
+        $this->report = 'ProvisionalMemberRegister';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -454,12 +458,11 @@ class DefaultController extends \app\controllers\ChildController {
                 }
             }
             //$controls['locale'] = Yii::$app->session->get('LanguageCode');
-            $controls['locale'] = 'en';
+            $controls['locale'] = !empty($model->locale) ? $model->locale : 'en';
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
-            $controls['REPORT_LOCALE'] = 'en';
+            $controls['REPORT_LOCALE'] = !empty($model->locale) ? $model->locale : 'en';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
-            $controls['digit_config'] = 0;
-
+            $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
                 $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
@@ -973,6 +976,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VspPaymentOnlineVrs',
                 'title' => 'Vsp Payment Online',
                 'bkg_export' => TRUE,
+            ],
+            'ProvisionalMemberRegister' => [
+                'param' => 'p_provisional_member_code,p_lang_code,locale,digit_config',
+                'path' => 'MemberRegister',
+                'scenario' => 'ProvisionalMemberRegister',
+                'title' => 'Provisional Member Register',
             ],
             'VendorMilkPaymentShuddh' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',

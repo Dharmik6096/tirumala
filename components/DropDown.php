@@ -987,7 +987,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1891,7 +1891,7 @@ class DropDown extends Component {
             'mode_of_payment' => [
                 'name' => 'mode_of_payment',
                 'prompt' => Yii::t('app', 'Select Payment Mode'),
-                'data' => ['0' => Yii::t('app', 'Cash Deposited In Bank'), '1' => Yii::t('app', 'Cash Submited to Officer')],
+                'data' => ['1' => Yii::t('app', 'Cash'), '2' => Yii::t('app', 'DD'), '3' => Yii::t('app', 'Check'), '4' => Yii::t('app', 'Other')],
             ],
             'applicant_relation' => [
                 'name' => 'applicant_relation',
@@ -1902,6 +1902,11 @@ class DropDown extends Component {
                 'name' => 'machine_owned_type',
                 'prompt' => Yii::t('app', 'Select Machine Owned Type'),
                 'data' => [1 => Yii::t('app', 'Self'), 2 => Yii::t('app', 'Company')],
+            ],
+            'language_list' => [
+                'name' => 'language_code',
+                'prompt' => Yii::t('app', 'Select Language'),
+                'data' => [0 => Yii::t('app', 'English'), 1 => Yii::t('app', 'Hindi')],
             ],
         ];
         return $records[$l];
@@ -2132,7 +2137,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
