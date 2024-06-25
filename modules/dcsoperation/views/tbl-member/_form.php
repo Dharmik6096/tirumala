@@ -225,7 +225,8 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-4">
             <?= $form->field($model, 'email')->textInput() ?>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['currentAddressProof']) ?>
             <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
@@ -262,7 +263,8 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tblmember-bank_code', '', 'Branch', 'branch_code'); ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['bankPassbook']) ?>
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
@@ -272,13 +274,16 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-2">
             <?= $form->field($model, 'beneficiary_name')->textInput() ?>
         </div>
-        <div class="col-sm-2 hidden-for-specific-client">
+        <div class="col-sm-2 hidden-for-specific-client icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['panCard']) ?>
             <?= $form->field($model, 'pan_no')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['aadharCard', 'aadharCardBack']) ?>
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
-        <div class="col-sm-2 hidden-for-specific-client">
+        <div class="col-sm-2 hidden-for-specific-client icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['voterID']) ?>
             <?= $form->field($model, 'voter_id')->textInput() ?>
         </div>
         <div class="col-sm-2">

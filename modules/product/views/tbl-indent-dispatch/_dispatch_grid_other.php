@@ -42,6 +42,9 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                 ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
+                ['attribute' => 'status_date', 'label' => Yii::t('app', 'Indent Approve Date'), 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->status_date);
+                }, 'filter' => FALSE],
                 ['attribute' => 'warehouse_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->warehouseCode, 'store_location_name');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],

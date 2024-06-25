@@ -315,6 +315,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $unlink_files = [];
                         $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
                         $deleteModel = [];
+                        $model->load(Yii::$app->request->post());
                         if ($config == 1) {
                             $modelStages = new TblApprovalStagesDetail();
                             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
