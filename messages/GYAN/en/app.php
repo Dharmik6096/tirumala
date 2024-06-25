@@ -320,6 +320,7 @@ return [
     '303 - BMC Wise Summary' => '303 - MCC Wise Summary',
     'BMC Collection Summary' => 'MCC Collection Summary',
     'DCS Wise Billing Config' => 'VLC Wise Billing Config',
+    'Update DCS Wise Billing Config' => 'Update VLCC Wise Billing Config',
     'DCS Bill Head' => 'VLC Bill Head',
     'BMC ' => 'MCC',
     'CC Collection' => 'VLC Collection',

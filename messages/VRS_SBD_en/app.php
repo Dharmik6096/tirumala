@@ -259,6 +259,7 @@ return [
     'Is Member Rate' => 'Is Farmer Rate',
     'DCS wise billing mapping' => 'VSP wise billing mapping',
     'DCS Wise Billing Config' => 'VSP Wise Billing Config',
+    'Update DCS Wise Billing Config' => 'Update VSP Wise Billing Config',
     'Search DCS wise billing mapping' => 'Search VSP wise billing mapping',
     'Member Payment Process : Step 1' => 'Farmer Payment Process : Step 1',
     'Member Address Details' => 'Farmer Address Details',
