@@ -325,6 +325,21 @@ $defaultToggle = true;
                                             </div> 
                                             <?php
                                         }
+                                        if (in_array($value, array('p_provisional_member_code'))) {
+                                            if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['provisional_member_code'])){
+                                                $model->{$value} = Yii::$app->request->queryParams['provisional_member_code'];
+                                            }
+                                            echo Html::activeHiddenInput($model, $value);
+                                        }
+                                        if (in_array($value, array('p_lang_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?php
+                                                echo Yii::$app->dropdown->dropdownStatic('language_list', $model, $form, 'form-group', $model->getAttributeLabel('Language'), false, $value, false);
+                                                ?>
+                                            </div>
+                                            <?php
+                                        }
                                         if (in_array($value, array('p_month'))) {
                                             ?>
                                             <div class="col-sm-3">
@@ -360,6 +375,9 @@ $defaultToggle = true;
                                         echo Html::activeHiddenInput($model, 'p_route_name');
                                         $model->p_report_name = Html::encode($this->title);
                                         echo Html::activeHiddenInput($model, 'p_report_name');
+                                        
+                                        echo Html::activeHiddenInput($model, 'locale');
+                                        echo Html::activeHiddenInput($model, 'digit_config');
                                         ?>
 
                                         <!--            <div class="clearfix"></div>-->
@@ -460,6 +478,21 @@ $defaultToggle = true;
 
     <?php
     $script = "
+    $('#reportsmodel-p_lang_code').val(1);
+    var languageCode = $('#reportsmodel-p_lang_code').val();
+    setLanguageData(languageCode);
+    function setLanguageData(languageCode){
+        $('#reportsmodel-locale').val('en');
+        $('#reportsmodel-digit_config').val(0);
+        if(languageCode == 1){
+            $('#reportsmodel-locale').val('hn');
+            $('#reportsmodel-digit_config').val(1);
+        }
+    }
+    $('#reportsmodel-p_lang_code').on('change', function(){
+        languageCode = $('#reportsmodel-p_lang_code').val();
+        setLanguageData(languageCode);
+    });
        $('#reportsmodel-p_union_name').val($('select#reportsmodel-union_code option:selected').text());
         $('#reportsmodel-p_union_code').val($('select#reportsmodel-union_code option:selected').val());
     $('#reportsmodel-union_code').change(function() {

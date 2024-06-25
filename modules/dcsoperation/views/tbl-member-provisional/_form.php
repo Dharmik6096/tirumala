@@ -150,6 +150,13 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'annual_milk_pour')->textInput() ?>
         </div>
         <div class="col-sm-4">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['signatureOfwitness']) ?>
+            <?= $form->field($model, 'witness_name')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'place')->textarea() ?>
+        </div>
+        <div class="col-sm-4">
             <?= $form->field($model, 'remarks')->textarea() ?>
         </div>
     </div>
@@ -193,7 +200,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'post_office')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                   ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                     ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -253,7 +260,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                   ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                     ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2 icon-set">

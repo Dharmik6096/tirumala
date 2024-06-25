@@ -65,8 +65,12 @@ class TblUnionShareConfig extends ChildModel {
         ];
     }
 
-    public function getShareDetail($type, $gender) {
-        return $this->find()->where(['process_type' => $type, 'gender_code' => $gender])->one();
+    public function getShareDetail($type, $gender, $union, $bmc) {
+        $shareData = $this->find()->where(['process_type' => $type, 'gender_code' => $gender, 'bmc_code' => $bmc])->one();
+        if (empty($shareData)) {
+            $shareData = $this->find()->where(['process_type' => $type, 'gender_code' => $gender, 'union_code' => $union, 'bmc_code' => null])->one();
+        }
+        return $shareData;
     }
 
 }

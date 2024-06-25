@@ -106,11 +106,6 @@ $form = ActiveForm::begin([
                                         $(".error-summary ul").append("<li>"+val+"</li>");
                                     });
                                     $(".error-summary").show();
-                                    //  var cnt=0;
-                                    // $.each(data, function(key, val) {
-                                    //     $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
-                                    //     $("#"+key).closest(".form-group").addClass("error");
-                                    // });
                                     // if(cnt==0 && typeof data.message != "undefined") 
                                     //     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+data.message+"</span></div></div>");
                                 }
