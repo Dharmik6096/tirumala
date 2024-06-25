@@ -247,9 +247,6 @@ class DefaultController extends \app\controllers\ChildController {
         if ($client_code == 'ANIG') {
             $this->report = 'VendorMilkPaymentAnig';
         }
-        if ($client_code == 'SHUDDH') {
-            $this->report = 'VendorMilkPaymentShuddh';
-        }
         return $this->actionIndex();
     }
 
@@ -259,7 +256,11 @@ class DefaultController extends \app\controllers\ChildController {
     }
 
     public function actionVendorMilkBill() {
+        $client_code = \Yii::$app->session->get('eiplCode');
         $this->report = 'VendorMilkBill';
+        if ($client_code == 'SHUDDH') {
+            $this->report = 'VendorMilkBillShuddh';
+        }
         return $this->actionIndex();
     }
 
@@ -392,21 +393,22 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VendorMilkBillSummaryGLT';
         return $this->actionIndex();
     }
-    
+
     public function actionMemberPaymentVrs() {
         $this->report = 'MemberPaymentVrs';
         return $this->actionIndex();
     }
-    
+
     public function actionVspPaymentVrs() {
         $this->report = 'VspPaymentVrs';
         return $this->actionIndex();
     }
-    
+
     public function actionVspPaymentOnlineVrs() {
         $this->report = 'VspPaymentOnlineVrs';
         return $this->actionIndex();
     }
+
     public function actionProvisionalMemberRegister() {
         $this->report = 'ProvisionalMemberRegister';
         return $this->actionIndex();
@@ -977,17 +979,18 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'Vsp Payment Online',
                 'bkg_export' => TRUE,
             ],
+            'VendorMilkBillShuddh' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
+                'path' => 'vsp/VendorMilkBillShuddh',
+                'scenario' => 'VendorMilkBill',
+                'title' => '609 - Vendor Milk Bill',
+                'bkg_export' => TRUE,
+            ],
             'ProvisionalMemberRegister' => [
                 'param' => 'p_provisional_member_code,p_lang_code,locale,digit_config',
                 'path' => 'MemberRegister',
                 'scenario' => 'ProvisionalMemberRegister',
                 'title' => 'Provisional Member Register',
-            ],
-            'VendorMilkPaymentShuddh' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',
-                'path' => 'vsp/VendorMilkBillShuddh',
-                'scenario' => 'VendorMilkPayment',
-                'title' => '604 - Vendor Milk Payment',
             ],
         ];
         return $label[$l];
