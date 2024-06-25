@@ -247,6 +247,9 @@ class DefaultController extends \app\controllers\ChildController {
         if ($client_code == 'ANIG') {
             $this->report = 'VendorMilkPaymentAnig';
         }
+        if ($client_code == 'SHUDDH') {
+            $this->report = 'VendorMilkPaymentShuddh';
+        }
         return $this->actionIndex();
     }
 
@@ -980,6 +983,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'MemberRegister',
                 'scenario' => 'ProvisionalMemberRegister',
                 'title' => 'Provisional Member Register',
+            ],
+            'VendorMilkPaymentShuddh' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',
+                'path' => 'vsp/VendorMilkBillShuddh',
+                'scenario' => 'VendorMilkPayment',
+                'title' => '604 - Vendor Milk Payment',
             ],
         ];
         return $label[$l];
