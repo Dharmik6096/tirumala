@@ -5166,3 +5166,7 @@ tr.highlightRow {
 .icon-set a.icon-set-right, .icon-set-checkbox a.icon-set-right {
     margin-right: 15px;
 }
+
+.mt-21 {
+    margin-top: 21px;
+}

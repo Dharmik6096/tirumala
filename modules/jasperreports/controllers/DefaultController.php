@@ -247,6 +247,9 @@ class DefaultController extends \app\controllers\ChildController {
         if ($client_code == 'ANIG') {
             $this->report = 'VendorMilkPaymentAnig';
         }
+        if ($client_code == 'SHUDDH') {
+            $this->report = 'VendorMilkPaymentShuddh';
+        }
         return $this->actionIndex();
     }
 
@@ -397,6 +400,11 @@ class DefaultController extends \app\controllers\ChildController {
     
     public function actionVspPaymentVrs() {
         $this->report = 'VspPaymentVrs';
+        return $this->actionIndex();
+    }
+    
+    public function actionVspPaymentOnlineVrs() {
+        $this->report = 'VspPaymentOnlineVrs';
         return $this->actionIndex();
     }
 
@@ -958,6 +966,19 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VspPaymentVrs',
                 'title' => 'Vsp Payment',
                 'bkg_export' => TRUE,
+            ],
+            'VspPaymentOnlineVrs' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VSPPaymentOnlineVRS',
+                'scenario' => 'VspPaymentOnlineVrs',
+                'title' => 'Vsp Payment Online',
+                'bkg_export' => TRUE,
+            ],
+            'VendorMilkPaymentShuddh' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',
+                'path' => 'vsp/VendorMilkBillShuddh',
+                'scenario' => 'VendorMilkPayment',
+                'title' => '604 - Vendor Milk Payment',
             ],
         ];
         return $label[$l];

@@ -34,6 +34,9 @@ $grid_option = [
             return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/dcsoperation/tbl-member/get-family-data', 'member_family_detail_code' => $model->member_family_detail_code], $options);
         },
         'delete' => ['option' => 'member_family_detail_code,member_family_detail_code,/dcsoperation/tbl-member/delete-family'],
+        'imageView' => function ($url, $model) {
+            return Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['nAddressProofback', 'nAddressProof']);
+        },
     ]
 ];
 

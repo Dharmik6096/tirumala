@@ -6,7 +6,7 @@ use kartik\detail\DetailView;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
-$this->title = Yii::$app->label->title('view', 'provisional member');
+$this->title = Yii::$app->label->title('view', 'provisional member').' > '.$model->application_no;
 if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 0) {
     $this->params['menu'][] = Yii::$app->controls->add('provisional member');
     if ($model->is_approved != 1) {
@@ -595,6 +595,26 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                 ?>
             </div>
         </div>
+    </div>
+    <div class="col-sm-12">
+        <table class="table table-bordered table-striped table-main table-language table-rate table-hover">
+            <tbody>
+            <thead>
+                <tr>
+                    <th><?= Yii::t('app', 'Member Class') ?></th>
+                    <th><?= Yii::t('app', 'Home consumption') ?></th>
+                    <th><?= Yii::t('app', 'Commitment Detail') ?></th>
+                    <th><?= Yii::t('app', 'Annual Milk Pour') ?></th>
+                </tr>
+            </thead>
+            <tr>
+                <td><?= $model->member_class; ?></td>
+                <td><?= $model->home_consumption_milk; ?></td>
+                <td><?= $model->market_surplus_milk; ?></td>
+                <td><?= $model->annual_milk_pour; ?></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
     <div class="row">
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">

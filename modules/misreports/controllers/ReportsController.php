@@ -1690,9 +1690,29 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MobileAppReport';
         return $this->actionIndex();
     }
-    
+
     public function actionFarmerRegister() {
         $this->report = 'FarmerRegister';
+        return $this->actionIndex();
+    }
+
+    public function actionFieldStaffActivity() {
+        $this->report = 'FieldStaffActivity';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberProvisionalFamilyDetail() {
+        $this->report = 'MemberProvisionalFamilyDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberProvisionalSapExport() {
+        $this->report = 'MemberProvisionalSapExport';
+        return $this->actionIndex();
+    }
+
+    public function actionExportProvisionalMemberBankReceipt(){
+        $this->report = 'ExportProvisionalMemberBankReceipt';
         return $this->actionIndex();
     }
 
@@ -3590,6 +3610,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
+            ],
+            'FieldStaffActivity' => [
+                'param' => 'union_code,state_code,region_code,area_code,user_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_field_staff_activity',
+                'scenario' => 'FieldStaffActivity',
+                'title' => 'User Task Activity MIS',
+            ],
+            'MemberProvisionalFamilyDetail' => [
+                'param' => 'union_code,p_date:string',
+                'sp_name' => 'mis_import_member_provisional_data_saahaj',
+                'scenario' => 'MemberProvisionalFamilyDetail',
+                'title' => 'Member Provisional Family Detail',
+            ],
+            'MemberProvisionalSapExport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_member_pib_upload_saahaj',
+                'scenario' => 'MemberProvisionalSapExport',
+                'title' => 'Member Provisional SAP Export',
+            ],
+            'ExportProvisionalMemberBankReceipt' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
+                'sp_name' => 'mis_member_bank_receipt_data_saahaj',
+                'scenario' => 'ExportProvisionalMemberBankReceipt',
+                'title' => 'Export Provisional Member Bank Receipt',
             ],
         ];
         return $label[$l];

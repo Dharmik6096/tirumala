@@ -41,10 +41,10 @@ $attribute = [
         ['attribute' => 'ex_member_code', 'value' => 'ex_member_code'],
         ['attribute' => 'member_type_code', 'value' => 'memberTypeCode.member_type_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'member_name', 'value' => 'member_name'],
+        ['attribute' => 'surname', 'value' => 'surname', 'visible' => true],
         ['attribute' => 'local_name', 'value' => 'local_name', 'filter' => false, 'visible' => false],
         ['attribute' => 'father_name', 'value' => 'father_name', 'visible' => false],
         ['attribute' => 'local_father_name', 'value' => 'local_father_name', 'filter' => false, 'visible' => false],
-        ['attribute' => 'surname', 'value' => 'surname', 'visible' => false],
         ['attribute' => 'local_surname', 'value' => 'local_surname', 'filter' => false, 'visible' => false],
         ['attribute' => 'nominee_name', 'value' => 'nominee_name', 'visible' => false, 'filter' => false,],
         ['attribute' => 'local_nominee_name', 'value' => 'local_nominee_name', 'visible' => false, 'filter' => false,],
@@ -89,6 +89,7 @@ $attribute = [
         ['attribute' => 'member_class', 'value' => function($model) {
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'application_no', 'filter' => true],
         ['attribute' => 'is_approved', 'value' => function($model) {
             return $model->is_approved == 1 ? 'Approved' : 'Pending';
         }, 'visible' => true, 'filter' => false],

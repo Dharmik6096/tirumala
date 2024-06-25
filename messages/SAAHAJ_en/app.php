@@ -128,4 +128,5 @@ return [
     'avg_fat' => 'Avg.FAT(%)',
     'avg_snf' => 'Avg.SNF(%)',
     'Registration Date' => 'Enrollment Date',
+    'Date of Birth' => 'Applicant Date of Birth',
 ];
