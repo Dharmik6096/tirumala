@@ -46,26 +46,29 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
-        $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
+        $union_code = empty($this->union_code) ? explode(',', Yii::$app->session->get('Unions')) : $this->union_code;
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($union_code, 'batch_no_wise_inventory', 'PORTAL');
+        $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration($union_code, 'grn_without_stock_entry', 'PORTAL');
         return [
-            [['plant_dispatch_txn_code'], 'required'],
-            [['product_code'], 'validateProduct', 'on' => ['product']],
-            [['product_code', 'unit_code', 'rate', 'amount', 'qty'], 'required'],
-            [['plant_dispatch_txn_code', 'plant_dispatch_code', 'received_qty', 'rejected_qty', 'grn_missing_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks', 'manuf_date'], 'safe'],
-            [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
-            [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'po_itemno'], 'safe'],
-            [['sap_batch_no'], 'required', 'when' => function ($model) use ($batchNoWiseInventory, $grnWithoutStockEntry) {
+                [['plant_dispatch_txn_code'], 'required'],
+                [['qty', 'rate'], 'number', 'on' => ['clienterp_cargill']],
+                [['product_code', 'rate', 'qty'], 'required', 'on' => ['clienterp_cargill']],
+                [['product_code'], 'validateProduct', 'on' => ['clienterp_cargill']],
+                [['product_code', 'unit_code', 'rate', 'amount', 'qty'], 'required', 'except' => ['clienterp_cargill']],
+                [['plant_dispatch_txn_code', 'plant_dispatch_code', 'received_qty', 'rejected_qty', 'grn_missing_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks', 'manuf_date'], 'safe'],
+                [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
+                [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'po_itemno'], 'safe'],
+                [['sap_batch_no'], 'required', 'when' => function ($model) use ($batchNoWiseInventory, $grnWithoutStockEntry) {
                     return $batchNoWiseInventory == 1 && $grnWithoutStockEntry != 1;
                 }],
-            [['sap_batch_no'], 'unique', 'targetAttribute' => ['sap_batch_no', 'product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importCsv'], 'when' => function ($model) use ($batchNoWiseInventory) {
+                [['sap_batch_no'], 'unique', 'targetAttribute' => ['sap_batch_no', 'product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importCsv'], 'when' => function ($model) use ($batchNoWiseInventory) {
                     return $batchNoWiseInventory == 1;
                 }],
-            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv'], 'when' => function ($model)use ($batchNoWiseInventory) {
+                [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv'], 'when' => function ($model)use ($batchNoWiseInventory) {
                     return $batchNoWiseInventory == 0;
                 }],
-            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'sap_batch_no', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv'], 'when' => function ($model)use ($batchNoWiseInventory) {
+                [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'sap_batch_no', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv'], 'when' => function ($model)use ($batchNoWiseInventory) {
                     return $batchNoWiseInventory == 1;
                 }],
         ];
@@ -124,13 +127,13 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
     }
 
     public function validateProduct($attribute) {
-        $record = TblProduct::find()->select(['union_code', 'product_code', 'unit_code'])->where(['or', ['ref_code' => $this->product_code], ['product_code' => $this->product_code]])->andWhere(['is_active' => 1])->one();
+        $record = TblProduct::find()->select(['product_code', 'unit_code'])->where(['union_code' => $this->union_code])
+                        ->andWhere(['or', ['ref_code' => $this->product_code], ['product_code' => $this->product_code]])->andWhere(['is_active' => 1])->one();
         if (!empty($record)) {
             $this->product_code = $record->product_code;
             $this->unit_code = $record->unit_code;
-            $this->union_code = $record->union_code;
         } else {
-            $this->addError($attribute, Yii::t('app/validation', 'Is Invalid'));
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' Is Invalid'));
         }
     }
 
