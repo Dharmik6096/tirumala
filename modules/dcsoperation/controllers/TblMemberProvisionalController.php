@@ -923,67 +923,81 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     }
 
     public function actionImportProvisionalMemberBankReceipt() {
-
         $model = new TblMemberProvisionalShareDetails();
-
         $model->scenario = 'import_receipt_detail';
-
         if ($model->load(Yii::$app->request->post())) {
             $message = '';
             $masterModel = [];
             if ($model->validate()) {
                 $this->uploadExcel($model, $_POST['file_name'], $masterModel, $message);
-                if ($message == '') {
-                    $transaction = $this->generalModel->saveTransaction($masterModel, ['member provisional share detail', 'edit']);
-                    if ($transaction == 'customRedirect') {
-                        return $this->redirect(['import-provisional-member-bank-receipt']);
-                    }
-                } else {
-                    return ['status' => 'error', 'message' => $message];
+                if (!empty($masterModel)) {
+                    $this->generalModel->saveTransaction($masterModel, ['member provisional share detail', 'edit']);
                 }
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'success',
+                    'message' => $message
+                ]);
+                return $this->redirect(['import-provisional-member-bank-receipt']);
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(ActiveForm::validate($model));
             }
         }
         return $this->render('import_receipt_detail', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
     private function uploadExcel($model, $fileName, &$masterModel, &$message) {
         $importPath = Yii::getAlias('@webroot') . '/' . Yii::$app->params['import_path'];
         $objPHPExcel = \PHPExcel_IOFactory::load($importPath . $fileName);
+        $successfulRecords = 0;
+        $errorRecords = 0;
+        $alreadyUpdatedRecords = 0;
+        $updatedLineErrors  = [];
+        $errorLineNumbers = [];
+        $totalAmount = 0;
+        $ref_no = '';
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-            $column_one = $worksheet->getCell('A1')->getValue();
-            if ($column_one == 'provisional_member_code') {
-                for ($row = 2; $row <= $worksheet->getHighestRow(); $row ++) {
-                    $provisionalMemberCode = $worksheet->getCell('A' . $row)->getValue();
-                    $existData = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $provisionalMemberCode])->one();
-                    if(!empty($existData)){
-                        if(empty($existData->bank_name) && (empty($existData->amount_deposit) || $existData->amount_deposit == 0)){
-                            $historyModel = new TblMemberProvisionalShareDetailsHistory();
-                            Yii::$app->operation->history($existData, $historyModel, UPDATE);
-                            $masterModel[] = $historyModel;
-                            $existData->scenario = 'import_receipt_detail';
-                            $existData->bank_name = $model->bank_name;
-                            $existData->amount_deposit = $existData->amount_payable;
-                            $existData->deposit_date = empty($model->deposit_date) ? NULL : Yii::$app->formatter->asDate($model->deposit_date, DATE_FORMAT);
-                            $existData->mode_of_payment = $model->mode_of_payment;
-                            $date = empty($model->deposit_date) ? '' : Yii::$app->formatter->asDate($model->deposit_date, 'Ymd');
-                            $existData->ref_no = $model->bank_name.$date;
-                            $masterModel[] = $existData;
-                        }
+            if ($worksheet->getHighestRow() <= 1 || $worksheet->getCell('A1')->getValue() != 'provisional_member_code') {
+                $message = 'Please Upload Valid Excel Sheet. <br>';
+                return;
+            }
+            for ($row = 2; $row <= $worksheet->getHighestRow(); $row++) {
+                $provisionalMemberCode = $worksheet->getCell('A' . $row)->getValue();
+                $existData = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $provisionalMemberCode])->one();
+                if (!empty($existData)) {
+                    if (empty($existData->ref_no)) {
+                        $historyModel = new TblMemberProvisionalShareDetailsHistory();
+                        Yii::$app->operation->history($existData, $historyModel, UPDATE);
+                        $masterModel[] = $historyModel;
+                        $existData->scenario = 'import_receipt_detail';
+                        $existData->bank_name = $model->bank_name;
+                        $existData->amount_deposit = $existData->amount_payable;
+                        $existData->deposit_date = empty($model->deposit_date) ? NULL : Yii::$app->formatter->asDate($model->deposit_date, DATE_FORMAT);
+                        $existData->mode_of_payment = $model->mode_of_payment;
+                        $date = empty($model->deposit_date) ? '' : date('Ymd', strtotime($model->deposit_date));
+                        $ref_no = $model->bank_name . $date;
+                        $existData->ref_no = $ref_no;
+                        $masterModel[] = $existData;
+                        $totalAmount += $existData->amount_payable;
+                        $successfulRecords++;
                     } else {
-                        $message .= 'Import data some record is invalid.';
+                        $alreadyUpdatedRecords++;
+                        $updatedLineErrors[] = $row - 1;
                     }
+                } else {
+                    $errorRecords++;
+                    $errorLineNumbers[] = $row - 1;
                 }
-            } else {
-                $message .= 'Provisional Applicant Uniuqe ID Not Available in Sheet.';
             }
-            if ((int) $worksheet->getHighestRow() <= 1) {
-                $message .= 'Please Upload Valid Excel Sheet.';
-            }
+        }
+        if($message == ''){
+            $message = "Success Records: $successfulRecords. <br>Total Amount: $totalAmount. Ref Reciept No: $ref_no<br>" .
+                        "Already Updated Records: $alreadyUpdatedRecords. <br>" .
+                        (!empty($updatedLineErrors) ? "Already Updated Line Numbers: " . implode(', ', $updatedLineErrors) . "<br>" : "").
+                        "Error Records: $errorRecords. <br>" .
+                        (!empty($errorLineNumbers) ? "Error Line Numbers: " . implode(', ', $errorLineNumbers) . "<br>" : "");
         }
     }
 
@@ -1009,5 +1023,4 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             return Json::encode($record);
         }
     }
-
 }
