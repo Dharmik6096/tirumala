@@ -107,6 +107,15 @@ $attribute = [
         }, 'visible' => false, 'filter' => true
     ],
         ['attribute' => 'member_identity_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'witness_name', 'visible' => false, 'filter' => false],
+        ['attribute' => 'place', 'visible' => false, 'filter' => false],
+        ['attribute' => 'payment_type', 'value' => function($model) {
+            return (!empty($model['shareCode']->mode_of_payment) && $model['shareCode']->mode_of_payment != null) ? Yii::$app->dropdown->getRecords('mode_of_payment')['data'][$model['shareCode']->mode_of_payment] : '';
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('mode_of_payment', $searchModel, 'payment_type')],
+        ['attribute' => 'recipt_ref_no', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->shareCode, 'ref_no');
+        }, 'visible' => true, 'filter' => true
+    ],
 ];
 
 $grid_option = [
@@ -159,6 +168,14 @@ $grid_option = [
                 $disable = ($model->provisional_status == 'Pending') ? '' : 'disabled';
                 $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
                 return GhostHtml::a('<i class="fa fa-file"></i>', ['/dcsoperation/tbl-member-provisional/document-upload', 'id' => $model->provisional_member_code], $options);
+            }
+        },
+        'report' => function ($url, $model) use ($pending_approval) {
+            if (!$pending_approval) {
+                $disable = (strtolower($model->provisional_status) == 'approve') ? '' : 'disabled';
+                $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable, 'target'=>'_blank'];
+                // return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register'], $options);
+                return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/jasperreports/default/provisional-member-register', 'provisional_member_code' => $model->provisional_member_code], $options);
             }
         },
     ]

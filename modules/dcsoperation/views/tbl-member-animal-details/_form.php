@@ -232,13 +232,17 @@ $btn = $type == 'create' ? 'create' : 'update';
                                                                 $(\'#pageloader\').hide();
                                                                 if (data.status == "error"){ 
                                                                     $("p.help-block").text("");
-                                                                    var cnt=0;
-                                                                    $.each(data.errors, function(key, val) {
-                                                                        $(".field-"+key+" p").text(val);
-                                                                        $("#"+key).closest(".form-group").addClass("has-error");
-                                                                    });
-                                                                    if(cnt==0 && typeof data.message != "undefined")                                           
-                                                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+data.message+"</span></div></div>");
+                                                                        var cnt=0;
+                                                                        var errorMessage = "";
+                                                                        $.each(data.errors, function(key, value) {
+                                                                            errorMessage += value + "<br>";
+                                                                            $(".field-" + key + " .help-block").text(value);
+                                                                            $("#" + key).closest(".form-group").addClass("has-error");
+                                                                         });
+                                                                        bootbox.alert({
+                                                                            title: "Validation Error",
+                                                                            message: errorMessage
+                                                                        });
                                                                 }else{
                                                                   var successMessage = "' . Yii::t('app', 'Member Animal Details Successfully Created') . '";
                                                                     $(".help-block").text("");

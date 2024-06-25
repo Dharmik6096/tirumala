@@ -3191,6 +3191,7 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
     padding: 2px 4px 0px !important;
     text-align: center;
     line-height: unset !important;
+    background-color: #00a2da;
 }
 .table-hover thead tr.filters.skip-export {
     background-color: #ffffff !important;

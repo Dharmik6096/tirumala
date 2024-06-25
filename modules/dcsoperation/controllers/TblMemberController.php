@@ -435,7 +435,8 @@ class TblMemberController extends \app\controllers\ChildController {
         //
         // share detail 
         $shareConfig = new TblUnionShareConfig();
-        $shares = $shareConfig->getShareDetail('member', $this->model->gender_code);
+        $dcs_detail = TblDcs::find()->select('bmc_code')->where(['dcs_code' => $this->model->dcs_code])->one();
+        $shares = $shareConfig->getShareDetail('member', $this->model->gender_code, $this->model->union_code, $dcs_detail['bmc_code']);
 
         $memberShareDetail = new TblMemberShareDetails();
         $memberShareDetail->member_code = $id;
@@ -480,8 +481,11 @@ class TblMemberController extends \app\controllers\ChildController {
                 $memberShareDetail->load($post_data);
             }
             $memberShareDetail['gender_code'] = $this->model->gender_code;
+            $memberShareDetail['bmc_code'] = $dcs_detail['bmc_code'];
+
             $master_model[] = $memberShareDetail;
             $msg = '';
+            Yii::$app->response->format = Response::FORMAT_JSON;
             if (empty($memberShareDetail->getErrors()) && empty($this->model->getErrors()) && empty($member_animal_model->getErrors()) && $memberShareDetail->validate() && $member_animal_model->validate() && $this->model->validate()) {
 
                 $transaction = $this->generalModel->saveTransaction($master_model, $h_model, ['member', 'create']);

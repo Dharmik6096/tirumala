@@ -120,6 +120,8 @@ $attribute = [
         }, 'visible' => false, 'filter' => true
     ],
         ['attribute' => 'member_identity_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'witness_name', 'visible' => false, 'filter' => false],
+        ['attribute' => 'place', 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [
