@@ -6,7 +6,7 @@ use kartik\detail\DetailView;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
-$this->title = Yii::$app->label->title('view', 'provisional member').' > '.$model->application_no;
+$this->title = Yii::$app->label->title('view', 'provisional member') . ' > ' . $model->application_no;
 if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 0) {
     $this->params['menu'][] = Yii::$app->controls->add('provisional member');
     if ($model->is_approved != 1) {
@@ -28,33 +28,39 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             [
                             'attribute' => 'union_code',
                             'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'bmc_code',
+                            'value' => (string) $model->bmc_code,
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
                     [
                     'columns' => [
-                            [
-                            'attribute' => 'bmc_code',
-                            'value' => (string) $model->bmc_code,
-                            'valueColOptions' => ['style' => 'width:30%']],
                             [
                             'attribute' => 'bmc_name',
                             'value' => isset($model->tblDcsBmc) ? $model->tblDcsBmc->bmc_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                            [
+                            'attribute' => 'dcs_code',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                     ],
                 ],
                     [
                     'columns' => [
                             [
-                            'attribute' => 'society_code',
-                            'value' => (string) $model->dcs_code,
+                            'attribute' => 'dcs_ref_code',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->ref_code : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
-                            'attribute' => 'dcs_code',
-                            'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'attribute' => 'society_code',
+                            'value' => (string) $model->dcs_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -285,6 +291,18 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             [
                             'attribute' => 'is_operator_aggre',
                             'value' => ($model->is_operator_aggre == 0) ? 'Pending' : ($model->is_operator_aggre == 1 ? 'Verify' : ''),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'witness_name',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'place',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
