@@ -13,7 +13,7 @@ use yii\web\View;
         <div class="col-sm-12">
             <div class="col-sm-3">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center"><div class="left-title"><?= Yii::t('app', 'Active VLC'); ?></div><div id="total_mpp_count" class="right-title"><?= 0; ?></div></div>
+                    <div class="card-header d-flex justify-content-between align-items-center background_dark"><div class="left-title"><?= Yii::t('app', 'Active VLC'); ?></div><div id="total_mpp_count" class="right-title"><?= 0; ?></div></div>
                     <div class="card-body">
                         <div class="tbl-cell">
                             <div id="total_mpp"></div>
@@ -23,7 +23,7 @@ use yii\web\View;
             </div>
             <div class="col-sm-3">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center"><div class="left-title"><?= Yii::t('app', 'Total Farmers'); ?></div><div id="total_member_count" class="right-title"><?= 0; ?></div></div>
+                    <div class="card-header d-flex justify-content-between align-items-center background_dark"><div class="left-title"><?= Yii::t('app', 'Total Farmers'); ?></div><div id="total_member_count" class="right-title"><?= 0; ?></div></div>
                     <div class="card-body">
                         <div class="tbl-cell">
                             <div id="total_member"></div>
@@ -33,7 +33,7 @@ use yii\web\View;
             </div>
             <div class="col-sm-3">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center"><div class="left-title"><?= Yii::t('app', 'Total Emplpyees'); ?></div><div id="total_employee_count" class="right-title"><?= 0; ?></div></div>
+                    <div class="card-header d-flex justify-content-between align-items-center background_dark"><div class="left-title"><?= Yii::t('app', 'Total Emplpyees'); ?></div><div id="total_employee_count" class="right-title"><?= 0; ?></div></div>
                     <div class="card-body">
                         <div class="tbl-cell">
                             <div id="total_employee"></div>
@@ -43,7 +43,7 @@ use yii\web\View;
             </div>
             <div class="col-sm-3">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center"><div class="left-title"><?= Yii::t('app', 'Total Route Supervisor'); ?></div><div id="total_supervisor_count" class="right-title"><?= 0; ?></div></div>            
+                    <div class="card-header d-flex justify-content-between align-items-center background_dark"><div class="left-title"><?= Yii::t('app', 'Total Route Supervisor'); ?></div><div id="total_supervisor_count" class="right-title"><?= 0; ?></div></div>            
                     <div class="card-body">
                         <div class="tbl-cell">
                             <div id="total_supervisor"></div>
@@ -53,7 +53,7 @@ use yii\web\View;
             </div>
             <div class="col-sm-3">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center"><div class="left-title"><?= Yii::t('app', 'Total Area Incharge'); ?></div><div id="total_az_manager_count" class="right-title"><?= 0; ?></div></div>
+                    <div class="card-header d-flex justify-content-between align-items-center background_dark"><div class="left-title"><?= Yii::t('app', 'Total Area Incharge'); ?></div><div id="total_az_manager_count" class="right-title"><?= 0; ?></div></div>
                     <div class="card-body">
                         <div class="tbl-cell">
                             <div id="total_az_manager"></div>
@@ -63,7 +63,7 @@ use yii\web\View;
             </div>
             <div class="col-sm-3">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center"><div class="left-title"><?= Yii::t('app', 'Other Employees'); ?></div><div id="total_other_Staff_count" class="right-title"><?= 0; ?></div></div>
+                    <div class="card-header d-flex justify-content-between align-items-center background_dark"><div class="left-title"><?= Yii::t('app', 'Other Employees'); ?></div><div id="total_other_Staff_count" class="right-title"><?= 0; ?></div></div>
                     <div class="card-body">
                         <div class="tbl-cell">
                             <div id="total_other_Staff"></div>

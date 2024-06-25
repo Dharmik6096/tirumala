@@ -5172,20 +5172,17 @@ tr.highlightRow {
     border-radius: 5px !important;
     display: flex;
     flex-direction: column;
-    color: #212529;
-    margin-top: 10px;
+    margin: 10px 0px 15px 0px;
 }
 
 .card-header {
     padding: 10px;
-    margin-bottom: 0;
-    background-color: #dee2e6;
     justify-content: space-between;
+    color: #fff;
+    border-radius: 5px 5px 0px 0px;
 }
 .card-body{
-    padding: 10px;
-    background-color: white;
-    margin-bottom: 20px;
+    background-color: #fff;
 }
 .mt-21 {
     margin-top: 21px;
