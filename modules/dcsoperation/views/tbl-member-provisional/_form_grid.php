@@ -109,10 +109,6 @@ $attribute = [
         ['attribute' => 'member_identity_no', 'visible' => false, 'filter' => false],
         ['attribute' => 'witness_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'place', 'visible' => false, 'filter' => false],
-//        ['attribute' => 'payment_type', 'value' => function ($model) {
-//            return Yii::$app->general->getforeignkey($model->shareCode, 'mode_of_payment');
-//        }, 'visible' => true, 'filter' => true
-//    ],
         ['attribute' => 'payment_type', 'value' => function($model) {
             return (!empty($model['shareCode']->mode_of_payment) && $model['shareCode']->mode_of_payment != null) ? Yii::$app->dropdown->getRecords('mode_of_payment')['data'][$model['shareCode']->mode_of_payment] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('mode_of_payment', $searchModel, 'payment_type')],
