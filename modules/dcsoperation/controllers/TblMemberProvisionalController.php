@@ -322,7 +322,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $modelStages = new TblApprovalStagesDetail();
                             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
                             $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
-                            if(strtolower($model->provisional_status) == 'approve'){
+                            if (strtolower($model->provisional_status) == 'approve') {
                                 $model->member_status = 'Created';
                             }
                             $save_model[] = $model;
@@ -330,7 +330,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             if (Yii::$app->request->post('request_button') === 'approve') {
                                 $model->provisional_status = 'Approve';
                                 $status = 'Approve';
-                                if(strtolower($status) == 'approve'){
+                                if (strtolower($status) == 'approve') {
                                     $model->member_status = 'Created';
                                 }
                                 $model->scenario = 'MemberApprove';
@@ -439,7 +439,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $memberModel->remarks = $model->remarks;
                 $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($memberModel->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
                 $memberModel->member_status = 'Approved';
-                if(strtolower($status) == 'approve' && ($memberCreationPendingForSapApproval != '1' || $memberModel->provisional_from == 'mobile_update')){
+                if (strtolower($status) == 'approve' && ($memberCreationPendingForSapApproval != '1' || $memberModel->provisional_from == 'mobile_update')) {
                     $memberModel->member_status = 'Created';
                 }
                 $memberModel->scenario = 'MemberApprove';
@@ -613,7 +613,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 //
 // share detail 
         $shareConfig = new TblUnionShareConfig();
-        $shares = $shareConfig->getShareDetail('member', $this->model->gender_code);
+        $shares = $shareConfig->getShareDetail('member', $this->model->gender_code, $this->model->union_code, $this->model->bmc_code);
 
         $memberShareDetail = new TblMemberProvisionalShareDetails();
         $memberShareDetail->provisional_member_code = $id;
@@ -656,6 +656,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $memberShareDetail->load($post_data);
             $memberShareDetail->gender_code = $this->model->gender_code;
             $memberShareDetail->union_code = $this->model->union_code;
+            $memberShareDetail->bmc_code = $this->model->bmc_code;
             $memberShareDetail->deposit_date = empty($memberShareDetail->deposit_date) ? NULL : Yii::$app->formatter->asDate($memberShareDetail->deposit_date, DATE_FORMAT);
             $master_model[] = $memberShareDetail;
             $msg = '';
@@ -917,6 +918,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $memberShareModel->attributes = $shareData->attributes;
                 $memberShareModel->member_code = $memberModel->member_code;
                 $memberShareModel->gender_code = $memberModel->gender_code;
+                $memberShareModel->bmc_code = $memberModel->bmc_code;
                 $model_save[] = $memberShareModel;
             }
         }
@@ -944,7 +946,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             }
         }
         return $this->render('import_receipt_detail', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -954,7 +956,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $successfulRecords = 0;
         $errorRecords = 0;
         $alreadyUpdatedRecords = 0;
-        $updatedLineErrors  = [];
+        $updatedLineErrors = [];
         $errorLineNumbers = [];
         $totalAmount = 0;
         $ref_no = '';
@@ -992,12 +994,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 }
             }
         }
-        if($message == ''){
+        if ($message == '') {
             $message = "Success Records: $successfulRecords. <br>Total Amount: $totalAmount. Ref Reciept No: $ref_no<br>" .
-                        "Already Updated Records: $alreadyUpdatedRecords. <br>" .
-                        (!empty($updatedLineErrors) ? "Already Updated Line Numbers: " . implode(', ', $updatedLineErrors) . "<br>" : "").
-                        "Error Records: $errorRecords. <br>" .
-                        (!empty($errorLineNumbers) ? "Error Line Numbers: " . implode(', ', $errorLineNumbers) . "<br>" : "");
+                    "Already Updated Records: $alreadyUpdatedRecords. <br>" .
+                    (!empty($updatedLineErrors) ? "Already Updated Line Numbers: " . implode(', ', $updatedLineErrors) . "<br>" : "") .
+                    "Error Records: $errorRecords. <br>" .
+                    (!empty($errorLineNumbers) ? "Error Line Numbers: " . implode(', ', $errorLineNumbers) . "<br>" : "");
         }
     }
 
@@ -1023,4 +1025,5 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             return Json::encode($record);
         }
     }
+
 }
