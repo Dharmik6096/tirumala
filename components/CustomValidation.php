@@ -274,7 +274,7 @@ class CustomValidation extends Component {
                         }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
                 ],
                 'TblVendorMaster' => [
-                        [['aadhaar_no'], function ($attribute, $params) {
+                        [['adhar_no'], function ($attribute, $params) {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
                         }],
                 ],
@@ -807,7 +807,7 @@ class CustomValidation extends Component {
                 ],
                 'TblVendorMaster' => [
                     'default' => [
-                            [['aadhaar_no'], function ($attribute, $params) {
+                            [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
                             }],
                     ],
@@ -970,7 +970,7 @@ class CustomValidation extends Component {
                 ],
                 'TblVendorMaster' => [
                     'default' => [
-                            [['aadhaar_no'], function ($attribute, $params) {
+                            [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
                             }],
                     ],

@@ -8,6 +8,9 @@ if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->g
     } else {
         $this->title = Yii::t('app', Yii::$app->label->title('list', 'provisional member'));
         $this->params['menu'][] = Yii::$app->controls->add('provisional member');
+        $this->params['menu'][] = Yii::$app->controls->custombutton('provisional member bank receipt export', ['/misreports/reports/export-provisional-member-bank-receipt'], '', 'btn btn-danger btn-block', '<i class="fa fa-upload"></i>');
+        // $this->params['menu'][] = Yii::$app->controls->custombutton('provisional member bank receipt export', 'export-provisional-member-bank-receipt', '', 'btn btn-danger btn-block', '<i class="fa fa-upload"></i>');
+        $this->params['menu'][] = Yii::$app->controls->custombutton('provisional member bank receipt import', 'import-provisional-member-bank-receipt', '', 'btn btn-danger btn-block', '<i class="fa fa-download"></i>');
     }
 } else {
     $this->title = Yii::t('app', Yii::$app->label->title('list', 'provisional member'));

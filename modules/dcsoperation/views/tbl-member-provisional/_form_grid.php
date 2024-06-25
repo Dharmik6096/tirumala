@@ -89,6 +89,7 @@ $attribute = [
         ['attribute' => 'member_class', 'value' => function($model) {
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'application_no', 'filter' => true],
         ['attribute' => 'is_approved', 'value' => function($model) {
             return $model->is_approved == 1 ? 'Approved' : 'Pending';
         }, 'visible' => true, 'filter' => false],
