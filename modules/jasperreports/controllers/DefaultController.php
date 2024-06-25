@@ -463,7 +463,6 @@ class DefaultController extends \app\controllers\ChildController {
             $controls['REPORT_LOCALE'] = !empty($model->locale) ? $model->locale : 'en';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
             $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
-
 //                  var_dump($controls);die;
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
                 $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
@@ -979,7 +978,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'ProvisionalMemberRegister' => [
-                'param' => 'p_provisional_member_code,p_language_code,locale,digit_config',
+                'param' => 'p_provisional_member_code,p_lang_code,locale,digit_config',
                 'path' => 'MemberRegister',
                 'scenario' => 'ProvisionalMemberRegister',
                 'title' => 'Provisional Member Register',

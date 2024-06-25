@@ -326,18 +326,12 @@ $defaultToggle = true;
                                             <?php
                                         }
                                         if (in_array($value, array('p_provisional_member_code'))) {
-                                            ?>
-                                            <div class="col-sm-3">
-                                                <?php
-                                                    if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['provisional_member_code'])){
-                                                        $model->{$value} = Yii::$app->request->queryParams['provisional_member_code'];
-                                                    }
-                                                    echo Yii::$app->dropdown->dropdown('provisional_member_list', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value), false, $value, true);
-                                                ?>
-                                            </div>
-                                            <?php
+                                            if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['provisional_member_code'])){
+                                                $model->{$value} = Yii::$app->request->queryParams['provisional_member_code'];
+                                            }
+                                            echo Html::activeHiddenInput($model, $value);
                                         }
-                                        if (in_array($value, array('p_language_code'))) {
+                                        if (in_array($value, array('p_lang_code'))) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?php
@@ -484,8 +478,8 @@ $defaultToggle = true;
 
     <?php
     $script = "
-    $('#reportsmodel-p_language_code').val(1);
-    var languageCode = $('#reportsmodel-p_language_code').val();
+    $('#reportsmodel-p_lang_code').val(1);
+    var languageCode = $('#reportsmodel-p_lang_code').val();
     setLanguageData(languageCode);
     function setLanguageData(languageCode){
         $('#reportsmodel-locale').val('en');
@@ -495,8 +489,8 @@ $defaultToggle = true;
             $('#reportsmodel-digit_config').val(1);
         }
     }
-    $('#reportsmodel-p_language_code').on('change', function(){
-        languageCode = $('#reportsmodel-p_language_code').val();
+    $('#reportsmodel-p_lang_code').on('change', function(){
+        languageCode = $('#reportsmodel-p_lang_code').val();
         setLanguageData(languageCode);
     });
        $('#reportsmodel-p_union_name').val($('select#reportsmodel-union_code option:selected').text());
