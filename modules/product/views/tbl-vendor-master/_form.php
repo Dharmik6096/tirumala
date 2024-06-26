@@ -43,7 +43,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'vendor_type')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2 mt10">
-            <?= Yii::$app->controls->active($model, $form); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
     </div>
     <div class="clearfix"></div>
