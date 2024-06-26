@@ -9,7 +9,7 @@ use yii\web\View;
 
 $attribute = [
         ['attribute' => 'mode_of_payment', 'value' => function ($model) {
-            return isset($model->mode_of_payment) ? Yii::$app->dropdown->getRecords('mode_of_payment')['data'][$model->mode_of_payment] : '';
+            return !empty($model->mode_of_payment) ? Yii::$app->dropdown->getRecords('mode_of_payment')['data'][$model->mode_of_payment] : '';
         }, 'filter' => false,],
         ['attribute' => 'ref_no', 'filter' => false],
         ['attribute' => 'bank_name', 'filter' => false],

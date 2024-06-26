@@ -34,7 +34,7 @@ use app\models\ChildModel;
  */
 class TblMemberShareDetails extends ChildModel {
 
-    public $gender_code;
+    public $gender_code, $bmc_code;
 
     /**
      * @inheritdoc
@@ -48,7 +48,7 @@ class TblMemberShareDetails extends ChildModel {
      */
     public function rules() {
         return [
-                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'union_code', 'member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'per_share_rate', 'gender_code'], 'safe'],
+                [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'union_code', 'member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'per_share_rate', 'gender_code', 'bmc_code'], 'safe'],
                 [['balance_amount', 'admission_fee_recovery'], 'default', 'value' => 0],
                 [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'no_of_share_req', 'no_of_share_apply'], 'required'],
                 [['no_of_share_apply'], 'validateMaxShare'],
@@ -64,7 +64,7 @@ class TblMemberShareDetails extends ChildModel {
             'union_code' => Yii::t('app', 'Union Code'),
             'member_code' => Yii::t('app', 'Member Code'),
             'mode_of_payment' => Yii::t('app', 'Mode Of Payment'),
-            'ref_no' => Yii::t('app', 'Cheque No.'),
+            'ref_no' => Yii::t('app', 'Receipt Reference No.'),
             'bank_name' => Yii::t('app', 'Bank Name'),
             'amount_deposit' => Yii::t('app', 'Amount Deposit'),
             'deposit_date' => Yii::t('app', 'Deposit Date'),
@@ -96,10 +96,16 @@ class TblMemberShareDetails extends ChildModel {
 
     public function validateMaxShare($attribute, $params) {
         $maxShare = TblUnionShareConfig::find()->select('max_share')
-                ->where(['process_type' => 'member', 'gender_code' => $this->gender_code])
+                ->where(['process_type' => 'member', 'gender_code' => $this->gender_code, 'bmc_code' => $this->bmc_code])
                 ->one();
-
-        if ($this->no_of_share_apply > $maxShare['max_share']) {
+        if (empty($maxShare)) {
+            $maxShare = TblUnionShareConfig::find()->select('max_share')
+                    ->where(['process_type' => 'member', 'gender_code' => $this->gender_code, 'union_code' => $this->union_code, 'bmc_code' => null])
+                    ->one();
+        }
+        if (empty($maxShare)) {
+            $this->addError($attribute, 'BMC Share Master Data Not Available');
+        } else if ($this->no_of_share_apply > $maxShare['max_share']) {
             $this->addError($attribute, 'The number of shares applied can not be greter than maximum share limit.');
         }
     }

@@ -113,18 +113,21 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
 
     public function setApprovalData($union_code, $process, $processCode, &$modelSave, &$approval_stages) {
         $approval_stages = $this->approvalStages($union_code, $process);
-        $i = 1;
-        foreach ($approval_stages as $stage) {
-            $stage_model = new TblProcessApproval();
-            $stage_model->setAttributes($stage);
-//            $stage_model->process_approval_code = Yii::$app->general->getCodeAutoIncrement($stage_model, $i);
-            $stage_model->process_code = $processCode;
-            $stage_model->process_name = $process;
-            $stage_model->status = 0;
-            unset($stage_model->created_at);
-            unset($stage_model->created_by);
-            $modelSave[] = $stage_model;
-            $i++;
+        $existDataApproval = TblProcessApproval::find()->where(['process_code' => $processCode, 'process_name' => $process])->count();
+        if ($existDataApproval == 0) {
+            $i = 1;
+            foreach ($approval_stages as $stage) {
+                $stage_model = new TblProcessApproval();
+                $stage_model->setAttributes($stage);
+                //  $stage_model->process_approval_code = Yii::$app->general->getCodeAutoIncrement($stage_model, $i);
+                $stage_model->process_code = $processCode;
+                $stage_model->process_name = $process;
+                $stage_model->status = 0;
+                unset($stage_model->created_at);
+                unset($stage_model->created_by);
+                $modelSave[] = $stage_model;
+                $i++;
+            }
         }
     }
 

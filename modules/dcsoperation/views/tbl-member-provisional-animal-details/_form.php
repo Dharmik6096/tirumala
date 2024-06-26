@@ -281,7 +281,8 @@ $script = "
     setHeifersCount();
     setMilchCount();
     setDryCount();
-    
+    setDailyMilk();
+    setRemainMilk();
     $('.daily_milk_production').change(function(){
         setDailyMilk();
     });
