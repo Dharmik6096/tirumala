@@ -52,7 +52,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                     return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
                 }, 'filter' => FALSE],
                 ['attribute' => 'available_stock', 'value' => function($model) {
-                    return !empty($model['warehouse_code']) ? $model->getExistingStock($model) : 0;
+                    return (empty($model['warehouse_code']) || $model['warehouse_code'] == 0) ? $model->getExistingStock($model) : 0;
                 }, 'filter' => FALSE],
 //                ['attribute' => 'qty', 'filter' => FALSE],
             ['attribute' => 'approve_qty', 'filter' => FALSE],
