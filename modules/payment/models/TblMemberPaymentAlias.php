@@ -92,7 +92,9 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
                 [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
 //            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
-            [['payment_release_type', 'shortage_amount_old','union_bank_payment_code'], 'safe']
+                [['payment_release_type', 'shortage_amount_old','union_bank_payment_code'], 'safe'],
+                // [['bank_name','ifsc','bank_account_no','bank_code','branch_name','branch_code','beneficiary_name'], 'checkBankValidate', 'on' => ['finalize_payment']],
+                [['bmc_code'], 'checkBankValidate', 'on' => ['finalize_payment']],
         ];
     }
 
@@ -392,5 +394,27 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             $query->andFilterWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         }
         return $query->all();
+    }
+
+    public function checkBankValidate($attribute, $params){
+        $return_flag = true;
+        $pendingBankVerifyCount = $this->find()
+                ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verify' => 0])
+                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
+                ->count();
+        $pendingBankCount = $this->find()
+                ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code])
+                ->andWhere(['or', ['ifsc' => null], ['bank_account_no' => null], ['bank_code' => null], ['branch_name' => null], ['branch_code' => null], ['beneficiary_name' => null], ['ifsc' => ''], ['bank_account_no' => ''], ['bank_code' => ''], ['branch_name' => ''], ['branch_code' => ''], ['beneficiary_name' => '']])
+                ->count();
+        if($pendingBankVerifyCount > 0){
+            $return_flag = false;
+            $this->addError($attribute, Yii::t('app', "Number of records bank verification pendings: $pendingBankVerifyCount"));
+            echo "Number of records with any blank or null fields: $pendingBankVerifyCount";
+        }
+        if($pendingBankCount > 0){
+            $return_flag = false;
+            $this->addError($attribute, Yii::t('app', "Number of records bank detail not exist: $pendingBankCount"));
+        }
+        return $return_flag;
     }
 }
