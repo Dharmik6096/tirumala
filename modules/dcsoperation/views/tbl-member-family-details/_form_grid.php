@@ -35,7 +35,9 @@ $grid_option = [
         },
         'delete' => ['option' => 'member_family_detail_code,member_family_detail_code,/dcsoperation/tbl-member/delete-family'],
         'imageView' => function ($url, $model) {
-            return Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['nAddressProofback', 'nAddressProof']);
+            if ($model->is_nominee == 1) {
+                return Yii::$app->general->getDisplayDocumentLink($model->member_code, 'tbl_member', ['nAddressProofback', 'nAddressProof']);
+            }
         },
     ]
 ];
