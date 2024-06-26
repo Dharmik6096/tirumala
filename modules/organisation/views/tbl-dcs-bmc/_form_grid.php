@@ -19,6 +19,7 @@ $attribute = [
         ['attribute' => 'ref_code'],
         ['attribute' => 'bmc_name', 'value' => 'bmc_name'],
         ['attribute' => 'local_name', 'filter' => false],
+        ['attribute' => 'bmc_short_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'bmc_type_code', 'value' => 'tblBmcType.bmc_type_name'],
         ['attribute' => 'x_col1', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->channelMaster, 'channel_desc');
