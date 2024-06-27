@@ -403,16 +403,23 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verified' => 0])
                 ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
                 ->count();
+        $rejectBankVerifyCount = $this->find()
+                ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verified' => 2])
+                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
+                ->count();
         $pendingBankCount = $this->find()
                 ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code])
                 ->andWhere(['or', ['ifsc' => null], ['bank_account_no' => null], ['bank_name' => null], ['bank_code' => null], ['branch_name' => null], ['branch_code' => null], ['beneficiary_name' => null], ['ifsc' => ''], ['bank_account_no' => ''], ['bank_name' => ''], ['bank_code' => ''], ['branch_name' => ''], ['branch_code' => ''], ['beneficiary_name' => '']])
                 ->count();
 
-        if($pendingBankVerifyCount > 0 || $pendingBankCount > 0){
+        if($pendingBankVerifyCount > 0 || $pendingBankCount > 0 || $rejectBankVerifyCount > 0){
             $isValid = false;
             $message = "";
             if ($pendingBankVerifyCount > 0) {
-                $message .= Yii::t('app', "Number of records bank verification pendings: $pendingBankVerifyCount. ");
+                $message .= Yii::t('app', "Number of records bank verification pending: $pendingBankVerifyCount. ");
+            }
+            if ($rejectBankVerifyCount > 0) {
+                $message .= Yii::t('app', "Number of records bank verification rejected: $rejectBankVerifyCount. ");
             }
             if ($pendingBankCount > 0) {
                 $message .= Yii::t('app', "Number of records bank detail not exist: $pendingBankCount. ");
