@@ -1239,11 +1239,11 @@ class TblDcs extends ChildModel {
     }
 
     public function getMainBankDetails() {
-        return $this->hasOne(TblBankDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_bank_details.module_name' => 'society', 'tbl_bank_details.is_default' => 1, 'tbl_bank_details.is_active' => 1]);
+        return $this->hasOne(TblBankDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_bank_details.module_name' => 'society']);
     }
 
     public function getMainContactDetails() {
-        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_contact_details.module_name' => 'society', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_contact_details.module_name' => 'society']);
     }
 
     public function setPanNumber($attribute, $params) {

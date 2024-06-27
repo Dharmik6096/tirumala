@@ -554,11 +554,11 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function getMainBankDetails() {
-        return $this->hasOne(TblBankDetails::className(), ['module_code' => 'customer_code'])->where(['tbl_bank_details.module_name' => 'customer', 'tbl_bank_details.is_default' => 1, 'tbl_bank_details.is_active' => 1]);
+        return $this->hasOne(TblBankDetails::className(), ['module_code' => 'customer_code'])->where(['tbl_bank_details.module_name' => 'customer']);
     }
 
     public function getMainContactDetails() {
-        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'customer_code'])->andOnCondition(['tbl_contact_details.module_name' => 'customer', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'customer_code'])->andOnCondition(['tbl_contact_details.module_name' => 'customer']);
     }
 
     public function validateCustomerRef($bmc_code, $customer_code) {
