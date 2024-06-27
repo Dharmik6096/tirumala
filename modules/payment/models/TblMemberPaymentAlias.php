@@ -85,7 +85,8 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
+                [['union_code', 'plant_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
+                [['dcs_code'], 'string', 'except' => ['finalize_payment']],
                 [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'is_verified'], 'integer'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay'], 'number'],
                 [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery', 'old_recovery', 'recovery_dcs', 'member_name', 'beneficiary_name', 'dcs_name', 'bmc_code', 'mcc_plant_code'], 'safe'],
@@ -397,24 +398,27 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     }
 
     public function checkBankValidate($attribute, $params){
-        $return_flag = true;
+        $isValid = true;
         $pendingBankVerifyCount = $this->find()
-                ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verify' => 0])
-                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
+                ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verified' => 0])
+                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
                 ->count();
         $pendingBankCount = $this->find()
                 ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code])
-                ->andWhere(['or', ['ifsc' => null], ['bank_account_no' => null], ['bank_code' => null], ['branch_name' => null], ['branch_code' => null], ['beneficiary_name' => null], ['ifsc' => ''], ['bank_account_no' => ''], ['bank_code' => ''], ['branch_name' => ''], ['branch_code' => ''], ['beneficiary_name' => '']])
+                ->andWhere(['or', ['ifsc' => null], ['bank_account_no' => null], ['bank_name' => null], ['bank_code' => null], ['branch_name' => null], ['branch_code' => null], ['beneficiary_name' => null], ['ifsc' => ''], ['bank_account_no' => ''], ['bank_name' => ''], ['bank_code' => ''], ['branch_name' => ''], ['branch_code' => ''], ['beneficiary_name' => '']])
                 ->count();
-        if($pendingBankVerifyCount > 0){
-            $return_flag = false;
-            $this->addError($attribute, Yii::t('app', "Number of records bank verification pendings: $pendingBankVerifyCount"));
-            echo "Number of records with any blank or null fields: $pendingBankVerifyCount";
+
+        if($pendingBankVerifyCount > 0 || $pendingBankCount > 0){
+            $isValid = false;
+            $message = "";
+            if ($pendingBankVerifyCount > 0) {
+                $message .= Yii::t('app', "Number of records bank verification pendings: $pendingBankVerifyCount. ");
+            }
+            if ($pendingBankCount > 0) {
+                $message .= Yii::t('app', "Number of records bank detail not exist: $pendingBankCount. ");
+            }
+            $this->addError($attribute, trim($message));
         }
-        if($pendingBankCount > 0){
-            $return_flag = false;
-            $this->addError($attribute, Yii::t('app', "Number of records bank detail not exist: $pendingBankCount"));
-        }
-        return $return_flag;
+        return $isValid;
     }
 }
