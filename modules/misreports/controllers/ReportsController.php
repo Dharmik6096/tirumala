@@ -1204,7 +1204,7 @@ class ReportsController extends \app\controllers\ChildController {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);
             } else {
-                $this->downloadData($model);
+                $this->downloadData();
             }
         }
     }
@@ -1667,10 +1667,10 @@ class ReportsController extends \app\controllers\ChildController {
     }
 
     public function actionSapWqFile() {
-        $this->report = 'SapWqFileXls';
+        $this->report = 'SapWqFile';
         if (Yii::$app->request->queryParams) {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
-                $this->report = 'SapWqFile';
+                $this->report = 'SapWqFileXls';
             }
         }
         return $this->actionIndex();
@@ -3462,15 +3462,6 @@ class ReportsController extends \app\controllers\ChildController {
                 ],
                 'bkg_export' => TRUE,
             ],
-            'SapWqFileXls' => [
-                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa_xls',
-                'scenario' => 'SapWqFile',
-                'title' => 'SAP WQ File',
-                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
-                'multiArray' => ['mcc_code', 'bmc_code'],
-                'report_type' => [Yii::t('app', 'Excel'), Yii::t('app', 'CSV')],
-            ],
             'SapWqFile' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_bmc_collection_wq_vrs_newasa',
@@ -3479,7 +3470,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
                 'downloadFormat' => 'csv',
-                'report_type' => [Yii::t('app', 'Excel'), Yii::t('app', 'CSV')],
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
+            ],
+            'SapWqFileXls' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa_xls',
+                'scenario' => 'SapWqFile',
+                'title' => 'SAP WQ File',
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
             ],
             'MemberDailyCollectionCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3728,12 +3728,7 @@ class ReportsController extends \app\controllers\ChildController {
             fputcsv($output, $labelArray);
 
             foreach ($this->output as $row) {
-                $rowData = [];
-                foreach ($labelArray as $label) {
-                    $value = isset($row[$label]) ? $row[$label] : '';
-                    $rowData[] = $value;
-                }
-                fputcsv($output, $rowData);
+                fputcsv($output, $row);
             }
             fclose($output);
             exit();
