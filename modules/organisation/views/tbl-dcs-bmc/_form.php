@@ -74,6 +74,9 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'local_name')->textInput() ?>
         </div>
         <div class="col-sm-2">
+            <?= $form->field($model, 'bmc_short_name')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Capacity (LPD)', false, 'capacity'); ?>        
         </div>
         <div class="col-sm-2">
@@ -81,6 +84,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'model')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
@@ -107,9 +113,6 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsbmc-village_code', 'form-group col-sm-4', Yii::t('app', 'Hamlet')); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('billing_type', $model, $form, 'form-group', $model->getAttributeLabel('billing_type'), false, 'billing_type', false); ?>

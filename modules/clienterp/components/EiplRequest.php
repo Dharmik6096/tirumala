@@ -39,7 +39,8 @@ class EiplRequest {
             }
         }
         if (!$is_authenticated) {
-            SetError::error('Authentication Failed.', 'statusAuthorizationFail');
+            $setError = new SetError();
+            $setError->error('Authentication Failed.', 'statusAuthorizationFail');
             return FALSE;
         }
         return TRUE;
