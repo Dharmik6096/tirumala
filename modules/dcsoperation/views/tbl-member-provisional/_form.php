@@ -206,7 +206,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                     ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                        ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -263,7 +263,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                     ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                        ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2 icon-set">
@@ -327,6 +327,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('.btn-toolbar.kv-grid-toolbar').hide();
 });
+if ('$type' == 'create') {
     $('#tblmemberprovisional-dcs_code').on('change',function(){
         var id = $(this).val();
             $.ajax({
@@ -345,7 +346,8 @@ $(document).ready(function() {
                                 }
             });
     });
-    
+}
+
     $('#tblmemberprovisional-no_of_buffalo, #tblmemberprovisional-no_of_cow_cross, #tblmemberprovisional-no_of_cow_ind').on('change',function(){
             var no_of_buffalo = document.getElementById('tblmemberprovisional-no_of_buffalo').value;
             var no_of_cow_cross = document.getElementById('tblmemberprovisional-no_of_cow_cross').value;
