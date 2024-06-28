@@ -2,6 +2,7 @@
 
 namespace app\modules\payment\controllers;
 
+use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\payment\models\TblPaymentTransaction;
 use Yii;
 use app\modules\payment\models\TblPaymentTransactionApproval;
@@ -42,6 +43,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                 $paymentTransactionApprovalCodes = [];
                 $remarks = Yii::$app->request->post('remarks');
                 $selecteddata = Yii::$app->request->post('selection');
+                $process_status = Yii::$app->request->post('process_flag');
                 foreach ($selecteddata as $key => $value) {
                     $status = '';
                     $this->model = TblProcessApproval::findOne($value);
@@ -49,7 +51,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                     $historyModel = new TblProcessApprovalHistory();
                     Yii::$app->operation->history($this->model, $historyModel, 'UPDATE');
                     $saveModel[] = $historyModel;
-                    $this->model->status = 1;
+                    $this->model->status = ($process_status == 'approve') ? 1 : 2;
                     $this->model->remarks = $remarks;
                     if (!empty($saveModel)) {
                         $this->model->ApprovalList($this->model, $saveModel, $status);
@@ -68,10 +70,11 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                 if(!empty($saveModel)){
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Payment Transaction Approve Successfully', 'info']);
                     if ($transaction == 'customRedirect') {
-                        if(strtolower($status) == 'approve'){
+                        if(strtolower($status) == 'approve' || strtolower($status) == 'reject'){
+                            $is_approved = (strtolower($status) == 'approve') ? 1 : 2;
                             $transationModel = new TblPaymentTransaction();
                             $condition = ['payment_transaction_approval_code' => $paymentTransactionApprovalCodes];
-                            $updateData = ['is_approved' => 1, 'approved_at' => date('Y-m-d H:i:s')];
+                            $updateData = ['is_approved' => $is_approved, 'approved_at' => date('Y-m-d H:i:s')];
                             $transationModel->updateStatus($condition, $updateData);
                         }
                         return $this->redirect(['pending-approval']);
@@ -91,6 +94,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
         return $this->render('pending_approval', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'type' => 'approval'
         ]);
     }
 
@@ -133,5 +137,67 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionPendingReinitiate()
+    {
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $paymentTransactionApprovalCodes = [];
+                $remarks = Yii::$app->request->post('remarks');
+                $selecteddata = Yii::$app->request->post('selection');
+                $union_code = explode(',', Yii::$app->session->get('Unions'));
+                $config = Yii::$app->general->getUnionConfiguration($union_code, 'workflow_require', 'PORTAL');
+                $status = 'Pending';
+                foreach ($selecteddata as $key => $value) {
+                    $model = TblPaymentTransactionApproval::findOne($value);
+                    if(!empty($model)){                        
+                        $transactionHistoryModel = new TblPaymentTransactionApprovalHistory();
+                        Yii::$app->operation->history($model, $transactionHistoryModel, 'UPDATE');
+                        $saveModel[] = $transactionHistoryModel;
+                        $model->approval_status = 'Approve';
+                        $model->remarks = $remarks;
+                        $model->status_date = date('Y-m-d H:i:s');
+                        $model->status_by = \Yii::$app->user->identity->user_code;
+                        if($config == 1){
+                            $modelStages = new TblApprovalStagesDetail();
+                            $modelStages->setApprovalData($model->union_code, 'tbl_payment_transaction_approval', $value, $saveModel, $approval_stages);
+                            $model->approval_status = empty($approval_stages) ? 'Approve' : 'Pending';
+                        }
+                        $status = $model->approval_status;
+                        $saveModel[] = $model;
+                        $paymentTransactionApprovalCodes[] = $value;
+                    }
+                }
+                if(!empty($saveModel)){
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Payment Transaction Reinitiale Successfully', 'info']);
+                    if ($transaction == 'customRedirect') {
+                        if(strtolower($status) == 'approve' || strtolower($status) == 'pending'){
+                            $is_approved = (strtolower($status) == 'approve') ? 1 : 0;
+                            $transationModel = new TblPaymentTransaction();
+                            $condition = ['payment_transaction_approval_code' => $paymentTransactionApprovalCodes];
+                            $updateData = ['is_approved' => $is_approved, 'approved_at' => date('Y-m-d H:i:s')];
+                            $transationModel->updateStatus($condition, $updateData);
+                        }
+                        return $this->redirect(['pending-approval']);
+                    }
+                }
+            }
+        }
+        $searchModel = new TblPaymentTransactionApprovalSearch();
+        $dataProvider = $searchModel->searchReinitiate(Yii::$app->request->queryParams, true);
+        if (!empty($dataProvider->getModels())) {
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $dataProvider->getModels(),
+                'pagination' => FALSE,
+            ]);
+        }
+
+        return $this->render('pending_approval', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'type' => 'reinitiate'
+        ]);
     }
 }
