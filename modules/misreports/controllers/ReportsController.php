@@ -1711,7 +1711,7 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
-    public function actionExportProvisionalMemberBankReceipt(){
+    public function actionExportProvisionalMemberBankReceipt() {
         $this->report = 'ExportProvisionalMemberBankReceipt';
         return $this->actionIndex();
     }
@@ -3628,6 +3628,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_member_pib_upload_saahaj',
                 'scenario' => 'MemberProvisionalSapExport',
                 'title' => 'Member Provisional SAP Export',
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
             ],
             'ExportProvisionalMemberBankReceipt' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
