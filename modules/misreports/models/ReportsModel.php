@@ -142,8 +142,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'login_user_code', 'from_date', 'to_date'], 'required', 'on' => ['DetailsReport']],
                 [['union_code', 'state_code'], 'required', 'on' => ['RegionWiseUserAttendanceReport']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_type', 'from_date', 'to_date'], 'required', 'on' => ['DcsWiseBillHeadApplicability']],
-                [['report_type'], 'default', 'value' => 1, 'on' => 'SapWqFile'],
-                [['union_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapWqFile'],
+                [['union_code', 'mcc_code', 'bmc_code'], 'required', 'on' => 'SapWqFile'],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BmcCollectionSummaryRahema'],
                 [['user_login_type'], 'required', 'on' => 'MobileAppReport'],
                 [['union_code', 'user_code', 'from_date', 'to_date'], 'required', 'on' => ['FieldStaffActivity']],
@@ -177,7 +176,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             'route_type_trans' => \Yii::t('app', 'Route Type'),
             'member' => \Yii::t('app', 'Member'),
             'channel_code' => \Yii::t('app', 'Channel'),
-            'report_type' => (in_array($this->scenario, ['SaleReportFarmer', 'SaleReportVendor'])) ? \Yii::t('app', 'Lock Type') : \Yii::t('app', 'Report Type'),
+            'report_type' => (in_array($this->scenario, ['SaleReportFarmer', 'SaleReportVendor'])) ? \Yii::t('app', 'Lock Type') : ((in_array($this->scenario, ['SapWqFile'])) ? \Yii::t('app', 'Format Type') : \Yii::t('app', 'Report Type')),
             'report_req_status' => \Yii::t('app', 'Status'),
             'payment_type' => \Yii::t('app', 'Bill Head For'),
         ];
