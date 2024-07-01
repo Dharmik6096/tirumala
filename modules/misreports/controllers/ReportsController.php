@@ -3726,10 +3726,10 @@ class ReportsController extends \app\controllers\ChildController {
 
             $output = fopen('php://output', 'w');
 
-            fputcsv($output, $labelArray);
+            fwrite($output, implode(',', $labelArray) . "\n");
 
             foreach ($this->output as $row) {
-                fputcsv($output, $row);
+                fwrite($output, implode(',', $row) . "\n");
             }
             fclose($output);
             exit();
