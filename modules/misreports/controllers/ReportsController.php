@@ -1671,6 +1671,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapWqFile() {
         $this->report = 'SapWqFile';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SapWqFileXls';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -3468,6 +3473,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
                 'downloadFormat' => 'csv',
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
+            ],
+            'SapWqFileXls' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa_xls',
+                'scenario' => 'SapWqFile',
+                'title' => 'SAP WQ File',
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
             ],
             'MemberDailyCollectionCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3698,13 +3713,29 @@ class ReportsController extends \app\controllers\ChildController {
 //        echo "</table>";
 //        exit();
 
-
         if (isset($this->data['downloadFormat']) && $this->data['downloadFormat'] == 'csv') {
             $header = [
                 'mime' => 'text/csv',
                 'extension' => 'csv',
                 'writer' => 'CSV',
             ];
+            $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'];
+
+            header('Content-Type: ' . $header['mime']);
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+
+            $output = fopen('php://output', 'w');
+
+            fputcsv($output, $labelArray);
+
+            foreach ($this->output as $row) {
+                fputcsv($output, $row);
+            }
+            fclose($output);
+            exit();
         } else {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
