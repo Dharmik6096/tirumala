@@ -21,23 +21,23 @@ if ($searchModel->module_name == 'society') {
 $attribute = [
 //    'contact_person',
 //    'local_contact_person',
-    ['label' => $contact_person_lable, 'value' => 'fullname', 'filter' => false],
-    ['label' => $local_contact_person_lable, 'value' => 'localfullname', 'filter' => false],
+        ['label' => $contact_person_lable, 'value' => 'fullname', 'filter' => false],
+        ['label' => $local_contact_person_lable, 'value' => 'localfullname', 'filter' => false],
 //    'fullname',
 //    'localfullname',
     'email:email',
     'mobile_no',
     'department',
-    ['attribute' => 'is_default', 'value' => function($model) {
+        ['attribute' => 'is_default', 'value' => function($model) {
             return $model->is_default == 1 ? 'Yes' : 'No';
         }, 'filter' => false],
-    ['attribute' => 'is_contact_verified', 'value' => function($model) {
+        ['attribute' => 'is_contact_verified', 'value' => function($model) {
             return $model->is_contact_verified == 1 ? 'Verified' : ( $model->is_contact_verified == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
-    ['attribute' => 'remarks', 'filter' => false],
-    ['attribute' => 'email_to', 'filter' => false],
-    ['attribute' => 'email_cc', 'filter' => false],
-    ['attribute' => 'email_bcc', 'filter' => false],
+        ['attribute' => 'remarks', 'filter' => false],
+        ['attribute' => 'email_to', 'filter' => false],
+        ['attribute' => 'email_cc', 'filter' => false],
+        ['attribute' => 'email_bcc', 'filter' => false],
 ];
 
 $grid_option = [
@@ -55,7 +55,8 @@ $grid_option = [
 //            die('here');
                 return Html::a('<i class="fa fa-ban"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options);
             } else {
-                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Activate', 'class' => 'react-user', 'data-is-default' => $model->is_default];
+                $class = ($model->is_contact_verified == 0 || $model->is_contact_verified == 1) ? '' : 'disabled';
+                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Activate', 'class' => 'react-user ' . $class, 'data-is-default' => $model->is_default];
                 return Html::a('<i class="fa fa-life-ring"></i>', ['/details/tbl-contact-details/activate', 'id' => $model->detail_code], $options);
             }
         },
