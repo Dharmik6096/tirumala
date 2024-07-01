@@ -3754,17 +3754,6 @@ class ReportsController extends \app\controllers\ChildController {
         /* $file_header = array_map(function($file_header) {
           return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
           }, array_values($file_header)); */
-        $objPHPExcel = new PHPExcel();
-        $sheet = $objPHPExcel->getActiveSheet();
-        /* $objPHPExcel->getDefaultStyle()
-          ->getNumberFormat()
-          ->setFormatCode(
-          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-          ); */
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        /* $file_header = array_map(function($file_header) {
-          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-          }, array_values($file_header)); */
 
         $sheet->fromArray(
                 $file_header, // The data to set
