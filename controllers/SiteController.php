@@ -84,7 +84,7 @@ class SiteController extends \app\controllers\ChildController {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -3167,6 +3167,27 @@ class SiteController extends \app\controllers\ChildController {
         $sp_name = 'proc_mobile_user_count_list';
         $mobile_status = \Yii::$app->general->getSpData($sp_name, $sp_param);
         return [$mobile_status];
+    }
+
+    public function actionLoadMobilePieChart() {
+        $sp_name = 'proc_mobile_user_count_and_list';
+        $sp_param = [];
+        $sp_param[] = 1;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $series = [];
+        if (!empty($results)) {
+            $series = [];
+            foreach ($results as $result) {
+                $widgetKey = $result['key'];
+
+                if (!isset($series[$widgetKey])) {
+                    $series[$widgetKey] = [];
+                }
+                $series[$widgetKey][] = $result;
+            }
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'series' => $series];
     }
 
 }

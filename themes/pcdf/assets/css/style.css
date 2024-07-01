@@ -5167,6 +5167,23 @@ tr.highlightRow {
     margin-right: 15px;
 }
 
+.card {
+    border: 1px solid #dee2e6 !important;
+    border-radius: 5px !important;
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0px 15px 0px;
+}
+
+.card-header {
+    padding: 10px;
+    justify-content: space-between;
+    color: #fff;
+    border-radius: 5px 5px 0px 0px;
+}
+.card-body{
+    background-color: #fff;
+}
 .mt-21 {
     margin-top: 21px;
 }
