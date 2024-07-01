@@ -32,7 +32,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                         ],
                             [
                             'attribute' => 'bmc_code',
-                            'value' => (string) $model->bmc_code,
+                            'value' => isset($model->tblDcsBmc) ? $model->tblDcsBmc->ref_code : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -626,7 +626,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                 </tr>
             </thead>
             <tr>
-                <td><?= $model->member_class; ?></td>
+                <td><?= Yii::$app->general->getStaticDropdownVal('member_class', $model, 'member_class'); ?></td>
                 <td><?= $model->home_consumption_milk; ?></td>
                 <td><?= $model->market_surplus_milk; ?></td>
                 <td><?= $model->annual_milk_pour; ?></td>

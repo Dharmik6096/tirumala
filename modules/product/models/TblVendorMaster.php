@@ -170,7 +170,7 @@ class TblVendorMaster extends \app\models\ChildModel {
     public function setBankDetail() {
         $branch = new TblBranch();
         $data = $branch->find()->where(['ifsc' => $this->ifsc, 'is_active' => '1'])->one();
-        if (count($data) == 1) {
+        if (!empty($data)) {
             $this->bank_code = $data->bank_code;
             $this->branch_code = $data->branch_code;
             $this->ifsc = $data->ifsc;

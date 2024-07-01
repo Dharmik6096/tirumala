@@ -8,18 +8,21 @@ use yii\helpers\Json;
 use app\modules\clienterp\components\EiplRequest;
 use app\modules\clienterp\components\EiplResponse;
 use app\modules\clienterp\components\EiplResponseCode;
+use app\models\GeneralModel;
 
-class PullMasterController extends ActiveController {
+class PushMasterController extends ActiveController {
 
     public $modelClass = 'app\modules\clienterp\models';
     public $layout = false;
     protected $eiplResponseCode;
+    protected $generalModel;
 
     public function init() {
         parent::init();
         $this->response = new EiplResponse();
         $this->eiplResponseCode = new EiplResponseCode();
         $this->response->setStatusCode($this->eiplResponseCode->statusSuccess);
+        $this->generalModel = new GeneralModel();
     }
 
     public function actions() {

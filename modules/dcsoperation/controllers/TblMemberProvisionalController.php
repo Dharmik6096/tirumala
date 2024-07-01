@@ -490,7 +490,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 }
                             }
                         }
-                        return $this->redirect(['index']);
+                        return $this->redirect(Url::previous());
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',

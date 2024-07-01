@@ -332,6 +332,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                                 $saveModel[] = $historyModel;
                                 $f_stock = $existfromStock->stock;
                                 $existfromStock->stock = $f_stock - $qty;
+                                $batch = $existfromStock->sap_batch_no;
                                 $fstockModel = $existfromStock;
                             } else {
                                 $fstockModel->product_stock_code = $fstockModel->getCode($j);
