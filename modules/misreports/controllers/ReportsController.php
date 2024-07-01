@@ -1668,6 +1668,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapWqFile() {
         $this->report = 'SapWqFile';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SapWqFileXls';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -1711,7 +1716,7 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
-    public function actionExportProvisionalMemberBankReceipt(){
+    public function actionExportProvisionalMemberBankReceipt() {
         $this->report = 'ExportProvisionalMemberBankReceipt';
         return $this->actionIndex();
     }
@@ -3465,6 +3470,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
                 'downloadFormat' => 'csv',
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
+            ],
+            'SapWqFileXls' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa_xls',
+                'scenario' => 'SapWqFile',
+                'title' => 'SAP WQ File',
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
             ],
             'MemberDailyCollectionCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3628,6 +3643,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_member_pib_upload_saahaj',
                 'scenario' => 'MemberProvisionalSapExport',
                 'title' => 'Member Provisional SAP Export',
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
             ],
             'ExportProvisionalMemberBankReceipt' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
@@ -3694,56 +3710,73 @@ class ReportsController extends \app\controllers\ChildController {
 //        echo "</table>";
 //        exit();
 
-
         if (isset($this->data['downloadFormat']) && $this->data['downloadFormat'] == 'csv') {
             $header = [
                 'mime' => 'text/csv',
                 'extension' => 'csv',
                 'writer' => 'CSV',
             ];
+            $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'];
+
+            header('Content-Type: ' . $header['mime']);
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+
+            $output = fopen('php://output', 'w');
+
+            fputcsv($output, $labelArray);
+
+            foreach ($this->output as $row) {
+                fputcsv($output, $row);
+            }
+            fclose($output);
+            exit();
         } else {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
                 'extension' => 'xls',
                 'writer' => 'Excel2007',
             ];
-        }
-        $objPHPExcel = new PHPExcel();
-        $sheet = $objPHPExcel->getActiveSheet();
-        /* $objPHPExcel->getDefaultStyle()
-          ->getNumberFormat()
-          ->setFormatCode(
-          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-          ); */
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        /* $file_header = array_map(function($file_header) {
-          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-          }, array_values($file_header)); */
 
-        $sheet->fromArray(
-                $file_header, // The data to set
-                NULL, // Array values with this value will not be set
-                'A1'         // Top left coordinate of the worksheet range where
+            $objPHPExcel = new PHPExcel();
+            $sheet = $objPHPExcel->getActiveSheet();
+            /* $objPHPExcel->getDefaultStyle()
+              ->getNumberFormat()
+              ->setFormatCode(
+              \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+              ); */
+            $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+            /* $file_header = array_map(function($file_header) {
+              return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+              }, array_values($file_header)); */
+
+            $sheet->fromArray(
+                    $file_header, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A1'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
-        );
-        $sheet->fromArray(
-                $this->output, // The data to set
-                NULL, // Array values with this value will not be set
-                'A2'         // Top left coordinate of the worksheet range where
+            );
+            $sheet->fromArray(
+                    $this->output, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
-        );
-        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
-        $fileName = $labelT . '.' . $header['extension'] .
-                header('Content-Type: ' . $header['mime']);
+            );
+            $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'] .
+                    header('Content-Type: ' . $header['mime']);
 //        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
 //                header('Content-Type: ' . $header['mime']);
-        header('Content-Disposition: attachment;filename=' . $fileName);
-        header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        ob_end_clean();
-        $objWriter->save('php://output');
-        exit();
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+            ob_end_clean();
+            $objWriter->save('php://output');
+            exit();
+        }
     }
 
     public function downloadDataExcel($model) {
