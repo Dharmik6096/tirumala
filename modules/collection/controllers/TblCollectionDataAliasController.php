@@ -17,6 +17,7 @@ use app\modules\collection\models\TblDcsMilkDispatch;
 use app\modules\collection\models\TblDcsMilkDispatchTxn;
 use app\modules\collection\models\TblMilkCollectionHistory;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * TblCollectionDataAliasController implements the CRUD actions for TblCollectionDataAlias model.
@@ -132,11 +133,19 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
 
     public function actionBmcCollectionApprove() {
         if (Yii::$app->request->post()) {
+            echo '<pre>';
+            print_r($_REQUEST['selection']);
+            echo '</pre>';
+            die;
             if (isset($_REQUEST['selection'])) {
                 $succCount = 0;
                 $errorCount = 0;
                 $deletedata = Yii::$app->request->post('selection');
-                foreach ($deletedata as $key => $value) {
+                // foreach ($deletedata as $key => $value) {
+                foreach ($deletedata as $key => $value_code) {
+                    $codes = explode('###', $value_code);
+                    $value = $codes[0];
+                    $approval_code = !empty($codes[1]) ? $codes[1] : '';
                     $saveModel = [];
                     $deleteModel = [];
                     $action = Yii::$app->request->post('TblCollectionDataAlias')['action_perform'];
@@ -145,14 +154,31 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'BmcCollection' : '';
                     if ($operation == 'approve') {
                         if ($existData->validate()) {
-                            if ($action == 'CREATE') {
+                            $status = '';
+                            $histroryFlag = 'DELETE';
+                            if(!empty($approval_code)){
+                                $approvalModel = TblProcessApproval::findOne($approval_code);
+                                $approvalHistoryModel = new TblProcessApprovalHistory();
+                                Yii::$app->operation->history($approvalModel, $approvalHistoryModel, 'UPDATE');
+                                $saveModel[] = $approvalHistoryModel;
+                                $approvalModel->status = 1;
+                                $saveModel[] = $approvalModel;
+                                $approvalModel->ApprovalList($approvalModel, $saveModel, $status);
+                                $existData->approval_status = $status;
+                                if(strtolower($status) != 'approve'){
+                                    $histroryFlag = 'UPDATE';   
+                                }
+                            }
+
+
+                            if ($action == 'CREATE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblBmcCollection();
                                 $MainModel->attributes = $existData->attributes;
                                 $MainModel->setModel($MainModel);
                                 $MainModel->rate_code = $existData->purchase_rate_code;
                                 $MainModel->purchase_rate_code = NULL;
                                 $saveModel[] = $MainModel;
-                            } else if ($action == 'UPDATE') {
+                            } else if ($action == 'UPDATE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblBmcCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 if (!empty($existMainData)) {
@@ -162,9 +188,9 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                     $existMainData->attributes = $existData->attributes;
                                     $saveModel[] = $existMainData;
                                 }
-//                                $existMainData->attributes = $existData->attributes;
-//                                $saveModel[] = $existMainData;
-                            } else if ($action == 'DELETE') {
+                                //$existMainData->attributes = $existData->attributes;
+                                //$saveModel[] = $existMainData;
+                            } else if ($action == 'DELETE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblBmcCollection();
                                 $existData->old_customer_code = !empty($existData->old_customer_code) ? $existData->old_customer_code : $existData->customer_code;
                                 $existMainData = $MainModel->getExistingCollection($existData);
@@ -174,7 +200,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                     $saveModel[] = $historyModel;
                                     $deleteModel[] = $existMainData;
                                 }
-//                                $deleteModel[] = $existMainData;
+                                //$deleteModel[] = $existMainData;
                             }
                             if ($existData->route_code != $existData->old_route_code && $existData->customer_type == 'DCS') {
                                 $collectionUpdate = new TblBmcCollection();
@@ -182,7 +208,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();
-                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                        Yii::$app->operation->history($existData, $historyModel, $histroryFlag);
                         $saveModel[] = $historyModel;
                     } else if ($operation == 'reject') {
                         $MainModel = new TblCollectionDataAliasReject();

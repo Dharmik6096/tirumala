@@ -18,6 +18,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
 use yii\widgets\ActiveForm;
 use app\modules\collection\models\TblCollectionDataAlias;
 use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
 use app\modules\organisation\models\TblBmcMilkType;
@@ -129,6 +130,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $this->model->date_time_of_collection = !empty($this->model->date_time_of_collection) ? date('Y-m-d', strtotime($this->model->date_time_of_collection)) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             if ($this->model->validate()) {
+                $auto_key_config = [];
                 $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
                 $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
                 $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
@@ -403,6 +405,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
                 $i = 1;
+                $auto_key_config = [];
                 foreach ($modelData as $detailKey => $detalData) {
                     if (!empty($detalData->oldAttributes) && ($detalData->customer_code != $detalData->oldAttributes['customer_code'] || $detalData->route_code != $detalData->oldAttributes['route_code'] || $detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'] || $detalData->antibiotic != $detalData->oldAttributes['antibiotic'])) {
                         // if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
@@ -569,7 +572,9 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $deletedata = Yii::$app->request->post('selection');
                 $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
                 $where = [];
-                foreach ($deletedata as $code) {
+                $i = 1;
+                $auto_key_config = [];
+                foreach ($deletedata as $detailKey => $code) {
                     $where['milk_collection_code'] = $code;
                     $existData = TblBmcCollection::find()->where($where)->one();
                     $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL');
@@ -579,24 +584,31 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $ApprovalModel->setOldAttributesValues($ApprovalModel);
                         $ApprovalModel->table_name = 'tbl_bmc_collection';
                         $ApprovalModel->action_perform = 'DELETE';
-
                         if($collectionApprovalConfig == 2){
                             $modelStages = new TblApprovalStagesDetail();
-                            $approvalStage = $modelStages->approvalStages($this->model->union_code, 'tbl_bmc_collection');
-                            $ApprovalModel->approval_status  = empty($approvalStage) ? 'Approve' : 'Pending';
-                            $modelSave[] = $ApprovalModel;
-                            $modelStages->setApprovalData($this->model->union_code, 'tbl_bmc_collection', '', $modelSave, $approval_stages);
+                            $approvalStage = $modelStages->approvalStages($existData->union_code, 'tbl_bmc_collection');
+                            $ApprovalModel->approval_status = empty($approvalStage) ? 'Approve' : 'Pending';
+                            $saveModel[] = $ApprovalModel;
+                            // $modelStages->setApprovalData($existData->union_code, 'tbl_bmc_collection', '', $saveModel, $approval_stages);
                             if(!empty($approvalStage)){
-                                foreach($approvalStage as $key => $value){
-                                    $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $i-($key+1)];
+                                foreach($approvalStage as $key => $stage){
+                                    $stage_model = new TblProcessApproval();
+                                    $stage_model->setAttributes($stage);
+                                    $stage_model->process_code = '';
+                                    $stage_model->process_name = 'tbl_bmc_collection';
+                                    $stage_model->status = 0;
+                                    unset($stage_model->created_at);
+                                    unset($stage_model->created_by);
+                                    $modelSave[] = $stage_model;
+
+                                    $index = ($i-($key+1))+$detailKey;
+                                    $auto_key_config[$i+$detailKey] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $index];
                                     $i++;
                                 }
                             }
                         } else {
                             $saveModel[] = $ApprovalModel;
                         }
-
-
                     } else {
                         $historyModel = new TblBmcCollectionHistory();
                         Yii::$app->operation->history($existData, $historyModel, DELETE);
@@ -606,10 +618,14 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $type = 'delete';
                     }
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                if(!empty($auto_key_config)){
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, [$message, $type], $auto_key_config);
+                } else {
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                }
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(Yii::$app->request->referrer);
-//                    return $this->redirect(['index']);
+                    //return $this->redirect(['index']);
                 }
             }
         }
