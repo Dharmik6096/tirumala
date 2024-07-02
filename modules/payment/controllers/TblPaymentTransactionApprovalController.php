@@ -156,7 +156,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                         $model->status_by = \Yii::$app->user->identity->user_code;
                         if ($config == 1) {
                             $modelStages = new TblApprovalStagesDetail();
-                            $modelStages->setApprovalData($model->union_code, 'tbl_payment_transaction_approval', $value, $saveModel, $approval_stages);
+                            $modelStages->setApprovalData($model->union_code, 'tbl_payment_transaction_approval', $value, $saveModel, $approval_stages, TRUE);
                             $model->approval_status = empty($approval_stages) ? 'Approve' : 'Pending';
                         }
                         $status = $model->approval_status;
