@@ -55,7 +55,8 @@ $grid_option = [
 //            die('here');
                 return Html::a('<i class="fa fa-ban"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options);
             } else {
-                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user', 'data-is-default' => $model->is_default];
+                $class = ($model->is_contact_verified == 0 || $model->is_contact_verified == 1) ? '' : 'disabled';
+                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user ' . $class, 'data-is-default' => $model->is_default];
                 return Html::a('<i class="fa fa-life-ring"></i>', ['/details/tbl-contact-details/activate', 'id' => $model->detail_code], $options);
             }
         },

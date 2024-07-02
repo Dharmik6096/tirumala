@@ -59,10 +59,10 @@ class TblPaymentTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
-            [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'created_by', 'updated_by', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
-            [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
-            [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code'], 'safe'],
+                [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
+                [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'created_by', 'updated_by', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
+                [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
+                [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code'], 'safe'],
         ];
     }
 
@@ -180,8 +180,13 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                             'ubp.corporate_code',
                             'pt.type',
                             'pt.union_bank_payment_code',
-                            'pt.union_code'
+                            'pt.union_code',
+                            'LEFT(CASE WHEN ISNULL([bmc].[bmc_short_name],\'\')=\'\' THEN [bmc].[bmc_name] ELSE [bmc].[bmc_short_name] END,4) as bmc_short_name',
+                            'LEFT(DATENAME(MONTH, pap.from_date), 3) as month_name',
+                            'CASE WHEN DAY(pap.from_date)=1 THEN \'1\' WHEN DAY(pap.from_date) in (11,16) THEN \'2\' ELSE \'3\' END AS pay_cycle',
                         ])
+                        ->innerJoin('tbl_payment_transaction_approval as pap', 'pap.payment_transaction_approval_code = pt.payment_transaction_approval_code and lower(approval_status)=\'approve\'')
+                        ->innerJoin('tbl_bmc as bmc', 'bmc.bmc_code = pap.bmc_code')
                         ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
                         ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
                         ->innerJoin('tbl_banks as b', 'b.bank_code = pt.bank_code')

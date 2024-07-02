@@ -112,7 +112,7 @@ class CargillBankIntegrationController extends Controller {
                     $this->ReverseUpdate($response, $data);
                 } catch (\Throwable $ex) {
                     //$logData->save(false);
-                  //  var_dump($ex);
+                    //  var_dump($ex);
                 }
             }
         }
@@ -143,6 +143,12 @@ class CargillBankIntegrationController extends Controller {
     }
 
     public function prepareJson($payment) {
+        $PTR = 'AMCS ' . $payment['bmc_short_name'] . ' ' . $payment['month_name'] . ' ' . $payment['pay_cycle'];
+        $CusNarration = 'CargMilk ' . $payment['month_name'] . ' ' . $payment['pay_cycle'];
+        if ($payment['TransactionType'] != 'SLIPS') {
+            $PTR .= ' ' . $payment['TransactionID'];
+            $CusNarration .= ' ' . $payment['TransactionID'];
+        }
         $params = yii::$app->params['CARGILL_BANK_INTEGRATION'];
         $body = [];
         $body['SecurityToken'] = $params['security_token'];
@@ -161,8 +167,9 @@ class CargillBankIntegrationController extends Controller {
         $body['DebitAccName'] = $payment['DebitAccName'];
         $body['ValueDate'] = $payment['ValueDate'];
         $body['TransactionType'] = $payment['TransactionType'];
-        $body['PTR'] = 'Fund Transfer';
+        $body['PTR'] = $PTR;
         $body['SecNo'] = 'SEC_1';
+        $body['CusNarration'] = $CusNarration;
 
         $request_json = json_encode($body);
 
