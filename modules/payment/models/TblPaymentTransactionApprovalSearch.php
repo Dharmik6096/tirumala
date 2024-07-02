@@ -115,32 +115,6 @@ class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
         $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_payment_transaction_approval.payment_transaction_approval_code) = convert(varchar(max),ap.process_code)')
                 ->addSelect(['tbl_payment_transaction_approval.*', 'ap.process_approval_code as process_approval_code'])
                 ->where(['tbl_payment_transaction_approval.approval_status' => ['Reject']]);
-        
-        if(!empty($this->from_date)){
-            $query->andFilterWhere(['>=', 'CAST(tbl_payment_transaction_approval.created_at as date)', date('Y-m-d', strtotime($this->from_date))]);
-        }
-        if(!empty($this->to_date)){
-            $query->andFilterWhere(['<=', 'CAST(tbl_payment_transaction_approval.created_at as date)', date('Y-m-d', strtotime($this->to_date))]);
-        }
-
-        $query->andFilterWhere(['=', 'CAST(tbl_payment_transaction_approval.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
-
-        $query->andFilterWhere([
-            'tbl_payment_transaction_approval.total_amount' => $this->total_amount,
-            'tbl_payment_transaction_approval.total_deduction' => $this->total_deduction,
-            'tbl_payment_transaction_approval.final_amount' => $this->final_amount,
-            'tbl_payment_transaction_approval.qty' => $this->qty,
-            'tbl_payment_transaction_approval.avg_fat' => $this->avg_fat,
-            'tbl_payment_transaction_approval.avg_snf' => $this->avg_snf,
-            'tbl_payment_transaction_approval.kg_fat' => $this->kg_fat,
-            'tbl_payment_transaction_approval.kg_snf' => $this->kg_snf,
-            'tbl_payment_transaction_approval.avg_rate' => $this->avg_rate,
-            'tbl_payment_transaction_approval.total_count' => $this->total_count,
-            'tbl_payment_transaction_approval.status_date' => $this->status_date,
-            'tbl_payment_transaction_approval.originating_type' => $this->originating_type,
-        ])
-        ->andFilterWhere(['like', 'tbl_payment_transaction_approval.customer_type', $this->customer_type])
-        ->andFilterWhere(['like', 'tbl_payment_transaction_approval.remarks', $this->remarks]);
 
         return $dataProvider;
     }

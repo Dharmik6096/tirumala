@@ -109,10 +109,11 @@ class TblProcessApproval extends \app\models\ChildModel {
                     'process_name',
                     new Expression('MIN(level_priority) AS level_priority'),
                     new Expression('MIN(level) AS level')
-                ])
-                ->where(['status' => $status, 'process_name' => $process_name]);
+                ]);
                 if($status == 2){
-                    $subquery->andWhere(['level' => 1]);
+                    $subquery->andWhere(['process_name' => $process_name, 'level' => 1]);
+                } else {
+                    $subquery->where(['status' => $status, 'process_name' => $process_name]);
                 }
                 $subquery->groupBy(['process_code', 'process_name']);
 
@@ -170,8 +171,7 @@ class TblProcessApproval extends \app\models\ChildModel {
             $next_count = $next_count->count();
         } else {
             $all_level = TblProcessApproval::find()
-                    ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name])->all();
-                    // ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])->all();
+                    ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])->all();
             foreach ($all_level as $level) {
                 $this->updateApprovalHistory($level, $model_save, $model);
             }

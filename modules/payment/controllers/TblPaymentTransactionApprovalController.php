@@ -171,7 +171,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                     }
                 }
                 if(!empty($saveModel)){
-                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Payment Transaction Reinitiale Successfully', 'info']);
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Payment Transaction Reinitiate Successfully', 'info']);
                     if ($transaction == 'customRedirect') {
                         if(strtolower($status) == 'approve' || strtolower($status) == 'pending'){
                             $is_approved = (strtolower($status) == 'approve') ? 1 : 0;
