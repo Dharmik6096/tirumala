@@ -218,9 +218,22 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $bmc_array = [];
             $postData = Yii::$app->request->post();
+            $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'processed';
+            $is_bank_integrated = Yii::$app->general->getUnionConfiguration($postData['union_code'], 'is_bank_integrated_vendor', 'PORTAL') == 1 ? true : false;
+            if ($is_bank_integrated && $processFlag == 'locked') {
+                $vspModel = new TblVspPayment();
+                $vspModel->load($postData);
+                $vspModel->scenario = 'finalize_payment';
+                if(!$vspModel->validate()){
+                    $msg = implode("\n", array_map(function($error) {
+                        return implode(", ", $error);
+                    }, $vspModel->getErrors()));
+                    Yii::$app->response->format = trim(Response::FORMAT_JSON);
+                    return ['status' => 'error', 'msg' => $msg];
+                }
+            }
             $stop_payment_customer = !empty($postData['selection']) ? $postData['selection'] : [];
             $stop_payment_reason = !empty($postData['TblVspPayment']) ? $postData['TblVspPayment'] : [];
-            $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'processed';
             $types_title = !empty($postData['types_title']) ? $postData['types_title'] : '';
 //        if (Yii::$app->request->post('TblVspPayment')) {
 //            $postData = Yii::$app->request->post();

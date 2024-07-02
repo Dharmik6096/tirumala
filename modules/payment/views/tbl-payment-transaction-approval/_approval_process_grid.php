@@ -13,6 +13,8 @@ $attributes = [
         $status = 'Pending';
         if ($model->status == '1') {
             $status = 'Approved';
+        } else if ($model->status == '2'){
+            $status = 'Rejected';
         }
         return  $status;
     }, 'filter' => false],

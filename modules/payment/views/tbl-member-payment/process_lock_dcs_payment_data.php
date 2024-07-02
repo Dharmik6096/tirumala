@@ -51,6 +51,7 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                             'action' => Url::to(['list-member-payment-summary-data'])
 //                            'action' => Url::to(['list-member-payment'])
                 ]);
+                echo $form->errorSummary($model);
                 ?>
                 <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($model, 'union_code'); ?>

@@ -57,20 +57,21 @@ class TblVspPayment extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'bmc_code', 'customer_type', 'payment_cycle_code', 'multiple_bmc'], 'safe'],
+                [['vsp_payment_code', 'union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'bmc_code', 'customer_type', 'payment_cycle_code', 'multiple_bmc'], 'safe'],
                 [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery', 'union_bank_payment_code'], 'safe'],
                 [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
                 [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code', 'p_customer_type', 'types_title'], 'safe'],
-                [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['finalize_payment']],
                 [['bmc_code'], 'required', 'on' => ['remuneration', 'processpayment']],
 //            [['payment_cycle_code'], 'required', 'on' => ['processpayment']],
-            [['payment_cycle_code'], 'required', 'except' => ['remuneration', 'unreleasepaymentsearch', 'paymenttypevendor', 'unreleasePaymentUpdate']],
+            [['payment_cycle_code'], 'required', 'except' => ['remuneration', 'unreleasepaymentsearch', 'paymenttypevendor', 'unreleasePaymentUpdate', 'finalize_payment']],
                 [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
                 [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name', 'payment_type'], 'safe'],
                 [['payment_release_type'], 'safe'],
                 [['payment_type'], 'required', 'on' => ['unreleasepaymentsearch', 'paymenttypevendor']],
 //            [['customer_type'], 'required', 'on' => ['paymenttypevendor','paymentdisburse']],
-            [['release_date'], 'validateReleaseDate', 'on' => 'unreleasePaymentUpdate']
+            [['release_date'], 'validateReleaseDate', 'on' => 'unreleasePaymentUpdate'],
+            [['vsp_payment_code'], 'checkBankValidate', 'on' => ['finalize_payment']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblVspPayment', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -228,6 +229,38 @@ class TblVspPayment extends \app\models\ChildModel {
                     'bmc_code' => $this->bmc_code,
                     'billing_type' => 'regular',
                     'status' => ['locked']])->orderBy('net_payable')->all();
+    }
+
+    public function checkBankValidate($attribute, $params){
+        $isValid = true;
+        $pendingBankVerifyCount = $this->find()
+                ->where(['vsp_payment_code' => $this->vsp_payment_code, 'is_verified' => 0])
+                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
+                ->count();
+        $rejectBankVerifyCount = $this->find()
+                ->where(['vsp_payment_code' => $this->vsp_payment_code, 'is_verified' => 2])
+                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
+                ->count();
+        $pendingBankCount = $this->find()
+                ->where(['vsp_payment_code' => $this->vsp_payment_code])
+                ->andWhere(['or', ['ifsc' => null], ['bank_account_no' => null], ['bank_name' => null], ['bank_code' => null], ['branch_name' => null], ['branch_code' => null], ['beneficiary_name' => null], ['ifsc' => ''], ['bank_account_no' => ''], ['bank_name' => ''], ['bank_code' => ''], ['branch_name' => ''], ['branch_code' => ''], ['beneficiary_name' => '']])
+                ->count();
+
+        if($pendingBankVerifyCount > 0 || $pendingBankCount > 0 || $rejectBankVerifyCount > 0){
+            $isValid = false;
+            $message = "";
+            if ($pendingBankVerifyCount > 0) {
+                $message .= Yii::t('app', "Number of records bank verification pending: $pendingBankVerifyCount. ");
+            }
+            if ($rejectBankVerifyCount > 0) {
+                $message .= Yii::t('app', "Number of records bank verification rejected: $rejectBankVerifyCount. ");
+            }
+            if ($pendingBankCount > 0) {
+                $message .= Yii::t('app', "Number of records bank detail not exist: $pendingBankCount. ");
+            }
+            $this->addError($attribute, trim($message));
+        }
+        return $isValid;
     }
 
 }
