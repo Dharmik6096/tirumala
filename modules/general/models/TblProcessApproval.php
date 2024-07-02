@@ -133,8 +133,7 @@ class TblProcessApproval extends \app\models\ChildModel {
                 ]);
                 if($status == 2){
                     $query->andWhere([
-                        'app.level_priority' => new Expression("pnd.level_priority"),
-                        'app.status' => $status
+                        'app.level_priority' => new Expression("pnd.level_priority")
                     ]);
                 } else {
                     $query->andWhere([
