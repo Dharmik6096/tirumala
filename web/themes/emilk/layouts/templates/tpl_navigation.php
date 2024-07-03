@@ -1065,6 +1065,14 @@ echo GhostMenu::widget([
                 ],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Survey') . '<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'MPP Survey'), 'url' => ['/feedback/tbl-mpp-survey/index']],
+                            ['label' => Yii::t('app', 'House Hold'), 'url' => ['/feedback/tbl-non-member-house-hold-visit/index']],
+                    ],
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Global <b class="caret"></b></a>',
                     'template' => '<a  class="dropdown-toggle" href="#">Global <b class="caret"></b></a>',
                     'items' => [
