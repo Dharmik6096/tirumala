@@ -50,7 +50,7 @@ class TblProductStockHistory extends \yii\db\ActiveRecord {
                 [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'history_created_by', 'operation_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['stock'], 'safe'],
                 [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-                [['originating_type'], 'safe'],
+                [['originating_type', 'sap_batch_no'], 'safe'],
         ];
     }
 

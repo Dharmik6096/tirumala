@@ -125,7 +125,10 @@ $script = '
         dispatch_qty = dispatch_qty == "" ? 0 : dispatch_qty;
         var new_remaining_qty = parseFloat(remaining_qty)-parseFloat(dispatch_qty);
 
-        if(!isNaN(remaining_qty) && parseInt(dispatch_qty) <= parseInt(approve_qty)){
+        if (!isNaN(remaining_qty) && parseInt(dispatch_qty) <= 0 && dispatch_qty != "") {
+            $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val("");
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Dispatch quantity must be greater than zero.</span></div></div>");
+        } else if(!isNaN(remaining_qty) && parseInt(dispatch_qty) <= parseInt(approve_qty)){
             new_remaining_qty=parseInt(new_remaining_qty).toFixed(2);
             $("#tblindentdispatch-" + tr_key +"-remaining").text(new_remaining_qty);                     
         } else {
