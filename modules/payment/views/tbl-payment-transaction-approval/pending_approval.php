@@ -1,5 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Payment Transaction Pending Approval'));
+$title = 'Payment Transaction Pending '.ucfirst($type);
+$this->title = Yii::t('app', Yii::$app->label->title('list', $title));
 ?>
 
 <div class="panel panel-default panel-grid">
@@ -11,6 +12,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Payment Transactio
         $this->render('_pending_approval_grid', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'type' => $type
         ])
         ?>
     </div>
