@@ -21,7 +21,7 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
                 [['collection_data_alias_code', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty_mode', 'no_of_can', 'qlty_auto', 'qty_auto', 'converted_qty_mode', 'send_status', 'collection_type', 'doc_no', 'dispatch_type', 'destination_type', 'old_no_of_can', 'old_purchase_rate_code', 'originating_type'], 'integer'],
                 [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'qlty_time', 'qty_time', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'date_time_of_testing', 'vehicle_no', 'route_arrival_time', 'challan_no', 'destination_code', 'vehicle_in_time', 'vehicle_out_time', 'old_milk_type_code', 'old_milk_quality_type_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'temperature', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'number'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'converted_amount'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'converted_amount', 'approved_at', 'approved_by', 'approval_status'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['approvalCollection']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['approvalDispatch']],
         ];
@@ -61,7 +61,7 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
         }
         if ($pending_approval) {
             $approval = new TblProcessApproval();
-            $subQuery = $approval->getApproveLavel('tbl_bmc_collection');
+            $subQuery = $approval->getApproveLavel($this->table_name);
             $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_collection_data_alias.collection_data_alias_code) = convert(varchar(max),ap.process_code)')
                     ->addSelect(['tbl_collection_data_alias.*', 'ap.process_approval_code as process_approval_code'])
                     ->where(['tbl_collection_data_alias.approval_status' => ['Pending','Inprogress']]);

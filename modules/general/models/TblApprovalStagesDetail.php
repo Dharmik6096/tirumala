@@ -145,4 +145,31 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
         return $levels;
     }
 
+    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag, $detailKey) {
+        $approvalStage = $this->approvalStages($unionCode, $processName);
+        $approvalModel->approval_status = empty($approvalStage) ? 'Approve' : 'Pending';
+        $saveModel[] = $approvalModel;
+
+        if (!empty($approvalStage)) {
+            foreach ($approvalStage as $key => $stage) {
+                $stage_model = new TblProcessApproval();
+                $stage_model->setAttributes($stage);
+                $stage_model->process_name = $processName;
+                $stage_model->status = 0;
+                unset($stage_model->created_at);
+                unset($stage_model->created_by);
+                $saveModel[] = $stage_model;
+                if ($processFlag == 'createBmc') {
+                    $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $i - ($key + 1)];
+                } else if ($processFlag == 'createMilkCollection') {
+                    $auto_key_config['TblProcessApproval'][] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => 0];
+                } else {
+                    $index = ($i - ($key + 1)) + $detailKey;
+                    $auto_key_config[$i + $detailKey] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $index];
+                }
+                $i++;
+            }
+        }
+    }
+
 }

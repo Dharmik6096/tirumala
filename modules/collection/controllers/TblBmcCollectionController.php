@@ -143,18 +143,9 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $approvalModel->table_name = 'tbl_bmc_collection';
                     $approvalModel->action_perform = 'CREATE';
                     $approvalModel->setOldAttributesValues($approvalModel);
-                    if($collectionApprovalConfig == 2){
+                    if ($collectionApprovalConfig == 2) {
                         $modelStages = new TblApprovalStagesDetail();
-                        $approvalStage = $modelStages->approvalStages($this->model->union_code, 'tbl_bmc_collection');
-                        $approvalModel->approval_status  = empty($approvalStage) ? 'Approve' : 'Pending';
-                        $modelSave[] = $approvalModel;
-                        $modelStages->setApprovalData($this->model->union_code, 'tbl_bmc_collection', '', $modelSave, $approval_stages);
-                        if(!empty($approvalStage)){
-                            foreach($approvalStage as $key => $value){
-                                $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $i-($key+1)];
-                                $i++;
-                            }
-                        }
+                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_bmc_collection', $modelSave, $auto_key_config, $i, 'createBmc', '');
                     } else {
                         $modelSave[] = $approvalModel;
                     }
@@ -163,7 +154,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 } else {
                     $modelSave[] = $this->model;
                 }
-                if(!empty($auto_key_config)){
+                if (!empty($auto_key_config)) {
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($modelSave, [$message, $type], $auto_key_config);
                 } else {
                     $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
@@ -428,20 +419,10 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $approvalModel->table_name = 'tbl_bmc_collection';
                             $approvalModel->action_perform = 'UPDATE';
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                            
-                            if($collectionApprovalConfig == 2){
+
+                            if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
-                                $approvalStage = $modelStages->approvalStages($approvalModel->union_code, 'tbl_bmc_collection');
-                                $approvalModel->approval_status  = empty($approvalStage) ? 'Approve' : 'Pending';
-                                $saveModel[] = $approvalModel;
-                                $modelStages->setApprovalData($approvalModel->union_code, 'tbl_bmc_collection', '', $saveModel, $approval_stages);
-                                if(!empty($approvalStage)){
-                                    foreach($approvalStage as $key => $value){
-                                        $index = ($i-($key+1))+$detailKey;
-                                        $auto_key_config[$i+$detailKey] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $index];
-                                        $i++;
-                                    }
-                                }
+                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, 'updateBmc', $detailKey);
                             } else {
                                 $saveModel[] = $approvalModel;
                             }
@@ -463,7 +444,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                if(!empty($auto_key_config)){
+                if (!empty($auto_key_config)) {
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, [$message, $type], $auto_key_config);
                 } else {
                     $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
@@ -584,28 +565,9 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $ApprovalModel->setOldAttributesValues($ApprovalModel);
                         $ApprovalModel->table_name = 'tbl_bmc_collection';
                         $ApprovalModel->action_perform = 'DELETE';
-                        if($collectionApprovalConfig == 2){
+                        if ($collectionApprovalConfig == 2) {
                             $modelStages = new TblApprovalStagesDetail();
-                            $approvalStage = $modelStages->approvalStages($existData->union_code, 'tbl_bmc_collection');
-                            $ApprovalModel->approval_status = empty($approvalStage) ? 'Approve' : 'Pending';
-                            $saveModel[] = $ApprovalModel;
-                            // $modelStages->setApprovalData($existData->union_code, 'tbl_bmc_collection', '', $saveModel, $approval_stages);
-                            if(!empty($approvalStage)){
-                                foreach($approvalStage as $key => $stage){
-                                    $stage_model = new TblProcessApproval();
-                                    $stage_model->setAttributes($stage);
-                                    $stage_model->process_code = '';
-                                    $stage_model->process_name = 'tbl_bmc_collection';
-                                    $stage_model->status = 0;
-                                    unset($stage_model->created_at);
-                                    unset($stage_model->created_by);
-                                    $modelSave[] = $stage_model;
-
-                                    $index = ($i-($key+1))+$detailKey;
-                                    $auto_key_config[$i+$detailKey] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $index];
-                                    $i++;
-                                }
-                            }
+                            $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, 'deleteBmc', $detailKey);
                         } else {
                             $saveModel[] = $ApprovalModel;
                         }
@@ -618,7 +580,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $type = 'delete';
                     }
                 }
-                if(!empty($auto_key_config)){
+                if (!empty($auto_key_config)) {
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, [$message, $type], $auto_key_config);
                 } else {
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
