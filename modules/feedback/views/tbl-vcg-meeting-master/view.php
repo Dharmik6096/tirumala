@@ -1,56 +1,138 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use kartik\detail\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\feedback\models\TblVCGMeetingMaster */
-
-$this->title = $model->VCG_M_Id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Vcg Meeting Masters'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
 ?>
-<div class="tbl-vcgmeeting-master-view">
+<div class="panel panel-default panel-grid hide-grid-settings">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $attributes = [
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'label' => Yii::t('app', 'MCC Name'),
+                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'bmc_code',
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'bmc_code',
+                            'label' => Yii::t('app', 'BMC Name'),
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'dcs_code',
+                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'dcs_code',
+                            'label' => Yii::t('app', 'DCS Name'),
+                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'VCG_date',
+                            'value' => Yii::$app->controls->view_date($model->VCG_date),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'from_time',
+                            'value' => Yii::$app->controls->view_time($model->from_time),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'to_time',
+                            'value' => Yii::$app->controls->view_time($model->to_time),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'attandance_count',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'route_supervisor_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'route_supervisor_code',
+                            'label' => Yii::t('app', 'Route Supervisor Name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'pib_office_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'status',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'remarks',
+                            'valueColOptions' => ['style' => 'width:80%'],
+                        ],
+                    ],
+                ],
+            ];
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->VCG_M_Id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->VCG_M_Id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'VCG_M_Id',
-            'VCG_M_code',
-            'VCG_date',
-            'from_time',
-            'to_time',
-            'mcc_plant_code',
-            'bmc_code',
-            'route_code',
-            'dcs_code',
-            'attandance_count',
-            'attachment_code',
-            'route_supervisor_code',
-            'pib_office_code',
-            'status',
-            'remarks',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'originating_type',
-            'originating_org_code',
-            'originating_org_type',
-        ],
-    ]) ?>
-
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+            ]);
+            ?>
+        </div>
+    </div>
 </div>

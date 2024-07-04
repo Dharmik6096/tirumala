@@ -4,6 +4,11 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_VCG_meeting_master".
@@ -77,6 +82,22 @@ class TblVCGMeetingMaster extends ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
 
 }

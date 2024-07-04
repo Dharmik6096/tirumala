@@ -4,6 +4,11 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_VCG_MRG_member".
@@ -50,6 +55,7 @@ class TblVCGMRGMember extends ChildModel
     {
         return [
             [['wef_date', 'end_date', 'approved_at', 'transaction_date', 'created_at', 'updated_at', 'originating_type', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'type', 'member_code', 'approved_by', 'originating_org_code', 'originating_org_type', 'member_tr_code', 'attachment_sign_key', 'attachment_photo_key', 'status', 'remark', 'created_by', 'updated_by'], 'safe'],
+            [['status'], 'required', 'on' => ['update']]
         ];
     }
 
@@ -60,11 +66,11 @@ class TblVCGMRGMember extends ChildModel
     {
         return [
             'VCG_MRG_member_id' => Yii::t('app', 'Vcg Mrg Member ID'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'member_code' => Yii::t('app', 'Member Code'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'route_code' => Yii::t('app', 'Route'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'member_code' => Yii::t('app', 'Member'),
             'member_tr_code' => Yii::t('app', 'Member Tr Code'),
             'wef_date' => Yii::t('app', 'Wef Date'),
             'end_date' => Yii::t('app', 'End Date'),
@@ -84,5 +90,25 @@ class TblVCGMRGMember extends ChildModel
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
     }
 }

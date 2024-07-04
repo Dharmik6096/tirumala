@@ -12,14 +12,15 @@ use app\modules\feedback\models\TblVCGMRGMember;
  */
 class TblVCGMRGMemberSearch extends TblVCGMRGMember
 {
+    public $from_date, $to_date, $member_name;
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['VCG_MRG_member_id', 'originating_type'], 'integer'],
-            [['mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'member_code', 'member_tr_code', 'wef_date', 'end_date', 'status', 'type', 'attachment_sign_key', 'attachment_photo_key', 'remark', 'approved_at', 'approved_by', 'transaction_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['VCG_MRG_member_id', 'originating_type', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'member_code', 'member_tr_code', 'wef_date', 'end_date', 'status', 'type', 'attachment_sign_key', 'attachment_photo_key', 'remark', 'approved_at', 'approved_by', 'transaction_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['from_date', 'to_date', 'member_name'], 'safe'],
         ];
     }
 
@@ -56,35 +57,41 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith(['mccPlantCode', 'bmcCode', 'dcsCode', 'memberCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs', 'tbl_dcs', 'tbl_VCG_MRG_member', 'tbl_VCG_MRG_member');
+
+        if (!empty($this->wef_date)) {
+            $wef_date = date('Y-m-d', strtotime($this->wef_date));
+            $query->andFilterWhere(['cast(tbl_VCG_MRG_member.wef_date as date)' => $wef_date]);
+        }
+        if (!empty($this->end_date)) {
+            $end_date = date('Y-m-d', strtotime($this->end_date));
+            $query->andFilterWhere(['cast(tbl_VCG_MRG_member.end_date as date)' => $end_date]);
+        }
+        if (!empty($this->transaction_date)) {
+            $transaction_date = date('Y-m-d', strtotime($this->transaction_date));
+            $query->andFilterWhere(['cast(tbl_VCG_MRG_member.transaction_date as date)' => $transaction_date]);
+        }
+
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $to_date]);
 
         // grid filtering conditions
         $query->andFilterWhere([
             'VCG_MRG_member_id' => $this->VCG_MRG_member_id,
-            'wef_date' => $this->wef_date,
-            'end_date' => $this->end_date,
             'approved_at' => $this->approved_at,
-            'transaction_date' => $this->transaction_date,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
         ]);
 
-        $query->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-            ->andFilterWhere(['like', 'route_code', $this->route_code])
-            ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'member_code', $this->member_code])
-            ->andFilterWhere(['like', 'member_tr_code', $this->member_tr_code])
-            ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'type', $this->type])
-            ->andFilterWhere(['like', 'attachment_sign_key', $this->attachment_sign_key])
-            ->andFilterWhere(['like', 'attachment_photo_key', $this->attachment_photo_key])
-            ->andFilterWhere(['like', 'remark', $this->remark])
-            ->andFilterWhere(['like', 'approved_by', $this->approved_by])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+        $query->andFilterWhere(['like', 'tbl_VCG_MRG_member.member_code', $this->member_code])
+            ->andFilterWhere(['like', 'tbl_member.member_name', $this->member_name])
+            ->andFilterWhere(['like', 'tbl_VCG_MRG_member.member_tr_code', $this->member_tr_code])
+            ->andFilterWhere(['like', 'tbl_VCG_MRG_member.status', $this->status])
+            ->andFilterWhere(['like', 'tbl_VCG_MRG_member.type', $this->type])
+            ->andFilterWhere(['like', 'tbl_VCG_MRG_member.remark', $this->remark])
+            ->andFilterWhere(['like', 'tbl_VCG_MRG_member.approved_by', $this->approved_by]);
 
         return $dataProvider;
     }

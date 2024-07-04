@@ -2,33 +2,17 @@
 
 namespace app\modules\feedback\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\feedback\models\TblVCGMeetingMaster;
 use app\modules\feedback\models\TblVCGMeetingMasterSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TblVcgMeetingMasterController implements the CRUD actions for TblVCGMeetingMaster model.
  */
-class TblVcgMeetingMasterController extends Controller
+class TblVcgMeetingMasterController extends ChildController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
     /**
      * Lists all TblVCGMeetingMaster models.
      * @return mixed

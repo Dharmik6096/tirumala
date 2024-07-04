@@ -2,32 +2,18 @@
 
 namespace app\modules\feedback\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\feedback\models\TblVCGMRGMember;
+use app\modules\feedback\models\TblVCGMRGMemberHistory;
 use app\modules\feedback\models\TblVCGMRGMemberSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TblVcgMrgMemberController implements the CRUD actions for TblVCGMRGMember model.
  */
-class TblVcgMrgMemberController extends Controller
+class TblVcgMrgMemberController extends ChildController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     /**
      * Lists all TblVCGMRGMember models.
@@ -82,15 +68,23 @@ class TblVcgMrgMemberController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->VCG_MRG_member_id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        $this->model->scenario = 'update';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblVCGMRGMemberHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            if($this->model->validate()){
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['VCG MRG Member', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
         }
+        return $this->render('update', [
+            'model' => $this->model
+        ]);
     }
 
     /**

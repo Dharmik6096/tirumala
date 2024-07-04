@@ -1869,6 +1869,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Language'),
                 'data' => [0 => Yii::t('app', 'English'), 1 => Yii::t('app', 'Hindi')],
             ],
+            'vcg_mrg_member_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['Draft' => Yii::t('app', 'Draft'),'Approved' => Yii::t('app', 'Approved'),'Rejected' => Yii::t('app', 'Rejected'), 'Inactivate' => Yii::t('app', 'Inactivate')],
+            ],
         ];
         return $records[$l];
     }

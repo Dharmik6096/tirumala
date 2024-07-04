@@ -12,7 +12,7 @@ use app\modules\feedback\models\TblNonMemberHouseHoldVisit;
  */
 class TblNonMemberHouseHoldVisitSearch extends TblNonMemberHouseHoldVisit
 {
-    public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code, $f_dcs_code, $from_date, $to_date;
+    public $from_date, $to_date;
     /**
      * @inheritdoc
      */
@@ -20,7 +20,7 @@ class TblNonMemberHouseHoldVisitSearch extends TblNonMemberHouseHoldVisit
     {
         return [
             [['house_hold_visit_id','house_hold_visit_code','surveyer_code','visit_date','mcc_plant_code','bmc_code','dcs_code','name','address_line','pincode','mobile_no','milch_animal_cow_cnt','milch_animal_buff_cnt','milch_animal_country_cow_cnt','cow_milk_volume','buff_milk_volume','total_milk_volume','own_milk_consumption','balance_milk','remarks','created_at','created_by','updated_at','updated_by','originating_type','originating_org_code','originating_org_type'], 'safe'],
-            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'], 'safe'],
+            [['from_date', 'to_date'], 'safe'],
 
         ];
     }
