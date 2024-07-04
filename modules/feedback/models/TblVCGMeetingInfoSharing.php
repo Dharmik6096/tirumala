@@ -1,0 +1,62 @@
+<?php
+
+namespace app\modules\feedback\models;
+
+use Yii;
+use app\models\ChildModel;
+
+/**
+ * This is the model class for table "tbl_VCG_meeting_info_sharing".
+ *
+ * @property integer $VCG_M_info_sharing_id
+ * @property integer $VCG_M_Id
+ * @property string $month
+ * @property integer $info_type_id
+ * @property string $description
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
+ * @property string $originating_org_code
+ * @property string $flg_sentbox_entry
+ * @property integer $originating_type
+ */
+class TblVCGMeetingInfoSharing extends ChildModel {
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName() {
+        return 'tbl_VCG_meeting_info_sharing';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return [
+            [['VCG_M_Id', 'month', 'info_type_id', 'description', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'flg_sentbox_entry', 'originating_type'], 'safe'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels() {
+        return [
+            'VCG_M_info_sharing_id' => Yii::t('app', 'Vcg M Info Sharing ID'),
+            'VCG_M_Id' => Yii::t('app', 'Vcg M ID'),
+            'month' => Yii::t('app', 'Month'),
+            'info_type_id' => Yii::t('app', 'Info Type ID'),
+            'description' => Yii::t('app', 'Description'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+        ];
+    }
+
+}
