@@ -23,6 +23,12 @@ class DefaultController extends \app\controllers\ChildController {
         $model = new ReportsModel();
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);
+            $client_code = \Yii::$app->session->get('eiplCode');
+            if (!empty($client_code) && isset($this->getLabels($this->report)['path'][$client_code])) {
+                $this->data['path'] = $this->getLabels($this->report)['path'][$client_code];
+            } elseif (!empty($client_code) && isset($this->getLabels($this->report)['path']['EIPLCOMMON'])) {
+                $this->data['path'] = $this->getLabels($this->report)['path']['EIPLCOMMON'];
+            }
             $model->scenario = $this->data['scenario'];
             if (strpos($this->data['param'], 'p_milk_type') !== FALSE) {
                 $model->p_milk_type = 0;
