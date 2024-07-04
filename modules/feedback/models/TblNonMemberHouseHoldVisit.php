@@ -56,7 +56,15 @@ class TblNonMemberHouseHoldVisit extends ChildModel
     public function rules()
     {
         return [
-            [['house_hold_visit_id','house_hold_visit_code','surveyer_code','visit_date','mcc_plant_code','bmc_code','dcs_code','name','address_line','pincode','mobile_no','milch_animal_cow_cnt','milch_animal_buff_cnt','milch_animal_country_cow_cnt','cow_milk_volume','buff_milk_volume','total_milk_volume','own_milk_consumption','balance_milk','remarks','created_at','created_by','updated_at','updated_by','originating_type','originating_org_code','originating_org_type'], 'safe'],
+            [['house_hold_visit_code','surveyer_code','visit_date','mcc_plant_code','bmc_code','dcs_code','name','address_line','pincode','mobile_no','milch_animal_cow_cnt','milch_animal_buff_cnt','milch_animal_country_cow_cnt','cow_milk_volume','buff_milk_volume','total_milk_volume','own_milk_consumption','balance_milk','remarks','created_at','created_by','updated_at','updated_by','originating_type','originating_org_code','originating_org_type'], 'safe'],
+            [['visit_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['visit_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['visit_date'], 'convertDate', 'on' => ['importCsv']],
+            // [['visit_date', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'unique',
+            //     'targetAttribute' => ['visit_date', 'mcc_plant_code', 'bmc_code', 'dcs_code'],
+            //     'message' => 'The combination of visit date, MCC plant code, BMC code, and DCS code has already been taken.',
+            //     'on' => ['importCsv'],
+            // ],
         ];
     }
 
@@ -110,5 +118,19 @@ class TblNonMemberHouseHoldVisit extends ChildModel
 
     public function getSurveyerCode() {
         return $this->hasOne(User::className(), ['id' => 'surveyer_code']);
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->visit_date = Yii::$app->controls->view_date($this->visit_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->visit_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->visit_date = !empty($this->visit_date) ? Yii::$app->controls->view_date($this->visit_date, 'php:Y-m-d') : NULL;
+        }
     }
 }

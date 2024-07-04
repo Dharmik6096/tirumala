@@ -73,7 +73,7 @@ class Path extends Component {
         '\\app\modules\hardwareconfigutation\models\\' =>
             ['TblDeviceManufacturer', 'TblInterfacingDevice', 'TblInterfacingDeviceHistory',],
         '\\app\components\\' =>
-            ['DcsImportStrategy', 'SubCenterImportStrategy', 'MemberImportStrategy', 'CommonImportStrategy', 'DispatchImportStrategy', 'DpuIncentiveImportStrategy', 'DcsImportUpdateStrategy', 'DpuPasswordImportStrategy', 'BillHeadDetailImportStrategy', 'AssetDetailImportStrategy', 'BulkImportStrategy', 'BackGroundDataImportStrategy'],
+            ['DcsImportStrategy', 'SubCenterImportStrategy', 'MemberImportStrategy', 'CommonImportStrategy', 'DispatchImportStrategy', 'DpuIncentiveImportStrategy', 'DcsImportUpdateStrategy', 'DpuPasswordImportStrategy', 'BillHeadDetailImportStrategy', 'AssetDetailImportStrategy', 'BulkImportStrategy', 'BackGroundDataImportStrategy', 'MemberHouseHoldSurveyImportStrategy'],
         '\\app\modules\general\models\\' => ['TblBloodgroup', 'TblGender', 'TblQualification', 'TblBmcType', 'TblReligion', 'TblSchemeType', 'TblOrganisationType', 'TblRelationship', 'TblSocietyVendor', 'TblDpuIncentiveMaster', 'TblDpuIncentiveMasterHistory', 'TblDepartment', 'TblCollectionIncentiveDeductionHistory', 'TblViewHistoryTableList', 'TblApprovalStages', 'TblApprovalStagesDetail', 'TblApprovalStagesProcess', 'TblProcessApproval', 'TblBanner', 'TblBannerApplicability'],
         '\\app\modules\email\models\\' => ['TblEmailRuleMaster', 'TblEmailProcessMaster'],
         '\\app\modules\transporter\models\\' => ['TblTransporter', 'TblFuelTypeMaster', 'TblVehicleMaster', 'TblBillingType', 'TblTransporterPaymentHead', 'TblVehicleMasterHistory', 'TblVehicleKmInfo', 'TblVehicleExtraKmDaywise', 'TblVehicleExtraQtyDaywise', 'TblFuelRateMaster', 'TblTransporterHistory', 'TblKmWiseRate', 'TblQtyWiseRate', 'TblLocationWiseKmDetail', 'TblLocationWiseKmDetailHistory', 'TblRecoveryParamDetail', 'TblRecoveryParamDetailHistory', 'TblVehicleVtsKm', 'TblTransporterTimeWisePenalty', 'TblTransporterTimeWisePenaltyHistory', 'TblMccWiseTransportationCost', 'TblMccWiseTransportationCostHistory', 'TblRouteWiseLateArrival'],
@@ -100,6 +100,7 @@ class Path extends Component {
         '\\app\modules\document\models\\' => ['TblDocumentMapping', 'TblAttachment'],
         '\\app\modules\webservice\eipl\models\\' =>
             ['TblEiplAppLogin'],
+        '\\app\modules\feedback\models\\' => ['TblNonMemberHouseHoldVisit', 'TblNonMemberHouseHoldCurrentPouring'],
     ];
 
     public function get($model) {

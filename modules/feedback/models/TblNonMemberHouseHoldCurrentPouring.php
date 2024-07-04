@@ -2,6 +2,7 @@
 
 namespace app\modules\feedback\models;
 
+use app\models\ChildModel;
 use Yii;
 
 /**
@@ -21,7 +22,7 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblNonMemberHouseHoldCurrentPouring extends \yii\db\ActiveRecord
+class TblNonMemberHouseHoldCurrentPouring extends ChildModel
 {
     /**
      * @inheritdoc
@@ -37,7 +38,8 @@ class TblNonMemberHouseHoldCurrentPouring extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['house_hold_current_pouring_id','house_hold_visit_id','competitor_id','milk_volume','milk_rate','remarks','created_at','created_by','updated_at','updated_by','originating_type','originating_org_code','originating_org_type'], 'safe'],
+            [['house_hold_visit_id','competitor_id','milk_volume','milk_rate','remarks','created_at','created_by','updated_at','updated_by','originating_type','originating_org_code','originating_org_type'], 'safe'],
+            [['competitor_id','milk_volume','milk_rate'],'required', 'on' => ['importCsv']]
         ];
     }
 

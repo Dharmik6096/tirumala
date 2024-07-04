@@ -1,5 +1,6 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Non Member House Hold Visit'));
+$this->params['menu'][] = Yii::$app->controls->import('non-member-house-hold-visit', $this);
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

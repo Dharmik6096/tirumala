@@ -28,7 +28,10 @@ $attribute = [
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'label' => Yii::t('app', 'DCS Name'), 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'mpp_survey_code'],
+    ['attribute' => 'name', 'label' => Yii::t('app', 'Member Name'), 'vAlign' => 'middle'],
+    ['attribute' => 'mobile_no'],
+    ['attribute' => 'address_line'],
+    ['attribute' => 'pincode'],
     ['attribute' => 'surveyer_code', 'value' => function($model) {
         return Yii::$app->general->getforeignkey($model->surveyerCode, 'name');
     }],
@@ -41,9 +44,6 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->visit_date);
         }],
-    ['attribute' => 'address_line'],
-    ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
-    ['attribute' => 'mobile_no'],
     ['attribute' => 'milch_animal_cow_cnt'],
     ['attribute' => 'milch_animal_buff_cnt'],
     ['attribute' => 'milch_animal_country_cow_cnt'],
