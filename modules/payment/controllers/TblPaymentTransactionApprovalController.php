@@ -17,26 +17,23 @@ use yii\web\NotFoundHttpException;
 /**
  * TblPaymentTransactionApprovalController implements the CRUD actions for TblPaymentTransactionApproval model.
  */
-class TblPaymentTransactionApprovalController extends \app\controllers\ChildController
-{
+class TblPaymentTransactionApprovalController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblPaymentTransactionApproval models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblPaymentTransactionApprovalSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionPendingApproval()
-    {
+    public function actionPendingApproval() {
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -67,10 +64,10 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                         $saveModel[] = $transactionModel;
                     }
                 }
-                if(!empty($saveModel)){
+                if (!empty($saveModel)) {
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Payment Transaction Approve Successfully', 'info']);
                     if ($transaction == 'customRedirect') {
-                        if(strtolower($status) == 'approve' || strtolower($status) == 'reject'){
+                        if (strtolower($status) == 'approve' || strtolower($status) == 'reject') {
                             $is_approved = (strtolower($status) == 'approve') ? 1 : 2;
                             $transationModel = new TblPaymentTransaction();
                             $condition = ['payment_transaction_approval_code' => $paymentTransactionApprovalCodes];
@@ -92,9 +89,9 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
         }
 
         return $this->render('pending_approval', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'type' => 'approval'
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'type' => 'approval'
         ]);
     }
 
@@ -103,8 +100,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
      * @param string $id
      * @return mixed
      */
-    public function actionView($payment_transaction_approval_code)
-    {
+    public function actionView($payment_transaction_approval_code) {
         $this->model = $this->findModel($payment_transaction_approval_code);
         $transaction = new TblPaymentTransaction();
         $dataProvider = new ActiveDataProvider([
@@ -115,11 +111,11 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
             'query' => $approval->find()->where(['process_code' => $payment_transaction_approval_code]),
         ]);
         return $this->render('view', [
-            'model' => $this->model,
-            'dataProvider' => $dataProvider,
-            'transaction' => $transaction,
-            'approvalDataProvider' => $approvalDataProvider,
-            'approval' => $approval
+                    'model' => $this->model,
+                    'dataProvider' => $dataProvider,
+                    'transaction' => $transaction,
+                    'approvalDataProvider' => $approvalDataProvider,
+                    'approval' => $approval
         ]);
     }
 
@@ -130,8 +126,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
      * @return TblPaymentTransactionApproval the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblPaymentTransactionApproval::findOne($id)) !== null) {
             return $model;
         } else {
@@ -139,8 +134,7 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
         }
     }
 
-    public function actionPendingReinitiate()
-    {
+    public function actionPendingReinitiate() {
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -148,11 +142,11 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                 $remarks = Yii::$app->request->post('remarks');
                 $selecteddata = Yii::$app->request->post('selection');
                 $union_code = explode(',', Yii::$app->session->get('Unions'));
-                $config = Yii::$app->general->getUnionConfiguration($union_code, 'workflow_require', 'PORTAL');
+                $config = Yii::$app->general->getUnionConfiguration($union_code, 'payment_disburse_with_workflow', 'PORTAL');
                 $status = 'Pending';
                 foreach ($selecteddata as $key => $value) {
                     $model = TblPaymentTransactionApproval::findOne($value);
-                    if(!empty($model)){                        
+                    if (!empty($model)) {
                         $transactionHistoryModel = new TblPaymentTransactionApprovalHistory();
                         Yii::$app->operation->history($model, $transactionHistoryModel, 'UPDATE');
                         $saveModel[] = $transactionHistoryModel;
@@ -160,9 +154,9 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                         $model->remarks = $remarks;
                         $model->status_date = date('Y-m-d H:i:s');
                         $model->status_by = \Yii::$app->user->identity->user_code;
-                        if($config == 1){
+                        if ($config == 1) {
                             $modelStages = new TblApprovalStagesDetail();
-                            $modelStages->setApprovalData($model->union_code, 'tbl_payment_transaction_approval', $value, $saveModel, $approval_stages);
+                            $modelStages->setApprovalData($model->union_code, 'tbl_payment_transaction_approval', $value, $saveModel, $approval_stages, TRUE);
                             $model->approval_status = empty($approval_stages) ? 'Approve' : 'Pending';
                         }
                         $status = $model->approval_status;
@@ -170,17 +164,17 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
                         $paymentTransactionApprovalCodes[] = $value;
                     }
                 }
-                if(!empty($saveModel)){
+                if (!empty($saveModel)) {
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Payment Transaction Reinitiate Successfully', 'info']);
                     if ($transaction == 'customRedirect') {
-                        if(strtolower($status) == 'approve' || strtolower($status) == 'pending'){
+                        if (strtolower($status) == 'approve' || strtolower($status) == 'pending') {
                             $is_approved = (strtolower($status) == 'approve') ? 1 : 0;
                             $transationModel = new TblPaymentTransaction();
                             $condition = ['payment_transaction_approval_code' => $paymentTransactionApprovalCodes];
                             $updateData = ['is_approved' => $is_approved, 'approved_at' => date('Y-m-d H:i:s')];
                             $transationModel->updateStatus($condition, $updateData);
                         }
-                        return $this->redirect(['pending-approval']);
+                        return $this->redirect(['pending-reinitiate']);
                     }
                 }
             }
@@ -195,9 +189,10 @@ class TblPaymentTransactionApprovalController extends \app\controllers\ChildCont
         }
 
         return $this->render('pending_approval', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'type' => 'reinitiate'
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'type' => 'reinitiate'
         ]);
     }
+
 }

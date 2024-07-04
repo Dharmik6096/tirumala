@@ -105,17 +105,17 @@ class TblProcessApproval extends \app\models\ChildModel {
         }
         $subquery = $this::find()
                 ->select([
-                    'process_code',
-                    'process_name',
-                    new Expression('MIN(level_priority) AS level_priority'),
-                    new Expression('MIN(level) AS level')
-                ]);
-                if($status == 2){
-                    $subquery->andWhere(['process_name' => $process_name, 'level' => 1]);
-                } else {
-                    $subquery->where(['status' => $status, 'process_name' => $process_name]);
-                }
-                $subquery->groupBy(['process_code', 'process_name']);
+            'process_code',
+            'process_name',
+            new Expression('MIN(level_priority) AS level_priority'),
+            new Expression('MIN(level) AS level')
+        ]);
+        if ($status == 2) {
+            $subquery->andWhere(['process_name' => $process_name, 'level' => 1]);
+        } else {
+            $subquery->where(['status' => $status, 'process_name' => $process_name]);
+        }
+        $subquery->groupBy(['process_code', 'process_name']);
 
         $query = $this::find()
                 ->alias('app')
@@ -127,20 +127,20 @@ class TblProcessApproval extends \app\models\ChildModel {
                         ]
                 )
                 ->where([
-                    'or',
-                        ['app.login_type' => $login_type],
-                        ['app.user_code' => \Yii::$app->user->identity->user_code]
-                ]);
-                if($status == 2){
-                    $query->andWhere([
-                        'app.level_priority' => new Expression("pnd.level_priority")
-                    ]);
-                } else {
-                    $query->andWhere([
-                        'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
-                        'app.status' => $status
-                    ]);      
-                }
+            'or',
+                ['app.login_type' => $login_type],
+                ['app.user_code' => \Yii::$app->user->identity->user_code]
+        ]);
+        if ($status == 2) {
+            $query->andWhere([
+                'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
+            ]);
+        } else {
+            $query->andWhere([
+                'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
+                'app.status' => $status
+            ]);
+        }
         return $query;
     }
 
@@ -149,7 +149,7 @@ class TblProcessApproval extends \app\models\ChildModel {
     }
 
     public function approvalList($model, &$model_save, &$status) {
-        if($model->status != '2'){
+        if ($model->status != '2') {
             $next_count = TblProcessApproval::find()
                     ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])
                     ->andWhere(['<>', 'process_approval_code', $model->process_approval_code]);
@@ -170,7 +170,7 @@ class TblProcessApproval extends \app\models\ChildModel {
             $next_count = $next_count->count();
         } else {
             $all_level = TblProcessApproval::find()
-                    ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])->all();
+                            ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])->all();
             foreach ($all_level as $level) {
                 $this->updateApprovalHistory($level, $model_save, $model);
             }
@@ -185,7 +185,7 @@ class TblProcessApproval extends \app\models\ChildModel {
     }
 
     private function updateApprovalHistory($level, &$model_save, $model) {
-        if($model->process_approval_code != $level->process_approval_code){
+        if ($model->process_approval_code != $level->process_approval_code) {
             $approvalHistoryModel = new TblProcessApprovalHistory();
             Yii::$app->operation->history($level, $approvalHistoryModel, UPDATE);
             $model_save[] = $approvalHistoryModel;
