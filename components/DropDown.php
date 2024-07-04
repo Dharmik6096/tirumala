@@ -539,9 +539,15 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/places-list', Yii::t('app', $prompt), $multiple, '', $readonly);
     }
 
-    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+    public function product_group_code($model, $form, $depends, $name = 'product_group_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
-        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-group/product-group-list', Yii::t('app', 'Select Product Group'), $multiple, $extra_param, $readonly, $id);
+    }
+    
+    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false, $flag = 'NotDependOnProduct') {
+        $this->setClass($form, $name);
+        $action = ($flag == 'NotDependOnProduct') ? '/product/tbl-product/product-list' : '/product/tbl-product/product-depend-list';
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, $action, Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
     }
 
     public function moduleType($model, $form, $name = 'module_type', $islable = false, $disable = false, $searchable = true) {

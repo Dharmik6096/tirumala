@@ -13,20 +13,20 @@ use yii\data\ArrayDataProvider;
  */
 class TblIndentMasterSearch extends TblIndentMaster {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $product_group_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['indent_code', 'customer_type', 'customer_code', 'member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'indent_date', 'product_code', 'status', 'status_date', 'status_by', 'status_remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close'], 'safe'],
-                [['qty'], 'number'],
-                [['originating_type'], 'integer'],
-                [['indent_type', 'warehouse_code'], 'safe'],
-                [['from_date', 'to_date'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['indentApprove']],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'searchdispatch'],
+            [['indent_code', 'customer_type', 'customer_code', 'member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'indent_date', 'product_code', 'status', 'status_date', 'status_by', 'status_remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close'], 'safe'],
+            [['qty'], 'number'],
+            [['originating_type'], 'integer'],
+            [['indent_type', 'warehouse_code', 'product_group_code'], 'safe'],
+            [['from_date', 'to_date'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['indentApprove']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'searchdispatch'],
         ];
     }
 
@@ -265,6 +265,52 @@ class TblIndentMasterSearch extends TblIndentMaster {
         }
         $query->groupBy(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date']);
         // $query->andWhere('tbl_product_requisition.status="2" OR tbl_product_requisition.status="6" OR tbl_product_requisition.status="7"');
+        return $dataProvider;
+    }
+
+    public function indentdispatchothernewsearch($params) {
+        $query = TblIndentMaster::find()->select([
+            'tbl_indent_master.dcs_code',
+            'tbl_indent_master.product_code',
+            'tbl_indent_master.member_code',
+            'qty' => 'ISNULL(SUM(ISNULL(qty, 0)), 0)',
+            'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)), 0)',
+            'tbl_indent_master.status_date'
+        ]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $query->leftJoin('tbl_dcs', 'tbl_indent_master.dcs_code = tbl_dcs.dcs_code');
+        $this->load($params);
+
+        $query->andWhere([
+            'tbl_indent_master.union_code' => $this->union_code,
+            'tbl_indent_master.plant_code' => $this->plant_code,
+            'tbl_indent_master.mcc_plant_code' => $this->mcc_plant_code,
+            'tbl_indent_master.bmc_code' => $this->bmc_code,
+            'tbl_indent_master.product_code' => $this->product_code,
+            'tbl_indent_master.status' => '2',
+            'tbl_indent_master.is_close' => '0'
+        ]);
+
+        $query->andFilterWhere([
+            'tbl_dcs.route_code' => $this->route_code,
+            'tbl_indent_master.dcs_code' => $this->dcs_code
+        ]);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+
+        $query->groupBy([
+            'tbl_indent_master.dcs_code',
+            'tbl_indent_master.product_code',
+            'tbl_indent_master.member_code',
+            'tbl_indent_master.status_date'
+        ]);
+
         return $dataProvider;
     }
 

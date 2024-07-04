@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\globalmaster\models\TblUnits;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_product_group".
@@ -90,6 +91,14 @@ class TblProductGroup extends \app\models\ChildModel {
 
     public function getUnitCode() {
         return $this->hasOne(TblUnits::className(), ['unit_code' => 'unit_code']);
+    }
+    
+     public function getProductGroupList($unionCode) {
+        $query = $this->find()->select(['product_group_code', 'product_group_name'])->where(['union_code' => $unionCode, 'is_active' => 1]);
+        $value = $query->all();
+
+        $data = ArrayHelper::map($value, 'product_group_code', 'product_group_name');
+        return $data;
     }
 
     public function afterSave($insert, $changedAttributes) {

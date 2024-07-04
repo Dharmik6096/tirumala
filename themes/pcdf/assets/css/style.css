@@ -67,7 +67,7 @@ ul{
     padding: 0;
 }
 .mt10{
-    margin-top: 10px;
+    margin-top: 10px !important;
 }
 .mt25{
     margin-top: 26px !important;
@@ -5186,4 +5186,14 @@ tr.highlightRow {
 }
 .mt-21 {
     margin-top: 21px;
+}
+.accordion:after {
+    font-family: 'FontAwesome';  
+    content: "\f068";
+    float: right; 
+    margin-right: 5px;
+}
+.accordion.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\f067"; 
 }
