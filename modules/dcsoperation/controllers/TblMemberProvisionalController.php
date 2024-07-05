@@ -979,8 +979,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             for ($row = 2; $row <= $worksheet->getHighestRow(); $row++) {
                 $provisionalMemberCode = $worksheet->getCell('A' . $row)->getValue();
-                $amountPayable = $worksheet->getCell('M' . $row)->getValue();
-                $totalAmountFromExcel += (float) $amountPayable;
                 $existData = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $provisionalMemberCode])->one();
                 if (!empty($existData)) {
                     if (empty($existData->ref_no)) {
