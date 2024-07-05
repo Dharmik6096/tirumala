@@ -206,7 +206,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                        ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                                    ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -218,12 +218,30 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('relation', $model, $form, '', $model->getAttributeLabel('email_relation'), false, 'email_relation'); ?>
         </div>
-        <div class="col-sm-4 mt10">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_contact_verified'); ?>
-        </div>
-        <div class="col-sm-4 mt10">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_email_verify'); ?>
-        </div>
+        <?php if ($model->provisional_from == 'mobile_app' || $model->provisional_from == 'mobile_update') { ?>
+            <div class = "col-sm-4 mt10">
+                <?php
+                $contactVerificationStatus = $model->is_contact_verified == 1 ? 'Verify' : 'Not Verify';
+                echo $model->getAttributeLabel('is_contact_verified') . '-' . $contactVerificationStatus;
+                ?>
+            </div>
+            <div class = "col-sm-4 mt10">
+                <?php
+                $emailVerificationStatus = $model->is_email_verify == 1 ? 'Verify' : 'Not Verify';
+                echo $model->getAttributeLabel('is_email_verify') . '-' . $emailVerificationStatus;
+                ?>
+            </div>
+            <?php
+        } else {
+            ?>
+            <div class="col-sm-4 mt10">
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_contact_verified'); ?>
+            </div>
+            <div class="col-sm-4 mt10">
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_email_verify'); ?>
+            </div>
+        <?php }
+        ?>
 
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Animal Details</h4>
@@ -263,7 +281,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                        ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                                    ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2 icon-set">
