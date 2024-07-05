@@ -53,7 +53,7 @@ class TblMemberProvisionalShareDetails extends ChildModel {
                 [['balance_amount', 'admission_fee_recovery'], 'default', 'value' => 0],
                 [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'no_of_share_req', 'no_of_share_apply'], 'required', 'except' => ['import_receipt_detail']],
                 [['no_of_share_apply'], 'validateMaxShare', 'except' => ['import_receipt_detail']],
-                [['bank_name', 'deposit_date', 'mode_of_payment'], 'required', 'on' => ['import_receipt_detail']]
+                [['bank_name', 'deposit_date', 'mode_of_payment', 'amount_payable'], 'required', 'on' => ['import_receipt_detail']]
         ];
     }
 
