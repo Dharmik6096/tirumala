@@ -948,7 +948,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1248,7 +1248,7 @@ class DropDown extends Component {
             'bank_type' => [
                 'name' => 'bank_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT')],
+                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
             ],
             'payment_mode_member' => [
                 'name' => 'payment_mode_member',
@@ -2100,7 +2100,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
