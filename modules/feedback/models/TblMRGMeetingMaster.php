@@ -4,6 +4,7 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_MRG_meeting_master".
@@ -58,7 +59,7 @@ class TblMRGMeetingMaster extends ChildModel {
             'm_from_date' => Yii::t('app', 'M From Date'),
             'm_to_date' => Yii::t('app', 'M To Date'),
             'attandance_count' => Yii::t('app', 'Attandance Count'),
-            'pib_office_code' => Yii::t('app', 'Pib Office Code'),
+            'pib_office_code' => Yii::t('app', 'Pib Office'),
             'area_office_code' => Yii::t('app', 'Area Office Code'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -69,6 +70,13 @@ class TblMRGMeetingMaster extends ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
+    }
+
+    public function getPibOfficeCode() {
+        return $this->hasOne(User::className(), ['id' => 'pib_office_code']);
+    }
+    public function getAreaOfficeCode() {
+        return $this->hasOne(User::className(), ['id' => 'area_office_code']);
     }
 
 }

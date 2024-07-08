@@ -2,33 +2,25 @@
 
 namespace app\modules\feedback\controllers;
 
+use app\controllers\ChildController;
+use app\modules\feedback\models\TblMRGMeetingAttandanceSearch;
+use app\modules\feedback\models\TblMRGMeetingFeedbackSearch;
+use app\modules\feedback\models\TblMRGMeetingInfoSharingSearch;
 use Yii;
 use app\modules\feedback\models\TblMRGMeetingMaster;
 use app\modules\feedback\models\TblMRGMeetingMasterSearch;
-use yii\web\Controller;
+use app\modules\feedback\models\TblMRGMeetingMOMSearch;
+use app\modules\feedback\models\TblMRGMeetingOrgMapping;
+use app\modules\feedback\models\TblMRGMeetingOrgMappingSearch;
+use app\modules\feedback\models\TblMRGMeetingPreviousActionsSearch;
+use app\modules\feedback\models\TblMRGMeetingStatisticsSearch;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TblMrgMeetingMasterController implements the CRUD actions for TblMRGMeetingMaster model.
  */
-class TblMrgMeetingMasterController extends Controller
+class TblMrgMeetingMasterController extends ChildController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
     /**
      * Lists all TblMRGMeetingMaster models.
      * @return mixed
@@ -51,8 +43,45 @@ class TblMrgMeetingMasterController extends Controller
      */
     public function actionView($id)
     {
+        $this->model = $this->findModel($id);
+        $searchModel = new TblMRGMeetingAttandanceSearch();
+        $params = Yii::$app->request->queryParams;
+        $searchModel->MRG_M_Id = $id;
+        $dataProvider = $searchModel->search($params);
+        $statisticsSearchModel = new TblMRGMeetingStatisticsSearch();
+        $statisticsSearchModel->MRG_M_Id = $id;
+        $statisticsDataProvider = $statisticsSearchModel->search($params);
+        $momSearchModel = new TblMRGMeetingMOMSearch();
+        $momSearchModel->MRG_M_Id = $id;
+        $momDataProvider = $momSearchModel->search($params);
+        $feedbackSearchModel = new TblMRGMeetingFeedbackSearch();
+        $feedbackSearchModel->MRG_M_Id = $id;
+        $feedbackDataProvider = $feedbackSearchModel->search($params);
+        $sharingSearchModel = new TblMRGMeetingInfoSharingSearch();
+        $sharingSearchModel->MRG_M_Id = $id;
+        $sharingDataProvider = $sharingSearchModel->search($params);
+        $previousSearchModel = new TblMRGMeetingPreviousActionsSearch();
+        $previousSearchModel->MRG_M_Id = $id;
+        $previousDataProvider = $previousSearchModel->search($params);
+        $mappingSearchModel = new TblMRGMeetingOrgMappingSearch();
+        $mappingSearchModel->MRG_M_Id = $id;
+        $mappingDataProvider = $mappingSearchModel->search($params);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->model,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'statisticsDataProvider' => $statisticsDataProvider,
+            'statisticsSearchModel' => $statisticsSearchModel,
+            'momDataProvider' => $momDataProvider,
+            'momSearchModel' => $momSearchModel,
+            'feedbackDataProvider' => $feedbackDataProvider,
+            'feedbackSearchModel' => $feedbackSearchModel,
+            'sharingDataProvider' => $sharingDataProvider,
+            'sharingSearchModel' => $sharingSearchModel,
+            'previousDataProvider' => $previousDataProvider,
+            'previousSearchModel' => $previousSearchModel,
+            'mappingDataProvider' => $mappingDataProvider,
+            'mappingSearchModel' => $mappingSearchModel,
         ]);
     }
 

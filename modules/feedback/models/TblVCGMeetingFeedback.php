@@ -4,6 +4,7 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_VCG_meeting_feedback".
@@ -66,5 +67,7 @@ class TblVCGMeetingFeedback extends ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
-
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
 }

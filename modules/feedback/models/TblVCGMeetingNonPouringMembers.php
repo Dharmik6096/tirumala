@@ -4,6 +4,9 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_VCG_meeting_non_pouring_members".
@@ -51,10 +54,10 @@ class TblVCGMeetingNonPouringMembers extends ChildModel {
             'VCG_meeting_non_pouring_id' => Yii::t('app', 'Vcg Meeting Non Pouring ID'),
             'VCG_M_Id' => Yii::t('app', 'Vcg M ID'),
             'month' => Yii::t('app', 'Month'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'member_code' => Yii::t('app', 'Member Code'),
-            'reason_id' => Yii::t('app', 'Reason ID'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'member_code' => Yii::t('app', 'Member'),
+            'reason_id' => Yii::t('app', 'Reason'),
             'action_taken' => Yii::t('app', 'Action Taken'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -65,6 +68,19 @@ class TblVCGMeetingNonPouringMembers extends ChildModel {
             'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+    public function getReasonID() {
+        return $this->hasOne(TblVCGMRGReasonsMaster::className(), ['reason_id' => 'reason_id']);
     }
 
 }

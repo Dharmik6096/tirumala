@@ -1,52 +1,227 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use kartik\detail\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\feedback\models\TblMRGMeetingMaster */
-
-$this->title = $model->MRG_M_Id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Mrg Meeting Masters'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('view', 'Mrg Meeting Master');
 ?>
-<div class="tbl-mrgmeeting-master-view">
+<div class="panel panel-default panel-grid hide-grid-settings">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $attributes = [
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'm_from_date',
+                            'value' => Yii::$app->controls->view_date($model->m_from_date),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'm_to_date',
+                            'value' => Yii::$app->controls->view_time($model->m_to_date),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'MRG_date',
+                            'value' => Yii::$app->controls->view_date($model->MRG_date),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'from_time',
+                            'value' => Yii::$app->controls->view_time($model->from_time),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'to_time',
+                            'value' => Yii::$app->controls->view_time($model->to_time),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'attandance_count',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'pib_office_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'pib_office_code',
+                            'value' => Yii::$app->general->getforeignkey($model->pibOfficeCode, 'name'),
+                            'label' => Yii::t('app', 'Pib Office Name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'pib_office_code',
+                            'value' => Yii::$app->general->getforeignkey($model->pibOfficeCode, 'employee_id'),
+                            'label' => Yii::t('app', 'Pib Office Employee ID'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'area_office_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'area_office_code',
+                            'value' => Yii::$app->general->getforeignkey($model->areaOfficeCode, 'name'),
+                            'label' => Yii::t('app', 'Area Office Name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'area_office_code',
+                            'value' => Yii::$app->general->getforeignkey($model->areaOfficeCode, 'employee_id'),
+                            'label' => Yii::t('app', 'Area Office Employee ID'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'status',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'remarks',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+            ];
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->MRG_M_Id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->MRG_M_Id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'MRG_M_Id',
-            'MRG_M_code',
-            'MRG_date',
-            'from_time',
-            'to_time',
-            'm_from_date',
-            'm_to_date',
-            'attandance_count',
-            'pib_office_code',
-            'area_office_code',
-            'remarks',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'originating_type',
-            'originating_org_code',
-            'originating_org_type',
-        ],
-    ]) ?>
-
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+            ]);
+            ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#mapping_grid" aria-expanded="true" aria-controls="mapping_grid">Org Mapping</h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="mapping_grid">
+                <?=
+                $this->render('_mapping_grid', [
+                    'mappingDataProvider' => $mappingDataProvider,
+                    'mappingSearchModel' => $mappingSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#attendance_grid" aria-expanded="true" aria-controls="attendance_grid">
+                    Attendance
+                </h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="attendance_grid">
+                <?=
+                $this->render('_attendance_grid', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#statistics_grid" aria-expanded="true" aria-controls="statistics_grid">
+                Statistics
+            </h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="statistics_grid">
+                <?=
+                $this->render('_statistics_grid', [
+                    'dataProvider' => $statisticsDataProvider,
+                    'searchModel' => $statisticsSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#mom_grid" aria-expanded="true" aria-controls="mom_grid">Mom</h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="mom_grid">
+                <?=
+                $this->render('_mom_grid', [
+                    'momDataProvider' => $momDataProvider,
+                    'momSearchModel' => $momSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#feedback_grid" aria-expanded="true" aria-controls="feedback_grid">Feedback</h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="feedback_grid">
+                <?=
+                $this->render('_feedback_grid', [
+                    'feedbackDataProvider' => $feedbackDataProvider,
+                    'feedbackSearchModel' => $feedbackSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#info_sharing_grid" aria-expanded="true" aria-controls="info_sharing_grid">Info Sharing</h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="info_sharing_grid">
+                <?=
+                $this->render('_info_sharing_grid', [
+                    'sharingDataProvider' => $sharingDataProvider,
+                    'sharingSearchModel' => $sharingSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#previous_grid" aria-expanded="true" aria-controls="previous_grid">Previous Action</h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="previous_grid">
+                <?=
+                $this->render('_previous_action', [
+                    'previousDataProvider' => $previousDataProvider,
+                    'previousSearchModel' => $previousSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
 </div>

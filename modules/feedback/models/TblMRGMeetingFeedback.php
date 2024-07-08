@@ -4,6 +4,7 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_MRG_meeting_feedback".
@@ -52,7 +53,7 @@ class TblMRGMeetingFeedback extends ChildModel {
             'MRG_M_Id' => Yii::t('app', 'Mrg M ID'),
             'month' => Yii::t('app', 'Month'),
             'feedback_desc' => Yii::t('app', 'Feedback Desc'),
-            'member_code' => Yii::t('app', 'Member Code'),
+            'member_code' => Yii::t('app', 'Member'),
             'type' => Yii::t('app', 'Type'),
             'status' => Yii::t('app', 'Status'),
             'action_taken' => Yii::t('app', 'Action Taken'),
@@ -65,6 +66,10 @@ class TblMRGMeetingFeedback extends ChildModel {
             'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
     }
 
 }

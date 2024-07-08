@@ -51,7 +51,7 @@ class TblMRGMeetingStatistics extends ChildModel {
             'MRG_M_Id' => Yii::t('app', 'Mrg M ID'),
             'from_date' => Yii::t('app', 'From Date'),
             'to_date' => Yii::t('app', 'To Date'),
-            'statistic_que_Id' => Yii::t('app', 'Statistic Que ID'),
+            'statistic_que_Id' => Yii::t('app', 'Statistic Que'),
             'answers' => Yii::t('app', 'Answers'),
             'system_numbers' => Yii::t('app', 'System Numbers'),
             'remarks' => Yii::t('app', 'Remarks'),
@@ -63,6 +63,10 @@ class TblMRGMeetingStatistics extends ChildModel {
             'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getStatisticQueID() {
+        return $this->hasOne(TblStatisticQuestionsMaster::className(), ['statistic_que_Id' => 'statistic_que_Id']);
     }
 
 }

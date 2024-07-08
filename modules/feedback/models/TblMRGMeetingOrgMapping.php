@@ -4,6 +4,10 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_MRG_meeting_org_mapping".
@@ -47,10 +51,10 @@ class TblMRGMeetingOrgMapping extends ChildModel {
         return [
             'MRG_org_map_id' => Yii::t('app', 'Mrg Org Map ID'),
             'MRG_M_Id' => Yii::t('app', 'Mrg M ID'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'route_code' => Yii::t('app', 'Route'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -59,6 +63,22 @@ class TblMRGMeetingOrgMapping extends ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
 
 }

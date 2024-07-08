@@ -1003,7 +1003,7 @@ echo GhostMenu::widget([
                     'items' => [
                             ['label' => Yii::t('app', 'VCG MRG MPP Member'), 'url' => ['/feedback/tbl-vcg-mrg-member/index']],
                             ['label' => Yii::t('app', 'VCG'), 'url' => ['/feedback/tbl-vcg-meeting-master/index']],
-                            // ['label' => Yii::t('app', 'MRG'), 'url' => ['/feedback/tbl-non-member-house-hold-visit/index']],
+                            ['label' => Yii::t('app', 'MRG'), 'url' => ['/feedback/tbl-mrg-meeting-master/index']],
                     ],
                 ],
                     [

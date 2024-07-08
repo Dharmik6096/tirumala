@@ -47,7 +47,7 @@ class TblVCGMeetingInfoSharing extends ChildModel {
             'VCG_M_info_sharing_id' => Yii::t('app', 'Vcg M Info Sharing ID'),
             'VCG_M_Id' => Yii::t('app', 'Vcg M ID'),
             'month' => Yii::t('app', 'Month'),
-            'info_type_id' => Yii::t('app', 'Info Type ID'),
+            'info_type_id' => Yii::t('app', 'Info Type'),
             'description' => Yii::t('app', 'Description'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -57,6 +57,10 @@ class TblVCGMeetingInfoSharing extends ChildModel {
             'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getInfoTypeId() {
+        return $this->hasOne(TblVCGMRGInfoTypeMaster::className(), ['info_type_id' => 'info_type_id']);
     }
 
 }

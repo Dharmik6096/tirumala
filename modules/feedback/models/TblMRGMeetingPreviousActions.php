@@ -65,4 +65,11 @@ class TblMRGMeetingPreviousActions extends ChildModel {
         ];
     }
 
+    public function getVCGMFeedbackId() {
+        return $this->hasOne(TblMRGMeetingFeedback::className(), ['MRG_M_feedback_id' => 'MRG_M_feedback_id']);
+    }
+    public function getVCGMMonId() {
+        return $this->hasOne(TblMRGMeetingMOM::className(), ['MRG_MOM_id' => 'MRG_M_MOM_id']);
+    }
+
 }

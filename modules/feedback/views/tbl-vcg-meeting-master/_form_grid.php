@@ -57,7 +57,7 @@ $attribute = [
     ['attribute' => 'route_supervisor_code'],
     ['attribute' => 'pib_office_code'],
     ['attribute' => 'status'],
-    ['attribute' => 'remark'],
+    ['attribute' => 'remarks'],
 ];
 
 $grid_option = [

@@ -4,6 +4,7 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_MRG_meeting_MOM".
@@ -53,7 +54,7 @@ class TblMRGMeetingMOM extends ChildModel {
             'MRG_M_Id' => Yii::t('app', 'Mrg M ID'),
             'month' => Yii::t('app', 'Month'),
             'concern' => Yii::t('app', 'Concern'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'mom_type_id' => Yii::t('app', 'Mom Type ID'),
             'discussions' => Yii::t('app', 'Discussions'),
             'status' => Yii::t('app', 'Status'),
@@ -67,6 +68,10 @@ class TblMRGMeetingMOM extends ChildModel {
             'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
 }

@@ -49,8 +49,8 @@ class TblVCGMeetingPreviousActions extends ChildModel {
         return [
             'VCG_previous_actions_id' => Yii::t('app', 'Vcg Previous Actions ID'),
             'VCG_M_Id' => Yii::t('app', 'Vcg M ID'),
-            'VCG_M_feedback_id' => Yii::t('app', 'Vcg M Feedback ID'),
-            'VCG_M_MOM_id' => Yii::t('app', 'Vcg M Mom ID'),
+            'VCG_M_feedback_id' => Yii::t('app', 'Vcg M Feedback'),
+            'VCG_M_MOM_id' => Yii::t('app', 'Vcg M Mom'),
             'description' => Yii::t('app', 'Description'),
             'type' => Yii::t('app', 'Type'),
             'isclose' => Yii::t('app', 'Isclose'),
@@ -63,6 +63,13 @@ class TblVCGMeetingPreviousActions extends ChildModel {
             'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getVCGMFeedbackId() {
+        return $this->hasOne(TblVCGMeetingFeedback::className(), ['VCG_M_feedback_id' => 'VCG_M_feedback_id']);
+    }
+    public function getVCGMMonId() {
+        return $this->hasOne(TblVCGMeetingMOM::className(), ['VCG_MOM_id' => 'VCG_M_MOM_id']);
     }
 
 }

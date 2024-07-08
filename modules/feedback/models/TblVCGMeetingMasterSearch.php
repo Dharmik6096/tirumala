@@ -12,6 +12,7 @@ use app\modules\feedback\models\TblVCGMeetingMaster;
  */
 class TblVCGMeetingMasterSearch extends TblVCGMeetingMaster
 {
+    public $from_date, $to_date;
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class TblVCGMeetingMasterSearch extends TblVCGMeetingMaster
     {
         return [
             [['VCG_M_Id', 'attandance_count', 'attachment_code', 'originating_type'], 'integer'],
-            [['VCG_M_code', 'VCG_date', 'from_time', 'to_time', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'route_supervisor_code', 'pib_office_code', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['VCG_M_code', 'VCG_date', 'from_time', 'to_time', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'route_supervisor_code', 'pib_office_code', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -56,6 +57,15 @@ class TblVCGMeetingMasterSearch extends TblVCGMeetingMaster
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        $query->joinWith(['mccPlantCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_mcc_plant', 'tbl_mcc_plant');
+
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'cast(tbl_VCG_meeting_master.VCG_date as date)', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'cast(tbl_VCG_meeting_master.VCG_date as date)', $to_date]);
 
         // grid filtering conditions
         $query->andFilterWhere([

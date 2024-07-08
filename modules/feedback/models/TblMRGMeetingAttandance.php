@@ -4,6 +4,9 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\document\models\TblAttachment;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_MRG_meeting_attandance".
@@ -51,11 +54,11 @@ class TblMRGMeetingAttandance extends ChildModel {
         return [
             'MRG_M_attandance_id' => Yii::t('app', 'Mrg M Attandance ID'),
             'MRG_M_Id' => Yii::t('app', 'Mrg M ID'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'member_code' => Yii::t('app', 'Member Code'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'route_code' => Yii::t('app', 'Route'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'member_code' => Yii::t('app', 'Member'),
             'is_present' => Yii::t('app', 'Is Present'),
             'attachment_code' => Yii::t('app', 'Attachment Code'),
             'reason' => Yii::t('app', 'Reason'),
@@ -69,4 +72,15 @@ class TblMRGMeetingAttandance extends ChildModel {
         ];
     }
 
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function getAttachmentCode() {
+        return $this->hasOne(TblAttachment::className(), ['module_code' => 'MRG_M_attandance_id']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
 }

@@ -3,9 +3,23 @@
 namespace app\modules\feedback\controllers;
 
 use app\controllers\ChildController;
+use app\modules\document\models\TblAttachment;
+use app\modules\feedback\models\TblVCGMeetingAttandance;
+use app\modules\feedback\models\TblVCGMeetingAttandanceSearch;
+use app\modules\feedback\models\TblVCGMeetingFeedbackSearch;
+use app\modules\feedback\models\TblVCGMeetingInfoSharing;
+use app\modules\feedback\models\TblVCGMeetingInfoSharingSearch;
 use Yii;
 use app\modules\feedback\models\TblVCGMeetingMaster;
 use app\modules\feedback\models\TblVCGMeetingMasterSearch;
+use app\modules\feedback\models\TblVCGMeetingMOM;
+use app\modules\feedback\models\TblVCGMeetingMOMSearch;
+use app\modules\feedback\models\TblVCGMeetingNonPouringMembers;
+use app\modules\feedback\models\TblVCGMeetingNonPouringMembersSearch;
+use app\modules\feedback\models\TblVCGMeetingPreviousActionsSearch;
+use app\modules\feedback\models\TblVCGMeetingStatistics;
+use app\modules\feedback\models\TblVCGMeetingStatisticsSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -35,8 +49,47 @@ class TblVcgMeetingMasterController extends ChildController
      */
     public function actionView($id)
     {
+        $this->model = $this->findModel($id);
+        $searchModel = new TblVCGMeetingAttandanceSearch();
+        $params = Yii::$app->request->queryParams;
+        $searchModel->VCG_M_Id = $id;
+        $dataProvider = $searchModel->search($params);
+        $statisticsSearchModel = new TblVCGMeetingStatisticsSearch();
+        $statisticsSearchModel->VCG_M_Id = $id;
+        $statisticsDataProvider = $statisticsSearchModel->search($params);
+        $memberSearchModel = new TblVCGMeetingNonPouringMembersSearch();
+        $memberSearchModel->VCG_M_Id = $id;
+        $memberDataProvider = $memberSearchModel->search($params);
+        $momSearchModel = new TblVCGMeetingMOMSearch();
+        $momSearchModel->VCG_M_Id = $id;
+        $momDataProvider = $momSearchModel->search($params);
+        $feedbackSearchModel = new TblVCGMeetingFeedbackSearch();
+        $feedbackSearchModel->VCG_M_Id = $id;
+        $feedbackDataProvider = $feedbackSearchModel->search($params);
+
+
+        $sharingSearchModel = new TblVCGMeetingInfoSharingSearch();
+        $sharingSearchModel->VCG_M_Id = $id;
+        $sharingDataProvider = $sharingSearchModel->search($params);
+        $previousSearchModel = new TblVCGMeetingPreviousActionsSearch();
+        $previousSearchModel->VCG_M_Id = $id;
+        $previousDataProvider = $previousSearchModel->search($params);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->model,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'statisticsDataProvider' => $statisticsDataProvider,
+            'statisticsSearchModel' => $statisticsSearchModel,
+            'memberDataProvider' => $memberDataProvider,
+            'memberSearchModel' => $memberSearchModel,
+            'momDataProvider' => $momDataProvider,
+            'momSearchModel' => $momSearchModel,
+            'feedbackDataProvider' => $feedbackDataProvider,
+            'feedbackSearchModel' => $feedbackSearchModel,
+            'sharingDataProvider' => $sharingDataProvider,
+            'sharingSearchModel' => $sharingSearchModel,
+            'previousDataProvider' => $previousDataProvider,
+            'previousSearchModel' => $previousSearchModel,
         ]);
     }
 

@@ -4,6 +4,8 @@ namespace app\modules\feedback\models;
 
 use Yii;
 use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\document\models\TblAttachment;
 
 /**
  * This is the model class for table "tbl_VCG_meeting_attandance".
@@ -63,6 +65,14 @@ class TblVCGMeetingAttandance extends ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function getAttachmentCode() {
+        return $this->hasOne(TblAttachment::className(), ['module_code' => 'VCG_M_attandance_id']);
     }
 
 }
