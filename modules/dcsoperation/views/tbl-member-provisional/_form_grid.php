@@ -116,6 +116,11 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->shareCode, 'ref_no');
         }, 'visible' => true, 'filter' => true
     ],
+        ['attribute' => 'provisional_status',
+        'filter' => (!$pending_approval) ? Yii::$app->dropdown->dropdownfilterStatic('provisional_status', $searchModel, 'provisional_status') : false,
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status] : '';
+        }],
 ];
 
 $grid_option = [
@@ -169,7 +174,7 @@ $grid_option = [
         'report' => function ($url, $model) use ($pending_approval) {
             if (!$pending_approval) {
                 $disable = (strtolower($model->provisional_status) == 'approve') ? '' : 'disabled';
-                $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable, 'target'=>'_blank'];
+                $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable, 'target' => '_blank'];
                 // return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register'], $options);
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register', 'provisional_member_code' => $model->provisional_member_code], $options);
             }
