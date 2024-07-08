@@ -114,6 +114,9 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             'tbl_member_provisional.is_approved' => $this->approved_status,
         ]);
 
+        if (!$pending_approval) {
+            $query->andFilterWhere(['tbl_member_provisional.provisional_status' => $this->provisional_status]);
+        }
         $query->andFilterWhere(['like', 'tbl_member_provisional.member_code', $this->member_code])
                 ->andFilterWhere(['like', 'tbl_member_provisional.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_member_provisional.member_name', $this->member_name])
