@@ -1,6 +1,7 @@
 <?php
 
 use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 $attribute = [
     ['attribute' => 'dcs_code', 'filter' => false],
@@ -27,6 +28,12 @@ $grid_option = [
     'id' => 'vcg-meeting-mom-grid',
     'attributes' => $attribute,
     'active_column' => false,
+    'actions' => [
+        'update' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-val' => $model->MRG_MOM_id];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/feedback/tbl-mrg-meeting-mom/update', 'id' => $model->MRG_MOM_id], $options);
+        },
+    ]
 ];
 ?>
 <div class="hideToggleBtn">

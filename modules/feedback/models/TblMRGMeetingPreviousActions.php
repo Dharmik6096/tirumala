@@ -39,6 +39,7 @@ class TblMRGMeetingPreviousActions extends ChildModel {
     public function rules() {
         return [
             [['MRG_M_Id', 'MRG_M_feedback_id', 'MRG_M_MOM_id', 'description', 'type', 'isclose', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'flg_sentbox_entry', 'originating_type'], 'safe'],
+            [['isclose'],'required']
         ];
     }
 

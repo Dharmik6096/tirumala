@@ -75,6 +75,12 @@ class TblVcgMrgMemberController extends ChildController
             $historyModel = new TblVCGMRGMemberHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
+            if(!empty($this->model->end_date)){
+                $this->model->end_date = Yii::$app->formatter->asDate($this->model->end_date, DATE_FORMAT);
+                if($this->model->end_date <= date('Y-m-d')){
+                    $this->model->status = 'INACTIVATE';
+                }
+            }
             if($this->model->validate()){
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['VCG MRG Member', 'edit']);
                 if ($transaction == 'customRedirect') {

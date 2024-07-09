@@ -40,16 +40,21 @@ $attribute = [
     ['attribute' => 'from_time',
         'value' => function($model) {
             return Yii::$app->controls->view_time($model->from_time);
-        }],
+        }, 'filter' => false],
     ['attribute' => 'to_time',
         'value' => function($model) {
             return Yii::$app->controls->view_time($model->to_time);
-        }],
+        }, 'filter' => false],
     ['attribute' => 'attandance_count'],
-    ['attribute' => 'attandance_code'],
     ['attribute' => 'pib_office_code'],
+    ['attribute' => 'pib_office_name', 'value' => function($model) {
+        return Yii::$app->general->getforeignkey($model->pibOfficeCode, 'name');
+    }, 'vAlign' => 'middle', 'filter' => true],
     ['attribute' => 'area_office_code'],
-    ['attribute' => 'status'],
+    ['attribute' => 'area_office_name', 'value' => function($model) {
+        return Yii::$app->general->getforeignkey($model->areaOfficeCode, 'name');
+    }, 'vAlign' => 'middle', 'filter' => true],
+    ['attribute' => 'status', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('vcg_mrg_meeting_status', $searchModel, 'status')],
     ['attribute' => 'remarks'],
 ];
 

@@ -60,7 +60,7 @@ class TblMRGMeetingMaster extends ChildModel {
             'm_to_date' => Yii::t('app', 'M To Date'),
             'attandance_count' => Yii::t('app', 'Attandance Count'),
             'pib_office_code' => Yii::t('app', 'Pib Office'),
-            'area_office_code' => Yii::t('app', 'Area Office Code'),
+            'area_office_code' => Yii::t('app', 'Area Office'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),

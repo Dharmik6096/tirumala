@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblRouteMapping;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_VCG_meeting_master".
@@ -70,7 +71,7 @@ class TblVCGMeetingMaster extends ChildModel {
             'dcs_code' => Yii::t('app', 'DCS'),
             'attandance_count' => Yii::t('app', 'Attandance Count'),
             'attachment_code' => Yii::t('app', 'Attachment Code'),
-            'route_supervisor_code' => Yii::t('app', 'Route Supervisor Code'),
+            'route_supervisor_code' => Yii::t('app', 'Route Supervisor'),
             'pib_office_code' => Yii::t('app', 'Pib Office'),
             'status' => Yii::t('app', 'Status'),
             'remarks' => Yii::t('app', 'Remarks'),
@@ -98,6 +99,14 @@ class TblVCGMeetingMaster extends ChildModel {
 
     public function getRouteCode() {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getRouteSupervisorCode() {
+        return $this->hasOne(User::className(), ['id' => 'route_supervisor_code']);
+    }
+
+    public function getPibOfficeName() {
+        return $this->hasOne(User::className(), ['id' => 'pib_office_code']);
     }
 
 }

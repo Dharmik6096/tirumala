@@ -42,6 +42,7 @@ class TblVCGMeetingMOM extends ChildModel {
     public function rules() {
         return [
             [['VCG_M_Id', 'month', 'concern', 'member_code', 'mom_type_id', 'discussions', 'status', 'remarks_actions', 'process_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'flg_sentbox_entry', 'originating_type'], 'safe'],
+            [['status'],'required'],
         ];
     }
 

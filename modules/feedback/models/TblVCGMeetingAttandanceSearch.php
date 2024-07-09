@@ -71,11 +71,7 @@ class TblVCGMeetingAttandanceSearch extends TblVCGMeetingAttandance
         $query->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
             ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
             ->andFilterWhere(['like', 'member_code', $this->member_code])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+            ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;
     }

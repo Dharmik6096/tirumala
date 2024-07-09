@@ -5,6 +5,7 @@
  */
 
 use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Html;
 ?>
 
@@ -77,7 +78,12 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
-        'update' => true,
+        // 'update' => true,
+        'update' => function ($url, $model) {
+            $class = in_array($model->status, ['REJECTED','INACTIVATE']) ? 'disabled' : '';
+            $options = ['data-code' => $model->VCG_MRG_member_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Asset Detail Bom', 'class' => $class,];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/feedback/tbl-vcg-mrg-member/update', 'id' => $model->VCG_MRG_member_id], $options);
+        },
     ]
 ];
 ?>

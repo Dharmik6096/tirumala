@@ -10,7 +10,6 @@ use yii\helpers\Html;
 
 <?php
 $attribute = [
-    ['attribute' => 'VCG_M_code'],
     ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
@@ -35,6 +34,7 @@ $attribute = [
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'label' => Yii::t('app', 'DCS Name'), 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'VCG_M_code'],
     ['attribute' => 'VCG_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -47,16 +47,21 @@ $attribute = [
     ['attribute' => 'from_time',
         'value' => function($model) {
             return Yii::$app->controls->view_time($model->from_time);
-        }],
+        }, 'filter' => false],
     ['attribute' => 'to_time',
         'value' => function($model) {
             return Yii::$app->controls->view_time($model->to_time);
-        }],
+        }, 'filter' => false],
     ['attribute' => 'attandance_count'],
-    ['attribute' => 'attandance_code'],
     ['attribute' => 'route_supervisor_code'],
+    ['attribute' => 'route_supervisor_name', 'value' => function($model) {
+        return Yii::$app->general->getforeignkey($model->routeSupervisorCode, 'name');
+    }, 'vAlign' => 'middle', 'filter' => true],
     ['attribute' => 'pib_office_code'],
-    ['attribute' => 'status'],
+    ['attribute' => 'pib_office_name', 'value' => function($model) {
+        return Yii::$app->general->getforeignkey($model->pibOfficeName, 'name');
+    }, 'vAlign' => 'middle', 'filter' => true],
+    ['attribute' => 'status', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('vcg_mrg_meeting_status', $searchModel, 'status')],
     ['attribute' => 'remarks'],
 ];
 

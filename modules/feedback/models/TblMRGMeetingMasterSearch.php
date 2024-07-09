@@ -12,6 +12,7 @@ use app\modules\feedback\models\TblMRGMeetingMaster;
  */
 class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster
 {
+    public $area_office_name, $pib_office_name;
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster
     {
         return [
             [['MRG_M_Id', 'attandance_count', 'originating_type'], 'integer'],
-            [['MRG_M_code', 'MRG_date', 'from_time', 'to_time', 'm_from_date', 'm_to_date', 'pib_office_code', 'area_office_code', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['MRG_M_code', 'MRG_date', 'from_time', 'to_time', 'm_from_date', 'm_to_date', 'pib_office_code', 'area_office_code', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'area_office_name', 'pib_office_name', 'status'], 'safe'],
         ];
     }
 
@@ -57,28 +58,26 @@ class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster
             return $dataProvider;
         }
 
+        $query->joinWith(['pibOfficeCode']);
+
         // grid filtering conditions
         $query->andFilterWhere([
-            'MRG_M_Id' => $this->MRG_M_Id,
-            'MRG_date' => $this->MRG_date,
-            'from_time' => $this->from_time,
-            'to_time' => $this->to_time,
-            'm_from_date' => $this->m_from_date,
-            'm_to_date' => $this->m_to_date,
-            'attandance_count' => $this->attandance_count,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
+            'tbl_MRG_meeting_master.MRG_M_Id' => $this->MRG_M_Id,
+            'tbl_MRG_meeting_master.MRG_date' => $this->MRG_date,
+            'tbl_MRG_meeting_master.from_time' => $this->from_time,
+            'tbl_MRG_meeting_master.to_time' => $this->to_time,
+            'tbl_MRG_meeting_master.m_from_date' => $this->m_from_date,
+            'tbl_MRG_meeting_master.m_to_date' => $this->m_to_date,
+            'tbl_MRG_meeting_master.attandance_count' => $this->attandance_count,
         ]);
 
-        $query->andFilterWhere(['like', 'MRG_M_code', $this->MRG_M_code])
-            ->andFilterWhere(['like', 'pib_office_code', $this->pib_office_code])
-            ->andFilterWhere(['like', 'area_office_code', $this->area_office_code])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+        $query->andFilterWhere(['like', 'tbl_MRG_meeting_master.MRG_M_code', $this->MRG_M_code])
+            ->andFilterWhere(['like', 'tbl_MRG_meeting_master.pib_office_code', $this->pib_office_code])
+            ->andFilterWhere(['like', 'tbl_MRG_meeting_master.area_office_code', $this->area_office_code])
+            ->andFilterWhere(['like', 'user.name', $this->area_office_name])
+            ->andFilterWhere(['like', 'user.name', $this->pib_office_name])
+            ->andFilterWhere(['like', 'tbl_MRG_meeting_master.status', $this->status])
+            ->andFilterWhere(['like', 'tbl_MRG_meeting_master.remarks', $this->remarks]);
 
         return $dataProvider;
     }

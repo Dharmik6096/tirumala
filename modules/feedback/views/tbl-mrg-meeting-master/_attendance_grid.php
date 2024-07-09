@@ -19,12 +19,12 @@ $attribute = [
     
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-        }, 'label' => Yii::t('app', 'DCS Name'), 'vAlign' => 'middle', 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'label' => Yii::t('app', 'DCS Name'), 'vAlign' => 'middle', 'filter' => false],
 
-    ['attribute' => 'member_code', 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'member_code', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'label' => Yii::t('app', 'Member Name'), 'vAlign' => 'middle', 'filter' => false],

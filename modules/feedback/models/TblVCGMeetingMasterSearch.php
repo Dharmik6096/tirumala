@@ -12,7 +12,7 @@ use app\modules\feedback\models\TblVCGMeetingMaster;
  */
 class TblVCGMeetingMasterSearch extends TblVCGMeetingMaster
 {
-    public $from_date, $to_date;
+    public $from_date, $to_date, $route_supervisor_name, $pib_office_name;
     /**
      * @inheritdoc
      */
@@ -20,7 +20,7 @@ class TblVCGMeetingMasterSearch extends TblVCGMeetingMaster
     {
         return [
             [['VCG_M_Id', 'attandance_count', 'attachment_code', 'originating_type'], 'integer'],
-            [['VCG_M_code', 'VCG_date', 'from_time', 'to_time', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'route_supervisor_code', 'pib_office_code', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date'], 'safe'],
+            [['VCG_M_code', 'VCG_date', 'from_time', 'to_time', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'route_supervisor_code', 'pib_office_code', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'route_supervisor_name', 'pib_office_name'], 'safe'],
         ];
     }
 
@@ -58,8 +58,8 @@ class TblVCGMeetingMasterSearch extends TblVCGMeetingMaster
             return $dataProvider;
         }
 
-        $query->joinWith(['mccPlantCode']);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_mcc_plant', 'tbl_mcc_plant');
+        $query->joinWith(['mccPlantCode', 'routeSupervisorCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_mcc_plant', 'tbl_mcc_plant', 'tbl_VCG_meeting_master');
 
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
         $query->andFilterWhere(['>=', 'cast(tbl_VCG_meeting_master.VCG_date as date)', $from_date]);
@@ -67,32 +67,27 @@ class TblVCGMeetingMasterSearch extends TblVCGMeetingMaster
         $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
         $query->andFilterWhere(['<=', 'cast(tbl_VCG_meeting_master.VCG_date as date)', $to_date]);
 
+        if(!empty($this->VCG_date)){
+            $VCG_date = date('Y-m-d', strtotime($this->VCG_date));
+            $query->andFilterWhere(['=', 'cast(tbl_VCG_meeting_master.VCG_date as date)', $VCG_date]);
+        }
+
         // grid filtering conditions
         $query->andFilterWhere([
-            'VCG_M_Id' => $this->VCG_M_Id,
-            'VCG_date' => $this->VCG_date,
-            'from_time' => $this->from_time,
-            'to_time' => $this->to_time,
-            'attandance_count' => $this->attandance_count,
-            'attachment_code' => $this->attachment_code,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
+            'tbl_VCG_meeting_master.VCG_M_Id' => $this->VCG_M_Id,
+            'tbl_VCG_meeting_master.from_time' => $this->from_time,
+            'tbl_VCG_meeting_master.to_time' => $this->to_time,
+            'tbl_VCG_meeting_master.attandance_count' => $this->attandance_count,
+            'tbl_VCG_meeting_master.attachment_code' => $this->attachment_code,
         ]);
 
-        $query->andFilterWhere(['like', 'VCG_M_code', $this->VCG_M_code])
-            ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-            ->andFilterWhere(['like', 'route_code', $this->route_code])
-            ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'route_supervisor_code', $this->route_supervisor_code])
-            ->andFilterWhere(['like', 'pib_office_code', $this->pib_office_code])
-            ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+        $query->andFilterWhere(['like', 'tbl_VCG_meeting_master.VCG_M_code', $this->VCG_M_code])
+            ->andFilterWhere(['like', 'tbl_VCG_meeting_master.route_supervisor_code', $this->route_supervisor_code])
+            ->andFilterWhere(['like', 'tbl_VCG_meeting_master.pib_office_code', $this->pib_office_code])
+            ->andFilterWhere(['like', 'user.name', $this->route_supervisor_name])
+            ->andFilterWhere(['like', 'user.name', $this->pib_office_name])
+            ->andFilterWhere(['like', 'tbl_VCG_meeting_master.status', $this->status])
+            ->andFilterWhere(['like', 'tbl_VCG_meeting_master.remarks', $this->remarks]);
 
         return $dataProvider;
     }
