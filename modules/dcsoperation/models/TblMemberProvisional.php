@@ -223,6 +223,7 @@ class TblMemberProvisional extends ChildModel {
                 [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
                 [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
+                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -770,17 +771,17 @@ class TblMemberProvisional extends ChildModel {
     public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, &$unlink_files, &$attachments, &$memberdoc, &$errors) {
         $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'member_creation_pending_for_sap_approval');
         $config = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_member_other_detail');
-        $pro_member_data = $this->find()->where(['application_no' => $model->application_no, 'member_status' => 0])->one();
+        $model->member_status = 1;
         $all_doc = [];
         $memberdoc = [];
         $unlink_files = [];
         $attachments = [];
         $message = [];
 
-        if (!empty($pro_member_data) && strtolower($pro_member_data->provisional_status) == 'approve' && $memberCreationPendingForSapApproval == '1') {
-            $this->memberApprove($modelSave, $deleteModel, $pro_member_data, $all_doc, $memberdoc, $message, $unlink_files, $attachments);
+        if (!empty($model) && strtolower($model->provisional_status) == 'approve' && $memberCreationPendingForSapApproval == '1') {
+            $this->memberApprove($modelSave, $deleteModel, $model, $all_doc, $memberdoc, $message, $unlink_files, $attachments);
             if ($config == 1) {
-                $this->memberEnrollmentApprove($modelSave, $pro_member_data, $deleteModel);
+                $this->memberEnrollmentApprove($modelSave, $model, $deleteModel);
             }
         }
         if (!empty($message)) {
@@ -791,7 +792,6 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function memberApprove(&$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, &$message, &$unlink_files, &$attachments) {
-        $memberModel->member_status = 1;
         $tblMember = new TblMember();
         if ($memberModel->provisional_from == 'mobile_update') {
             $tblMember = TblMember::find()->where(['member_code' => $memberModel->member_code])->one();
@@ -803,12 +803,8 @@ class TblMemberProvisional extends ChildModel {
         $tblMember->scenario = 'ApprovalMember';
         $tblMember->attributes = $memberModel->attributes;
         $tblMember->member_code = ($memberModel->provisional_from == 'mobile_update') ? $memberCode : $tblMember->getCode();
-        $historyModel = new TblMemberProvisionalHistory();
-        Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
         if ($tblMember->validate()) {
             $model_save[] = $tblMember;
-            $model_save[] = $memberModel;
-            $model_save[] = $historyModel;
             $deleteAttachment = [];
             if ($memberModel->provisional_from != 'mobile_update') {
                 $milkCollectionData = new TblProvisionalMilkCollection();
@@ -902,6 +898,13 @@ class TblMemberProvisional extends ChildModel {
             $memberShareModel->gender_code = $memberModel->gender_code;
             $memberShareModel->bmc_code = $memberModel->bmc_code;
             $model_save[] = $memberShareModel;
+        }
+    }
+
+    public function checkExistData($attribute, $params) {
+        $modelData = TblMemberProvisional::find()->where(['application_no' => $this->$attribute, 'member_status' => 0, 'provisional_status' => 'Approve',])->one();
+        if (empty($modelData)) {
+            $this->addError($attribute, 'Application number does not exist.');
         }
     }
 

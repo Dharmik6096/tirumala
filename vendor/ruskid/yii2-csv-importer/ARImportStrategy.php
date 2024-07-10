@@ -218,8 +218,9 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                         foreach ($exclude as $val) {
                             $excludes[] = $val;
                         }
+                        $scenario = $model->scenario;
                         $model = $existData;
-                        $model->scenario = 'importCsv';
+                        $model->scenario = $scenario;
                         $history = !empty($this->details['historyClass']) ? $this->details['historyClass'] : NULL;
                         if (!empty($history)) {
                             $history = Yii::$app->path->define($history);
@@ -261,7 +262,7 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                 if (isset($this->saveDeleteChild) && $this->saveDeleteChild && empty($model->getErrors()) && $model->validate()) {
                     $model->setChildTableSaveDelete($model, $modelList, $deleteModelList, $unlink_files, $attachments, $masterdoc, $errors);
                 }
-                
+
                 if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
                     $modelList[] = $model;
 
