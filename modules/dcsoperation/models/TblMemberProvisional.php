@@ -663,10 +663,6 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function setChildTable(&$model, &$modelSave, &$childModel) {
-        echo '<pre>';
-        print_r('ghf');
-        echo '</pre>';
-        die;
         $content = $modelSave['content'];
         $model->scenario = 'hosync';
         if (isset($modelSave['operation_type']) && strtolower($modelSave['operation_type']) == 'update') {
