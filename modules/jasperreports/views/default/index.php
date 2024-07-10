@@ -329,7 +329,7 @@ $defaultToggle = true;
                                         <?php
                                     }
                                     if (in_array($value, array('p_provisional_member_code'))) {
-                                        if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['provisional_member_code'])){
+                                        if (Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['provisional_member_code'])) {
                                             $model->{$value} = Yii::$app->request->queryParams['provisional_member_code'];
                                         }
                                         echo Html::activeHiddenInput($model, $value);
@@ -380,6 +380,8 @@ $defaultToggle = true;
                                     echo Html::activeHiddenInput($model, 'p_route_name');
                                     $model->p_report_name = Html::encode($this->title);
                                     echo Html::activeHiddenInput($model, 'p_report_name');
+                                    echo Html::activeHiddenInput($model, 'locale');
+                                    echo Html::activeHiddenInput($model, 'digit_config');
                                     ?>
 
                                     <!--            <div class="clearfix"></div>-->

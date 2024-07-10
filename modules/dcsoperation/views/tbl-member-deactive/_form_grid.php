@@ -23,14 +23,14 @@ $attribute = [
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => FALSE],
-    ['attribute' => 'member_code', 'value' => 'member_code', 'filter' => FALSE],
-    ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code Ex'), 'value' => function($model) {
+    ['attribute' => 'member_code'],
+    ['attribute' => 'ex_member_code', 'label' => Yii::t('app', 'Member Code Ex'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
-        }, 'filter' => FALSE],
-    ['attribute' => 'member_code', 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+        }, 'filter' => TRUE],
+    ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'ref_code');
-        }, 'filter' => FALSE],
-    ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Name'), 'value' => function($model) {
+        }, 'filter' => TRUE],
+    ['attribute' => 'member_name', 'label' => Yii::t('app', 'Member Name'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'filter' => FALSE],
     [
