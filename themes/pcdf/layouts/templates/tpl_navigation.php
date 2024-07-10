@@ -1001,9 +1001,9 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Meeting') . '<b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'VCG MRG MPP Member'), 'url' => ['/feedback/tbl-vcg-mrg-member/index']],
-                            ['label' => Yii::t('app', 'VCG'), 'url' => ['/feedback/tbl-vcg-meeting-master/index']],
-                            ['label' => Yii::t('app', 'MRG'), 'url' => ['/feedback/tbl-mrg-meeting-master/index']],
+                            ['label' => Yii::t('app', 'VCG/MRG Member Selection'), 'url' => ['/feedback/tbl-vcg-mrg-member/index']],
+                            ['label' => Yii::t('app', 'VCG Meeting'), 'url' => ['/feedback/tbl-vcg-meeting-master/index']],
+                            ['label' => Yii::t('app', 'MRG Meeting'), 'url' => ['/feedback/tbl-mrg-meeting-master/index']],
                     ],
                 ],
                     [

@@ -42,6 +42,8 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
     public $saveChild = '';
     public $details;
     public $file_path, $file_name;
+    public $saveDeleteChild = '';
+    public $unlinkFile = '';
 
     /**
      * @throws Exception
@@ -101,6 +103,10 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                 $trans = \Yii::$app->db->beginTransaction();
                 /* @var $model \yii\db\ActiveRecord */
                 $modelList = [];
+                $deleteModelList = [];
+                $unlink_files = [];
+                $attachments = [];
+                $masterdoc = [];
                 $model = new $this->className;
                 if (!empty($this->scenario))
                     $model->scenario = $this->scenario;
@@ -251,15 +257,47 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                 if (isset($this->saveChild) && $this->saveChild && empty($model->getErrors()) && $model->validate()) {
                     $model->setChildTable($model, $modelList, $errors);
                 }
+
+                if (isset($this->saveDeleteChild) && $this->saveDeleteChild && empty($model->getErrors()) && $model->validate()) {
+                    $model->setChildTableSaveDelete($model, $modelList, $deleteModelList, $unlink_files, $attachments, $masterdoc, $errors);
+                }
+                
                 if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
                     $modelList[] = $model;
 
                     foreach ($modelList as $modelRow) {
                         $master[] = $modelRow->save();
                     }
+                    foreach ($deleteModelList as $modelRow) {
+                        $master[] = $modelRow->delete();
+                    }
                     if (!in_array(FALSE, $master)) {
                         $trans->commit();
                         $count++;
+                        if (isset($this->unlinkFile) && $this->unlinkFile && isset($this->saveDeleteChild) && $this->saveDeleteChild) {
+                            $model->attachmentPath($baseDirPath, $docMoveFolderName, $docFolderName);
+                            $baseDir = Yii::getAlias('@webroot') . '/' . $baseDirPath;
+                            $moveDir = $baseDir . $docMoveFolderName;
+                            $docDir = $baseDir . $docFolderName;
+
+                            if (!empty($unlink_files)) {
+                                foreach ($unlink_files as $file) {
+                                    if (file_exists($moveDir . '/' . $file)) {
+                                        unlink($moveDir . '/' . $file);
+                                    }
+                                }
+                            }
+
+                            for ($i = 0; $i < count($attachments); $i++) {
+                                $all_doc = basename($attachments[$i]);
+                                $fileName = basename($masterdoc[$i]);
+                                $file = $moveDir . '/' . $fileName;
+                                file_put_contents($file, file_get_contents($attachments[$i]));
+                                if (file_exists($docDir . '/' . $all_doc)) {
+                                    unlink($docDir . '/' . $all_doc);
+                                }
+                            }
+                        }
                     } else {
                         $trans->rollback();
                         $message = '';

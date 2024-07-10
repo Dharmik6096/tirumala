@@ -5,6 +5,7 @@ namespace app\modules\feedback\controllers;
 use app\controllers\ChildController;
 use Yii;
 use app\modules\feedback\models\TblMRGMeetingFeedback;
+use app\modules\feedback\models\TblMRGMeetingFeedbackHistory;
 use app\modules\feedback\models\TblMRGMeetingFeedbackSearch;
 use yii\web\NotFoundHttpException;
 
@@ -21,15 +22,20 @@ class TblMrgMeetingFeedbackController extends ChildController
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/feedback/tbl-mrg-meeting-master/view', 'id' => $model->MRG_M_Id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblMRGMeetingFeedbackHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['MRG Meeting Feedback', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['/feedback/tbl-mrg-meeting-master/view', 'id' => $this->model->MRG_M_Id]);
+            }
         }
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
     /**
      * Finds the TblMRGMeetingFeedback model based on its primary key value.

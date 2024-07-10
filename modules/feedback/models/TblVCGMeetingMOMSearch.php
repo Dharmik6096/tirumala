@@ -18,7 +18,7 @@ class TblVCGMeetingMOMSearch extends TblVCGMeetingMOM
     public function rules()
     {
         return [
-            [['VCG_MOM_id', 'VCG_M_Id', 'mom_type_id', 'status', 'originating_type'], 'integer'],
+            [['VCG_MOM_id', 'VCG_M_Id', 'mom_type_id', 'status', 'originating_type'], 'safe'],
             [['month', 'concern', 'member_code', 'discussions', 'remarks_actions', 'process_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'flg_sentbox_entry'], 'safe'],
         ];
     }

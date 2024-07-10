@@ -75,6 +75,7 @@ class TblVCGMeetingMasterSearch extends TblVCGMeetingMaster
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_VCG_meeting_master.VCG_M_Id' => $this->VCG_M_Id,
+            'tbl_VCG_meeting_master.route_code' => $this->route_code,
             'tbl_VCG_meeting_master.from_time' => $this->from_time,
             'tbl_VCG_meeting_master.to_time' => $this->to_time,
             'tbl_VCG_meeting_master.attandance_count' => $this->attandance_count,

@@ -81,8 +81,9 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'VCG_MRG_member_id' => $this->VCG_MRG_member_id,
-            'approved_at' => $this->approved_at,
+            'tbl_VCG_MRG_member.VCG_MRG_member_id' => $this->VCG_MRG_member_id,
+            'tbl_VCG_MRG_member.route_code' => $this->route_code,
+            'tbl_VCG_MRG_member.approved_at' => $this->approved_at,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_VCG_MRG_member.member_code', $this->member_code])

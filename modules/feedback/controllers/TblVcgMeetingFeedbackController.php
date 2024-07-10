@@ -5,6 +5,7 @@ namespace app\modules\feedback\controllers;
 use app\controllers\ChildController;
 use Yii;
 use app\modules\feedback\models\TblVCGMeetingFeedback;
+use app\modules\feedback\models\TblVCGMeetingFeedbackHistory;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -20,15 +21,20 @@ class TblVcgMeetingFeedbackController extends ChildController
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/feedback/tbl-vcg-meeting-master/view', 'id' => $model->VCG_M_Id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblVCGMeetingFeedbackHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['VCG Meeting Feedback', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['/feedback/tbl-vcg-meeting-master/view', 'id' => $this->model->VCG_M_Id]);
+            }
         }
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**

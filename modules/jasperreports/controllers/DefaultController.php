@@ -471,7 +471,7 @@ class DefaultController extends \app\controllers\ChildController {
             //$controls['locale'] = Yii::$app->session->get('LanguageCode');
             $controls['locale'] = !empty($model->locale) ? $model->locale : 'en';
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
-            $controls['REPORT_LOCALE'] = !empty($model->locale) ? $model->locale : 'en';
+            $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
             $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;

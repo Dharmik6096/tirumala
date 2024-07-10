@@ -41,7 +41,7 @@ class TblMRGMeetingMOMHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['MRG_M_Id', 'month', 'concern', 'dcs_code', 'mom_type_id', 'discussions', 'status', 'remarks_actions', 'process_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'flg_sentbox_entry', 'originating_type', 'history_created_at', 'history_created_by'], 'safe'],
+            [['MRG_MOM_id', 'MRG_M_Id', 'month', 'concern', 'dcs_code', 'mom_type_id', 'discussions', 'status', 'remarks_actions', 'process_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'flg_sentbox_entry', 'originating_type', 'history_created_at', 'history_created_by'], 'safe'],
         ];
     }
 

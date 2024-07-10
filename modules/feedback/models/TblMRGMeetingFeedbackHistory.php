@@ -40,7 +40,7 @@ class TblMRGMeetingFeedbackHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['MRG_M_Id', 'month', 'feedback_desc', 'member_code', 'type', 'status', 'action_taken', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'flg_sentbox_entry', 'originating_type', 'history_created_at', 'history_created_by'], 'safe'],
+            [['MRG_M_feedback_id', 'MRG_M_Id', 'month', 'feedback_desc', 'member_code', 'type', 'status', 'action_taken', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'flg_sentbox_entry', 'originating_type', 'history_created_at', 'history_created_by'], 'safe'],
         ];
     }
 

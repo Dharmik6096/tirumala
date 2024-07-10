@@ -42,6 +42,7 @@ use app\modules\complaint\models\TblComplain;
 use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
+use app\modules\feedback\models\TblVCGMRGMember;
 
 class SchedulerController extends ChildController {
 
@@ -605,6 +606,9 @@ class SchedulerController extends ChildController {
                 $modelMaster = new $model_name();
                 $existData = $modelMaster::find()->where([$f_key => $row->{$f_key}])->one();
                 if (!empty($existData)) {
+                    if (method_exists($existData, 'updateChildRecord')) {
+                        $existData->updateChildRecord($existData, $status);
+                    }
                     $existData->is_active = $status;
                     $sentboxArray = [];
                     $encrypt = $modelMaster->encryptModel($existData->attributes);
