@@ -100,7 +100,7 @@ class ChildController extends Controller {
 
     public static function printDocument($controls, $path, $filename, $type, $out = 'web') {
         $controls['locale'] = 'en';
-        $controls['REPORT_LOCALE'] = 'en';
+        $controls['REPORT_LOCALE'] = 'en_IN';
         $controls['digit_config'] = 0;
         $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
         $clientJasper->setRequestTimeout(300);
