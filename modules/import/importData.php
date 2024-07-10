@@ -172,6 +172,7 @@ class importData extends \yii\base\Module {
             'product-stock-sap' => ['table_name' => 'tbl_product_stock_sap', 'fields' => 'mcc_plant_code,stock_date,product_code,qty', 'scenario' => 'importCsv'],
             'import-shagun-dpu-data' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'dcs_code,date_time_of_collection,member_code,shift_code,qty,fat,snf,rtpl,amount,milk_type_code,qty_auto,qlty_auto,calibration_value_fat,calibration_value_snf,sample_no', 'scenario' => 'milk_collection_dpu_data', 'validate_length' => FALSE, 'accept_old_template' => TRUE],
             'import-other-dpu-data' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'dcs_code,member_code,milk_type_code,sample_no,qty,fat,snf,clr,rtpl,amount,shift_code,date_time_of_collection,qty_auto,qlty_auto,milk_quality_type_code', 'scenario' => 'milk_collection_other_data', 'validate_length' => FALSE, 'accept_old_template' => TRUE],
+            'provisional-member-sap-import' => ['table_name' => 'tbl_member_provisional', 'fields' => 'application_no,sap_farmer_code', 'scenario' => 'pro_member_sap_import', 'save_delete_child' => true, 'unlink_file' => true],
         ];
         return $label[$l];
     }

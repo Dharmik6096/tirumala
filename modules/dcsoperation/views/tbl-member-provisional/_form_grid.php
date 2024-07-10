@@ -121,6 +121,7 @@ $attribute = [
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status] : '';
         }],
+        ['attribute' => 'sap_farmer_code', 'visible' => true, 'filter' => false],
 ];
 
 $grid_option = [
