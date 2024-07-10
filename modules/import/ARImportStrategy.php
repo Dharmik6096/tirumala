@@ -11,8 +11,8 @@ use ruskid\csvimporter\BaseImportStrategy;
 use yii\base\UserException;
 use yii\widgets\ActiveForm;
 
-class ARImportStrategy extends CsvimporterARImportStrategy
-{
+class ARImportStrategy extends CsvimporterARImportStrategy {
+
     /**
      * ActiveRecord class name
      * @var string
@@ -31,12 +31,13 @@ class ARImportStrategy extends CsvimporterARImportStrategy
     public $saveChild = '';
     public $details;
     public $file_path, $file_name;
+    public $saveDeleteChild = '';
+    public $unlinkFile = '';
 
     /**
      * @throws Exception
      */
-    public function __construct()
-    {
+    public function __construct() {
         $arguments = func_get_args();
         if (!empty($arguments)) {
             foreach ($arguments[0] as $key => $property) {
@@ -59,8 +60,7 @@ class ARImportStrategy extends CsvimporterARImportStrategy
      * @param array $data CSV data passed by reference to save memory.
      * @return array Primary keys of imported data
      */
-    public function import(&$data)
-    {
+    public function import(&$data) {
         $importedPks = [];
         $errors = [];
         $count = 0;
@@ -78,6 +78,11 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                 $trans = \Yii::$app->db->beginTransaction();
                 /* @var $model \yii\db\ActiveRecord */
                 $modelList = [];
+                $deleteModelList = [];
+                $unlink_files = [];
+                $attachments = [];
+                $masterdoc = [];
+
                 $model = new $this->className;
                 if (!empty($this->scenario))
                     $model->scenario = $this->scenario;
@@ -102,7 +107,7 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                         $model->{$config['attribute']} = $value;
                     }
                 }
-                
+
                 if (isset($this->defaultFields)) {
                     foreach ($this->defaultFields as $default) {
                         if (isset($default['attribute']) && $model->hasAttribute($default['attribute'])) {
@@ -132,9 +137,9 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                         }
                     }
                 }
-                
+
                 $error = ActiveForm::validate($model);
-                
+
                 if (!empty($findField)) {
                     $findFields = explode(',', $findField);
                     foreach ($findFields as $val) {
@@ -147,8 +152,9 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                         foreach ($exclude as $val) {
                             $excludes[] = $val;
                         }
+                        $scenario = $model->scenario;
                         $model = $existData;
-                        $model->scenario = 'importCsv';
+                        $model->scenario = $scenario;
                         $history = !empty($this->details['historyClass']) ? $this->details['historyClass'] : NULL;
                         if (!empty($history)) {
                             $history = Yii::$app->path->define($history);
@@ -186,15 +192,49 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                 if (isset($this->saveChild) && $this->saveChild && empty($model->getErrors()) && $model->validate()) {
                     $model->setChildTable($model, $modelList, $errors);
                 }
+
+                if (isset($this->saveDeleteChild) && $this->saveDeleteChild && empty($model->getErrors()) && $model->validate()) {
+                    $model->setChildTableSaveDelete($model, $modelList, $deleteModelList, $unlink_files, $attachments, $masterdoc, $errors);
+                }
+
                 if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
                     $modelList[] = $model;
 
                     foreach ($modelList as $modelRow) {
                         $master[] = $modelRow->save();
                     }
+
+                    foreach ($deleteModelList as $modelRow) {
+                        $master[] = $modelRow->delete();
+                    }
+
                     if (!in_array(FALSE, $master)) {
                         $trans->commit();
                         $count++;
+                        if (isset($this->unlinkFile) && $this->unlinkFile && isset($this->saveDeleteChild) && $this->saveDeleteChild) {
+                            $model->attachmentPath($baseDirPath, $docMoveFolderName, $docFolderName);
+                            $baseDir = Yii::getAlias('@webroot') . '/' . $baseDirPath;
+                            $moveDir = $baseDir . $docMoveFolderName;
+                            $docDir = $baseDir . $docFolderName;
+
+                            if (!empty($unlink_files)) {
+                                foreach ($unlink_files as $file) {
+                                    if (file_exists($moveDir . '/' . $file)) {
+                                        unlink($moveDir . '/' . $file);
+                                    }
+                                }
+                            }
+
+                            for ($i = 0; $i < count($attachments); $i++) {
+                                $all_doc = basename($attachments[$i]);
+                                $fileName = basename($masterdoc[$i]);
+                                $file = $moveDir . '/' . $fileName;
+                                file_put_contents($file, file_get_contents($attachments[$i]));
+                                if (file_exists($docDir . '/' . $all_doc)) {
+                                    unlink($docDir . '/' . $all_doc);
+                                }
+                            }
+                        }
                     } else {
                         $trans->rollback();
                         $message = '';
@@ -220,14 +260,13 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                 if ($this->isActiveRecordUnique($uniqueAttributes)) {
                     $importedPks[] = $model->primaryKey;
                 }
-
             }
         }
         if ($count == count($data) || $count == count($data) - 1) {
-            return ['total' => count($importedPks), 
-                    'status' => 'success', 
-                    'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 
-                    'pk' => count($importedPks)];
+            return ['total' => count($importedPks),
+                'status' => 'success',
+                'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.',
+                'pk' => count($importedPks)];
         }
     }
 
@@ -236,21 +275,18 @@ class ARImportStrategy extends CsvimporterARImportStrategy
      * @param array $attributes
      * @return boolean
      */
-    protected function isActiveRecordUnique($attributes)
-    {
+    protected function isActiveRecordUnique($attributes) {
         /* @var $class \yii\db\ActiveRecord */
         $class = $this->className;
         return empty($attributes) ? true :
-            !$class::find()->where($attributes)->exists();
+                !$class::find()->where($attributes)->exists();
     }
 
-    private function setFields($fields, $data)
-    {
-
+    private function setFields($fields, $data) {
+        
     }
 
-    public function setAttributes($configs, &$model, $row, $excludes = [])
-    {
+    public function setAttributes($configs, &$model, $row, $excludes = []) {
         foreach ($configs as $config) {
             if (isset($config['attribute']) && !in_array($config['attribute'], $excludes)) {
                 $value = call_user_func($config['value'], $row);
