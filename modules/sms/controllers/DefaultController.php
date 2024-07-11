@@ -73,6 +73,11 @@ class DefaultController extends Controller {
                     } catch (\yii\db\Exception $e) {
                         $row->send_status = 3;
                         $row->save(FALSE);
+                    } catch (\Throwable $ex) {
+                        $row->response_datetime = date('Y-m-d H:i:s');
+                        $row->response_status = substr($ex->getMessage(), 0, 254);
+                        $row->send_status = 3;
+                        $row->save(FALSE);
                     }
                 } else {
                     $row->send_status = 3;
