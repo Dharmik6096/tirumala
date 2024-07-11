@@ -12,12 +12,14 @@ use app\modules\dcsoperation\models\TblMemberDeactive;
  */
 class TblMemberDeactiveSearch extends TblMemberDeactive {
 
+    public $ex_member_code, $ref_code, $member_name;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['member_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'from_date', 'to_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['member_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'from_date', 'to_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'ex_member_code', 'ref_code'], 'safe'],
             [['originating_type'], 'integer'],
         ];
     }
@@ -46,6 +48,8 @@ class TblMemberDeactiveSearch extends TblMemberDeactive {
             'query' => $query,
         ]);
 
+        $query->joinWith(['memberCode']);
+
         $this->load($params);
 
         if (!$this->validate()) {
@@ -61,10 +65,12 @@ class TblMemberDeactiveSearch extends TblMemberDeactive {
         $query->andFilterWhere([
 //            'from_date' => $this->from_date,
 //            'to_date' => $this->to_date,
-            'member_code' => $this->member_code,
             'member_deactive_code' => $this->member_deactive_code,
         ]);
-        $query->andFilterWhere(['like', 'remarks', $this->remarks]);
+        $query->andFilterWhere(['like', 'remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_member_deactive.member_code', $this->member_code])
+                ->andFilterWhere(['like', 'tbl_member.ex_member_code', $this->ex_member_code])
+                ->andFilterWhere(['like', 'tbl_member.ref_code', $this->ref_code]);
 
 
         return $dataProvider;

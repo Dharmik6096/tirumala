@@ -46,6 +46,10 @@ use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberAnimalDetails;
 use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberShareDetails;
+use app\modules\jasperreports\controllers\DefaultController;
+use app\modules\sms\models\TblApiMaster;
+use app\modules\sms\models\TblAlertTemplate;
+use app\modules\sms\models\TblAlertNotification;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -829,6 +833,7 @@ class TblMemberProvisional extends ChildModel {
             $tblAttachment = new TblAttachment();
             $memberProvisionalCode = (string) $memberModel->provisional_member_code;
             $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc, $deleteModel, $deleteAttachment, $unlink_files, $attachments);
+            $this->RegisterEmailRequest($memberModel, $tblMember, $model_save);
         } else {
             foreach ($tblMember->getErrors() as $errorkey => $value) {
                 $message[] = $value;
@@ -905,6 +910,47 @@ class TblMemberProvisional extends ChildModel {
         $modelData = TblMemberProvisional::find()->where(['application_no' => $this->$attribute, 'member_status' => 0, 'provisional_status' => 'Approve',])->one();
         if (empty($modelData)) {
             $this->addError($attribute, 'Application number does not exist.');
+        }
+    }
+
+    public function RegisterEmailRequest($memberModel, $tblMember, &$model_save) {
+        if ($memberModel->is_email_verify == 1 && !empty($tblMember->email)) {
+            $report_config = DefaultController::getLabels('ProvisionalMemberRegister');
+            if (!empty($report_config)) {
+                $receiver_type = 'EMAIL';
+                $module_type = 'member_register_form';
+                $apiMaster = new TblApiMaster();
+                $apiMasterData = $apiMaster->getRecord($receiver_type, $tblMember->union_code);
+                if (!empty($apiMasterData)) {
+                    $templateModel = new TblAlertTemplate();
+                    $templateData = $templateModel->getTemplateData($module_type, $receiver_type, $tblMember->union_code);
+                    if (!empty($templateData)) {
+                        $notificationModel = new TblAlertNotification();
+                        $notificationModel->receiver_type = $receiver_type;
+                        $notificationModel->message = $templateData->message;
+                        $notificationModel->header_info = $templateData->header_info;
+                        $notificationModel->send_status = 0;
+                        $notificationModel->content_id = $apiMasterData->api_master_id;
+                        $notificationModel->module_type = $module_type;
+                        $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                        $notificationModel->send_mail = 1;
+                        $notificationModel->receiver_detail = $tblMember->email;
+                        $notificationModel->refecence_code = $tblMember->member_code;
+                        $notificationModel->parent_code = $memberModel->provisional_member_code;
+                        $notificationModel->filename = $tblMember->member_code . '-' . date('YmdHis') . '.pdf';
+                        $notificationModel->has_attachment = 1;
+                        $controls = [];
+                        $controls['p_provisional_member_code'] = $memberModel->provisional_member_code;
+                        $controls['p_lang_code'] = '1';
+                        $controls['locale'] = 'hn';
+                        $controls['digit_config'] = '1';
+                        $controls['REPORT_LOCALE'] = 'hn_IN';
+                        $notificationModel->file_param = json_encode($controls);
+                        $notificationModel->file_path = $report_config['path'];
+                        $model_save[] = $notificationModel;
+                    }
+                }
+            }
         }
     }
 
