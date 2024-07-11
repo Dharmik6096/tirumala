@@ -8,6 +8,7 @@ use app\modules\feedback\models\TblVCGMRGMember;
 use app\modules\feedback\models\TblVCGMRGMemberHistory;
 use app\modules\feedback\models\TblVCGMRGMemberSearch;
 use yii\web\NotFoundHttpException;
+use yii\base\Model;
 
 /**
  * TblVcgMrgMemberController implements the CRUD actions for TblVCGMRGMember model.
@@ -22,7 +23,7 @@ class TblVcgMrgMemberController extends ChildController
     public function actionIndex()
     {
         $searchModel = new TblVCGMRGMemberSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchDcsWise(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -37,27 +38,16 @@ class TblVcgMrgMemberController extends ChildController
      */
     public function actionView($id)
     {
+        $this->model = TblVCGMRGMember::find()->where(['dcs_code' => $id])->one();
+        $searchModel = new TblVCGMRGMemberSearch();
+        $searchModel->dcs_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
-    }
-
-    /**
-     * Creates a new TblVCGMRGMember model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new TblVCGMRGMember();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->VCG_MRG_member_id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
     }
 
     /**
@@ -93,17 +83,32 @@ class TblVcgMrgMemberController extends ChildController
         ]);
     }
 
-    /**
-     * Deletes an existing TblVCGMRGMember model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+    public function actionApproval() {
+        $memberModel = new TblVCGMRGMember();
+        $searchModel = new TblVCGMRGMemberSearch();
+        $searchModel->status = 'DRAFT';
+        $searchModel->pagination = false;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
+                $operation = Yii::$app->request->post('operation');
+                $msg = 'VCG/MRG Member is not'.ucfirst(strtolower($operation)).' Successfully';
+                $type = 'error';
+                if($memberModel->updateStatus($operation, $codes)){
+                    $msg = 'VCG/MRG Member is '.ucfirst(strtolower($operation)).' Successfully';
+                    $type = 'success';
+                }
+                Yii::$app->getSession()->setFlash('success', ['type' => $type,
+                    'message' => $msg]);
+                return $this->redirect(['approval']);
+            }
+        }
+        return $this->render('approval', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'memberModel' => $memberModel,
+        ]);
     }
 
     /**

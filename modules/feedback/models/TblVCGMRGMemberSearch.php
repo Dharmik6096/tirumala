@@ -12,7 +12,8 @@ use app\modules\feedback\models\TblVCGMRGMember;
  */
 class TblVCGMRGMemberSearch extends TblVCGMRGMember
 {
-    public $from_date, $to_date, $member_name;
+    public $from_date, $to_date, $member_name; 
+    public $pagination = true;
     /**
      * @inheritdoc
      */
@@ -20,7 +21,7 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
     {
         return [
             [['VCG_MRG_member_id', 'originating_type', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'member_code', 'member_tr_code', 'wef_date', 'end_date', 'status', 'type', 'attachment_sign_key', 'attachment_photo_key', 'remark', 'approved_at', 'approved_by', 'transaction_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['from_date', 'to_date', 'member_name'], 'safe'],
+            [['from_date', 'to_date', 'member_name', 'pagination'], 'safe'],
         ];
     }
 
@@ -40,15 +41,18 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $is_approve = false)
     {
         $query = TblVCGMRGMember::find();
-
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        if(!$this->pagination){
+            $dataProvider = new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => $this->pagination
+            ]);
+        }
 
         $this->load($params);
 
@@ -73,11 +77,13 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
             $query->andFilterWhere(['cast(tbl_VCG_MRG_member.transaction_date as date)' => $transaction_date]);
         }
 
-        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $query->andFilterWhere(['>=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $from_date]);
+        if($is_approve){
+            $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $this->from_date]);
 
-        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $to_date]);
+            $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $this->to_date]);
+        }
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -94,6 +100,38 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
             ->andFilterWhere(['like', 'tbl_VCG_MRG_member.remark', $this->remark])
             ->andFilterWhere(['like', 'tbl_VCG_MRG_member.approved_by', $this->approved_by]);
 
+        return $dataProvider;
+    }
+
+    public function searchDcsWise($params){
+        $query = TblVCGMRGMember::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->select([
+                'MAX(tbl_mcc_plant.union_code) AS union_code',
+                'MAX(tbl_mcc_plant.plant_code) AS plant_code',
+                'MAX(tbl_VCG_MRG_member.mcc_plant_code) AS mcc_plant_code',
+                'MAX(tbl_VCG_MRG_member.bmc_code) AS bmc_code',
+                'MAX(tbl_VCG_MRG_member.dcs_code) AS dcs_code',
+                'COUNT(member_code) AS total_mem',
+            ]);
+        $query->joinWith(['mccPlantCode', 'bmcCode', 'dcsCode']);
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $to_date]);
+        $query->groupBy('tbl_VCG_MRG_member.dcs_code');
+        $query->all();
         return $dataProvider;
     }
 }

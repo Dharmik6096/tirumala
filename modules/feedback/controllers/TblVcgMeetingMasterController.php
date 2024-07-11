@@ -3,23 +3,17 @@
 namespace app\modules\feedback\controllers;
 
 use app\controllers\ChildController;
-use app\modules\document\models\TblAttachment;
-use app\modules\feedback\models\TblVCGMeetingAttandance;
 use app\modules\feedback\models\TblVCGMeetingAttandanceSearch;
 use app\modules\feedback\models\TblVCGMeetingFeedbackSearch;
-use app\modules\feedback\models\TblVCGMeetingInfoSharing;
 use app\modules\feedback\models\TblVCGMeetingInfoSharingSearch;
 use Yii;
 use app\modules\feedback\models\TblVCGMeetingMaster;
 use app\modules\feedback\models\TblVCGMeetingMasterSearch;
-use app\modules\feedback\models\TblVCGMeetingMOM;
 use app\modules\feedback\models\TblVCGMeetingMOMSearch;
-use app\modules\feedback\models\TblVCGMeetingNonPouringMembers;
 use app\modules\feedback\models\TblVCGMeetingNonPouringMembersSearch;
 use app\modules\feedback\models\TblVCGMeetingPreviousActionsSearch;
-use app\modules\feedback\models\TblVCGMeetingStatistics;
 use app\modules\feedback\models\TblVCGMeetingStatisticsSearch;
-use yii\data\ActiveDataProvider;
+use app\modules\feedback\models\TblVCGMRGUpdateSearch;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -66,14 +60,15 @@ class TblVcgMeetingMasterController extends ChildController
         $feedbackSearchModel = new TblVCGMeetingFeedbackSearch();
         $feedbackSearchModel->VCG_M_Id = $id;
         $feedbackDataProvider = $feedbackSearchModel->search($params);
-
-
         $sharingSearchModel = new TblVCGMeetingInfoSharingSearch();
         $sharingSearchModel->VCG_M_Id = $id;
         $sharingDataProvider = $sharingSearchModel->search($params);
         $previousSearchModel = new TblVCGMeetingPreviousActionsSearch();
         $previousSearchModel->VCG_M_Id = $id;
         $previousDataProvider = $previousSearchModel->search($params);
+        $updateSearchModel = new TblVCGMRGUpdateSearch();
+        $updateSearchModel->VCG_M_id = $id;
+        $updateDataProvider = $updateSearchModel->search($params);
         return $this->render('view', [
             'model' => $this->model,
             'dataProvider' => $dataProvider,
@@ -90,6 +85,8 @@ class TblVcgMeetingMasterController extends ChildController
             'sharingSearchModel' => $sharingSearchModel,
             'previousDataProvider' => $previousDataProvider,
             'previousSearchModel' => $previousSearchModel,
+            'updateDataProvider' => $updateDataProvider,
+            'updateSearchModel' => $updateSearchModel,
         ]);
     }
 

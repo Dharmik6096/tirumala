@@ -14,20 +14,20 @@ $form = ActiveForm::begin([
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
         ]);
-$isVcgMrgMeetingApprovalRequired = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'is_vcg_mrg_meeting_approval_required', 'PORTAL') == 1 ? TRUE : FALSE;
+// $isVcgMrgMeetingApprovalRequired = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'is_vcg_mrg_meeting_approval_required', 'PORTAL') == 1 ? TRUE : FALSE;
 ?>
 <?= $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'end_date'); ?>
     </div>
-    <?php
+    <?php /*
     if($isVcgMrgMeetingApprovalRequired){ ?>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('vcg_mrg_member_status', $model, $form, 'form-group', $model->getAttributeLabel('status'), false, 'status', false); ?>
         </div>
     <?php
-    } ?>
+    } */?>
     <div class="col-sm-2">
         <?= $form->field($model, 'remark')->textarea(['maxlength' => true]) ?>
     </div>

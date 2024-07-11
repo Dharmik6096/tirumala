@@ -233,5 +233,18 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
                 ?>
             </div>
         </div>
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#update_grid" aria-expanded="true" aria-controls="update_grid">Update</h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="update_grid">
+                <?=
+                $this->render('_update_grid', [
+                    'updateDataProvider' => $updateDataProvider,
+                    'updateSearchModel' => $updateSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
     </div>
 </div>

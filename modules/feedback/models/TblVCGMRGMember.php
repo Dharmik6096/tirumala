@@ -55,7 +55,7 @@ class TblVCGMRGMember extends ChildModel
     {
         return [
             [['wef_date', 'end_date', 'approved_at', 'transaction_date', 'created_at', 'updated_at', 'originating_type', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'type', 'member_code', 'approved_by', 'originating_org_code', 'originating_org_type', 'member_tr_code', 'attachment_sign_key', 'attachment_photo_key', 'status', 'remark', 'created_by', 'updated_by'], 'safe'],
-            [['status'], 'required', 'on' => ['update']]
+            [['status'], 'required', 'on' => ['vcgMrgApproval']]
         ];
     }
 
@@ -110,5 +110,9 @@ class TblVCGMRGMember extends ChildModel
 
     public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function updateStatus($operation, $codes) {
+        return $this->updateAll(['status' => $operation], ['VCG_MRG_member_id' => $codes]);
     }
 }

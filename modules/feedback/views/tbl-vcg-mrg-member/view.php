@@ -62,61 +62,15 @@ $this->title = Yii::$app->label->title('view', 'VCG MRG Member');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'member_code',
+                            'attribute' => 'route_code',
+                            'value' => Yii::$app->general->getforeignkey($model->routeCode, 'ref_code'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
-                            'attribute' => 'member_code',
-                            'label' => Yii::t('app', 'Member Name'),
-                            'value' => Yii::$app->general->getforeignkey($model->memberCode, 'member_name'),
+                            'attribute' => 'route_code',
+                            'label' => Yii::t('app', 'Route Name'),
+                            'value' => Yii::$app->general->getforeignkey($model->routeCode, 'route_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'member_tr_code',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                        [
-                            'attribute' => 'wef_date',
-                            'value' => Yii::$app->controls->view_date($model->wef_date),
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'end_date',
-                            'value' => Yii::$app->controls->view_date($model->end_date),
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                        [
-                            'attribute' => 'transaction_date',
-                            'value' => Yii::$app->controls->view_date($model->transaction_date),
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'type',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                        [
-                            'attribute' => 'status',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'remark',
-                            'valueColOptions' => ['style' => 'width:80%'],
                         ],
                     ],
                 ],
@@ -134,6 +88,21 @@ $this->title = Yii::$app->label->title('view', 'VCG MRG Member');
                 'vAlign' => 'top',
             ]);
             ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#member_grid" aria-expanded="true" aria-controls="member_grid">Member</h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="member_grid">
+                <?=
+                $this->render('_member_grid', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ])
+                ?>
+            </div>
         </div>
     </div>
 </div>
