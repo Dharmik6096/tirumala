@@ -98,10 +98,12 @@ class ChildController extends Controller {
         return $this->render($this->viewFile, ['model' => $this->model]);
     }
 
-    public static function printDocument($controls, $path, $filename, $type, $out = 'web') {
-        $controls['locale'] = 'en';
-        $controls['REPORT_LOCALE'] = 'en_IN';
-        $controls['digit_config'] = 0;
+    public static function printDocument($controls, $path, $filename, $type, $out = 'web', $append_control = TRUE) {
+        if ($append_control) {
+            $controls['locale'] = 'en';
+            $controls['REPORT_LOCALE'] = 'en_IN';
+            $controls['digit_config'] = 0;
+        }
         $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
         $clientJasper->setRequestTimeout(300);
         $output = $clientJasper->reportService()->runReport(preg_replace('#/+#', '/', Yii::$app->params['report_path'] . $path), $type, null, null, $controls);
