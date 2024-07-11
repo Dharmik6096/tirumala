@@ -200,7 +200,7 @@ class TblMember extends ChildModel {
                 [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'check_is_dcs_member' => 'is_dcs_member'], 'message' => Yii::t('app/validation', 'DCS Member has already been taken.'), 'when' => function() {
                     return $this->is_dcs_member;
                 },],
-                [['emilk_sync_status'], 'default', 'value' => 'N'],
+                [['member_code'], 'setEmilkSyncData'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -702,6 +702,10 @@ class TblMember extends ChildModel {
 
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function setEmilkSyncData() {
+        $this->emilk_sync_status = 'N';
     }
 
 }
