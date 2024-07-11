@@ -1,7 +1,7 @@
 <?php
 $isVcgMrgMeetingApprovalRequired = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'is_vcg_mrg_meeting_approval_required', 'PORTAL') == 1 ? TRUE : FALSE;
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'VCG MRG Members'));
-if(!$isVcgMrgMeetingApprovalRequired){
+if($isVcgMrgMeetingApprovalRequired){
     $this->params['menu'][] = Yii::$app->controls->custombutton('VCG/MRG Member Approval', 'approval', '', 'btn btn-danger btn-block', '<i class="fa fa-plus"></i>');
 }
 ?>

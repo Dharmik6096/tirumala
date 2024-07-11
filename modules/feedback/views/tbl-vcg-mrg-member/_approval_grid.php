@@ -70,16 +70,16 @@ $this->title = Yii::t('app', 'VCG/MRG Member Approval');
 </div>
 <?php
 $script = '
-    // $(".submit").click(function() {
-    //     var id= $(this).attr("value");
-    //     $(".set_operation").val(id);
-    //     var len = $("input[class=\"checkbox kv-row-checkbox\"]:checked").length;
-    //     if(len == 0){
-    //         bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
-    //         return false;
-    //     } else {
-    //         $("#vcg-mrg-member-approval").submit();
-    //     }
-    // });
+    $(".submit").click(function() {
+        var id= $(this).attr("value");
+        $(".set_operation").val(id);
+        var len = $("input[class=\"checkbox kv-row-checkbox\"]:checked").length;
+        if(len == 0){
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
+            return false;
+        } else {
+            $("#vcg-mrg-member-approval").submit();
+        }
+    });
 ';
 $this->registerJs($script, View::POS_END, 'vcg-mrg-member-approval');
