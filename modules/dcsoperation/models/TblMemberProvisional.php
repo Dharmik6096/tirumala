@@ -46,6 +46,10 @@ use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberAnimalDetails;
 use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberShareDetails;
+use app\modules\jasperreports\controllers\DefaultController;
+use app\modules\sms\models\TblApiMaster;
+use app\modules\sms\models\TblAlertTemplate;
+use app\modules\sms\models\TblAlertNotification;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -223,6 +227,7 @@ class TblMemberProvisional extends ChildModel {
                 [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
                 [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
+                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -770,17 +775,17 @@ class TblMemberProvisional extends ChildModel {
     public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, &$unlink_files, &$attachments, &$memberdoc, &$errors) {
         $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'member_creation_pending_for_sap_approval');
         $config = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_member_other_detail');
-        $pro_member_data = $this->find()->where(['application_no' => $model->application_no, 'member_status' => 0])->one();
+        $model->member_status = 1;
         $all_doc = [];
         $memberdoc = [];
         $unlink_files = [];
         $attachments = [];
         $message = [];
 
-        if (!empty($pro_member_data) && strtolower($pro_member_data->provisional_status) == 'approve' && $memberCreationPendingForSapApproval == '1') {
-            $this->memberApprove($modelSave, $deleteModel, $pro_member_data, $all_doc, $memberdoc, $message, $unlink_files, $attachments);
+        if (!empty($model) && strtolower($model->provisional_status) == 'approve' && $memberCreationPendingForSapApproval == '1') {
+            $this->memberApprove($modelSave, $deleteModel, $model, $all_doc, $memberdoc, $message, $unlink_files, $attachments);
             if ($config == 1) {
-                $this->memberEnrollmentApprove($modelSave, $pro_member_data, $deleteModel);
+                $this->memberEnrollmentApprove($modelSave, $model, $deleteModel);
             }
         }
         if (!empty($message)) {
@@ -791,7 +796,6 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function memberApprove(&$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, &$message, &$unlink_files, &$attachments) {
-        $memberModel->member_status = 1;
         $tblMember = new TblMember();
         if ($memberModel->provisional_from == 'mobile_update') {
             $tblMember = TblMember::find()->where(['member_code' => $memberModel->member_code])->one();
@@ -803,12 +807,8 @@ class TblMemberProvisional extends ChildModel {
         $tblMember->scenario = 'ApprovalMember';
         $tblMember->attributes = $memberModel->attributes;
         $tblMember->member_code = ($memberModel->provisional_from == 'mobile_update') ? $memberCode : $tblMember->getCode();
-        $historyModel = new TblMemberProvisionalHistory();
-        Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
         if ($tblMember->validate()) {
             $model_save[] = $tblMember;
-            $model_save[] = $memberModel;
-            $model_save[] = $historyModel;
             $deleteAttachment = [];
             if ($memberModel->provisional_from != 'mobile_update') {
                 $milkCollectionData = new TblProvisionalMilkCollection();
@@ -833,6 +833,7 @@ class TblMemberProvisional extends ChildModel {
             $tblAttachment = new TblAttachment();
             $memberProvisionalCode = (string) $memberModel->provisional_member_code;
             $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc, $deleteModel, $deleteAttachment, $unlink_files, $attachments);
+            $this->RegisterEmailRequest($memberModel, $tblMember, $model_save);
         } else {
             foreach ($tblMember->getErrors() as $errorkey => $value) {
                 $message[] = $value;
@@ -902,6 +903,54 @@ class TblMemberProvisional extends ChildModel {
             $memberShareModel->gender_code = $memberModel->gender_code;
             $memberShareModel->bmc_code = $memberModel->bmc_code;
             $model_save[] = $memberShareModel;
+        }
+    }
+
+    public function checkExistData($attribute, $params) {
+        $modelData = TblMemberProvisional::find()->where(['application_no' => $this->$attribute, 'member_status' => 0, 'provisional_status' => 'Approve',])->one();
+        if (empty($modelData)) {
+            $this->addError($attribute, 'Application number does not exist.');
+        }
+    }
+
+    public function RegisterEmailRequest($memberModel, $tblMember, &$model_save) {
+        if ($memberModel->is_email_verify == 1 && !empty($tblMember->email)) {
+            $report_config = DefaultController::getLabels('ProvisionalMemberRegister');
+            if (!empty($report_config)) {
+                $receiver_type = 'EMAIL';
+                $module_type = 'member_register_form';
+                $apiMaster = new TblApiMaster();
+                $apiMasterData = $apiMaster->getRecord($receiver_type, $tblMember->union_code);
+                if (!empty($apiMasterData)) {
+                    $templateModel = new TblAlertTemplate();
+                    $templateData = $templateModel->getTemplateData($module_type, $receiver_type, $tblMember->union_code);
+                    if (!empty($templateData)) {
+                        $notificationModel = new TblAlertNotification();
+                        $notificationModel->receiver_type = $receiver_type;
+                        $notificationModel->message = $templateData->message;
+                        $notificationModel->header_info = $templateData->header_info;
+                        $notificationModel->send_status = 0;
+                        $notificationModel->content_id = $apiMasterData->api_master_id;
+                        $notificationModel->module_type = $module_type;
+                        $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                        $notificationModel->send_mail = 1;
+                        $notificationModel->receiver_detail = $tblMember->email;
+                        $notificationModel->refecence_code = $tblMember->member_code;
+                        $notificationModel->parent_code = $memberModel->provisional_member_code;
+                        $notificationModel->filename = $tblMember->member_code . '-' . date('YmdHis') . '.pdf';
+                        $notificationModel->has_attachment = 1;
+                        $controls = [];
+                        $controls['p_provisional_member_code'] = $memberModel->provisional_member_code;
+                        $controls['p_lang_code'] = '1';
+                        $controls['locale'] = 'hn';
+                        $controls['digit_config'] = '1';
+                        $controls['REPORT_LOCALE'] = 'hn_IN';
+                        $notificationModel->file_param = json_encode($controls);
+                        $notificationModel->file_path = $report_config['path'];
+                        $model_save[] = $notificationModel;
+                    }
+                }
+            }
         }
     }
 
