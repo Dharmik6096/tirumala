@@ -26,7 +26,7 @@ $models = new app\modules\product\models\TblIndentMaster();
                     'checkboxOptions' => function($model, $key, $index) {
                         $member_code = !empty($model['member_code']) ? $model['member_code'] : 0;
                         $id = $model['dcs_code'] . $member_code . $model['product_code'];
-                        return ['class' => 'checkbox group-checkbox child-checkbox ' . $id, 'data-id' => $model['indent_code'], 'value' => $model['indent_code']];
+                        return ['class' => 'checkbox group-checkbox child-checkbox ' . $id, 'data-id' => $id, 'value' => $model['indent_code']];
                     }],
                 ['attribute' => 'member_code'],
                 ['attribute' => 'qty'],
@@ -38,7 +38,7 @@ $models = new app\modules\product\models\TblIndentMaster();
                     'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
                         echo Html::activeHiddenInput($dispatchModel, '[' . $model['indent_code'] . ']indent_code', ['value' => $model->indent_code]);
                         echo Html::activeHiddenInput($dispatchModel, '[' . $model['indent_code'] . ']approve_qty', ['value' => $model->approve_qty]);
-                        return $form->field($dispatchModel, '[' . $model['indent_code'] . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch dispatch_qty-' . $model->indent_code, 'data-class' => $model['product_code'], 'data-id' => $model['indent_code']])->label(FALSE);
+                        return $form->field($dispatchModel, '[' . $model['indent_code'] . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch dispatch_qty-' . $model->indent_code.' '.$model['product_code'], 'data-class' => $model['product_code'], 'data-id' => $model['indent_code']])->label(FALSE);
                     },
                 ],
                 ['attribute' => 'remaining_qty', 'label' => Yii::t('app', 'Remaining Qty'), 'filter' => FALSE,

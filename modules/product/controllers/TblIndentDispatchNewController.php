@@ -91,7 +91,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
                         $dcs = $existData->dcs_code;
                         $product = $existData->product_code;
-//                        $disp_qty = $data[2];
+                        //$disp_qty = $data[2];
                         $approve_qty = $existData->approve_qty;
                         $disp_qty = $indentPostData[$code]['dispatch_qty'] == "" ? 0 : $indentPostData[$code]['dispatch_qty'];
                         $warehouse = isset($existData->warehouse_code) ? $existData->warehouse_code : '';

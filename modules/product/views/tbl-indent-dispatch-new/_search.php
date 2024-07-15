@@ -66,15 +66,15 @@ use yii\web\View;
 </div>
 <?php
 $script = "
+BindData();
 $(document).on('change','.filldata', function() {
-        var product_code = $('#tblindentmastersearch-product_code').val();
-       if(product_code !='' ){
-            $('#product-detail').html('');         
-            BindData(product_code);            
-        }      
-    });
+    BindData();
+    $('#product-detail').html('');
+});
    
-    function BindData(product_code){
+function BindData(){
+    var product_code = $('#tblindentmastersearch-product_code').val();
+    if(product_code !='' && product_code != null){
         $.ajax({
             type: 'get',
             url: '" . Url::to(['product-detail']) . "',
@@ -84,6 +84,7 @@ $(document).on('change','.filldata', function() {
             }
         });
     }
+}
     ";
 $this->registerJs($script, View::POS_END, 'to-date-from-date');
 ?>

@@ -8,6 +8,7 @@ use yii\helpers\Html;
         <tr>
             <th>Product Code</th>
             <th>Product Name</th>
+            <th>Product Remaining Stock</th>         
             <th>Product Total Stock</th>         
         </tr>
     </thead>
@@ -17,6 +18,7 @@ use yii\helpers\Html;
             <tr id="<?= $data['product_code'] ?>">
                 <td><?= $data['product_code'] ?></td>
                 <td><?= $data['product_name'] ?></td>
+                <td class="remaining_stock"><?= $data['total_stock'] ?></td>       
                 <td class="total_stock"><?= $data['total_stock'] ?></td>       
             </tr>
         <?php

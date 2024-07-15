@@ -55,7 +55,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                     return Yii::$app->controller->renderPartial('_dispatch_grid_new', ['model' => $model, 'form' => $form, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'dispatchModel' => $dispatchModel]);
                 },
                 'headerOptions' => ['class' => 'kartik-sheet-style'],
-                'expandOneOnly' => true,
+                // 'expandOneOnly' => true,
             ],
             ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
             ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
@@ -116,79 +116,73 @@ $this->title = Yii::t('app', 'Indent Dispatch');
 $script = '
     $(".kv-panel-before").hide();
     $(".parent-checkbox").prop("disabled", false);
-    $(document).on("click",".parent-checkbox",function(){
+
+    $(document).on("click", ".parent-checkbox", function() {
         var id = $(this).attr("id");
-        $("."+id).prop("checked", false);
-        if($(this).prop("checked") == true){
-            $("."+id).prop("checked", true);
-        }
+        $("." + id).prop("checked", this.checked);
     });
-    
-    $(document).on("click",".child-checkbox",function(){
-        var id = $(this).attr("data-id");
-        $("#"+id).prop("checked", true);
-        $("."+id).each(function() {
-            if($(this).prop("checked") == false){
-                $("#"+id).prop("checked", false);
-            }
-        });
+    $(document).on("click", ".child-checkbox", function() {
+        var id = $(this).data("id");
+        var allChecked = $("." + id).filter(":checked").length === $("." + id).length;
+        $("#" + id).prop("checked", allChecked);
     });
     
     $(document).on("blur",".qty-dispatch", function() {
-//        var new_tr_key = $(this).closest("tr").attr("data-key");
-        var data_key = $(this).attr("data-id");
-        var data_class = $(this).attr("data-class");
-        remainingqty(data_key, data_class);
+        var key = $(this).attr("data-id");
+        var cls = $(this).attr("data-class");
+        updateRemainingQty(key, cls);
     });
 
-    function remainingqty(tr_key, data_class){
-        var remaining_qty = $("#tblindentdispatch-" + tr_key + "-remaining_qty").val();
-        var approve_qty = $("#tblindentdispatch-" + tr_key + "-approve_qty").val();
-        var dispatch_qty = $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val();
-        dispatch_qty = dispatch_qty == "" ? 0 : dispatch_qty;
-        var new_remaining_qty = parseFloat(remaining_qty)-parseFloat(dispatch_qty);
-        var product_total_stock = $("#"+data_class+" .total_stock").text();
-        var new_product_total_stock = parseFloat(product_total_stock) - parseFloat(dispatch_qty);
-        $("#"+data_class+" .total_stock").text(new_product_total_stock);
-        if (!isNaN(remaining_qty) && parseInt(dispatch_qty) <= 0 && dispatch_qty != "") {
-            $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val("");
-            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Dispatch quantity must be greater than zero.</span></div></div>");
-        } else if(!isNaN(remaining_qty) && parseInt(dispatch_qty) <= parseInt(approve_qty)){
-            new_remaining_qty=parseInt(new_remaining_qty).toFixed(2);
-            $("#tblindentdispatch-" + tr_key +"-remaining").text(new_remaining_qty);                     
+    function updateRemainingQty(key, cls) {
+        var remaining = parseFloat($("#tblindentdispatch-" + key + "-remaining_qty").val());
+        var approve = parseFloat($("#tblindentdispatch-" + key + "-approve_qty").val());
+        var dispatch = parseFloat($("#tblindentdispatch-" + key + "-dispatch_qty").val()) || 0;
+        var newRemaining = remaining - dispatch;
+
+
+        let totalStock = parseFloat($(`#${cls} .total_stock`).text());
+        let outOfStock = totalStock;
+
+        $("." + cls).each(function() {
+            var currentValue = parseFloat($(this).val()) || 0;
+            outOfStock -= currentValue;
+             if(totalStock < currentValue){
+                currentValue = 0;
+            }
+            totalStock -= currentValue;
+        });
+        $("#" + cls + " .remaining_stock").text(totalStock.toFixed(2));
+
+        if (outOfStock < 0 || dispatch <= 0 || dispatch > approve) {
+            $("#tblindentdispatch-" + key + "-dispatch_qty").val("");
+            $("#tblindentdispatch-" + key + "-remaining").text(approve);
+            bootbox.alert("Invalid dispatch quantity.");
         } else {
-            $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val("");
-            $("#tblindentdispatch-" + tr_key +"-remaining").text(approve_qty);
-            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Dispatch Qty can not be more then Remain Qty.</span></div></div>");
-            return false;
+            $("#tblindentdispatch-" + key + "-remaining").text(newRemaining.toFixed(2));
         }
     }
 
     $(".submit").click(function() {
-        var id= $(this).attr("value");
-        var vehicle_no = $("#tblindentdispatch-vehicle_no").val();
-        var ref_no = $("#tblindentdispatch-reference_no").val();
-        var lr_no = $("#tblindentdispatch-lr_no").val();
-        $(".set_operation").val(id);
-        $(".set_vehicle").val(vehicle_no);
-        $(".set_ref_no").val(ref_no);
-        $(".set_lrno").val(lr_no);
-        var parentChecked = $("input[class=\'checkbox group-checkbox parent-checkbox kv-row-checkbox\']:checked").length;
-        var childChecked = $("input[class*=\'child-checkbox\']:checked").length;
+        var operation = $(this).val();
+        var vehicle = $("#tblindentdispatch-vehicle_no").val();
+        var refNo = $("#tblindentdispatch-reference_no").val();
+        var lrNo = $("#tblindentdispatch-lr_no").val();
 
-        if(parentChecked === 0 && childChecked === 0) {
-            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
+        $(".set_operation").val(operation);
+        $(".set_vehicle").val(vehicle);
+        $(".set_ref_no").val(refNo);
+        $(".set_lrno").val(lrNo);
+
+        if ($(".parent-checkbox:checked, .child-checkbox:checked").length === 0) {
+            bootbox.alert("Please select at least one record.");
             return false;
-        }else if(vehicle_no ==""){
-            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select vehicle.</span></div></div>");
-            return false;
-        }else if(ref_no ==""){
-            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please Add Reference No.</span></div></div>");
+        } else if (!vehicle || !refNo) {
+            bootbox.alert("Please enter Vehical No and Reference No.");
             return false;
         } else {
             $(".parent-checkbox").prop("disabled", true);
             $("#indent-dispatch-new").submit();
         }
-});
+    });
 ';
 $this->registerJs($script, View::POS_END, 'indent-dispatch');
