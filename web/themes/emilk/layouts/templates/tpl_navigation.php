@@ -938,9 +938,9 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Vendor Sale Report'), 'url' => ['/misreports/reports/sale-report-vendor']],
                             ['label' => Yii::t('app', 'Summary Report - MCC'), 'url' => ['/misreports/reports/summary-report-mcc']],
                             ['label' => Yii::t('app', 'Summary Report - DCS'), 'url' => ['/misreports/reports/summary-report-dcs']],
-                            ['label' => Yii::t('app', 'Stock Dispatch To Sale Report'), 'url' => ['/misreports/reports/stock-dispatch-to-sale'], 'visible' => User::canRoute(['/misreports/reports/stock-dispatch-to-sale']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
-                            ['label' => Yii::t('app', 'DCS Wise Stock'), 'url' => ['/misreports/reports/stock-register-to-sap'], 'visible' => User::canRoute(['/misreports/reports/stock-register-to-sap']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
-                            ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap'], 'visible' => User::canRoute(['/misreports/reports/stock-register-mcc-to-sap']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
+                            ['label' => Yii::t('app', 'Stock Dispatch To Sale Report'), 'url' => ['/misreports/reports/stock-dispatch-to-sale']],
+                            ['label' => Yii::t('app', 'DCS Wise Stock'), 'url' => ['/misreports/reports/stock-register-to-sap']],
+                            ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap']],
                     ]
                 ],
                     [

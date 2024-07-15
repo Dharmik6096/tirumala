@@ -45,12 +45,17 @@ class DefaultController extends Controller {
                             $cc = !empty($otherReceiver) ? $otherReceiver : $token;
                             $bcc = '';
                             if ($row->has_attachment == 1) {
-                                $controls = [];
-                                $controls['dcs_milk_dispatch_code'] = $row->parent_code;
-                                $controls['p_report_name'] = $row->filename;
+                                if (empty($row->file_param)) {
+                                    $controls = [];
+                                    $controls['dcs_milk_dispatch_code'] = $row->parent_code;
+                                    $controls['p_report_name'] = $row->filename;
+                                    $filename = $row->filename . '-' . $row->parent_code . '.pdf';
+                                } else {
+                                    $controls = json_decode($row->file_param, TRUE);
+                                    $filename = $row->filename;
+                                }
                                 $path = $row->file_path;
-                                $filename = $row->filename . '-' . $row->parent_code . '.pdf';
-                                $attachment = ChildController::printDocument($controls, $path, $filename, 'pdf', 'mail');
+                                $attachment = ChildController::printDocument($controls, $path, $filename, 'pdf', 'mail', FALSE);
                             } elseif ($row->has_attachment == 2) {
                                 $filename = $row->filename;
                                 $filepath = $row->file_path;
@@ -66,6 +71,11 @@ class DefaultController extends Controller {
                         $row->send_status = $status;
                         $row->save(FALSE);
                     } catch (\yii\db\Exception $e) {
+                        $row->send_status = 3;
+                        $row->save(FALSE);
+                    } catch (\Throwable $ex) {
+                        $row->response_datetime = date('Y-m-d H:i:s');
+                        $row->response_status = substr($ex->getMessage(), 0, 254);
                         $row->send_status = 3;
                         $row->save(FALSE);
                     }

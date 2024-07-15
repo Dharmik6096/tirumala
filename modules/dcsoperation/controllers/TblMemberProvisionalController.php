@@ -960,11 +960,23 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $errorLineNumbers = [];
         $totalAmount = 0;
         $ref_no = '';
+        $totalAmountFromExcel = 0;
+
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             if ($worksheet->getHighestRow() <= 1 || $worksheet->getCell('A1')->getValue() != 'provisional_member_code') {
                 $message = 'Please Upload Valid Excel Sheet. <br>';
                 return;
             }
+            for ($row = 2; $row <= $worksheet->getHighestRow(); $row++) {
+                $amountPayable = $worksheet->getCell('M' . $row)->getValue();
+                $totalAmountFromExcel += (float) $amountPayable;
+            }
+        }
+        if ($model->amount_payable != $totalAmountFromExcel) {
+            $message = 'Amount Data Not Match With Receipt Detail. <br>';
+            return;
+        }
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             for ($row = 2; $row <= $worksheet->getHighestRow(); $row++) {
                 $provisionalMemberCode = $worksheet->getCell('A' . $row)->getValue();
                 $existData = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $provisionalMemberCode])->one();
@@ -979,7 +991,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $existData->deposit_date = empty($model->deposit_date) ? NULL : Yii::$app->formatter->asDate($model->deposit_date, DATE_FORMAT);
                         $existData->mode_of_payment = $model->mode_of_payment;
                         $date = empty($model->deposit_date) ? '' : date('Ymd', strtotime($model->deposit_date));
-                        $ref_no = $model->bank_name . $date;
+                        $ref_no = $model->amount_payable . $model->bank_name . $date;
                         $existData->ref_no = $ref_no;
                         $masterModel[] = $existData;
                         $totalAmount += $existData->amount_payable;

@@ -471,7 +471,7 @@ class DefaultController extends \app\controllers\ChildController {
             //$controls['locale'] = Yii::$app->session->get('LanguageCode');
             $controls['locale'] = !empty($model->locale) ? $model->locale : 'en';
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
-            $controls['REPORT_LOCALE'] = !empty($model->locale) ? $model->locale : 'en';
+            $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
             $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;
@@ -514,7 +514,7 @@ class DefaultController extends \app\controllers\ChildController {
 
     /* Reports Configuration */
 
-    private function getLabels($l) {
+    public function getLabels($l) {
         $label = [
             'MemberMilkCollectionSummary' => [
                 'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
