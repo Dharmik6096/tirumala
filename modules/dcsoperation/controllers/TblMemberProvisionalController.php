@@ -336,8 +336,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $model->scenario = 'MemberApprove';
                                 $save_model[] = $model;
                                 $memberdoc = [];
+                                $attachment = [];
                                 if (strtolower($model->provisional_status) == 'approve') {
-                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message, $unlink_files);
+                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message, $unlink_files, $attachment);
                                 }
                                 if (!empty($message)) {
                                     foreach ($message as $msg) {
@@ -470,25 +471,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $transaction = $this->generalModel->saveDeleteTransaction([], $model_save, $deleteModel, ['Member Provisional Approval', 'edit']);
                     if ($transaction == 'customRedirect') {
                         if ($memberModel->provisional_status == 'Approve') {
-                            $baseDir = Yii::getAlias('@webroot') . '/' . Yii::$app->params['document_upload'];
-                            $memberDir = $baseDir . 'member';
-                            $proMemberDir = $baseDir . 'provisional_member';
-
-                            if (!empty($unlink_files)) {
-                                foreach ($unlink_files as $file) {
-                                    if (file_exists($memberDir . '/' . $file)) {
-                                        unlink($memberDir . '/' . $file);
-                                    }
-                                }
-                            }
-                            for ($i = 0; $i < count($all_doc); $i++) {
-                                $fileName = basename($memberdoc[$i]);
-                                $file = $memberDir . '/' . $fileName;
-                                file_put_contents($file, file_get_contents($attachments[$i]));
-                                if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
-                                    unlink($proMemberDir . '/' . $all_doc[$i]);
-                                }
-                            }
+                            $memberModel->moveFiles($unlink_files, $attachments, $memberdoc);
                         }
                         return $this->redirect(Url::previous());
                     }
