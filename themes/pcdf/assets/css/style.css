@@ -5197,3 +5197,7 @@ tr.highlightRow {
     /* symbol for "collapsed" panels */
     content: "\f067"; 
 }
+.padding_left_45 {
+    padding-left: 45px;
+    background-color: white;
+}

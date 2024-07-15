@@ -290,10 +290,13 @@ class TblIndentMasterSearch extends TblIndentMaster {
             'tbl_indent_master.plant_code' => $this->plant_code,
             'tbl_indent_master.mcc_plant_code' => $this->mcc_plant_code,
             'tbl_indent_master.bmc_code' => $this->bmc_code,
-            'tbl_indent_master.product_code' => $this->product_code,
             'tbl_indent_master.status' => '2',
             'tbl_indent_master.is_close' => '0'
         ]);
+
+        if (!empty($this->product_code)) {
+            $query->andWhere(['tbl_indent_master.product_code' => $this->product_code]);
+        }
 
         $query->andFilterWhere([
             'tbl_dcs.route_code' => $this->route_code,

@@ -17,6 +17,7 @@ use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\product\models\TblProductStock;
 use app\modules\assetmanagement\models\TblStoreLocation;
 use app\modules\product\models\TblProductSaleRateApplicability;
+use yii\data\ArrayDataProvider;
 
 /**
  * This is the model class for table "tbl_indent_master".
@@ -66,39 +67,39 @@ class TblIndentMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['indent_code'], 'required', 'except' => ['importCsv', 'importCsvOther']],
-                [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close', 'from_date', 'to_date'], 'safe'],
-                [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
-                [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required', 'on' => ['create', 'createOther', 'importCsv', 'importCsvOther']],
-                [['indent_type', 'rate', 'amount'], 'required', 'on' => ['createOther']],
-                [['warehouse_code'], 'required', 'when' => function ($model) {
+            [['indent_code'], 'required', 'except' => ['importCsv', 'importCsvOther']],
+            [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close', 'from_date', 'to_date'], 'safe'],
+            [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
+            [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required', 'on' => ['create', 'createOther', 'importCsv', 'importCsvOther']],
+            [['indent_type', 'rate', 'amount'], 'required', 'on' => ['createOther']],
+            [['warehouse_code'], 'required', 'when' => function ($model) {
                     return $model->indent_type == 2;
                 }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblindentmaster-indent_type').val() != ''; 
                         }"],
-                [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code', 'member_code'], 'required', 'on' => ['create']],
-                [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code'], 'required', 'on' => ['createOther']],
-                [['member'], 'required', 'on' => ['importCsv']],
-                [['status_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'status_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['qty'], 'number'],
-                [['indent_date'], 'convertDateDot', 'on' => ['importCsv', 'importCsvOther']],
-                [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importCsvOther']],
-                [['indent_date'], 'convertDate', 'on' => ['importCsv', 'importCsvOther']],
-                [['indent_date'], 'statusSet', 'skipOnError' => true],
-                [['indent_date'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
-                [['indent_date'], 'importFieldSetOther', 'skipOnError' => true, 'on' => ['importCsvOther']],
-                [['indent_code'], 'validateCancel', 'skipOnError' => true],
-                [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+            [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code', 'member_code'], 'required', 'on' => ['create']],
+            [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code'], 'required', 'on' => ['createOther']],
+            [['member'], 'required', 'on' => ['importCsv']],
+            [['status_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'status_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['qty'], 'number'],
+            [['indent_date'], 'convertDateDot', 'on' => ['importCsv', 'importCsvOther']],
+            [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importCsvOther']],
+            [['indent_date'], 'convertDate', 'on' => ['importCsv', 'importCsvOther']],
+            [['indent_date'], 'statusSet', 'skipOnError' => true],
+            [['indent_date'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['indent_date'], 'importFieldSetOther', 'skipOnError' => true, 'on' => ['importCsvOther']],
+            [['indent_code'], 'validateCancel', 'skipOnError' => true],
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
                     return empty($this->getErrors());
                 }, 'on' => ['create', 'importCsv']],
-                [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'indent_type', 'warehouse_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'indent_type', 'warehouse_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
                     return empty($this->getErrors());
                 }, 'on' => ['createOther', 'importCsvOther']],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv', 'importCsvOther']],
-                [['warehouse_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocation::className(), 'targetAttribute' => ['warehouse_code' => 'store_location_code'], 'on' => ['importCsvOther']],
-                [['approve_qty'], 'approveQty', 'on' => ['approve']],
-                [['is_close'], 'default', 'value' => 0],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv', 'importCsvOther']],
+            [['warehouse_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocation::className(), 'targetAttribute' => ['warehouse_code' => 'store_location_code'], 'on' => ['importCsvOther']],
+            [['approve_qty'], 'approveQty', 'on' => ['approve']],
+            [['is_close'], 'default', 'value' => 0],
         ];
     }
 
@@ -361,6 +362,49 @@ class TblIndentMaster extends \app\models\ChildModel {
                 ->andWhere(['!=', 'status', 0])
                 ->one();
         return $level;
+    }
+
+    public function indentDetail($model) {
+
+        $query = $this->find()
+                ->andWhere(['dcs_code' => $model->dcs_code, 'member_code' => $model->member_code, 'product_code' => $model->product_code, 'status' => '2', 'is_close' => '0'])
+                ->all();
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $query,
+            'sort' => [
+                'defaultOrder' => ['indent_code' => SORT_ASC],
+                'attributes' => [
+                    'indent_code',
+                    'customer_type',
+                    'customer_code',
+                    'member_code',
+                    'dcs_code',
+                    'bmc_code',
+                    'mcc_plant_code',
+                    'plant_code',
+                    'union_code',
+                    'indent_date',
+                    'product_code',
+                    'qty',
+                    'rate',
+                    'amount',
+                    'status',
+                    'status_date',
+                    'status_by',
+                    'status_remarks',
+                    'indent_type',
+                    'warehouse_code',
+                    'approve_qty',
+                    'rejected_qty',
+                    'approve_remarks',
+                    'received_qty',
+                    'dispatch_qty',
+                    'is_close',
+                ],
+            ],
+        ]);
+        return $dataProvider;
     }
 
 }

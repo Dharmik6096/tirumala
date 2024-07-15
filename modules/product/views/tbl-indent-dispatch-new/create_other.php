@@ -13,14 +13,10 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                 </div>
                 <div class="large-search hidden-print">
                     <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
-                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                        <h4 class="theme-box-heading accordion collapsed" data-toggle="collapse" data-target="#document_grid" aria-expanded="true" aria-controls="competitor_grid">DCS Wise</h4>
-                    </div>
-                    <div class="col-sm-12 collapse" id="document_grid">
+                    <div class="col-sm-12" id="document_grid">
                         <?= $this->render('_dispatch_grid_other', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'dispatchModel' => $dispatchModel]);
                         ?>
                     </div>
-
                 </div>
             </div>
         </div>

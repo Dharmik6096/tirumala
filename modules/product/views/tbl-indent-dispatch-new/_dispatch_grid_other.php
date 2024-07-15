@@ -9,7 +9,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Indent Dispatch');
 ?>
-<div class=" no-effect">
+<div class="no-effect">
     <?php
     $form = ActiveForm::begin([
                 'id' => 'indent-dispatch',
@@ -29,48 +29,59 @@ $this->title = Yii::t('app', 'Indent Dispatch');
         ?>
         <?php
         $attribute = [
-                ['class' => 'kartik\grid\CheckboxColumn',
+            [
+                'class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
-                'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+                'headerOptions' => ['class' => 'skip-export'],
+                'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model, $key, $index) {
-                    return ['class' => 'checkbox', 'value' => $model['indent_code']];
-                }],
-                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
-                ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
+                    $member_code = !empty($model['member_code']) ? $model['member_code'] : 0;
+                    $id = $model['dcs_code'] . $member_code . $model['product_code'];
+                    return ['class' => 'checkbox group-checkbox parent-checkbox', 'id' => $id, 'value' => ''];
+                }
+            ],
+            [
+                'class' => 'kartik\grid\ExpandRowColumn',
+                'expandIcon' => '<span class="fa fa-plus"></span>',
+                'collapseIcon' => '<span class="fa fa-minus"></span>',
+                'expandTitle' => 'View Details',
+                'expandAllTitle' => 'View All Details',
+                'collapseTitle' => 'Hide Details',
+                'collapseAllTitle' => 'Hide All Details',
+                'value' => function ($model, $key, $index, $column) {
+                    return GridView::ROW_EXPANDED;
+                },
+                'detail' => function ($model, $key, $index, $column) use ($form, $dataProvider, $searchModel, $dispatchModel) {
+                    return Yii::$app->controller->renderPartial('_dispatch_grid_new', ['model' => $model, 'form' => $form, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'dispatchModel' => $dispatchModel]);
+                },
+                'headerOptions' => ['class' => 'kartik-sheet-style'],
+                'expandOneOnly' => true,
+            ],
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
+            ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
-                ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'value' => function($model) {
+            ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
-                ['attribute' => 'status_date', 'label' => Yii::t('app', 'Indent Approve Date'), 'value' => function($model) {
+            ['attribute' => 'status_date', 'label' => Yii::t('app', 'Indent Approve Date'), 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->status_date);
                 }, 'filter' => FALSE],
-                ['attribute' => 'warehouse_code', 'value' => function($model) {
+            ['attribute' => 'warehouse_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->warehouseCode, 'store_location_name');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
-                ['attribute' => 'product_code', 'value' => function($model) {
+            ['attribute' => 'product_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
                 }, 'filter' => FALSE],
-//                ['attribute' => 'qty', 'filter' => FALSE],
             ['attribute' => 'approve_qty', 'filter' => FALSE],
-                ['attribute' => 'dispatch_qty', 'filter' => FALSE,
-                'format' => 'raw',
-                'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
-                    echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']indent_code', ['value' => $model->indent_code]);
-                    echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']approve_qty', ['value' => $model->approve_qty]);
-                    return $form->field($dispatchModel, '[' . $key . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch dispatch_qty-' . $model->indent_code, 'data-id' => $key])->label(FALSE);
-                },
-            ],
-                ['attribute' => 'remaining_qty', 'label' => Yii::t('app', 'Remaining Qty'), 'filter' => FALSE,
+            ['attribute' => 'remaining_qty', 'label' => Yii::t('app', 'Remaining Qty'), 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
                     $remaining_qty = $model->approve_qty - $dispatchModel->dispatch_qty;
-                    echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']remaining_qty', ['value' => $remaining_qty]);
-                    echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']is_close', ['value' => 1]);
                     return '<span id="tblindentdispatch-' . $key . '-remaining">' . $remaining_qty . '</span>';
                 },
             ],
-                ['attribute' => 'received_qty', 'filter' => FALSE],
+            ['attribute' => 'received_qty', 'filter' => FALSE],
         ];
 
         $grid_option = [
@@ -80,13 +91,10 @@ $this->title = Yii::t('app', 'Indent Dispatch');
             'showPageSummary' => false,
             'default_sorting' => FALSE,
         ];
-        
+
         Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['indent-dispatch']);
         ?>
         <?= $form->field($dispatchModel, 'challan_date', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true, 'readonly' => 'readonly', 'value' => date('d-m-Y')])->label('Date'); ?>                      
-        <!--<div class="col-sm-2">-->
-            <!--<? Yii::$app->dropdown->vehicle($dispatchModel, $form, 'vehicle_no', $dispatchModel->getAttributeLabel('vehicle_no'), false); ?>-->
-        <!--</div>-->
         <?= $form->field($dispatchModel, 'vehicle_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
         <?= $form->field($dispatchModel, 'reference_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
         <?= $form->field($dispatchModel, 'lr_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
@@ -94,11 +102,10 @@ $this->title = Yii::t('app', 'Indent Dispatch');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Dispatchh'), ['class' => 'btn btn-primary submit mt10', 'id' => 'approve', 'value' => 'dispatch', 'name' => 'dispatch']);
-//                echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
+                echo Html::button(Yii::t('app', 'Dispatch'), ['class' => 'btn btn-primary submit mt10', 'id' => 'approve', 'value' => 'dispatch', 'name' => 'dispatch']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval','', 'mt10'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval', '', 'mt10'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
@@ -108,20 +115,41 @@ $this->title = Yii::t('app', 'Indent Dispatch');
 <?php
 $script = '
     $(".kv-panel-before").hide();
-        
+    $(".parent-checkbox").prop("disabled", false);
+    $(document).on("click",".parent-checkbox",function(){
+        var id = $(this).attr("id");
+        $("."+id).prop("checked", false);
+        if($(this).prop("checked") == true){
+            $("."+id).prop("checked", true);
+        }
+    });
+    
+    $(document).on("click",".child-checkbox",function(){
+        var id = $(this).attr("data-id");
+        $("#"+id).prop("checked", true);
+        $("."+id).each(function() {
+            if($(this).prop("checked") == false){
+                $("#"+id).prop("checked", false);
+            }
+        });
+    });
+    
     $(document).on("blur",".qty-dispatch", function() {
-        var new_tr_key = $(this).closest("tr").attr("data-key");
-        remainingqty(new_tr_key);
+//        var new_tr_key = $(this).closest("tr").attr("data-key");
+        var data_key = $(this).attr("data-id");
+        var data_class = $(this).attr("data-class");
+        remainingqty(data_key, data_class);
     });
 
-    function remainingqty(new_tr_key){
-        var tr_key = $(".dispatch_qty-"+new_tr_key).attr("data-id");
+    function remainingqty(tr_key, data_class){
         var remaining_qty = $("#tblindentdispatch-" + tr_key + "-remaining_qty").val();
         var approve_qty = $("#tblindentdispatch-" + tr_key + "-approve_qty").val();
         var dispatch_qty = $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val();
         dispatch_qty = dispatch_qty == "" ? 0 : dispatch_qty;
         var new_remaining_qty = parseFloat(remaining_qty)-parseFloat(dispatch_qty);
-
+        var product_total_stock = $("#"+data_class+" .total_stock").text();
+        var new_product_total_stock = parseFloat(product_total_stock) - parseFloat(dispatch_qty);
+        $("#"+data_class+" .total_stock").text(new_product_total_stock);
         if (!isNaN(remaining_qty) && parseInt(dispatch_qty) <= 0 && dispatch_qty != "") {
             $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val("");
             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Dispatch quantity must be greater than zero.</span></div></div>");
@@ -145,19 +173,21 @@ $script = '
         $(".set_vehicle").val(vehicle_no);
         $(".set_ref_no").val(ref_no);
         $(".set_lrno").val(lr_no);
-        var len = $("input[class=\"checkbox kv-row-checkbox\"]:checked").length;
-        if(len == 0){
-        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
-        return false;
-                    }else if(vehicle_no ==""){
-        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select vehicle.</span></div></div>");
-        return false;
-                    }else if(ref_no ==""){
-        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please Add Reference No.</span></div></div>");
-        return false;
-        }
-        else {
-        $("#indent-dispatch").submit();
+        var parentChecked = $("input[class=\'checkbox group-checkbox parent-checkbox kv-row-checkbox\']:checked").length;
+        var childChecked = $("input[class*=\'child-checkbox\']:checked").length;
+
+        if(parentChecked === 0 && childChecked === 0) {
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
+            return false;
+        }else if(vehicle_no ==""){
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select vehicle.</span></div></div>");
+            return false;
+        }else if(ref_no ==""){
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please Add Reference No.</span></div></div>");
+            return false;
+        } else {
+            $(".parent-checkbox").prop("disabled", true);
+            $("#indent-dispatch-new").submit();
         }
 });
 ';

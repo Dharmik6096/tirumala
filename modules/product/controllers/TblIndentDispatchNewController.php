@@ -330,4 +330,21 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionProductDetail() {
+        $product_code = Yii::$app->request->get('product_code');
+
+        $existData = TblProductStock::find()
+                ->select(['tbl_product_stock.product_code','tbl_product.product_name','SUM(tbl_product_stock.stock) as total_stock'])
+                ->innerJoin('tbl_product', 'tbl_product.product_code = tbl_product_stock.product_code')
+                ->where(['tbl_product_stock.product_code' => $product_code])
+                ->andWhere(['>', 'tbl_product_stock.stock', 0])
+                ->groupBy(['tbl_product_stock.product_code', 'tbl_product.product_name'])
+                ->asArray()
+                ->all();
+
+        return $this->renderAjax('_product_detail', [
+                    'stock_detail' => $existData
+        ]);
+    }
+
 }

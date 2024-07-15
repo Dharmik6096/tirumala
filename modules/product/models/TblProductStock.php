@@ -38,7 +38,7 @@ use yii\helpers\ArrayHelper;
 class TblProductStock extends \app\models\ChildModel {
 
     public $is_sentbox = TRUE;
-    public $qty, $type;
+    public $qty, $type, $product_name;
 
     /**
      * @inheritdoc
