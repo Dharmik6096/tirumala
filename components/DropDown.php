@@ -1875,6 +1875,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Language'),
                 'data' => [0 => Yii::t('app', 'English'), 1 => Yii::t('app', 'Hindi')],
             ],
+            'indent_group_by' =>  [
+                'name' => 'group_by',
+                'prompt' => Yii::t('app', 'Select Group By'),
+                'data' => [0 => Yii::t('app', 'INDIVIDUAL'), 1 => Yii::t('app', 'DCS') . '-' . Yii::t('app', 'MEMBER')],
+            ],
         ];
         return $records[$l];
     }

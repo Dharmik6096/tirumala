@@ -12,10 +12,14 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                     <h4 class="theme-box-heading">Indent Dispatch</h4>
                 </div>
                 <div class="large-search hidden-print">
-                    <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
+                    <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider, 'stock_detail' => $stock_detail]); ?>
                     <div class="col-sm-12" id="document_grid">
-                        <?= $this->render('_dispatch_grid_other', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'dispatchModel' => $dispatchModel]);
-                        ?>
+                        <?php
+                        if(!empty($searchModel->group_by)) {
+                            echo $this->render('_dispatch_grid_other_group_wise', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'dispatchModel' => $dispatchModel]);
+                        } else {
+                            echo $this->render('_dispatch_grid_other', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'dispatchModel' => $dispatchModel]);
+                        } ?>
                     </div>
                 </div>
             </div>

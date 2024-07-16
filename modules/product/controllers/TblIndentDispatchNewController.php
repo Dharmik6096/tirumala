@@ -16,6 +16,7 @@ use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblProductStockTransaction;
 use app\modules\product\models\TblProductReceipt;
 use app\modules\product\models\TblProductReceiptTransaction;
+use app\modules\product\models\TblProductStockSearch;
 use yii\base\Model;
 use yii\helpers\Url;
 
@@ -66,14 +67,18 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
         $dispatchModel = new TblIndentDispatch();
         $searchModel = new TblIndentMasterSearch();
         $searchModel->scenario = 'indentApprove';
-        $dataProvider = $searchModel->indentdispatchothernewsearch(Yii::$app->request->queryParams);
+        $param = Yii::$app->request->queryParams;
+        $indentMasterParam = !empty($param['TblIndentMasterSearch']) ? $param['TblIndentMasterSearch'] : [];
+        $param['TblIndentMasterSearch']['group_by'] = (Yii::$app->request->isPost) ? 0 : !empty($indentMasterParam['group_by']) ? $indentMasterParam['group_by'] : '';
+        $dataProvider = $searchModel->indentdispatchothernewsearch($param);
         $indentModel = $dataProvider->getModels();
+        $stock_detail = $this->getProductDetail($indentMasterParam);
         if (Yii::$app->request->post()) {
             Model::loadMultiple($indentModel, Yii::$app->request->post(), 'TblIndentDispatch');
             if (Model::validateMultiple($indentModel)) {
                 $indentPostData = Yii::$app->request->post()['TblIndentDispatch'];
                 $DispatchConsiderAs = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'dispatch_consider', 'PORTAL');
-                $txnType = $DispatchConsiderAs == 1 ? 'PRODUCT SALE' : '';
+                $txnType = $DispatchConsiderAs == 0 ? 'PRODUCT SALE' : '';
                 $searchModel->load(Yii::$app->request->post());
                 if (isset($_REQUEST['selection'])) {
                     $saveModel = [];
@@ -138,7 +143,9 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     if ($remaining_quantity <= 0) {
                                         break;
                                     }
-
+                                    $historyModel = new TblProductStockHistory();
+                                    Yii::$app->operation->history($existStock, $historyModel, UPDATE);
+                                    $saveModel[] = $historyModel;
                                     if (array_key_exists($existStock->product_stock_code, $productStock)) {
                                         $existStock->stock = $productStock[$existStock->product_stock_code];
                                     }
@@ -146,10 +153,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     $dispatch_quantity = min($remaining_quantity, $initial_stock);
                                     $existStock->stock = $existStock->stock - $dispatch_quantity;
                                     $remaining_quantity = $remaining_quantity - $dispatch_quantity;
-
-                                    $historyModel = new TblProductStockHistory();
-                                    Yii::$app->operation->history($existStock, $historyModel, UPDATE);
-                                    $saveModel[] = $historyModel;
 
                                     $fstockModel = $existStock;
 
@@ -299,7 +302,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         $i++;
                         $j++;
                     }
-
                     $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'create']);
                     if ($transaction == 'customRedirect') {
                         return $this->redirect(['index-other']);
@@ -307,11 +309,11 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                 }
             }
         }
-
         return $this->render('create_other', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'dispatchModel' => $dispatchModel,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'dispatchModel' => $dispatchModel,
+            'stock_detail' => $stock_detail
         ]);
     }
 
@@ -330,21 +332,20 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionProductDetail() {
-        $product_code = Yii::$app->request->get('product_code');
-
+    public function getProductDetail($param) {
+        $bmc_code = !empty($param['bmc_code']) ? $param['bmc_code'] : '';
         $existData = TblProductStock::find()
                 ->select(['tbl_product_stock.product_code','tbl_product.product_name','SUM(tbl_product_stock.stock) as total_stock'])
                 ->innerJoin('tbl_product', 'tbl_product.product_code = tbl_product_stock.product_code')
-                ->where(['tbl_product_stock.product_code' => $product_code])
-                ->andWhere(['>', 'tbl_product_stock.stock', 0])
+                ->where(['tbl_product_stock.bmc_code' => $bmc_code]);
+                if(!empty($param['product_code'])){
+                    $existData = $existData->andWhere(['tbl_product_stock.product_code' => $param['product_code']]);
+                }
+        $existData = $existData->andWhere(['>', 'tbl_product_stock.stock', 0])
                 ->groupBy(['tbl_product_stock.product_code', 'tbl_product.product_name'])
                 ->asArray()
                 ->all();
-
-        return $this->renderAjax('_product_detail', [
-                    'stock_detail' => $existData
-        ]);
+        return $existData;
     }
 
 }

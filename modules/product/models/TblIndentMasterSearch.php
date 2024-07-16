@@ -13,7 +13,7 @@ use yii\data\ArrayDataProvider;
  */
 class TblIndentMasterSearch extends TblIndentMaster {
 
-    public $from_date, $to_date, $product_group_code;
+    public $from_date, $to_date, $product_group_code, $group_by;
 
     /**
      * @inheritdoc
@@ -24,7 +24,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
             [['qty'], 'number'],
             [['originating_type'], 'integer'],
             [['indent_type', 'warehouse_code', 'product_group_code'], 'safe'],
-            [['from_date', 'to_date'], 'safe'],
+            [['from_date', 'to_date', 'group_by'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['indentApprove']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'searchdispatch'],
         ];
@@ -269,21 +269,21 @@ class TblIndentMasterSearch extends TblIndentMaster {
     }
 
     public function indentdispatchothernewsearch($params) {
-        $query = TblIndentMaster::find()->select([
-            'tbl_indent_master.dcs_code',
-            'tbl_indent_master.product_code',
-            'tbl_indent_master.member_code',
-            'qty' => 'ISNULL(SUM(ISNULL(qty, 0)), 0)',
-            'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)), 0)',
-            'tbl_indent_master.status_date'
-        ]);
+        $this->load($params);
+        $select = ['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)', 'tbl_indent_master.status_date'];
+        $group_by = ['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date'];
+        if(!empty($this->group_by)){
+            $select = ['tbl_indent_master.dcs_code','tbl_indent_master.product_code','tbl_indent_master.member_code','qty' => 'ISNULL(SUM(ISNULL(qty, 0)), 0)','approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)), 0)','tbl_indent_master.status_date'];
+            $group_by = ['tbl_indent_master.dcs_code','tbl_indent_master.product_code','tbl_indent_master.member_code','tbl_indent_master.status_date'];
+        }
+        $query = TblIndentMaster::find()->select($select);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        $query->leftJoin('tbl_dcs', 'tbl_indent_master.dcs_code = tbl_dcs.dcs_code');
-        $this->load($params);
+        // $query->leftJoin('tbl_dcs', 'tbl_indent_master.dcs_code = tbl_dcs.dcs_code');
+        $query->joinWith(['dcsCode']);
 
         $query->andWhere([
             'tbl_indent_master.union_code' => $this->union_code,
@@ -306,13 +306,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
         if (!$this->validate()) {
             return $dataProvider;
         }
-
-        $query->groupBy([
-            'tbl_indent_master.dcs_code',
-            'tbl_indent_master.product_code',
-            'tbl_indent_master.member_code',
-            'tbl_indent_master.status_date'
-        ]);
+        $query->groupBy($group_by);
 
         return $dataProvider;
     }

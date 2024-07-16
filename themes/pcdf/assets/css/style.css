@@ -5198,6 +5198,11 @@ tr.highlightRow {
     content: "\f067"; 
 }
 .padding_left_45 {
-    padding-left: 45px;
-    background-color: white;
+    border: 5px solid #ddd;
+}
+
+.child-grid .kv-expanded-row {
+    width: 94%;
+    margin: auto;
+    padding: 10px 0px;
 }
