@@ -41,10 +41,10 @@ $attribute = [
         ['attribute' => 'ex_member_code', 'value' => 'ex_member_code'],
         ['attribute' => 'member_type_code', 'value' => 'memberTypeCode.member_type_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'member_name', 'value' => 'member_name'],
+        ['attribute' => 'surname', 'value' => 'surname', 'visible' => true],
         ['attribute' => 'local_name', 'value' => 'local_name', 'filter' => false, 'visible' => false],
         ['attribute' => 'father_name', 'value' => 'father_name', 'visible' => false],
         ['attribute' => 'local_father_name', 'value' => 'local_father_name', 'filter' => false, 'visible' => false],
-        ['attribute' => 'surname', 'value' => 'surname', 'visible' => false],
         ['attribute' => 'local_surname', 'value' => 'local_surname', 'filter' => false, 'visible' => false],
         ['attribute' => 'nominee_name', 'value' => 'nominee_name', 'visible' => false, 'filter' => false,],
         ['attribute' => 'local_nominee_name', 'value' => 'local_nominee_name', 'visible' => false, 'filter' => false,],
@@ -89,6 +89,7 @@ $attribute = [
         ['attribute' => 'member_class', 'value' => function($model) {
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'application_no', 'filter' => true],
         ['attribute' => 'is_approved', 'value' => function($model) {
             return $model->is_approved == 1 ? 'Approved' : 'Pending';
         }, 'visible' => true, 'filter' => false],
@@ -106,6 +107,21 @@ $attribute = [
         }, 'visible' => false, 'filter' => true
     ],
         ['attribute' => 'member_identity_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'witness_name', 'visible' => false, 'filter' => false],
+        ['attribute' => 'place', 'visible' => false, 'filter' => false],
+        ['attribute' => 'payment_type', 'value' => function($model) {
+            return (!empty($model['shareCode']->mode_of_payment) && $model['shareCode']->mode_of_payment != null) ? Yii::$app->dropdown->getRecords('mode_of_payment')['data'][$model['shareCode']->mode_of_payment] : '';
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('mode_of_payment', $searchModel, 'payment_type')],
+        ['attribute' => 'recipt_ref_no', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->shareCode, 'ref_no');
+        }, 'visible' => true, 'filter' => true
+    ],
+        ['attribute' => 'provisional_status',
+        'filter' => (!$pending_approval) ? Yii::$app->dropdown->dropdownfilterStatic('provisional_status', $searchModel, 'provisional_status') : false,
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status] : '';
+        }],
+        ['attribute' => 'sap_farmer_code', 'visible' => true, 'filter' => false],
 ];
 
 $grid_option = [
@@ -154,6 +170,14 @@ $grid_option = [
                 $disable = ($model->provisional_status == 'Pending') ? '' : 'disabled';
                 $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
                 return GhostHtml::a('<i class="fa fa-file"></i>', ['/dcsoperation/tbl-member-provisional/document-upload', 'id' => $model->provisional_member_code], $options);
+            }
+        },
+        'report' => function ($url, $model) use ($pending_approval) {
+            if (!$pending_approval) {
+                $disable = (strtolower($model->provisional_status) == 'approve') ? '' : 'disabled';
+                $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable, 'target' => '_blank'];
+                // return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register'], $options);
+                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register', 'provisional_member_code' => $model->provisional_member_code], $options);
             }
         },
     ]

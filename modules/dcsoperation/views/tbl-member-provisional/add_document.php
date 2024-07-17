@@ -14,7 +14,8 @@ use yii\web\View;
     <div class="panel-heading">
         <ul class="progressbar">
             <li class="inactive">Member Provisional No. <?= $model->provisional_member_code ?>  > </li>
-            <li>  Upload Documents</li>
+            <li>  Upload Documents > </li>
+            <li>  <?php echo $model->application_no; ?></li>
         </ul>
     </div>
     <div class="panel-body">
@@ -111,6 +112,9 @@ use yii\web\View;
                                     <?php } ?>
                                 </tbody>
                             </table>
+                            <div class="col-sm-4 mt15">
+                                <?= $form->field($model, 'is_operator_aggre', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+                            </div>
                         </div>
                         <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                             <div class="form-group">

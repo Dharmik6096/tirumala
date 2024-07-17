@@ -97,7 +97,7 @@ use app\modules\organisation\models\TblDcsBmc;
 class TblMember extends ChildModel {
 
     public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern, $bmc_code;
-    public $operation, $verifie_for, $file_name;
+    public $operation, $verifie_for, $file_name, $dcs_ref_code;
     public $check_is_dcs_member = 1;
 
     /**
@@ -129,7 +129,7 @@ class TblMember extends ChildModel {
                 [['email'], 'email', 'except' => ['androidsync']],
                 [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'string', 'except' => ['androidsync', 'verification']],
                 [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync']],
-                [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'ex_member_code', 'ref_code', 'beneficiary_name', 'max_allowed_qty', 'response_datetime', 'rate_class', 'operation', 'is_verified', 'is_contact_verified', 'file_name', 'vendor_code', 'bank_remarks', 'contact_remarks', 'sap_farmer_code', 'latitude', 'longitude', 'aadhaar_card_address', 'is_email_verify', 'email_relation', 'member_identity_no', 'applicant_relation'], 'safe'],
+                [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'ex_member_code', 'ref_code', 'beneficiary_name', 'max_allowed_qty', 'response_datetime', 'rate_class', 'operation', 'is_verified', 'is_contact_verified', 'file_name', 'vendor_code', 'bank_remarks', 'contact_remarks', 'sap_farmer_code', 'latitude', 'longitude', 'aadhaar_card_address', 'is_email_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'application_no', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
                 [['sap_farmer_code'], 'unique', 'targetAttribute' => ['sap_farmer_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
@@ -179,7 +179,7 @@ class TblMember extends ChildModel {
             //   [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync']],
             // [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync']],
             [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync']],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'witness_name', 'place', 'dcs_ref_code'], 'safe'],
                 [['member_code', 'federation_code', 'dcs_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'mobile_no', 'received_timestamp', 'employee_code', 'employee_name', 'region_code', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour'], 'safe'],
             //  [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
             //  [['ex_member_code'], 'setExMember'],
@@ -199,7 +199,8 @@ class TblMember extends ChildModel {
                 [['is_verified', 'is_contact_verified', 'is_dcs_member'], 'default', 'value' => 0],
                 [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'check_is_dcs_member' => 'is_dcs_member'], 'message' => Yii::t('app/validation', 'DCS Member has already been taken.'), 'when' => function() {
                     return $this->is_dcs_member;
-                },]
+                },],
+                [['member_code'], 'setEmilkSyncData'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -279,6 +280,7 @@ class TblMember extends ChildModel {
             'employee_code' => Yii::t('app', 'Employee Code'),
             'employee_name' => Yii::t('app', 'Employee Name'),
             'region_code' => Yii::t('app', 'Region Name'),
+            'dcs_ref_code' => Yii::t('app', 'Society Ref Code'),
         ];
     }
 
@@ -700,6 +702,10 @@ class TblMember extends ChildModel {
 
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function setEmilkSyncData() {
+        $this->emilk_sync_status = 'N';
     }
 
 }

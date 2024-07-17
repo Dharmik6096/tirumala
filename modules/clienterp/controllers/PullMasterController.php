@@ -41,7 +41,7 @@ class PullMasterController extends ActiveController {
             $message = [Yii::$app->getSession()->getFlash('success')['message']];
             $this->response->setStatusCode(!empty($this->eiplResponseCode->{$type}) ? $this->eiplResponseCode->{$type} : $this->eiplResponseCode->statusError);
             $this->response->setMessage($message);
-            echo json_encode($this->response);
+            exit(json_encode($this->response));
         } else {
             return $request;
         }

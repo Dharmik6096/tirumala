@@ -31,6 +31,25 @@ use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use yii\web\UploadedFile;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\geo\models\TblRegion;
+use app\modules\dcsoperation\models\TblMemberProvisionalShareDetails;
+use app\modules\collection\models\TblProvisionalMilkCollection;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\dcsoperation\models\TblMemberHistory;
+use app\modules\dcsoperation\models\TblMemberProvisionalHistory;
+use app\modules\collection\models\TblMilkCollection;
+use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
+use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetails;
+use app\modules\dcsoperation\models\TblMemberFamilyDetailsHistory;
+use app\modules\dcsoperation\models\TblMemberFamilyDetails;
+use app\modules\dcsoperation\models\TblMemberProvisionalAnimalDetails;
+use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
+use app\modules\dcsoperation\models\TblMemberAnimalDetails;
+use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
+use app\modules\dcsoperation\models\TblMemberShareDetails;
+use app\modules\jasperreports\controllers\DefaultController;
+use app\modules\sms\models\TblApiMaster;
+use app\modules\sms\models\TblAlertTemplate;
+use app\modules\sms\models\TblAlertNotification;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -105,7 +124,7 @@ use app\modules\geo\models\TblRegion;
  */
 class TblMemberProvisional extends ChildModel {
 
-    public $cnt, $reference_code, $society_code, $bmc_name, $process_approval_code, $activityStatus;
+    public $cnt, $reference_code, $society_code, $bmc_name, $process_approval_code, $activityStatus, $dcs_ref_code, $payment_type, $recipt_ref_no;
 
     /**
      * @inheritdoc
@@ -119,19 +138,20 @@ class TblMemberProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code'], 'safe'],
                 [['is_download', 'is_contact_verified', 'is_verify', 'is_email_verify'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
                 [['member_type_code'], 'default', 'value' => '1'],
-                [['bmc_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv', 'collection']],
-                [['dcs_code', 'member_name'], 'required', 'except' => ['collection']],
-                [['ex_member_code'], 'required', 'except' => ['collection', 'hosync']],
-                [['hamlet_code'], 'required', 'except' => ['collection', 'hosync', 'hosyncUpdate']],
+                [['bmc_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv', 'collection', 'pro_member_sap_import']],
+                [['dcs_code', 'member_name'], 'required', 'except' => ['collection', 'pro_member_sap_import']],
+                [['ex_member_code'], 'required', 'except' => ['collection', 'hosync', 'pro_member_sap_import']],
+                [['hamlet_code'], 'required', 'except' => ['collection', 'hosync', 'hosyncUpdate', 'pro_member_sap_import']],
                 [['gender_code', 'caste_category_code'], 'required', 'on' => ['EIPLAMCS_TEST']],
-                [['dcs_code', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'collection', 'hosync', 'hosyncUpdate']],
-                [['member_code', 'state_code', 'union_code'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-                [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['collection', 'importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-                [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+                [['dcs_code', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'collection', 'hosync', 'hosyncUpdate', 'pro_member_sap_import']],
+                [['member_code', 'state_code', 'union_code'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'pro_member_sap_import']],
+                [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['collection', 'importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'pro_member_sap_import']],
+                [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'pro_member_sap_import']],
                 [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
             /* [['member_name'],'unique', 'when' => function($model) {
               return ($model->isNewRecord)?true:false;
@@ -141,8 +161,7 @@ class TblMemberProvisional extends ChildModel {
                 }, 'on' => 'saveCreamyData'],
                 [['email'], 'email', 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id', 'approved_by',], 'string', 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-                [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation'], 'safe'],
+                [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync', 'hosync', 'hosyncUpdate', 'pro_member_sap_import']],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
@@ -207,6 +226,8 @@ class TblMemberProvisional extends ChildModel {
                 [['provisional_from'], 'default', 'value' => 'collection'],
                 [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
+                [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
+                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -295,6 +316,9 @@ class TblMemberProvisional extends ChildModel {
             'is_verify' => Yii::t('app', 'Is Bank Verify ?'),
             'is_email_verify' => Yii::t('app', 'Is Email Verify ?'),
             'email_relation' => Yii::t('app', 'Email Relation with Applicant'),
+            'is_operator_aggre' => Yii::t('app', 'Operator Is Agree That All The Information Is Verified And Correct.'),
+            'dcs_ref_code' => Yii::t('app', 'Society Ref Code'),
+            'payment_type' => Yii::t('app', 'Mode Of Payment'),
         ];
     }
 
@@ -459,14 +483,14 @@ class TblMemberProvisional extends ChildModel {
 
     private function generateEncFile($file, $path) {
         chdir(Yii::$app->params['biplMemberUtilityPath']);
-        //$file=\Yii::getAlias('@webroot').'/'.Yii::$app->params['biplMemberUtilityPath'].'/VFSD_EXAMPLE.csv';
+//$file=\Yii::getAlias('@webroot').'/'.Yii::$app->params['biplMemberUtilityPath'].'/VFSD_EXAMPLE.csv';
         $path = $path . '/myvendor.ven';
-        //echo 'milkvendor_cmd_i386-win32_B.exe -i '.$file.' -o '.$path;
+//echo 'milkvendor_cmd_i386-win32_B.exe -i '.$file.' -o '.$path;
         $utility_path = \Yii::getAlias('@webroot') . '/' . Yii::$app->params['biplMemberUtilityPath'];
         $command = 'cd ' . $utility_path . ' && ./milkven_cmd_x86_64-linux_B -i ' . $file . ' -o ' . $path;
 //        exec('milkvendor_cmd_i386-win32_B.exe -i ' . $file . ' -o ' . $path);
         exec('cd ' . $utility_path . ' && ./milkven_cmd_x86_64-linux_B -i ' . $file . ' -o ' . $path);
-        //exit;
+//exit;
         return;
     }
 
@@ -713,7 +737,7 @@ class TblMemberProvisional extends ChildModel {
                         } else if ($doc->is_mandate == 1) {
                             $error_msg .= $master_doc->doc_name . '<br/>';
                         } else {
-                            // Handle case when no file is uploaded
+// Handle case when no file is uploaded
                         }
                     }
                 }
@@ -739,8 +763,194 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function validateFlag($attribute, $param) {
-        if ($this->is_contact_verified != 1 || $this->is_verify != 1 || $this->is_email_verify != 1) {
-            $this->addError($attribute, Yii::t('app/validation', 'Please verify Email address, Mobile no, Bank detail.'));
+        if ($this->is_contact_verified != 1 || $this->is_verify != 1 || $this->is_email_verify != 1 || $this->is_aadhar_verify != 1) {
+            $this->addError($attribute, Yii::t('app/validation', 'Please verify Email address, Mobile no, Bank detail, Adhar No.'));
+        }
+    }
+
+    public function getShareCode() {
+        return $this->hasOne(TblMemberProvisionalShareDetails::className(), ['provisional_member_code' => 'provisional_member_code']);
+    }
+
+    public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, &$unlink_files, &$attachments, &$memberdoc, &$errors) {
+        $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'member_creation_pending_for_sap_approval');
+        $config = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_member_other_detail');
+        $model->member_status = 1;
+        $all_doc = [];
+        $memberdoc = [];
+        $unlink_files = [];
+        $attachments = [];
+        $message = [];
+
+        if (!empty($model) && strtolower($model->provisional_status) == 'approve' && $memberCreationPendingForSapApproval == '1') {
+            $this->memberApprove($modelSave, $deleteModel, $model, $all_doc, $memberdoc, $message, $unlink_files, $attachments);
+            if ($config == 1) {
+                $this->memberEnrollmentApprove($modelSave, $model, $deleteModel);
+            }
+        }
+        if (!empty($message)) {
+            foreach ($message as $msg) {
+                $errors[] = $msg;
+            }
+        }
+    }
+
+    public function memberApprove(&$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, &$message, &$unlink_files, &$attachments) {
+        $tblMember = new TblMember();
+        if ($memberModel->provisional_from == 'mobile_update') {
+            $tblMember = TblMember::find()->where(['member_code' => $memberModel->member_code])->one();
+            $memberCode = $memberModel->member_code;
+            $historyMemberModel = new TblMemberHistory();
+            Yii::$app->operation->history($tblMember, $historyMemberModel, UPDATE);
+            $model_save[] = $historyMemberModel;
+        }
+        $tblMember->scenario = 'ApprovalMember';
+        $tblMember->attributes = $memberModel->attributes;
+        $tblMember->member_code = ($memberModel->provisional_from == 'mobile_update') ? $memberCode : $tblMember->getCode();
+        if ($tblMember->validate()) {
+            $model_save[] = $tblMember;
+            $deleteAttachment = [];
+            if ($memberModel->provisional_from != 'mobile_update') {
+                $milkCollectionData = new TblProvisionalMilkCollection();
+                $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
+                if (!empty($milkCollectionData)) {
+                    foreach ($milkCollectionData as $key => $value) {
+                        $deleteModel[] = $value;
+                        $tblMilkCollection = new TblMilkCollection();
+                        $tblMilkCollection->attributes = $value->attributes;
+                        $tblMilkCollection->member_code = $tblMember->member_code;
+                        $tblMilkCollection->is_provisional = 1;
+                        $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                        Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
+                        $model_save[] = $tblMilkCollection;
+                        $model_save[] = $tblProvisionalMilkCollectionHistory;
+                    }
+                }
+            } else {
+                $deleteAttachment['module_code'] = $memberModel->member_code;
+                $deleteAttachment['module_name'] = 'tbl_member';
+            }
+            $tblAttachment = new TblAttachment();
+            $memberProvisionalCode = (string) $memberModel->provisional_member_code;
+            $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc, $deleteModel, $deleteAttachment, $unlink_files, $attachments);
+            $this->RegisterEmailRequest($memberModel, $tblMember, $model_save);
+        } else {
+            foreach ($tblMember->getErrors() as $errorkey => $value) {
+                $message[] = $value;
+            }
+        }
+    }
+
+    public function attachmentPath(&$baseDirPath, &$docMoveFolderName, &$docFolderName) {
+        $baseDirPath = Yii::$app->params['document_upload'];
+        $docMoveFolderName = 'member';
+        $docFolderName = 'provisional_member';
+    }
+
+    public function memberEnrollmentApprove(&$model_save, $memberModel, &$deleteModel) {
+        $familyData = new TblMemberProvisionalFamilyDetails();
+        $familyData = $familyData->getFamilyData($memberModel->provisional_member_code);
+        $existingFamilyDetail = TblMemberFamilyDetails::find()->where(['member_code' => $memberModel->member_code])->all();
+        if (!empty($existingFamilyDetail)) {
+            foreach ($existingFamilyDetail as $value) {
+                $historyModel = new TblMemberFamilyDetailsHistory();
+                Yii::$app->operation->history($value, $historyModel, DELETE);
+                $deleteModel[] = $value;
+                $model_save[] = $historyModel;
+            }
+        }
+        if (!empty($familyData)) {
+            foreach ($familyData as $key => $value) {
+                $memberFamilyModel = new TblMemberFamilyDetails();
+                $memberFamilyModel->attributes = $value->attributes;
+                $memberFamilyModel->member_code = $memberModel->member_code;
+                $model_save[] = $memberFamilyModel;
+            }
+        }
+
+        $animalData = new TblMemberProvisionalAnimalDetails();
+        $animalData = $animalData->getAnimalData($memberModel->provisional_member_code);
+        $existingAnimalDetail = TblMemberAnimalDetails::find()->where(['member_code' => $memberModel->member_code])->all();
+        if (!empty($existingAnimalDetail)) {
+            foreach ($existingAnimalDetail as $value) {
+                $familyHistoryModel = new TblMemberAnimalDetailsHistory();
+                Yii::$app->operation->history($value, $familyHistoryModel, DELETE);
+                $deleteModel[] = $value;
+                $model_save[] = $familyHistoryModel;
+            }
+        }
+        if (!empty($animalData)) {
+            foreach ($animalData as $key => $value) {
+                $memberAnimalModel = new TblMemberAnimalDetails();
+                $memberAnimalModel->attributes = $value->attributes;
+                $memberAnimalModel->member_code = $memberModel->member_code;
+                $model_save[] = $memberAnimalModel;
+            }
+        }
+        $shareData = new TblMemberProvisionalShareDetails();
+        $shareData = $shareData->getShareData($memberModel->provisional_member_code);
+        $existingShareData = TblMemberShareDetails::find()->where(['member_code' => $memberModel->member_code])->one();
+        if (!empty($existingShareData)) {
+            $shareHistoryModel = new TblMemberShareDetailsHistory();
+            Yii::$app->operation->history($existingShareData, $shareHistoryModel, DELETE);
+            $deleteModel[] = $existingShareData;
+            $model_save[] = $shareHistoryModel;
+        }
+        if (!empty($shareData)) {
+            $memberShareModel = new TblMemberShareDetails();
+            $memberShareModel->attributes = $shareData->attributes;
+            $memberShareModel->member_code = $memberModel->member_code;
+            $memberShareModel->gender_code = $memberModel->gender_code;
+            $memberShareModel->bmc_code = $memberModel->bmc_code;
+            $model_save[] = $memberShareModel;
+        }
+    }
+
+    public function checkExistData($attribute, $params) {
+        $modelData = TblMemberProvisional::find()->where(['application_no' => $this->$attribute, 'member_status' => 0, 'provisional_status' => 'Approve',])->one();
+        if (empty($modelData)) {
+            $this->addError($attribute, 'Application number does not exist.');
+        }
+    }
+
+    public function RegisterEmailRequest($memberModel, $tblMember, &$model_save) {
+        if ($memberModel->is_email_verify == 1 && !empty($tblMember->email)) {
+            $report_config = DefaultController::getLabels('ProvisionalMemberRegister');
+            if (!empty($report_config)) {
+                $receiver_type = 'EMAIL';
+                $module_type = 'member_register_form';
+                $apiMaster = new TblApiMaster();
+                $apiMasterData = $apiMaster->getRecord($receiver_type, $tblMember->union_code);
+                if (!empty($apiMasterData)) {
+                    $templateModel = new TblAlertTemplate();
+                    $templateData = $templateModel->getTemplateData($module_type, $receiver_type, $tblMember->union_code);
+                    if (!empty($templateData)) {
+                        $notificationModel = new TblAlertNotification();
+                        $notificationModel->receiver_type = $receiver_type;
+                        $notificationModel->message = $templateData->message;
+                        $notificationModel->header_info = $templateData->header_info;
+                        $notificationModel->send_status = 0;
+                        $notificationModel->content_id = $apiMasterData->api_master_id;
+                        $notificationModel->module_type = $module_type;
+                        $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                        $notificationModel->send_mail = 1;
+                        $notificationModel->receiver_detail = $tblMember->email;
+                        $notificationModel->refecence_code = $tblMember->member_code;
+                        $notificationModel->parent_code = $memberModel->provisional_member_code;
+                        $notificationModel->filename = $tblMember->member_code . '-' . date('YmdHis') . '.pdf';
+                        $notificationModel->has_attachment = 1;
+                        $controls = [];
+                        $controls['p_provisional_member_code'] = $memberModel->provisional_member_code;
+                        $controls['p_lang_code'] = '1';
+                        $controls['locale'] = 'hn';
+                        $controls['digit_config'] = '1';
+                        $controls['REPORT_LOCALE'] = 'hn_IN';
+                        $notificationModel->file_param = json_encode($controls);
+                        $notificationModel->file_path = $report_config['path'];
+                        $model_save[] = $notificationModel;
+                    }
+                }
+            }
         }
     }
 

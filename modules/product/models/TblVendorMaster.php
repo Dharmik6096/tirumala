@@ -6,6 +6,8 @@ use Yii;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblUnions;
 use app\modules\product\models\TblGrn;
+use app\modules\organisation\models\TblBanks;
+use app\modules\organisation\models\TblBranch;
 
 /**
  * This is the model class for table "tbl_vendor_master".
@@ -44,17 +46,42 @@ class TblVendorMaster extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['vendor_code', 'vendor_name'], 'required'],
-                [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'aadhaar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code'], 'safe'],
-                [['contact_person', 'mobile_no'], 'required', 'on' => 'importCsv'],
-                [['vendor_code'], 'integer'],
-                [['pan_no'], function ($attribute, $params) {
+            [['vendor_code', 'vendor_name', 'is_active'], 'required'],
+            [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active'], 'safe'],
+            [['contact_person', 'mobile_no'], 'required', 'on' => 'importCsv'],
+            [['vendor_code'], 'integer'],
+            [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }],
-                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => 'importCsv'],
-                [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
-                [['pan_no', 'aadhaar_no', 'vendor_code'], 'unique'],
-            ];
+            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => 'importCsv'],
+            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+            [['ifsc', 'pan_no'], 'trim'],
+            [['pan_no', 'adhar_no', 'vendor_code'], 'unique'],
+            [['bank_account_no', 'ifsc'], 'required', 'when' => function ($model) {
+                    return !empty($model->bank_account_no) || !empty($model->ifsc);
+                }, 'on' => ['importCsv']],
+            [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'when' => function ($model) {
+                    return !empty($model->bank_code);
+                }, 'except' => ['importCsv'], 'whenClient' => "function (attribute, value) { 
+                            return $('#tblvendormaster-bank_code').val() != ''; 
+                        }"],
+            [['bank_account_no'], function ($attribute, $params) {
+                    $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
+                    if ($error !== TRUE)
+                        $this->addError($attribute, $error);
+                }],
+            [['ifsc'], function ($attribute, $params) {
+                    Yii::$app->general->validateIfsc($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'when' => function() {
+                    return ((in_array($this->scenario, ['importCsv']) && !empty($this->ifsc)));
+                }],
+            [['beneficiary_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateBeneficiary($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
+            [['ifsc'], 'setBankDetail', 'when' => function ($model) {
+                    return !empty($model->ifsc);
+                }, 'on' => ['importCsv']],
+        ];
         $client_rules = Yii::$app->customvalidation->getRules('TblVendorMaster', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
@@ -69,7 +96,7 @@ class TblVendorMaster extends \app\models\ChildModel {
             'vendor_code' => Yii::t('app', 'Vendor Code'),
             'vendor_name' => Yii::t('app', 'Vendor Name'),
             'pan_no' => Yii::t('app', 'Pan No'),
-            'aadhaar_no' => Yii::t('app', 'Aadhaar No'),
+            'adhar_no' => Yii::t('app', 'Aadhaar No'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -82,6 +109,13 @@ class TblVendorMaster extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'bank_code' => Yii::t('app', 'Bank'),
+            'branch_code' => Yii::t('app', 'Branch'),
+            'bank_account_no' => Yii::t('app', 'Bank Account No'),
+            'ifsc' => Yii::t('app', 'Ifsc'),
+            'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
+            'vendor_type' => Yii::t('app', 'Vendor Type'),
+            'is_active' => Yii::t('app', 'Is Active'),
         ];
     }
 
@@ -122,6 +156,26 @@ class TblVendorMaster extends \app\models\ChildModel {
             return false;
         } else {
             return true;
+        }
+    }
+
+    public function getBankCode() {
+        return $this->hasOne(TblBanks::className(), ['bank_code' => 'bank_code']);
+    }
+
+    public function getBranchCode() {
+        return $this->hasOne(TblBranch::className(), ['branch_code' => 'branch_code']);
+    }
+
+    public function setBankDetail() {
+        $branch = new TblBranch();
+        $data = $branch->find()->where(['ifsc' => $this->ifsc, 'is_active' => '1'])->one();
+        if (!empty($data)) {
+            $this->bank_code = $data->bank_code;
+            $this->branch_code = $data->branch_code;
+            $this->ifsc = $data->ifsc;
+        } else {
+            $this->addError('ifsc', Yii::t('app/validation', $this->getAttributeLabel('ifsc') . ' is invalid'));
         }
     }
 

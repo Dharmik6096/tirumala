@@ -59,10 +59,10 @@ class TblPaymentTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
-            [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'created_by', 'updated_by', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
-            [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
-            [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status'], 'safe'],
+                [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
+                [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'created_by', 'updated_by', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
+                [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
+                [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code'], 'safe'],
         ];
     }
 
@@ -172,7 +172,7 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                             'ubp.bank_account_no as DebitAccountNo',
                             'ubp.account_holder_name as DebitAccName',
                             'convert(varchar, getdate(), 12) ValueDate',
-                            'case when lower(ISNULL(ubp.corporate_code,\'slips\'))=\'ceft\' then (case when b.old_bank_code=ubp.bank_code then \'CARG\' else \'CEFT\' end) else \'SLIPS\' end as TransactionType',
+                            'case when b.old_bank_code=ubp.bank_code then \'CARG\' when lower(ISNULL(ubp.corporate_code,\'slips\'))=\'ceft\' then \'CEFT\' else \'SLIPS\' end as TransactionType',
                             'ba.auth_url',
                             'ba.payment_url',
                             'ba.reverse_check_url',
@@ -180,8 +180,13 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                             'ubp.corporate_code',
                             'pt.type',
                             'pt.union_bank_payment_code',
-                            'pt.union_code'
+                            'pt.union_code',
+                            'LEFT(CASE WHEN ISNULL([bmc].[bmc_short_name],\'\')=\'\' THEN [bmc].[bmc_name] ELSE [bmc].[bmc_short_name] END,4) as bmc_short_name',
+                            'LEFT(DATENAME(MONTH, pap.from_date), 3) as month_name',
+                            'CASE WHEN DAY(pap.from_date)=1 THEN \'1\' WHEN DAY(pap.from_date) in (11,16) THEN \'2\' ELSE \'3\' END AS pay_cycle',
                         ])
+                        ->innerJoin('tbl_payment_transaction_approval as pap', 'pap.payment_transaction_approval_code = pt.payment_transaction_approval_code and lower(approval_status)=\'approve\'')
+                        ->innerJoin('tbl_bmc as bmc', 'bmc.bmc_code = pap.bmc_code')
                         ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
                         ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
                         ->innerJoin('tbl_banks as b', 'b.bank_code = pt.bank_code')
@@ -189,7 +194,8 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                             'pt.is_file' => 0,
                             'UPPER(ubp.integration_mode)' => 'API',
                             'ubp.is_active' => 1,
-                            'ba.is_active' => 1
+                            'ba.is_active' => 1,
+                            'pt.is_approved' => 1
                         ])
                         ->andWhere(['NOT', ['ISNULL(pt.file_name, \'\')' => '']])
                         ->orderBy(['pt.payment_transaction_code' => SORT_ASC])
@@ -222,8 +228,8 @@ class TblPaymentTransaction extends \app\models\ChildModel {
 //                $memberPaymentModel->dcs_code = $data->dcs_code;
 //                $memberPaymentModel->union_code = $data->union_code;
                 $disburseCount = $memberPaymentModel->find()->select('count(*) as count,payment_status')
-                ->where(['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
-                ->groupBy(['payment_status'])->asArray()->all();
+                                ->where(['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
+                                ->groupBy(['payment_status'])->asArray()->all();
                 $count = count($disburseCount);
                 if ($count == 1 && lower($disburseCount[0]['payment_status']) == 'disburse') {
                     Yii::$app->db->createCommand()
@@ -231,12 +237,12 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                                 'disburse_amount' => new Expression('final_amount'),
                                 'disburse_date' => $date,
                                 'payment_status' => 'Disburse',
-                                    ], ['union_code'  => $data->union_code, 'dcs_payment_cycle_code'  => $data->dcs_payment_cycle_code, 'dcs_code'  => $data->dcs_code,  new Expression('LOWER(payment_status) = "sent"')])
+                                    ], ['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code, new Expression('LOWER(payment_status) = "sent"')])
                             ->execute();
-                     
                 }
             }
         }
         return;
     }
+
 }

@@ -49,7 +49,7 @@ class TblPlantDispatchTxnHistory extends \yii\db\ActiveRecord {
             [['plant_dispatch_txn_code', 'plant_dispatch_code'], 'safe'],
             [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no', 'grn_missing_qty'], 'safe'],
             [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'history_created_at'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'po_itemno'], 'safe'],
         ];
     }
 
@@ -82,6 +82,7 @@ class TblPlantDispatchTxnHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'po_itemno' => Yii::t('app', 'PO Item No'),
         ];
     }
 

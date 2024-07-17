@@ -54,6 +54,7 @@ $allow_stop_payment_vendor = isset(Yii::$app->session->get('unionConfig')[$model
         ?>
         <?= Html::hiddenInput('process_lock_flag', 'processed', ['class' => 'process_lock_flag']); ?>
         <?= Html::hiddenInput('types_title', $model->types_title); ?>
+        <?= Html::hiddenInput('union_code', $model->union_code); ?>
         <?php
         $attribute = [
             ['class' => 'kartik\grid\CheckboxColumn',

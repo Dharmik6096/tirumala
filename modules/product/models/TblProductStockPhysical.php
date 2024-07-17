@@ -7,6 +7,7 @@ use app\models\ChildModel;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\product\models\TblProduct;
+use app\modules\organisation\models\TblDcsBmc;
 
 class TblProductStockPhysical extends ChildModel {
 
@@ -103,6 +104,17 @@ class TblProductStockPhysical extends ChildModel {
                 $this->addError('customer_code', 'Customer code is invalid.');
                 return false;
             }
+        } else if ($this->customer_type == 'BMC') {
+            $bmcData = TblDcsBmc::find()->where(['ref_code' => $this->customer_code])->one();
+            if (!empty($bmcData)) {
+                $this->union_code = $bmcData->union_code;
+                $this->plant_code = $bmcData->plant_code;
+                $this->mcc_plant_code = $bmcData->mcc_plant_code;
+                $this->bmc_code = $bmcData->bmc_code;
+            } else {
+                $this->addError('customer_code', 'Customer code is invalid.');
+                return false;
+            }
         } else {
             $dcsData = TblDcs::find()->where(['ref_code' => $this->customer_code])->one();
             if (!empty($dcsData)) {
@@ -145,6 +157,10 @@ class TblProductStockPhysical extends ChildModel {
             $this->addError($attribute, 'Product Code is invalid.');
             return false;
         }
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

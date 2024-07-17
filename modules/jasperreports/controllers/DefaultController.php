@@ -23,6 +23,12 @@ class DefaultController extends \app\controllers\ChildController {
         $model = new ReportsModel();
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);
+            $client_code = \Yii::$app->session->get('eiplCode');
+            if (!empty($client_code) && isset($this->getLabels($this->report)['path'][$client_code])) {
+                $this->data['path'] = $this->getLabels($this->report)['path'][$client_code];
+            } elseif (!empty($client_code) && isset($this->getLabels($this->report)['path']['EIPLCOMMON'])) {
+                $this->data['path'] = $this->getLabels($this->report)['path']['EIPLCOMMON'];
+            }
             $model->scenario = $this->data['scenario'];
             if (strpos($this->data['param'], 'p_milk_type') !== FALSE) {
                 $model->p_milk_type = 0;
@@ -247,6 +253,9 @@ class DefaultController extends \app\controllers\ChildController {
         if ($client_code == 'ANIG') {
             $this->report = 'VendorMilkPaymentAnig';
         }
+        if ($client_code == 'SHUDDH') {
+            $this->report = 'VendorMilkPaymentShuddh';
+        }
         return $this->actionIndex();
     }
 
@@ -256,7 +265,11 @@ class DefaultController extends \app\controllers\ChildController {
     }
 
     public function actionVendorMilkBill() {
+        $client_code = \Yii::$app->session->get('eiplCode');
         $this->report = 'VendorMilkBill';
+        if ($client_code == 'SHUDDH') {
+            $this->report = 'VendorMilkBillShuddh';
+        }
         return $this->actionIndex();
     }
 
@@ -390,6 +403,26 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberPaymentVrs() {
+        $this->report = 'MemberPaymentVrs';
+        return $this->actionIndex();
+    }
+
+    public function actionVspPaymentVrs() {
+        $this->report = 'VspPaymentVrs';
+        return $this->actionIndex();
+    }
+
+    public function actionVspPaymentOnlineVrs() {
+        $this->report = 'VspPaymentOnlineVrs';
+        return $this->actionIndex();
+    }
+
+    public function actionProvisionalMemberRegister() {
+        $this->report = 'ProvisionalMemberRegister';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -436,12 +469,11 @@ class DefaultController extends \app\controllers\ChildController {
                 }
             }
             //$controls['locale'] = Yii::$app->session->get('LanguageCode');
-            $controls['locale'] = 'en';
+            $controls['locale'] = !empty($model->locale) ? $model->locale : 'en';
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
-            $controls['REPORT_LOCALE'] = 'en';
+            $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
-            $controls['digit_config'] = 0;
-
+            $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
                 $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
@@ -482,7 +514,7 @@ class DefaultController extends \app\controllers\ChildController {
 
     /* Reports Configuration */
 
-    private function getLabels($l) {
+    public function getLabels($l) {
         $label = [
             'MemberMilkCollectionSummary' => [
                 'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
@@ -933,6 +965,47 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VendorMilkBillSummaryForGLT',
                 'scenario' => 'VendorMilkBillSummaryGLT',
                 'title' => 'Vendor Milk Bill Summary',
+                'bkg_export' => TRUE,
+            ],
+            'MemberPaymentVrs' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/MemberPaymentVRS',
+                'scenario' => 'MemberPaymentVrs',
+                'title' => 'Member Payment',
+                'bkg_export' => TRUE,
+            ],
+            'VspPaymentVrs' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VSPPaymentVRS',
+                'scenario' => 'VspPaymentVrs',
+                'title' => 'Vsp Payment',
+                'bkg_export' => TRUE,
+            ],
+            'VspPaymentOnlineVrs' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VSPPaymentOnlineVRS',
+                'scenario' => 'VspPaymentOnlineVrs',
+                'title' => 'Vsp Payment Online',
+                'bkg_export' => TRUE,
+            ],
+            'VendorMilkBillShuddh' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
+                'path' => 'vsp/VendorMilkBillShuddh',
+                'scenario' => 'VendorMilkBill',
+                'title' => '609 - Vendor Milk Bill',
+                'bkg_export' => TRUE,
+            ],
+            'ProvisionalMemberRegister' => [
+                'param' => 'p_provisional_member_code,p_lang_code,locale,digit_config',
+                'path' => 'MemberRegister',
+                'scenario' => 'ProvisionalMemberRegister',
+                'title' => 'Provisional Member Register',
+            ],
+            'VendorMilkPaymentShuddh' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',
+                'path' => 'vsp/VspPaymentBillShuddh',
+                'scenario' => 'VendorMilkPayment',
+                'title' => '604 - Vendor Milk Payment',
                 'bkg_export' => TRUE,
             ],
         ];

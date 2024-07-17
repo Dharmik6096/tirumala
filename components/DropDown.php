@@ -1248,7 +1248,7 @@ class DropDown extends Component {
             'bank_type' => [
                 'name' => 'bank_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT')],
+                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
             ],
             'payment_mode_member' => [
                 'name' => 'payment_mode_member',
@@ -1504,7 +1504,7 @@ class DropDown extends Component {
             'org_type' => [
                 'name' => 'org_type',
                 'prompt' => Yii::t('app', 'Select Type'),
-                'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'DCS' => Yii::t('app', 'DCS')],
+                'data' => ['BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
             ],
             'approval_collection_type' => [
                 'name' => 'approval_collection_type',
@@ -1852,7 +1852,7 @@ class DropDown extends Component {
             'mode_of_payment' => [
                 'name' => 'mode_of_payment',
                 'prompt' => Yii::t('app', 'Select Payment Mode'),
-                'data' => ['0' => Yii::t('app', 'Cash Deposited In Bank'), '1' => Yii::t('app', 'Cash Submited to Officer')],
+                'data' => ['1' => Yii::t('app', 'Cash'), '2' => Yii::t('app', 'DD'), '3' => Yii::t('app', 'Check'), '4' => Yii::t('app', 'Other')],
             ],
             'applicant_relation' => [
                 'name' => 'applicant_relation',
@@ -1863,6 +1863,11 @@ class DropDown extends Component {
                 'name' => 'machine_owned_type',
                 'prompt' => Yii::t('app', 'Select Machine Owned Type'),
                 'data' => [1 => Yii::t('app', 'Self'), 2 => Yii::t('app', 'Company')],
+            ],
+            'language_list' => [
+                'name' => 'language_code',
+                'prompt' => Yii::t('app', 'Select Language'),
+                'data' => [0 => Yii::t('app', 'English'), 1 => Yii::t('app', 'Hindi')],
             ],
         ];
         return $records[$l];
@@ -1981,7 +1986,7 @@ class DropDown extends Component {
             'trip_code' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code', 'prompt' => 'Select Trip', 'model' => 'TblMilkVehicleEntry'],
             'grn_no' => ['name' => 'grn_no', 'fields' => 'grn_no,grn_no', 'prompt' => 'Select GRN No', 'model' => 'TblMilkVehicleEntry'],
             'user' => ['name' => 'id', 'fields' => 'id,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
-            'ref_no' => ['name' => 'ref_no', 'fields' => 'document_no,document_no,', 'prompt' => Yii::t('app', 'Select Ref No.'), 'model' => 'TblPlantDispatch', 'depend' => 'plant_code', 'dependArray' => ['mcc_plant_code', 'status']],
+            'ref_no' => ['name' => 'ref_no', 'fields' => 'document_no,document_no,', 'prompt' => Yii::t('app', 'Select Ref No.'), 'model' => 'TblPlantDispatch', 'depend' => 'plant_code', 'dependArray' => ['bmc_code', 'status']],
             'approval_process' => ['name' => 'process_name', 'fields' => 'process_name,process_desc,', 'prompt' => Yii::t('app', 'Select Process'), 'model' => 'TblApprovalStagesProcess', 'depend' => 'union_code'],
             'indent-product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code', 'dependArray' => ['is_indent']],
             'spare_code' => ['name' => 'spare_code', 'fields' => 'asset_code,asset_name', 'prompt' => 'Select Head', 'model' => 'TblAssetMaster', 'whereCondition' => ['is_spare' => 1]],

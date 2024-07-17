@@ -102,7 +102,7 @@ $form = ActiveForm::begin([
                 </label>
             </div>
             <div class="col-sm-2 create_fields reset_field" id="new_sap_batch_no" style="display:none;">
-                <?= $form->field($txModel, 'sap_batch_no')->textInput(['class'=>'form-control','disabled'=>'disabled', 'id'=>'sap_batch_no'])->label(Yii::t('app', 'Sap Batch No')) ?>
+                <?= $form->field($txModel, 'sap_batch_no')->textInput(['class' => 'form-control', 'disabled' => 'disabled', 'id' => 'sap_batch_no'])->label(Yii::t('app', 'Sap Batch No')) ?>
             </div>
         <?php }
         ?>
@@ -118,11 +118,10 @@ $form = ActiveForm::begin([
         <thead>
             <tr>
                 <th>Product</th>
-                <?php
-                if($batchNoWiseInventory == 1){ ?>
+                <?php if ($batchNoWiseInventory == 1) { ?>
                     <th>Sap Batch No</th>
-                <?php
-                } ?>
+                <?php }
+                ?>
                 <th>Unit</th>
                 <th>Stock</th>
                 <th>Quantity</th>
@@ -199,11 +198,7 @@ $('#tblproductstockadjustment-type').on('change', function(){
     $('#tblproductstockadjustment-mcc_plant_code').trigger('select2:select');
     $('#tblproductstockadjustment-mcc_plant_code').trigger('change');
     setCode();
-    if($(this).val()=='MCC'){
-        $('#mcc').show();
-        $('#bmc').hide(); 
-        $('#dcs').hide(); 
-    }else if($(this).val()=='BMC'){
+    if($(this).val()=='BMC'){
         $('#mcc').show(); 
         $('#bmc').show();
         $('#dcs').hide();
@@ -223,10 +218,10 @@ $(document).ready(function(){
     $('#bmc').hide(); 
     $('#dcs').hide();
     if(userType == 5){
-        $('#tblproductstockadjustment-type').val('MCC');
+        $('#tblproductstockadjustment-type').val('BMC');
         $('#tblproductstockadjustment-type').trigger('select2:select');
         $('#tblproductstockadjustment-type').trigger('change');
-        $('.field-tblproductstockadjustment-type').addClass('disabledDiv');
+//        $('.field-tblproductstockadjustment-type').addClass('disabledDiv');
     }
     $('#add_product').on('click', function(){
         var err = '';
@@ -396,10 +391,7 @@ function setCode(){
    var mcc =$('#tblproductstockadjustment-mcc_plant_code').val();
    var bmc =$('#tblproductstockadjustment-bmc_code').val();
    var dcs =$('#tblproductstockadjustment-dcs_code').val();
-    if(type =='MCC'){
-        $('#code').val(mcc);
-         $('#code').trigger('change');
-    }else if(type =='BMC'){
+    if(type =='BMC'){
         $('#code').val(bmc);
          $('#code').trigger('change');
     }else if(type =='DCS'){

@@ -6,7 +6,7 @@ use kartik\detail\DetailView;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
-$this->title = Yii::$app->label->title('view', 'provisional member');
+$this->title = Yii::$app->label->title('view', 'provisional member') . ' > ' . $model->application_no;
 if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 0) {
     $this->params['menu'][] = Yii::$app->controls->add('provisional member');
     if ($model->is_approved != 1) {
@@ -28,33 +28,39 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             [
                             'attribute' => 'union_code',
                             'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'bmc_code',
+                            'value' => isset($model->tblDcsBmc) ? $model->tblDcsBmc->ref_code : '',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
                     [
                     'columns' => [
-                            [
-                            'attribute' => 'bmc_code',
-                            'value' => (string) $model->bmc_code,
-                            'valueColOptions' => ['style' => 'width:30%']],
                             [
                             'attribute' => 'bmc_name',
                             'value' => isset($model->tblDcsBmc) ? $model->tblDcsBmc->bmc_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                            [
+                            'attribute' => 'dcs_code',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                     ],
                 ],
                     [
                     'columns' => [
                             [
-                            'attribute' => 'society_code',
-                            'value' => (string) $model->dcs_code,
+                            'attribute' => 'dcs_ref_code',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->ref_code : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
-                            'attribute' => 'dcs_code',
-                            'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'attribute' => 'society_code',
+                            'value' => (string) $model->dcs_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -243,7 +249,20 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                         ],
                             [
                             'attribute' => 'applicant_relation',
-                            'value' => isset($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'value' => !empty($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'post_office',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'is_aadhar_verify',
+                            'value' => ($model->is_aadhar_verify == 0) ? 'Pending' : ($model->is_aadhar_verify == 1 ? 'Verify' : ''),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -267,7 +286,24 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             [
                             'attribute' => 'is_verify',
                             'value' => ($model->is_verify == 0) ? 'Pending' : ($model->is_verify == 1 ? 'Verify' : ''),
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'is_operator_aggre',
+                            'value' => ($model->is_operator_aggre == 0) ? 'Pending' : ($model->is_operator_aggre == 1 ? 'Verify' : ''),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'witness_name',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'place',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
@@ -577,6 +613,26 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                 ?>
             </div>
         </div>
+    </div>
+    <div class="col-sm-12">
+        <table class="table table-bordered table-striped table-main table-language table-rate table-hover">
+            <tbody>
+            <thead>
+                <tr>
+                    <th><?= Yii::t('app', 'Member Class') ?></th>
+                    <th><?= Yii::t('app', 'Home consumption') ?></th>
+                    <th><?= Yii::t('app', 'Commitment Detail') ?></th>
+                    <th><?= Yii::t('app', 'Annual Milk Pour') ?></th>
+                </tr>
+            </thead>
+            <tr>
+                <td><?= Yii::$app->general->getStaticDropdownVal('member_class', $model, 'member_class'); ?></td>
+                <td><?= $model->home_consumption_milk; ?></td>
+                <td><?= $model->market_surplus_milk; ?></td>
+                <td><?= $model->annual_milk_pour; ?></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
     <div class="row">
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">

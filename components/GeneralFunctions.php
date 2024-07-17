@@ -52,7 +52,9 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\general\models\TblProcessApproval;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
+use Exception;
 use webvimark\modules\UserManagement\components\GhostHtml;
+use PHPExcel;
 
 class GeneralFunctions extends Component {
 
@@ -158,7 +160,7 @@ class GeneralFunctions extends Component {
 
     public static function getStates($value) {
 
-        //$model = IdentityMaster::find()->where(['organization_type'=>$value])->one();
+//$model = IdentityMaster::find()->where(['organization_type'=>$value])->one();
 
         $return_array = [];
         switch ($value) {
@@ -450,7 +452,7 @@ class GeneralFunctions extends Component {
         $tableName = $model->tableName();
         $val = (new \yii\db\Query)
                 ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
-                //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
+//->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
                 ->from($tableName)
                 ->one();
         $number = (int) $val[$primaryKey] + $auto_inc;
@@ -510,7 +512,7 @@ class GeneralFunctions extends Component {
 
     public function getforeignkey($value, $field) {
         return !empty($value) ? $value->$field : '';
-        // return '';
+// return '';
     }
 
     public function valiadteUnique($model, $field, $value, $msg = '') {
@@ -1517,7 +1519,7 @@ class GeneralFunctions extends Component {
                     $Code = $model->customer_code;
                 }
             } else {
-                //$model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
+//$model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
                 $model->ex_code = $model->customer_code;
                 $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             }
@@ -1611,7 +1613,7 @@ class GeneralFunctions extends Component {
                 $key_config['ref_code_length'] = $data->ref_code_length;
                 $key_config['ref_code_fix_length'] = $data->ref_code_fix_length;
 //                $key_config['has_prefix'] = $data->has_prefix;
-                //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
+//$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
                 $PatternArray[$data->pattern_for] = $key_config;
             }
             return $PatternArray;
@@ -1906,11 +1908,11 @@ class GeneralFunctions extends Component {
             $payment_model = new \app\modules\collection\models\TblMccShiftLock();
             $data = $payment_model->find()
                     ->where([
-                        'cast(date_time_of_collection as date)' => $date, 
-                        'shift_code' => $model->shift_code, 
+                        'cast(date_time_of_collection as date)' => $date,
+                        'shift_code' => $model->shift_code,
                         $lock_flag => 1,
                         'mcc_plant_code' => $model->$codeParam
-                        ])
+                    ])
                     ->one();
             if (!empty($data)) {
                 $model->addError($showError, "Shift Is Already Lock");
@@ -1919,11 +1921,16 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function validateBMC($model, $attribute) {
+    public function validateBMC($model, $attribute, $hierarchy = FALSE) {
         $bmcModel = new TblDcsBmc();
-        $records = $bmcModel->find()->select('bmc_code')->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
+        $records = $bmcModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'])->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->bmc_code;
+            if ($hierarchy == 'TRUE') {
+                $model->union_code = $records[0]->union_code;
+                $model->plant_code = $records[0]->plant_code;
+                $model->mcc_plant_code = $records[0]->mcc_plant_code;
+            }
         } else {
             $model->addError('bmc_code', Yii::t('app/validation', Yii::t('app', 'BMC') . ' Is Invalid.'));
             return false;
@@ -1966,10 +1973,10 @@ class GeneralFunctions extends Component {
     }
 
     function distanceCalculation($point1_lat, $point1_long, $point2_lat, $point2_long, $unit = 'km', $decimals = 2) {
-        // Calculate the distance in degrees
+// Calculate the distance in degrees
         $degrees = rad2deg(acos((sin(deg2rad($point1_lat)) * sin(deg2rad($point2_lat))) + (cos(deg2rad($point1_lat)) * cos(deg2rad($point2_lat)) * cos(deg2rad($point1_long - $point2_long)))));
 
-        // Convert the distance in degrees to the chosen unit (kilometres, miles or nautical miles)
+// Convert the distance in degrees to the chosen unit (kilometres, miles or nautical miles)
         switch ($unit) {
             case 'km':
                 $distance = $degrees * 111.13384; // 1 degree = 111.13384 km, based on the average diameter of the Earth (12,735 km)
@@ -2136,7 +2143,7 @@ class GeneralFunctions extends Component {
             $ext = pathinfo($file_name, PATHINFO_EXTENSION);
             $modelAttachment->remarks = 'Documents';
             $modelAttachment->attachment_type = $ext;
-            // save thumbnail
+// save thumbnail
             $imagePath = Yii::getAlias('@webroot') . '/web/upload/images/';
             $thumbnail_path = $imagePath . 'thumbnail';
             $thumbnail_base_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . 'thumbnail';
@@ -2490,11 +2497,31 @@ class GeneralFunctions extends Component {
     }
 
     public function getUnionConfigResult($union, $field, $model = '') {
-        if(!empty(Yii::$app->session->get('unionConfig'))){
+        if (!empty(Yii::$app->session->get('unionConfig'))) {
             $data = isset(Yii::$app->session->get('unionConfig')[$union][$field]) ? Yii::$app->session->get('unionConfig')[$union][$field] : '';
         } else {
             $data = is_object($model) && property_exists($model, 'import_union_config') ? $model->import_union_config[$field] : '';
         }
         return !empty($data) ? $data : '';
     }
+
+    public function getDisplayDocumentLink($module_code, $module_name, $doc_key) {
+        $attchmentModel = new \app\modules\document\models\TblAttachment();
+
+        $records = $attchmentModel->find()
+                        ->select(['attachment'])
+                        ->innerJoin('tbl_document_master_info', 'tbl_document_master_info.doc_id = tbl_attachment.doc_id')
+                        ->where(['tbl_attachment.module_code' => $module_code, 'tbl_attachment.module_name' => $module_name, 'tbl_document_master_info.doc_key' => $doc_key])
+                        ->asArray()->all();
+        $links = '';
+        $class = '';
+        foreach ($records as $record) {
+            if ($links != '') {
+                $class = 'icon-set-right';
+            }
+            $links .= ' ' . Html::a('<i class="fa fa-picture-o"></i>', $record['attachment'], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank', 'class' => $class]);
+        }
+        return $links;
+    }
+
 }

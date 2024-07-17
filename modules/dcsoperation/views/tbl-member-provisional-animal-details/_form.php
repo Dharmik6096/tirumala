@@ -45,6 +45,7 @@ $btn = $type == 'create' ? 'create' : 'update';
                     ],
                         [
                         'attribute' => 'member_name',
+                        'value' => $model->member_name . ' ' . $model->father_name . ' ' . $model->surname,
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                 ],
@@ -280,7 +281,8 @@ $script = "
     setHeifersCount();
     setMilchCount();
     setDryCount();
-    
+    setDailyMilk();
+    setRemainMilk();
     $('.daily_milk_production').change(function(){
         setDailyMilk();
     });

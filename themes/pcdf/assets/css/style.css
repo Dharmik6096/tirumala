@@ -5146,3 +5146,44 @@ tr.highlightRow {
     height: 115px !important;
     text-align: center;
 }
+.remark-text-aria{
+    margin-bottom: 10px;
+    height: 43px !important;
+}
+.icon-set, .icon-set-checkbox {
+    position: relative;
+}
+
+.icon-set a{
+    position: absolute;
+    right: 10px;
+}
+.icon-set-checkbox a{
+    position: absolute;
+    right: 68px;
+    top: 10px;
+}
+.icon-set a.icon-set-right, .icon-set-checkbox a.icon-set-right {
+    margin-right: 15px;
+}
+
+.card {
+    border: 1px solid #dee2e6 !important;
+    border-radius: 5px !important;
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0px 15px 0px;
+}
+
+.card-header {
+    padding: 10px;
+    justify-content: space-between;
+    color: #fff;
+    border-radius: 5px 5px 0px 0px;
+}
+.card-body{
+    background-color: #fff;
+}
+.mt-21 {
+    margin-top: 21px;
+}

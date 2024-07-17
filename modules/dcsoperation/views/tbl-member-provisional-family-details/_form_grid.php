@@ -34,6 +34,11 @@ $grid_option = [
             return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/dcsoperation/tbl-member-provisional/get-family-data', 'member_provisional_family_detail_code' => $model->member_provisional_family_detail_code], $options);
         },
         'delete' => ['option' => 'member_provisional_family_detail_code,member_provisional_family_detail_code,/dcsoperation/tbl-member-provisional/delete-family'],
+        'imageView' => function ($url, $model) {
+            if ($model->is_nominee == 1) {
+                return Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProofback', 'nAddressProof']);
+            }
+        },
     ]
 ];
 

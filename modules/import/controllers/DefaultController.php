@@ -69,6 +69,8 @@ class DefaultController extends \app\controllers\ChildController {
                 $fields = $data['mapping_fields'];
                 $scenario = !empty($data['mapping_scenario']) ? $data['mapping_scenario'] : '';
                 $data['save_child'] = !empty($data['save_map_child']) ? TRUE : FALSE;
+                $data['save_delete_child'] = !empty($data['save_delete_child']) ? TRUE : FALSE;
+                $data['unlink_file'] = !empty($data['unlink_file']) ? TRUE : FALSE;
                 $data['update_key'] = FALSE;
             }
             $fields = explode(',', $fields);
@@ -149,6 +151,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => $scenario,
                 'updateField' => !empty($data['update_field']) ? $data['update_field'] : '',
                 'saveChild' => !empty($data['save_child']) ? $data['save_child'] : 0,
+                'saveDeleteChild' => !empty($data['save_delete_child']) ? $data['save_delete_child'] : 0,
+                'unlinkFile' => !empty($data['unlink_file']) ? $data['unlink_file'] : 0,
                 'details' => $data,
                 'file_path' => Yii::$app->basePath . '/web/import/' . trim($fileName),
                 'file_name' => trim($fileName)

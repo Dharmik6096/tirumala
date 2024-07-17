@@ -290,80 +290,90 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_id = [];
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = $getParam;
-            $memberPaymentModelData = $memberPaymentModel->getRecords(false)->all();
-            foreach ($memberPaymentModelData as $memberPayment) {
-                $historyModel = new TblMemberPaymentAliasHistory();
-                Yii::$app->operation->history($memberPayment, $historyModel, UPDATE);
-                $dcsCode = $memberPayment->dcs_code;
-                $memberPayment->payment_status = in_array($dcsCode, $stop_payment_dcs) ? 'Process' : $processFlag;
-                $save_model[] = $historyModel;
-                $save_model[] = $memberPayment;
-                $holdAmount = !empty($memberPayment->hold_amount) ? $memberPayment->hold_amount : 0;
-                $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
-                $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
-                $recovery = !empty($memberPayment->recovery) ? $memberPayment->recovery : 0;
-                $adjust_recovery = !empty($memberPayment->adjust_recovery) ? $memberPayment->adjust_recovery : 0;
-                $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
-                $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
-                $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
-                $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
-            }
-
-            foreach ($summaryModelData as $summaryData) {
-                $historyModel = new TblMemberPaymentSummaryAliasHistory();
-                Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
-                $dcs = $summaryData->dcs_code;
-                $summaryData->payment_status = in_array($dcs, $stop_payment_dcs) ? 'Process' : $processFlag;
-                if (!empty($adjustmentSummary[$dcs])) {
-                    $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
-                    $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
-                    $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
-                    $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
-                    $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
+            $is_validate = true;
+            $is_bank_integrated = Yii::$app->general->getUnionConfiguration($memberPaymentModel->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
+            if ($is_bank_integrated && $processFlag == 'Lock') {
+                $memberPaymentModel->scenario = 'finalize_payment';
+                if(!$memberPaymentModel->validate()){
+                    $is_validate = false;
                 }
-                $save_model[] = $historyModel;
-                $save_model[] = $summaryData;
-                if ($processFlag == 'Lock') {
-                    $old_stop_all = TblPaymentStop::find()
-                            ->where(['payment_cycle_code' => $summaryData->payment_cycle_code, 'customer_code' => $dcs, 'customer_type' => 'DCS', 'payment_type' => 'MEMBER_PAYMENT', 'bmc_code' => $summaryData->bmc_code])
-                            ->all();
-                    if (!empty($old_stop_all)) {
-                        foreach ($old_stop_all as $old_stop) {
-                            $historyModel = new TblPaymentStopHistory();
-                            if (in_array($dcs, $stop_payment_dcs)) {
-                                Yii::$app->operation->history($old_stop, $historyModel, UPDATE);
-                                $old_stop->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
-                                $save_model[] = $old_stop;
-                            } else {
-                                Yii::$app->operation->history($old_stop, $historyModel, DELETE);
-                                $historyModel->lock_datetime = date('Y-m-d H:i:s');
-                                $delete_model[] = $old_stop;
+            }
+            if($is_validate){
+                $memberPaymentModelData = $memberPaymentModel->getRecords(false)->all();
+                foreach ($memberPaymentModelData as $memberPayment) {
+                    $historyModel = new TblMemberPaymentAliasHistory();
+                    Yii::$app->operation->history($memberPayment, $historyModel, UPDATE);
+                    $dcsCode = $memberPayment->dcs_code;
+                    $memberPayment->payment_status = in_array($dcsCode, $stop_payment_dcs) ? 'Process' : $processFlag;
+                    $save_model[] = $historyModel;
+                    $save_model[] = $memberPayment;
+                    $holdAmount = !empty($memberPayment->hold_amount) ? $memberPayment->hold_amount : 0;
+                    $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
+                    $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
+                    $recovery = !empty($memberPayment->recovery) ? $memberPayment->recovery : 0;
+                    $adjust_recovery = !empty($memberPayment->adjust_recovery) ? $memberPayment->adjust_recovery : 0;
+                    $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
+                    $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
+                    $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
+                    $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
+                }
+
+                foreach ($summaryModelData as $summaryData) {
+                    $historyModel = new TblMemberPaymentSummaryAliasHistory();
+                    Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
+                    $dcs = $summaryData->dcs_code;
+                    $summaryData->payment_status = in_array($dcs, $stop_payment_dcs) ? 'Process' : $processFlag;
+                    if (!empty($adjustmentSummary[$dcs])) {
+                        $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
+                        $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
+                        $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
+                        $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
+                        $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
+                    }
+                    $save_model[] = $historyModel;
+                    $save_model[] = $summaryData;
+                    if ($processFlag == 'Lock') {
+                        $old_stop_all = TblPaymentStop::find()
+                                ->where(['payment_cycle_code' => $summaryData->payment_cycle_code, 'customer_code' => $dcs, 'customer_type' => 'DCS', 'payment_type' => 'MEMBER_PAYMENT', 'bmc_code' => $summaryData->bmc_code])
+                                ->all();
+                        if (!empty($old_stop_all)) {
+                            foreach ($old_stop_all as $old_stop) {
+                                $historyModel = new TblPaymentStopHistory();
+                                if (in_array($dcs, $stop_payment_dcs)) {
+                                    Yii::$app->operation->history($old_stop, $historyModel, UPDATE);
+                                    $old_stop->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
+                                    $save_model[] = $old_stop;
+                                } else {
+                                    Yii::$app->operation->history($old_stop, $historyModel, DELETE);
+                                    $historyModel->lock_datetime = date('Y-m-d H:i:s');
+                                    $delete_model[] = $old_stop;
+                                }
+                                $save_model[] = $historyModel;
                             }
-                            $save_model[] = $historyModel;
-                        }
-                    } else {
-                        if (in_array($dcs, $stop_payment_dcs)) {
-                            $stop_pay = new TblPaymentStop();
-                            $stop_pay->attributes = $summaryData->attributes;
-                            $stop_pay->customer_type = 'DCS';
-                            $stop_pay->customer_code = $dcs;
-                            $stop_pay->payment_type = 'MEMBER_PAYMENT';
-                            $stop_pay->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
-                            $stop_pay->originating_type = $stop_pay->originating_org_type = $stop_pay->originating_org_code = NULL;
-                            $stop_pay->created_at = $stop_pay->created_by = $stop_pay->updated_at = $stop_pay->updated_by = NULL;
-                            $save_model[] = $stop_pay;
+                        } else {
+                            if (in_array($dcs, $stop_payment_dcs)) {
+                                $stop_pay = new TblPaymentStop();
+                                $stop_pay->attributes = $summaryData->attributes;
+                                $stop_pay->customer_type = 'DCS';
+                                $stop_pay->customer_code = $dcs;
+                                $stop_pay->payment_type = 'MEMBER_PAYMENT';
+                                $stop_pay->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
+                                $stop_pay->originating_type = $stop_pay->originating_org_type = $stop_pay->originating_org_code = NULL;
+                                $stop_pay->created_at = $stop_pay->created_by = $stop_pay->updated_at = $stop_pay->updated_by = NULL;
+                                $save_model[] = $stop_pay;
+                            }
                         }
                     }
                 }
-            }
 
-            $successMsg = 'Payment adjusted succesfully';
-            if ($processFlag == 'Lock') {
-                $successMsg = Yii::t('app', 'Payment has been Locked Successfully');
-            }
-            $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $delete_model, [$successMsg, 'info']);
-            if ($transaction == 'customRedirect') {
-                return $this->redirect(['index']);
+                $successMsg = 'Payment adjusted succesfully';
+                if ($processFlag == 'Lock') {
+                    $successMsg = Yii::t('app', 'Payment has been Locked Successfully');
+                }
+                $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $delete_model, [$successMsg, 'info']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
             }
 
 //            Yii::$app->response->format = Response::FORMAT_JSON;
@@ -375,6 +385,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $model = new TblMemberPaymentAlias();
 //            $model->load(Yii::$app->request->get());
             $model->attributes = $getParam;
+            if(!$is_validate){
+                $model = $memberPaymentModel;
+            }
 //            if ($reGenerate == 1) {
 //                $query = $this->getMemberDcsSpData($model, $reGenerate);
 //            }
@@ -1766,6 +1779,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            !empty($bmcCode) && $bmcCode == '004' && 
             $msg_type = '';
             $msg = '';
+            $is_send_otp = 'yes';
+            $payment_disburse_with_workflow = Yii::$app->general->getUnionConfiguration($model->union_code, 'payment_disburse_with_workflow', 'PORTAL') == 1 ? true : false;
+            if ($payment_disburse_with_workflow) {
+                $is_send_otp = 'no';
+            }
             if (!empty($bmcCode) && !empty($modelData) && (!empty($modelData->file_path) || $modelData->integration_mode == 'API') && !empty($modelData->mobile_no)) {
 
                 try {
@@ -1835,7 +1853,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
 
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
-            return Json::encode(['status' => $status, 'message' => $msg]);
+            return Json::encode(['status' => $status, 'message' => $msg, 'is_send_otp' => $is_send_otp]);
         }
     }
 

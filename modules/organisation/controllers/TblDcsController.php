@@ -261,18 +261,22 @@ class TblDcsController extends ChildController {
         $validate = 1;
         $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
         $this->showIsBMC = FALSE;
-        $address = explode(',', $this->model->address);
-        if (isset($address)) {
-            if (isset($address[0]))
-                $this->model->street1 = $address[0];
-            if (isset($address[1]))
-                $this->model->street2 = $address[1];
+        if (!empty($this->model->address)) {
+            $address = explode(',', $this->model->address);
+            if (isset($address)) {
+                if (isset($address[0]))
+                    $this->model->street1 = $address[0];
+                if (isset($address[1]))
+                    $this->model->street2 = $address[1];
+            }
         }
-        $x_col1 = explode('#', $this->model->x_col1);
-        if (isset($x_col1)) {
-            if (isset($x_col1[0]) && isset($x_col1[1])) {
-                $this->model->same_milk_type = $x_col1[0];
-                $this->model->diff_milk_type = $x_col1[1];
+        if (!empty($this->model->x_col1)) {
+            $x_col1 = explode('#', $this->model->x_col1);
+            if (isset($x_col1)) {
+                if (isset($x_col1[0]) && isset($x_col1[1])) {
+                    $this->model->same_milk_type = $x_col1[0];
+                    $this->model->diff_milk_type = $x_col1[1];
+                }
             }
         }
         $this->model->vendor = $oldVendor = $vendorModel->getDcsVendor($this->model->dcs_code);
@@ -986,6 +990,10 @@ class TblDcsController extends ChildController {
                         $saveModel[] = $historyModel;
                         $existData->is_verified = $status;
                         $existData->bank_remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
+                        if ($status == 2) {
+                            $existData->is_active = 0;
+                            $existData->is_default = 0;
+                        }
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {
@@ -997,6 +1005,10 @@ class TblDcsController extends ChildController {
                         $saveModel[] = $historyModel;
                         $existData->is_verified = $status;
                         $existData->remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
+                        if ($status == 2) {
+                            $existData->is_active = 0;
+                            $existData->is_default = 0;
+                        }
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     }
@@ -1056,6 +1068,9 @@ class TblDcsController extends ChildController {
                         $saveModel[] = $historyModel;
                         $existData->is_contact_verified = $status;
                         $existData->contact_remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
+                        if ($status == 2) {
+                            $existData->is_active = 0;
+                        }
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {
@@ -1067,6 +1082,9 @@ class TblDcsController extends ChildController {
                         $saveModel[] = $historyModel;
                         $existData->is_contact_verified = $status;
                         $existData->remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
+                        if ($status == 2) {
+                            $existData->is_active = 0;
+                        }
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     }

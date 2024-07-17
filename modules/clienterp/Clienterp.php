@@ -22,6 +22,9 @@ class Clienterp extends \yii\base\Module {
             'vka' => [
                 'class' => 'app\modules\clienterp\vka\Vka',
             ],
+            'cargill' => [
+                'class' => 'app\modules\clienterp\cargill\Cargill',
+            ],
         ];
     }
 

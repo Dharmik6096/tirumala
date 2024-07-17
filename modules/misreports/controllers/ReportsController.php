@@ -1099,12 +1099,22 @@ class ReportsController extends \app\controllers\ChildController {
             if ($dataToDecryptCheck && !empty($dataToDecrypt)) {
                 for ($i = 0; $i < count($output); $i++) {
                     foreach ($dataToDecrypt as $decKey) {
+                        $formateChange = '';
+                        if (strpos($decKey, '##') !== false) {
+                            $formate = explode('##', $decKey);
+                            $decKey = $formate[0];
+                            $formateChange = $formate[1];
+                        }
                         if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
                             $output[$i][$decKey] = Yii::$app->general->decryptData($output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($output[$i][$decKey]) : $output[$i][$decKey];
+                            if (!empty($formateChange)) {
+                                $output[$i][$decKey] = date($formateChange, strtotime($output[$i][$decKey]));
+                            }
                         }
                     }
                 }
             }
+            $this->output = $output;
             $dataPro = [];
             $dataPro = [
                 'allModels' => $output,
@@ -1668,6 +1678,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapWqFile() {
         $this->report = 'SapWqFile';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SapWqFileXls';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -1690,9 +1705,29 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MobileAppReport';
         return $this->actionIndex();
     }
-    
+
     public function actionFarmerRegister() {
         $this->report = 'FarmerRegister';
+        return $this->actionIndex();
+    }
+
+    public function actionFieldStaffActivity() {
+        $this->report = 'FieldStaffActivity';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberProvisionalFamilyDetail() {
+        $this->report = 'MemberProvisionalFamilyDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberProvisionalSapExport() {
+        $this->report = 'MemberProvisionalSapExport';
+        return $this->actionIndex();
+    }
+
+    public function actionExportProvisionalMemberBankReceipt() {
+        $this->report = 'ExportProvisionalMemberBankReceipt';
         return $this->actionIndex();
     }
 
@@ -2793,7 +2828,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'SocietyWiseCdaDateWiseFormat' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -2801,7 +2837,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'SocietyWiseCdaConsolidatedFormat' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -2809,7 +2846,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'VmReportSap' => [
 //                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
@@ -3445,6 +3483,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
                 'downloadFormat' => 'csv',
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
+            ],
+            'SapWqFileXls' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa_xls',
+                'scenario' => 'SapWqFile',
+                'title' => 'SAP WQ File',
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
             ],
             'MemberDailyCollectionCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3591,6 +3639,31 @@ class ReportsController extends \app\controllers\ChildController {
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
             ],
+            'FieldStaffActivity' => [
+                'param' => 'union_code,state_code,region_code,area_code,user_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_field_staff_activity',
+                'scenario' => 'FieldStaffActivity',
+                'title' => 'User Task Activity MIS',
+            ],
+            'MemberProvisionalFamilyDetail' => [
+                'param' => 'union_code,p_date:string',
+                'sp_name' => 'mis_import_member_provisional_data_saahaj',
+                'scenario' => 'MemberProvisionalFamilyDetail',
+                'title' => 'Member Provisional Family Detail',
+            ],
+            'MemberProvisionalSapExport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_member_pib_upload_saahaj',
+                'scenario' => 'MemberProvisionalSapExport',
+                'title' => 'Member Provisional SAP Export',
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob##d.m.Y', 'Dob', 'adhar_no', 'aadhaar_no'],
+            ],
+            'ExportProvisionalMemberBankReceipt' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
+                'sp_name' => 'mis_member_bank_receipt_data_saahaj',
+                'scenario' => 'ExportProvisionalMemberBankReceipt',
+                'title' => 'Export Provisional Member Bank Receipt',
+            ],
         ];
         return $label[$l];
     }
@@ -3650,56 +3723,73 @@ class ReportsController extends \app\controllers\ChildController {
 //        echo "</table>";
 //        exit();
 
-
         if (isset($this->data['downloadFormat']) && $this->data['downloadFormat'] == 'csv') {
             $header = [
                 'mime' => 'text/csv',
                 'extension' => 'csv',
                 'writer' => 'CSV',
             ];
+            $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'];
+
+            header('Content-Type: ' . $header['mime']);
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+
+            $output = fopen('php://output', 'w');
+
+            fwrite($output, implode(',', $labelArray) . "\n");
+
+            foreach ($this->output as $row) {
+                fwrite($output, implode(',', $row) . "\n");
+            }
+            fclose($output);
+            exit();
         } else {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
                 'extension' => 'xls',
                 'writer' => 'Excel2007',
             ];
-        }
-        $objPHPExcel = new PHPExcel();
-        $sheet = $objPHPExcel->getActiveSheet();
-        /* $objPHPExcel->getDefaultStyle()
-          ->getNumberFormat()
-          ->setFormatCode(
-          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-          ); */
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        /* $file_header = array_map(function($file_header) {
-          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-          }, array_values($file_header)); */
 
-        $sheet->fromArray(
-                $file_header, // The data to set
-                NULL, // Array values with this value will not be set
-                'A1'         // Top left coordinate of the worksheet range where
+            $objPHPExcel = new PHPExcel();
+            $sheet = $objPHPExcel->getActiveSheet();
+            /* $objPHPExcel->getDefaultStyle()
+              ->getNumberFormat()
+              ->setFormatCode(
+              \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+              ); */
+            $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+            /* $file_header = array_map(function($file_header) {
+              return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+              }, array_values($file_header)); */
+
+            $sheet->fromArray(
+                    $file_header, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A1'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
-        );
-        $sheet->fromArray(
-                $this->output, // The data to set
-                NULL, // Array values with this value will not be set
-                'A2'         // Top left coordinate of the worksheet range where
+            );
+            $sheet->fromArray(
+                    $this->output, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
-        );
-        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
-        $fileName = $labelT . '.' . $header['extension'] .
-                header('Content-Type: ' . $header['mime']);
+            );
+            $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'] .
+                    header('Content-Type: ' . $header['mime']);
 //        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
 //                header('Content-Type: ' . $header['mime']);
-        header('Content-Disposition: attachment;filename=' . $fileName);
-        header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        ob_end_clean();
-        $objWriter->save('php://output');
-        exit();
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+            ob_end_clean();
+            $objWriter->save('php://output');
+            exit();
+        }
     }
 
     public function downloadDataExcel($model) {

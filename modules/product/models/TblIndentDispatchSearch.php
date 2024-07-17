@@ -12,16 +12,16 @@ use app\modules\product\models\TblIndentDispatch;
  */
 class TblIndentDispatchSearch extends TblIndentDispatch {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $status_date;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['indent_dispatch_code', 'challan_date', 'reference_no', 'dispatch_date', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'vehicle_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'indent_code', 'product_code', 'status', 'rate', 'amount', 'discount_amount', 'dispatch_qty'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['from_date', 'to_date'], 'safe'],
+                [['indent_dispatch_code', 'challan_date', 'reference_no', 'dispatch_date', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'vehicle_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'indent_code', 'product_code', 'status', 'rate', 'amount', 'discount_amount', 'dispatch_qty'], 'safe'],
+                [['originating_type'], 'integer'],
+                [['from_date', 'to_date', 'status_date'], 'safe'],
         ];
     }
 
@@ -58,23 +58,23 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
         }
 
         // grid filtering conditions
-        $query->joinWith(['routeCode', 'vehicleCode', 'productCode']);
+        $query->joinWith(['routeCode', 'vehicleCode', 'productCode', 'indentCode']);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_indent_dispatch', 'tbl_indent_dispatch', 'tbl_indent_dispatch');
 
         // grid filtering conditions
-        if (!empty($this->from_date)) {
-            $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['>=', 'dispatch_date', $from_date]);
-        }
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'dispatch_date', $from_date]);
 
-        if (!empty($this->to_date)) {
-            $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andFilterWhere(['<=', 'dispatch_date', $to_date]);
-        }
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'dispatch_date', $to_date]);
 
         if (!empty($this->dispatch_date)) {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), dispatch_date, 126)', date('Y-m-d', strtotime($this->dispatch_date))]);
+        }
+
+        if (!empty($this->status_date)) {
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_indent_master.status_date, 126)', date('Y-m-d', strtotime($this->status_date))]);
         }
 
         $query->andFilterWhere(['like', 'indent_dispatch_code', $this->indent_dispatch_code])
@@ -85,7 +85,8 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
                 ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code])
                 ->andFilterWhere(['like', 'tbl_indent_dispatch.dispatch_qty', $this->dispatch_qty])
 //                ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->vehicle_no]);
-                ->andFilterWhere(['like', 'tbl_indent_dispatch.vehicle_no', $this->vehicle_no]);
+                ->andFilterWhere(['like', 'tbl_indent_dispatch.vehicle_no', $this->vehicle_no])
+                ->andFilterWhere(['like', 'tbl_indent_dispatch.dcs_code', $this->dcs_code]);
 
         return $dataProvider;
     }

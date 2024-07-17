@@ -350,7 +350,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'member_code'],
             ],
             'TblGrnSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
             'TblInventoryTransferSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
@@ -414,7 +414,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
             ],
             'TblPlantDispatchSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
             ],
             'TblLoanProductSaleLockingSearch' => [
                 'filter' => ['f_union_code'],
@@ -483,7 +483,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
             ],
             'TblProductStockSapSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
             'TblCustomerMasterProvisionalSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code'],
@@ -491,6 +491,9 @@ class SearchFilter {
             ],
             'TblReportTxnLogSearch' => [
                 'filter' => ['from_date', 'to_date'],
+            ],
+            'TblPaymentTransactionApprovalSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

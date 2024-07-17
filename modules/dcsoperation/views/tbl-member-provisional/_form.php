@@ -150,6 +150,13 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'annual_milk_pour')->textInput() ?>
         </div>
         <div class="col-sm-4">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['signatureOfwitness']) ?>
+            <?= $form->field($model, 'witness_name')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'place')->textarea() ?>
+        </div>
+        <div class="col-sm-4">
             <?= $form->field($model, 'remarks')->textarea() ?>
         </div>
     </div>
@@ -161,7 +168,8 @@ if ($model->isNewRecord) {
         </div>
         <div class="col-sm-4">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-12 icon-set">
+                    <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCard', 'aadharCardBack']) ?>
                     <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
                 </div>
                 <div class="col-sm-12">
@@ -189,27 +197,50 @@ if ($model->isNewRecord) {
             <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'tblmemberprovisional-union_code', 'form-group col-sm-12', 'Region', 'region_code'); ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                     ?>-->
+            <?= $form->field($model, 'post_office')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-4">
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                                  ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
         </div>
+        <div class="col-sm-4 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['currentAddressProof']) ?>
+            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
+        </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'email')->textInput() ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
-        </div>
-        <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('relation', $model, $form, '', $model->getAttributeLabel('email_relation'), false, 'email_relation'); ?>
         </div>
-        <div class="col-sm-4 mt10">
-            <?= $form->field($model, 'is_contact_verified', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-        </div>
-        <div class="col-sm-4 mt10">
-            <?= $form->field($model, 'is_email_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-        </div>
+
+        <?php if ($model->provisional_from == 'mobile_app' || $model->provisional_from == 'mobile_update') { ?>
+            <div class = "col-sm-4 mt10">
+                <?php
+                $contactVerificationStatus = $model->is_contact_verified == 1 ? 'Verify' : 'Not Verify';
+                echo $model->getAttributeLabel('is_contact_verified') . '-' . $contactVerificationStatus;
+                ?>
+            </div>
+            <div class = "col-sm-4 mt10">
+                <?php
+                $emailVerificationStatus = $model->is_email_verify == 1 ? 'Verify' : 'Not Verify';
+                echo $model->getAttributeLabel('is_email_verify') . '-' . $emailVerificationStatus;
+                ?>
+            </div>
+            <?php
+        } else {
+            ?>
+            <div class="col-sm-4 mt10">
+                <?= $form->field($model, 'is_contact_verified', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
+            <div class="col-sm-4 mt10">
+                <?= $form->field($model, 'is_email_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
+        <?php }
+        ?>
 
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Animal Details</h4>
@@ -243,27 +274,34 @@ if ($model->isNewRecord) {
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tblmemberprovisional-bank_code', '', 'Branch', 'branch_code'); ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['bankPassbook']) ?>
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                     ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                                  ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['panCard']) ?>
             <?= $form->field($model, 'pan_no')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCard', 'aadharCardBack']) ?>
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 icon-set">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['voterID']) ?>
             <?= $form->field($model, 'voter_id')->textInput() ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'annual_income')->textInput() ?>
         </div>
-        <div class="col-sm-4 mt10">
+        <div class="col-sm-2 mt10">
             <?= $form->field($model, 'is_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'is_aadhar_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
         <!--    <div class="col-sm-4">
         <?php // $form->field($model, 'payment_mode')->textInput() ?>
@@ -286,10 +324,26 @@ if ($model->isNewRecord) {
 
 <?php
 $script = "
+$(document).ready(function() {
+    function setDefaultHamletCode() {
+        var hamletDropdown = $('#tblmemberprovisional-hamlet_code');
+        var options = hamletDropdown.find('option');
+        if (options.length == 2) {
+            var singleOption = options.eq(1).val();
+            hamletDropdown.val(singleOption).trigger('change');
+        }
+    }
+    $('#tblmemberprovisional-village_code').on('change', function() {
+        $('#tblmemberprovisional-hamlet_code').on('depdrop.afterChange', function(event, id, value) {
+            setDefaultHamletCode();
+        });
+    });
+});
 
 $(document).ready(function() {
     $('.btn-toolbar.kv-grid-toolbar').hide();
 });
+if ('$type' == 'create') {
     $('#tblmemberprovisional-dcs_code').on('change',function(){
         var id = $(this).val();
             $.ajax({
@@ -308,7 +362,8 @@ $(document).ready(function() {
                                 }
             });
     });
-    
+}
+
     $('#tblmemberprovisional-no_of_buffalo, #tblmemberprovisional-no_of_cow_cross, #tblmemberprovisional-no_of_cow_ind').on('change',function(){
             var no_of_buffalo = document.getElementById('tblmemberprovisional-no_of_buffalo').value;
             var no_of_cow_cross = document.getElementById('tblmemberprovisional-no_of_cow_cross').value;
@@ -353,5 +408,34 @@ $(document).ready(function() {
         return val.toUpperCase();
     });
    });
+   enableDisableField();
+   $('#tblmemberprovisional-is_contact_verified,#tblmemberprovisional-is_email_verify,#tblmemberprovisional-is_aadhar_verify,#tblmemberprovisional-is_verify').on('click',function(){
+        enableDisableField();
+    });
+    function enableDisableField(){
+        $('.field-tblmemberprovisional-mobile_no').removeClass('disabled no_pointer');
+        $('.field-tblmemberprovisional-email').removeClass('disabled no_pointer');
+        $('.field-tblmemberprovisional-adhar_no').removeClass('disabled no_pointer');
+        $('.field-tblmemberprovisional-bank_code').removeClass('disabled no_pointer');
+        $('.field-tblmemberprovisional-branch_code').removeClass('disabled no_pointer');
+        $('.field-tblmemberprovisional-bank_account_no').removeClass('disabled no_pointer');
+        $('#tblmemberprovisional-ifsc').prop('disabled', false);
+        
+        if ($('#tblmemberprovisional-is_contact_verified').is(':checked')) {
+            $('.field-tblmemberprovisional-mobile_no').addClass('disabled no_pointer');
+        }
+        if ($('#tblmemberprovisional-is_email_verify').is(':checked')) {
+            $('.field-tblmemberprovisional-email').addClass('disabled no_pointer');
+        }
+        if ($('#tblmemberprovisional-is_aadhar_verify').is(':checked')) {
+           $('.field-tblmemberprovisional-adhar_no').addClass('disabled no_pointer');
+        }
+        if ($('#tblmemberprovisional-is_verify').is(':checked')) {
+            $('.field-tblmemberprovisional-bank_code').addClass('disabled no_pointer');
+            $('.field-tblmemberprovisional-branch_code').addClass('disabled no_pointer');
+            $('.field-tblmemberprovisional-bank_account_no').addClass('disabled no_pointer');
+            $('.field-tblmemberprovisional-ifsc').addClass('disabled no_pointer');
+        }
+    }
 ";
 $this->registerJs($script, View::POS_END, 'union');

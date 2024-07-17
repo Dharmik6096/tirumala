@@ -10,26 +10,22 @@ use app\modules\organisation\models\TblBranch;
 /**
  * TblBranchSearch represents the model behind the search form about `app\modules\organisation\models\TblBranch`.
  */
-class TblBranchSearch extends TblBranch
-{
+class TblBranchSearch extends TblBranch {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-
-            [['branch_code', 'address', 'branch_name','district_code', 'created_at', 'ifsc', 'pincode', 'updated_at', 'bank_code', 'created_by', 'sub_district_code', 'updated_by', 'village_code', 'valid_from'], 'safe'],
-
-            [['is_active'], 'integer'],
+                [['branch_code', 'address', 'branch_name', 'district_code', 'created_at', 'ifsc', 'pincode', 'updated_at', 'bank_code', 'created_by', 'sub_district_code', 'updated_by', 'village_code', 'valid_from', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['is_active'], 'integer'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -41,13 +37,12 @@ class TblBranchSearch extends TblBranch
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblBranch::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['branch_name'=>SORT_ASC]],
+            'sort' => ['defaultOrder' => ['branch_name' => SORT_ASC]],
         ]);
 
         $this->load($params);
@@ -65,9 +60,10 @@ class TblBranchSearch extends TblBranch
         ]);
 
         $query->andFilterWhere(['like', 'tbl_branch.branch_code', $this->branch_code])
-            ->andFilterWhere(['like', 'branch_name', $this->branch_name])
-            ->andFilterWhere(['like', 'ifsc', $this->ifsc]);
+                ->andFilterWhere(['like', 'branch_name', $this->branch_name])
+                ->andFilterWhere(['like', 'ifsc', $this->ifsc]);
 
         return $dataProvider;
     }
+
 }
