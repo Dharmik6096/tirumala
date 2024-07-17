@@ -187,6 +187,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         $c = explode('###', $alldata);
                         $dataArray[$c[0]] = $c;
                     }
+                    $purchaseRateCode = TblPurchaseRate::find()->select(['purchase_rate_code'])->where(['dcs_purchase_rate_code' => $rateCode, 'union_code' => $searchModel->union_code])->one();
                     foreach ($dcs_codes as $code) {
                         $from_shift = Yii::$app->general->getshift($searchModel->from_shift);
                         $to_shift = Yii::$app->general->getshift($searchModel->to_shift);
@@ -196,7 +197,6 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         if (isset($dataArray[$codes])) {
                             $c = $dataArray[$codes];
                             if ($searchModel->recalc_for == 'both' && $c[2] == 'Member') {
-                                $purchaseRateCode = TblPurchaseRate::find()->select(['purchase_rate_code'])->where(['dcs_purchase_rate_code' => $rateCode, 'union_code' => $searchModel->union_code])->one();
                                 $rateCode = $purchaseRateCode['purchase_rate_code'];
                             }
                         }
