@@ -23,6 +23,12 @@ class DefaultController extends \app\controllers\ChildController {
         $model = new ReportsModel();
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);
+            $client_code = \Yii::$app->session->get('eiplCode');
+            if (!empty($client_code) && isset($this->getLabels($this->report)['path'][$client_code])) {
+                $this->data['path'] = $this->getLabels($this->report)['path'][$client_code];
+            } elseif (!empty($client_code) && isset($this->getLabels($this->report)['path']['EIPLCOMMON'])) {
+                $this->data['path'] = $this->getLabels($this->report)['path']['EIPLCOMMON'];
+            }
             $model->scenario = $this->data['scenario'];
             if (strpos($this->data['param'], 'p_milk_type') !== FALSE) {
                 $model->p_milk_type = 0;
@@ -465,7 +471,7 @@ class DefaultController extends \app\controllers\ChildController {
             //$controls['locale'] = Yii::$app->session->get('LanguageCode');
             $controls['locale'] = !empty($model->locale) ? $model->locale : 'en';
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
-            $controls['REPORT_LOCALE'] = !empty($model->locale) ? $model->locale : 'en';
+            $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
             $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;
@@ -508,7 +514,7 @@ class DefaultController extends \app\controllers\ChildController {
 
     /* Reports Configuration */
 
-    private function getLabels($l) {
+    public function getLabels($l) {
         $label = [
             'MemberMilkCollectionSummary' => [
                 'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',

@@ -1099,12 +1099,22 @@ class ReportsController extends \app\controllers\ChildController {
             if ($dataToDecryptCheck && !empty($dataToDecrypt)) {
                 for ($i = 0; $i < count($output); $i++) {
                     foreach ($dataToDecrypt as $decKey) {
+                        $formateChange = '';
+                        if (strpos($decKey, '##') !== false) {
+                            $formate = explode('##', $decKey);
+                            $decKey = $formate[0];
+                            $formateChange = $formate[1];
+                        }
                         if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
                             $output[$i][$decKey] = Yii::$app->general->decryptData($output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($output[$i][$decKey]) : $output[$i][$decKey];
+                            if (!empty($formateChange)) {
+                                $output[$i][$decKey] = date($formateChange, strtotime($output[$i][$decKey]));
+                            }
                         }
                     }
                 }
             }
+            $this->output = $output;
             $dataPro = [];
             $dataPro = [
                 'allModels' => $output,
@@ -2818,7 +2828,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'SocietyWiseCdaDateWiseFormat' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -2826,7 +2837,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'SocietyWiseCdaConsolidatedFormat' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -2834,7 +2846,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'VmReportSap' => [
 //                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
@@ -3643,7 +3656,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_member_pib_upload_saahaj',
                 'scenario' => 'MemberProvisionalSapExport',
                 'title' => 'Member Provisional SAP Export',
-                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob##d.m.Y', 'Dob', 'adhar_no', 'aadhaar_no'],
             ],
             'ExportProvisionalMemberBankReceipt' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
