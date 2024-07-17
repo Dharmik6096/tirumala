@@ -4,7 +4,7 @@ use kartik\grid\GridView;
 ?>
 
 <div class="">
-    <h5 class="panel-heading"><?= Yii::t('app', 'Indent Master Details') ?></h5>
+    <h5 class="panel-heading"><?= Yii::t('app', 'Indent Request Details') ?></h5>
 
     <?php
     $attribute = [

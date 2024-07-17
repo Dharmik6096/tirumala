@@ -2,6 +2,7 @@
 
 namespace app\modules\product\controllers;
 
+use app\modules\collection\models\TblMilkCollection;
 use Yii;
 use app\modules\product\models\TblIndentMaster;
 use app\modules\product\models\TblIndentMasterSearch;
@@ -231,6 +232,10 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
         $backUrl[] = '/product/tbl-indent-master/indent-approval-other';
         $indentMaster = new TblIndentMaster();
         if (Yii::$app->request->post()) {
+            echo '<pre>';
+            print_r(Yii::$app->request->post());
+            echo '</pre>';
+            die;
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
                 $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'approve' ? 1 : 2) : 0;
@@ -315,7 +320,7 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
                     $approvalFlag = false;
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Indent ' . $msg, 'create']);
                     if ($transaction == 'customRedirect') {
-//                    return $this->redirect(['index']);
+                        // return $this->redirect(['index']);
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $modelError]);
@@ -324,7 +329,58 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
             }
         }
         $dataProvider = $searchModel->indentapprovesearch(Yii::$app->request->queryParams, 'portal_sp_pending_indent_approval_other');
-
+        $isIndentApprovalCreditLimitCheck = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'is_indent_approval_credit_limit_check', 'PORTAL') == 1 ? TRUE : FALSE;
+        if(!empty($searchModel->group_by) && !empty($dataProvider->allModels)) {
+            $resultArray = [];
+            foreach ($dataProvider->allModels as $item) {
+                $key = $item['dcs_code'] . '-' . $item['member_code'] . '-' . $item['product_code'] . '-' . $item['product_name'];
+                if (!isset($resultArray[$key])) {
+                    $creditAmount = 'Not Applicable';
+                    if(!empty($item['member_code']) && $isIndentApprovalCreditLimitCheck){
+                        $fromDate = date('Y-m-d', strtotime($searchModel->from_date));
+                        $toDate = date('Y-m-d', strtotime($searchModel->to_date));
+                        $model = new TblMilkCollection();
+                        $modelData = $model->find()
+                            ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                            ->where(['between', 'date_time_of_collection', $fromDate, $toDate])
+                            ->andWhere(['member_code' => $item['member_code']])
+                            ->one();
+                        $creditAmount = 0;
+                        if (!empty($modelData->amount)) {
+                            $creditAmount = $modelData->amount;
+                        }
+                    }
+                    $resultArray[$key] = [
+                        'dcs_code' => $item['dcs_code'],
+                        'member_code' => $item['member_code'],
+                        'product_code' => $item['product_code'],
+                        'product_name' => $item['product_name'],
+                        'qty' => 0.00,
+                        'allow_edit' => $item['allow_edit'],
+                        'dcs_code' => $item['dcs_code'],
+                        'dcs_ref_code' => $item['dcs_ref_code'],
+                        'dcs_name' => $item['dcs_name'],
+                        'member_code' => $item['member_code'],
+                        'member_ref_code' => $item['member_ref_code'],
+                        'member_name' => $item['member_name'],
+                        'product_name' => $item['product_name'],
+                        'warehouse_code' => $item['store_location_name'],
+                        'rate' => $item['rate'],
+                        'user_name' => $item['user_name'],
+                        'login_type' => $item['login_type'],
+                        'credit_amount' => $creditAmount,
+                        'member_array' => []
+                    ];
+                }
+                $resultArray[$key]['qty'] += $item['qty'];
+                $resultArray[$key]['member_array'][] = $item;
+            }
+            $dataProvider->allModels = array_values($resultArray);
+        }
+        // echo '<pre>';
+        // print_r($dataProvider->allModels);
+        // echo '</pre>';
+        // die;
         return $this->render('indent_approval', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

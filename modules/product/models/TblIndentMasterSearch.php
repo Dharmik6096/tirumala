@@ -13,7 +13,7 @@ use yii\data\ArrayDataProvider;
  */
 class TblIndentMasterSearch extends TblIndentMaster {
 
-    public $from_date, $to_date, $product_group_code, $group_by;
+    public $from_date, $to_date, $product_group_code, $group_by, $payment_cycle_code;
 
     /**
      * @inheritdoc
@@ -24,8 +24,8 @@ class TblIndentMasterSearch extends TblIndentMaster {
             [['qty'], 'number'],
             [['originating_type'], 'integer'],
             [['indent_type', 'warehouse_code', 'product_group_code'], 'safe'],
-            [['from_date', 'to_date', 'group_by'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['indentApprove']],
+            [['from_date', 'to_date', 'group_by', 'payment_cycle_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => ['indentApprove']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'searchdispatch'],
         ];
     }
@@ -131,6 +131,8 @@ class TblIndentMasterSearch extends TblIndentMaster {
             ];
 
             $sp_params = array_merge($sp_params, $params['TblIndentMasterSearch']);
+            unset($sp_params['group_by']);
+            unset($sp_params['payment_cycle_code']);
 //            if (empty($this->bmc_code)) {
 //                $this->bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
 //            }

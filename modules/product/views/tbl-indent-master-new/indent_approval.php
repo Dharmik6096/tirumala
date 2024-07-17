@@ -16,8 +16,11 @@ $visible = !empty($visibledata) ? True : false;
                     <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
                     <div class="clearfix"></div>
                     <?php
-                    echo $this->render('_approval_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'visible' => $visible, 'indentMaster' => $indentMaster
-                    ]);
+                    if(!empty($searchModel->group_by)) {
+                        echo $this->render('_approval_grid_group_wise', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'visible' => $visible, 'indentMaster' => $indentMaster]);
+                    } else {
+                        echo $this->render('_approval_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'visible' => $visible, 'indentMaster' => $indentMaster]);
+                    }
                     ?>
                 </div>
             </div>

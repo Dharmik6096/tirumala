@@ -8,7 +8,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use kartik\grid\GridView;
 
-$this->title = Yii::$app->label->title('create', 'Indent Master');
+$this->title = Yii::$app->label->title('create', 'Indent Request');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

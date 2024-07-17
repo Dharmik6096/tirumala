@@ -7,7 +7,7 @@ use kartik\detail\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\modules\payment\models\TblProductSale */
 
-$this->title = Yii::$app->label->title('view', 'Indent Master');
+$this->title = Yii::$app->label->title('view', 'Indent Request');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
