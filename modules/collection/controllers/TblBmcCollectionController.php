@@ -81,7 +81,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $update = FALSE;
             $this->model->load(Yii::$app->request->post());
-            $i = 1;
+            $i = 0;
             if (!empty(Yii::$app->request->post()['TblBmcCollection']['milk_collection_code'])) {
                 $this->model = $this->findModel(Yii::$app->request->post()['TblBmcCollection']['milk_collection_code']);
                 $historyModel = new TblBmcCollectionHistory();
@@ -90,7 +90,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $this->model->load(Yii::$app->request->post());
                 $this->model->scenario = 'update';
                 $update = TRUE;
-                $i = 2;
+                $i = 1;
             }
             if (!$update) {
                 $this->model->qlty_auto = 0;
@@ -145,7 +145,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $approvalModel->setOldAttributesValues($approvalModel);
                     if ($collectionApprovalConfig == 2) {
                         $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_bmc_collection', $modelSave, $auto_key_config, $i, 'createBmc', '');
+                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_bmc_collection', $modelSave, $auto_key_config, $i, TRUE);
                     } else {
                         $modelSave[] = $approvalModel;
                     }
@@ -395,7 +395,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             }
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
-                $i = 1;
+                $i = 0;
                 $auto_key_config = [];
                 foreach ($modelData as $detailKey => $detalData) {
                     if (!empty($detalData->oldAttributes) && ($detalData->customer_code != $detalData->oldAttributes['customer_code'] || $detalData->route_code != $detalData->oldAttributes['route_code'] || $detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'] || $detalData->antibiotic != $detalData->oldAttributes['antibiotic'])) {
@@ -422,7 +422,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 
                             if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
-                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, 'updateBmc', $detailKey);
+                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, TRUE);
+                                $i++;
                             } else {
                                 $saveModel[] = $approvalModel;
                             }
@@ -553,7 +554,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $deletedata = Yii::$app->request->post('selection');
                 $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
                 $where = [];
-                $i = 1;
+                $i = 0;
                 $auto_key_config = [];
                 foreach ($deletedata as $detailKey => $code) {
                     $where['milk_collection_code'] = $code;
@@ -567,7 +568,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $ApprovalModel->action_perform = 'DELETE';
                         if ($collectionApprovalConfig == 2) {
                             $modelStages = new TblApprovalStagesDetail();
-                            $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, 'deleteBmc', $detailKey);
+                            $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, TRUE);
+                            $i++;
                         } else {
                             $saveModel[] = $ApprovalModel;
                         }

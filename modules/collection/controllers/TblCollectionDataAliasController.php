@@ -44,8 +44,8 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     $status = '';
                     ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'MilkCollection' : '';
                     if ($operation == 'approve') {
+                        $historyFlag = 'DELETE';
                         if ($existData->validate()) {
-                            $historyFlag = 'DELETE';
                             if ($collection_config == 2 && !empty($approval_code)) {
                                 $status = 1;
                                 $this->updateApprovalHistory($approval_code, $saveModel, $status);
@@ -172,8 +172,8 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     $status = '';
                     ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'BmcCollection' : '';
                     if ($operation == 'approve') {
+                        $historyFlag = 'DELETE';
                         if ($existData->validate()) {
-                            $historyFlag = 'DELETE';
                             if ($collection_config == 2 && !empty($approval_code)) {
                                 $status = 1;
                                 $this->updateApprovalHistory($approval_code, $saveModel, $status);

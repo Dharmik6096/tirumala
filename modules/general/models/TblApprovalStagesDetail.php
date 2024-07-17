@@ -145,13 +145,14 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
         return $levels;
     }
 
-    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag, $detailKey) {
+    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag = FALSE) {
         $approvalStage = $this->approvalStages($unionCode, $processName);
-        $approvalModel->approval_status = empty($approvalStage) ? 'Approve' : 'Pending';
+        $approvalModel->approval_status = 'Pending';
         $saveModel[] = $approvalModel;
-
+        $parent_index = $i;
         if (!empty($approvalStage)) {
             foreach ($approvalStage as $key => $stage) {
+                $i++;
                 $stage_model = new TblProcessApproval();
                 $stage_model->setAttributes($stage);
                 $stage_model->process_name = $processName;
@@ -159,15 +160,9 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
                 unset($stage_model->created_at);
                 unset($stage_model->created_by);
                 $saveModel[] = $stage_model;
-                if ($processFlag == 'createBmc') {
-                    $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $i - ($key + 1)];
-                } else if ($processFlag == 'createMilkCollection') {
-                    $auto_key_config['TblProcessApproval'][] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => 0];
-                } else {
-                    $index = ($i - ($key + 1)) + $detailKey;
-                    $auto_key_config[$i + $detailKey] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $index];
+                if ($processFlag) {
+                    $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $parent_index];
                 }
-                $i++;
             }
         }
     }
