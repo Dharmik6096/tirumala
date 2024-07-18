@@ -422,6 +422,16 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'ProvisionalMemberRegister';
         return $this->actionIndex();
     }
+    
+    public function actionMilkChillBillCenterWise() {
+        $this->report = 'MilkChillBillCenterWise';
+        return $this->actionIndex();
+    }
+    
+    public function actionMilkChillingBillLrNoWise() {
+        $this->report = 'MilkChillingBillLrNoWise';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1007,6 +1017,18 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VendorMilkPayment',
                 'title' => '604 - Vendor Milk Payment',
                 'bkg_export' => TRUE,
+            ],
+            'MilkChillBillCenterWise' => [
+                'param' => 'p_date,p_lr_no,p_vehicle_no',
+                'path' => 'vsp/MilkChillBillCenterWise',
+                'scenario' => 'MilkChillBillCenterWise',
+                'title' => 'Milk Chill Bill Center Wise',
+            ],
+            'MilkChillingBillLrNoWise' => [
+                'param' => 'p_date,p_lr_no,p_vehicle_no',
+                'path' => 'vsp/MilkChillingBillLrNoWise',
+                'scenario' => 'MilkChillingBillLrNoWise',
+                'title' => 'Milk Chilling Bill Lr No Wise',
             ],
         ];
         return $label[$l];

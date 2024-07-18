@@ -22,7 +22,7 @@ class ReportsModel extends Model {
     public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty;
     public $p_plant_code, $p_mcc_code, $p_bmc_code, $p_ltr_kg, $p_customer_code, $p_customer_type, $p_payment_cycle_code, $p_staff_member_code, $p_month, $p_dcsc_code, $p_billing_for;
     public $region_code, $area_code;
-    public $locale,$digit_config, $p_provisional_member_code, $p_lang_code;
+    public $locale,$digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no;
 
     function __construct() {
         if (Yii::$app->session->get('LanguageId') == 0) {
@@ -57,7 +57,7 @@ class ReportsModel extends Model {
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
             [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
             [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
-            [['p_report_name'], 'safe'],
+            [['p_report_name', 'p_lr_no', 'p_vehicle_no'], 'safe'],
             [['p_no_of_pouring_day'], 'integer'],
             [['p_pouring_qty'], 'double'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_pouring_qty', 'p_no_of_pouring_day', 'p_member_type'], 'required', 'on' => 'SocietyDetails'],
@@ -94,6 +94,7 @@ class ReportsModel extends Model {
             [['p_union_code', 'p_plant_code', 'p_mcc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ProductSaleSummary']],
             [['p_union_code', 'p_plant_code'], 'required', 'on' => ['VendorMilkBillSbd']],
             [['p_provisional_member_code','p_lang_code'], 'required', 'on' => ['ProvisionalMemberRegister']],
+            [['p_date', 'p_lr_no', 'p_vehicle_no'], 'required', 'on' => ['MilkChillBillCenterWise', 'MilkChillingBillLrNoWise']],
         ];
     }
 
@@ -156,6 +157,8 @@ class ReportsModel extends Model {
             'p_billing_for' => \Yii::t('app', 'Billing For'),
             'p_provisional_member_code' => \Yii::t('app', 'Provisional Member'),
             'p_lang_code' => \Yii::t('app', 'Language'),
+            'p_lr_no' => \Yii::t('app', 'LR No'),
+            'p_vehicle_no' => \Yii::t('app', 'Vehicle No'),
         ];
     }
 
