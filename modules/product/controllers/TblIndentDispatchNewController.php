@@ -63,9 +63,9 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
         $param['TblIndentDispatchSearch'] = Yii::$app->request->queryParams;
         $dataProvider = $searchModel->searchNew($param, false);
         return $this->render('view', [
-            'model' => $model,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -316,10 +316,10 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
             }
         }
         return $this->render('create_other', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'dispatchModel' => $dispatchModel,
-            'stock_detail' => $stock_detail
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'dispatchModel' => $dispatchModel,
+                    'stock_detail' => $stock_detail
         ]);
     }
 
@@ -341,17 +341,31 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
     public function getProductDetail($param) {
         $bmc_code = !empty($param['bmc_code']) ? $param['bmc_code'] : '';
         $existData = TblProductStock::find()
-                ->select(['tbl_product_stock.product_code','tbl_product.product_name','SUM(tbl_product_stock.stock) as total_stock'])
+                ->select(['tbl_product_stock.product_code', 'tbl_product.product_name', 'SUM(tbl_product_stock.stock) as total_stock'])
                 ->innerJoin('tbl_product', 'tbl_product.product_code = tbl_product_stock.product_code')
                 ->where(['tbl_product_stock.bmc_code' => $bmc_code]);
-                if(!empty($param['product_code'])){
-                    $existData = $existData->andWhere(['tbl_product_stock.product_code' => $param['product_code']]);
-                }
+        if (!empty($param['product_code'])) {
+            $existData = $existData->andWhere(['tbl_product_stock.product_code' => $param['product_code']]);
+        }
         $existData = $existData->andWhere(['>', 'tbl_product_stock.stock', 0])
                 ->groupBy(['tbl_product_stock.product_code', 'tbl_product.product_name'])
                 ->asArray()
                 ->all();
         return $existData;
+    }
+
+    public function actionChallen($dispatch_date, $lr_no, $vehicle_no, $report_type) {
+        $controls = [];
+        $controls['p_date'] = $dispatch_date;
+        $controls['p_lr_no'] = $lr_no;
+        $controls['p_vehicle_no'] = $vehicle_no;
+        if ($report_type == 'MilkChillBillCenterWise') {
+            $controls['p_report_name'] = 'Milk Chill Bill Center Wise';
+            $this->printDocument($controls, 'vsp/MilkChillBillCenterWise', 'MilkChillBillCenterWise', 'pdf');
+        } else if ($report_type == 'MilkChillingBillLrNoWise') {
+            $controls['p_report_name'] = 'Milk Chilling Bill Lr No Wise';
+            $this->printDocument($controls, 'vsp/MilkChillingBillLrNoWise', 'MilkChillingBillLrNoWise', 'pdf');
+        }
     }
 
 }

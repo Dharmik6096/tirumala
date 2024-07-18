@@ -37,7 +37,6 @@ $attribute = [
             return Yii::$app->controls->view_date($model->dispatch_date);
         }, 'visible' => true],
     ['attribute' => 'vehicle_no', 'visible' => true],
-    
 ];
 
 $grid_option = [
@@ -51,11 +50,11 @@ $grid_option = [
         },
         'dcs-wise-challan' => function ($url, $model) {
             $options = ['title' => 'View ' . Yii::t('app', 'DCS') . ' Wise Challan Report', 'target' => '_blank'];
-            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/milk-chill-bill-center-wise', 'indent_dispatch_code' => $model->indent_dispatch_code], $options);
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/product/tbl-indent-dispatch-new/challen', 'dispatch_date' => $model->dispatch_date, 'lr_no' => $model->lr_no, 'vehicle_no' => $model->vehicle_no, 'report_type' => 'MilkChillBillCenterWise'], $options);
         },
         'lr-copy' => function ($url, $model) {
             $options = ['title' => Yii::t('app', 'View LR Copy Report'), 'target' => '_blank'];
-            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/milk-chilling-bill-lr-no-wise', 'indent_dispatch_code' => $model->indent_dispatch_code], $options);
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/product/tbl-indent-dispatch-new/challen', 'dispatch_date' => $model->dispatch_date, 'lr_no' => $model->lr_no, 'vehicle_no' => $model->vehicle_no, 'report_type' => 'MilkChillingBillLrNoWise'], $options);
         },
     ]
 ];
