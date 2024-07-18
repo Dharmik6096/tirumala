@@ -113,8 +113,3 @@ $this->title = Yii::$app->label->title('view', 'Indent Dispatch');
         </div>
     </div>
 </div>
-<?php /*
-$script = '
-    $(".kv-panel-before").hide();
-';
-$this->registerJs($script, View::POS_END, 'indent-dispatch-view'); */ ?>
