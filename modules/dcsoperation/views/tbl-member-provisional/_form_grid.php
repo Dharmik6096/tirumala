@@ -92,7 +92,7 @@ $attribute = [
         ['attribute' => 'application_no', 'filter' => true],
         ['attribute' => 'is_approved', 'value' => function($model) {
             return $model->is_approved == 1 ? 'Approved' : 'Pending';
-        }, 'visible' => true, 'filter' => false],
+        }, 'visible' => false, 'filter' => false],
         ['attribute' => 'provisional_from'],
         ['attribute' => 'employee_code', 'visible' => false, 'filter' => true],
         ['attribute' => 'employee_name', 'visible' => false, 'filter' => true],
