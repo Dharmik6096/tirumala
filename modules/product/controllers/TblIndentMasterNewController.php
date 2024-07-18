@@ -16,6 +16,7 @@ use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\product\models\TblIndentMasterHistory;
+use app\modules\payment\models\TblPaymentCycleApplicability;
 
 /**
  * TblIndentMasterNewController implements the CRUD actions for TblIndentMaster model.
@@ -128,8 +129,9 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $this->model->indent_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->model->indent_date = Yii::$app->formatter->asDate($this->model->indent_date, DATE_FORMAT) . ' 00:00:00.000000';
-            $this->model->customer_code = $this->model->dcs_code;
-            $this->model->customer_type = 'DCS';
+            $this->model->customer_type = $this->model->customer_type == 1 ? 'MEMBER' : 'DCS';
+            $this->model->customer_code = $this->model->customer_type == 'MEMBER' ? $this->model->customer_code : $this->model->dcs_code;
+            $this->model->member_code = $this->model->customer_type == 'MEMBER' ? $this->model->customer_code : NULL;
             $this->model->status = 0;
             $this->model->scenario = 'createOther';
             if ($this->model->validate()) {
@@ -428,5 +430,48 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
+    public function actionGetAvailableCredit() {
+        $model = new TblPaymentCycleApplicability();
+        $union = Yii::$app->request->post('union_code');
+        $bmc = Yii::$app->request->post('bmc_code');
+        $date = Yii::$app->request->post('indent_date');
+        $code = Yii::$app->request->post('customer_code');
+        $model->applicable_type = 'DCS';
+        $model->applicable_code = $bmc;
+        $model->applicable_for = 'BMC';
 
+        $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
+        if (!empty($modelData)) {
+
+            $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+            $toDate = date('Y-m-d', strtotime($modelData->to_date));
+
+            $model = new TblMilkCollection();
+            $modelData = $model->find()
+                    ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                    ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                    ->andWhere(['member_code' => $code, 'union_code' => $union])
+                    ->one();
+            $creditAmount = 0;
+            if (!empty($modelData->amount)) {
+                $creditAmount = $modelData->amount;
+            }
+
+            $model = new TblIndentMaster();
+            $data = $model->find()
+                    ->select(['indent_total_amount' => 'ISNULL(SUM(ISNULL(amount, 0)),0)'])
+                    ->where(['between', 'cast(indent_date as date)', $fromDate, $toDate])
+                    ->andWhere(['customer_type' => 'MEMBER', 'customer_code' => $code, 'union_code' => $union])
+                    ->one();
+            $indentTotalAmount = 0;
+            if (!empty($data->indent_total_amount)) {
+                $indentTotalAmount = $data->indent_total_amount;
+            }
+
+            $availableCredit = $creditAmount - $indentTotalAmount;
+            return Json::encode(['status' => 'success', 'credit' => $availableCredit]);
+        } else {
+            return Json::encode(['status' => 'error', 'credit' => 0]);
+        }
+    }
 }

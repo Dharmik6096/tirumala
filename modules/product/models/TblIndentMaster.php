@@ -93,7 +93,7 @@ class TblIndentMaster extends \app\models\ChildModel {
             [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
                     return empty($this->getErrors());
                 }, 'on' => ['create', 'importCsv']],
-            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'indent_type', 'warehouse_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'indent_type', 'warehouse_code', 'dcs_code', 'indent_date', 'member_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
                     return empty($this->getErrors());
                 }, 'on' => ['createOther', 'importCsvOther']],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv', 'importCsvOther']],

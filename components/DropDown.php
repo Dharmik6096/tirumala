@@ -1880,6 +1880,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Group By'),
                 'data' => [0 => Yii::t('app', 'INDIVIDUAL'), 1 => Yii::t('app', 'DCS') . '-' . Yii::t('app', 'MEMBER')],
             ],
+            'customer_type' => [
+                'name' => 'customer_type',
+                'prompt' => Yii::t('app', 'Select Customer Type'),
+                'data' => ['0' => Yii::t('app', 'DCS'), '1' => Yii::t('app', 'Member')],
+            ],
         ];
         return $records[$l];
     }
