@@ -212,28 +212,7 @@ class ARImportStrategy extends CsvimporterARImportStrategy {
                         $trans->commit();
                         $count++;
                         if (isset($this->unlinkFile) && $this->unlinkFile && isset($this->saveDeleteChild) && $this->saveDeleteChild) {
-                            $model->attachmentPath($baseDirPath, $docMoveFolderName, $docFolderName);
-                            $baseDir = Yii::getAlias('@webroot') . '/' . $baseDirPath;
-                            $moveDir = $baseDir . $docMoveFolderName;
-                            $docDir = $baseDir . $docFolderName;
-
-                            if (!empty($unlink_files)) {
-                                foreach ($unlink_files as $file) {
-                                    if (file_exists($moveDir . '/' . $file)) {
-                                        unlink($moveDir . '/' . $file);
-                                    }
-                                }
-                            }
-
-                            for ($i = 0; $i < count($attachments); $i++) {
-                                $all_doc = basename($attachments[$i]);
-                                $fileName = basename($masterdoc[$i]);
-                                $file = $moveDir . '/' . $fileName;
-                                file_put_contents($file, file_get_contents($attachments[$i]));
-                                if (file_exists($docDir . '/' . $all_doc)) {
-                                    unlink($docDir . '/' . $all_doc);
-                                }
-                            }
+                            $model->moveFiles($unlink_files, $attachments, $masterdoc);
                         }
                     } else {
                         $trans->rollback();
