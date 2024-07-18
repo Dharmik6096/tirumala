@@ -102,7 +102,7 @@ $this->title = Yii::t('app', 'Indent Approval');
                 echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index-other'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>

@@ -54,13 +54,6 @@ $this->title = Yii::t('app', 'Indent Approval');
                 'detailRowCssClass' => 'child-grid',
                 // 'expandOneOnly' => true,
             ],
-            // ['class' => 'kartik\grid\CheckboxColumn',
-            //     'rowSelectedClass' => GridView::TYPE_SUCCESS,
-            //     'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-            //     'checkboxOptions' => function($model, $key) {
-            //         $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
-            //         return ['class' => 'checkbox', 'disabled' => $disabled, 'id' => 'tblindentmaster-' . $key . '-process_approval_code', 'value' => $model['process_approval_code']];
-            //     }],
             ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS'), 'filter' => FALSE],
             ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'filter' => FALSE],
             ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'filter' => FALSE],
@@ -76,12 +69,10 @@ $this->title = Yii::t('app', 'Indent Approval');
                 'filter' => FALSE, 
                 'visible' => $isIndentApprovalCreditLimitCheck ? true : false, 
                 'contentOptions' => function($model) {
-                    $id = $model['dcs_code'].$model['member_code'].$model['product_code'];
-                    return ['class' => 'credit_amount_' . $id];
+                    $member_code = !empty($model['member_code']) ? $model['member_code'] : 0;
+                    $id = $model['dcs_code'] . $member_code . $model['product_code'];
+                    return ['class' => 'credit_amount_' . $id, 'data-id' => $id];
                 },
-                'value' => function(){
-                    return 13000;
-                }
             ],
         ];
 
@@ -102,7 +93,7 @@ $this->title = Yii::t('app', 'Indent Approval');
                 echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index-other'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
@@ -111,6 +102,7 @@ $this->title = Yii::t('app', 'Indent Approval');
 
 <?php
 $script = '
+    var config = ' . ($isIndentApprovalCreditLimitCheck ? 'true' : 'false') . ';
     $(".kv-panel-before").hide();
 
     $(document).ready(function() {
@@ -130,17 +122,15 @@ $script = '
     });
 
     $(document).on("blur",".approve_qty", function() {
-        var tr_key = $(this).closest("tr").attr("data-key");
+        var tr_key = $(this).closest("tr").attr("data-id");
         rejectqty(tr_key);
         amount(tr_key);
     });
 
-    function rejectqty(tr_key){   
-        var check_key = $("#tblindentmaster-" + tr_key + "-process_approval_code").val();
+    function rejectqty(check_key){
         var qty = $("#tblindentmaster-" + check_key + "-qty").val();
         var approve_qty = $("#tblindentmaster-" + check_key + "-approve_qty").val();
         var rejected_qty = parseFloat(qty)-parseFloat(approve_qty);
-       // var total_qty = parseFloat(approve_qty)+parseFloat(rejected_qty);
         if(!isNaN(rejected_qty) && rejected_qty >= 0){
             rejected_qty=rejected_qty.toFixed(2);
             $("#tblindentmaster-" + check_key +"-rejected_qty").val(rejected_qty);                     
@@ -152,25 +142,17 @@ $script = '
         }
     }
     
-    function amount(tr_key){   
-        var check_key = $("#tblindentmaster-" + tr_key + "-process_approval_code").val();
-        var rate = $("#tblindentmaster-" + check_key + "-rate").val();
-        var approve_qty = $("#tblindentmaster-" + check_key + "-approve_qty").val(); 
-        if(rate == "" || isNaN(rate)){
-            rate = 0;
-        }
-        if(approve_qty == "" || isNaN(approve_qty)){
-            approve_qty = 0;
-        }
-
-        var id = $("#tblindentmaster-" + check_key + "-approve_qty").data("id");
-        var creditLimit = $(".credit_amount_"+id).text();
-
+    function amount(check_key){
+        var rate = $("#tblindentmaster-" + check_key + "-rate").val() || 0;
+        var approve_qty = $("#tblindentmaster-" + check_key + "-approve_qty").val() || 0;
         var amount = parseFloat(rate)* parseFloat(approve_qty);
         if(!isNaN(amount)){
             amount=amount.toFixed(2);
             $("#tblindentmaster-" + check_key +"-amount").val(amount);
-            checkCreditLimit(id);                     
+            if(config){
+                var id = $("#tblindentmaster-" + check_key + "-approve_qty").data("id");
+                checkCreditLimit(id);                     
+            }
         }
     }
 
@@ -178,34 +160,44 @@ $script = '
         var id = $("."+cls).data("id");
         var creditAmount = $(".credit_amount_"+id).text();
         var amount = 0;
-        $("." + cls).each(function() {
+        $(".cls-" + cls).each(function() {
             var currentValue = parseFloat($(this).val()) || 0;
-            console.log(currentValue);
             amount += currentValue;
-            // amount -= currentValue;
-            //  if(amount < currentValue){
-            //     amount = 0;
-            // }
-            // amount -= currentValue;
         });
-        alert(amount);
-        if(creditAmount < amount) {
+        if(creditAmount != "Not Applicable" && creditAmount < amount) {
             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Approve quantity cannot exceed the available credit amount limit.</span></div></div>");
             return false;
-        } 
+        }
+        return true;
     }
     
     $(".submit").click(function() {
-      var id= $(this).attr("value");
-      $(".set_operation").val(id);
+        var id= $(this).attr("value");
+        $(".set_operation").val(id);
         var len = $(".child-checkbox:checked").length;
-            if(len == 0){
-                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
-                return false;
-            } else {
-                $("#indent-approval").submit();
+        if(len == 0){
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
+            return false;
+        } else {
+            if(config){
+                var allLimitsPassed = true;
+                $(".cls-amount").each(function() {
+                    var id = $(this).attr("data-id");
+                    if($("#tblindentmaster-" + id + "-process_approval_code").prop("checked")){
+                        if (!checkCreditLimit(id)) {
+                            allLimitsPassed = false;
+                            return false;
+                        }
+                    }
+                });
+                if (!allLimitsPassed) {
+                    return false;
+                }
             }
-         });
+            $(".parent-checkbox").prop("disabled", true);
+            $("#indent-approval").submit();
+        }
+    });
          
      $(document).on("click",".view-verification",function(e){
         $("#pageloader").show();

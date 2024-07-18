@@ -377,10 +377,6 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
             }
             $dataProvider->allModels = array_values($resultArray);
         }
-        // echo '<pre>';
-        // print_r($dataProvider->allModels);
-        // echo '</pre>';
-        // die;
         return $this->render('indent_approval', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
