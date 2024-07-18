@@ -45,7 +45,10 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'view' => true,
+        // 'view' => true,
+        'view_detail' => function($url, $model) {
+            return Html::a('<i class="fa fa-eye"></i>', ['view', 'reference_no' => $model->reference_no, 'vehicle_no' => $model->vehicle_no, 'dispatch_date' => $model->dispatch_date]);
+        },
         'dcs-wise-challan' => function ($url, $model) {
             $options = ['title' => 'View ' . Yii::t('app', 'DCS') . ' Wise Challan Report', 'target' => '_blank'];
             return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/milk-chill-bill-center-wise', 'indent_dispatch_code' => $model->indent_dispatch_code], $options);

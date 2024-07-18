@@ -99,9 +99,11 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
      *
      * @return ActiveDataProvider
      */
-    public function searchNew($params) {
-        // $query = TblIndentDispatch::find();
-        $query = TblIndentDispatch::find()->select(['tbl_indent_dispatch.vehicle_no', 'tbl_indent_dispatch.reference_no']);
+    public function searchNew($params, $groupBy = true) {
+        $query = TblIndentDispatch::find();
+        if($groupBy){
+            $query->select(['tbl_indent_dispatch.vehicle_no', 'tbl_indent_dispatch.reference_no', 'tbl_indent_dispatch.dispatch_date', 'tbl_indent_dispatch.lr_no']);
+        }
 
         // add conditions that should always apply here
 
@@ -123,15 +125,17 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_indent_dispatch', 'tbl_indent_dispatch', 'tbl_indent_dispatch');
 
-        // grid filtering conditions
-        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $query->andFilterWhere(['>=', 'dispatch_date', $from_date]);
-
-        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'dispatch_date', $to_date]);
+        if($groupBy){
+            // grid filtering conditions
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'dispatch_date', $from_date]);
+    
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'dispatch_date', $to_date]);
+        }
 
         if (!empty($this->dispatch_date)) {
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), dispatch_date, 126)', date('Y-m-d', strtotime($this->dispatch_date))]);
+            $query->andFilterWhere(['CONVERT(VARCHAR(25), dispatch_date, 126)' => date('Y-m-d', strtotime($this->dispatch_date))]);
         }
 
         // if (!empty($this->status_date)) {
@@ -139,10 +143,13 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
         // }
 
         $query->andFilterWhere(['like', 'indent_dispatch_code', $this->indent_dispatch_code])
-                ->andFilterWhere(['like', 'reference_no', $this->reference_no])
-                ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_code])
+                ->andFilterWhere(['like', 'tbl_indent_dispatch.reference_no', $this->reference_no])
+                ->andFilterWhere(['like', 'tbl_indent_dispatch.lr_no', $this->lr_no])
+                // ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_code])
                 ->andFilterWhere(['like', 'tbl_indent_dispatch.vehicle_no', $this->vehicle_no]);
-        $query->groupBy(['tbl_indent_dispatch.vehicle_no', 'tbl_indent_dispatch.reference_no','tbl_indent_dispatch.dispatch_date']);
+        if($groupBy){
+            $query->groupBy(['tbl_indent_dispatch.vehicle_no', 'tbl_indent_dispatch.reference_no','tbl_indent_dispatch.dispatch_date', 'tbl_indent_dispatch.lr_no']);
+        }
 
         return $dataProvider;
     }

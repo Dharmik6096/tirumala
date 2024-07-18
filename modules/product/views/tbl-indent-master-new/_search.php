@@ -35,7 +35,7 @@ use yii\web\View;
     </div>
     <div class="col-sm-2">
         <?php 
-        $where = json_encode(['data_lock_member' => 0, 'sync_lock_member' => 0, 'billing_lock_member' => 0]);
+        $where = json_encode(['data_lock_member' => 1, 'sync_lock_member' => 1, 'billing_lock_member' => 0]);
         echo Html::hiddenInput('customer_type', 'DCS', ['id' => 'customer_type']);
         echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
         echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);

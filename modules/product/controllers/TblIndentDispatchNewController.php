@@ -44,7 +44,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
 
     public function actionIndexOther() {
         $searchModel = new TblIndentDispatchSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchNew(Yii::$app->request->queryParams);
 
         return $this->render('index_other', [
                     'searchModel' => $searchModel,
@@ -57,9 +57,15 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($reference_no, $vehicle_no, $dispatch_date) {
+        $model = TblIndentDispatch::find()->where(['reference_no' => $reference_no, 'vehicle_no' => $vehicle_no, 'dispatch_date' => $dispatch_date])->one();
+        $searchModel = new TblIndentDispatchSearch();
+        $param['TblIndentDispatchSearch'] = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->searchNew($param, false);
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 

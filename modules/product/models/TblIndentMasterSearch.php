@@ -125,7 +125,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
                 'mcc_plant_code' => '',
                 'bmc_code' => '',
                 'dcs_code' => '',
-                'user_code' => '',
+                'user_code' => \Yii::$app->user->identity->user_code,
                 'from_date' => '',
                 'to_date' => '',
             ];

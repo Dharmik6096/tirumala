@@ -1,22 +1,21 @@
 <?php
 
 use yii\helpers\Html;
-use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
+use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\payment\models\TblProductSale */
 
 $this->title = Yii::$app->label->title('view', 'Indent Dispatch');
 ?>
-<div class="panel panel-default panel-grid panel-main">
+<div class="panel panel-default panel-grid hide-grid-settings">
     <div class="panel-heading">
         <?= Yii::$app->controls->cancel($model); ?>
         <?= Html::encode($this->title) ?>
     </div>
-
     <div class="panel-body">
-        <div class="form-grid">
+        <!-- <div class="form-grid"> -->
             <div class="table-responsive">
                 <?php
                 $attributes = [
@@ -42,22 +41,8 @@ $this->title = Yii::$app->label->title('view', 'Indent Dispatch');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
-                                'attribute' => 'route_code',
-                                'value' => Yii::$app->general->getforeignkey($model->routeCode, 'route_name'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
-                                [
                                 'attribute' => 'bmc_code',
                                 'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                                [
-                                'attribute' => 'dcs_code',
-                                'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -72,20 +57,7 @@ $this->title = Yii::$app->label->title('view', 'Indent Dispatch');
                             ],
                                 [
                                 'attribute' => 'vehicle_no',
-                                'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
-                                [
-                                'attribute' => 'product_code',
-                                'value' => Yii::$app->general->getforeignkey($model->productCode, 'product_name'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                                [
-                                'attribute' => 'dispatch_qty',
+                                // 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -99,15 +71,6 @@ $this->title = Yii::$app->label->title('view', 'Indent Dispatch');
                                 [
                                 'attribute' => 'lr_no',
                                 'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
-                                [
-                                'attribute' => 'status_date',
-                                'value' => Yii::$app->controls->view_date($model->indentCode->status_date),
-                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
@@ -130,6 +93,28 @@ $this->title = Yii::$app->label->title('view', 'Indent Dispatch');
                 ]);
                 ?>
             </div>
-        </div>
-
+        <!-- </div> -->
     </div>
+    <div class="row">
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">
+                    Indent Dispatch List
+                </h4>
+            </div>
+            <div class="col-sm-12">
+                <?=
+                $this->render('_dispatch_detail_grid', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php /*
+$script = '
+    $(".kv-panel-before").hide();
+';
+$this->registerJs($script, View::POS_END, 'indent-dispatch-view'); */ ?>

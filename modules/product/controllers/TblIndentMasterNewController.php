@@ -234,10 +234,6 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
         $backUrl[] = '/product/tbl-indent-master/indent-approval-other';
         $indentMaster = new TblIndentMaster();
         if (Yii::$app->request->post()) {
-            echo '<pre>';
-            print_r(Yii::$app->request->post());
-            echo '</pre>';
-            die;
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
                 $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'approve' ? 1 : 2) : 0;
