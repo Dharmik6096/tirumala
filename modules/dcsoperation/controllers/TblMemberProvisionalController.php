@@ -323,7 +323,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
                             $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
                             if (strtolower($model->provisional_status) == 'approve') {
-                                $model->member_status = 'Created';
+                                $model->member_status = 1; //Created
                             }
                             $save_model[] = $model;
                         } else {
@@ -331,7 +331,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $model->provisional_status = 'Approve';
                                 $status = 'Approve';
                                 if (strtolower($status) == 'approve') {
-                                    $model->member_status = 'Created';
+                                    $model->member_status = 1; //Created
                                 }
                                 $model->scenario = 'MemberApprove';
                                 $save_model[] = $model;
@@ -439,9 +439,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $memberModel->provisional_status = $status;
                 $memberModel->remarks = $model->remarks;
                 $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($memberModel->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
-                $memberModel->member_status = 'Approved';
+                $memberModel->member_status = 0; // Approved
                 if (strtolower($status) == 'approve' && ($memberCreationPendingForSapApproval != '1' || $memberModel->provisional_from == 'mobile_update')) {
-                    $memberModel->member_status = 'Created';
+                    $memberModel->member_status = 1; // Created
                 }
                 $memberModel->scenario = 'MemberApprove';
                 $model_save[] = $memberModel;
