@@ -41,7 +41,8 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblIndentDispatch::find();
+        // $query = TblIndentDispatch::find();
+        $query = TblIndentDispatch::find()->select(['tbl_indent_dispatch.vehicle_no', 'tbl_indent_dispatch.reference_no']);
 
         // add conditions that should always apply here
 
@@ -58,7 +59,8 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
         }
 
         // grid filtering conditions
-        $query->joinWith(['routeCode', 'vehicleCode', 'productCode', 'indentCode']);
+        // $query->joinWith(['routeCode', 'vehicleCode', 'productCode', 'indentCode']);
+        $query->joinWith(['routeCode']);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_indent_dispatch', 'tbl_indent_dispatch', 'tbl_indent_dispatch');
 
@@ -73,20 +75,15 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), dispatch_date, 126)', date('Y-m-d', strtotime($this->dispatch_date))]);
         }
 
-        if (!empty($this->status_date)) {
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_indent_master.status_date, 126)', date('Y-m-d', strtotime($this->status_date))]);
-        }
+        // if (!empty($this->status_date)) {
+        //     $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_indent_master.status_date, 126)', date('Y-m-d', strtotime($this->status_date))]);
+        // }
 
         $query->andFilterWhere(['like', 'indent_dispatch_code', $this->indent_dispatch_code])
                 ->andFilterWhere(['like', 'reference_no', $this->reference_no])
-                ->andFilterWhere(['like', 'customer_type', $this->customer_type])
-                ->andFilterWhere(['like', 'customer_code', $this->customer_code])
                 ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_code])
-                ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code])
-                ->andFilterWhere(['like', 'tbl_indent_dispatch.dispatch_qty', $this->dispatch_qty])
-//                ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->vehicle_no]);
-                ->andFilterWhere(['like', 'tbl_indent_dispatch.vehicle_no', $this->vehicle_no])
-                ->andFilterWhere(['like', 'tbl_indent_dispatch.dcs_code', $this->dcs_code]);
+                ->andFilterWhere(['like', 'tbl_indent_dispatch.vehicle_no', $this->vehicle_no]);
+        $query->groupBy(['tbl_indent_dispatch.vehicle_no', 'tbl_indent_dispatch.reference_no','tbl_indent_dispatch.dispatch_date']);
 
         return $dataProvider;
     }
