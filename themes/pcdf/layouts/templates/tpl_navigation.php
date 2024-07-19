@@ -19,7 +19,9 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
 } else if (Yii::$app->session->get('Login-sess') == 'Rail') {
     $logout_url[] = '/site/rail-logout';
 }
-$collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
+// $collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
+$collectionApprovalConfig = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL');
+$collectionApproval = in_array($collectionApprovalConfig, [1, 2]);
 $eiplCode = Yii::$app->session->get('eiplCode');
 $rateAppApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'rate_approval', 'PORTAL') == 1 ? TRUE : FALSE;
 $batchNoWise = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;
@@ -989,6 +991,23 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Feedback Item'), 'url' => ['/feedback/tbl-eipl-app-feedback-item/index']],
                             ['label' => Yii::t('app', 'Feedback Master'), 'url' => ['/feedback/tbl-eipl-app-feedback-master/index']],
                     //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
+                    ],
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Survey') . '<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'MPP Survey'), 'url' => ['/feedback/tbl-mpp-survey/index']],
+                            ['label' => Yii::t('app', 'House Hold'), 'url' => ['/feedback/tbl-non-member-house-hold-visit/index']],
+                    ],
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Meeting') . '<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'VCG/MRG Member Selection'), 'url' => ['/feedback/tbl-vcg-mrg-member/index']],
+                            ['label' => Yii::t('app', 'VCG Meeting'), 'url' => ['/feedback/tbl-vcg-meeting-master/index']],
+                            ['label' => Yii::t('app', 'MRG Meeting'), 'url' => ['/feedback/tbl-mrg-meeting-master/index']],
                     ],
                 ],
                     [

@@ -5195,12 +5195,11 @@ tr.highlightRow {
 }
 .accordion.collapsed:after {
     /* symbol for "collapsed" panels */
-    content: "\f067"; 
+    content: "\f067";
 }
 .padding_left_45 {
     border: 5px solid #ddd;
 }
-
 .child-grid .kv-expanded-row {
     width: 94%;
     margin: auto;

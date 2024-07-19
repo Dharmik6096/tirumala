@@ -1885,6 +1885,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Customer Type'),
                 'data' => ['0' => Yii::t('app', 'DCS'), '1' => Yii::t('app', 'Member')],
             ],
+            'vcg_mrg_member_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['DRAFT' => Yii::t('app', 'DRAFT'),'APPROVED' => Yii::t('app', 'APPROVED'),'REJECTED' => Yii::t('app', 'REJECTED'), 'INACTIVATE' => Yii::t('app', 'INACTIVATE')],
+            ],
+            'vcg_mrg_meeting_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['CREATE' => Yii::t('app', 'CREATE'),'IN PROGRESS' => Yii::t('app', 'IN PROGRESS'),'COMPLETED' => Yii::t('app', 'COMPLETED')],
+            ],
+            'vcg_mrg_meeting_mom_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['OPEN' => Yii::t('app', 'OPEN'),'IN PROGRESS' => Yii::t('app', 'IN PROGRESS'),'CLOSED' => Yii::t('app', 'CLOSED'), 'CARRY FORWARD' => Yii::t('app', 'CARRY FORWARD')],
+            ],
         ];
         return $records[$l];
     }
