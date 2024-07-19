@@ -25,7 +25,6 @@ $form = ActiveForm::begin([
             'action' => $rtype == 'forced' ? ['create'] : ['create-recalc'],
             'method' => 'get',
             'validateOnBlur' => true,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -43,7 +42,7 @@ $form = ActiveForm::begin([
 <div class="col-sm-2">
     <?= Yii::$app->dropdown->mcc_bmc($searchModel, $form, 'tblraterecalculationsearch-mcc_plant_code', 'bmc_code', false); ?>
 </div>
-<?= Yii::$app->dropdown->dropdownStatic('rate_cal_for', $searchModel, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', FALSE, FALSE, 'recalc_for', false, $remove) ?> 
+<?= Yii::$app->dropdown->dropdownStatic('rate_cal_for', $searchModel, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', FALSE, FALSE, 'recalc_for', false) ?> 
 <?php if ($rtype == 'forced') { ?>
     <div class="col-sm-2 show_on_memebr form-group_mb0">
         <?= Yii::$app->dropdown->bmc_society($searchModel, $form, 'tblraterecalculationsearch-bmc_code', 'dcs_code', false, FALSE, '', FALSE, false, true); ?>         
