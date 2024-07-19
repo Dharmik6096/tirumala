@@ -50,43 +50,43 @@ if (!empty($rec_data) && $rtype == 'forced') {
     <?php
     if ($rtype == 'forced') {
         $attribute = [
-            ['class' => 'kartik\grid\CheckboxColumn',
+                ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
 //                'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
                     return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['customer_type'] . '###' . $model['recalc_for'] . '###' . $model['name']];
                 }],
-            ['attribute' => 'type', 'filter' => false],
-            ['attribute' => 'code', 'filter' => false],
-            ['attribute' => 'code_ex', 'filter' => false],
-            ['attribute' => 'name', 'filter' => false],
-            ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'type', 'filter' => false],
+                ['attribute' => 'code', 'filter' => false],
+                ['attribute' => 'code_ex', 'filter' => false],
+                ['attribute' => 'name', 'filter' => false],
+                ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
         ];
     } else {
         $attribute = [
-            ['class' => 'kartik\grid\CheckboxColumn',
+                ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
                     return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for'] . '###' . $model['name'] . '###' . $model['shift_applicability']];
                 }],
-            ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'code_ex', 'value' => 'code_ex', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'name', 'value' => 'name'],
-            ['label' => 'From Date', 'attribute' => 'from_date', 'value' => function($model) {
+                ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'code_ex', 'value' => 'code_ex', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'name', 'value' => 'name'],
+                ['label' => 'From Date', 'attribute' => 'from_date', 'value' => function($model) {
                     $shift = explode(' ', $model['from_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
                     return Yii::$app->controls->view_date($model['from_date']) . $shift;
                 }, 'filter' => false],
-            ['label' => 'To Date', 'attribute' => 'to_date', 'value' => function($model) {
+                ['label' => 'To Date', 'attribute' => 'to_date', 'value' => function($model) {
                     $shift = explode(' ', $model['to_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
                     return !empty($model['to_date']) ? Yii::$app->controls->view_date($model['to_date']) . $shift : '';
                 }, 'filter' => false],
-            ['attribute' => 'wef_date', 'value' => function($model) {
+                ['attribute' => 'wef_date', 'value' => function($model) {
                     $shift = explode(' ', $model['wef_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
                     return Yii::$app->controls->view_date($model['wef_date']) . $shift;
                 }, 'filter' => false],
@@ -95,11 +95,11 @@ if (!empty($rec_data) && $rtype == 'forced') {
                     $modelPurchase = new TblPurchaseRate();
                     $dcsRate = $modelPurchase->find()->where(['purchase_rate_code' => $model['purchase_rate_code']])->one();
                     return (!empty($dcsRate) && $model['recalc_for'] == 'Member') ? $model['purchase_rate_code'] . ' (' . $dcsRate->dcs_purchase_rate_code . ')' : $model['purchase_rate_code'];
-                }, 'visible' => true, 'filter' => false],            
-            ['label' => 'Shift Applicability', 'attribute' => 'shift', 'value' => 'shift', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
+                }, 'visible' => true, 'filter' => false],
+                ['label' => 'Shift Applicability', 'attribute' => 'shift', 'value' => 'shift', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
         ];
     }
     $grid_option = [
@@ -138,6 +138,9 @@ $script = "
             }else if(recalc_for=='bmc'){
                 $('.show_on_memebr').hide();
                 $('.show_on_bmc').show();
+            }else if(recalc_for=='both'){
+                $('.show_on_memebr').hide();
+                $('.show_on_bmc').hide();
             }
     });
     $('.submit_form').on('click', function(){
@@ -155,6 +158,10 @@ $script = "
                 $('.show_on_memebr').hide();
                 $('.show_on_bmc').show();
                 hideType();
+            }else if(recalc_for=='both'){
+                $('.show_on_memebr').hide();
+                $('#tblraterecalculationsearch-customer_type').val('');
+                $('.show_on_bmc').hide();
             }
     });
     
@@ -172,7 +179,7 @@ $script = "
                 });
             } else if(recalc_for=='bmc'){
                 $('.show_hide_customer_type').show();
-            }
+            } 
     });
     
     function hideType(){

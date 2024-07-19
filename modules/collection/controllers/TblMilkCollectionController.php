@@ -27,6 +27,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use app\modules\general\models\TblApprovalStagesDetail;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -100,19 +101,31 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $conversion_const = empty($conversion_const) ? 1 : $conversion_const;
             $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
             if ($this->model->validate()) {
-                if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
+                $auto_key_config = [];
+                $collectionApprovalConfig = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'collection_approval');
+                if (in_array($collectionApprovalConfig, [1, 2])) {
                     $approvalModel = new TblCollectionDataAlias();
                     $approvalModel->attributes = $this->model->attributes;
                     $approvalModel->table_name = 'tbl_milk_collection';
                     $approvalModel->action_perform = 'CREATE';
                     $approvalModel->setOldAttributesValues($approvalModel);
-                    $modelSave[] = $approvalModel;
+                    if ($collectionApprovalConfig == 2) {
+                        $i = 0;
+                        $modelStages = new TblApprovalStagesDetail();
+                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE);
+                    } else {
+                        $modelSave[] = $approvalModel;
+                    }
                     $message = 'Data For Approval';
                     $type = 'create';
                 } else {
                     $modelSave[] = $this->model;
                 }
-                $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
+                if (!empty($auto_key_config)) {
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($modelSave, [$message, $type], $auto_key_config);
+                } else {
+                    $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
+                }
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
                     $record = ['status' => 'success', 'msg' => $msg];
@@ -367,6 +380,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $detailModel = $dataProvider->getModels();
         $message = 'Milk Collection';
         $type = 'edit';
+        $collectionApprovalConfig = Yii::$app->general->getUnionConfigResult($searchModel->union_code, 'collection_approval');
         $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
         $config = $configVal == 1 ? TRUE : FALSE;
         if (Yii::$app->request->post()) {
@@ -384,9 +398,11 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
 
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
-                foreach ($modelData as $detalData) {
+                $i = 0;
+                $auto_key_config = [];
+                foreach ($modelData as $detailKey => $detalData) {
                     if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->antibiotic != $detalData->oldAttributes['antibiotic'])) {
-                        if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                        if (in_array($collectionApprovalConfig, [1, 2])) {
                             $approvalModel = new TblCollectionDataAlias();
                             $approvalModel->attributes = $detalData->attributes;
                             $approvalModel->old_qty = $detalData->oldAttributes['qty'];
@@ -401,7 +417,13 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $approvalModel->table_name = 'tbl_milk_collection';
                             $approvalModel->action_perform = 'UPDATE';
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                            $saveModel[] = $approvalModel;
+                            if ($collectionApprovalConfig == 2) {
+                                $modelStages = new TblApprovalStagesDetail();
+                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE);
+                                $i++;
+                            } else {
+                                $saveModel[] = $approvalModel;
+                            }
                             $message = 'Data For Approval';
                             $type = 'create';
                         } else {
@@ -415,7 +437,11 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
+                if (!empty($auto_key_config)) {
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, [$message, $type], $auto_key_config);
+                } else {
+                    $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
+                }
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
                 }
@@ -517,17 +543,26 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $deletedata = Yii::$app->request->post('selection');
                 $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
                 $where = [];
-                foreach ($deletedata as $code) {
+                $i = 0;
+                $auto_key_config = [];
+                foreach ($deletedata as $detailKey => $code) {
                     $where['milk_collection_code'] = $code;
                     $existData = TblMilkCollection::find()->where($where)->one();
                     if (!empty($existData)) {
-                        if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                        $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL');
+                        if (in_array($collectionApprovalConfig, [1, 2])) {
                             $ApprovalModel = new TblCollectionDataAlias();
                             $ApprovalModel->attributes = $existData->attributes;
                             $ApprovalModel->setOldAttributesValues($ApprovalModel);
                             $ApprovalModel->table_name = 'tbl_milk_collection';
                             $ApprovalModel->action_perform = 'DELETE';
-                            $saveModel[] = $ApprovalModel;
+                            if ($collectionApprovalConfig == 2) {
+                                $modelStages = new TblApprovalStagesDetail();
+                                $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE);
+                                $i++;
+                            } else {
+                                $saveModel[] = $ApprovalModel;
+                            }
                         } else {
                             $historyModel = new TblMilkCollectionHistory();
                             Yii::$app->operation->history($existData, $historyModel, DELETE);
@@ -538,7 +573,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                if (!empty($saveModel) || !empty($deleteModel)) {
+                if (!empty($auto_key_config)) {
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, [$message, $type], $auto_key_config);
+                } else {
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
                 }
             }

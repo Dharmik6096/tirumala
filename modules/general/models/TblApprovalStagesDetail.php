@@ -145,4 +145,26 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
         return $levels;
     }
 
+    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag = FALSE) {
+        $approvalStage = $this->approvalStages($unionCode, $processName);
+        $approvalModel->approval_status = 'Pending';
+        $saveModel[] = $approvalModel;
+        $parent_index = $i;
+        if (!empty($approvalStage)) {
+            foreach ($approvalStage as $key => $stage) {
+                $i++;
+                $stage_model = new TblProcessApproval();
+                $stage_model->setAttributes($stage);
+                $stage_model->process_name = $processName;
+                $stage_model->status = 0;
+                unset($stage_model->created_at);
+                unset($stage_model->created_by);
+                $saveModel[] = $stage_model;
+                if ($processFlag) {
+                    $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $parent_index];
+                }
+            }
+        }
+    }
+
 }

@@ -23,7 +23,7 @@ use app\modules\usermanagement\components\GhostHtml;
             'checkboxOptions' => function($model, $key, $index) {
                 echo Html::activeHiddenInput($model, 'action_perform', ['value' => $model->action_perform]);
                 echo Html::activeHiddenInput($model, 'operation', ['value' => $model->operation, 'class' => 'set_operation']);
-                return ['class' => 'checkbox-collection', 'value' => $model['collection_data_alias_code']];
+                return ['class' => 'checkbox-collection', 'value' => $model['collection_data_alias_code'] . '###' . $model['process_approval_code']];
             }],
             ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');

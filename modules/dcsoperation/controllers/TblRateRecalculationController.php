@@ -14,6 +14,7 @@ use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use app\modules\collection\models\TblMccShiftLock;
+use app\modules\dcsoperation\models\TblPurchaseRate;
 
 /**
  * TblRateRecalculationController implements the CRUD actions for TblRateRecalculation model.
@@ -181,16 +182,44 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }
                 } else {
+                    $dataArray = [];
+                    foreach ($data as $alldata) {
+                        $c = explode('###', $alldata);
+                        $dataArray[$c[0]] = $c;
+                    }
+                    $purchaseRateCode = TblPurchaseRate::find()->select(['purchase_rate_code'])->where(['dcs_purchase_rate_code' => $rateCode, 'union_code' => $searchModel->union_code])->one();
                     foreach ($dcs_codes as $code) {
                         $from_shift = Yii::$app->general->getshift($searchModel->from_shift);
                         $to_shift = Yii::$app->general->getshift($searchModel->to_shift);
                         $fdate = date('Y-m-d H:i:s', strtotime($searchModel->from_date . ' ' . $from_shift));
                         $tdate = date('Y-m-d H:i:s', strtotime($searchModel->to_date . ' ' . $to_shift));
                         $codes = (string) (!empty($code['customer_code']) ? $code['customer_code'] : $code);
+                        if (isset($dataArray[$codes])) {
+                            $c = $dataArray[$codes];
+                            if ($searchModel->recalc_for == 'both' && $c[2] == 'Member') {
+                                $rateCode = $purchaseRateCode['purchase_rate_code'];
+                            }
+                        }
                         $sp_params = [$searchModel->bmc_code, $rateCode, $codes, $fdate, $tdate, $searchModel->recalc_for, $codes, $c[1], $shiftApplicability];
                         $sp = 'sp_Portal_Process_Recalculation';
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }
+
+//                   foreach ($data as $alldata) {
+//                        $c = explode('###', $alldata);
+//                        $from_shift = Yii::$app->general->getshift($searchModel->from_shift);
+//                        $to_shift = Yii::$app->general->getshift($searchModel->to_shift);
+//                        $fdate = date('Y-m-d H:i:s', strtotime($searchModel->from_date . ' ' . $from_shift));
+//                        $tdate = date('Y-m-d H:i:s', strtotime($searchModel->to_date . ' ' . $to_shift));
+//                        $codes = (string) (!empty($code['customer_code']) ? $code['customer_code'] : $c[0]);
+//                        if ($searchModel->recalc_for == 'both' && $c[2] == 'Member') {
+//                            $purchaseRateCode = TblPurchaseRate::find()->select(['purchase_rate_code'])->where(['dcs_purchase_rate_code' => $rateCode, 'union_code' => $searchModel->union_code])->one();
+//                            $rateCode = $purchaseRateCode['purchase_rate_code'];
+//                        }
+//                        $sp_params = [$searchModel->bmc_code, $rateCode, $codes, $fdate, $tdate, $searchModel->recalc_for, $codes, $c[1], $shiftApplicability];
+//                        $sp = 'sp_Portal_Process_Recalculation';
+//                        \Yii::$app->general->getSpData($sp, $sp_params);
+//                    }
                 }
                 //  $trans->commit();
             } catch (UserException $e) {
