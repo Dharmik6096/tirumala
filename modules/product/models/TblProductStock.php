@@ -283,7 +283,7 @@ class TblProductStock extends \app\models\ChildModel {
             $query->andWhere(['not in', 'product_stock_code', $productStockCode]);
         }
         
-        if (strtoupper($type) == 'MCC' || $checkMccStock) {
+        if (strtoupper($type) == 'MCC') {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])
