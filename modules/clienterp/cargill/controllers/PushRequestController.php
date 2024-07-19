@@ -86,8 +86,6 @@ class PushRequestController extends PushMasterController {
                 $this->response->setMessage([$msg]);
             }
         } catch (\Throwable $ex) {
-            var_dump($ex);
-            die;
             $this->response->setStatusCode($this->eiplResponseCode->statusError);
             $this->response->setMessage(['Error While Process Request.']);
         }
