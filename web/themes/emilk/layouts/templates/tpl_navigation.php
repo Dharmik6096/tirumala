@@ -21,7 +21,9 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
 }
 $unions = Yii::$app->session->get('Unions');
 $unionArray = !empty($unions) ? explode(',', $unions) : []; // Check if $unions is not null before using explode()
-$collectionApproval = Yii::$app->general->getUnionConfiguration($unionArray, 'collection_approval', 'PORTAL') == 1 ? true : false;
+// $collectionApproval = Yii::$app->general->getUnionConfiguration($unionArray, 'collection_approval', 'PORTAL') == 1 ? true : false;
+$collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($unionArray, 'collection_approval', 'PORTAL');
+$collectionApproval = in_array($collectionApprovalConfig, [1, 2]);
 $eiplCode = Yii::$app->session->get('eiplCode');
 $rateAppApproval = Yii::$app->general->getUnionConfiguration($unionArray, 'rate_approval', 'PORTAL') == 1 ? true : false;
 $batchNoWise = Yii::$app->general->getUnionConfiguration($unionArray, 'batch_no_wise_inventory', 'PORTAL') == 1 ? true : false;
