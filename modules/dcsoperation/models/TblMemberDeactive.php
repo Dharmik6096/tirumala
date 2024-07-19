@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\feedback\models\TblVCGMRGMember;
 
 /**
  * This is the model class for table "tbl_member_deactive".
@@ -242,6 +243,17 @@ class TblMemberDeactive extends \app\models\ChildModel {
                 ->andWhere('((:checkdate between cast(from_date as date) and coalesce(cast(to_date as date), \'9999-12-31\')))', [':checkdate' => $checkdate])
                 ->column();
         return $deactivateMemberList;
+    }
+
+    public function updateChildRecord($model, $status){
+        if($status == 0){
+            $vcgMrgMemberModel = TblVCGMRGMember::find()->where(['member_code' => $model->member_code, 'status'=>['DRAFT','APPROVED']])->one();
+            if(!empty($vcgMrgMemberModel)){
+                $vcgMrgMemberModel->status = 'INACTIVATE';
+                $vcgMrgMemberModel->end_date = date('Y-m-d');
+                $vcgMrgMemberModel->save();
+            }
+        }
     }
 
 }

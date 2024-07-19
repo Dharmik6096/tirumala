@@ -176,6 +176,7 @@ return [
     'Customer Code Ex.' => 'Dairy Farm Code Ex.',
     'Customer Name' => 'Dairy Farm Name',
     'Customer Type' => 'Dairy Farm Type',
+    'Select Customer Type' => 'Select Dairy Farm Type',
     'Customer Master List' => 'Dairy Farm List',
     'Customer' => 'Dairy Farm',
     'Vendor/Customer' => 'Dairy Farm',

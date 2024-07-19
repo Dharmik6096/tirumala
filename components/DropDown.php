@@ -561,9 +561,15 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/places-list', Yii::t('app', $prompt), $multiple, '', $readonly);
     }
 
-    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+    public function product_group_code($model, $form, $depends, $name = 'product_group_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
-        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-group/product-group-list', Yii::t('app', 'Select Product Group'), $multiple, $extra_param, $readonly, $id);
+    }
+    
+    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false, $flag = 'NotDependOnProduct') {
+        $this->setClass($form, $name);
+        $action = ($flag == 'NotDependOnProduct') ? '/product/tbl-product/product-list' : '/product/tbl-product/product-depend-list';
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, $action, Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
     }
 
     public function moduleType($model, $form, $name = 'module_type', $islable = false, $disable = false, $searchable = true) {
@@ -1907,6 +1913,31 @@ class DropDown extends Component {
                 'name' => 'language_code',
                 'prompt' => Yii::t('app', 'Select Language'),
                 'data' => [0 => Yii::t('app', 'English'), 1 => Yii::t('app', 'Hindi')],
+            ],
+            'indent_group_by' =>  [
+                'name' => 'group_by',
+                'prompt' => Yii::t('app', 'Select Group By'),
+                'data' => [0 => Yii::t('app', 'INDIVIDUAL'), 1 => Yii::t('app', 'DCS') . '-' . Yii::t('app', 'MEMBER')],
+            ],
+            'customer_type' => [
+                'name' => 'customer_type',
+                'prompt' => Yii::t('app', 'Select Customer Type'),
+                'data' => ['0' => Yii::t('app', 'DCS'), '1' => Yii::t('app', 'Member')],
+            ],
+            'vcg_mrg_member_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['DRAFT' => Yii::t('app', 'DRAFT'),'APPROVED' => Yii::t('app', 'APPROVED'),'REJECTED' => Yii::t('app', 'REJECTED'), 'INACTIVATE' => Yii::t('app', 'INACTIVATE')],
+            ],
+            'vcg_mrg_meeting_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['CREATE' => Yii::t('app', 'CREATE'),'IN PROGRESS' => Yii::t('app', 'IN PROGRESS'),'COMPLETED' => Yii::t('app', 'COMPLETED')],
+            ],
+            'vcg_mrg_meeting_mom_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['OPEN' => Yii::t('app', 'OPEN'),'IN PROGRESS' => Yii::t('app', 'IN PROGRESS'),'CLOSED' => Yii::t('app', 'CLOSED'), 'CARRY FORWARD' => Yii::t('app', 'CARRY FORWARD')],
             ],
         ];
         return $records[$l];

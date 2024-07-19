@@ -247,7 +247,9 @@ echo GhostMenu::widget([
                     'items' => [
                             ['label' => Yii::t('app', 'Indent Product'), 'url' => ['/product/tbl-indent-product/index'], 'active' => ($cntrl == 'tbl-indent-product')],
                             ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index-other'], 'active' => ($cntrl == 'tbl-indent-master')],
+                            ['label' => Yii::t('app', 'Indent Master New'), 'url' => ['/product/tbl-indent-master-new/index-other'], 'active' => ($cntrl == 'tbl-indent-master-new')],
                             ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index-other'], 'active' => ($cntrl == 'tbl-indent-dispatch')],
+                            ['label' => Yii::t('app', 'Indent Dispatch - New'), 'url' => ['/product/tbl-indent-dispatch-new/index-other'], 'active' => ($cntrl == 'tbl-indent-dispatch-new')],
                             ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
                     ]
                 ],
@@ -989,6 +991,23 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Feedback Item'), 'url' => ['/feedback/tbl-eipl-app-feedback-item/index']],
                             ['label' => Yii::t('app', 'Feedback Master'), 'url' => ['/feedback/tbl-eipl-app-feedback-master/index']],
                     //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
+                    ],
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Survey') . '<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'MPP Survey'), 'url' => ['/feedback/tbl-mpp-survey/index']],
+                            ['label' => Yii::t('app', 'House Hold'), 'url' => ['/feedback/tbl-non-member-house-hold-visit/index']],
+                    ],
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Meeting') . '<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'VCG/MRG Member Selection'), 'url' => ['/feedback/tbl-vcg-mrg-member/index']],
+                            ['label' => Yii::t('app', 'VCG Meeting'), 'url' => ['/feedback/tbl-vcg-meeting-master/index']],
+                            ['label' => Yii::t('app', 'MRG Meeting'), 'url' => ['/feedback/tbl-mrg-meeting-master/index']],
                     ],
                 ],
                     [

@@ -616,6 +616,9 @@ class SchedulerController extends ChildController {
                 $modelMaster = new $model_name();
                 $existData = $modelMaster::find()->where([$f_key => $row->{$f_key}])->one();
                 if (!empty($existData)) {
+                    if (method_exists($existData, 'updateChildRecord')) {
+                        $existData->updateChildRecord($existData, $status);
+                    }
                     $existData->is_active = $status;
                     $sentboxArray = [];
                     $encrypt = $modelMaster->encryptModel($existData->attributes);
