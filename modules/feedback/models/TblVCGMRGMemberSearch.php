@@ -89,6 +89,7 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
         $query->andFilterWhere([
             'tbl_VCG_MRG_member.VCG_MRG_member_id' => $this->VCG_MRG_member_id,
             'tbl_VCG_MRG_member.route_code' => $this->route_code,
+            'tbl_VCG_MRG_member.dcs_code' => $this->dcs_code,
             'tbl_VCG_MRG_member.approved_at' => $this->approved_at,
         ]);
 

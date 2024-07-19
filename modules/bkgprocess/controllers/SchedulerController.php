@@ -42,7 +42,6 @@ use app\modules\complaint\models\TblComplain;
 use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
-use app\modules\feedback\models\TblVCGMRGMember;
 
 class SchedulerController extends ChildController {
 

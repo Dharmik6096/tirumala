@@ -60,7 +60,6 @@ class TblVcgMrgMemberController extends ChildController
     {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-        $this->model->scenario = 'update';
         if (Yii::$app->request->post()) {
             $historyModel = new TblVCGMRGMemberHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
