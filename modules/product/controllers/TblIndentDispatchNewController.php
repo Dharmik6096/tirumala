@@ -75,7 +75,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
         $searchModel->scenario = 'indentApprove';
         $param = Yii::$app->request->queryParams;
         $indentMasterParam = !empty($param['TblIndentMasterSearch']) ? $param['TblIndentMasterSearch'] : [];
-        $param['TblIndentMasterSearch']['group_by'] = (Yii::$app->request->isPost) ? 0 : !empty($indentMasterParam['group_by']) ? $indentMasterParam['group_by'] : '';
+        $param['TblIndentMasterSearch']['group_by'] = (Yii::$app->request->isPost) ? 0 : (!empty($indentMasterParam['group_by']) ? $indentMasterParam['group_by'] : '');
         $dataProvider = $searchModel->indentdispatchothernewsearch($param);
         $indentModel = $dataProvider->getModels();
         $stock_detail = $this->getProductDetail($indentMasterParam);
