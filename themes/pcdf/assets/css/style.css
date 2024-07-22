@@ -5205,3 +5205,21 @@ tr.highlightRow {
     margin: auto;
     padding: 10px 0px;
 }
+.for-pw-in {
+    max-width: 370px;
+    margin: auto;
+    max-height: 350px !important;
+    min-height: 224px !important;
+}
+.for-pw-ot {
+    max-width: 370px;
+    margin: auto;
+    max-height: 420px !important;
+    min-height: 224px !important;
+}
+.padding_right_15 {
+    padding-right: 15px !important;
+}
+.padding_left_15 {
+    padding-left: 15px !important;
+}
