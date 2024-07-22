@@ -93,9 +93,9 @@ $this->title = Yii::$app->label->title('view', 'VCG MRG Member');
     <div class="row">
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#member_grid" aria-expanded="true" aria-controls="member_grid">Member</h4>
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#member_grid" aria-expanded="true" aria-controls="member_grid">Member</h4>
             </div>
-            <div class="col-sm-12 collapse in" id="member_grid">
+            <div class="col-sm-12 collapse show" id="member_grid">
                 <?=
                 $this->render('_member_grid', [
                     'searchModel' => $searchModel,

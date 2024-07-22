@@ -5485,3 +5485,23 @@ div#w12 > .card.border-default {
 .icon-set a.icon-set-right, .icon-set-checkbox a.icon-set-right {
     margin-right: 15px;
 }
+
+.accordion:after {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f068";
+    float: right; 
+    margin-right: 5px;
+    font-weight: 900;
+}
+.accordion.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\f067";
+}
+.padding_left_45 {
+    border: 5px solid #ddd;
+}
+.child-grid .kv-expanded-row {
+    width: 94%;
+    margin: auto;
+    padding: 10px 0px;
+}

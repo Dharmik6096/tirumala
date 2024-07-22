@@ -166,11 +166,11 @@ $this->title = Yii::$app->label->title('view', 'Non Member House Hold Visit');
     <div class="row">
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#current_pouring_grid" aria-expanded="true" aria-controls="current_pouring_grid">
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#current_pouring_grid" aria-expanded="true" aria-controls="current_pouring_grid">
                     Current Pouring
                 </h4>
             </div>
-            <div class="col-sm-12 collapse in" id="current_pouring_grid">
+            <div class="col-sm-12 collapse show" id="current_pouring_grid">
                 <?=
                 $this->render('_current_pouring', [
                     'dataProvider' => $dataProvider,
@@ -181,9 +181,9 @@ $this->title = Yii::$app->label->title('view', 'Non Member House Hold Visit');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#document_grid" aria-expanded="true" aria-controls="competitor_grid">Document Upload</h4>
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#document_grid" aria-expanded="true" aria-controls="competitor_grid">Document Upload</h4>
             </div>
-            <div class="col-sm-12 collapse in" id="document_grid">
+            <div class="col-sm-12 collapse show" id="document_grid">
                 <?=
                 $this->render('_document_grid', [
                     'dataProviderOther' => $dataProviderOther,

@@ -138,11 +138,11 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
     <div class="row">
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#attendance_grid" aria-expanded="true" aria-controls="attendance_grid">
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#attendance_grid" aria-expanded="true" aria-controls="attendance_grid">
                     Attendance
                 </h4>
             </div>
-            <div class="col-sm-12 collapse in" id="attendance_grid">
+            <div class="col-sm-12 collapse show" id="attendance_grid">
                 <?=
                 $this->render('_attendance_grid', [
                     'dataProvider' => $dataProvider,
@@ -153,11 +153,11 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#statistics_grid" aria-expanded="true" aria-controls="statistics_grid">
+            <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#statistics_grid" aria-expanded="true" aria-controls="statistics_grid">
                 Statistics
             </h4>
             </div>
-            <div class="col-sm-12 collapse in" id="statistics_grid">
+            <div class="col-sm-12 collapse show" id="statistics_grid">
                 <?=
                 $this->render('_statistics_grid', [
                     'dataProvider' => $statisticsDataProvider,
@@ -168,11 +168,11 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#member_grid" aria-expanded="true" aria-controls="member_grid">
+            <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#member_grid" aria-expanded="true" aria-controls="member_grid">
                     Non Pouring Member
                 </h4>
             </div>
-            <div class="col-sm-12 collapse in" id="member_grid">
+            <div class="col-sm-12 collapse show" id="member_grid">
                 <?=
                 $this->render('_non_pouring_member_grid', [
                     'dataProvider' => $memberDataProvider,
@@ -183,9 +183,9 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#mom_grid" aria-expanded="true" aria-controls="mom_grid">Mom</h4>
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#mom_grid" aria-expanded="true" aria-controls="mom_grid">Mom</h4>
             </div>
-            <div class="col-sm-12 collapse in" id="mom_grid">
+            <div class="col-sm-12 collapse show" id="mom_grid">
                 <?=
                 $this->render('_mom_grid', [
                     'momDataProvider' => $momDataProvider,
@@ -196,9 +196,9 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#feedback_grid" aria-expanded="true" aria-controls="feedback_grid">Feedback</h4>
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#feedback_grid" aria-expanded="true" aria-controls="feedback_grid">Feedback</h4>
             </div>
-            <div class="col-sm-12 collapse in" id="feedback_grid">
+            <div class="col-sm-12 collapse show" id="feedback_grid">
                 <?=
                 $this->render('_feedback_grid', [
                     'feedbackDataProvider' => $feedbackDataProvider,
@@ -209,9 +209,9 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#info_sharing_grid" aria-expanded="true" aria-controls="info_sharing_grid">Info Sharing</h4>
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#info_sharing_grid" aria-expanded="true" aria-controls="info_sharing_grid">Info Sharing</h4>
             </div>
-            <div class="col-sm-12 collapse in" id="info_sharing_grid">
+            <div class="col-sm-12 collapse show" id="info_sharing_grid">
                 <?=
                 $this->render('_info_sharing_grid', [
                     'sharingDataProvider' => $sharingDataProvider,
@@ -222,9 +222,9 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#previous_grid" aria-expanded="true" aria-controls="previous_grid">Previous Action</h4>
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#previous_grid" aria-expanded="true" aria-controls="previous_grid">Previous Action</h4>
             </div>
-            <div class="col-sm-12 collapse in" id="previous_grid">
+            <div class="col-sm-12 collapse show" id="previous_grid">
                 <?=
                 $this->render('_previous_action', [
                     'previousDataProvider' => $previousDataProvider,
@@ -235,9 +235,9 @@ $this->title = Yii::$app->label->title('view', 'Vcg Meeting Master');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#update_grid" aria-expanded="true" aria-controls="update_grid">Update</h4>
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#update_grid" aria-expanded="true" aria-controls="update_grid">Update</h4>
             </div>
-            <div class="col-sm-12 collapse in" id="update_grid">
+            <div class="col-sm-12 collapse show" id="update_grid">
                 <?=
                 $this->render('_update_grid', [
                     'updateDataProvider' => $updateDataProvider,
