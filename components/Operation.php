@@ -11,7 +11,8 @@ use yii\base\Component;
 
 class Operation extends Component {
 
-    private $toEncrypt = ['bank_account_no', 'ifsc', 'pan_no', 'mobile_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'dob'];
+    // private $toEncrypt = ['bank_account_no', 'ifsc', 'pan_no', 'mobile_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'dob'];
+    private $toEncrypt = ['bank_account_no', 'ifsc', 'pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'dob'];
 
     public function defaults($model, $flag) {
 

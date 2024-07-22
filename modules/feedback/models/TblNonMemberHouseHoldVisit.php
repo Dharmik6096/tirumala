@@ -42,6 +42,8 @@ use Yii;
  */
 class TblNonMemberHouseHoldVisit extends ChildModel
 {
+    public $is_auto_increment_primary_key, $auto_key_config;
+    public $competitor_id, $milk_volume, $milk_rate;
     /**
      * @inheritdoc
      */
@@ -56,15 +58,12 @@ class TblNonMemberHouseHoldVisit extends ChildModel
     public function rules()
     {
         return [
-            [['house_hold_visit_code','surveyer_code','visit_date','mcc_plant_code','bmc_code','dcs_code','name','address_line','pincode','mobile_no','milch_animal_cow_cnt','milch_animal_buff_cnt','milch_animal_country_cow_cnt','cow_milk_volume','buff_milk_volume','total_milk_volume','own_milk_consumption','balance_milk','remarks','created_at','created_by','updated_at','updated_by','originating_type','originating_org_code','originating_org_type'], 'safe'],
+            [['house_hold_visit_code','surveyer_code','visit_date','mcc_plant_code','bmc_code','dcs_code','name','address_line','pincode','mobile_no','milch_animal_cow_cnt','milch_animal_buff_cnt','milch_animal_country_cow_cnt','cow_milk_volume','buff_milk_volume','total_milk_volume','own_milk_consumption','balance_milk','remarks','created_at','created_by','updated_at','updated_by','originating_type','originating_org_code','originating_org_type', 'is_auto_increment_primary_key', 'auto_key_config'], 'safe'],
+            [['surveyer_code','visit_date','dcs_code','name','address_line','pincode','mobile_no', 'competitor_id', 'milk_volume', 'milk_rate'], 'required', 'on' => ['importCsv']],
+            [['dcs_code'], 'validateDCS', 'on' => ['importCsv']],
             [['visit_date'], 'convertDateDot', 'on' => ['importCsv']],
             [['visit_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['visit_date'], 'convertDate', 'on' => ['importCsv']],
-            // [['visit_date', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'unique',
-            //     'targetAttribute' => ['visit_date', 'mcc_plant_code', 'bmc_code', 'dcs_code'],
-            //     'message' => 'The combination of visit date, MCC plant code, BMC code, and DCS code has already been taken.',
-            //     'on' => ['importCsv'],
-            // ],
         ];
     }
 
@@ -104,6 +103,24 @@ class TblNonMemberHouseHoldVisit extends ChildModel
         ];
     }
 
+    public function setChildTable(&$model, &$modelSave, &$errors) {
+            $model->house_hold_visit_code = "MHHV/" . date("dmYis"). substr((string)microtime(true), 11, 3);
+            $childModel = new TblNonMemberHouseHoldCurrentPouring();
+            $childModel->scenario = $model->scenario;
+            $childModel->competitor_id = $model->competitor_id;
+            $childModel->milk_volume = $model->milk_volume;
+            $childModel->milk_rate = $model->milk_rate;
+            $childModel->remarks = $model->remarks;
+            if (property_exists($model, 'is_auto_increment_primary_key')) {
+                $index = !empty($modelSave) ? count($modelSave) : 0;
+                $model->auto_key_config['TblNonMemberHouseHoldCurrentPouring'][] = ['self_key' => 'house_hold_visit_id', 'parent_key' => 'house_hold_visit_id', 'parent_index' => $index];
+            }
+            if (!$childModel->validate()) {
+                $errors[] = $childModel->getErrors();
+            }
+            array_push($modelSave, $childModel);
+    }
+
     public function getMccPlantCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
@@ -131,6 +148,18 @@ class TblNonMemberHouseHoldVisit extends ChildModel
     public function convertDate() {
         if (empty($this->getErrors())) {
             $this->visit_date = !empty($this->visit_date) ? Yii::$app->controls->view_date($this->visit_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function validateDCS() {
+        $dcsModel = new TblDcs();
+        $records = $dcsModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'])->where(['or', ['dcs_code' => $this->dcs_code], ['ref_code' => $this->dcs_code], ['dcs_code_ex' => $this->dcs_code]])->all();
+        if (!empty($records) && count($records) == 1) {
+            $this->mcc_plant_code = $records[0]->mcc_plant_code;
+            $this->bmc_code = $records[0]->bmc_code;
+        } else {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Invalid.'));
+            return false;
         }
     }
 }

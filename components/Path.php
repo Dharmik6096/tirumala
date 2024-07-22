@@ -100,7 +100,7 @@ class Path extends Component {
         '\\app\modules\document\models\\' => ['TblDocumentMapping', 'TblAttachment'],
         '\\app\modules\webservice\eipl\models\\' =>
             ['TblEiplAppLogin'],
-        '\\app\modules\feedback\models\\' => ['TblNonMemberHouseHoldVisit', 'TblNonMemberHouseHoldCurrentPouring'],
+        '\\app\modules\feedback\models\\' => ['TblNonMemberHouseHoldVisit', 'TblNonMemberHouseHoldCurrentPouring', 'TblNonMemberHouseHoldVisitHistory'],
     ];
 
     public function get($model) {
