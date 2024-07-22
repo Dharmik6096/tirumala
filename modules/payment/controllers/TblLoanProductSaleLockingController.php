@@ -60,7 +60,6 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
         $searchModel = new TblLoanProductSaleLockingSearch();
         $searchModel->scenario = 'saleLockData';
         $saveModel = [];
-        $dataProvider = $searchModel->locksearch(Yii::$app->request->queryParams);
         if (Yii::$app->request->post()) {
             $searchData = Yii::$app->request->post()['TblLoanProductSaleLockingSearch'];
             $postCodes = Yii::$app->request->post()['sale_detail_code'];
@@ -102,7 +101,7 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
                     return $this->redirect(['index']);
                 }
             } else {
-//                $dataProviderDownload = $searchModel->downloadsearch(Yii::$app->request->queryParams);
+                $dataProvider = $searchModel->locksearch(Yii::$app->request->queryParams);
                 $this->downloadData($dataProvider->getModels());
             }
         }
