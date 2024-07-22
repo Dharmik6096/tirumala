@@ -18,24 +18,24 @@ $this->title = Yii::t('app', 'Indent Approval');
         <?php echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
         <?php
         $attribute = [
-            ['class' => 'kartik\grid\CheckboxColumn',
+                ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model, $key) {
                     $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
                     return ['class' => 'checkbox', 'disabled' => $disabled, 'id' => 'tblindentmaster-' . $key . '-process_approval_code', 'value' => $model['process_approval_code']];
                 }],
-            ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'filter' => FALSE],
-            ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'filter' => FALSE],
-            ['attribute' => 'member_code', 'label' => 'Member Code', 'filter' => FALSE, 'visible' => ($visible ? FALSE : TRUE)],
-            ['attribute' => 'member_ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
-            ['attribute' => 'member_name', 'filter' => FALSE],
-            ['attribute' => 'product_name', 'filter' => FALSE],
-            ['attribute' => 'qty', 'filter' => FALSE],
-            ['attribute' => 'indent_date', 'value' => function($model) {
+                ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'filter' => FALSE],
+                ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'filter' => FALSE],
+                ['attribute' => 'member_code', 'label' => 'Member Code', 'filter' => FALSE, 'visible' => ($visible ? FALSE : TRUE)],
+                ['attribute' => 'member_ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
+                ['attribute' => 'member_name', 'filter' => FALSE],
+                ['attribute' => 'product_name', 'filter' => FALSE],
+                ['attribute' => 'qty', 'filter' => FALSE],
+                ['attribute' => 'indent_date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model['indent_date']);
                 }, 'filter' => FALSE],
-            ['attribute' => 'approve_qty', 'filter' => FALSE,
+                ['attribute' => 'approve_qty', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
                     $level = $indentMaster->getApprovalLevel($model['indent_code']);
@@ -49,7 +49,7 @@ $this->title = Yii::t('app', 'Indent Approval');
                     }
                 },
             ],
-            ['attribute' => 'rejected_qty', 'filter' => FALSE,
+                ['attribute' => 'rejected_qty', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
                     $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
@@ -59,9 +59,9 @@ $this->title = Yii::t('app', 'Indent Approval');
                     return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']rejected_qty')->textInput(['value' => $model['rejected_qty'], 'class' => 'form-control number-validate', 'disabled' => $disabled, 'readonly' => TRUE])->label(FALSE);
                 },
             ],
-            ['attribute' => 'store_location_name', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
-            ['attribute' => 'rate', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
-            ['attribute' => 'amount', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE),
+                ['attribute' => 'store_location_name', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
+                ['attribute' => 'rate', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
+                ['attribute' => 'amount', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE),
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
                     return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']amount')->textInput(['value' => $model['amount'], 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
@@ -80,8 +80,8 @@ $this->title = Yii::t('app', 'Indent Approval');
                     }
                 },
             ],
-            ['attribute' => 'user_name', 'label' => Yii::t('app', 'User Name'), 'filter' => FALSE],
-            ['attribute' => 'login_type', 'label' => Yii::t('app', 'Login Type'), 'filter' => FALSE],
+                ['attribute' => 'user_name', 'label' => Yii::t('app', 'User Name'), 'filter' => FALSE],
+                ['attribute' => 'login_type', 'label' => Yii::t('app', 'Login Type'), 'filter' => FALSE],
         ];
 
         $grid_option = [
@@ -101,7 +101,7 @@ $this->title = Yii::t('app', 'Indent Approval');
                 echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval', '', 'btn-login'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index-other', '', 'btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
