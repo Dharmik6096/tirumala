@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
@@ -103,10 +103,10 @@ $this->title = Yii::t('app', 'Indent Dispatch');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Dispatch'), ['class' => 'btn btn-primary submit mt10', 'id' => 'approve', 'value' => 'dispatch', 'name' => 'dispatch']);
+                echo Html::button(Yii::t('app', 'Dispatch'), ['class' => 'btn-login btn btn-primary submit mt10', 'id' => 'approve', 'value' => 'dispatch', 'name' => 'dispatch']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval', '', 'mt10'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval', '', 'btn-login mt10'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>

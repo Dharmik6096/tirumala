@@ -10,7 +10,7 @@ use yii\web\View;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="search-filter large-search">
+<div class="search-filter large-search d-inline-block">
 
     <?php
     $isIndentApprovalCreditLimitCheck = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'is_indent_approval_credit_limit_check', 'PORTAL') == 1 ? TRUE : FALSE;
