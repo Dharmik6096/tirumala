@@ -161,7 +161,6 @@ class TblLoanProductSaleLockingSearch extends TblLoanProductSaleLocking {
             unset($sp_params['locking_date']);
 
             $output = \Yii::$app->general->getSpData('Portal_loan_product_sale_data_lock', $sp_params);
-            var_dump(count($output));die;
         }
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
