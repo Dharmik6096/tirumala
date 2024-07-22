@@ -25,7 +25,8 @@ class TblIndentMasterSearch extends TblIndentMaster {
             [['originating_type'], 'integer'],
             [['indent_type', 'warehouse_code', 'product_group_code'], 'safe'],
             [['from_date', 'to_date', 'group_by', 'payment_cycle_code'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => ['indentApprove']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['indentApprove', 'indentApproveNew']],
+            [['payment_cycle_code'], 'required', 'on' => ['indentApproveNew']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'searchdispatch'],
         ];
     }

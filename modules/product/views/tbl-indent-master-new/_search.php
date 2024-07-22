@@ -35,7 +35,7 @@ use yii\web\View;
     </div>
     <div class="col-sm-2">
         <?php 
-        $where = json_encode(['data_lock_member' => 1, 'sync_lock_member' => 1, 'billing_lock_member' => 0]);
+        $where = json_encode(['billing_lock_member' => 0]);
         echo Html::hiddenInput('customer_type', 'DCS', ['id' => 'customer_type']);
         echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
         echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
@@ -69,11 +69,16 @@ $script = '
         $(".field-tblindentmastersearch-to_date").addClass("disabled");
         $("#tblindentmastersearch-payment_cycle_code").on("change", function() {
             var dateRange = $("#tblindentmastersearch-payment_cycle_code option:selected").text();
-            var dates = dateRange.split(" to ");
-            var fromDate = dates[0];
-            var toDate = dates[1];
-            $("#tblindentmastersearch-from_date").val(fromDate);
-            $("#tblindentmastersearch-to_date").val(toDate);
+            if (dateRange !== "Select Payment Cycle") {
+                var dates = dateRange.split(" to ");
+                if (dates.length === 2) {
+                    var dates = dateRange.split(" to ");
+                    var fromDate = dates[0];
+                    var toDate = dates[1];
+                    $("#tblindentmastersearch-from_date").val(fromDate);
+                    $("#tblindentmastersearch-to_date").val(toDate);
+                }
+            }
         });
     });
 ';
