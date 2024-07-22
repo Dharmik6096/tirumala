@@ -69,11 +69,16 @@ $script = '
         $(".field-tblindentmastersearch-to_date").addClass("disabled");
         $("#tblindentmastersearch-payment_cycle_code").on("change", function() {
             var dateRange = $("#tblindentmastersearch-payment_cycle_code option:selected").text();
-            var dates = dateRange.split(" to ");
-            var fromDate = dates[0];
-            var toDate = dates[1];
-            $("#tblindentmastersearch-from_date").val(fromDate);
-            $("#tblindentmastersearch-to_date").val(toDate);
+            if (dateRange !== "Select Payment Cycle") {
+                var dates = dateRange.split(" to ");
+                if (dates.length === 2) {
+                    var dates = dateRange.split(" to ");
+                    var fromDate = dates[0];
+                    var toDate = dates[1];
+                    $("#tblindentmastersearch-from_date").val(fromDate);
+                    $("#tblindentmastersearch-to_date").val(toDate);
+                }
+            }
         });
     });
 ';

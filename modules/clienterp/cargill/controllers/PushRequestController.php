@@ -5,6 +5,7 @@ namespace app\modules\clienterp\cargill\controllers;
 use Yii;
 use app\modules\product\models\TblPlantDispatch;
 use app\modules\product\models\TblPlantDispatchTxn;
+use DateTime;
 
 class PushRequestController extends PushMasterController {
 
@@ -18,6 +19,18 @@ class PushRequestController extends PushMasterController {
             $plantdisModel->scenario = 'clienterp_cargill';
             $plantdisModel->setAttributes($request);
             $plantdisModel->bmc_code = $request['to_location'];
+            $dispatch_date = DateTime::createFromFormat('d/m/Y', $plantdisModel->dispatch_date);
+            if ($dispatch_date === false) {
+                $plantdisModel->dispatch_date = '-';
+            } else {
+                $plantdisModel->dispatch_date = $dispatch_date->format('Y-m-d');
+            }
+            $document_date = DateTime::createFromFormat('d/m/Y', $plantdisModel->document_date);
+            if ($document_date === false) {
+                $plantdisModel->document_date = '-';
+            } else {
+                $plantdisModel->document_date = $document_date->format('Y-m-d');
+            }
             if ($plantdisModel->validate()) {
                 $plant_data = $plantdisModel->plantCode;
                 if (!empty($plant_data) && $plant_data->ref_code == $request['plant_code']) {

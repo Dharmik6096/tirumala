@@ -72,7 +72,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
     public function actionCreateOther() {
         $dispatchModel = new TblIndentDispatch();
         $searchModel = new TblIndentMasterSearch();
-        $searchModel->scenario = 'indentApprove';
+        $searchModel->scenario = 'indentApproveNew';
         $param = Yii::$app->request->queryParams;
         $indentMasterParam = !empty($param['TblIndentMasterSearch']) ? $param['TblIndentMasterSearch'] : [];
         $param['TblIndentMasterSearch']['group_by'] = (Yii::$app->request->isPost) ? 0 : (!empty($indentMasterParam['group_by']) ? $indentMasterParam['group_by'] : '');
