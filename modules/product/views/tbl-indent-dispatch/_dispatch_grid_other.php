@@ -96,11 +96,11 @@ $this->title = Yii::t('app', 'Indent Dispatch');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Dispatch'), ['class' => 'btn btn-primary submit', 'id' => 'approve', 'value' => 'dispatch', 'name' => 'dispatch']);
+                echo Html::button(Yii::t('app', 'Dispatch'), ['class' => 'btn-login btn btn-primary submit', 'id' => 'approve', 'value' => 'dispatch', 'name' => 'dispatch']);
 //                echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval','','btn-login'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval', '', 'btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
