@@ -1021,4 +1021,105 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionBulkPendingApproval() {
+        $provisionalModel = new TblMemberProvisional();
+        $searchModel = new TblMemberProvisionalSearch();
+        $searchModel->scenario = 'bulk_approval';
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE, TRUE);
+        $selection = Yii::$app->request->post('selection');
+        if (Yii::$app->request->post() && !empty($selection)) {
+            $succCount = 0;
+            $errorCount = 0;
+            $memberpostData = Yii::$app->request->post()['TblMemberProvisional'];
+            $remarks = Yii::$app->request->post()['approve_remarks'];
+            $postData = Yii::$app->request->post();
+            foreach ($selection as $value) {
+                $model = TblProcessApproval::findOne($value);
+                $model->scenario = 'approve';
+                $member_error = '';
+                $message = '';
+                $saveModel = [];
+                $deleteModel = [];
+                $approvalHistoryModel = new TblProcessApprovalHistory();
+                Yii::$app->operation->history($model, $approvalHistoryModel, 'UPDATE');
+                $saveModel[] = $approvalHistoryModel;
+                $operation = $postData['operation'];
+                $model->status = $operation == 'approve' ? 1 : 2;
+                $model->remarks = $remarks . $memberpostData[$value]['remarks'];
+                $saveModel[] = $model;
+                if (!empty($saveModel)) {
+                    $model->ApprovalList($model, $saveModel, $status);
+                    $memberModel = $this->findModel($model->process_code);
+                    $historyModel = new TblMemberProvisionalHistory();
+                    Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                    $memberModel->provisional_status = $status;
+                    $memberModel->remarks = $remarks . $memberpostData[$value]['remarks'];
+                    $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($memberModel->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
+                    $memberModel->member_status = 0; // Approved
+                    if (strtolower($status) == 'approve' && ($memberCreationPendingForSapApproval != '1' || $memberModel->provisional_from == 'mobile_update')) {
+                        $memberModel->member_status = 1; // Created
+                    }
+                    $memberModel->scenario = 'MemberApprove';
+                    $saveModel[] = $memberModel;
+                    $all_doc = [];
+                    $memberdoc = [];
+                    $unlink_files = [];
+                    $attachments = [];
+                    $config = Yii::$app->general->getUnionConfigResult($memberModel->union_code, 'allow_member_other_detail');
+                    if ($memberModel->validate()) {
+                        if ($memberModel->provisional_status == 'Approve' && $memberCreationPendingForSapApproval != '1') {
+                            $this->memberApprove($status, $saveModel, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachments);
+                            if ($config == 1) {
+                                $this->memberEnrollmentApprove($status, $saveModel, $memberModel, $deleteModel);
+                            }
+                        }
+                        $succCount++;
+                    } else {
+                        $errorCount++;
+                        foreach ($memberModel->getErrors() as $errorkey => $value) {
+                            $message = $value;
+                        }
+                    }
+                    if (!empty($message)) {
+                        foreach ($message as $msg) {
+                            $member_error .= $msg;
+                        }
+                    }
+                    if (empty($member_error)) {
+                        $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Member Provisional Approval', 'edit']);
+                        if ($transaction == 'customRedirect') {
+                            if ($memberModel->provisional_status == 'Approve') {
+                                $memberModel->moveFiles($unlink_files, $attachments, $memberdoc);
+                            }
+                        }
+                    } else {
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => $member_error . ' in Member']);
+                        return $this->redirect(['bulk-pending-approval']);
+                    }
+                } else {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Member provisional already approved by other user.']);
+                    return $this->redirect(['bulk-pending-approval']);
+                }
+            }
+            $msg = $operation == 'approve' ? ('Provisional Member approved successfully. <br /> Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount) : ('Provisional Member rejected successfully.  <br />Rejected count : ' . $succCount . '<br />Not Rejected count : ' . $errorCount);
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                'message' => $msg]);
+            $getData = Yii::$app->request->queryParams;
+            if (!empty($getData['TblMemberProvisionalSearch'])) {
+                return $this->redirect(['bulk-pending-approval', 'TblMemberProvisionalSearch' => $getData['TblMemberProvisionalSearch']]);
+            } else {
+                return $this->redirect(['bulk-pending-approval']);
+            }
+        }
+
+        return $this->render('bulk_approve', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'provisionalModel' => $provisionalModel,
+        ]);
+    }
+
 }
