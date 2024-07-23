@@ -276,8 +276,8 @@ class TblIndentMasterSearch extends TblIndentMaster {
         $select = ['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)', 'tbl_indent_master.status_date'];
         $group_by = ['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date'];
         if(!empty($this->group_by)){
-            $select = ['tbl_indent_master.dcs_code','tbl_indent_master.product_code','tbl_indent_master.member_code','qty' => 'ISNULL(SUM(ISNULL(qty, 0)), 0)','approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)), 0)','tbl_indent_master.status_date'];
-            $group_by = ['tbl_indent_master.dcs_code','tbl_indent_master.product_code','tbl_indent_master.member_code','tbl_indent_master.status_date'];
+            $select = ['tbl_indent_master.dcs_code','tbl_indent_master.product_code','tbl_indent_master.member_code','qty' => 'ISNULL(SUM(ISNULL(qty, 0)), 0)','approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)), 0)'];
+            $group_by = ['tbl_indent_master.dcs_code','tbl_indent_master.product_code','tbl_indent_master.member_code'];
         }
         $query = TblIndentMaster::find()->select($select);
 
