@@ -6,6 +6,7 @@ use app\modules\usermanagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 ?>
 
 <?php
@@ -77,10 +78,10 @@ $attribute = [
         ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'bank_name', 'value' => 'bank_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'branch_name', 'value' => 'branch_name', 'visible' => false, 'filter' => false],
-        ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false, 'contentOptions' => ['cellFormat' => DataType::TYPE_STRING]],
         ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
         ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
-        ['attribute' => 'adhar_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'adhar_no', 'visible' => false, 'filter' => false, 'contentOptions' => ['cellFormat' => DataType::TYPE_STRING]],
         ['attribute' => 'annual_income', 'visible' => false, 'filter' => false],
         ['attribute' => 'payment_mode', 'visible' => false, 'filter' => false],
         ['attribute' => 'registration_date', 'value' => function($model) {
@@ -187,7 +188,7 @@ $grid_option = [
     ]
 ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['index'], TRUE, ['Csv']);
 ?>
 <div id="milkCollectionDetails"></div>
 <?php
