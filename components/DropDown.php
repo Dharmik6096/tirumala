@@ -2249,7 +2249,7 @@ class DropDown extends Component {
             $data = [$model->{$name} => $model->{$name}];
         }
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
-        $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]];
+        $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'placeholder' => $placeholder, 'dropdownParent' => '#' . $form_id, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]];
 
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
