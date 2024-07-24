@@ -318,7 +318,7 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
                     $approvalFlag = false;
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Indent ' . $msg, 'create']);
                     if ($transaction == 'customRedirect') {
-                        return $this->redirect(['index']);
+                        return $this->redirect(['index-other']);
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $modelError]);
