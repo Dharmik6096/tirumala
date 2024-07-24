@@ -179,9 +179,8 @@ $script = '
             if(isZeroValue){
                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter value greater than zero.</span></div></div>");
             } else {
-             console.log("aaa");
                 $(".parent-checkbox").prop("disabled", true);
-                // $("#indent-dispatch").submit();
+                $("#indent-dispatch").submit();
             }
         }
 });
