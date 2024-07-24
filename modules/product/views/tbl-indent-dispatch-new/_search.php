@@ -58,7 +58,7 @@ use yii\web\View;
             </div>
         </div>
         <div class="col-sm-6">
-            <div class="col-lg-4 ml35">
+            <div class="col-lg-12 ml35 view-grid text-wrap">
                 <h5 class="panel-heading mb15"><?= Yii::t('app', 'Product Information') ?></h5>
                 <div id="product-detail">
                     <table class="table tab-bordered">

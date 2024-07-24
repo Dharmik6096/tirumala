@@ -230,7 +230,7 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
 
     public function actionIndentApprovalOther() {
         $searchModel = new TblIndentMasterSearch();
-        $searchModel->scenario = 'indentApprove';
+        $searchModel->scenario = 'indentApproveNew';
         $backUrl[] = '/product/tbl-indent-master/indent-approval-other';
         $indentMaster = new TblIndentMaster();
         if (Yii::$app->request->post()) {
@@ -318,7 +318,7 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
                     $approvalFlag = false;
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Indent ' . $msg, 'create']);
                     if ($transaction == 'customRedirect') {
-                        // return $this->redirect(['index']);
+                        return $this->redirect(['index']);
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $modelError]);

@@ -72,10 +72,10 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
     public function actionCreateOther() {
         $dispatchModel = new TblIndentDispatch();
         $searchModel = new TblIndentMasterSearch();
-        $searchModel->scenario = 'indentApproveNew';
+        $searchModel->scenario = 'indentApprove';
         $param = Yii::$app->request->queryParams;
         $indentMasterParam = !empty($param['TblIndentMasterSearch']) ? $param['TblIndentMasterSearch'] : [];
-        $param['TblIndentMasterSearch']['group_by'] = (Yii::$app->request->isPost) ? 0 : (!empty($indentMasterParam['group_by']) ? $indentMasterParam['group_by'] : '');
+        $param['TblIndentMasterSearch']['group_by'] = (Yii::$app->request->isPost) ? 0 : (!empty($indentMasterParam['group_by']) ? $indentMasterParam['group_by'] : 0);
         $dataProvider = $searchModel->indentdispatchothernewsearch($param);
         $indentModel = $dataProvider->getModels();
         $stock_detail = $this->getProductDetail($indentMasterParam);
@@ -98,6 +98,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                     $productStockCode = [];
                     $existingProducts = [];
                     $productStock = [];
+                    $batchQuantities = [];
                     foreach ($codes as $code) {
                         $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
                         $dcs = $existData->dcs_code;
@@ -129,7 +130,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
 
                         if (empty($warehouse)) { //gyandhara plant stock is not available //Sunita 03/03/2023
                             $fstockModel = new TblProductStock();
-                            $fstockModel->setCodes('BMC', $dispatch->mcc_plant_code);
+                            $fstockModel->setCodes('BMC', $dispatch->bmc_code);
                             $fstockModel->product_code = $product;
                             $fstockModel->union_code = $dispatch->union_code;
 
@@ -210,6 +211,11 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     $receiptTxn->remark = !empty($txnType) ? $txnType : 'INVENTORY TRANSFER';
                                     $saveModel[] = $receiptTxn;
                                     $j++;
+                                    if (isset($batchQuantities[$batch])) {
+                                        $batchQuantities[$batch] = $remaining_quantity;
+                                    } else {
+                                        $batchQuantities[$batch] = $dispatch_quantity;
+                                    }
                                 }
                             } else {
                                 $productName = Yii::$app->general->getForeignKey($fstockModel->productCode, 'product_name');
@@ -218,79 +224,84 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             }
                         }
 
-                        //set to stock
-                        $stockModel = new TblProductStock();
-                        $stockModel->setCodes('DCS', $dcs);
+                        foreach ($batchQuantities as $batch => $totalQty) {
+                            //set to stock
+                            $stockModel = new TblProductStock();
+                            $stockModel->setCodes('DCS', $dcs);
 
-                        $stockModel->product_code = $product;
-                        $stockModel->union_code = $dispatch->union_code;
-                        $stockModel->sap_batch_no = $batch;
-                        $existtoStock = $stockModel->getExistStock('DCS', $batch);
-                        $key = $stockModel->mcc_plant_code . '_' . $dcs . '_' . $stockModel->product_code . '_' . $batch;
-                        $oldQty = 0;
+                            $stockModel->product_code = $product;
+                            $stockModel->union_code = $dispatch->union_code;
+                            $stockModel->sap_batch_no = $batch;
+                            $existtoStock = $stockModel->getExistStock('DCS', $batch);
+                            $key = $stockModel->mcc_plant_code . '_' . $dcs . '_' . $stockModel->product_code . '_' . $batch;
+                            $oldQty = 0;
 
-                        if (!empty($existtoStock)) {
-                            if (empty($setOldVal[$key])) {
-                                $setOldVal[$key] = $existtoStock->stock;
+                            if (!empty($existtoStock)) {
+                                if (empty($setOldVal[$key])) {
+                                    $setOldVal[$key] = $existtoStock->stock;
+                                }
+                                $oldQty = $setOldVal[$key];
+                                // $setOldVal[$key] = $setOldVal[$key] + $qty;
+                                $setOldVal[$key] = $setOldVal[$key] + $totalQty;
+
+                                $historyModel = new TblProductStockHistory();
+                                Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
+                                $historyModel->stock = $oldQty;
+                                $saveModel[] = $historyModel;
+                                // $existtoStock->stock = $oldQty + $qty;
+                                $existtoStock->stock = $oldQty + $totalQty;
+                                $stockModel = $existtoStock;
+                            } else {
+                                $stockModel->product_stock_code = $stockModel->getCode($j);
+                                // $stockModel->stock = $oldQty + $qty;
+                                $stockModel->stock = $oldQty + $totalQty;
+                                $stockModel->x_col1 = Yii::$app->general->getUuid();
                             }
-                            $oldQty = $setOldVal[$key];
-                            $setOldVal[$key] = $setOldVal[$key] + $qty;
+                            $saveModel[] = $stockModel;
 
-                            $historyModel = new TblProductStockHistory();
-                            Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
-                            $historyModel->stock = $oldQty;
-                            $saveModel[] = $historyModel;
-                            $existtoStock->stock = $oldQty + $qty;
-                            $stockModel = $existtoStock;
-                        } else {
-                            $stockModel->product_stock_code = $stockModel->getCode($j);
-                            $stockModel->stock = $oldQty + $qty;
-                            $stockModel->x_col1 = Yii::$app->general->getUuid();
+                            $stockTxnModel = new TblProductStockTransaction();
+                            $stockTxnModel->attributes = $stockModel->attributes;
+                            unset($stockTxnModel->created_at);
+                            unset($stockTxnModel->created_by);
+                            $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($j);
+                            $stockTxnModel->old_value = $oldQty;
+                            // $stockTxnModel->new_value = $qty;
+                            $stockTxnModel->new_value = $totalQty;
+                            $stockTxnModel->final_value = $stockModel->stock;
+                            $stockTxnModel->transaction_type = !empty($txnType) ? $txnType : 'INVENTORY RECEIVED';
+                            $stockTxnModel->transaction_date = date('Y-m-d');
+                            $stockTxnModel->reference_code = $dispatch->indent_dispatch_code;
+                            $stockTxnModel->x_col2 = 'Indent Dispatch';
+                            $saveModel[] = $stockTxnModel;
+
+                            $receiptTo = new TblProductReceipt();
+                            $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
+                            $receiptTo->grn_no = '1234';
+                            $receiptTo->grn_date = date('Y-m-d');
+                            $receiptTo->vendor_type = 'DCS';
+                            $receiptTo->vendor_code = $dcs;
+                            $receiptTo->union_code = $stockModel->union_code;
+                            $receiptTo->plant_code = $stockModel->plant_code;
+                            $receiptTo->mcc_plant_code = $stockModel->mcc_plant_code;
+                            $receiptTo->bmc_code = $stockModel->bmc_code;
+                            $receiptTo->dcs_code = $stockModel->dcs_code;
+                            $saveModel[] = $receiptTo;
+
+                            $receiptTxnTo = new TblProductReceiptTransaction();
+                            $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $j);
+                            $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
+                            $receiptTxnTo->product_code = $stockModel->product_code;
+                            $receiptTxnTo->received_quantity = $qty;
+                            $receiptTxnTo->requested_quantity = $qty;
+                            $receiptTxnTo->dispatched_quantity = $qty;
+                            $receiptTxnTo->rejected_quantity = 0;
+                            $receiptTxnTo->rate = 0;
+                            $receiptTxnTo->amount = 0;
+                            $receiptTxnTo->remark = !empty($txnType) ? $txnType : 'INVENTORY RECEIVED';
+                            $saveModel[] = $receiptTxnTo;
+                            $j++;
                         }
-                        $saveModel[] = $stockModel;
-
-                        $stockTxnModel = new TblProductStockTransaction();
-                        $stockTxnModel->attributes = $stockModel->attributes;
-                        unset($stockTxnModel->created_at);
-                        unset($stockTxnModel->created_by);
-                        $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($j);
-                        $stockTxnModel->old_value = $oldQty;
-                        $stockTxnModel->new_value = $qty;
-                        $stockTxnModel->final_value = $stockModel->stock;
-                        $stockTxnModel->transaction_type = !empty($txnType) ? $txnType : 'INVENTORY RECEIVED';
-                        $stockTxnModel->transaction_date = date('Y-m-d');
-                        $stockTxnModel->reference_code = $dispatch->indent_dispatch_code;
-                        $stockTxnModel->x_col2 = 'Indent Dispatch';
-                        $saveModel[] = $stockTxnModel;
-
-                        $receiptTo = new TblProductReceipt();
-                        $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
-                        $receiptTo->grn_no = '1234';
-                        $receiptTo->grn_date = date('Y-m-d');
-                        $receiptTo->vendor_type = 'DCS';
-                        $receiptTo->vendor_code = $dcs;
-                        $receiptTo->union_code = $stockModel->union_code;
-                        $receiptTo->plant_code = $stockModel->plant_code;
-                        $receiptTo->mcc_plant_code = $stockModel->mcc_plant_code;
-                        $receiptTo->bmc_code = $stockModel->bmc_code;
-                        $receiptTo->dcs_code = $stockModel->dcs_code;
-                        $saveModel[] = $receiptTo;
-
-                        $receiptTxnTo = new TblProductReceiptTransaction();
-                        $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $j);
-                        $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
-                        $receiptTxnTo->product_code = $stockModel->product_code;
-                        $receiptTxnTo->received_quantity = $qty;
-                        $receiptTxnTo->requested_quantity = $qty;
-                        $receiptTxnTo->dispatched_quantity = $qty;
-                        $receiptTxnTo->rejected_quantity = 0;
-                        $receiptTxnTo->rate = 0;
-                        $receiptTxnTo->amount = 0;
-                        $receiptTxnTo->remark = !empty($txnType) ? $txnType : 'INVENTORY RECEIVED';
-                        $saveModel[] = $receiptTxnTo;
-
                         $saveModel[] = $dispatch;
-
                         if (!empty($existData)) {
                             $historyModel = new TblIndentMasterHistory();
                             Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
@@ -343,12 +354,13 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
         $existData = TblProductStock::find()
                 ->select(['tbl_product_stock.product_code', 'tbl_product.product_name', 'SUM(tbl_product_stock.stock) as total_stock'])
                 ->innerJoin('tbl_product', 'tbl_product.product_code = tbl_product_stock.product_code')
-                ->where(['tbl_product_stock.bmc_code' => $bmc_code]);
+                ->where(['tbl_product_stock.bmc_code' => $bmc_code])
+                ->andWhere(['is', 'tbl_product_stock.dcs_code', NULL]);
         if (!empty($param['product_code'])) {
             $existData = $existData->andWhere(['tbl_product_stock.product_code' => $param['product_code']]);
         }
-        $existData = $existData->andWhere(['>', 'tbl_product_stock.stock', 0])
-                ->groupBy(['tbl_product_stock.product_code', 'tbl_product.product_name'])
+        // $existData = $existData->andWhere(['>', 'tbl_product_stock.stock', 0])
+        $existData = $existData->groupBy(['tbl_product_stock.product_code', 'tbl_product.product_name'])
                 ->asArray()
                 ->all();
         return $existData;

@@ -5205,3 +5205,6 @@ tr.highlightRow {
     margin: auto;
     padding: 10px 0px;
 }
+.text-wrap td{
+    text-wrap: wrap !important;
+}
