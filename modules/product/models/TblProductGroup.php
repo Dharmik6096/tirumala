@@ -36,18 +36,18 @@ class TblProductGroup extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_group_name', 'unit_code', 'union_code'], 'required'],
-                [['product_group_name', 'created_by', 'updated_by', 'local_name'], 'string'],
+            [['product_group_name', 'unit_code', 'union_code'], 'required'],
+            [['product_group_name', 'created_by', 'updated_by', 'local_name'], 'string'],
 //                ['product_group_name', 'unique'],
             [['product_group_name'], 'unique', 'targetAttribute' => ['product_group_name', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['product_group_name'], function ($attribute, $params) {
+            [['product_group_name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['local_name'], function ($attribute, $params) {
+            [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['created_at', 'updated_at', 'product_group_code', 'union_code', 'unit_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code'], 'safe'],
-                [['is_active'], 'integer'],
+            [['created_at', 'updated_at', 'product_group_code', 'union_code', 'unit_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code'], 'safe'],
+            [['is_active'], 'integer'],
         ];
     }
 
@@ -91,14 +91,6 @@ class TblProductGroup extends \app\models\ChildModel {
 
     public function getUnitCode() {
         return $this->hasOne(TblUnits::className(), ['unit_code' => 'unit_code']);
-    }
-    
-     public function getProductGroupList($unionCode) {
-        $query = $this->find()->select(['product_group_code', 'product_group_name'])->where(['union_code' => $unionCode, 'is_active' => 1]);
-        $value = $query->all();
-
-        $data = ArrayHelper::map($value, 'product_group_code', 'product_group_name');
-        return $data;
     }
 
     public function afterSave($insert, $changedAttributes) {
