@@ -46,7 +46,7 @@ class TblRoutesHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'bmc_code', 'sap_vendor_code'], 'safe'],
-                [['route_length_kms', 'capacity', 'vehicle_type_code', 'return_time', 'route_code', 'vehicle_type_code', 'route_name', 'start_time', 'union_code', 'local_name'], 'safe'],
+                [['route_length_kms', 'capacity', 'vehicle_type_code', 'return_time', 'route_code', 'vehicle_type_code', 'route_name', 'start_time', 'union_code', 'local_name', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
         ];
     }
 
