@@ -53,7 +53,7 @@ use yii\web\View;
             <div class="col-sm-4 filldata">
                 <?= Yii::$app->dropdown->product($model, $form, 'tblindentmastersearch-union_code,tblindentmastersearch-product_group_code', 'product_code', 'Product', TRUE, '', '', false, 'DependOnProduct'); ?>
             </div>
-            <div class="col-sm-3 mt23">
+            <div class="col-sm-3 mt18">
                 <?= Yii::$app->controls->search(); ?>
             </div>
         </div>

@@ -1,7 +1,7 @@
 <div class="padding_left_45">
     <?php
 
-    use yii\bootstrap\ActiveForm;
+    use app\components\ActiveForm;
     use yii\web\View;
     use yii\helpers\Html;
     use kartik\grid\GridView;

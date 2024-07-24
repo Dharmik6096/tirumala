@@ -50,11 +50,11 @@ $grid_option = [
         },
         'dcs-wise-challan' => function ($url, $model) {
             $options = ['title' => 'View ' . Yii::t('app', 'DCS') . ' Wise Challan Report', 'target' => '_blank'];
-            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/product/tbl-indent-dispatch-new/challen', 'dispatch_date' => $model->dispatch_date, 'lr_no' => $model->lr_no, 'vehicle_no' => $model->vehicle_no, 'report_type' => 'MilkChillBillCenterWise'], $options);
+            return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/product/tbl-indent-dispatch-new/challen', 'dispatch_date' => $model->dispatch_date, 'lr_no' => $model->lr_no, 'vehicle_no' => $model->vehicle_no, 'report_type' => 'MilkChillBillCenterWise'], $options);
         },
         'lr-copy' => function ($url, $model) {
             $options = ['title' => Yii::t('app', 'View LR Copy Report'), 'target' => '_blank'];
-            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/product/tbl-indent-dispatch-new/challen', 'dispatch_date' => $model->dispatch_date, 'lr_no' => $model->lr_no, 'vehicle_no' => $model->vehicle_no, 'report_type' => 'MilkChillingBillLrNoWise'], $options);
+            return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/product/tbl-indent-dispatch-new/challen', 'dispatch_date' => $model->dispatch_date, 'lr_no' => $model->lr_no, 'vehicle_no' => $model->vehicle_no, 'report_type' => 'MilkChillingBillLrNoWise'], $options);
         },
     ]
 ];
