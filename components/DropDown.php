@@ -958,7 +958,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1904,6 +1904,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Status'),
                 'data' => ['OPEN' => Yii::t('app', 'OPEN'), 'IN PROGRESS' => Yii::t('app', 'IN PROGRESS'), 'CLOSED' => Yii::t('app', 'CLOSED'), 'CARRY FORWARD' => Yii::t('app', 'CARRY FORWARD')],
             ],
+            'verified_flag' => [
+                'name' => 'is_verify',
+                'prompt' => Yii::t('app', 'Select Verified Flag'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Verify')],
+            ],
         ];
         return $records[$l];
     }
@@ -2131,7 +2136,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
