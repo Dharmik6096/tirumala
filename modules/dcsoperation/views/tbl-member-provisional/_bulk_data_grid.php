@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
@@ -71,12 +71,12 @@ use kartik\grid\GridView;
             if (!empty($dataProvider->getModels())) {
                 ?>
                 <?= $form->field($provisionalModel, 'remarks', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
-                <div class="clearfix"></div>
-                <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
-                <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
+                <div class="clearfix"></div><br>
+                <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
+                <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
             <?php }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval', '', 'btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
