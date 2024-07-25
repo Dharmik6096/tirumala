@@ -561,15 +561,9 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/places-list', Yii::t('app', $prompt), $multiple, '', $readonly);
     }
 
-    public function product_group_code($model, $form, $depends, $name = 'product_group_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
-        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-group/product-group-list', Yii::t('app', 'Select Product Group'), $multiple, $extra_param, $readonly, $id);
-    }
-
-    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false, $flag = 'NotDependOnProduct') {
-        $this->setClass($form, $name);
-        $action = ($flag == 'NotDependOnProduct') ? '/product/tbl-product/product-list' : '/product/tbl-product/product-depend-list';
-        $this->select2Dropdown($model, $form, $depends, $name, $islable, $action, Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
     }
 
     public function moduleType($model, $form, $name = 'module_type', $islable = false, $disable = false, $searchable = true) {
@@ -800,20 +794,28 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false) {
+        $data = $this->getLabels($flag);
+        $fields = explode(',', $data['fields']);
+        $checkValid = in_array('checkValid', $data);
+        $field_value = !empty($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
+        $control_name = ($name == '') ? $data['name'] : $name;
+        $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
+        $placeholder = $data['prompt'];
+        $url = '/site/get-data';
+        $allParam = [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray];
+
+        if ($multiselect2Dropdown) {
+            $this->select2Dropdown($model, $form, $depends, $name, $label, $url, $placeholder, $multiselect, $allParam, $readonly, '', $searchable, true);
+            return;
+        }
         if ($multiselect) {
             $this->depend_dropdown_multiple($flag, $model, $form, $depends, $class, $label, $name, $check, $checkList);
             return;
         }
 
         $class = $readonly ? 'depend-control' : '';
-        $data = $this->getLabels($flag);
-        $fields = explode(',', $data['fields']);
-        $checkValid = in_array('checkValid', $data);
-        $field_value = !empty($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
-        $control_name = ($name == '') ? $data['name'] : $name;
         $depends = explode(',', $depends);
-        $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
         $tabIndex = ($tab) ? -1 : '';
         $dropDownType = DepDrop::TYPE_DEFAULT;
         if (isset($searchable) && $searchable) {
@@ -830,9 +832,9 @@ class DropDown extends Component {
                     'select2Options' => $select2Options,
                     'pluginOptions' => [
                         'depends' => $depends,
-                        'placeholder' => $data['prompt'],
-                        'url' => Url::to(['/site/get-data']),
-                        'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray],
+                        'placeholder' => $placeholder,
+                        'url' => Url::to([$url]),
+                        'allParam' => $allParam,
                         'initialize' => true,
                     ],
                     'options' => [
@@ -843,7 +845,7 @@ class DropDown extends Component {
                 ])->label($label);
     }
 
-    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $searchable = true) {
+    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $searchable = true, $multiple = false) {
         $data = $this->getLabels($flag);
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $this->withoutLocal($data, $model);
@@ -855,7 +857,7 @@ class DropDown extends Component {
             $records = [0 => 'All'] + $records;
         }
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
-        $select2Options = ['data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable]];
+        $select2Options = ['data' => $records, 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable]];
         !empty($form_id) ? ($select2Options['pluginOptions']['dropdownParent'] = '#' . $form_id) : '';
 
         if (isset($searchable) && $searchable) {
@@ -2084,6 +2086,7 @@ class DropDown extends Component {
             'login_user_code' => ['name' => 'login_user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
             'region' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'union_code'],
             'relation_code' => ['name' => 'relationship_code', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
+            'product_depend_group' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'product_group_code'],
         ];
         return $label[$l];
     }
@@ -2256,6 +2259,7 @@ class DropDown extends Component {
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
         $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'placeholder' => $placeholder, 'dropdownParent' => '#' . $form_id, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]];
 
+        $allParam = is_array($extraParam) ? $extraParam : ["'" . $extraParam . "'"];
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -2266,7 +2270,7 @@ class DropDown extends Component {
                         'depends' => $depends,
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
-                        'allParam' => ["'" . $extraParam . "'"],
+                        'allParam' => $allParam,
                         'initialize' => true,
                         'allowClear' => true,
                     ],

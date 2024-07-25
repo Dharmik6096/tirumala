@@ -48,10 +48,10 @@ use yii\web\View;
                 echo Html::activeHiddenInput($model, 'group_by', ['value' => 1]);
             } ?>
             <div class="col-sm-4">
-                <?= Yii::$app->dropdown->product_group_code($model, $form, 'tblindentmastersearch-union_code', 'product_group_code', 'Product Group', TRUE); ?>
+                <?= Yii::$app->dropdown->dropdown('product_group_code', $model, $form, 'form-group padding-right-5 col-sm-12', $model->getAttributeLabel('product_group_code'), false, '', false, true, true); ?>
             </div>
             <div class="col-sm-4 filldata">
-                <?= Yii::$app->dropdown->product($model, $form, 'tblindentmastersearch-union_code,tblindentmastersearch-product_group_code', 'product_code', 'Product', TRUE, '', '', false, 'DependOnProduct'); ?>
+                <?= Yii::$app->dropdown->depend_dropdown('product_depend_group', $model, $form, 'tblindentmastersearch-product_group_code', 'form-group padding-right-5 col-sm-12', $model->getAttributeLabel('product_code'), 'product_code', false, 0, [], TRUE, Yii::t('app', 'Select Product'), FALSE, TRUE, TRUE); ?>
             </div>
             <div class="col-sm-3 mt18">
                 <?= Yii::$app->controls->search(); ?>
