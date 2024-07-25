@@ -33,7 +33,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model, $key, $index) {
-                    return ['class' => 'checkbox', 'value' => $model['indent_code']];
+                    return ['class' => 'checkbox child-checkbox-'.$model['indent_code'], 'value' => $model['indent_code']];
                 }],
                 ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
                 ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
@@ -61,7 +61,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                 'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
                     echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']indent_code', ['value' => $model->indent_code]);
                     echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']approve_qty', ['value' => $model->approve_qty]);
-                    return $form->field($dispatchModel, '[' . $key . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch dispatch_qty-' . $model->indent_code, 'data-id' => $key])->label(FALSE);
+                    return $form->field($dispatchModel, '[' . $key . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch qty-dispatch-' . $model->product_code.' dispatch_qty-' . $model->indent_code, 'data-id' => $key, 'data-key' => $model->product_code])->label(FALSE);
                 },
             ],
                 ['attribute' => 'remaining_qty', 'label' => Yii::t('app', 'Remaining Qty'), 'filter' => FALSE,
@@ -116,11 +116,23 @@ $script = '
 
     function remainingqty(new_tr_key){
         var tr_key = $(".dispatch_qty-"+new_tr_key).attr("data-id");
+        var dataKey = $(".dispatch_qty-"+new_tr_key).attr("data-key");
         var remaining_qty = $("#tblindentdispatch-" + tr_key + "-remaining_qty").val();
         var approve_qty = $("#tblindentdispatch-" + tr_key + "-approve_qty").val();
         var dispatch_qty = $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val();
         dispatch_qty = dispatch_qty == "" ? 0 : dispatch_qty;
         var new_remaining_qty = parseFloat(remaining_qty)-parseFloat(dispatch_qty);
+        let totalStock = parseFloat($(`#${dataKey} .total_stock`).text());
+        let outOfStock = totalStock;
+        $(".qty-dispatch-"+dataKey).each(function() {
+            var currentValue = parseFloat($(this).val()) || 0;
+            outOfStock -= currentValue;
+            if(totalStock < currentValue){
+                currentValue = 0;
+            }
+            totalStock -= currentValue;
+        });
+        $("#" + dataKey + " .remaining_stock").text(totalStock.toFixed(2));
 
         if (!isNaN(remaining_qty) && parseInt(dispatch_qty) <= 0 && dispatch_qty != "") {
             $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val("");
@@ -145,19 +157,31 @@ $script = '
         $(".set_vehicle").val(vehicle_no);
         $(".set_ref_no").val(ref_no);
         $(".set_lrno").val(lr_no);
-        var len = $("input[class=\"checkbox kv-row-checkbox\"]:checked").length;
+        var len = $(".checkbox.kv-row-checkbox:checked").length;
         if(len == 0){
-        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
-        return false;
-                    }else if(vehicle_no ==""){
-        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select vehicle.</span></div></div>");
-        return false;
-                    }else if(ref_no ==""){
-        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please Add Reference No.</span></div></div>");
-        return false;
-        }
-        else {
-        $("#indent-dispatch").submit();
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
+            return false;
+        } else if(vehicle_no ==""){
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select vehicle.</span></div></div>");
+            return false;
+        } else if(ref_no ==""){
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please Add Reference No.</span></div></div>");
+            return false;
+        } else {
+            var isZeroValue = false;
+            $(".qty-dispatch").each(function() {
+                var id = $(this).data("id");
+                var currentValue = parseFloat($(this).val()) || 0;
+                if(currentValue == 0 && $(".child-checkbox-"+id).prop("checked")){
+                    isZeroValue = true;
+                }
+            });
+            if(isZeroValue){
+                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter value greater than zero.</span></div></div>");
+            } else {
+                $(".parent-checkbox").prop("disabled", true);
+                $("#indent-dispatch").submit();
+            }
         }
 });
 ';

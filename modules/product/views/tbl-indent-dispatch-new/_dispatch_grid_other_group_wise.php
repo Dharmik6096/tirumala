@@ -65,9 +65,6 @@ $this->title = Yii::t('app', 'Indent Dispatch');
             ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
-            ['attribute' => 'status_date', 'label' => Yii::t('app', 'Indent Approve Date'), 'value' => function($model) {
-                    return Yii::$app->controls->view_date($model->status_date);
-                }, 'filter' => FALSE],
             ['attribute' => 'warehouse_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->warehouseCode, 'store_location_name');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
@@ -137,6 +134,9 @@ $script = '
         var cls = $(this).attr("data-class");
         if($("#tblindentdispatch-" + key + "-dispatch_qty").val() != ""){
             updateRemainingQty(key, cls);
+        } else {
+            var qty = $("#tblindentdispatch-" + key + "-qty").text();
+            $("#tblindentdispatch-" + key + "-remaining").text(qty);
         }
     });
 
@@ -160,10 +160,14 @@ $script = '
         });
         $("#" + cls + " .remaining_stock").text(totalStock.toFixed(2));
 
-        if (dispatch <= 0 || dispatch > approve) {
+        if(dispatch <= 0){
             $("#tblindentdispatch-" + key + "-dispatch_qty").val("");
             $("#tblindentdispatch-" + key + "-remaining").text(approve);
             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Dispatch quantity must be greater than zero.</span></div></div>");
+        } else if (dispatch > approve) {
+            $("#tblindentdispatch-" + key + "-dispatch_qty").val("");
+            $("#tblindentdispatch-" + key + "-remaining").text(approve);
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Dispatch quantity must be greater than Approve Qty.</span></div></div>");
         } else if(outOfStock < 0) {
             $("#tblindentdispatch-" + key + "-dispatch_qty").val("");
             $("#tblindentdispatch-" + key + "-remaining").text(approve);
@@ -185,14 +189,26 @@ $script = '
         $(".set_lrno").val(lrNo);
 
         if ($(".parent-checkbox:checked, .child-checkbox:checked").length === 0) {
-            bootbox.alert("Please select at least one record.");
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select at least one record.</span></div></div>");
             return false;
         } else if (!vehicle || !refNo) {
-            bootbox.alert("Please enter Vehical No and Reference No.");
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter Vehical No and Reference No.</span></div></div>");
             return false;
         } else {
-            $(".parent-checkbox").prop("disabled", true);
-            $("#indent-dispatch-new").submit();
+            var isZeroValue = false;
+            $(".qty-dispatch").each(function() {
+                var id = $(this).data("id");
+                var currentValue = parseFloat($(this).val()) || 0;
+                if(currentValue == 0 && $(".child-checkbox-"+id).prop("checked")){
+                    isZeroValue = true;
+                }
+            });
+            if(isZeroValue){
+                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter value greater than zero.</span></div></div>");
+            } else {
+                $(".parent-checkbox").prop("disabled", true);
+                $("#indent-dispatch-new").submit();
+            }
         }
     });
 ';

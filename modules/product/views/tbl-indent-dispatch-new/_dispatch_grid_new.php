@@ -26,10 +26,14 @@ $models = new app\modules\product\models\TblIndentMaster();
                     'checkboxOptions' => function($model, $key, $index) {
                         $member_code = !empty($model['member_code']) ? $model['member_code'] : 0;
                         $id = $model['dcs_code'] . $member_code . $model['product_code'];
-                        return ['class' => 'checkbox group-checkbox child-checkbox ' . $id, 'data-id' => $id, 'value' => $model['indent_code']];
+                        return ['class' => 'checkbox group-checkbox child-checkbox ' . $id .' child-checkbox-'.$model['indent_code'], 'data-id' => $id, 'value' => $model['indent_code']];
                     }],
                 ['attribute' => 'member_code'],
-                ['attribute' => 'qty'],
+                ['attribute' => 'qty',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index) {
+                        return '<span id="tblindentdispatch-' . $model['indent_code'] . '-qty">' . $model->qty . '</span>';
+                },],                
                 ['attribute' => 'status_date', 'label' => Yii::t('app', 'Indent Approve Date'), 'value' => function($model) {
                         return Yii::$app->controls->view_date($model->status_date);
                     }, 'filter' => FALSE],

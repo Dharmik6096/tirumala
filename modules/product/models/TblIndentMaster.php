@@ -312,6 +312,7 @@ class TblIndentMaster extends \app\models\ChildModel {
             $modelStages->union_code = $model['union_code'];
             $modelStages->mcc_plant_code = $model['mcc_plant_code'];
             $modelStages->product_code = $model['product_code'];
+            $modelStages->bmc_code = $model['bmc_code'];
             $availableStockData = $modelStages->getAvailableStock('BMC');
             $availableStockQty = 0;
             foreach ($availableStockData as $stock) {
