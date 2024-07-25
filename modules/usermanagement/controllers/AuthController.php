@@ -10,6 +10,7 @@ use app\models\IdentityMaster;
 use app\modules\sms\models\TblApiMaster;
 use app\models\UserHistory;
 use app\modules\usermanagement\models\User;
+use app\modules\sms\models\TblAlertTemplate;
 
 class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController {
 
@@ -76,28 +77,25 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
                     } else {
                         $otp = rand(1000, 9999);
                         Yii::$app->session->set('otp_code', $otp);
-
                         $apiMaster = new TblApiMaster();
                         $apiMaster->receiver_type = 'EMAIL';
                         $apiMasterData = $apiMaster->getAPI();
-
                         if (!empty($apiMasterData)) {
-                            $htmlContent = "";
-                            $message = "";
-                            $this->setHtmlContent($otp, $htmlContent, $message, $model->username);
-
-                            $notificationModel = new TblAlertNotification();
-                            $notificationModel->receiver_type = 'EMAIL';
-                            $notificationModel->message = $htmlContent;
-                            $notificationModel->header_info = $message;
-                            $notificationModel->send_status = 0;
-                            $notificationModel->content_id = $apiMasterData->api_master_id;
-                            $notificationModel->refecence_code = $modelData->id;
-                            $notificationModel->module_type = "OTP - Forgot Password";
-                            $notificationModel->entry_datetime = date('Y-m-d H:i:s');
-                            $notificationModel->send_mail = 1;
-                            $notificationModel->receiver_detail = $modelData->email;
-                            $notificationModel->save();
+                            $templateModel = new TblAlertTemplate();
+                            $templateData = $templateModel->getTemplateData('forgot_password', 'EMAIL', $apiMaster->union_code);
+                            if (!empty($templateData)) {
+                                $notificationModel = new TblAlertNotification();
+                                $notificationModel->receiver_type = 'EMAIL';
+                                $notificationModel->message = str_replace('{OTP}', $otp, $templateData->message);
+                                $notificationModel->header_info = $templateData->header_info;
+                                $notificationModel->send_status = 0;
+                                $notificationModel->content_id = $apiMasterData->api_master_id;
+                                $notificationModel->module_type = 'forgot_password';
+                                $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                                $notificationModel->send_mail = 1;
+                                $notificationModel->receiver_detail = $modelData->email;
+                                $notificationModel->save();
+                            }
                         }
                         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
                             'message' => 'OTP Sent Successfully']);
@@ -118,6 +116,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
                         }
                     }
                     $sentOtp = true;
+                    $model->scenario = 'verifyOtp';
                 } else {
                     $model->addError('username', Yii::t('app', 'Email Is Not Available For user ' . $model->username));
                 }
@@ -128,17 +127,6 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
             Yii::$app->session->remove('otp_code');
         }
         return $this->renderIsAjax('forget_password', ['model' => $model, 'sentOtp' => $sentOtp]);
-    }
-
-    public function setHtmlContent($OTP, &$htmlContent, &$message, $username) {
-        $message = 'OTP For Reset Password of user ' . $username;
-        $htmlContent = '';
-        $htmlContent = '<p>Dear Sir, <br/><br/>';
-        $htmlContent .= '<br/>We have received your request to reset password for PORTAL. </p>';
-        $htmlContent .= '<br/>To reset, please use OTP: <b>' . $OTP . '</b></p>';
-        $htmlContent .= '<br/><br/>';
-        $htmlContent .= '<p>Regards,';
-        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
 }

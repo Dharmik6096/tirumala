@@ -38,4 +38,9 @@ class GuestAssets extends AssetBundle {
         'yii\bootstrap\BootstrapAsset',
     ];
 
+    public function init() {
+        parent::init();
+        \Yii::$app->general->setDesignTheme($this, \Yii::$app->session['eiplCode']);
+    }
+
 }

@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\web\View;
 use app\assets\GuestAssets;
 use yii\helpers\Url;
+use app\modules\organisation\models\TblUnions;
 
 GuestAssets::register($this);
 ?>
@@ -28,13 +29,6 @@ GuestAssets::register($this);
     <body>
 
         <?php $this->beginBody() ?>
-        <!-- Page Loader -->
-        <div id="pageloader">
-            <div id="loadercontent"></div>
-        </div>
-        <!-- / Page Loader -->
-<!--   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
         <?php
         if (Yii::$app->session->hasFlash('success')) {
             $msg = Yii::$app->session->getFlash('success');
@@ -46,10 +40,19 @@ GuestAssets::register($this);
                 Yii::$app->display->show($msg['message'], $alertType, $type, $field, $hiddenfield);
             }
         }
+        $unionData = TblUnions::find()->where(['is_active' => 1])->one();
+        $eiplCode = !empty($unionData) && !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
         $logo = $this->theme->getUrl('/assets/images/logo.png');
-        if (Yii::$app->session->get('organization_logo') != '') {
-            $new_logo = '/' . substr(Yii::$app->params['logo_path'], 1) . Yii::$app->session->get('organization_logo');
-            $logo = file_exists(Yii::$app->basePath . $new_logo) ? $new_logo : $logo;
+        if ($eiplCode == 'CARGILL') {
+            $logo = $this->theme->getUrl('/assets/cargill/images/logo.png');
+        } else if ($eiplCode == 'KOTMALE') {
+            $logo = $this->theme->getUrl('/assets/kotmale/images/logo.png');
+        } else if ($eiplCode == 'THIRUMALA') {
+            $logo = $this->theme->getUrl('/assets/images/nav_logo.png');
+        } else if ($eiplCode == 'PRABHAT') {
+            $logo = $this->theme->getUrl('/assets/images/nav_logo.png');
+        } else if ($eiplCode == 'ANIK') {
+            $logo = $this->theme->getUrl('/assets/images/nav_logo.png');
         }
         ?>
         <div class="navbar navbar-fixed-top menu-wrap">

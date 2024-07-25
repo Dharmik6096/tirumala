@@ -5850,15 +5850,13 @@ tr.highlightRow {
 .for-pw-in {
     max-width: 370px;
     margin: auto;
-    max-height: 350px !important;
-    min-height: 224px !important;
+    max-height: 198px !important;
 }
 
 .for-pw-ot {
     max-width: 370px;
     margin: auto;
-    max-height: 420px !important;
-    min-height: 224px !important;
+    max-height: 310px !important;
 }
 
 .padding_right_15 {
