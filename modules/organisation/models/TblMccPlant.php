@@ -97,7 +97,7 @@ class TblMccPlant extends \app\models\ChildModel {
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'mcc_plant_code_ex', 'ref_code', 'vendor_code'], 'safe'],
                 [['is_weight_manual', 'is_quality_manual'], 'boolean'],
                 ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
+                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
                 [['gst_no'], 'string', 'min' => 15, 'max' => 15],
                 [['gst_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);

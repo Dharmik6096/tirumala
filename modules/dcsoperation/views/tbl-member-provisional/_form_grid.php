@@ -15,7 +15,9 @@ $attribute = [
         ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
             return Yii::$app->general->generateActivityStatus($model, 'updated_at');
         }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
-        ['attribute' => 'bmc_code', 'value' => 'bmc_code', 'filter' => false],
+        ['attribute' => 'bmc_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->tblDcsBmc, 'ref_code');
+        }, 'filter' => false],
         ['attribute' => 'bmc_name', 'value' => 'tblDcsBmc.bmc_name', 'filter' => false],
         ['attribute' => 'created_at', 'vAlign' => 'middle', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->created_at);
@@ -123,6 +125,18 @@ $attribute = [
             return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status] : '';
         }],
         ['attribute' => 'sap_farmer_code', 'visible' => true, 'filter' => false],
+        ['attribute' => 'is_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_verify');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'is_contact_verified', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_contact_verified');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'is_email_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_email_verify');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'is_aadhar_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_aadhar_verify');
+        }, 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [

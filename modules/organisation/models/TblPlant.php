@@ -74,7 +74,7 @@ class TblPlant extends \app\models\ChildModel {
 //            [['plant_code'], 'string', 'max' => 6],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code_ex', 'vendor_code', 'ref_code'], 'safe'],
                 ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
+                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblPlant', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
