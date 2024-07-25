@@ -776,8 +776,7 @@ class DropDown extends Component {
         $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
         $placeholder = $data['prompt'];
         $url = '/site/get-data';
-        $allParam = [];
-        $allParam[] = [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray];
+        $allParam = [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray];
 
         if ($multiselect2Dropdown) {
             $this->select2Dropdown($model, $form, $depends, $name, $label, $url, $placeholder, $multiselect, $allParam, $readonly, '', $searchable, true);
