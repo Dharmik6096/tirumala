@@ -72,6 +72,9 @@ class ReportsController extends \app\controllers\ChildController {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
                 $this->report = 'MemberConsolidated';
             }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'MemberConsolidatedWithBank';
+            }
         }
         return $this->actionIndex();
     }
@@ -1741,7 +1744,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_collection_day_wise_report',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
@@ -1750,7 +1753,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_collection_passbook',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
@@ -1759,8 +1762,17 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_collection_summary',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
+                'bkg_export' => TRUE
+            ],
+            'MemberConsolidatedWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_summary_with_bank',
+                'scenario' => 'MemberDailyCollection',
+                'title' => '101 - Member Collection Detail',
+                'to_decrypt' => ['aadhar_no'],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
                 'bkg_export' => TRUE
             ],
             //102

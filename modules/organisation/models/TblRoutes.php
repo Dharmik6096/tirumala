@@ -61,7 +61,7 @@ class TblRoutes extends ChildModel {
                 [['start_time'], 'rangeValidation'],
                 [['capacity'], 'integer', 'max' => 1000, 'min' => 1, 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "01".'), 'tooBig' => '{attribute} Should be less than 999', 'tooSmall' => '{attribute} Should be greater than 1'],
                 [['capacity', 'vehicle_type_code'], 'integer'],
-                [['is_active', 'created_at', 'updated_at', 'union_code', 'federation_code', 'route_length_kms', 'sap_vendor_code'], 'safe'],
+                [['is_active', 'created_at', 'updated_at', 'union_code', 'federation_code', 'route_length_kms', 'sap_vendor_code', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
                 [['route_name'], 'string', 'max' => 255],
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                 [['route_length_kms'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "15"')],
