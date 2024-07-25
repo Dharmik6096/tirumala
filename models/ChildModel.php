@@ -70,6 +70,9 @@ class ChildModel extends \yii\db\ActiveRecord {
                 $this->sync_status = 'U';
             }
 
+            if ($this->hasAttribute('emilk_sync_status')) {
+                $this->emilk_sync_status = 'N';
+            }
             $encrypt = $this->encryptModel($this->attributes);
             $this->setAttributes($encrypt);
             $result = $this->validateAttributesSingleSpace($this->attributes());

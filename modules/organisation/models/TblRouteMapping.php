@@ -79,7 +79,7 @@ class TblRouteMapping extends \app\models\ChildModel {
                 [['morning_end_time'], 'morningTimeValidate'],
                 [['evening_end_time'], 'eveningTimeValidate'],
                 [['evening_grace_time'], 'graceTimeValidate', 'on' => ['importCsv']],
-                [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'route_code_ex', 'ref_code', 'mobile_no', 'firstname'], 'safe'],
+                [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'route_code_ex', 'ref_code', 'mobile_no', 'firstname', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
                 [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
                 ['to_dest', 'compare', 'compareAttribute' => 'from_dest', 'operator' => '!=', 'message' => 'Source and destination can not be same'],
 //            [['route_name'], function ($attribute, $params) {
