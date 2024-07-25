@@ -125,16 +125,16 @@ $attribute = [
         }],
         ['attribute' => 'sap_farmer_code', 'visible' => true, 'filter' => false],
         ['attribute' => 'is_verify', 'value' => function($model) {
-            return $model->is_verify == 1 ? 'Verify' : 'Pending';
+            return isset(Yii::$app->dropdown->getRecords('verified_flag')['data'][$model->is_verify]) ? Yii::$app->dropdown->getRecords('verified_flag')['data'][$model->is_verify] : '';
         }, 'visible' => false, 'filter' => false],
         ['attribute' => 'is_contact_verified', 'value' => function($model) {
-            return $model->is_contact_verified == 1 ? 'Verify' : 'Pending';
+            return isset(Yii::$app->dropdown->getRecords('verified_flag')['data'][$model->is_contact_verified]) ? Yii::$app->dropdown->getRecords('verified_flag')['data'][$model->is_contact_verified] : '';
         }, 'visible' => false, 'filter' => false],
         ['attribute' => 'is_email_verify', 'value' => function($model) {
-            return $model->is_email_verify == 1 ? 'Verify' : 'Pending';
+            return isset(Yii::$app->dropdown->getRecords('verified_flag')['data'][$model->is_email_verify]) ? Yii::$app->dropdown->getRecords('verified_flag')['data'][$model->is_email_verify] : '';
         }, 'visible' => false, 'filter' => false],
         ['attribute' => 'is_aadhar_verify', 'value' => function($model) {
-            return $model->is_aadhar_verify == 1 ? 'Verify' : 'Pending';
+            return isset(Yii::$app->dropdown->getRecords('verified_flag')['data'][$model->is_aadhar_verify]) ? Yii::$app->dropdown->getRecords('verified_flag')['data'][$model->is_aadhar_verify] : '';
         }, 'visible' => false, 'filter' => false],
 ];
 
