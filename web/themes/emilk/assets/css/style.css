@@ -5508,3 +5508,22 @@ div#w12 > .card.border-default {
 .text-wrap td{
     text-wrap: wrap !important;
 }
+.for-pw-in {
+    max-width: 370px;
+    margin: auto;
+    max-height: 198px !important;
+}
+
+.for-pw-ot {
+    max-width: 370px;
+    margin: auto;
+    max-height: 382px !important;
+}
+
+.padding_right_15 {
+    padding-right: 15px !important;
+}
+
+.padding_left_15 {
+    padding-left: 15px !important;
+}

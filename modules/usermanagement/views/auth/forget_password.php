@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Html;
 
 $readOnly = $sentOtp;
@@ -48,10 +48,10 @@ $class = !$sentOtp ? 'for-pw-in' : 'for-pw-ot';
                                 <?= $form->field($model, 'repeat_password')->textInput() ?>
                             </div>
                         <?php } ?>
-                        <div class="col-sm-12 mt15">
+                        <div class="col-sm-12 d-grid">
                             <?= Html::submitButton(Yii::t('app', $button), ['class' => 'btn btn-primary btn-block']) ?>
                         </div>
-                        <p class="center_text">- OR -</p>
+                        <p class="center_text mt-3">- OR -</p>
                         <div class="col-sm-12">
                             <?php echo Html::a('Login', ['/user-management/auth/login'], ['title' => 'Click for Redirect Login', 'class' => 'btn btn-primary btn-block']); ?>
                         </div>

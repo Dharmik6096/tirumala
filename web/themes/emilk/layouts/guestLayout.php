@@ -55,18 +55,13 @@ GuestAssets::register($this);
             $logo = $this->theme->getUrl('/assets/images/nav_logo.png');
         }
         ?>
-        <div class="navbar navbar-fixed-top menu-wrap">
+
+        <div class="navbar fixed-top menu-wrap navbar-expand-lg navbar-lightasd bg-lightasd">
             <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="<?= Url::to(['/site/dashboard']) ?>"><img src="<?= $logo ?>" alt='<?= Yii::t('app', 'Logo') ?>' class="logo img-responsive"/></a>
-                </div>
-                <div class="navbar-collapse collapse navbar-responsive-collapse">
-                </div>
+                <a class="navbar-brand" href="<?= Url::to(['/site/dashboard']) ?>"><img src="<?= $logo ?>" alt='<?= Yii::t('app', 'Company Logo') ?>' class="logo img-responsive"/></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
         </div>
 

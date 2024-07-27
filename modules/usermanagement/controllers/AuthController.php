@@ -15,6 +15,7 @@ use app\models\IdentityMaster;
 use app\modules\sms\models\TblApiMaster;
 use app\models\UserHistory;
 use app\modules\sms\models\TblAlertTemplate;
+use app\models\GeneralModel;
 
 class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController
 {
@@ -97,7 +98,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
     }
     public function actionForgetPassword()
     {
-        $this->layout = "@app/themes/pcdf/layouts/guestLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/guestLayout.php";
         $model = new User();
         $model->scenario = 'forgetPsd';
         $sentOtp = false;
@@ -122,7 +123,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
                         $apiMasterData = $apiMaster->getAPI();
                         if (!empty($apiMasterData)) {
                             $templateModel = new TblAlertTemplate();
-                            $templateData = $templateModel->getTemplateData('forgot_password', 'EMAIL', $apiMaster->union_code);
+                            $templateData = $templateModel->getTemplateData('portal_password_reset', 'EMAIL', $apiMaster->union_code);
                             if (!empty($templateData)) {
                                 $notificationModel = new TblAlertNotification();
                                 $notificationModel->receiver_type = 'EMAIL';
@@ -148,8 +149,9 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
                         if ($model->otp_code == $otpCode) {
                             $model->username = $checkUser;
                             $historyModel = new UserHistory();
-                            Yii::$app->operation->history($model, $historyModel, UPDATE);
-                            $transaction = $this->generalModel->saveTransaction([$model], [$historyModel], ['Password', 'edit']);
+                            Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                            $generalModel = new GeneralModel();
+                            $transaction = $generalModel->saveTransaction([$model], [$historyModel], ['Password', 'edit']);
                             if ($transaction == 'customRedirect') {
                                 return $this->redirect(['/user-management/auth/login']);
                             }

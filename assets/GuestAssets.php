@@ -20,22 +20,22 @@ class GuestAssets extends AssetBundle {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'themes/pcdf/assets/css/font-awesome.css',
-        'themes/pcdf/assets/css/pageloader.css',
-        'themes/pcdf/assets/css/style.css',
-        'themes/pcdf/assets/css/font.css',
+        'themes/emilk/assets/css/font.css',
+        'themes/emilk/assets/css/fontawesome-all.min.css',
+        'themes/emilk/assets/css/pageloader.css',
+        'themes/emilk/assets/css/style.css'
     ];
     public $js = [
-        'themes/pcdf/assets/js/bootstrap.js',
-        'themes/pcdf/assets/js/liveloader.js',
-        'themes/pcdf/assets/js/bootbox.min.js',
-        'themes/pcdf/assets/js/script.js',
-        'themes/pcdf/assets/js/style.js',
-        'themes/pcdf/assets/js/shortcut_bind.js',
+        'themes/emilk/assets/js/bootstrap.js',
+        'themes/emilk/assets/js/liveloader.js',
+        'themes/emilk/assets/js/bootbox.min.js',
+        'themes/emilk/assets/js/script.js',
+        'themes/emilk/assets/js/style.js',
+        'themes/emilk/assets/js/shortcut_bind.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
+        'yii\bootstrap5\BootstrapAsset',
     ];
 
     public function init() {
