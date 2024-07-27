@@ -25,6 +25,7 @@ use app\modules\configuration\models\TblConfig;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultSearch;
 use yii\helpers\ArrayHelper;
+use app\modules\general\models\TblApprovalStagesDetail;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
@@ -173,6 +174,10 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 $txn_model->vehicle_entry_chamber_date = $this->model->vehicle_entry_date;
                 $modelSave[] = $txn_model;
                 if ($txn_model->validate()) {
+                    $modelStages = new TblApprovalStagesDetail();
+                    $modelStages->setApprovalData($this->model->union_code, 'tbl_milk_vehicle_entry', $this->model->milk_vehicle_entry_code, $modelSave, $approval_stages);
+                    $this->model->approval_status = 'Pending';
+
                     $transaction = $this->generalModel->saveTransaction($modelSave, ['Milk Vehicle Entry', ($update) ? 'edit' : 'create']);
                     $key = $this->model->milk_vehicle_entry_code;
                     if ($transaction == 'customRedirect') {
@@ -256,13 +261,13 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     }
 
     public function actionDispatchDetail() {
-          $existData = TblBmcMilkDispatch::find()
-                        ->alias('bmd')
-                        ->select(['bmd.challan_no','bmd.from_date','bmd.from_shift_code','bmd.to_date','bmd.to_shift_code','bmd.vehicle_code','bmd.vehicle_in_time','bmd.vehicle_out_time','bmd.bmc_milk_dispatch_code', 'gross_weight' => 'sum(a.dispatch_qty)'])
-                        ->join('INNER JOIN', 'tbl_bmc_milk_dispatch_txn a', 'a.bmc_milk_dispatch_code=bmd.bmc_milk_dispatch_code')
-                        ->where(['trip_code' => Yii::$app->request->get('trip_code')])
-                        ->groupBy(['bmd.challan_no','bmd.from_date','bmd.from_shift_code','bmd.to_date','bmd.to_shift_code','bmd.vehicle_code','bmd.vehicle_in_time','bmd.vehicle_out_time','bmd.bmc_milk_dispatch_code'])
-                        ->all();
+        $existData = TblBmcMilkDispatch::find()
+                ->alias('bmd')
+                ->select(['bmd.challan_no', 'bmd.from_date', 'bmd.from_shift_code', 'bmd.to_date', 'bmd.to_shift_code', 'bmd.vehicle_code', 'bmd.vehicle_in_time', 'bmd.vehicle_out_time', 'bmd.bmc_milk_dispatch_code', 'gross_weight' => 'sum(a.dispatch_qty)'])
+                ->join('INNER JOIN', 'tbl_bmc_milk_dispatch_txn a', 'a.bmc_milk_dispatch_code=bmd.bmc_milk_dispatch_code')
+                ->where(['trip_code' => Yii::$app->request->get('trip_code')])
+                ->groupBy(['bmd.challan_no', 'bmd.from_date', 'bmd.from_shift_code', 'bmd.to_date', 'bmd.to_shift_code', 'bmd.vehicle_code', 'bmd.vehicle_in_time', 'bmd.vehicle_out_time', 'bmd.bmc_milk_dispatch_code'])
+                ->all();
 
         return $this->renderAjax('_dispatch_detail', [
                     'existData' => $existData,
@@ -416,5 +421,19 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     'config_list' => $config_list,
         ]);
     }
-    
+
+    public function actionBulkApproval() {
+        $milkVehicleEntryModel = new TblMilkVehicleEntry();
+        $searchModel = new TblMilkVehicleEntrySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
+
+        $selection = Yii::$app->request->post('selection');
+
+        return $this->render('bulk_approve', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'milkVehicleEntryModel' => $milkVehicleEntryModel,
+        ]);
+    }
+
 }
