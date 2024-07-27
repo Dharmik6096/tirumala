@@ -134,7 +134,7 @@ use kartik\grid\GridView;
                 <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
             <?php }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'bulk-approval'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
