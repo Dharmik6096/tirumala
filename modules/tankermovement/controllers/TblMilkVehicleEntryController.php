@@ -26,6 +26,8 @@ use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultSearch;
 use yii\helpers\ArrayHelper;
 use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
@@ -428,7 +430,75 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
 
         $selection = Yii::$app->request->post('selection');
+        if (Yii::$app->request->post() && !empty($selection)) {
+            $succCount = 0;
+            $errorCount = 0;
+            $receipt_error = '';
+            $message = '';
+            $milkVehiclepostData = Yii::$app->request->post()['TblMilkVehicleEntry'];
+            $remarks = Yii::$app->request->post()['remarks'];
+            $postData = Yii::$app->request->post();
+            $operation = $postData['operation'];
+            foreach ($selection as $value) {
+                $model = TblProcessApproval::findOne($value);
+                $model->scenario = 'approve';
+                $saveModel = [];
+                $deleteModel = [];
+                $approvalHistoryModel = new TblProcessApprovalHistory();
+                Yii::$app->operation->history($model, $approvalHistoryModel, 'UPDATE');
+                $saveModel[] = $approvalHistoryModel;
+                $model->status = $operation == 'approve' ? 1 : 2;
+                $model->remarks = $remarks . $milkVehiclepostData[$value]['approval_remarks'];
+                $saveModel[] = $model;
+                if (!empty($saveModel)) {
+                    $model->ApprovalList($model, $saveModel, $status);
+                    $receiptModel = $this->findModel($model->process_code);
+                    $historyModel = new TblMilkVehicleEntryHistory();
+                    Yii::$app->operation->history($receiptModel, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                    $receiptModel->approval_status = $status;
+                    $receiptModel->approval_remarks = $remarks . $milkVehiclepostData[$value]['approval_remarks'];
+                    $saveModel[] = $receiptModel;
 
+                    if ($receiptModel->validate()) {
+                        if (strtolower($status) == 'approve' && strtolower($receiptModel->approval_status) == 'approve') {
+                            $receiptModel->approved_at = date('Y-m-d H:i:s');
+                            $receiptModel->approved_by = Yii::$app->session['UserCode'];
+                            $saveModel[] = $receiptModel;
+                        }
+                        $succCount++;
+                    } else {
+                        $errorCount++;
+                        foreach ($receiptModel->getErrors() as $errorkey => $value) {
+                            $message = $value;
+                        }
+                    }
+                    if (!empty($message)) {
+                        foreach ($message as $msg) {
+                            $receipt_error .= $msg;
+                        }
+                    }
+                    if (empty($receipt_error)) {
+                        $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Milk Receipt Approval', 'edit']);
+                    } else {
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $receipt_error . ' in Milk Receipt']);
+                        return $this->redirect(['bulk-approval']);
+                    }
+                } else {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Milk Receipt already approved by other user.']);
+                    return $this->redirect(['bulk-approval']);
+                }
+            }
+            $msg = $operation == 'approve' ? ('Milk Receipt approved successfully. <br /> Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount) : ('Provisional Member rejected successfully.  <br />Rejected count : ' . $succCount . '<br />Not Rejected count : ' . $errorCount);
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => $msg]);
+            $getData = Yii::$app->request->queryParams;
+            if (!empty($getData['TblMilkVehicleEntrySearch'])) {
+                return $this->redirect(['bulk-approval', 'TblMilkVehicleEntrySearch' => $getData['TblMilkVehicleEntrySearch']]);
+            } else {
+                return $this->redirect(['bulk-approval']);
+            }
+        }
         return $this->render('bulk_approve', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

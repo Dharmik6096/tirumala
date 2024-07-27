@@ -36,6 +36,7 @@ use kartik\grid\GridView;
                 ['attribute' => 'plant_code', 'value' => 'plant_code', 'filter' => false],
                 ['attribute' => 'receipt_at'],
                 ['attribute' => 'receipt_at_code', 'value' => function($model) {
+                    echo Html::activeHiddenInput($model, '[' . $model['process_approval_code'] . ']milk_vehicle_entry_code', ['value' => $model->milk_vehicle_entry_code]);
                     $rel = Yii::$app->general->getDestRelation($model->receipt_at);
                     $att = strtolower($model->receipt_at) == 'bmc' ? 'bmc_name' : (strtolower($model->receipt_at) == 'vendor' ? 'customer_name' : (strtolower($model->receipt_at) == 'party' ? 'party_name' : 'name'));
                     if (!empty($rel))
