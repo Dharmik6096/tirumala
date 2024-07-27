@@ -10,8 +10,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
 <div class="navbar fixed-top menu-wrap">
     <div class="container-fluid">
         <a class="navbar-brand" href="javascript:void(0)">
-            <img src="<?= $this->theme->getUrl('/assets/images/nav_logo.png') ?>" alt="AMCS Logo"
-                 class="logo img-responsive" />
+            <img src="<?= $this->theme->getUrl('/assets/images/nav_logo.png') ?>" alt="AMCS Logo" class="logo img-responsive" />
         </a>
     </div>
 </div>
@@ -28,26 +27,26 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
             <div class="modal-body">
                 <?php
                 $form = ActiveForm::begin([
-                            'id' => 'login-form',
-                            'options' => ['autocomplete' => 'off'],
-                            'validateOnBlur' => false,
-                            'fieldConfig' => [
-                                'template' => "{label}\n{input}\n{error}",
-                            ],
-                        ])
+                    'id' => 'login-form',
+                    'options' => ['autocomplete' => 'off'],
+                    'validateOnBlur' => false,
+                    'fieldConfig' => [
+                        'template' => "{label}\n{input}\n{error}",
+                    ],
+                ])
                 ?>
                 <?php echo $form->errorSummary($model); ?>
                 <div class="row">
                     <div class="col-sm-12">
                         <?=
-                                $form->field($model, 'username')
-                                ->textInput(['placeholder' => $model->getAttributeLabel('username'), 'autocomplete' => 'off'])
+                        $form->field($model, 'username')
+                            ->textInput(['placeholder' => $model->getAttributeLabel('username'), 'autocomplete' => 'off'])
                         ?>
                     </div>
                     <div class="col-sm-12">
                         <?=
-                                $form->field($model, 'password')
-                                ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
+                        $form->field($model, 'password')
+                            ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
                         ?>
                     </div>
                     <div id="org" class="col-sm-12">
@@ -60,7 +59,8 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     <div class="col-sm-12">
                         <?=
                         Html::button(
-                                Yii::t('app', 'Login'), ['class' => 'btn-login-second btn btn-primary btn-block login-submit']
+                            Yii::t('app', 'Login'),
+                            ['class' => 'btn-login-second btn btn-primary btn-block login-submit']
                         )
                         ?>
                     </div>
@@ -113,9 +113,10 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                                 evokes in us, the zeal to deliver the best, through precision, whatever
                                                 we do. Our endeavor is to be the personification of the concept of
                                                 "Precision Behind Purity"</p>
-                                            <a href="javascript:void(0)" class="btn btn-danger btn-login"
-                                               data-bs-toggle="modal" data-bs-target="#loginModal"><i
-                                                    class="fas fa-sign-in-alt"></i> Login</a>
+                                            <a href="javascript:void(0)" class="btn btn-danger btn-login" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</a>
+                                            <div class="ml500 col-xs-12">
+                                                <?php echo Html::a('Forgot Password ?', ['/usermanagement/auth/forget-password'], ['title' => 'Click to reset your password']); ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

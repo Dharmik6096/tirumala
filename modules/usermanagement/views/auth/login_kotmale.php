@@ -4,6 +4,7 @@
  * @var $this yii\web\View
  * @var $model webvimark\modules\UserManagement\models\forms\LoginForm
  */
+
 use app\components\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
@@ -17,9 +18,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
 <div class="navbar fixed-top menu-wrap">
     <div class="container-fluid">
         <a class="navbar-brand" href="javascript:void(0)">
-            <img
-                src="<?= $this->theme->getUrl('/assets/images/logo.png') ?>" alt="AMCS Logo"
-                class="logo img-responsive" /> 
+            <img src="<?= $this->theme->getUrl('/assets/images/logo.png') ?>" alt="AMCS Logo" class="logo img-responsive" />
         </a>
     </div>
 </div>
@@ -35,48 +34,52 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
             <div class="modal-body">
                 <?php
                 $form = ActiveForm::begin([
-                            'id' => 'login-form',
-                            'options' => ['autocomplete' => 'off'],
-                            'validateOnBlur' => false,
-                            'fieldConfig' => [
-                                'template' => "{label}\n{input}\n{error}",
-                            ],
-                        ])
+                    'id' => 'login-form',
+                    'options' => ['autocomplete' => 'off'],
+                    'validateOnBlur' => false,
+                    'fieldConfig' => [
+                        'template' => "{label}\n{input}\n{error}",
+                    ],
+                ])
                 ?>
 
                 <?php echo $form->errorSummary($model); ?>
                 <div class="row">
                     <div class="col-sm-12">
                         <?=
-                                $form->field($model, 'username')
-                                ->textInput(['placeholder' => $model->getAttributeLabel('username'), 'autocomplete' => 'off'])
+                        $form->field($model, 'username')
+                            ->textInput(['placeholder' => $model->getAttributeLabel('username'), 'autocomplete' => 'off'])
                         ?>
                     </div>
                     <div class="col-sm-12">
                         <?=
-                                $form->field($model, 'password')
-                                ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
+                        $form->field($model, 'password')
+                            ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
                         ?>
                     </div>
-                    <?php //if($identity['organization_type']!='NATIONAL'){  ?>
+                    <?php //if($identity['organization_type']!='NATIONAL'){  
+                    ?>
 
                     <div id="org" class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-6">
-                                <?php //$form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']); ?>
+                                <?php //$form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']); 
+                                ?>
                             </div>
                         </div>
                         <?= Html::activeHiddenInput($model, 'organization'); ?>
                         <?= Html::hiddenInput('state', $state); ?>
                     </div>
-                    <?php //}  ?>
+                    <?php //}  
+                    ?>
                     <div class="col-sm-12">
                         <?= (isset(Yii::$app->user->enableAutoLogin) && Yii::$app->user->enableAutoLogin) ? \Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'rememberMe', true) : '' ?>
                     </div>
                     <div class="col-sm-12">
                         <?=
                         Html::button(
-                                Yii::t('app', 'Login'), ['class' => 'btn-login btn btn-primary btn-block login-submit']
+                            Yii::t('app', 'Login'),
+                            ['class' => 'btn-login btn btn-primary btn-block login-submit']
                         )
                         ?>
                     </div>
@@ -110,11 +113,14 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <p>• Reducing the cost of living</p>
                                         <p>• Enhancing youth skills</p>
                                         <p>• Bridging regional disparity</p>
-<!--                                        <p class="text-justify">Everest, keeping the above in mind, has entered into MOU with Gujarat Knowledge Application &Facilitation Centre of Confederation of Indian Industries, Western Branch and Anand Agriculture University to conduct research for our instruments to evaluate the performance, suggest further modification and upon their approval, issue the necessary accreditations.</p>
+                                        <!--                                        <p class="text-justify">Everest, keeping the above in mind, has entered into MOU with Gujarat Knowledge Application &Facilitation Centre of Confederation of Indian Industries, Western Branch and Anand Agriculture University to conduct research for our instruments to evaluate the performance, suggest further modification and upon their approval, issue the necessary accreditations.</p>
                                         <p class="text-justify">Everest is being modernized inconformity with a plan for a number of purposes, including raising the technological level of production. In addition, thereby increasing the volume of output by eliminating bottlenecks, systematizing production and improving management. It is also envisaged significant capital investments to have production building sand installations, auxiliary facilities, administrative buildings, etc. The Indian Government is extensively promoting milk production through intensive dairy development programs and strengthening of infrastructure for quality and clean milk production. Everest is poised to take maximum advantage of it by extending its infrastructural facilities in a big way.</p>
                                         <p class="text-justify">IT is our Best Assets. Everest offers impeccable IT solution/integration to its clientele. Our full-fledged IT Team do research to customize the requirement every customers be it a small entrepreneur or a dairy giant like NDDB. Everest’s IT Team has been selected for conceptualizing and implementing a new software for milk collection across our country.</p>
                                         <p class="text-justify">Everest now employs a workforce of 350 techno commercial personnel and its Engineering field staff are made available for 24x7 service. Everest Care Its Customers and render exemplary services at all times -secret of Everest’s success. Everest has generated revenue over 1000 million INR and it has very ambitious but realistic plan to achieve the coveted 5000 million INR by 2015.</p>-->
                                         <a href="javascript:void(0)" class="btn-login  btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</a>
+                                        <div class="ml500 col-xs-12">
+                                            <?php echo Html::a('Forgot Password ?', ['/usermanagement/auth/forget-password'], ['title' => 'Click to reset your password', 'class' => 'float_right']); ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

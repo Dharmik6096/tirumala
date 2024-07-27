@@ -10,10 +10,19 @@ use app\modules\usermanagement\models\forms\ChangeOwnPasswordForm;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use app\modules\sms\models\TblAlertNotification;
+use app\models\IdentityMaster;
+use app\modules\sms\models\TblApiMaster;
+use app\models\UserHistory;
+use app\modules\sms\models\TblAlertTemplate;
 
-class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController {
+class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController
+{
 
-    public function actionLogin() {
+    public $freeAccessActions = ['forget-password'];
+
+    public function actionLogin()
+    {
         $this->layout = '@app/web/themes/emilk/layouts/loginLayout.php';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -33,8 +42,8 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         if (empty($identity)) {
             return $this->render('error');
         }
-//                if($identity->organization_type!='NATIONAL')
-//                    $model->scenario = 'non_national';
+        //                if($identity->organization_type!='NATIONAL')
+        //                    $model->scenario = 'non_national';
         if (Yii::$app->request->isAjax) {
             $model->username = $identity->organization_code . '#' . $model->username;
             if ($model->load(Yii::$app->request->post())) {
@@ -60,7 +69,8 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         return $this->renderIsAjax($loginFile, compact('model'));
     }
 
-    public function actionChangeOwnPassword() {
+    public function actionChangeOwnPassword()
+    {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -74,16 +84,90 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         $model = new ChangeOwnPasswordForm(['user' => $user]);
 
 
-        if (Yii::$app->request->isAjax AND $model->load(Yii::$app->request->post())) {
+        if (Yii::$app->request->isAjax and $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()) AND $model->changePassword()) {
+        if ($model->load(Yii::$app->request->post()) and $model->changePassword()) {
             return $this->renderIsAjax('changeOwnPasswordSuccess');
         }
 
         return $this->renderIsAjax('changeOwnPassword', compact('model'));
     }
+    public function actionForgetPassword()
+    {
+        $this->layout = "@app/themes/pcdf/layouts/guestLayout.php";
+        $model = new User();
+        $model->scenario = 'forgetPsd';
+        $sentOtp = false;
+        if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
+            $identity = new IdentityMaster();
+            $data = $identity->getIdentity();
+            $checkUser = $data['organization_code'] . '#' . $model->username;
+            $modelData = $model->findOne(['username' => $checkUser, 'portal_type' => strtolower('portal')]);
 
+            if (!empty($modelData)) {
+                if (!empty($modelData->email)) {
+                    $model = $modelData;
+                    $model->load(Yii::$app->request->post());
+                    if (Yii::$app->session->get('otp_code')) {
+                        $model->scenario = 'verifyOtp';
+                    } else {
+                        $otp = rand(1000, 9999);
+                        Yii::$app->session->set('otp_code', $otp);
+                        $apiMaster = new TblApiMaster();
+                        $apiMaster->receiver_type = 'EMAIL';
+                        $apiMasterData = $apiMaster->getAPI();
+                        if (!empty($apiMasterData)) {
+                            $templateModel = new TblAlertTemplate();
+                            $templateData = $templateModel->getTemplateData('forgot_password', 'EMAIL', $apiMaster->union_code);
+                            if (!empty($templateData)) {
+                                $notificationModel = new TblAlertNotification();
+                                $notificationModel->receiver_type = 'EMAIL';
+                                $notificationModel->message = str_replace('{OTP}', $otp, $templateData->message);
+                                $notificationModel->header_info = $templateData->header_info;
+                                $notificationModel->send_status = 0;
+                                $notificationModel->content_id = $apiMasterData->api_master_id;
+                                $notificationModel->module_type = 'forgot_password';
+                                $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                                $notificationModel->send_mail = 1;
+                                $notificationModel->receiver_detail = $modelData->email;
+                                $notificationModel->save();
+                            }
+                        }
+                        Yii::$app->getSession()->setFlash('success', [
+                            'type' => 'success',
+                            'message' => 'OTP Sent Successfully'
+                        ]);
+                    }
+
+                    if ($model->validate() && !empty($model->otp_code)) {
+                        $otpCode = Yii::$app->session->get('otp_code');
+                        if ($model->otp_code == $otpCode) {
+                            $model->username = $checkUser;
+                            $historyModel = new UserHistory();
+                            Yii::$app->operation->history($model, $historyModel, UPDATE);
+                            $transaction = $this->generalModel->saveTransaction([$model], [$historyModel], ['Password', 'edit']);
+                            if ($transaction == 'customRedirect') {
+                                return $this->redirect(['/user-management/auth/login']);
+                            }
+                        } else {
+                            $model->addError('otp_code', Yii::t('app', 'Please enter valid OTP.'));
+                        }
+                    }
+                    $sentOtp = true;
+                    $model->scenario = 'verifyOtp';
+                } else {
+                    $model->addError('username', Yii::t('app', 'Email Is Not Available For user ' . $model->username));
+                }
+            } else {
+                $model->addError('username', Yii::t('app', 'Please enter valid Information.'));
+            }
+        } else {
+            Yii::$app->session->remove('otp_code');
+        }
+        return $this->renderIsAjax('forget_password', ['model' => $model, 'sentOtp' => $sentOtp]);
+    }
 }
