@@ -28,6 +28,7 @@ use yii\helpers\ArrayHelper;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
+use app\modules\general\models\TblProcessApprovalSearch;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
@@ -59,9 +60,16 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $searchModel = new TblMilkVehicleEntryTransactionSearch();
         $searchModel->milk_vehicle_entry_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $approvalModel = new TblProcessApprovalSearch();
+        $approvalModel->process_code = $id;
+        $approvalDataProvider = $approvalModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
-                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'approvalModel' => $approvalModel,
+                    'approvalDataProvider' => $approvalDataProvider,
         ]);
     }
 
