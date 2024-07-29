@@ -79,13 +79,3 @@ GuestAssets::register($this);
     </body>
 </html>
 <?php $this->endPage() ?>
-<script type="text/javascript">
-    var SearchArray = {};
-    var SearchParam = {};
-    SearchArray = '<?php echo json_encode(Yii::$app->request->queryParams); ?>';
-    $.each(JSON.parse(SearchArray), function (index, value) {
-        if (typeof value !== 'object' && index !== 'q') {
-            SearchParam[index] = value;
-        }
-    });
-</script>

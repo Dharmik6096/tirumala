@@ -131,7 +131,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
                                 $notificationModel->header_info = $templateData->header_info;
                                 $notificationModel->send_status = 0;
                                 $notificationModel->content_id = $apiMasterData->api_master_id;
-                                $notificationModel->module_type = 'forgot_password';
+                                $notificationModel->module_type = 'portal_password_reset';
                                 $notificationModel->entry_datetime = date('Y-m-d H:i:s');
                                 $notificationModel->send_mail = 1;
                                 $notificationModel->receiver_detail = $modelData->email;

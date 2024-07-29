@@ -11,7 +11,7 @@ $class = !$sentOtp ? 'for-pw-in' : 'for-pw-ot';
     <div class="modal-header">
         <h4 class="modal-title"><?= Yii::t('app', 'ACCOUNT RECOVERY') ?></h4>
     </div>
-    <div class="panel-body">
+    <div class="panel-body min_h_0">
         <div id="login-container">
             <div class="animation-fadeInQuickInv">
                 <div>
@@ -53,7 +53,7 @@ $class = !$sentOtp ? 'for-pw-in' : 'for-pw-ot';
                         </div>
                         <p class="center_text mt-3">- OR -</p>
                         <div class="col-sm-12">
-                            <?php echo Html::a('Login', ['/user-management/auth/login'], ['title' => 'Click for Redirect Login', 'class' => 'btn btn-primary btn-block']); ?>
+                            <?php echo Html::a('Login', ['/user-management/auth/login'], ['title' => 'Click for Redirect Login', 'class' => 'btn btn-primary btn-block form-label']); ?>
                         </div>
                         <?php ActiveForm::end() ?>
                     </div>
