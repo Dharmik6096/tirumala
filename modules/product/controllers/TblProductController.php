@@ -143,22 +143,5 @@ class TblProductController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
-    
-    public function actionProductDependList() {
-        $out = [];
-        if (isset($_POST['depdrop_parents'])) {
-            $parents = $_POST['depdrop_parents'];
-            if (!empty($parents)) {
-                $product = new TblProduct();
-                $data = $product->getProductDependList($parents[0], $parents[1]);
-                foreach ($data as $key => $val) {
-                    $out[] = array('id' => $key, 'name' => $val);
-                }
-                return Json::encode(['output' => $out, 'selected' => '']);
-                return;
-            }
-        }
-        return Json::encode(['output' => '', 'selected' => '']);
-    }
 
 }

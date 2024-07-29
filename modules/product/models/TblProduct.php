@@ -269,12 +269,4 @@ class TblProduct extends \app\models\ChildModel {
         return $data;
     }
 
-    public function getProductDependList($unionCode, $productgroupcode) {
-        $query = $this->find()->select(['product_code', 'product_name'])->where(['product_group_code' => $productgroupcode, 'union_code' => $unionCode, 'is_active' => 1]);
-        $value = $query->all();
-
-        $data = ArrayHelper::map($value, 'product_code', 'product_name');
-        return $data;
-    }
-
 }
