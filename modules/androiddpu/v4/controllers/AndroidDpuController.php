@@ -759,4 +759,64 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         return $sentbox;
     }
 
+    public function actionSendOtp() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            $androidUsr = TblUserAndroid::find()->where(['user_code' => $content['user_code'], 'is_active' => 1])->one();
+            if(!empty($androidUsr)){
+                if (YII_ENV_DEV) {
+                    $otp = 1234;
+                } else {
+                    $otp = rand(1000, 9999);
+                }
+                $res_data['otp'] = $otp;
+                $sms_data = [];
+                $templateModel = new TblAlertTemplate();
+                $templateData = $templateModel->getTemplateData('app_password_reset', 'SMS', $androidUsr->union_code);
+                if (!empty($templateData)) {
+                    $arrFrom = array("{OTP}");
+                    $arrTo = array($otp);
+                    $word = $templateData->message;
+                    $message = str_replace($arrFrom, $arrTo, $word);
+                    if (YII_ENV_DEV) {
+
+                    } else {
+                        Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, TRUE, $templateData->header_info);
+                    }
+                    $res_data['message'] = 'OTP send successfully';
+                }
+            } else {
+                $res_data['message'] = 'User not found.';
+            }
+            $this->response['data'] = $res_data;
+            return $this->response;
+        }
+    }
+
+    public function actionChangePassword() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            $androidUsr = TblUserAndroid::find()->where(['user_code' => $content['user_code'], 'is_active' => 1])->one();
+            if(!empty($androidUsr)){
+                if($content['password'] == $content['repeat_password']){
+                    $androidUsr->password = $content['password'];
+                    $androidUsr->repeat_password = $content['repeat_password'];
+                    $res_data['message'] = "Password updated sucessfully.";
+                    if(!$androidUsr->save()){
+                        $res_data['message'] = "Password not updated sucessfully.";
+                    }
+                } else {
+                    $res_data['message'] = "Password and Repeat password does not match.";
+                }
+            } else {
+                $res_data['message'] = 'User not found.';
+            }
+            $this->response['data'] = $res_data;
+            return $this->response;
+        }
+    }
 }
