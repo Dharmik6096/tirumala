@@ -24,6 +24,7 @@ $table_url = isset($table_url) && !empty($table_url) ? $table_url : '';
 $diff_sp_name = isset($diff_sp_name) && !empty($diff_sp_name) ? $diff_sp_name : '';
 $popup_title = isset($popup_title) && !empty($popup_title) ? $popup_title : '';
 //Yii::$app->controls->view_date($date);
+$qlt_param = !empty($qlt_param) ? $qlt_param : 'qlt_param';
 ?>
 
 <?php
@@ -72,19 +73,46 @@ if (isset($table_pop_up_only) && $table_pop_up_only) {
                     <?php } ?>
                     <?php if (empty($hide_param)) { ?>
                         <div class="col-sm-2">
-                            <?php //$form->field($model, 'qlt_param')->dropDownList($quality_params)->label(false); 
-                                echo $form->field($model, 'qlt_param')->widget(Select2::classname(), [
-                                    'data' => $quality_params]
-                                    )->label(false);
+                            <?php
+                            //$form->field($model, 'qlt_param')->dropDownList($quality_params)->label(false); 
+                            echo $form->field($model, 'qlt_param')->widget(Select2::classname(), [
+                                'data' => $quality_params, 'options' => [
+                                    'id' => 'dashboard-' . $qlt_param, // Replace 'your-custom-id' with your desired id
+                                ],]
+                            )->label(false);
                             ?>
                         </div>
+                        <?php
+                    }
+                    if (isset($union)) {
+                        echo Yii::$app->dropdown->federation_union($model, $form, 'union_code', false);
+                    }
+                    if (isset($bmc_code)) {
+                        ?>
+                        <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->union_bmc($model, $form, 'dashboard-union_code', 'bmc_code'); ?>
+                        </div>
+                        <?php
+                    }
+                    if (isset($dcs_code)) {
+                        ?>
+                        <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->bmc_society($model, $form, 'dashboard-bmc_code', 'dcs_code'); ?>
+                        </div>
+                        <?php
+                    }
+                    if (isset($member_code)) {
+                        ?>
+                        <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'dashboard-dcs_code', '', FALSE, 'member_code'); ?>
+                        </div>
                     <?php } ?>
-                    <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);   ?>
+                        <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
                     <div class="col-sm-2 dashboard_modal_footer pt5">
                         <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton btn-login'); ?>
                     </div>
                     <?php
-                        ActiveForm::end();
+                    ActiveForm::end();
                     ?>
                 </div>
             </div>
