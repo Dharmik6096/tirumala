@@ -84,9 +84,6 @@ if (isset($table_pop_up_only) && $table_pop_up_only) {
                         </div>
                         <?php
                     }
-                    if (isset($union)) {
-                        echo Yii::$app->dropdown->federation_union($model, $form, 'union_code', false);
-                    }
                     if (isset($bmc_code)) {
                         ?>
                         <div class="col-sm-2">
