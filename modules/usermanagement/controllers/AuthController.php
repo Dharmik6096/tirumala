@@ -82,7 +82,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
                         $apiMasterData = $apiMaster->getAPI();
                         if (!empty($apiMasterData)) {
                             $templateModel = new TblAlertTemplate();
-                            $templateData = $templateModel->getTemplateData('forgot_password', 'EMAIL', $apiMaster->union_code);
+                            $templateData = $templateModel->getTemplateData('portal_password_reset', 'EMAIL', $apiMaster->union_code);
                             if (!empty($templateData)) {
                                 $notificationModel = new TblAlertNotification();
                                 $notificationModel->receiver_type = 'EMAIL';
@@ -90,7 +90,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
                                 $notificationModel->header_info = $templateData->header_info;
                                 $notificationModel->send_status = 0;
                                 $notificationModel->content_id = $apiMasterData->api_master_id;
-                                $notificationModel->module_type = 'forgot_password';
+                                $notificationModel->module_type = 'portal_password_reset';
                                 $notificationModel->entry_datetime = date('Y-m-d H:i:s');
                                 $notificationModel->send_mail = 1;
                                 $notificationModel->receiver_detail = $modelData->email;

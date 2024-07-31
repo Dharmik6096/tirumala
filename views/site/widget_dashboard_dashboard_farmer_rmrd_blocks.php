@@ -145,7 +145,7 @@ if (empty($display_rmrd)) {
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
-            <p class="dash_block_header"><?= Yii::t('app', 'TS KG TAB') ?></p>
+            <p class="dash_block_header"><?= Yii::t('app', 'TSKG') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_ts_kg_tab">0/0</h4>
         </div>
