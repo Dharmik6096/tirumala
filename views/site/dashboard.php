@@ -142,6 +142,9 @@ if ($widget_type == 'rmrd')
 $dashboard_widget = new TblDashboardWidgets();
 $unionCode = !empty($model->union_code) ? $model->union_code : '';
 $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
+$bmcCode = !empty($model->bmc_code) ? $model->bmc_code : '';
+$dcsCode = !empty($model->dcs_code) ? $model->dcs_code : '';
+$memberCode = !empty($model->member_code) ? $model->member_code : '';
 $model->dup_search_date = !empty($model->date) ? $model->date : Yii::$app->controls->view_date(date('Y-m-d'));
 $model->dpu_status = !empty($model->dpu_status) ? $model->dpu_status : -1;
 $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
@@ -349,7 +352,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
         if (!empty($selected_widgets)) {
             foreach ($selected_widgets as $key => $value) {
                 if (in_array($value, $all_widgets)) {
-                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'union' => $unionCode, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart]);
+                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'union' => $unionCode, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'bmc_code' => $bmcCode, 'dcs_code' => $dcsCode, 'member_code' => $memberCode]);
                 }
             }
         }
@@ -537,6 +540,7 @@ $('.dpu_data_icon').click(function(){
                                 $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
                                 $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
                                 $('#farmer_rmrd_block_amount').text(obj1.res.amount);
+                                $('#farmer_rmrd_block_ts_kg_tab').text(obj1.res.ts_kg_tab);
                             }
                         },
                         error:function(data){
@@ -1079,7 +1083,7 @@ $('.dpu_data_icon').click(function(){
 
 function drawChart(id, cntr, url, type)
 {
-    if (['bmc_union_comparison', 'union_datewise', 'bmc_union_datewise', 'union_comparison'].indexOf(id) == -1) {
+    if (['bmc_union_comparison', 'union_datewise', 'bmc_union_datewise', 'union_comparison', 'member_datewise'].indexOf(id) == -1) {
         var datastring = $('#collapse1 form').serialize();
     } else {
         var datastring = $('#' + id).serialize();
