@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\globalmaster\models\TblAnimalType;
+use yii\web\View;
 
 $milkType = new TblAnimalType();
 $milk_type = $milkType->getAnimalMilkTypeArray();
@@ -141,4 +142,14 @@ $grid_option = [
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>
+<?php
+
+$script = "
+$(document).ready(function(){
+        setInterval(() => {
+            $.pjax.reload({container: '#milk-collection-list'});
+        },300000);
+});";
+$this->registerJs($script, View::POS_END, 'milk-collection-list');
 ?>

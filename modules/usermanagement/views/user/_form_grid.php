@@ -146,6 +146,11 @@ $grid_option = [
                 return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/user-management/user/activate-user', 'id' => $model->id], $options);
             }
         },
+        'reset-password' => function ($url, $model) {
+            $disable = ''; //($model->checkNotSelf()) ? '' : 'link-disable';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Reset Password', 'class' => $disable];
+            return Html::a('<i class="fa fa-user"></i>', ['/user-management/user/password-reset', 'id' => $model->id], $options);
+        },
     ]
 ];
 
