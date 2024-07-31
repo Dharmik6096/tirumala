@@ -920,6 +920,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail']],
                             ['label' => Yii::t('app', 'BMC Wise Society Wise Auto Manual Report'), 'url' => ['/misreports/reports/bmc-wise-society-wise-auto-manual']],
                             ['label' => Yii::t('app', 'BMC Wise Auto Manual Summary Report'), 'url' => ['/misreports/reports/bmc-wise-auto-manual-summary']],
+                            ['label' => Yii::t('app', 'Milk Collection Status Report'), 'url' => ['/misreports/reports/milk-collection-status-report']],
+                            ['label' => Yii::t('app', 'Milk Collection Filter Based Report'), 'url' => ['/misreports/reports/milk-collection-filter-based']],
                     ]
                 ],
                     [
