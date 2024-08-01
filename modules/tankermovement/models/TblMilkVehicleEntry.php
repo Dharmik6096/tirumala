@@ -315,4 +315,18 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         return TRUE;
     }
 
+    // public function getData(){
+    //     return $this->find()
+    //                     ->where(['or', ['approval_status' => NULL], ['approval_status' => ''], ['approval_status' => 0]])
+    //                     ->orderBy([
+    //                         'created_at' => SORT_ASC,
+    //                     ])->all();
+    // }
+
+    public function getTransactionRecord($milk_vehicle_entry_code){
+        $sql = "SELECT grn_no as Item_Number, chamber_no, challan_no, chamber_quantity as Quantity_Ordered, amount as Unit_Cost, entry_type as Reference_2 FROM tbl_milk_vehicle_entry_transaction WHERE milk_vehicle_entry_code = :milkVehicleEntryCode";
+        $command = Yii::$app->db->createCommand($sql);
+        $command->bindValue(':milkVehicleEntryCode', $milk_vehicle_entry_code);
+        return $command->queryAll();
+    }
 }

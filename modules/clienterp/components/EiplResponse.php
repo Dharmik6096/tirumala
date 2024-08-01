@@ -5,12 +5,14 @@ namespace app\modules\clienterp\components;
 use Yii;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
+use app\modules\clienterp\models\TblClientErpApiLog;
 
 class EiplResponse {
 
     public $statusCode;
     public $message = [];
     public $data = [];
+    public $logData = [];
 
     /**
      *
@@ -77,6 +79,24 @@ class EiplResponse {
             return $res_data;
         }
         return $res_data;
+    }
+
+    public function saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp){
+        $requestUrl = Yii::$app->request->getAbsoluteUrl();
+        $endPoint = Yii::$app->requestedRoute;
+        $logModel = new TblClientErpApiLog();
+        $logModel->setAttributes($this->logData);
+        $logModel->end_point = $endPoint;
+        $logModel->request_url = $requestUrl;
+        $logModel->request_header = !empty(getallheaders()) ? json_encode(getallheaders()) : '';
+        $logModel->request_payload = json_encode($request);
+        $logModel->response_payload = json_encode($response);
+        $logModel->request_timestamp = $requestTimestamp;
+        $logModel->response_timestamp = $responseTimestamp;
+        $logModel->status_response = ($logModel->status_code >= 200 && $logModel->status_code < 300) ? 'success' : 'error';
+        $logModel->status_message = $logModel->status_message;
+        $logModel->save();
+        unset($response->logData);
     }
 
 }

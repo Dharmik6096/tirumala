@@ -25,6 +25,7 @@ use app\modules\configuration\models\TblConfig;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultSearch;
 use yii\helpers\ArrayHelper;
+use app\modules\clienterp\components\EiplResponse;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
@@ -415,6 +416,75 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     'config' => $config_mapping,
                     'config_list' => $config_list,
         ]);
+    }
+
+    public function actionAbc(){
+        $url = \Yii::$app->params['clienterp_authentication']['cargill']['jde_milk_receipt_url'];
+        $milkVehicalData = TblMilkVehicleEntry::find()->where(['approval_status' => 'Approve'])->all();
+        if(!empty($milkVehicalData)){
+            foreach($milkVehicalData as $milkVehical){
+                $httpCode = '';
+                $milkVehicalTxn = $milkVehical->getTransactionRecord($milkVehical->milk_vehicle_entry_code);
+                $jsonArray = array(
+                    'Long_Address_Number_ALKY' => $milkVehical->trip_code,
+                    "Branch_Plant" => $milkVehical->plant_code,
+                    "Order_Date" => $milkVehical->vehicle_entry_date,
+                    "KCOO..Order_Company" => $milkVehical->union_code,
+                    "VINV..Invoice_Number" => $milkVehical->grn_no,
+                    "GridIn_1_3" => $milkVehicalTxn,
+                );
+                $data = json_encode($jsonArray);
+                $header = array(
+                    "Content-Type: application/json", 
+                    "Content-length: " . strlen($data),
+                    //'Host: <calculated when request is sent>',
+                    'User-Agent: PostmanRuntime/7.39.0',
+                    'Accept: */*',
+                    'Accept-Encoding: gzip, deflate, br',
+                    'Connection: keep-alive'
+                );
+                $requestTimestamp = date('Y-m-d H:i:s');
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_HEADER, FALSE);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+                if (false) {
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                }  // Skip SSL Verification
+                $response = curl_exec($ch);
+                if ($response === false) {
+                    // echo 'cURL Error: ' . curl_error($ch);
+                } else {
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    // echo 'HTTP Response Code: ' . $httpCode;
+                }
+                curl_close($ch);
+                $responseTimestamp = date('Y-m-d H:i:s');
+                $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $data, $httpCode);
+            }
+        }
+    }
+
+    public function setLogData($request, $response, $requestTimestamp, $responseTimestamp, $requestJson, $httpCode) {
+        $this->response = new EiplResponse();
+        $logData = [
+            'union_code' => !empty($request['union_code']) ? $request['union_code'] : '',
+            'plant_code' => !empty($request['plant_code']) ? $request['plant_code'] : '',
+            'mcc_plant_code' => !empty($request['mcc_plant_code']) ? $request['mcc_plant_code'] : '',
+            'bmc_code' => !empty($request['bmc_code']) ? $request['bmc_code'] : '',
+            'request_desc' => '',
+            'txn_type' => 'eipl',
+            'date1' => !empty($request['vehicle_entry_date']) ? $request['vehicle_entry_date'] : '',
+            // 'date2' => !empty($request['dispatch_date']) ? $request['dispatch_date'] : '',
+            'desc1' => !empty($request['trip_code']) ? $request['trip_code'] : '',
+            'desc2' => !empty($request['grn_no']) ? $request['grn_no'] : '',
+            'status_code' => $httpCode,
+            'status_message' => !empty($response->jde__simpleMessage) ? json_encode($response->jde__simpleMessage) : '',
+        ];        
+        $this->response->logData = $logData;
+        $this->response->saveRequestResponseLog($requestJson, $response, $requestTimestamp, $responseTimestamp);
     }
     
 }
