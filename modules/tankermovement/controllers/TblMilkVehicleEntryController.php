@@ -29,6 +29,8 @@ use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\general\models\TblProcessApprovalSearch;
+use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionReject;
+use app\modules\tankermovement\models\TblMilkVehicleEntryReject;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
@@ -455,14 +457,22 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 $approvalHistoryModel = new TblProcessApprovalHistory();
                 Yii::$app->operation->history($model, $approvalHistoryModel, 'UPDATE');
                 $saveModel[] = $approvalHistoryModel;
-                $model->status = $operation == 'approve' ? 1 : 2;
+                $isApprove = $operation == 'approve';
+                $model->status = $isApprove ? 1 : 2;
+                $historyFlag = $isApprove ? 'UPDATE' : 'DELETE';
                 $model->remarks = $remarks . $milkVehiclepostData[$value]['approval_remarks'];
                 $saveModel[] = $model;
                 if (!empty($saveModel)) {
-                    $model->ApprovalList($model, $saveModel, $status);
+                    if ($operation != 'reject') {
+                        $model->ApprovalList($model, $saveModel, $status);
+                    } else {
+                        $milkVehicleEntryReject = new TblMilkVehicleEntryReject();
+                        $milkVehicleEntryReject->milk_vehicle_entry_reject_code = Yii::$app->general->getCodeAutoIncrement($milkVehicleEntryReject);
+                        $model->RejectList($model, $saveModel, $status, $milkVehicleEntryReject->milk_vehicle_entry_reject_code);
+                    }
                     $receiptModel = $this->findModel($model->process_code);
                     $historyModel = new TblMilkVehicleEntryHistory();
-                    Yii::$app->operation->history($receiptModel, $historyModel, UPDATE);
+                    Yii::$app->operation->history($receiptModel, $historyModel, $historyFlag);
                     $saveModel[] = $historyModel;
                     $receiptModel->approval_status = $status;
                     $receiptModel->approval_remarks = $remarks . $milkVehiclepostData[$value]['approval_remarks'];
@@ -473,6 +483,33 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                             $receiptModel->approved_at = date('Y-m-d H:i:s');
                             $receiptModel->approved_by = Yii::$app->session['UserCode'];
                             $saveModel[] = $receiptModel;
+                        } else if (strtolower($status) == 'reject' && strtolower($receiptModel->approval_status) == 'reject') {
+                            $milkVehicleEntryReject->setAttributes($receiptModel->attributes);
+                            $saveModel[] = $milkVehicleEntryReject;
+
+                            $milkVehicleEntryTransactionData = TblMilkVehicleEntryTransaction::find()
+                                    ->where(['milk_vehicle_entry_code' => $model->process_code])
+                                    ->all();
+
+                            foreach ($milkVehicleEntryTransactionData as $transaction) {
+                                $milkVehicleEntryTransactionReject = new TblMilkVehicleEntryTransactionReject();
+                                $milkVehicleEntryTransactionReject->setAttributes($transaction->attributes);
+                                $saveModel[] = $milkVehicleEntryTransactionReject;
+
+                                $transactionHistoryModel = new TblMilkVehicleEntryTransactionHistory();
+                                Yii::$app->operation->history($transaction, $transactionHistoryModel, $historyFlag);
+                                $saveModel[] = $historyModel;
+
+                                $deleteModel[] = $transaction;
+                            }
+                            $tripModel = new TblVehicleTrip();
+                            $tripModel->trip_code = $receiptModel->trip_code;
+                            $tripModel = $tripModel->getClosedtripData();
+                            $tripModel->scenario = 'closetrip';
+                            $tripModel->grn_no = NULL;
+                            $tripModel->trip_status = 'open';
+                            $saveModel[] = $tripModel;
+                            $deleteModel[] = $receiptModel;
                         }
                         $succCount++;
                     } else {
