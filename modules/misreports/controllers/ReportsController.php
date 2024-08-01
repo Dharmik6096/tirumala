@@ -1738,6 +1738,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionStatusReport() {
+        $this->report = 'MilkCollectionStatusReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionFilterBased() {
+        $this->report = 'MilkCollectionFilterBased';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3680,6 +3690,19 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ExportProvisionalMemberBankReceipt',
                 'title' => 'Export Provisional Member Bank Receipt',
             ],
+            'MilkCollectionStatusReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_status_report',
+                'scenario' => 'MilkCollectionStatusReport',
+                'title' => 'Milk Collection Status Report',
+            ],
+            'MilkCollectionFilterBased' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,report_type,from_value:txt,to_value:txt',
+                'sp_name' => 'mis_milk_collection_filter_based',
+                'scenario' => 'MilkCollectionFilterBased',
+                'title' => 'Milk Collection Filter Based Report',
+                'report_type' => ['Attendance' => Yii::t('app', 'Attendance'), 'qty' => Yii::t('app', 'Qty'), 'fat' => Yii::t('app', 'FAT'), 'snf' => Yii::t('app', 'SNF'), 'amount' => Yii::t('app', 'Amount')],
+            ]
         ];
         return $label[$l];
     }
