@@ -25,40 +25,36 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->depend_dropdown('rule_code', $model, $form, 'tblalertrulemapping-union_code,is_active', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('rule_code')); ?>
     </div>
 </div>
-<div class="col-md-12 padding_10_0 theme-box view-subtitle">
+<div class="row col-md-12 padding_10_0 theme-box view-subtitle">
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
         <h4 class="theme-box-heading">Department</h4>
     </div>
-    <div class="row">
-        <?php foreach ($department as $key => $depart) { ?>
-            <div class="col-sm-2">
-                <?=
-                Html::checkbox('TblAlertRuleMapping[department_id][]', false, [
-                    'label' => $depart['department'], 'value' => $depart['department_id'], 'id' => 'tblalertrulemapping-' . $key . '-department_id',
-                ]);
-                ?>
-            </div>
-        <?php } ?>
-    </div>
+    <?php foreach ($department as $key => $depart) { ?>
+        <div class="col-sm-2 padding-bottom-20">
+            <?=
+            Html::checkbox('TblAlertRuleMapping[department_id][]', false, [
+                'label' => $depart['department'], 'value' => $depart['department_id'], 'id' => 'tblalertrulemapping-' . $key . '-department_id',
+            ]);
+            ?>
+        </div>
+    <?php } ?>
 </div>
-<div class="col-md-12 padding_10_0 theme-box view-subtitle">
+<div class="row col-md-12 padding_10_0 theme-box view-subtitle">
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
         <h4 class="theme-box-heading">Organization Type</h4>
     </div>
-    <div class="row">
-        <?php
-        $organization_types = Yii::$app->general->getStaticData($model);
-        foreach ($organization_types as $key => $org) {
+    <?php
+    $organization_types = Yii::$app->general->getStaticData($model);
+    foreach ($organization_types as $key => $org) {
+        ?>
+        <div class="col-sm-2 padding-bottom-20">
+            <?=
+            Html::checkbox('TblAlertRuleMapping[organization_type][]', false, [
+                'label' => $key, 'value' => $org, 'id' => 'tblalertrulemapping-' . $key . '-organization_type',
+            ]);
             ?>
-            <div class="col-sm-2">
-                <?=
-                Html::checkbox('TblAlertRuleMapping[organization_type][]', false, [
-                    'label' => $key, 'value' => $org, 'id' => 'tblalertrulemapping-' . $key . '-organization_type',
-                ]);
-                ?>
-            </div>
-        <?php } ?>
-    </div>
+        </div>
+    <?php } ?>
 </div>
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <div class="form-group">
