@@ -2532,4 +2532,13 @@ class GeneralFunctions extends Component {
         return $links;
     }
 
+    public function getStaticData() {
+        return array(
+            'UNION' => 'UNION',
+            'PLANT' => 'PLANT',
+            'MCC' => 'MCC',
+            'DCS' => 'DCS',
+        );
+    }
+
 }

@@ -1143,6 +1143,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Banner Process'), 'url' => ['/general/tbl-banner/index'], 'active' => ($cntrl == 'tbl-banner')],
                     ],
                 ],
+                    ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
             ],
         ],
             [
