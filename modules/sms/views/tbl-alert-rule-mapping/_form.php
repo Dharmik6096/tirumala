@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Html;
 
 $title = Yii::$app->label->title($type, 'Alert Rule Mapping');
