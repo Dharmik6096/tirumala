@@ -350,4 +350,6 @@ return [
     'Member Payment Disburse' => 'Farmer Payment Disburse',
     'Member Bill Head Transaction' => 'Farmer Bill Head Transaction',
     'Member Bill Head Import' => 'Farmer Bill Head Import',
+    'DCS Wise Stock' => 'VLCC Wise Stock',
+    'MCC Wise Stock' => 'CC Wise Stock',
 ];
