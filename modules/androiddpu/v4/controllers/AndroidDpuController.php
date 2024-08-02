@@ -788,7 +788,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                     $res_data['message'] = 'OTP send successfully';
                 }
             } else {
-                $res_data['message'] = 'User not found.';
+                $this->response['error']['message'] = ['User not found.'];
             }
             $this->response['data'] = $res_data;
             return $this->response;
@@ -807,13 +807,14 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                     $androidUsr->repeat_password = $content['repeat_password'];
                     $res_data['message'] = "Password updated sucessfully.";
                     if(!$androidUsr->save()){
-                        $res_data['message'] = "Password not updated sucessfully.";
+                        $this->response['error']['message'] = ['Password not updated sucessfully.'];
+                        $res_data['message'] = '';
                     }
                 } else {
-                    $res_data['message'] = "Password and Repeat password does not match.";
+                    $this->response['error']['message'] = ['Password and Repeat password does not match.'];
                 }
             } else {
-                $res_data['message'] = 'User not found.';
+                $this->response['error']['message'] = ['User not found.'];
             }
             $this->response['data'] = $res_data;
             return $this->response;
