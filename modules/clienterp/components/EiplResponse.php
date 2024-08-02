@@ -81,15 +81,24 @@ class EiplResponse {
         return $res_data;
     }
 
-    public function saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp){
-        $requestUrl = Yii::$app->request->getAbsoluteUrl();
-        $endPoint = Yii::$app->requestedRoute;
+    public function saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp, $requestJson = ''){
+        if(!empty($requestJson)){
+            $requestUrl = $request->request_url;
+            $endPoint = $request->end_point;
+            $header = $request->request_header;
+            $request_payload = $requestJson;
+        } else {
+            $requestUrl = Yii::$app->request->getAbsoluteUrl();
+            $endPoint = Yii::$app->requestedRoute;
+            $header = !empty(getallheaders()) ? json_encode(getallheaders()) : '';
+            $request_payload = json_encode($request);
+        }
         $logModel = new TblClientErpApiLog();
         $logModel->setAttributes($this->logData);
         $logModel->end_point = $endPoint;
         $logModel->request_url = $requestUrl;
-        $logModel->request_header = !empty(getallheaders()) ? json_encode(getallheaders()) : '';
-        $logModel->request_payload = json_encode($request);
+        $logModel->request_header = $header;
+        $logModel->request_payload = $request_payload;
         $logModel->response_payload = json_encode($response);
         $logModel->request_timestamp = $requestTimestamp;
         $logModel->response_timestamp = $responseTimestamp;

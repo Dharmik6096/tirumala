@@ -1067,6 +1067,7 @@ echo GhostMenu::widget([
                             ]
                         ],
                             ['label' => Yii::t('app', 'Help Manual'), 'url' => ['/site/help-manual'], 'visible' => User::canRoute(['/site/help-manual']) ? (($eiplCode == 'GYAN') ? TRUE : FALSE) : FALSE],
+                            ['label' => Yii::t('app', 'Client Erp Api Logs'), 'url' => ['/clienterp/tbl-client-erp-api-log/index']],
                             ['label' => Yii::t('app', 'Collection Pendrive File'), 'url' => ['/misreports/reports/collection-pendrive-file']],
                             ['label' => Yii::t('app', 'FAT/SNF Threshold'), 'url' => ['/general/tbl-fat-snf-threshold/index'], 'active' => ($cntrl == 'tbl-fat-snf-threshold')],
                             ['label' => Yii::t('app', 'Shift Time'), 'url' => ['/general/tbl-shift-time/index'], 'active' => ($cntrl == 'tbl-shift-time')],

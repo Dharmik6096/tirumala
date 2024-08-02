@@ -3,6 +3,7 @@
 namespace app\modules\clienterp\models;
 
 use app\models\ChildModel;
+use app\modules\organisation\models\TblUnions;
 use Yii;
 
 /**
@@ -104,5 +105,9 @@ class TblClientErpApiLog extends ChildModel
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 }

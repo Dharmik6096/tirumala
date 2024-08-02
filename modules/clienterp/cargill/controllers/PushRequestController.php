@@ -102,7 +102,7 @@ class PushRequestController extends PushMasterController {
         $logData = [
             'union_code' => !empty($plantDetail['union_code']) ? $plantDetail['union_code'] : '',
             'plant_code' => !empty($plantDetail['plant_code']) ? $plantDetail['plant_code'] : '',
-            'request_desc' => '',
+            'request_desc' => 'inventory plant dispatch',
             'txn_type' => 'cargill',
             'date1' => !empty($request['document_date']) ? $request['document_date'] : '',
             'date2' => !empty($request['dispatch_date']) ? $request['dispatch_date'] : '',
