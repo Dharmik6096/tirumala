@@ -39,7 +39,7 @@ if (isset($table_pop_up_only) && $table_pop_up_only) {
 } else {
     ?>
     <div class="modal fade" id="modal_<?= $table_class ?>" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-bs-dismiss="modal">×</button>
