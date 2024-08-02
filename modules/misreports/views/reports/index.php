@@ -15,6 +15,10 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
 $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
 $model->date = empty($model->date) ? date('d-m-Y') : $model->date;
+$model->f_spr_date = empty($model->f_spr_date) ? date('d-m-Y') : $model->f_spr_date;
+$model->t_spr_date = empty($model->t_spr_date) ? date('d-m-Y') : $model->t_spr_date;
+$model->f_cmpr_date = empty($model->f_cmpr_date) ? date('d-m-Y') : $model->f_cmpr_date;
+$model->t_cmpr_date = empty($model->t_cmpr_date) ? date('d-m-Y') : $model->t_cmpr_date;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
@@ -249,6 +253,21 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('basis_on'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('milk_type'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= $form->field($model, 'milk_type', ['options' => ['class' => 'form-group']])->dropDownList(['1' => 'Cow', '2' => 'Buffalo']);
+                                                ?> 
+                                            </div>
+                                            <?php
+                                        }
                                         if (in_array($value, array('p_organization_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
@@ -267,7 +286,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -691,6 +710,12 @@ $('.mis_report_modal_toggle').on('click', function(){
                 hideOrgFields();
             });
         }
+        if('" . $report . "'=='MemberMilkCollection' || '" . $report . "'=='MemberMilkCollectionDcsWise'){
+            hideShift();
+            $(document).on('change','#reportsmodel-basis_on', function() {
+                 hideShift();
+            });
+        }
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
@@ -716,6 +741,20 @@ $('.mis_report_modal_toggle').on('click', function(){
             }
         }
     });
+    
+    function hideShift(){
+        if('" . $report . "'=='MemberMilkCollection' || '" . $report . "'=='MemberMilkCollectionDcsWise'){
+            var basis_on =  $('#reportsmodel-basis_on option:selected').val();
+             if(basis_on == '1' || basis_on == '2'){
+                $('.val_shift').show();
+            }else {
+                $('.val_shift').hide();
+                $('.val_shift select').val('');
+                $('.val_shift select').trigger('change');
+            }
+        }
+       
+    }
     function hideFields(){
         var locat_type =  $('#reportsmodel-store_location_type option:selected').text();
         $('.val_plant_code').hide();
