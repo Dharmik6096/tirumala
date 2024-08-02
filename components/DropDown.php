@@ -1912,16 +1912,16 @@ class DropDown extends Component {
                 'name' => 'basis_on',
                 'prompt' => Yii::t('app', 'Select Report Type'),
                 'data' => [
-                    1 => Yii::t('app', 'Date shift wise with milk type')
-                    , 2 => Yii::t('app', 'Date shift wise with out milk type')
-                    , 3 => Yii::t('app', 'Date wise with milk type')
-                    , 4 => Yii::t('app', 'Date wise with out milk type')
-                    , 5 => Yii::t('app', 'Month wise with milk type')
-                    , 6 => Yii::t('app', 'Month wise with out milk type')
-                    , 7 => Yii::t('app', 'Year wise with milk type')
-                    , 8 => Yii::t('app', 'Year wise with out milk type')
-                    , 9 => Yii::t('app', 'Consolidate milk type')
-                    , 10 => Yii::t('app', 'Consolidate with out milk type')
+                    1 => Yii::t('app', 'Date shift wise with milk type'),
+                    2 => Yii::t('app', 'Date shift wise with out milk type'),
+                    3 => Yii::t('app', 'Date wise with milk type'),
+                    4 => Yii::t('app', 'Date wise with out milk type'),
+                    5 => Yii::t('app', 'Month wise with milk type'),
+                    6 => Yii::t('app', 'Month wise with out milk type'),
+                    7 => Yii::t('app', 'Year wise with milk type'),
+                    8 => Yii::t('app', 'Year wise with out milk type'),
+                    9 => Yii::t('app', 'Consolidate milk type'),
+                    10 => Yii::t('app', 'Consolidate with out milk type')
                 ],
             ],
             'top_collection_on' => [
