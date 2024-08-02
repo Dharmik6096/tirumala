@@ -543,6 +543,9 @@ $('.dpu_data_icon').click(function(){
                                 $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
                                 $('#farmer_rmrd_block_amount').text(obj1.res.amount);
                                 $('#farmer_rmrd_block_ts_kg_tab').text(obj1.res.ts_kg_tab);
+                                $('#totle_app').text(obj1.res.app);
+                                $('#totle_ws').text(obj1.res.ws);
+                                $('#totle_ma').text(obj1.res.ma);
                             }
                         },
                         error:function(data){

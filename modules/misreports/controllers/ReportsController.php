@@ -1748,6 +1748,36 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionAudit() {
+        $this->report = 'MilkCollectionAudit';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMilkCollection() {
+        $this->report = 'MemberMilkCollection';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMilkCollectionDcsWise() {
+        $this->report = 'MemberMilkCollectionDcsWise';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsBmcMemberWiseTopCollection() {
+        $this->report = 'DcsBmcMemberWiseTopCollection';
+        return $this->actionIndex();
+    }
+
+    public function actionFatAnalysisReport() {
+        $this->report = 'FatAnalysisReport';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsAndMemberWiseQtyCompare() {
+        $this->report = 'DcsAndMemberWiseQtyCompare';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3702,7 +3732,44 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MilkCollectionFilterBased',
                 'title' => 'Milk Collection Filter Based Report',
                 'report_type' => ['Attendance' => Yii::t('app', 'Attendance'), 'qty' => Yii::t('app', 'Qty'), 'fat' => Yii::t('app', 'FAT'), 'snf' => Yii::t('app', 'SNF'), 'amount' => Yii::t('app', 'Amount')],
-            ]
+            ],
+            'MilkCollectionAudit' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_member_collection_audit',
+                'scenario' => 'MilkCollectionAudit',
+                'title' => 'Milk Collection Audit',
+            ],
+            'MemberMilkCollection' => [
+                'param' => 'basis_on,union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_member_milk_collection_all_report',
+                'scenario' => 'MemberMilkCollection',
+                'title' => 'Member Milk Collection',
+            ],
+            'MemberMilkCollectionDcsWise' => [
+                'param' => 'basis_on,union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_member_milk_collection_society_wise_all_report',
+                'scenario' => 'MemberMilkCollectionDcsWise',
+                'title' => 'Member Milk Collection Society wise',
+            ],
+            'DcsBmcMemberWiseTopCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,top_collection_on:static:top_collection_on,top_value:txt,param_type:static:param_type',
+                'sp_name' => 'rpt_mis_top_society_and_member_all_report',
+                'scenario' => 'DcsBmcMemberWiseTopCollection',
+                'title' => 'DCS/BMC/Member Wise Top Collection',
+            ],
+            'FatAnalysisReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,milk_type',
+                'sp_name' => 'mis_dcs_wise_fat_analysis_report',
+                'scenario' => 'FatAnalysisReport',
+                'title' => 'FAT Analysis Report',
+                'kartik_grid_view' => 'FatAnalysisReport'
+            ],
+            'DcsAndMemberWiseQtyCompare' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,f_spr_date:string,t_spr_date:string,f_cmpr_date:string,t_cmpr_date:string,animal_type',
+                'sp_name' => 'mis_society_and_member_wise_qty_compair_report',
+                'scenario' => 'DcsAndMemberWiseQtyCompare',
+                'title' => 'DCS & Member Wise Qty Compare',
+            ],
         ];
         return $label[$l];
     }
