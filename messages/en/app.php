@@ -127,4 +127,6 @@ return [
     'avg_rate' => 'Avg.Rate',
     'avg_fat' => 'Avg.FAT(%)',
     'avg_snf' => 'Avg.SNF(%)',
+    'DCS & Member Wise Qty Compare' => 'Society & Member Wise Qty Compare',
+    'DCS/BMC/Member Wise Top Collection' => 'Society/BMC/Member Wise Top Collection'
 ];
