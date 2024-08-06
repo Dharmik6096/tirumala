@@ -160,7 +160,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['union_code', 'plant_code', 'mcc_code', 'as_on_date'], 'required', 'on' => 'ExportProvisionalMemberBankReceipt'],
             [['dcs_code', 'report_type', 'from_value', 'to_value'], 'required', 'on' => ['MilkCollectionFilterBased']],
             [['from_value', 'to_value'], 'number'],
-            [['from_value'], 'validateFromValue', 'on' => ['MilkCollectionFilterBased']]
+            [['from_value'], 'compare', 'compareAttribute' => 'to_value', 'operator' => '<', 'type' => 'number', 'on' => ['MilkCollectionFilterBased']],
         ];
     }
 
@@ -260,15 +260,6 @@ return $('#reportsmodel-org_type').val() == 'DCS';
         $bmcModel = new TblDcsBmc();
         $bmcData = $bmcModel->find()->where(['bmc_code' => $bmcCode])->one();
         return $bmcData;
-    }
-
-    public function validateFromValue($attribute, $params) {
-        $fromValue = $this->$attribute;
-        $toValue = $this->to_value;
-        if ($fromValue >= $toValue) {
-            $this->addError($attribute, Yii::t('app/validation', 'To Value Must Greater than From Value'));
-            return false;
-        }
     }
 
 }
