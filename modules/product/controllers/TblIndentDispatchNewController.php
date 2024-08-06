@@ -98,7 +98,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                     $productStockCode = [];
                     $existingProducts = [];
                     $productStock = [];
-                    $batchQuantities = [];
                     foreach ($codes as $code) {
                         $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
                         $dcs = $existData->dcs_code;
@@ -127,6 +126,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         //set from stock
                         $qty = $disp_qty;
                         $batch = '';
+                        $batchQuantities = [];
 
                         if (empty($warehouse)) { //gyandhara plant stock is not available //Sunita 03/03/2023
                             $fstockModel = new TblProductStock();
