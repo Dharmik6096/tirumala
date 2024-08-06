@@ -920,6 +920,19 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail']],
                             ['label' => Yii::t('app', 'BMC Wise Society Wise Auto Manual Report'), 'url' => ['/misreports/reports/bmc-wise-society-wise-auto-manual']],
                             ['label' => Yii::t('app', 'BMC Wise Auto Manual Summary Report'), 'url' => ['/misreports/reports/bmc-wise-auto-manual-summary']],
+                            ['label' => Yii::t('app', 'Milk Collection Status Report'), 'url' => ['/misreports/reports/milk-collection-status-report']],
+                            ['label' => Yii::t('app', 'Milk Collection Filter Based Report'), 'url' => ['/misreports/reports/milk-collection-filter-based']],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Analytical Report') . '<b class="caret"></b></a>',
+                            'items' => [
+                                ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/misreports/reports/milk-collection-audit']],
+                                ['label' => Yii::t('app', 'Member Milk Collection'), 'url' => ['/misreports/reports/member-milk-collection']],
+                                ['label' => Yii::t('app', 'Member  Milk Collection Society Wise'), 'url' => ['/misreports/reports/member-milk-collection-dcs-wise']],
+                                ['label' => Yii::t('app', 'DCS/BMC/Member Wise Top Collection'), 'url' => ['/misreports/reports/dcs-bmc-member-wise-top-collection']],
+                                ['label' => Yii::t('app', 'FAT Analysis Report'), 'url' => ['/misreports/reports/fat-analysis-report']],
+                                ['label' => Yii::t('app', 'DCS & Member Wise Qty Compare'), 'url' => ['/misreports/reports/dcs-and-member-wise-qty-compare']],]
+                        ],
                     ]
                 ],
                     [
@@ -1226,6 +1239,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Banner Process'), 'url' => ['/general/tbl-banner/index'], 'active' => ($cntrl == 'tbl-banner')],
                     ],
                 ],
+                    ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
             ],
         ],
             [

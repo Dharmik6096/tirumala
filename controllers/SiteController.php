@@ -880,6 +880,7 @@ class SiteController extends Controller {
         $widget_type = '';
         $customer_type = '';
         $performance_type = '0';
+        $member_code = '0';
         if (!empty(Yii::$app->request->post('widget_type'))) {
             $widget_type = Yii::$app->request->post('widget_type');
         }
@@ -888,6 +889,9 @@ class SiteController extends Controller {
         }
         if (!empty(Yii::$app->request->post('performance_type'))) {
             $performance_type = Yii::$app->request->post('performance_type');
+        }
+        if(!empty(Yii::$app->request->post('member_code'))){
+            $member_code = Yii::$app->request->post('member_code');
         }
         $array = [
             'fed_union' => [
@@ -909,6 +913,10 @@ class SiteController extends Controller {
             'union_datewise' => [
                 'name' => 'sp_portal_dashboard_union_datewise',
                 'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list',
+            ],
+            'member_datewise' => [
+                'name' => 'sp_portal_dashboard_member_datewise',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,member_code=' . $member_code . '|list',
             ],
             'bmc_union_comparison' => [
                 'name' => 'sp_portal_dashboard_bmc_union_comparison',

@@ -20,8 +20,8 @@ class AlertNotification {
             $url = $api[0]['apiMaster']['url']; //url
             foreach ($api as $a) {
                 //if {mobileno} found in value then replace it with actual no 
-                //if {msg} found in value then replace it with actual text message                
-                $value = ($a['key_value'] == '{mobileno}') ? $mob_no : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
+                //if {msg} found in value then replace it with actual text message     
+                $value = (strpos($a['key_value'], '{mobileno}') !== false) ? str_replace('{mobileno}', $mob_no, $a['key_value']) : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
                 $value = ($a['key_value'] == '{timeStamp}') ? date('dmYHms') : $value;
                 if (!empty($a['parent_tag'])) {
                     if (!empty($a['parent_type']) && $a['parent_type'] == 'string') {
@@ -52,7 +52,7 @@ class AlertNotification {
             }
             try {
                 foreach ($param as $p) {
-                    if (strpos($p, "%")) {
+                    if (is_string($p) && strpos($p, "%")) {
                         $param = urldecode(http_build_query($param));
                         break;
                     }

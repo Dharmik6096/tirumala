@@ -15,6 +15,8 @@ use yii\widgets\ActiveForm;
 use app\modules\usermanagement\models\User;
 use \app\modules\details\models\TblContactDetailsHistory;
 use app\modules\usermanagement\models\search\UserSearch;
+use app\modules\sms\models\TblApiMaster;
+use app\modules\sms\models\TblAlertNotification;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -407,6 +409,77 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         Yii::$app->getSession()->setFlash('success');
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionPasswordReset($id) {
+        $model = $this->findModel($id);
+
+        if ($this->scenarioOnUpdate) {
+            $model->scenario = $this->scenarioOnUpdate;
+        }
+        $tableName = $model->tableName();
+        if (Yii::$app->request->post()) {
+            //if ($model->load(Yii::$app->request->post()) AND $model->save()) {
+            $master = [];
+            $delete = [];
+            if ($model->validate()) {
+                if ($tableName == "{{%user}}") {
+                    $historyModel = new UserHistory();
+                    Yii::$app->operation->history($model, $historyModel, UPDATE);
+                    $model->load(Yii::$app->request->post());
+                    $master[] = $model;
+
+                    $apiMaster = new TblApiMaster();
+                    $apiMaster->receiver_type = 'EMAIL';
+                    $apiMasterData = $apiMaster->getAPI();
+
+                    if (!empty($apiMasterData)) {
+                        $htmlContent = "";
+                        $message = "";
+                        $this->setHtmlContent($model->password, $htmlContent, $message, $model->username);
+
+                        $notificationModel = new TblAlertNotification();
+                        $notificationModel->receiver_type = 'EMAIL';
+                        $notificationModel->message = $htmlContent;
+                        $notificationModel->header_info = $message;
+                        $notificationModel->send_status = 0;
+                        $notificationModel->content_id = $apiMasterData->api_master_id;
+                        $notificationModel->refecence_code = $model->id;
+                        $notificationModel->module_type = "OTP - Forgot Password";
+                        $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                        $notificationModel->send_mail = 1;
+                        $notificationModel->receiver_detail = $model->email;
+                        $master[] = $notificationModel;
+                    }
+                }
+                $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['Password', 'edit']);
+
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+        $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
+
+        if ($searchModel) {
+            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        } else {
+            $dataProvider = new ActiveDataProvider([
+                'query' => $model::find(),
+            ]);
+        }
+        return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
+    }
+
+    public function setHtmlContent($OTP, &$htmlContent, &$message, $username) {
+        $message = 'New Reset Password for ' . $username;
+        $htmlContent = '';
+        $htmlContent = '<p>Dear Sir, <br/><br/>';
+        $htmlContent .= '<br/>Your password has been reset by admin. </p>';
+        $htmlContent .= '<br/>new password is: <b>' . $OTP . '</b></p>';
+        $htmlContent .= '<br/><br/>';
+        $htmlContent .= '<p>Regards,';
+        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
     /**

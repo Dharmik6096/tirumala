@@ -29,8 +29,7 @@ if (empty($display_rmrd)) {
                     <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
                     <h4 class="dash_block_value block_value" id="farmer_rmrd_block_union">0/0</h4>
                 </div>
-                <div class="div_dash_block_icon"> <img
-                        src="<?= $imageIconPath . 'company.png' ?>"> </div>
+                <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'company.png' ?>"></div>
             </div>
         </div>
     </a>
@@ -43,8 +42,7 @@ if (empty($display_rmrd)) {
                 <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
                 <h4 class="dash_block_value block_value" id="farmer_rmrd_block_mcc">0/0</h4>
             </div>
-            <div class="div_dash_block_icon"> <img
-                    src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
+            <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
         </div>
     </a>
 
@@ -56,8 +54,7 @@ if (empty($display_rmrd)) {
                 <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
                 <h4 class="dash_block_value block_value" id="farmer_rmrd_block_dcs">0/0</h4>
             </div>
-            <div class="div_dash_block_icon"> <img
-                    src="<?= $imageIconPath . 'dcs.png' ?>"> </div>
+            <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'dcs.png' ?>"> </div>
         </div>
     </a>
 
@@ -73,9 +70,7 @@ if (empty($display_rmrd)) {
                 <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
                 <h4 class="dash_block_value block_value" id="farmer_rmrd_block_blk_vendor">0/0</h4>
             </div>
-            <div class="div_dash_block_icon"> <img
-                    src="<?= $imageIconPath . 'dcs.png' ?>"> 
-            </div>
+            <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'dcs.png' ?>"></div>
         </div>
     <?php } ?>
 
@@ -86,8 +81,7 @@ if (empty($display_rmrd)) {
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_vlcc_vendor">0/0</h4>
         </div>
-        <div class="div_dash_block_icon"> <img
-                src="<?= $imageIconPath . 'dcs.png' ?>"> </div>
+        <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'dcs.png' ?>"></div>
     </div>
 
     <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code, 'shift' => $model->shift]); ?>
@@ -98,8 +92,7 @@ if (empty($display_rmrd)) {
                 <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
                 <h4 class="dash_block_value block_value" id="farmer_rmrd_block_farmer">0/0</h4>
             </div>
-            <div class="div_dash_block_icon"> <img
-                    src="<?= $imageIconPath . 'farmer.png' ?>"> </div>
+            <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'farmer.png' ?>"></div>
         </div>
     </a>
 
@@ -109,8 +102,7 @@ if (empty($display_rmrd)) {
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_quantity">0/0</h4>
         </div>
-        <div class="div_dash_block_icon"> <img
-                src="<?= $imageIconPath . 'scale.png' ?>"> </div>
+        <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'scale.png' ?>"></div>
     </div>
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
@@ -119,8 +111,7 @@ if (empty($display_rmrd)) {
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_fatkg">0/0</h4>
         </div>
-        <div class="div_dash_block_icon"> <img
-                src="<?= $imageIconPath . 'totalcount.png' ?>"> </div>
+        <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'totalcount.png' ?>"></div>
     </div>
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
@@ -129,8 +120,7 @@ if (empty($display_rmrd)) {
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_snfkg">0/0</h4>
         </div>
-        <div class="div_dash_block_icon"> <img
-                src="<?= $imageIconPath . 'totalcount.png' ?>"> </div>
+        <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'totalcount.png' ?>"></div>
     </div>
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
@@ -139,8 +129,34 @@ if (empty($display_rmrd)) {
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_amount">0/0</h4>
         </div>
-        <div class="div_dash_block_icon"> <img
-                src="<?= $imageIconPath . 'rupee.png' ?>"> </div>
+        <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'rupee.png' ?>"></div>
+    </div>
+
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+        <div class="div_dash_block_content">
+            <p class="dash_block_header"><?= Yii::t('app', 'TSKG') ?></p>
+            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            <h4 class="dash_block_value block_value" id="farmer_rmrd_block_ts_kg_tab">0/0</h4>
+        </div>
+        <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'totalcount.png' ?>"></div>
+    </div>
+
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+        <div class="div_dash_block_content">
+            <p class="dash_block_header"><?= Yii::t('app', 'App Ack Request') ?></p>
+            <table class="width_100 dashboard_widget_table">
+                <tr>
+                    <td><?= Yii::t('app', 'APP : ') ?><span id="totle_app"></span></td>
+                </tr>
+                <tr>
+                    <td><?= Yii::t('app', 'WS : ') ?><span id="totle_ws"></span></td>
+                </tr>
+                <tr>
+                    <td><?= Yii::t('app', 'MA : ') ?><span id="totle_ma"></span></td>
+                </tr>
+            </table>
+        </div>
+        <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'totalcount.png' ?>"></div>
     </div>
 
 </div>
