@@ -126,7 +126,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         //set from stock
                         $qty = $disp_qty;
                         $batch = '';
-                        $batchQuantities = [];
+                        $batchQuantities = []; 
 
                         if (empty($warehouse)) { //gyandhara plant stock is not available //Sunita 03/03/2023
                             $fstockModel = new TblProductStock();
