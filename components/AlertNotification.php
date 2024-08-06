@@ -52,7 +52,7 @@ class AlertNotification {
             }
             try {
                 foreach ($param as $p) {
-                    if (strpos($p, "%")) {
+                    if (is_string($p) && strpos($p, "%")) {
                         $param = urldecode(http_build_query($param));
                         break;
                     }
