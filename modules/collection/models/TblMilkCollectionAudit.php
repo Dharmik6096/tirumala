@@ -145,6 +145,9 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
                 [['last_edited_type', 'sync_status'], 'safe'],
                 [['union_code'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['cannumber', 'is_sms_sent', 'antibiotic', 'is_antibiotic', 'scheme_rate', 'scheme_rate_code', 'actual_rate', 'x_col6'], 'safe'],
+                [['union_code'], 'required', 'on' => ['androidsync']],
+                [['send_status'], 'default', 'value' => 0],
         ];
     }
 
