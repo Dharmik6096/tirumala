@@ -25,7 +25,12 @@ use app\modules\configuration\models\TblConfig;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultSearch;
 use yii\helpers\ArrayHelper;
-use app\modules\clienterp\components\EiplResponse;
+use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
+use app\modules\general\models\TblProcessApprovalSearch;
+use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionReject;
+use app\modules\tankermovement\models\TblMilkVehicleEntryReject;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
@@ -57,9 +62,16 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $searchModel = new TblMilkVehicleEntryTransactionSearch();
         $searchModel->milk_vehicle_entry_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $approvalModel = new TblProcessApprovalSearch();
+        $approvalModel->process_code = $id;
+        $approvalDataProvider = $approvalModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
-                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'approvalModel' => $approvalModel,
+                    'approvalDataProvider' => $approvalDataProvider,
         ]);
     }
 
@@ -174,6 +186,10 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 $txn_model->vehicle_entry_chamber_date = $this->model->vehicle_entry_date;
                 $modelSave[] = $txn_model;
                 if ($txn_model->validate()) {
+                    $modelStages = new TblApprovalStagesDetail();
+                    $modelStages->setApprovalData($this->model->union_code, 'tbl_milk_vehicle_entry', $this->model->milk_vehicle_entry_code, $modelSave, $approval_stages);
+                    $this->model->approval_status = 'Pending';
+
                     $transaction = $this->generalModel->saveTransaction($modelSave, ['Milk Vehicle Entry', ($update) ? 'edit' : 'create']);
                     $key = $this->model->milk_vehicle_entry_code;
                     if ($transaction == 'customRedirect') {
@@ -257,13 +273,13 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     }
 
     public function actionDispatchDetail() {
-          $existData = TblBmcMilkDispatch::find()
-                        ->alias('bmd')
-                        ->select(['bmd.challan_no','bmd.from_date','bmd.from_shift_code','bmd.to_date','bmd.to_shift_code','bmd.vehicle_code','bmd.vehicle_in_time','bmd.vehicle_out_time','bmd.bmc_milk_dispatch_code', 'gross_weight' => 'sum(a.dispatch_qty)'])
-                        ->join('INNER JOIN', 'tbl_bmc_milk_dispatch_txn a', 'a.bmc_milk_dispatch_code=bmd.bmc_milk_dispatch_code')
-                        ->where(['trip_code' => Yii::$app->request->get('trip_code')])
-                        ->groupBy(['bmd.challan_no','bmd.from_date','bmd.from_shift_code','bmd.to_date','bmd.to_shift_code','bmd.vehicle_code','bmd.vehicle_in_time','bmd.vehicle_out_time','bmd.bmc_milk_dispatch_code'])
-                        ->all();
+        $existData = TblBmcMilkDispatch::find()
+                ->alias('bmd')
+                ->select(['bmd.challan_no', 'bmd.from_date', 'bmd.from_shift_code', 'bmd.to_date', 'bmd.to_shift_code', 'bmd.vehicle_code', 'bmd.vehicle_in_time', 'bmd.vehicle_out_time', 'bmd.bmc_milk_dispatch_code', 'gross_weight' => 'sum(a.dispatch_qty)'])
+                ->join('INNER JOIN', 'tbl_bmc_milk_dispatch_txn a', 'a.bmc_milk_dispatch_code=bmd.bmc_milk_dispatch_code')
+                ->where(['trip_code' => Yii::$app->request->get('trip_code')])
+                ->groupBy(['bmd.challan_no', 'bmd.from_date', 'bmd.from_shift_code', 'bmd.to_date', 'bmd.to_shift_code', 'bmd.vehicle_code', 'bmd.vehicle_in_time', 'bmd.vehicle_out_time', 'bmd.bmc_milk_dispatch_code'])
+                ->all();
 
         return $this->renderAjax('_dispatch_detail', [
                     'existData' => $existData,
@@ -418,73 +434,121 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionAbc(){
-        $url = \Yii::$app->params['clienterp_authentication']['cargill']['jde_milk_receipt_url'];
-        $milkVehicalData = TblMilkVehicleEntry::find()->where(['approval_status' => 'Approve'])->all();
-        if(!empty($milkVehicalData)){
-            foreach($milkVehicalData as $milkVehical){
-                $httpCode = '';
-                $milkVehicalTxn = $milkVehical->getTransactionRecord($milkVehical->milk_vehicle_entry_code);
-                $jsonArray = array(
-                    'Long_Address_Number_ALKY' => $milkVehical->trip_code,
-                    "Branch_Plant" => $milkVehical->plant_code,
-                    "Order_Date" => $milkVehical->vehicle_entry_date,
-                    "KCOO..Order_Company" => $milkVehical->union_code,
-                    "VINV..Invoice_Number" => $milkVehical->grn_no,
-                    "GridIn_1_3" => $milkVehicalTxn,
-                );
-                $data = json_encode($jsonArray);
-                $header = array(
-                    "Content-Type: application/json", 
-                    "Content-length: " . strlen($data),
-                    //'Host: <calculated when request is sent>',
-                    'User-Agent: PostmanRuntime/7.39.0',
-                    'Accept: */*',
-                    'Accept-Encoding: gzip, deflate, br',
-                    'Connection: keep-alive'
-                );
-                $requestTimestamp = date('Y-m-d H:i:s');
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_HEADER, FALSE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-                if (false) {
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                }  // Skip SSL Verification
-                $response = curl_exec($ch);
-                if ($response === false) {
-                    // echo 'cURL Error: ' . curl_error($ch);
+    public function actionBulkApproval() {
+        $milkVehicleEntryModel = new TblMilkVehicleEntry();
+        $searchModel = new TblMilkVehicleEntrySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
+
+        $selection = Yii::$app->request->post('selection');
+        if (Yii::$app->request->post() && !empty($selection)) {
+            $succCount = 0;
+            $errorCount = 0;
+            $receipt_error = '';
+            $message = '';
+            $milkVehiclepostData = Yii::$app->request->post()['TblMilkVehicleEntry'];
+            $remarks = Yii::$app->request->post()['remarks'];
+            $postData = Yii::$app->request->post();
+            $operation = $postData['operation'];
+            foreach ($selection as $value) {
+                $model = TblProcessApproval::findOne($value);
+                $model->scenario = 'approve';
+                $saveModel = [];
+                $deleteModel = [];
+                $approvalHistoryModel = new TblProcessApprovalHistory();
+                Yii::$app->operation->history($model, $approvalHistoryModel, 'UPDATE');
+                $saveModel[] = $approvalHistoryModel;
+                $isApprove = $operation == 'approve';
+                $model->status = $isApprove ? 1 : 2;
+                $historyFlag = $isApprove ? 'UPDATE' : 'DELETE';
+                $model->remarks = $remarks . $milkVehiclepostData[$value]['approval_remarks'];
+                $saveModel[] = $model;
+                if (!empty($saveModel)) {
+                    if ($operation != 'reject') {
+                        $model->ApprovalList($model, $saveModel, $status);
+                    } else {
+                        $milkVehicleEntryReject = new TblMilkVehicleEntryReject();
+                        $milkVehicleEntryReject->milk_vehicle_entry_reject_code = Yii::$app->general->getCodeAutoIncrement($milkVehicleEntryReject);
+                        $model->RejectList($model, $saveModel, $status, $milkVehicleEntryReject->milk_vehicle_entry_reject_code);
+                    }
+                    $receiptModel = $this->findModel($model->process_code);
+                    $historyModel = new TblMilkVehicleEntryHistory();
+                    Yii::$app->operation->history($receiptModel, $historyModel, $historyFlag);
+                    $saveModel[] = $historyModel;
+                    $receiptModel->approval_status = $status;
+                    $receiptModel->approval_remarks = $remarks . $milkVehiclepostData[$value]['approval_remarks'];
+                    $saveModel[] = $receiptModel;
+
+                    if ($receiptModel->validate()) {
+                        if (strtolower($status) == 'approve' && strtolower($receiptModel->approval_status) == 'approve') {
+                            $receiptModel->approved_at = date('Y-m-d H:i:s');
+                            $receiptModel->approved_by = Yii::$app->session['UserCode'];
+                            $saveModel[] = $receiptModel;
+                        } else if (strtolower($status) == 'reject' && strtolower($receiptModel->approval_status) == 'reject') {
+                            $milkVehicleEntryReject->setAttributes($receiptModel->attributes);
+                            $saveModel[] = $milkVehicleEntryReject;
+
+                            $milkVehicleEntryTransactionData = TblMilkVehicleEntryTransaction::find()
+                                    ->where(['milk_vehicle_entry_code' => $model->process_code])
+                                    ->all();
+
+                            foreach ($milkVehicleEntryTransactionData as $transaction) {
+                                $milkVehicleEntryTransactionReject = new TblMilkVehicleEntryTransactionReject();
+                                $milkVehicleEntryTransactionReject->setAttributes($transaction->attributes);
+                                $saveModel[] = $milkVehicleEntryTransactionReject;
+
+                                $transactionHistoryModel = new TblMilkVehicleEntryTransactionHistory();
+                                Yii::$app->operation->history($transaction, $transactionHistoryModel, $historyFlag);
+                                $saveModel[] = $historyModel;
+
+                                $deleteModel[] = $transaction;
+                            }
+                            $tripModel = new TblVehicleTrip();
+                            $tripModel->trip_code = $receiptModel->trip_code;
+                            $tripModel = $tripModel->getClosedtripData();
+                            $tripModel->scenario = 'closetrip';
+                            $tripModel->grn_no = NULL;
+                            $tripModel->trip_status = 'open';
+                            $saveModel[] = $tripModel;
+                            $deleteModel[] = $receiptModel;
+                        }
+                        $succCount++;
+                    } else {
+                        $errorCount++;
+                        foreach ($receiptModel->getErrors() as $errorkey => $value) {
+                            $message = $value;
+                        }
+                    }
+                    if (!empty($message)) {
+                        foreach ($message as $msg) {
+                            $receipt_error .= $msg;
+                        }
+                    }
+                    if (empty($receipt_error)) {
+                        $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Milk Receipt Approval', 'edit']);
+                    } else {
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $receipt_error . ' in Milk Receipt']);
+                        return $this->redirect(['bulk-approval']);
+                    }
                 } else {
-                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                    // echo 'HTTP Response Code: ' . $httpCode;
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Milk Receipt already approved by other user.']);
+                    return $this->redirect(['bulk-approval']);
                 }
-                curl_close($ch);
-                $responseTimestamp = date('Y-m-d H:i:s');
-                $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $data, $httpCode);
+            }
+            $msg = $operation == 'approve' ? ('Milk Receipt approved successfully. <br /> Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount) : ('Provisional Member rejected successfully.  <br />Rejected count : ' . $succCount . '<br />Not Rejected count : ' . $errorCount);
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => $msg]);
+            $getData = Yii::$app->request->queryParams;
+            if (!empty($getData['TblMilkVehicleEntrySearch'])) {
+                return $this->redirect(['bulk-approval', 'TblMilkVehicleEntrySearch' => $getData['TblMilkVehicleEntrySearch']]);
+            } else {
+                return $this->redirect(['bulk-approval']);
             }
         }
+        return $this->render('bulk_approve', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'milkVehicleEntryModel' => $milkVehicleEntryModel,
+        ]);
     }
 
-    public function setLogData($request, $response, $requestTimestamp, $responseTimestamp, $requestJson, $httpCode) {
-        $this->response = new EiplResponse();
-        $logData = [
-            'union_code' => !empty($request['union_code']) ? $request['union_code'] : '',
-            'plant_code' => !empty($request['plant_code']) ? $request['plant_code'] : '',
-            'mcc_plant_code' => !empty($request['mcc_plant_code']) ? $request['mcc_plant_code'] : '',
-            'bmc_code' => !empty($request['bmc_code']) ? $request['bmc_code'] : '',
-            'request_desc' => '',
-            'txn_type' => 'eipl',
-            'date1' => !empty($request['vehicle_entry_date']) ? $request['vehicle_entry_date'] : '',
-            // 'date2' => !empty($request['dispatch_date']) ? $request['dispatch_date'] : '',
-            'desc1' => !empty($request['trip_code']) ? $request['trip_code'] : '',
-            'desc2' => !empty($request['grn_no']) ? $request['grn_no'] : '',
-            'status_code' => $httpCode,
-            'status_message' => !empty($response->jde__simpleMessage) ? json_encode($response->jde__simpleMessage) : '',
-        ];        
-        $this->response->logData = $logData;
-        $this->response->saveRequestResponseLog($requestJson, $response, $requestTimestamp, $responseTimestamp);
-    }
-    
 }
