@@ -231,11 +231,11 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblBulkNotificationApplicability();
         $value = [];
-        if (in_array(strtolower($model->login_type), ['farmer', 'vsp', 'route_supervisor'])) {
+        if (in_array(strtolower($model->login_type), ['farmer', 'vsp'])) {
             $value['DCS'] = 'VLCC';
         } elseif (in_array(strtolower($model->login_type), ['mcc_incharge'])) {
             $value['MCC'] = 'MCC';
-        } elseif (in_array(strtolower($model->login_type), ['procurement_staff'])) {
+        } elseif (in_array(strtolower($model->login_type), ['procurement_staff', 'route_supervisor'])) {
             $value['USER'] = 'USER';
         } else {
             $value['USER'] = 'USER';
