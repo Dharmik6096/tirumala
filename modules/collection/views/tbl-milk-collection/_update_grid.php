@@ -56,14 +56,14 @@ echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'col
                 if (!$config) {
                     echo Html::activeHiddenInput($model, '[' . $index . ']milk_quality_type_code', ['value' => $model->milk_quality_type_code]);
                 }
-                return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
+                return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE) . '</span>';
             },
         ],
             ['attribute' => 'milk_quality_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel, $config) {
                 if ($config) {
-                    return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
+                    return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE) . '</span>';
                 } else {
                     return $model->milk_quality_type_code;
                 }
