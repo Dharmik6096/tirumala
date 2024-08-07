@@ -162,6 +162,8 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['union_code', 'user_code', 'from_date', 'to_date'], 'required', 'on' => ['FieldStaffActivity']],
             [['union_code', 'plant_code', 'mcc_code', 'as_on_date'], 'required', 'on' => 'ExportProvisionalMemberBankReceipt'],
             [['dcs_code', 'report_type', 'from_value', 'to_value'], 'required', 'on' => ['MilkCollectionFilterBased']],
+            [['from_value', 'to_value'], 'number'],
+            [['from_value'], 'compare', 'compareAttribute' => 'to_value', 'operator' => '<', 'type' => 'number', 'on' => ['MilkCollectionFilterBased']],
         ];
     }
 
