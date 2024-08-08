@@ -84,7 +84,7 @@ class SiteController extends \app\controllers\ChildController {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -885,7 +885,7 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty(Yii::$app->request->post('performance_type'))) {
             $performance_type = Yii::$app->request->post('performance_type');
         }
-        if(!empty(Yii::$app->request->post('member_code'))){
+        if (!empty(Yii::$app->request->post('member_code'))) {
             $member_code = Yii::$app->request->post('member_code');
         }
         $array = [
@@ -1959,7 +1959,8 @@ class SiteController extends \app\controllers\ChildController {
                                                 $model->other_reading = str_replace('\r\n', '#####', $model->other_reading);
                                                 $model->other_reading = str_replace('\r', '#####', $model->other_reading);
                                                 $model->other_reading = str_replace('\n', '#####', $model->other_reading);
-                                                if (in_array(substr($model->member_code, -4), ['2097', '2098']) && $is_insert) {
+                                                if (in_array(substr($model->member_code, -4), ['2097', '2098'])) {
+                                                    $process_record = FALSE;
                                                     $model->setCleaningCalibration($model, $childModel);
                                                 }
                                             }
@@ -1986,7 +1987,9 @@ class SiteController extends \app\controllers\ChildController {
                                 }
                                 $generalModel = new GeneralModel();
                                 $masterSave = [];
-                                $masterSave[] = $model;
+                                if ($process_record) {
+                                    $masterSave[] = $model;
+                                }
                                 $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
                                 if ($transaction != 'customRedirect') {
                                     $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';

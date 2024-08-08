@@ -77,7 +77,7 @@ $vendor_payment = ($searchParameter->payment_type == 'VENDOR') ? TRUE : FALSE;
             'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
             'value' => function ($model, $index) use ($form, $vendor_payment) {
                 $tblId = $vendor_payment ? $model->vsp_payment_code : $model->payment_sumary_code;
-                return '<span class=\'hold_reason\'>' . Yii::$app->dropdown->dropdown('hold_reason', $model, $form, '', FALSE, FALSE, '[' . $tblId . ']hold_reason', FALSE, TRUE, $model->hold_reason) . '</span>';
+                return '<span class=\'hold_reason\'>' . Yii::$app->dropdown->dropdown('hold_reason', $model, $form, '', FALSE, FALSE, '[' . $tblId . ']hold_reason', FALSE, TRUE) . '</span>';
             },
         ],
         [
