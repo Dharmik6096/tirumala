@@ -1774,6 +1774,29 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapDataExportForDeduction() {
+        $this->report = 'SapDataExportForDeduction';
+        return $this->actionIndex();
+    }
+
+    public function actionSapDataExportForVlcReplacement() {
+        $this->report = 'SapDataExportForVlcReplacement';
+        return $this->actionIndex();
+    }
+
+    public function actionStockRegisterBmcToSap() {
+        $this->report = 'StockRegisterBmcToSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'StockRegisterBmcToProduct';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'StockRegisterBmcToSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3765,6 +3788,39 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_society_and_member_wise_qty_compair_report',
                 'scenario' => 'DcsAndMemberWiseQtyCompare',
                 'title' => 'DCS & Member Wise Qty Compare',
+            ],
+            'SapDataExportForDeduction' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_sap_data_export_for_deduction',
+                'scenario' => 'SapDataExportForDeduction',
+                'title' => 'SAP Date export for Deduction',
+            ],
+            'SapDataExportForVlcReplacement' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_sap_data_export_for_vlc_replacement',
+                'scenario' => 'SapDataExportForVlcReplacement',
+                'title' => 'SAP Date export for VLC Replacement',
+            ],
+            'StockRegisterBmcToSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_bmc_wise_sap_batch_wise',
+                'scenario' => 'StockRegisterBmcToSap',
+                'title' => 'BMC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterBmcToProduct' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_bmc_wise_product_wise',
+                'scenario' => 'StockRegisterBmcToSap',
+                'title' => 'BMC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterBmcToSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_bmc_wise_summary',
+                'scenario' => 'StockRegisterBmcToSap',
+                'title' => 'BMC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
             ],
         ];
         return $label[$l];

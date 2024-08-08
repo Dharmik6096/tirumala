@@ -656,6 +656,8 @@ echo GhostMenu::widget([
                             ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/reports/sap-wq-file']],
                             ['label' => '410-' . Yii::t('app', 'Member Provisional Family Detail'), 'url' => ['/misreports/reports/member-provisional-family-detail']],
                             ['label' => '411-' . Yii::t('app', 'Member Provisional SAP Export'), 'url' => ['/misreports/reports/member-provisional-sap-export']],
+                            ['label' => '412-' . Yii::t('app', 'SAP Date export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
+                            ['label' => '413-' . Yii::t('app', 'SAP Date export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
                     ]
                 ],
                     [
@@ -890,6 +892,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Stock Dispatch To Sale Report'), 'url' => ['/misreports/reports/stock-dispatch-to-sale']],
                             ['label' => Yii::t('app', 'DCS Wise Stock'), 'url' => ['/misreports/reports/stock-register-to-sap']],
                             ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap']],
+                            ['label' => Yii::t('app', 'BMC Wise Stock'), 'url' => ['/misreports/reports/stock-register-bmc-to-sap']],
                     ]
                 ],
                     [
