@@ -1796,6 +1796,16 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+    
+    public function actionAssetDetailsReport() {
+        $this->report = 'AssetDetailsReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionUserOrganizationMappingReport() {
+        $this->report = 'UserOrganizationMappingReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -1912,7 +1922,9 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'ManualMilkEntrySocietyDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:'
+                . ''
+                . ':report_status',
                 'sp_name' => 'sp_mis_manual_milk_entry_society_date_wise',
                 'scenario' => 'ManualMilkEntrySocietyDateShiftWise',
                 'title' => '107 - Manual Milk Entry Society Date wise',
@@ -3822,10 +3834,21 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'BMC Wise Stock',
                 'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
             ],
+            'AssetDetailsReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,current_status:static:asset_detail_status',
+                'sp_name' => 'mis_asset_details_report',
+                'scenario' => 'AssetDetailsReport',
+                'title' => 'Asset Details Report',
+            ],
+            'UserOrganizationMappingReport' => [
+                'param' => 'login_type_report:static:login_type_report',
+                'sp_name' => 'mis_user_organization_mapping_report',
+                'title' => 'User Organization Mapping Report',
+            ],
         ];
         return $label[$l];
     }
-
+    
     public function downloadData() {
 //        $extention = 'xls';
 //        $header = [
