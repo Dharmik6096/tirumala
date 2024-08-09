@@ -15,6 +15,7 @@ if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->g
 $this->params['menu'][] = Yii::$app->controls->import('import-shagun-dpu-data', $this, Yii::t('app', 'Import Shagun DPU Data'), [], 'import_shagun_dpu_data');
 $this->params['menu'][] = Yii::$app->controls->import('import-other-dpu-data', $this, Yii::t('app', 'Import Other DPU Data'), [], 'import_other_dpu_data');
 $this->params['menu'][] = Yii::$app->controls->custombutton('Online Farmer', 'online-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-map-marker"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton('IOT Temperature', 'iot-temperature', '', 'btn btn-danger btn-block', '<i class="fa fa-list"></i>');
 $url_path = [];
 $url_path[] = 'online-collection';
 $url = Url::to(array_values($url_path));
