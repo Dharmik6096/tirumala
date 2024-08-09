@@ -5,6 +5,7 @@ namespace app\modules\collection\controllers;
 use Yii;
 use app\modules\collection\models\TblMilkCollectionAuditSearch;
 use app\modules\collection\models\TblMilkCollectionAudit;
+use yii\web\NotFoundHttpException;
 
 /**
  * TblMilkCollectionAuditController implements the CRUD actions for TblMilkCollectionAudit model.
