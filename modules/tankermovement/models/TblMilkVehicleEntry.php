@@ -61,7 +61,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['union_code', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code'], 'required', 'except' => ['androidsync', 'importCsv']], [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'process_approval_code', 'remarks'], 'safe'],
+                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'process_approval_code', 'remarks', 'status'], 'safe'],
                 [['gross_weight', 'tare_weight'], 'number'],
                 [['originating_type'], 'integer'],
                 [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
@@ -86,6 +86,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
                 [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true],
+                [['status'], 'default', 'value' => 0],
         ];
     }
 
@@ -314,19 +315,8 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         }
         return TRUE;
     }
-
-    // public function getData(){
-    //     return $this->find()
-    //                     ->where(['or', ['approval_status' => NULL], ['approval_status' => ''], ['approval_status' => 0]])
-    //                     ->orderBy([
-    //                         'created_at' => SORT_ASC,
-    //                     ])->all();
-    // }
-
-    public function getTransactionRecord($milk_vehicle_entry_code){
-        $sql = "SELECT grn_no as Item_Number, chamber_no, challan_no, chamber_quantity as Quantity_Ordered, amount as Unit_Cost, entry_type as Reference_2 FROM tbl_milk_vehicle_entry_transaction WHERE milk_vehicle_entry_code = :milkVehicleEntryCode";
-        $command = Yii::$app->db->createCommand($sql);
-        $command->bindValue(':milkVehicleEntryCode', $milk_vehicle_entry_code);
-        return $command->queryAll();
+    
+    public function updateStatus($updateData, $ids) {
+        return $this->updateAll($updateData, ['milk_vehicle_entry_code' => $ids]);
     }
 }

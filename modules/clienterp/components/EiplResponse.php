@@ -82,27 +82,19 @@ class EiplResponse {
     }
 
     public function saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp, $requestJson = ''){
-        if(!empty($requestJson)){
-            $requestUrl = $request->request_url;
-            $endPoint = $request->end_point;
-            $header = $request->request_header;
-            $request_payload = $requestJson;
-        } else {
-            $requestUrl = Yii::$app->request->getAbsoluteUrl();
-            $endPoint = Yii::$app->requestedRoute;
-            $header = !empty(getallheaders()) ? json_encode(getallheaders()) : '';
-            $request_payload = json_encode($request);
-        }
         $logModel = new TblClientErpApiLog();
-        $logModel->setAttributes($this->logData);
-        $logModel->end_point = $endPoint;
-        $logModel->request_url = $requestUrl;
-        $logModel->request_header = $header;
+        if(!empty($requestJson)){
+            $request_payload = $requestJson;
+            $logModel->setAttributes($this->logData->attributes);
+        } else {
+            $request_payload = json_encode($request);
+            $logModel->setAttributes($this->logData);
+        }
         $logModel->request_payload = $request_payload;
         $logModel->response_payload = json_encode($response);
         $logModel->request_timestamp = $requestTimestamp;
         $logModel->response_timestamp = $responseTimestamp;
-        $logModel->status_response = ($logModel->status_code >= 200 && $logModel->status_code < 300) ? 'success' : 'error';
+        // $logModel->status_response = ($logModel->status_code >= 200 && $logModel->status_code < 300) ? 'success' : 'error';
         $logModel->status_message = $logModel->status_message;
         $logModel->save();
         unset($response->logData);
