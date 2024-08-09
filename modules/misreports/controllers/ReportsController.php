@@ -1796,14 +1796,24 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionAssetDetailsReport() {
         $this->report = 'AssetDetailsReport';
         return $this->actionIndex();
     }
-    
+
     public function actionUserOrganizationMappingReport() {
         $this->report = 'UserOrganizationMappingReport';
+        return $this->actionIndex();
+    }
+
+    public function actionAppStartupReport() {
+        $this->report = 'AppStartupReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionStatusDetail() {
+        $this->report = 'MilkCollectionStatusDetail';
         return $this->actionIndex();
     }
 
@@ -3843,10 +3853,22 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_user_organization_mapping_report',
                 'title' => 'User Organization Mapping Report',
             ],
+            'AppStartupReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_app_startup_status',
+                'scenario' => 'AppStartupReport',
+                'title' => 'App Startup Report',
+            ],
+            'MilkCollectionStatusDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_status_summary',
+                'scenario' => 'MilkCollectionStatusDetail',
+                'title' => 'Milk Collection Status Detail',
+            ],
         ];
         return $label[$l];
     }
-    
+
     public function downloadData() {
 //        $extention = 'xls';
 //        $header = [
