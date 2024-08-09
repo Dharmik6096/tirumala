@@ -37,7 +37,7 @@ class TblBankPaymentLog extends \app\models\ChildModel {
             // [['log_id'], 'safe'],
             [['dcs_payment_cycle_code'], 'integer'],
             [['union_code', 'file_path', 'created_by', 'updated_by'], 'string'],
-            [['payment_date', 'created_at', 'updated_at', 'status'], 'safe'],
+            [['payment_date', 'created_at', 'updated_at', 'status', 'retry_count'], 'safe'],
         ];
     }
 
