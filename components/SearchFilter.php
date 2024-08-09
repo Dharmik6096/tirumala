@@ -513,6 +513,10 @@ class SearchFilter {
             'TblMilkCollectionAuditSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
+            'TblIotTemperatureSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+                'action' => ['iot-temperature']
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
