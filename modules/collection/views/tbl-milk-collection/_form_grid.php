@@ -149,7 +149,7 @@ $script = "
 $(document).ready(function(){
         setInterval(() => {
             $.pjax.reload({container: '#milk-collection-list'});
-        },300000);
+        },30000);
 });";
 $this->registerJs($script, View::POS_END, 'milk-collection-list');
 ?>
