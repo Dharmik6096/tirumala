@@ -495,6 +495,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         if (Yii::$app->session->get('eiplCode') == 'DODLA') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_dodla_WQ', TRUE);
         }
+        if (Yii::$app->session->get('eiplCode') == 'ANANDA') {
+            $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_Ananda');
+        }
 
         if (Yii::$app->session->get('eiplCode') == 'MMD') {
             $callErp = true;
