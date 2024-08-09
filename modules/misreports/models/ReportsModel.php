@@ -198,7 +198,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             'f_cmpr_date' => \Yii::t('app', 'From Compare Date'),
             't_cmpr_date' => \Yii::t('app', 'To Compare Date'),
             'animal_type' => \Yii::t('app', 'Milk Type'),
-            'current_status' => Yii::t('app', 'Current Status'),
+            'current_status' => \Yii::t('app', 'Current Status'),
             'login_type_report' => \Yii::t('app', 'Login Type'),
         ];
     }

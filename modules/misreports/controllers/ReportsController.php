@@ -1922,9 +1922,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'ManualMilkEntrySocietyDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:'
-                . ''
-                . ':report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_manual_milk_entry_society_date_wise',
                 'scenario' => 'ManualMilkEntrySocietyDateShiftWise',
                 'title' => '107 - Manual Milk Entry Society Date wise',
