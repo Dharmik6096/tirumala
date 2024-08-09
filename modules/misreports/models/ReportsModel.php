@@ -14,7 +14,7 @@ class ReportsModel extends Model
     public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type, $customer_type, $vendor_code, $payment_cycle_code, $bank_type, $report_status, $member_type, $route_code;
     public $no_of_payment_cycle, $output_type, $store_location_type, $asset_code, $sap_code, $sr_no, $main_customer_type, $transporter_code, $vehicle_code, $originating_type, $report_collection_type, $type_wise_report, $route_type_trans, $product_code;
     public $org_type, $product_type, $module_type, $action_perform, $channel_code, $upload_ftp_file, $sap_file, $trip_code, $grn_no, $plant_register_type;
-    public $state_code, $region_code, $area_code, $user_code, $report_req_status, $login_user_code, $payment_type, $user_login_type, $as_on_date, $from_value, $to_value, $basis_on, $top_collection_on, $param_type, $top_value, $milk_type, $f_spr_date, $t_spr_date, $f_cmpr_date, $t_cmpr_date, $animal_type;
+    public $state_code, $region_code, $area_code, $user_code, $report_req_status, $login_user_code, $payment_type, $user_login_type, $as_on_date, $from_value, $to_value, $basis_on, $top_collection_on, $param_type, $top_value, $milk_type, $f_spr_date, $t_spr_date, $f_cmpr_date, $t_cmpr_date, $animal_type, $current_status, $login_type_report;
 
     function __construct()
     {
@@ -27,8 +27,7 @@ class ReportsModel extends Model
     {
         return [
             [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type', 'route_code', 'main_customer_type', 'transporter_code', 'vehicle_code', 'product_type', 'animal_type'], 'default', 'value' => 0],
-            [['main_customer_type'], 'default', 'value' => 0, 'on' => ['CustomerMaster']],
-            [['year', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code', 'no_of_payment_cycle', 'output_type', 'report_type', 'store_location_type', 'asset_code', 'sap_code', 'sr_no', 'main_customer_type', 'transporter_code', 'vehicle_code', 'originating_type', 'report_collection_type', 'type_wise_report', 'route_type_trans', 'product_code', 'org_type', 'product_type', 'module_type', 'action_perform', 'channel_code', 'upload_ftp_file', 'sap_file', 'channel_code', 'month', 'state_code', 'region_code', 'area_code', 'report_req_status', 'login_user_code', 'user_code', 'as_on_date', 'basis_on', 'top_collection_on', 'param_type', 'top_value', 'milk_type', 'f_spr_date', 't_spr_date', 'f_cmpr_date', 't_cmpr_date', 'animal_type'], 'safe'],
+            [['year', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code', 'no_of_payment_cycle', 'output_type', 'report_type', 'store_location_type', 'asset_code', 'sap_code', 'sr_no', 'main_customer_type', 'transporter_code', 'vehicle_code', 'originating_type', 'report_collection_type', 'type_wise_report', 'route_type_trans', 'product_code', 'org_type', 'product_type', 'module_type', 'action_perform', 'channel_code', 'upload_ftp_file', 'sap_file', 'channel_code', 'month', 'state_code', 'region_code', 'area_code', 'report_req_status', 'login_user_code', 'user_code', 'as_on_date', 'basis_on', 'top_collection_on', 'param_type', 'top_value', 'milk_type', 'f_spr_date', 't_spr_date', 'f_cmpr_date', 't_cmpr_date', 'animal_type', 'current_status', 'login_type_report'], 'safe'],
             [['union_code', 'plant_code', 'mcc_code', 'date', 'shift'], 'required', 'on' => ['MemberCollectionShiftReport']],
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['BmcCollDateShiftWiseSummary', 'BmcCollDateShiftWiseSummaryCommon']],
             [['union_code', 'plant_code', 'mcc_code', 'date'], 'required', 'on' => ['MemberCollectionPaymentCycleWise', 'MemberWiseMonthlyCollection']],
@@ -52,7 +51,7 @@ class ReportsModel extends Model
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['MemberPaymentDrafted']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['VendorBankPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['MemberBankPayment']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['MemberOutstandingDetail', 'MemberData', 'MilkColllectionHistory', 'MemberHistory', 'DcsHistory', 'CpliabilityReport', 'TallyReport']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['MemberOutstandingDetail', 'MemberData', 'MilkColllectionHistory', 'MemberHistory', 'DcsHistory', 'CpliabilityReport', 'TallyReport', 'AssetDetailsReport']],
             [['union_code'], 'required', 'on' => ['RateApplicabilityDetails']],
             [['p_organization_type', 'rate_type', 'union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['RateAcknowledgement']],
             [['p_organization_type', 'union_code', 'plant_code'], 'required', 'on' => ['AmcsSyncPending']],
@@ -77,7 +76,7 @@ class ReportsModel extends Model
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['DayWiseQtyDetail', 'DayWiseQtySummary', 'VendorPaymentCycleWiseBmcWise']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'product_code'], 'required', 'on' => ['AdvancePm']],
             [['to_date'], 'validateToDate', 'on' => ['AdvancePm']],
-            [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment', 'MilkCollectionNegativeGroth', 'RootWiseDifference']],
+            [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment', 'MilkCollectionNegativeGroth', 'RootWiseDifference', 'AppStartupReport', 'MilkCollectionStatusDetail']],
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment', 'RouteWiseReconciliation']],
             [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory']],
             [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory']],
@@ -202,6 +201,8 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             'f_cmpr_date' => \Yii::t('app', 'From Compare Date'),
             't_cmpr_date' => \Yii::t('app', 'To Compare Date'),
             'animal_type' => \Yii::t('app', 'Milk Type'),
+            'current_status' => \Yii::t('app', 'Current Status'),
+            'login_type_report' => \Yii::t('app', 'Login Type'),
         ];
     }
 
