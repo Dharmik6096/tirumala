@@ -74,6 +74,7 @@ class TblAlertNotification extends \app\models\ChildModel {
 
         return $this->find()
                         ->Where(['or', ['send_status' => 0], ['send_status' => NULL]])
+                        ->andWhere(['IS', 'queue_name', NULL])
                         ->andWhere(['>=', 'entry_datetime', $from_date])
                         ->andWhere(['<=', 'entry_datetime', $to_date])
 //                        ->andWhere(['alert_notification_id' => '113838'])
