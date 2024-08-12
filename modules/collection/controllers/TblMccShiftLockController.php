@@ -20,6 +20,7 @@ use app\modules\collection\models\TblMccShiftLockStagingHistory;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\sms\models\TblApiMaster;
+use yii\helpers\Url;
 
 /**
  * TblMccShiftLockController implements the CRUD actions for TblMccShiftLock model.
@@ -485,7 +486,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         } else {
             $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];
         }
-        return $this->redirect([$url]);
+        return $this->redirect(Url::previous());
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
