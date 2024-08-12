@@ -30,6 +30,7 @@ class TblIotTemperature extends \app\models\ChildModel {
     public function rules() {
         return [
             [['id', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'date_time', 'device_id', 'temperature', 'originating_org_code', 'originating_org_type', 'originating_type', 'updated_at', 'updated_by', 'created_at', 'created_by'], 'safe'],
+            [['union_code'], 'required', 'on' => ['androidsync']],
         ];
     }
 
