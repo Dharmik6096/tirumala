@@ -1797,6 +1797,26 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionAssetDetailsReport() {
+        $this->report = 'AssetDetailsReport';
+        return $this->actionIndex();
+    }
+
+    public function actionUserOrganizationMappingReport() {
+        $this->report = 'UserOrganizationMappingReport';
+        return $this->actionIndex();
+    }
+
+    public function actionAppStartupReport() {
+        $this->report = 'AppStartupReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionStatusDetail() {
+        $this->report = 'MilkCollectionStatusDetail';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3821,6 +3841,29 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'StockRegisterBmcToSap',
                 'title' => 'BMC Wise Stock',
                 'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'AssetDetailsReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,current_status:static:asset_detail_status',
+                'sp_name' => 'mis_asset_details_report',
+                'scenario' => 'AssetDetailsReport',
+                'title' => 'Asset Details Report',
+            ],
+            'UserOrganizationMappingReport' => [
+                'param' => 'login_type_report:static:login_type_report',
+                'sp_name' => 'mis_user_organization_mapping_report',
+                'title' => 'User Organization Mapping Report',
+            ],
+            'AppStartupReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_app_startup_status',
+                'scenario' => 'AppStartupReport',
+                'title' => 'App Startup Report',
+            ],
+            'MilkCollectionStatusDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_status_summary',
+                'scenario' => 'MilkCollectionStatusDetail',
+                'title' => 'Milk Collection Status Detail',
             ],
         ];
         return $label[$l];
