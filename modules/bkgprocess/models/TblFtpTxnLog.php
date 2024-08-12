@@ -138,7 +138,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
             $downLoadArray = [];
             foreach ($output as $detail) {
-                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : (($data_array['module_name'] == 'TblMilkCollection_cdpl_VM') ? 'Agent_Code' : 'Plant'));
+                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : (($data_array['module_name'] == 'TblMilkCollection_cdpl_VM') ? 'Agent_Code' : (($data_array['module_name'] == 'TblBmcCollection_Ananda') ? 'MCC' : 'Plant')));
                 if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
                     if (empty($downLoadArray[$detail[$plant]])) {
                         $downLoadArray[$detail[$plant]] = [];
@@ -368,9 +368,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         foreach ($output as $item) {
             $headerElement = $xml->addChild('Header');
             foreach ($item as $key => $value) {
-                if (!empty($value)) {
-                    $headerElement->addChild($key, htmlspecialchars($value));
-                }
+                $headerElement->addChild($key, htmlspecialchars($value));
             }
         }
         return $xml->asXML();
