@@ -5,7 +5,7 @@ namespace app\modules\clienterp\devmilk;
 /**
  * vka module definition class
  */
-class DevMilk extends \yii\base\Module {
+class Devmilk extends \yii\base\Module {
 
     /**
      * @inheritdoc
