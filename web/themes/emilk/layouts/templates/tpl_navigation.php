@@ -719,6 +719,7 @@ echo GhostMenu::widget([
                         ['label' => '411-' . Yii::t('app', 'Member Provisional SAP Export'), 'url' => ['/misreports/reports/member-provisional-sap-export']],
                         ['label' => '412-' . Yii::t('app', 'SAP Date export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
                         ['label' => '413-' . Yii::t('app', 'SAP Date export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
+                        ['label' => '414-' . Yii::t('app', 'SAP Data Export Feed Sale Member'), 'url' => ['/misreports/reports/sap-data-export-feed-sale-member']],
                     ]
                 ],
                 [
@@ -862,6 +863,7 @@ echo GhostMenu::widget([
                                     ]
                                 ],
                                 ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
+                                ['label' => Yii::t('app', 'Eipl Installed Users Details'), 'url' => ['/misreports/reports/eipl-installed-users-details']],
                                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
