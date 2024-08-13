@@ -89,7 +89,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -3204,6 +3204,17 @@ class SiteController extends Controller {
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'series' => $series];
+    }
+
+    public function actionLoadTemperatureData() {
+        $date = date('Y-m-d');
+        if (!empty(Yii::$app->request->post('Dashboard')['date'])) {
+            $date = Yii::$app->request->post('Dashboard')['date'];
+            $date = date('Y-m-d', strtotime($date));
+        }
+        $results = \Yii::$app->general->getSpData('sp_get_iot_temperature_data', [$date]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'results' => $results];
     }
 
 }
