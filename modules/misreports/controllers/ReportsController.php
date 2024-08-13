@@ -1817,6 +1817,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionEiplInstalledUsersDetails() {
+        $this->report = 'EiplInstalledUsersDetails';
+        return $this->actionIndex();
+    }
+
+    public function actionSapDataExportFeedSaleMember() {
+        $this->report = 'SapDataExportFeedSaleMember';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3864,6 +3874,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_milk_collection_status_summary',
                 'scenario' => 'MilkCollectionStatusDetail',
                 'title' => 'Milk Collection Status Detail',
+            ],
+            'EiplInstalledUsersDetails' => [
+                'param' => 'union_code,state_code,region_code,area_code,user_login_type',
+                'sp_name' => 'mis_eipl_installed_users_details',
+                'scenario' => 'EiplInstalledUsersDetails',
+                'title' => 'Eipl Installed Users Details',
+            ],
+            'SapDataExportFeedSaleMember' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_sap_data_export_feed_sale_member',
+                'scenario' => 'SapDataExportFeedSaleMember',
+                'title' => 'SAP Data Export Feed Sale Member',
             ],
         ];
         return $label[$l];
