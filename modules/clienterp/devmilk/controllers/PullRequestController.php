@@ -6,7 +6,7 @@ use Yii;
 
 class PullRequestController extends PullMasterController {
 
-    public function actionMemberCollection() {
+    public function actionBmcCollection() {
         $request = Yii::$app->request->getRawBody();
         if (!empty($request) && !empty($request['bmc_code']) && !empty($request['date']) && !empty(!empty($request['shift']))) {
             try {
