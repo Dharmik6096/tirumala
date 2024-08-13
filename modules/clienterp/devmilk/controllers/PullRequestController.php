@@ -14,7 +14,8 @@ class PullRequestController extends PullMasterController {
                 $sp_param[] = $request['bmc_code'];
                 $sp_param[] = $request['date'];
                 $sp_param[] = $request['shift'];
-                $sp_name = 'clienterp_devmilk_pull_member_collection';
+                $sp_name = 'clienterp_devmilk_pull_bmc_collection';
+         
                 $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
                 $this->response->setData($response, FALSE);
             } catch (\Throwable $ex) {
