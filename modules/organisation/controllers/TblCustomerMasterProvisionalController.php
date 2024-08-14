@@ -228,12 +228,24 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 $model_save[] = $historyModel;
                 $customerModel->status = $status;
                 $customerModel->remarks = $model->remarks;
+
+                $customerCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($customerModel->union_code, 'customer_creation_pending_for_sap_approval', 'PORTAL');
+                $customerModel->customer_status = 0; // Approved
+                if (strtolower($status) == 'approve' && $customerCreationPendingForSapApproval != '1') {
+                    $customerModel->customer_status = 1; // Created
+                }
+
                 $model_save[] = $customerModel;
                 $all_doc = [];
                 $customerdoc = [];
-
-                if ($status == 'Approve') {
-                    $this->createCustomer($customerModel, $model_save, $all_doc, $customerdoc, $message);
+                if ($customerModel->validate()) {
+                    if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
+                        $this->createCustomer($customerModel, $model_save, $all_doc, $customerdoc, $message);
+                    }
+                } else {
+                    foreach ($customerModel->getErrors() as $errorkey => $value) {
+                        $message = $value;
+                    }
                 }
                 if (!empty($message)) {
                     foreach ($message as $msg) {
@@ -246,6 +258,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
 
                     if ($transaction == 'customRedirect') {
 
+                        // if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
                         if ($status == 'Approve') {
                             $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                             $customerDir = $baseDir . 'customer';

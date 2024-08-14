@@ -138,7 +138,7 @@ class TblMemberProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks'], 'safe'],
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
                 [['is_download', 'is_contact_verified', 'is_verify', 'is_email_verify'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
@@ -319,6 +319,9 @@ class TblMemberProvisional extends ChildModel {
             'is_operator_aggre' => Yii::t('app', 'Operator Is Agree That All The Information Is Verified And Correct.'),
             'dcs_ref_code' => Yii::t('app', 'Society Ref Code'),
             'payment_type' => Yii::t('app', 'Mode Of Payment'),
+            'route_code' => Yii::t('app', 'Route'),
+            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'), 
+            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
         ];
     }
 

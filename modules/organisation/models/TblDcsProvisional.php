@@ -182,7 +182,7 @@ class TblDcsProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['milk_type', 'milk_type_auto', 'auto_member_create', 'detail_code', 'is_default'], 'safe'],
+                [['milk_type', 'milk_type_auto', 'auto_member_create', 'detail_code', 'is_default', 'latitude', 'longitude', 'dcs_status', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
                 [['status', 'dcs_code', 'milk_type_code', 'allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'mapped_village_no', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status', 'rate_flag', 'is_name_request', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'dpu_type', 'member_rate_code', 'is_live', 'is_single_farmer', 'default_milk_type', 'credit_sale_allow', 'auto_code', 'mfile_digit', 'is_chiller', 'antibiotic_check', 'is_security_cheque', 'originating_type', 'effective_date', 'registration_date', 'valid_from', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'DPUVersionNo', 'morning_kms', 'evening_kms', 'cheque_amount', 'address', 'dcs_name', 'gender_code'], 'safe'],
                 [['bank_account_no', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'upi_no', 'ccenter_code', 'center_code', 'vendor_code', 'sap_center_code', 'rate_chart_code', 'resp_status', 'resp_desc', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'dob', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['contact_person', 'dcs_short_name', 'beneficiary_name', 'punch_line', 'department', 'firstname', 'lastname', 'surname', 'password', 'gender', 'account_type', 'cheque_number', 'dcs_code_ex', 'route_code', 'old_route_code', 'cutoff', 'lower_milk_type', 'cutoff_val', 'destination_code', 'branch_code', 'email', 'pincode', 'village_code', 'mcc_plant_code', 'plant_code', 'old_mcc_plant_code', 'registration_code', 'service_tax', 'tin_no', 'gst_no', 'fssi'], 'safe'],
@@ -204,12 +204,12 @@ class TblDcsProvisional extends ChildModel {
                 },
                 'whenClient' => "function (attribute, value) { return !$('#tbldcsprovisional-milk_type_auto').is(':checked') }", 'except' => ['uploadDoc', 'approveDcs']
             ],
-                [['vendor'], 'required', 'except' => ['uploadDoc', 'approveDcs']],
+                [['vendor'], 'required', 'except' => ['uploadDoc', 'approveDcs', 'createDcs', 'updateDcs']],
                 [['vendor'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
                 }, 'except' => ['updateDcs', 'uploadDoc']],
                 [['dpu_type'], function ($attribute, $params) {
-                    if (empty($this->getErrors())) {
+                    if (empty($this->getErrors()) && !empty($this->dpu_type) && !empty($this->vendor)) {
                         Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type');
                     }
                 }, 'except' => ['uploadDoc', 'approveDcs']],
@@ -258,7 +258,9 @@ class TblDcsProvisional extends ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate');
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
                 [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow', 'is_chiller'], 'boolean'],
-                [['dpu_type', 'is_dispatch_mandate'], 'required', 'on' => ['createDcs', 'updateDcs', 'customImportUpdate', 'routeMapping']],
+                [['is_dispatch_mandate'], 'required', 'on' => ['createDcs', 'updateDcs', 'customImportUpdate', 'routeMapping']],
+                [['dpu_type'], 'required', 'on' => ['customImportUpdate', 'routeMapping']],
+                [['plant_code', 'mcc_plant_code'], 'required', 'on' => ['createDcs', 'updateDcs']],
                 [['dcs_type_code'], 'required', 'on' => ['createDcs', 'updateDcs']],
                 [['x_col1'], 'default', 'value' => '1#1'],
                 [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
@@ -334,11 +336,11 @@ class TblDcsProvisional extends ChildModel {
             'dcs_type_code' => Yii::t('app', 'Dcs Type Code'),
             'district_code' => Yii::t('app', 'District Code'),
             'hamlet_code' => Yii::t('app', 'Hamlet Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
+            'route_code' => Yii::t('app', 'Route'),
             'state_code' => Yii::t('app', 'State Code'),
             'sub_district_code' => Yii::t('app', 'Sub District Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'village_code' => Yii::t('app', 'Village Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'village_code' => Yii::t('app', 'Village'),
             'block_code' => Yii::t('app', 'Block Code'),
             'local_name' => Yii::t('app', 'Local Name'),
             'local_address' => Yii::t('app', 'Local Address'),
@@ -355,9 +357,9 @@ class TblDcsProvisional extends ChildModel {
             'is_registered' => Yii::t('app', 'Is Registered'),
             'valid_from' => Yii::t('app', 'Valid From'),
             'data_post_status' => Yii::t('app', 'Data Post Status'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'plant_code' => Yii::t('app', 'Plant'),
             'DPUVersionNo' => Yii::t('app', 'Dpu Version No'),
             'rate_flag' => Yii::t('app', 'Rate Flag'),
             'bank_name' => Yii::t('app', 'Bank Name'),
@@ -427,6 +429,8 @@ class TblDcsProvisional extends ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'status' => Yii::t('app', 'Provisional Status'),
+            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'), 
+            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
         ];
     }
 
