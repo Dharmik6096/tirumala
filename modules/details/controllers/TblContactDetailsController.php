@@ -271,4 +271,16 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         return Json::encode($data);
     }
 
+    public function actionContactDetails(){
+        $response = [];
+        $module_code = Yii::$app->request->post()['module_code'];
+        $module_name = Yii::$app->request->post()['module_name'];
+        $contactDetail = TblContactDetails::find()->where(['module_code' => $module_code, 'module_name' => $module_name, 'is_default' => 1, 'is_active' => 1])->one();
+        if (!empty($contactDetail)) {
+            $response['status'] = 'success';
+            $response['data'] = $contactDetail;
+        }
+        return Json::encode($response);
+    }
+
 }
