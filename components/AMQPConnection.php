@@ -56,5 +56,3 @@ class AMQPConnection extends Component {
     }
 
 }
-
-?> 
