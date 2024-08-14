@@ -41,6 +41,12 @@ $form = ActiveForm::begin([
         <div class="col-sm-4 DCS">
             <?= Yii::$app->dropdown->all_routes($model, $form, 'tblcustomermasterprovisional-plant_code,tblcustomermasterprovisional-mcc_plant_code,tblcustomermasterprovisional-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
         </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'supervisor_employee_id')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'supervisor_employee_name')->textInput() ?>
+        </div>
         <div class="col-sm-4 ">
             <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
         </div>
@@ -74,6 +80,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', $model->getAttributeLabel('gender')); ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
@@ -265,6 +274,32 @@ $form = ActiveForm::begin([
                                     //alert('Your data has not been submitted..Please try again');
                                 }
             });
+    });
+    $('#tblcustomermasterprovisional-route_code').on('change', function(e) {
+        var module_code = $(this).val();
+        var module_name = 'routeMapping';
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/details/tbl-contact-details/contact-details']) . "',
+            data: 'module_code='+module_code+'&module_name='+module_name,
+            success: function(response) {
+                var obj1 = $.parseJSON(response);
+                var data = obj1.data;
+                if(data){
+                    $('#tblcustomermasterprovisional-supervisor_employee_id').val(data.employee_code);
+                    $('#tblcustomermasterprovisional-supervisor_employee_name').val(data.firstname);
+                    if(data.employee_code != '' && data.employee_code != null){
+                        $('.field-tblcustomermasterprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                    }
+                    if(data.firstname != '' && data.firstname != null){
+                        $('.field-tblcustomermasterprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                    }
+                }                               
+            },
+            error:function(data){
+                //alert('Your data has not been submitted..Please try again');
+            }
+        });
     });
 ";
     $this->registerJs($script, View::POS_END, 'provisional_customer_master_create');
