@@ -27,6 +27,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use PHPExcel;
 use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\collection\models\TblIotTemperatureSearch;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -1395,6 +1396,16 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             return $this->renderAjax('_real_time_collection_details', ['mcc_weight_data' => $mcc_weight_data, 'mcc_quality_data' => $mcc_quality_data]);
         }
         return $this->render('real_time_collection');
+    }
+
+    public function actionIotTemperature() {
+        $searchModel = new TblIotTemperatureSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('iot_temperature_index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

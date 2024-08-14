@@ -7,10 +7,6 @@ use yii\web\View;
 
 $milkType = new TblAnimalType();
 $milk_type = $milkType->getAnimalMilkTypeArray();
-//$fat = Yii::$app->general->dropdownRange('TblMilkCollection', 'fat', 3);
-//$snf = Yii::$app->general->dropdownRange('TblMilkCollection', 'snf', 3);
-//$qty = Yii::$app->general->dropdownRange('TblMilkCollection', 'qty', 100);
-//$amount = Yii::$app->general->dropdownRange('TblMilkCollection', 'amount', 1000);
 $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 $client_code = \Yii::$app->session->get('eiplCode');
 ?>
@@ -73,17 +69,10 @@ $attribute = [
             return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
         },],
     ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
-    // ['attribute' => 'fat', 'filter' => Html::activeDropDownList($searchModel, 'fat', $fat,['class'=>'form-control','prompt'=>'Select FAT'])],
-    // ['attribute' => 'snf', 'filter' => Html::activeDropDownList($searchModel, 'snf', $snf,['class'=>'form-control','prompt'=>'Select SNF'])],
-    //['attribute' => 'qty', 'value' => 'qty', 'filter' => Html::activeDropDownList($searchModel, 'qty', $qty,['class'=>'form-control','prompt'=>'Select Qty'])],
     ['attribute' => 'rtpl', 'filter' => true],
     ['attribute' => 'scheme_rate', 'filter' => false, 'visible' => false],
     ['attribute' => 'actual_rate', 'filter' => false, 'visible' => false],
     ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
-    //['attribute' => 'amount', 'filter' => Html::activeDropDownList($searchModel, 'amount', $amount,['class'=>'form-control','prompt'=>'Select Amount'])],
-//    ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection', 'value' => function($model) {
-//            return date('d-m-Y', strtotime($model->date_time_of_collection));
-//        }, 'filter' => true],
     ['attribute' => 'mobile_no', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'mobile_no');
         }, 'filter' => false, 'visible' => false, 'visible' => false],
@@ -93,11 +82,7 @@ $attribute = [
     ['attribute' => 'incentive', 'filter' => true, 'visible' => false],
     ['attribute' => 'deduction', 'filter' => true, 'visible' => false],
     ['attribute' => 'total_amount', 'filter' => true, 'visible' => false],
-//    ['attribute' => 'converted_qty_mode'],
-//    ['attribute' => 'milk_analyser_type_code', 'filter' => true],
-//    ['attribute' => 'ws_code', 'filter' => true],
     ['attribute' => 'type_of_data_receive', 'visible' => false],
-//    ['attribute' => 'originating_org_type'],
     ['attribute' => 'originating_org_type', 'filter' => FALSE,
         'value' => function ($model) {
             return Yii::$app->general->getStaticDropdownVal('originating_type_flag', $model, 'originating_type');
@@ -128,10 +113,6 @@ $attribute = [
     ['attribute' => 'antibiotic', 'filter' => FALSE],
 ];
 
-
-
-
-
 $grid_option = [
     'id' => 'milk-collection-list',
     'attributes' => $attribute,
@@ -142,14 +123,4 @@ $grid_option = [
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-?>
-<?php
-
-$script = "
-$(document).ready(function(){
-        setInterval(() => {
-            $.pjax.reload({container: '#milk-collection-list'});
-        },30000);
-});";
-$this->registerJs($script, View::POS_END, 'milk-collection-list');
 ?>
