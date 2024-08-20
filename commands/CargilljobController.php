@@ -24,8 +24,9 @@ class CargilljobController extends \yii\console\Controller {
                 $output = \Yii::$app->general->getSpData('sp_approved_milk_vehicle_entries', []);
                 if(!empty($output)){
                     $this->ids = array_column($output,'VINV..Invoice_Number');
-                    $updateData = ['status' => 1];
-                    // $this->model->updateStatus($updateData, $this->ids);
+                    $date = date('Y-m-d H:i:s');
+                    $updateData = ['status' => 1, 'updated_at' => $date, 'pick_datetime' => $date, 'cron_pick_datetime' => $date];
+                    $this->model->updateStatus($updateData, $this->ids);
                     foreach($output as $milkVehical){
                         $httpCode = '';
                         $header = '';
@@ -64,24 +65,28 @@ class CargilljobController extends \yii\console\Controller {
                         //     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                         // }  // Skip SSL Verification
                         // $response = curl_exec($ch);
-                        // if ($response === false) {
-                        //     $updateData = ['status' => 3];
-                        //     // echo 'cURL Error: ' . curl_error($ch);
-                        // } else {
-                        //     $updateData = ['status' => 2];
-                        //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                        //     // echo 'HTTP Response Code: ' . $httpCode;
-                        // }
+                        $responseTimestamp = date('Y-m-d H:i:s');
+                        if ($response === false) {
+                            $updateData = ['status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => $response];
+                            // echo 'cURL Error: ' . curl_error($ch);
+                        } else {
+                            $updateData = ['status' => 2, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Milk reciept send successfully'];
+                            // $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                            // echo 'HTTP Response Code: ' . $httpCode;
+                        }
                         // curl_close($ch);
 
-
-                        // $this->model->updateStatus($updateData, $this->ids);
-                        $responseTimestamp = date('Y-m-d H:i:s');
+                        $this->model->updateStatus($updateData, $this->ids);
                         $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $data, $httpCode, $header);
                     }
                 }
             } catch (\Throwable $ex) {
-                $this->model->updateStatus($updateData, $this->ids);
+                if(!empty($this->ids)){
+                    $msg = substr($ex->getMessage(), 0, 254);
+                    $date = date('Y-m-d H:i:s');
+                    $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => $msg];
+                    $this->model->updateStatus($updateData, $this->ids);
+                }
                 var_dump($ex->getMessage());
             }
         }
