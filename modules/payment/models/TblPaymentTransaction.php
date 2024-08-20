@@ -188,10 +188,7 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                         ->innerJoin('tbl_payment_transaction_approval as pap', 'pap.payment_transaction_approval_code = pt.payment_transaction_approval_code and lower(approval_status)=\'approve\'')
                         ->innerJoin('tbl_bmc as bmc', 'bmc.bmc_code = pap.bmc_code')
                         ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
-                        // ->innerJoin('tbl_debit_bank_detail AS dbd', 'dbd.union_bank_payment_code = pt.union_bank_payment_code AND dbd.module_code = bmc.mcc_plant_code AND dbd.module_name = \'mcc\'')
-                        ->innerJoin('tbl_debit_bank_detail AS dbd', 'dbd.module_code = bmc.mcc_plant_code AND dbd.module_name = \'mcc\'')
-                        ->innerJoin('tbl_debit_bank_detail AS dbde', 'dbde.union_bank_payment_code = pt.union_bank_payment_code')
-
+                        ->innerJoin('tbl_debit_bank_detail AS dbd', 'dbd.union_bank_payment_code = pt.union_bank_payment_code AND dbd.module_code = bmc.mcc_plant_code AND dbd.module_name = \'mcc\'')
                         ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
                         ->innerJoin('tbl_banks as b', 'b.bank_code = pt.bank_code')
                         ->where([
