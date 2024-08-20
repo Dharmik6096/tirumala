@@ -113,6 +113,7 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
 
     public function setApprovalData($union_code, $process, $processCode, &$modelSave, &$approval_stages, $create_level = FALSE) {
         $approval_stages = $this->approvalStages($union_code, $process);
+        $processCode = (string)$processCode;
         $existDataApproval = TblProcessApproval::find()->where(['process_code' => $processCode, 'process_name' => $process])->count();
         if ($existDataApproval == 0 || $create_level) {
             $i = 1;
