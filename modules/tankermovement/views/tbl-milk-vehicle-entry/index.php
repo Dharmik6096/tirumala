@@ -7,6 +7,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Receipt'));
 $this->params['menu'][] = Yii::$app->controls->add('Milk Receipt');
 $this->params['menu'][] = GhostHtml::a('<i class="fa fa-pencil-alt"></i>' . Yii::t('app', 'Edit Trip Detail'), ['/tankermovement/tbl-milk-vehicle-entry/edit-trip-detail'], ['class' => 'btn btn-danger btn-block']);
 $this->params['menu'][] = Yii::$app->controls->import('milk-receipt-trip-update', $this, 'Update Trip Code');
+$this->params['menu'][] = Yii::$app->controls->add('Bulk Milk Receipt Approval', 'bulk-approval');
 ?>
 <div class="tbl-vehicle-trip-index">
     <div class="panel panel-default panel-grid panel-main">

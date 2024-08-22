@@ -200,5 +200,23 @@ class TblProcessApproval extends \app\models\ChildModel {
     public function getCustomerProvisional() {
         return $this->hasOne(TblCustomerMasterProvisional::className(), ['customer_provisional_code' => 'process_code']);
     }
+    
+    public function RejectList($model, &$model_save, &$status, $autoCode) {
+        $all_level = TblProcessApproval::find()->where(['process_code' => $model->process_code, 'process_name' => $model->process_name])->all();
+        foreach ($all_level as $level) {
+            if ($model->process_approval_code != $level->process_approval_code) {
+                $approvalHistoryModel = new TblProcessApprovalHistory();
+                Yii::$app->operation->history($level, $approvalHistoryModel, UPDATE);
+                $model_save[] = $approvalHistoryModel;
+            }
+            $level->process_code = $autoCode;
+            $level->status_date = date('Y-m-d H:i:s');
+            $level->status_by = \Yii::$app->user->identity->user_code;
+            $level->status = ($level->status == 0) ? $model->status : $level->status;
+            $level->remarks = $model->remarks;
+            $model_save[] = $level;
+        }
+        $status = 'Reject';
+    }
 
 }
