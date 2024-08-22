@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\tankermovement\models\TblMilkVehicleEntry;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * TblMilkVehicleEntrySearch represents the model behind the search form about `app\modules\tankermovement\models\TblMilkVehicleEntry`.
@@ -19,7 +20,7 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code', 'f_plant_code'], 'safe'],
+                [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code', 'f_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks'], 'safe'],
                 [['gross_weight', 'tare_weight'], 'number'],
                 [['originating_type'], 'integer'],
                 [['from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'changeTrip'],
@@ -41,7 +42,7 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params, $pending_approval = false) {
         $query = TblMilkVehicleEntry::find();
 
         // add conditions that should always apply here
@@ -60,16 +61,13 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'bmcCode']);
         // grid filtering conditions
 
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_milk_vehicle_entry', 'tbl_milk_vehicle_entry', 'tbl_milk_vehicle_entry');
-
-        $query->andFilterWhere([
-            'receipt_at' => $this->receipt_at,
-        ]);
-        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
-        $query->andFilterWhere(['or', ['like', 'tbl_dcs.ref_code', $this->ref_code], ['like', 'tbl_customer_master.ref_code', $this->ref_code]]);
-        if (!empty($this->from_date)) {
-            $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['>=', 'CAST(vehicle_entry_date as date)', $from_date]);
+        if ($pending_approval) {
+            $approval = new TblProcessApproval();
+            $subQuery = $approval->getApproveLavel('tbl_milk_vehicle_entry');
+            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_milk_vehicle_entry.milk_vehicle_entry_code) = convert(varchar(max),ap.process_code)');
+            $query->addSelect(['tbl_milk_vehicle_entry.*', 'ap.process_approval_code as process_approval_code']);
+            $this->approval_status = ['Pending', 'Inprogress'];
+            $query->where(['tbl_milk_vehicle_entry.approval_status' => $this->approval_status]);
         }
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
