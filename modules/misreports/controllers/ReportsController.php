@@ -1830,6 +1830,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'SapDataExportFeedSaleMember';
         return $this->actionIndex();
     }
+    
+    public function actionPaymentCycleApplicabilityStatus() {
+        $this->report = 'PaymentCycleApplicabilityStatus';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3890,6 +3895,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_sap_data_export_feed_sale_member',
                 'scenario' => 'SapDataExportFeedSaleMember',
                 'title' => 'SAP Data Export Feed Sale Member',
+            ],
+            'PaymentCycleApplicabilityStatus' => [
+                'param' => 'union_code,plant_code,mcc_code,customer_type,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_payment_cycle_applicability',
+                'scenario' => 'PaymentCycleApplicabilityStatus',
+                'title' => 'Payment Cycle Applicabilit Status',
             ],
         ];
         return $label[$l];
