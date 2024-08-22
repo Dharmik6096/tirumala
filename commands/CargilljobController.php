@@ -3,7 +3,7 @@ namespace app\commands;
 
 use app\components\WebApi;
 use app\modules\clienterp\components\EiplResponse;
-use app\modules\tankermovement\models\TblMilkVehicleEntry;
+use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
 use Yii;
 
 class CargilljobController extends \yii\console\Controller {
@@ -12,11 +12,12 @@ class CargilljobController extends \yii\console\Controller {
     public $url = '';
     public $base_url = '';
     public $end_point = '';
+    public $challan_no = '';
     public function actionMilkReceiptSend(){
         $this->url = \Yii::$app->params['clienterp_authentication']['cargill']['jde_milk_receipt_url'];
         $this->base_url = \Yii::$app->params['clienterp_authentication']['cargill']['jde_base_url'];
         $this->end_point = str_replace($this->base_url, '', $this->url);
-        $this->model = new TblMilkVehicleEntry();
+        $this->model = new TblMilkVehicleEntryTransaction();
         $i = 0;
         while ($i < 1) {
             sleep(2);
@@ -24,15 +25,17 @@ class CargilljobController extends \yii\console\Controller {
                 $output = \Yii::$app->general->getSpData('sp_approved_milk_vehicle_entries', []);
                 if(!empty($output)){
                     $this->ids = array_column($output,'VINV..Invoice_Number');
+                    $this->challan_no = array_column($output,'challan_no');
                     $date = date('Y-m-d H:i:s');
                     $updateData = ['status' => 1, 'updated_at' => $date, 'pick_datetime' => $date, 'cron_pick_datetime' => $date];
-                    $this->model->updateStatus($updateData, $this->ids);
+                    $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
                     foreach($output as $milkVehical){
                         $httpCode = '';
                         $header = '';
                         $this->ids = $milkVehical['VINV..Invoice_Number'];
+                        $this->challan_no = $milkVehical['challan_no'];
                         $body = $milkVehical;
-                        unset($body['union_code'], $body['plant_code'], $body['mcc_plant_code'], $body['bmc_code']);
+                        unset($body['union_code'], $body['plant_code'], $body['mcc_plant_code'], $body['bmc_code'], $body['challan_no'], $body['milk_vehicle_entry_code']);
                         $body['GridIn_1_3'] = json_decode($body['GridIn_1_3']);
                         $requestTimestamp = date('Y-m-d H:i:s');
                         $api = new WebApi();
@@ -76,7 +79,7 @@ class CargilljobController extends \yii\console\Controller {
                         }
                         // curl_close($ch);
 
-                        $this->model->updateStatus($updateData, $this->ids);
+                        $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
                         $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $data, $httpCode, $header);
                     }
                 }
@@ -85,7 +88,7 @@ class CargilljobController extends \yii\console\Controller {
                     $msg = substr($ex->getMessage(), 0, 254);
                     $date = date('Y-m-d H:i:s');
                     $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => $msg];
-                    $this->model->updateStatus($updateData, $this->ids);
+                    $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
                 }
                 var_dump($ex->getMessage());
             }

@@ -320,8 +320,4 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         }
         return TRUE;
     }
-    
-    public function updateStatus($updateData, $ids) {
-        return $this->updateAll($updateData, ['milk_vehicle_entry_code' => $ids]);
-    }
 }
