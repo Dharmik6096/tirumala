@@ -32,7 +32,7 @@ class CargilljobController extends \yii\console\Controller {
                         $header = '';
                         $this->ids = $milkVehical['VINV..Invoice_Number'];
                         $body = $milkVehical;
-                        unset($body['union_code'], $body['plant_code'], $body['mcc_plant_code'], $body['bmc_code']);
+                        unset($body['union_code'], $body['plant_code'], $body['mcc_plant_code'], $body['bmc_code'], $body['challan_no'], $body['milk_vehicle_entry_code']);
                         $body['GridIn_1_3'] = json_decode($body['GridIn_1_3']);
                         $requestTimestamp = date('Y-m-d H:i:s');
                         $api = new WebApi();

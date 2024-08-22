@@ -13,6 +13,7 @@ class PushRequestController extends PushMasterController {
     public function actionInventoryPlantDispatch() {
         $request = Yii::$app->request->getRawBody();
         $requestTimestamp = date('Y-m-d H:i:s');
+        $plant_data = [];
         try {
             $errors = [];
             $save_model = [];
@@ -35,7 +36,7 @@ class PushRequestController extends PushMasterController {
             }
             if ($plantdisModel->validate()) {
                 $plant_data = $plantdisModel->plantCode;
-                if (!empty($plant_data) && $plant_data->ref_code == $request['plant_code']) {
+                if (!empty($plant_data) && $plant_data->sap_vendor_code == $request['plant_code']) {
                     $plantdisModel->originating_org_code = $plantdisModel->union_code;
                     $plantdisModel->created_by = 'api';
                     $save_model[] = $plantdisModel;
@@ -92,12 +93,12 @@ class PushRequestController extends PushMasterController {
             $this->response->setMessage(['Error While Process Request.']);
         }
         $responseTimestamp = date('Y-m-d H:i:s');
-        $this->setLogData($request, $this->response, $requestTimestamp, $responseTimestamp);
+        $this->setLogData($request, $this->response, $requestTimestamp, $responseTimestamp, $plant_data);
         return $this->response;
     }
     
-    public function setLogData($request, $response, $requestTimestamp, $responseTimestamp) {
-        $plantDetail = !empty($request['plant_code']) ? TblPlant::find()->where(['or',['plant_code' => $request['plant_code']], ['ref_code' => $request['plant_code']]])->one() : [];
+    public function setLogData($request, $response, $requestTimestamp, $responseTimestamp, $plantDetail) {
+        // $plantDetail = !empty($request['plant_code']) ? TblPlant::find()->where(['or',['plant_code' => $request['plant_code']], ['ref_code' => $request['plant_code']], ['sap_vendor_code' => $request['plant_code']]])->one() : [];
         $statusCode = $response->getStatusCode();
         $logData = [
             'union_code' => !empty($plantDetail['union_code']) ? $plantDetail['union_code'] : '',
