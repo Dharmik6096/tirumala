@@ -125,7 +125,7 @@ class DefaultController extends \app\controllers\ChildController {
                 ]);
             }
         } else {
-            if ($this->RegisterReportRequest('dynamic', $this->data, $controls)) {
+            if ($this->RegisterReportRequest('mis', $this->data, $controls)) {
                 $this->output = 'Your Request has been submitted for Report Data.<br/>You can download the file from My Report Request screen after some time.';
             } else {
                 $this->output = 'Error While Request Submit.';
