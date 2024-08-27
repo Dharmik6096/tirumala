@@ -64,6 +64,7 @@ class TblMilkVehicleEntryTransactionHistory extends \yii\db\ActiveRecord
             [['vehicle_entry_chamber_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'integer'],
+            [['status','cron_pick_datetime','pick_datetime','response_datetime','response_msg'], 'safe'],
         ];
     }
 

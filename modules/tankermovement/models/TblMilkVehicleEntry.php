@@ -61,7 +61,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['union_code', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code'], 'required', 'except' => ['androidsync', 'importCsv']], [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'process_approval_code', 'remarks', 'status', 'cron_pick_datetime','pick_datetime','response_datetime','response_msg'], 'safe'],
+                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'process_approval_code', 'remarks'], 'safe'],
                 [['gross_weight', 'tare_weight'], 'number'],
                 [['originating_type'], 'integer'],
                 [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
@@ -86,7 +86,6 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
                 [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true],
-                [['status'], 'default', 'value' => 0],
         ];
     }
 
