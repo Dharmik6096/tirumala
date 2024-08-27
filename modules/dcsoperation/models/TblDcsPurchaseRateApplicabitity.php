@@ -416,8 +416,8 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
     public function getDcsPurchaseRateData($data) {
         return $this->find()
                         ->select(['dprb.rate_type as rate_app_code'])
-                        ->joinWith(['purchaseRateCode'])
-                        ->join('LEFT JOIN', 'tbl_dcs_purchase_rate_based dprb', 'dprb.purchase_rate_code = tbl_dcs_purchase_rate_applicability.purchase_rate_code AND dprb.milk_type_code =' . $data['milk_type'] . ' AND dprb.milk_quality_type_code =' . $data['milk_quality_type'])
+                        ->join('INNER JOIN', 'tbl_dcs_purchase_rate_based dprb', 'dprb.purchase_rate_code = tbl_dcs_purchase_rate_applicability.purchase_rate_code AND dprb.milk_type_code =' . $data['milk_type'] . ' AND dprb.milk_quality_type_code =' . $data['milk_quality_type'])
+                        ->where(['dprb.purchase_rate_code' => $this->purchase_rate_code])
                         ->one();
     }
 

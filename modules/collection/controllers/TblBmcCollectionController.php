@@ -307,47 +307,49 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 
         if (!empty($model_data)) {
             if ($model_data->rate_gen_method_code == '4') {
+                $model->purchase_rate_code = $model_data->purchase_rate_code;
                 $purchase_rate_data = $model->getDcsPurchaseRateData($data);
-                $model_data->rate_app_code = $purchase_rate_data->rate_app_code;
-                $purchase_model = new TblDcsPurchaseRateBased();
-                $purchase_model->rate_type = $model_data->rate_app_code;
-                $rate_type = !empty($purchase_model->rateTypeCode) ? $purchase_model->rateTypeCode->rate_type : '';
-                $purchase_data = $purchase_model->getDcsPurchaseRateData($model_data, $rate_type);
-                $kgfatRate = '';
-                $kgsnfRate = '';
-                $kgclrRate = '';
-                $kgtsRate = '';
-                $qty = $data['qty'];
-                $fat = $data['fat'];
-                $snf = $data['snf'];
-                $clr = $data['clr'];
-                $formula = '';
-                foreach ($purchase_data as $value) {
-                    if ($value['param'] == 'FAT') {
-                        $kgfatRate = $value['kg_rate'];
-                    } else if ($value['param'] == 'SNF') {
-                        $kgsnfRate = $value['kg_rate'];
-                    } else if ($value['param'] == 'CLR') {
-                        $kgclrRate = $value['kg_rate'];
-                    } else if ($value['param'] == 'TS') {
-                        $kgtsRate = $value['kg_rate'];
+                if (!empty($purchase_rate_data)) {
+                    $purchase_model = new TblDcsPurchaseRateBased();
+                    $purchase_model->rate_type = $purchase_rate_data->rate_app_code;
+                    $rate_type = !empty($purchase_model->rateTypeCode) ? $purchase_model->rateTypeCode->rate_type : '';
+                    $purchase_data = $purchase_model->getDcsPurchaseRateData($model_data, $rate_type);
+                    $kgfatRate = '';
+                    $kgsnfRate = '';
+                    $kgclrRate = '';
+                    $kgtsRate = '';
+                    $qty = $data['qty'];
+                    $fat = $data['fat'];
+                    $snf = $data['snf'];
+                    $clr = $data['clr'];
+                    $formula = '';
+                    foreach ($purchase_data as $value) {
+                        if ($value['param'] == 'FAT') {
+                            $kgfatRate = $value['kg_rate'];
+                        } else if ($value['param'] == 'SNF') {
+                            $kgsnfRate = $value['kg_rate'];
+                        } else if ($value['param'] == 'CLR') {
+                            $kgclrRate = $value['kg_rate'];
+                        } else if ($value['param'] == 'TS') {
+                            $kgtsRate = $value['kg_rate'];
+                        }
+                        $formula = $value['formula'];
                     }
-                    $formula = $value['formula'];
-                }
-                $formula = str_replace('kgFATRate', $kgfatRate, $formula);
-                $formula = str_replace('kgSNFRate', $kgsnfRate, $formula);
-                $formula = str_replace('kgCLRRate', $kgclrRate, $formula);
-                $formula = str_replace('kgTSRate', $kgtsRate, $formula);
-                $formula = str_replace('qty', $qty, $formula);
-                $formula = str_replace('fat', $fat, $formula);
-                $formula = str_replace('snf', $snf, $formula);
-                $formula = str_replace('clr', $clr, $formula);
-                $command = \Yii::$app->db->createCommand("SELECT $formula as rtpl");
-                $result = $command->queryAll();
-                if (!empty($result)) {
-                    $response['status'] = 'success';
-                    $rtpl_data['list'] = $result[0];
-                    $response['data'] = $rtpl_data;
+                    $formula = str_replace('kgFATRate', $kgfatRate, $formula);
+                    $formula = str_replace('kgSNFRate', $kgsnfRate, $formula);
+                    $formula = str_replace('kgCLRRate', $kgclrRate, $formula);
+                    $formula = str_replace('kgTSRate', $kgtsRate, $formula);
+                    $formula = str_replace('qty', $qty, $formula);
+                    $formula = str_replace('fat', $fat, $formula);
+                    $formula = str_replace('snf', $snf, $formula);
+                    $formula = str_replace('clr', $clr, $formula);
+                    $command = \Yii::$app->db->createCommand("SELECT $formula as rtpl");
+                    $result = $command->queryAll();
+                    if (!empty($result)) {
+                        $response['status'] = 'success';
+                        $rtpl_data['list'] = $result[0];
+                        $response['data'] = $rtpl_data;
+                    }
                 }
             } else {
                 $detail_model = new TblDcsPurchaseRateDetails();
