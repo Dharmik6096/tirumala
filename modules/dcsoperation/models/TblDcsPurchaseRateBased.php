@@ -64,30 +64,30 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['deduction_type', 'fixed_point', 'kg_rate', 'ref_type', 'step', 'value'], 'default', 'value' => '0'],
-            [['quality_param_code', 'deduction_type', 'ref_type', 'kg_rate'], 'required', 'on' => 'manualForm'],
-            [['milk_type_code', 'end_range', 'start_range', 'rate_type', 'milk_quality_type_code'], 'required'],
-            [['formula_code', 'kg_rate'], 'required', 'except' => ['excel', 'formulaOnly']],
-            [['formula', 'kg_rate'], 'required', 'on' => ['formulaOnly']],
-            [['end_range', 'start_range'], 'number', 'min' => 0.1, 'max' => 99, 'numberPattern' => '/^\d+(.\d{1,1})?$/', 'message' => 'Range should single decimal number.'],
-            [['fixed_point'], 'number', 'numberPattern' => '/^\d+(.\d{1,1})?$/', 'message' => 'Fixed Point should single decimal number.'],
-            [['kg_rate'], 'number', 'min' => 1, 'except' => 'excel'],
-            [['end_range'], 'customValidate'],
-            [['rate_type'], 'RateTypeValidate'],
-            [['fixed_point', 'value', 'step'], 'required', 'when' => function($model) {
+                [['deduction_type', 'fixed_point', 'kg_rate', 'ref_type', 'step', 'value'], 'default', 'value' => '0'],
+                [['quality_param_code', 'deduction_type', 'ref_type', 'kg_rate'], 'required', 'on' => 'manualForm'],
+                [['milk_type_code', 'end_range', 'start_range', 'rate_type', 'milk_quality_type_code'], 'required'],
+                [['formula_code', 'kg_rate'], 'required', 'except' => ['excel', 'formulaOnly']],
+                [['formula', 'kg_rate'], 'required', 'on' => ['formulaOnly']],
+                [['end_range', 'start_range'], 'number', 'min' => 0.1, 'max' => 99, 'numberPattern' => '/^\d+(.\d{1,1})?$/', 'message' => 'Range should single decimal number.'],
+                [['fixed_point'], 'number', 'numberPattern' => '/^\d+(.\d{1,1})?$/', 'message' => 'Fixed Point should single decimal number.'],
+                [['kg_rate'], 'number', 'min' => 1, 'except' => 'excel'],
+                [['end_range'], 'customValidate'],
+                [['rate_type'], 'RateTypeValidate'],
+                [['fixed_point', 'value', 'step'], 'required', 'when' => function($model) {
                     return $model->ref_type == 1;
                 }, 'whenClient' => "function (attribute, value) {  if($('#tbldcspurchaseratebased-0-ref_type').val()==1){return true;} }", 'on' => 'manualForm'],
-            [['value'], 'required', 'when' => function($model) {
+                [['value'], 'required', 'when' => function($model) {
                     return $model->ref_type == 2;
                 }, 'whenClient' => "function (attribute, value) {  if($('#tbldcspurchaseratebased-0-ref_type').val()==2){return true;} }", 'on' => 'manualForm'],
-            [['ref_type'], 'RefTypeValidate', 'on' => 'manualForm'],
-            [['start_range', 'end_range'], 'rangeValidate', 'on' => 'manualForm'],
-            [['fixed_point'], 'fixedPointValidate', 'on' => 'manualForm'],
-            [['created_at', 'deleted_at', 'step', 'updated_at', 'kg_rate', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type', 'purchase_rate_code', 'rate_class'], 'safe'],
-            [['end_range', 'fixed_point', 'value', 'start_range'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"')],
-            [['quality_param_code', 'milk_quality_type_code', 'milk_type_code'], 'integer'],
-            [['deduction_type', 'ref_type'], 'string', 'max' => 50],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['ref_type'], 'RefTypeValidate', 'on' => 'manualForm'],
+                [['start_range', 'end_range'], 'rangeValidate', 'on' => 'manualForm'],
+                [['fixed_point'], 'fixedPointValidate', 'on' => 'manualForm'],
+                [['created_at', 'deleted_at', 'step', 'updated_at', 'kg_rate', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type', 'purchase_rate_code', 'rate_class'], 'safe'],
+                [['end_range', 'fixed_point', 'value', 'start_range'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"')],
+                [['quality_param_code', 'milk_quality_type_code', 'milk_type_code'], 'integer'],
+                [['deduction_type', 'ref_type'], 'string', 'max' => 50],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
                 //  [['purchase_rate_code'], 'string', 'max' => 255],
 //            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
 //            [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityGrade::className(), 'targetAttribute' => ['milk_quality_type_code' => 'grade_code']],
@@ -433,6 +433,17 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
             return $quality_param[$diff];
         }
         return false;
+    }
+
+    public function getRateTypeCode() {
+        return $this->hasOne(TblRateType::className(), ['code' => 'rate_type']);
+    }
+
+    public function getDcsPurchaseRateData($data, $rate_type) {
+        return $this->find()
+                        ->select(['tbl_dcs_purchase_rate_based.*', 'tbl_quality_param.param'])
+                        ->join('inner join', 'tbl_quality_param', 'tbl_quality_param.id=tbl_dcs_purchase_rate_based.quality_param_code')
+                        ->where(['tbl_dcs_purchase_rate_based.purchase_rate_code' => $data['purchase_rate_code']])->asArray()->all();
     }
 
 }
