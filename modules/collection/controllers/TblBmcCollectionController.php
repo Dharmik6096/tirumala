@@ -314,10 +314,10 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $purchase_model->rate_type = $purchase_rate_data->rate_app_code;
                     $rate_type = !empty($purchase_model->rateTypeCode) ? $purchase_model->rateTypeCode->rate_type : '';
                     $purchase_data = $purchase_model->getDcsPurchaseRateData($model_data, $rate_type);
-                    $kgfatRate = '';
-                    $kgsnfRate = '';
-                    $kgclrRate = '';
-                    $kgtsRate = '';
+                    $kgfatRate = 0.00;
+                    $kgsnfRate = 0.00;
+                    $kgclrRate = 0.00;
+                    $kgtsRate = 0.00;
                     $qty = $data['qty'];
                     $fat = $data['fat'];
                     $snf = $data['snf'];
@@ -335,14 +335,14 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         }
                         $formula = $value['formula'];
                     }
-                    $formula = str_replace('kgFATRate', $kgfatRate, $formula);
-                    $formula = str_replace('kgSNFRate', $kgsnfRate, $formula);
-                    $formula = str_replace('kgCLRRate', $kgclrRate, $formula);
-                    $formula = str_replace('kgTSRate', $kgtsRate, $formula);
-                    $formula = str_replace('qty', $qty, $formula);
-                    $formula = str_replace('fat', $fat, $formula);
-                    $formula = str_replace('snf', $snf, $formula);
-                    $formula = str_replace('clr', $clr, $formula);
+                    $formula = str_replace('kgFATRate', number_format($kgfatRate, 2, '.', ''), $formula);
+                    $formula = str_replace('kgSNFRate', number_format($kgsnfRate, 2, '.', ''), $formula);
+                    $formula = str_replace('kgCLRRate', number_format($kgclrRate, 2, '.', ''), $formula);
+                    $formula = str_replace('kgTSRate', number_format($kgtsRate, 2, '.', ''), $formula);
+                    $formula = str_replace('qty', number_format($qty, 2, '.', ''), $formula);
+                    $formula = str_replace('fat', number_format($fat, 2, '.', ''), $formula);
+                    $formula = str_replace('snf', number_format($snf, 2, '.', ''), $formula);
+                    $formula = str_replace('clr', number_format($clr, 2, '.', ''), $formula);
                     $command = \Yii::$app->db->createCommand("SELECT $formula as rtpl");
                     $result = $command->queryAll();
                     if (!empty($result)) {
