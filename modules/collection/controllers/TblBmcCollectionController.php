@@ -346,6 +346,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $command = \Yii::$app->db->createCommand("SELECT $formula as rtpl");
                     $result = $command->queryAll();
                     if (!empty($result)) {
+                        $result[0]['rtpl'] = round(bcdiv($result[0]['rtpl'], $qty, 3), 2);
                         $response['status'] = 'success';
                         $rtpl_data['list'] = $result[0];
                         $response['data'] = $rtpl_data;
