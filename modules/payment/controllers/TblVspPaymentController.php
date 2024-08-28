@@ -618,7 +618,11 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                     if (!empty($model->union_code)) {
                         $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated_vendor', 'PORTAL') == 1 ? true : false;
                         if ($is_bank_integrated) {
-                            $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
+                            // $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
+                            $union_bank = TblUnionBankPayment::find()->alias('ubp')->select(['ubp.union_bank_payment_code', 'ubp.bank_name'])
+                            ->distinct()
+                            ->innerJoin('tbl_debit_bank_detail as dbd', 'dbd.union_bank_payment_code = ubp.union_bank_payment_code')
+                            ->where(['ubp.union_code' => $model->union_code, 'ubp.is_active' => 1])->all();
                         }
                     }
                     return $this->render('confirm-payment', [
