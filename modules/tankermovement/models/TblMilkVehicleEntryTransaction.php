@@ -74,6 +74,8 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
           }"],
             [['entry_type'], 'validateCreate'],
             [['clr', 'protein', 'density', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'default', 'value' => '0'],
+            [['status', 'cron_pick_datetime','pick_datetime','response_datetime','response_msg'], 'safe'],
+            [['status'], 'default', 'value' => 0],
         ];
     }
 
@@ -165,6 +167,10 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
                 return false;
             }
         }
+    }
+
+    public function updateStatus($updateData, $ids, $challan_no) {
+        return $this->updateAll($updateData, ['milk_vehicle_entry_code' => $ids, 'challan_no' => $challan_no]);
     }
 
 }

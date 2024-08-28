@@ -46,7 +46,7 @@ use app\modules\tankermovement\models\TblPartyMaster;
  */
 class TblMilkVehicleEntry extends \app\models\ChildModel {
 
-    public $vehicle, $customer_name, $bmc_ref_code, $bmc_name, $ref_code;
+    public $vehicle, $customer_name, $bmc_ref_code, $bmc_name, $ref_code, $process_approval_code, $remarks;
 
     /**
      * @inheritdoc
@@ -60,32 +60,32 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code'], 'required', 'except' => ['androidsync', 'importCsv']], [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code'], 'safe'],
-            [['gross_weight', 'tare_weight'], 'number'],
-            [['originating_type'], 'integer'],
-            [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
+                [['union_code', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code'], 'required', 'except' => ['androidsync', 'importCsv']], [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'process_approval_code', 'remarks'], 'safe'],
+                [['gross_weight', 'tare_weight'], 'number'],
+                [['originating_type'], 'integer'],
+                [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
                     return $model->receipt_at == 'VENDOR';
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblmilkvehicleentry-receipt_at').val() == 'VENDOR';
           }", 'except' => ['androidsync', 'importCsv']],
-            [['trip_code'], 'validateBottle', 'except' => ['androidsync', 'importCsv']],
-            [['tare_weight_time'], 'validateTime', 'except' => ['androidsync', 'importCsv']],
-            [['plant_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
-            [['trip_code'], 'required', 'when' => function ($model) {
+                [['trip_code'], 'validateBottle', 'except' => ['androidsync', 'importCsv']],
+                [['tare_weight_time'], 'validateTime', 'except' => ['androidsync', 'importCsv']],
+                [['plant_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+                [['trip_code'], 'required', 'when' => function ($model) {
                     return !($model->dispatch_from == 'PARTY');
                 }],
-            [['receipt_at'], 'AddBmcCode'],
-            [['tanker_no'], 'required', 'when' => function ($model) {
+                [['receipt_at'], 'AddBmcCode'],
+                [['tanker_no'], 'required', 'when' => function ($model) {
                     return $model->dispatch_from == 'PARTY';
                 }],
-            [['vehicle_code'], 'required', 'when' => function ($model) {
+                [['vehicle_code'], 'required', 'when' => function ($model) {
                     return !($model->dispatch_from == 'PARTY');
                 }, 'message' => 'Trip Code is required for the selected Source & Destination.'],
-            [['tanker_no'], function ($attribute, $params) {
+                [['tanker_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
-            [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true],
+                [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true],
         ];
     }
 
@@ -124,6 +124,11 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             'receipt_datetime' => Yii::t('app', 'Receipt Datetime'),
             'receipt_shift_code' => Yii::t('app', 'Receipt Shift'),
             'tanker_no' => Yii::t('app', 'Tanker No'),
+            'status' => Yii::t('app', 'Tanker No'),
+            'cron_pick_datetime' => Yii::t('app', 'Cron Pick Datetime'),
+            'pick_datetime' => Yii::t('app', 'Pick Datetime'),
+            'response_datetime' => Yii::t('app', 'Response Datetime'),
+            'response_msg' => Yii::t('app', 'Response Msg'),
         ];
     }
 
@@ -314,5 +319,4 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         }
         return TRUE;
     }
-
 }
