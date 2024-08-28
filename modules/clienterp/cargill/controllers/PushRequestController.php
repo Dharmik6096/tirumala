@@ -2,6 +2,7 @@
 
 namespace app\modules\clienterp\cargill\controllers;
 
+use app\modules\organisation\models\TblPlant;
 use Yii;
 use app\modules\product\models\TblPlantDispatch;
 use app\modules\product\models\TblPlantDispatchTxn;
@@ -11,6 +12,8 @@ class PushRequestController extends PushMasterController {
 
     public function actionInventoryPlantDispatch() {
         $request = Yii::$app->request->getRawBody();
+        $requestTimestamp = date('Y-m-d H:i:s');
+        $plant_data = [];
         try {
             $errors = [];
             $save_model = [];
@@ -33,7 +36,7 @@ class PushRequestController extends PushMasterController {
             }
             if ($plantdisModel->validate()) {
                 $plant_data = $plantdisModel->plantCode;
-                if (!empty($plant_data) && $plant_data->ref_code == $request['plant_code']) {
+                if (!empty($plant_data) && $plant_data->sap_vendor_code == $request['plant_code']) {
                     $plantdisModel->originating_org_code = $plantdisModel->union_code;
                     $plantdisModel->created_by = 'api';
                     $save_model[] = $plantdisModel;
@@ -89,7 +92,30 @@ class PushRequestController extends PushMasterController {
             $this->response->setStatusCode($this->eiplResponseCode->statusError);
             $this->response->setMessage(['Error While Process Request.']);
         }
+        $responseTimestamp = date('Y-m-d H:i:s');
+        $this->setLogData($request, $this->response, $requestTimestamp, $responseTimestamp, $plant_data);
         return $this->response;
     }
+    
+    public function setLogData($request, $response, $requestTimestamp, $responseTimestamp, $plantDetail) {
+        // $plantDetail = !empty($request['plant_code']) ? TblPlant::find()->where(['or',['plant_code' => $request['plant_code']], ['ref_code' => $request['plant_code']], ['sap_vendor_code' => $request['plant_code']]])->one() : [];
+        $statusCode = $response->getStatusCode();
+        $logData = [
+            'union_code' => !empty($plantDetail['union_code']) ? $plantDetail['union_code'] : '',
+            'plant_code' => !empty($plantDetail['plant_code']) ? $plantDetail['plant_code'] : '',
+            'request_desc' => 'inventory plant dispatch',
+            'txn_type' => 'cargill',
+            'date1' => !empty($request['document_date']) ? $request['document_date'] : '',
+            'date2' => !empty($request['dispatch_date']) ? $request['dispatch_date'] : '',
+            'desc1' => !empty($request['document_no']) ? $request['document_no'] : '',
+            'desc2' => !empty($request['remarks']) ? $request['remarks'] : '',
+            'status_code' => $statusCode,
+            'status_message' => is_array($response->message) ? json_encode($response->message) : $response->message,            
+            //'status_message' => !empty($response->jde__simpleMessage) ? json_encode($response->jde__simpleMessage) : '',
+        ];        
+        $response->logData = $logData;
+        $response->saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp);
+    }
+
 
 }

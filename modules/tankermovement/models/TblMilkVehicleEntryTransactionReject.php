@@ -5,9 +5,8 @@ namespace app\modules\tankermovement\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_milk_vehicle_entry_transaction_history".
+ * This is the model class for table "tbl_milk_vehicle_entry_transaction".
  *
- * @property integer $id
  * @property string $milk_vehicle_entry_transaction_code
  * @property string $milk_vehicle_entry_code
  * @property string $vehicle_entry_chamber_date
@@ -40,61 +39,51 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  * @property integer $originating_type
- * @property string $history_created_at
- * @property string $operation_type
- * @property string $history_created_by
  */
-class TblMilkVehicleEntryTransactionHistory extends \yii\db\ActiveRecord
-{
+class TblMilkVehicleEntryTransactionReject extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
-        return 'tbl_milk_vehicle_entry_transaction_history';
+    public static function tableName() {
+        return 'tbl_milk_vehicle_entry_transaction_reject';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'grn_no', 'chamber_no', 'challan_no', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by'], 'string'],
-            [['vehicle_entry_chamber_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
-            [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'integer'],
-            [['status','cron_pick_datetime','pick_datetime','response_datetime','response_msg'], 'safe'],
+            [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'vehicle_entry_chamber_date', 'chamber_quantity', 'grn_no', 'chamber_no', 'challan_no', 'milk_quality_type_code', 'milk_type_code', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'amount', 'rate', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
-            'id' => Yii::t('app', 'ID'),
+            'milk_vehicle_entry_transaction_reject_code' => Yii::t('app', 'Milk Vehicle Entry Transaction Reject Code'),
             'milk_vehicle_entry_transaction_code' => Yii::t('app', 'Milk Vehicle Entry Transaction Code'),
             'milk_vehicle_entry_code' => Yii::t('app', 'Milk Vehicle Entry Code'),
             'vehicle_entry_chamber_date' => Yii::t('app', 'Vehicle Entry Chamber Date'),
-            'chamber_quantity' => Yii::t('app', 'Chamber Quantity'),
+            'chamber_quantity' => Yii::t('app', 'Chamber Qty.'),
             'grn_no' => Yii::t('app', 'Grn No'),
             'chamber_no' => Yii::t('app', 'Chamber No'),
             'challan_no' => Yii::t('app', 'Challan No'),
-            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
-            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
-            'source_org_code' => Yii::t('app', 'Source Org Code'),
-            'source_org_type' => Yii::t('app', 'Source Org Type'),
-            'destination_code' => Yii::t('app', 'Destination Code'),
-            'destination_type' => Yii::t('app', 'Destination Type'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Qlty Type'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'source_org_code' => Yii::t('app', 'Source Code'),
+            'source_org_type' => Yii::t('app', 'Source Type'),
+            'destination_code' => Yii::t('app', 'Dest. Code'),
+            'destination_type' => Yii::t('app', 'Dest. Type'),
             'entry_type' => Yii::t('app', 'Entry Type'),
-            'fat' => Yii::t('app', 'Fat'),
-            'snf' => Yii::t('app', 'Snf'),
-            'clr' => Yii::t('app', 'Clr'),
+            'fat' => Yii::t('app', 'FAT(%)'),
+            'snf' => Yii::t('app', 'SNF(%)'),
+            'clr' => Yii::t('app', 'CLR'),
             'water' => Yii::t('app', 'Water'),
-            'density' => Yii::t('app', 'Density'),
             'protein' => Yii::t('app', 'Protein'),
+            'density' => Yii::t('app', 'Density'),
             'lactose' => Yii::t('app', 'Lactose'),
             'freezing_point' => Yii::t('app', 'Freezing Point'),
             'mbrt' => Yii::t('app', 'Mbrt'),
@@ -107,9 +96,7 @@ class TblMilkVehicleEntryTransactionHistory extends \yii\db\ActiveRecord
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'history_created_at' => Yii::t('app', 'History Created At'),
-            'operation_type' => Yii::t('app', 'Operation Type'),
-            'history_created_by' => Yii::t('app', 'History Created By'),
         ];
     }
+
 }
