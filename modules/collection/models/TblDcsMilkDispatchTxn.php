@@ -241,9 +241,11 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
         $mainmodel = new TblDcsMilkDispatch();
         $mainmodel->attributes = $model->attributes;
         $mainmodel->bmc_code = $model->bmc_code;
+
         $mainmodel->shift_code = $model->shift_code;
         $mainmodel->date_time_of_dispatch = $model->date_time_of_dispatch;
         $mainmodel->antibiotic = $model->antibiotic;
+        $org_code = $model->bmc_code;
         $existMainData = $mainmodel->getExistingData($mainmodel);
         if (empty($existMainData)) {
             $mainmodel->dcs_milk_dispatch_code = Yii::$app->general->getUuid(); //Yii::$app->general->getPrimaryCode($mainmodel);
@@ -265,8 +267,15 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
         // set clr
         (float) $fat = $this->avg_fat;
         (float) $snf = $this->avg_snf;
-        (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
-        (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        
+        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
+        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
+        
+        if($lr1 == '' or $lr2 == '') {
+            (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
+            (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        }
+        
         $this->avg_clr = ($snf - ($fat * $lr1) - $lr2) * 4;
         $model->dcs_milk_dispatch_code = !empty($existMainData) ? $existMainData->dcs_milk_dispatch_code : $mainmodel->dcs_milk_dispatch_code;
         $model->dcs_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($model, $model->dcs_milk_dispatch_code);

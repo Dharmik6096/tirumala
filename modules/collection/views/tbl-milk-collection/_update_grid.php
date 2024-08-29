@@ -241,11 +241,12 @@ $script = "
         var union = $('#tblmilkcollection-'+tr_key+'-union_code').val();
         var fat = $('#tblmilkcollection-'+tr_key+'-fat').val();
         var snf = $('#tblmilkcollection-'+tr_key+'-snf').val();
+        var bmcCode = $('#tblmilkcollectionsearch-bmc_code').val();
             if(fat !='' && snf !=''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'bmcCode':bmcCode},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
