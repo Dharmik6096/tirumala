@@ -119,6 +119,8 @@ class TblMilkRejectController extends \app\controllers\ChildController {
     }
 
     public function setModel(&$model) {
+
+         
         if ($model->source_org_type == 'bmc') {
             $model->source_org_code = $model->bmc_code;
             $model->dest_org_code = $model->customer_code;
@@ -128,7 +130,9 @@ class TblMilkRejectController extends \app\controllers\ChildController {
             $model->dest_org_code = $model->bmc_code;
             $model->dest_org_type = 'bmc';
         }
-        $org_code = $model->dest_org_code;
+
+    
+        $org_code = $model->bmc_code;
         $model->sample_no = $this->model->getSampleNo();
         (float) $fat = $model->fat;
         (float) $snf = $model->snf;

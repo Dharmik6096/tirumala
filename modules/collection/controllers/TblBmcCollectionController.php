@@ -407,7 +407,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $union = Yii::$app->request->post('union_code');
         (float) $clr = Yii::$app->request->post('clr');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
-        $org_code = Yii::$app->request->post('bmcCode');;
+        $org_code = Yii::$app->request->post('bmcCode');
 
        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
