@@ -19,9 +19,9 @@ class TblInventoryTransferSearch extends TblInventoryTransfer {
      */
     public function rules() {
         return [
-                [['inventory_transfer_code', 'inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['originating_type'], 'integer'],
-                [['from_date', 'to_date', 'from_name', 'to_name', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'f_plant_code'], 'safe']
+            [['inventory_transfer_code', 'inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['originating_type'], 'integer'],
+            [['from_date', 'to_date', 'from_name', 'to_name', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'f_plant_code'], 'safe']
         ];
     }
 
@@ -50,6 +50,36 @@ class TblInventoryTransferSearch extends TblInventoryTransfer {
         ]);
 
         $this->load($params);
+
+        if (Yii::$app->session->get('MCC') !== '') {
+            $mccCodes = explode(',', Yii::$app->session->get('MCC'));
+            $query->joinWith(['mccToCode']);
+            $query->andFilterWhere([
+                'or',
+                ['tbl_inventory_transfer.to_code' => $mccCodes],
+                ['tbl_inventory_transfer.from_code' => $mccCodes],
+            ]);
+        }
+
+        if (Yii::$app->session->get('BMC') !== '') {
+            $bmcCodes = explode(',', Yii::$app->session->get('BMC'));
+            $query->joinWith(['bmcToCode']);
+            $query->andFilterWhere([
+                'or',
+                ['tbl_inventory_transfer.to_code' => $bmcCodes],
+                ['tbl_inventory_transfer.from_code' => $bmcCodes],
+            ]);
+        }
+
+        if (Yii::$app->session->get('Dcs') !== '') {
+            $dcsCodes = explode(',', Yii::$app->session->get('Dcs'));
+            $query->joinWith(['dcsToCode']);
+            $query->andFilterWhere([
+                'or',
+                ['tbl_inventory_transfer.to_code' => $dcsCodes],
+                ['tbl_inventory_transfer.from_code' => $dcsCodes],
+            ]);
+        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
