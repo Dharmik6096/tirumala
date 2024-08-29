@@ -53,32 +53,17 @@ class TblInventoryTransferSearch extends TblInventoryTransfer {
 
         if (Yii::$app->session->get('MCC') !== '') {
             $mccCodes = explode(',', Yii::$app->session->get('MCC'));
-            $query->joinWith(['mccToCode']);
-            $query->andFilterWhere([
-                'or',
-                ['tbl_inventory_transfer.to_code' => $mccCodes],
-                ['tbl_inventory_transfer.from_code' => $mccCodes],
-            ]);
+            $query->andFilterWhere(['or', ['tbl_inventory_transfer.to_code' => $mccCodes], ['tbl_inventory_transfer.from_code' => $mccCodes],]);
         }
 
         if (Yii::$app->session->get('BMC') !== '') {
             $bmcCodes = explode(',', Yii::$app->session->get('BMC'));
-            $query->joinWith(['bmcToCode']);
-            $query->andFilterWhere([
-                'or',
-                ['tbl_inventory_transfer.to_code' => $bmcCodes],
-                ['tbl_inventory_transfer.from_code' => $bmcCodes],
-            ]);
+            $query->andFilterWhere(['or', ['tbl_inventory_transfer.to_code' => $bmcCodes], ['tbl_inventory_transfer.from_code' => $bmcCodes],]);
         }
 
         if (Yii::$app->session->get('Dcs') !== '') {
             $dcsCodes = explode(',', Yii::$app->session->get('Dcs'));
-            $query->joinWith(['dcsToCode']);
-            $query->andFilterWhere([
-                'or',
-                ['tbl_inventory_transfer.to_code' => $dcsCodes],
-                ['tbl_inventory_transfer.from_code' => $dcsCodes],
-            ]);
+            $query->andFilterWhere(['or', ['tbl_inventory_transfer.to_code' => $dcsCodes], ['tbl_inventory_transfer.from_code' => $dcsCodes],]);
         }
 
         if (!$this->validate()) {
