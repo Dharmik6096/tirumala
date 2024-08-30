@@ -101,7 +101,7 @@ class TblConfigMapping extends \app\models\ChildModel {
         $config = $model->find()
                 ->select('config_code')
                 ->where(['config_for' => $this->org_type, 'process_name' => $this->process_name])
-                ->andWhere(['is_input_config' => null])
+                ->andWhere(['ISNULL(is_input_config,0)' => 0])
                 ->all();
         if (!empty($config)) {
             $codes = [];
