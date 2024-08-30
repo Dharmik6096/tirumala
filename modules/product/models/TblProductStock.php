@@ -117,7 +117,7 @@ class TblProductStock extends \app\models\ChildModel {
     public function getExistStock($type, $batch = '', $checkMccStock = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
         if (!empty($batch)) {
-            $query->andWhere(['sap_batch_no' => $batch]);
+            $query->andWhere(['sap_batch_no' => (string) $batch]);
         }
         if (strtoupper($type) == 'MCC') {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
