@@ -65,12 +65,12 @@ class TblFtpTxnLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['file_status', 'status'], 'default', 'value' => 0],
-            [['txn_type'], 'default', 'value' => 'EIPL'],
-            [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path','zip_filename','file_date'], 'safe'],
-            [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
-            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime', 'ftp_mode'], 'safe'],
-            [['file_name'],'unique','targetAttribute' => ['txn_type','file_name'],'on'=>'EKOMILKZIP','message' => Yii::t('app/validation', 'File already uploaded')],
+                [['file_status', 'status'], 'default', 'value' => 0],
+                [['txn_type'], 'default', 'value' => 'EIPL'],
+                [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path', 'zip_filename', 'file_date'], 'safe'],
+                [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
+                [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime', 'ftp_mode'], 'safe'],
+                [['file_name'], 'unique', 'targetAttribute' => ['txn_type', 'file_name'], 'on' => 'EKOMILKZIP', 'message' => Yii::t('app/validation', 'File already uploaded')],
         ];
     }
 
@@ -107,7 +107,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             'old_file_path' => Yii::t('app', 'Old File Path'),
             'old_local_path' => Yii::t('app', 'Old Local Path'),
             'file_creator_id' => Yii::t('app', 'File Creator ID'),
-            'zip_filename' =>Yii::t('app','Zip File Name'),
+            'zip_filename' => Yii::t('app', 'Zip File Name'),
         ];
     }
 
@@ -138,7 +138,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
             $downLoadArray = [];
             foreach ($output as $detail) {
-                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : (($data_array['module_name'] == 'TblMilkCollection_cdpl_VM') ? 'Agent_Code' : 'Plant'));
+                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : (($data_array['module_name'] == 'TblMilkCollection_cdpl_VM') ? 'Agent_Code' : (($data_array['module_name'] == 'TblBmcCollection_Ananda') ? 'MCC' : 'Plant')));
                 if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
                     if (empty($downLoadArray[$detail[$plant]])) {
                         $downLoadArray[$detail[$plant]] = [];
@@ -154,6 +154,11 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 } elseif ($eiplCode == 'DODLA') {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'WQ' : 'VM';
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
+                } else if ($eiplCode == 'ANANDA') {
+                    $FTPProcess['ftp_path'] .= 'Mcc' . $bmc;
+                    $report_type = 'RMRD';
+                    $collection_date = (!empty($download[0]) && !empty($download[0]['Collection_Date'])) ? $download[0]['Collection_Date'] : $data_array['from_date'];
+                    $title = $report_type . '_' . $bmc . '_' . str_replace('-', '_', Yii::$app->controls->view_date($collection_date, 'php:dmY')) . '_' . date('His') . '_' . $data_array['shift_code'];
                 } else {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'WQ' : 'SD';
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
@@ -195,14 +200,17 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
         $ftpPath = !empty($mccRefCode) ? $mccRefCode : $FTPProcess['ftp_path'];
-        
+
         $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
         $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
         $skip_header = isset($FTPProcess['skip_header']) ? TRUE : FALSE;
 
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
-            if (Yii::$app->session->get('eiplCode') == 'DODLA') {
+            if ($FTPProcess['ext'] == '.xml') {
+                $xmlContent = $this->convertArrayToXml($output);
+                file_put_contents($filePath . $fileName, $xmlContent);
+            } else if (Yii::$app->session->get('eiplCode') == 'DODLA') {
                 $objPHPExcel = new PHPExcel();
                 $sheet = $objPHPExcel->getActiveSheet();
                 $sheet->setTitle('Sheet1');
@@ -354,6 +362,18 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return FALSE;
     }
 
+    private function convertArrayToXml($output) {
+        $xml = new \SimpleXMLElement('<?xml version = "1.0" encoding = "UTF-8"?>'
+                . '<MT_RMRD_File_SND></MT_RMRD_File_SND>');
+        foreach ($output as $item) {
+            $headerElement = $xml->addChild('Header');
+            foreach ($item as $key => $value) {
+                $headerElement->addChild($key, htmlspecialchars($value));
+            }
+        }
+        return $xml->asXML();
+    }
+
     public function getPickRecords($ids = [], $limit = 100) {
         $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
 
@@ -458,11 +478,11 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $htmlContent .= '<br/><br/>Please find the attached ' . $mccModelData->ref_code . '-' . $mccModelData->name . ' RMRD files. </p>';
         $htmlContent .= '<br/><br/>';
         $htmlContent .= '<p>Regards,';
-//        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
+        //        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
-    public function UserMatchingRecords($user,$txntype)
-    {
-        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => $txntype, 'module_name' => 'TblMilkCollection' ])->count();
+    public function UserMatchingRecords($user, $txntype) {
+        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => $txntype, 'module_name' => 'TblMilkCollection'])->count();
     }
+
 }

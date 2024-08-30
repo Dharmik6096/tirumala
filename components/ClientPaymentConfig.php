@@ -4,9 +4,11 @@ namespace app\components;
 
 use yii\base\Component;
 
-class ClientPaymentConfig extends Component {
+class ClientPaymentConfig extends Component
+{
 
-    public function processPayment($process, $data) {
+    public function processPayment($process, $data)
+    {
         $client_code = \Yii::$app->session->get('eiplCode');
         $spdetail = $this->spdetail();
         $config = (isset($spdetail[$client_code]) && isset($spdetail[$client_code][$process])) ? $spdetail[$client_code][$process] : $spdetail['EIPLCOMMON'][$process];
@@ -26,7 +28,8 @@ class ClientPaymentConfig extends Component {
         return $command->execute();
     }
 
-    public static function spdetail() {
+    public static function spdetail()
+    {
         return [
             'GYAN' => [
                 'vsp_payment' => [
@@ -336,7 +339,12 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_vsp_payment_devmilk',
                 ],
             ],
+            'CHADDHA' => [
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_Chadha',
+                ],
+            ],
         ];
     }
-
 }
