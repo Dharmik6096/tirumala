@@ -123,11 +123,13 @@ $script = "
         var union = $('#tblmilkcollection-union_code').val();
         var fat = $('#tblmilkcollection-fat').val();
         var snf = $('#tblmilkcollection-snf').val();
+        var bmcCode = $('#tblmilkcollection-bmc_code').val();
+        var dcsCode = $('#tblmilkcollection-dcs_code').val();
             if(fat !='' && snf !=''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'bmcCode':bmcCode,'dcsCode':dcsCode},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

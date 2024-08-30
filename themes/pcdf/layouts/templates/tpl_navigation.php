@@ -1168,6 +1168,7 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Miscellaneous <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Banner Process'), 'url' => ['/general/tbl-banner/index'], 'active' => ($cntrl == 'tbl-banner')],
+                        ['label' => Yii::t('app', 'Contact Detail Info.'), 'url' => ['/details/tbl-contact-details/index-other'], 'active' => ($cntrl == 'tbl-contact-detail')],
                     ],
                 ],
                 ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],

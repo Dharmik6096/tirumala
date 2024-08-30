@@ -249,8 +249,16 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
         (float) $fat = Yii::$app->request->post('fat');
         (float) $snf = Yii::$app->request->post('snf');
         $union = Yii::$app->request->post('union_code');
-        (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
-        (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        $org_code = Yii::$app->request->post('bmcCode');
+        
+        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
+        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
+        
+        if($lr1 == '' or $lr2 == '') {
+            (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
+            (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        }    
+        
         $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
         $response['data'] = $clr;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);

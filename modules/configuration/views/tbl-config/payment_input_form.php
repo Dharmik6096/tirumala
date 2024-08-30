@@ -78,7 +78,7 @@ use yii\helpers\ArrayHelper;
         </div>
 
         <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <?php
                 AjaxSubmitButton::begin([
                     'label' => Yii::t('app', 'Save'),
@@ -110,7 +110,7 @@ use yii\helpers\ArrayHelper;
                                                                 }
                                                  }'),
                     ],
-                    'options' => ['class' => 'btn btn-default btn-raised',
+                    'options' => ['class' => 'btn-login btn btn-default btn-raised',
                         'type' => 'submit'],
                 ]);
                 AjaxSubmitButton::end();

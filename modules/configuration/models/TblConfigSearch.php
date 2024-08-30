@@ -87,6 +87,7 @@ class TblConfigSearch extends TblConfig {
             'config_for' => $this->config_for,
             'process_name' => $this->process_name,
             'config_type' => $this->config_type,
+             'ISNULL(is_input_config,0)' => 0
         ]);
 
         return $dataProvider;

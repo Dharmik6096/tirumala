@@ -139,7 +139,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
             $downLoadArray = [];
             foreach ($output as $detail) {
-                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : (($data_array['module_name'] == 'TblMilkCollection_cdpl_VM') ? 'Agent_Code' : 'Plant'));
+                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : (($data_array['module_name'] == 'TblMilkCollection_cdpl_VM') ? 'Agent_Code' : (($data_array['module_name'] == 'TblBmcCollection_Ananda') ? 'MCC' : 'Plant')));
                 if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
                     if (empty($downLoadArray[$detail[$plant]])) {
                         $downLoadArray[$detail[$plant]] = [];
@@ -155,6 +155,11 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 } elseif ($eiplCode == 'DODLA') {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'WQ' : 'VM';
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
+                } else if ($eiplCode == 'ANANDA') {
+                    $FTPProcess['ftp_path'] .= 'Mcc' . $bmc;
+                    $report_type = 'RMRD';
+                    $collection_date = (!empty($download[0]) && !empty($download[0]['Collection_Date'])) ? $download[0]['Collection_Date'] : $data_array['from_date'];
+                    $title = $report_type . '_' . $bmc . '_' . str_replace('-', '_', Yii::$app->controls->view_date($collection_date, 'php:dmY')) . '_' . date('His') . '_' . $data_array['shift_code'];
                 } else {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'WQ' : 'SD';
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
@@ -203,7 +208,10 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
-            if (Yii::$app->session->get('eiplCode') == 'DODLA') {
+            if ($FTPProcess['ext'] == '.xml') {
+                $xmlContent = $this->convertArrayToXml($output);
+                file_put_contents($filePath . $fileName, $xmlContent);
+            } else if (Yii::$app->session->get('eiplCode') == 'DODLA') {
                 $objPHPExcel = new Spreadsheet();
                 $sheet = $objPHPExcel->getActiveSheet();
                 $sheet->setTitle('Sheet1');
@@ -355,6 +363,18 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return FALSE;
     }
 
+    private function convertArrayToXml($output) {
+        $xml = new \SimpleXMLElement('<?xml version = "1.0" encoding = "UTF-8"?>'
+                . '<MT_RMRD_File_SND></MT_RMRD_File_SND>');
+        foreach ($output as $item) {
+            $headerElement = $xml->addChild('Header');
+            foreach ($item as $key => $value) {
+                $headerElement->addChild($key, htmlspecialchars($value));
+            }
+        }
+        return $xml->asXML();
+    }
+
     public function getPickRecords($ids = [], $limit = 100) {
         $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
 
@@ -459,7 +479,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $htmlContent .= '<br/><br/>Please find the attached ' . $mccModelData->ref_code . '-' . $mccModelData->name . ' RMRD files. </p>';
         $htmlContent .= '<br/><br/>';
         $htmlContent .= '<p>Regards,';
-//        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
+        //        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
     public function UserMatchingRecords($user, $txntype) {
