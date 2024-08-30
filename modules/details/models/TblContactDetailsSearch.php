@@ -153,7 +153,7 @@ class TblContactDetailsSearch extends TblContactDetails {
             return new \yii\data\ArrayDataProvider(['allModels' => [], 'sort' => ['attributes' => ['mobile_no', 'master_name']],]);
         }
         if (!empty($this->mobile_no)) {
-            $query->andFilterWhere(['like', 'mobile_no', $this->mobile_no]);
+            $query->where(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => \Yii::$app->general->encryptData($this->mobile_no)]]);
         }
         $models = $query->all();
         return new \yii\data\ArrayDataProvider([
