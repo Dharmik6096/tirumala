@@ -42,8 +42,9 @@ class Bkgprocess extends \yii\base\Module {
                 'ext' => '.csv',
                 'export_title' => 'module_code+_+SD+_+applicable_date:date+_+shift_code',
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
-                'ftp_path' => '',
+                'ftp_path' => '/inbox',
                 'skip_header' => TRUE,
+                'append_ftp_path' => TRUE,
             ],
             'TblBmcCollection' => [
                 'ext' => '.csv',
