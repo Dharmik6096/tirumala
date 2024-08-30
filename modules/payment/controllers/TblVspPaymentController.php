@@ -618,7 +618,21 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                     if (!empty($model->union_code)) {
                         $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated_vendor', 'PORTAL') == 1 ? true : false;
                         if ($is_bank_integrated) {
-                            $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
+                            // $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
+                            $moduleCodes = $model->mcc_plant_code;
+                            $union_bank = TblUnionBankPayment::find()
+                                ->alias('ubp')
+                                ->select(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
+                                ->innerJoin('tbl_debit_bank_detail as dbd', 'dbd.union_bank_payment_code = ubp.union_bank_payment_code')
+                                ->where(['ubp.union_code' => $model->union_code, 'ubp.is_active' => 1])
+                                ->andWhere(['in', 'dbd.module_code', $moduleCodes])
+                                ->groupBy(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
+                                ->asArray()
+                                ->all();
+                            $result = array_diff($moduleCodes, array_column($union_bank, 'module_code'));
+                            if(!empty($result)){
+                                $union_bank = [];
+                            }
                         }
                     }
                     return $this->render('confirm-payment', [
