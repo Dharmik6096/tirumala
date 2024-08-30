@@ -208,13 +208,14 @@ $script = "
         var fat = $('#tblbmccollection-fat').val();
         var snf = $('#tblbmccollection-snf').val();
         var clr = $('#tblbmccollection-clr').val();
-        var is_clr_input = $('#is_clr_input').val();
+        var is_clr_input = $('#is_clr_input').val()
+        var bmcCode = $('#tblbmccollection-own_bmc_code').val();
 
             if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

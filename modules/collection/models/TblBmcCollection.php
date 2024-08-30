@@ -446,8 +446,14 @@ class TblBmcCollection extends \app\models\ChildModel {
             (float) $fat = $this->fat;
             (float) $snf = $this->snf;
             $union = $this->union_code;
-            (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
-            (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+
+            $org_code =  $this->bmc_code;
+            (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
+            (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
+            if($lr1 == '' or $lr2 == '') {
+                (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
+                (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+            }
             $this->clr = ($snf - ($fat * $lr1) - $lr2) * 4;
             Yii::$app->general->validateRateRange($this);
             //set rtpl,rate_code and amount

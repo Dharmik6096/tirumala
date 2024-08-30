@@ -407,8 +407,15 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $union = Yii::$app->request->post('union_code');
         (float) $clr = Yii::$app->request->post('clr');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
-        (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
-        (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        $org_code = Yii::$app->request->post('bmcCode');
+
+       (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
+       (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
+       if($lr1 == '' or $lr2 == '') {
+            (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
+            (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        }
+
         if ($is_clr_input == 0) {
             $data = ($snf - ($fat * $lr1) - $lr2) * 4;
         } else {
