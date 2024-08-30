@@ -76,7 +76,7 @@ use kartik\grid\GridView;
                 <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
             <?php }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval', '', 'btn-login'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'pending-approval', '', 'btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>

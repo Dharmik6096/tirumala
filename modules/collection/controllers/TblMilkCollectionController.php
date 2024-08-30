@@ -358,8 +358,17 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         (float) $fat = Yii::$app->request->post('fat');
         (float) $snf = Yii::$app->request->post('snf');
         $union = Yii::$app->request->post('union_code');
-        $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
-        $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
+        $org_code = Yii::$app->request->post('bmcCode');
+        
+        $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','MEMBER_COLLECTION');
+        $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','MEMBER_COLLECTION');
+        
+        if($lr1 == '' or $lr2 == '') {
+            $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
+            $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
+        }
+        // $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
+        // $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
         (float) $lr1 = empty($lr1) ? 1 : $lr1;
         (float) $lr2 = empty($lr2) ? 0 : $lr2;
         $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
