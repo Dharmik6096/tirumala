@@ -119,6 +119,8 @@ class TblMilkRejectController extends \app\controllers\ChildController {
     }
 
     public function setModel(&$model) {
+
+         
         if ($model->source_org_type == 'bmc') {
             $model->source_org_code = $model->bmc_code;
             $model->dest_org_code = $model->customer_code;
@@ -128,12 +130,23 @@ class TblMilkRejectController extends \app\controllers\ChildController {
             $model->dest_org_code = $model->bmc_code;
             $model->dest_org_type = 'bmc';
         }
+
+    
+        $org_code = $model->bmc_code;
         $model->sample_no = $this->model->getSampleNo();
         (float) $fat = $model->fat;
         (float) $snf = $model->snf;
         $model->qty_mode = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_qty_mode', 'BMC');
-        (float) $lr1 = Yii::$app->general->getUnionConfiguration($model->union_code, 'clr_constant1', 'BMC');
-        (float) $lr2 = Yii::$app->general->getUnionConfiguration($model->union_code, 'clr_constant2', 'BMC');
+    
+        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($model->union_code, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
+        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($model->union_code, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
+        
+        if($lr1 == '' or $lr2 == '') {
+            (float) $lr1 = Yii::$app->general->getUnionConfiguration($model->union_code, 'clr_constant1', 'BMC');
+            (float) $lr2 = Yii::$app->general->getUnionConfiguration($model->union_code, 'clr_constant2', 'BMC');
+        }    
+        
+        
         $model->clr = ($snf - ($fat * $lr1) - $lr2) * 4;
         $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
         $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);

@@ -23,6 +23,7 @@ use yii\base\Model;
 use yii\data\ArrayDataProvider;
 use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateBased;
 
 /**
  * TblBmcCollectionController implements the CRUD actions for TblBmcCollection model.
@@ -279,6 +280,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['snf'] = Yii::$app->request->post('snf');
         $data['customer_type'] = Yii::$app->request->post('customer_type');
         $data['union'] = Yii::$app->request->post('union_code');
+        $data['qty'] = Yii::$app->request->post('qty');
         $validCode = !empty(Yii::$app->request->post('valid_code')) ? Yii::$app->request->post('valid_code') : '';
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
         /*   $bmcModel = new TblBmcCollection();
@@ -304,15 +306,63 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $model_data = $model->getDcsPurchaseRateApplicableData($data);
 
         if (!empty($model_data)) {
-            $detail_model = new TblDcsPurchaseRateDetails();
-            $detail_model->rate_type_code = $model_data->rate_app_code;
-            $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-            $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
-            $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
-            if (!empty($detail_data)) {
-                $response['status'] = 'success';
-                $rtpl_data['list'] = $detail_data;
-                $response['data'] = $rtpl_data;
+            if ($model_data->rate_gen_method_code == '4') {
+                $model->purchase_rate_code = $model_data->purchase_rate_code;
+                $purchase_rate_data = $model->getDcsPurchaseRateData($data);
+                if (!empty($purchase_rate_data)) {
+                    $purchase_model = new TblDcsPurchaseRateBased();
+                    $purchase_model->rate_type = $purchase_rate_data->rate_app_code;
+                    $rate_type = !empty($purchase_model->rateTypeCode) ? $purchase_model->rateTypeCode->rate_type : '';
+                    $purchase_data = $purchase_model->getDcsPurchaseRateData($model_data, $rate_type);
+                    $kgfatRate = 0.00;
+                    $kgsnfRate = 0.00;
+                    $kgclrRate = 0.00;
+                    $kgtsRate = 0.00;
+                    $qty = $data['qty'];
+                    $fat = $data['fat'];
+                    $snf = $data['snf'];
+                    $clr = $data['clr'];
+                    $formula = '';
+                    foreach ($purchase_data as $value) {
+                        if ($value['param'] == 'FAT') {
+                            $kgfatRate = $value['kg_rate'];
+                        } else if ($value['param'] == 'SNF') {
+                            $kgsnfRate = $value['kg_rate'];
+                        } else if ($value['param'] == 'CLR') {
+                            $kgclrRate = $value['kg_rate'];
+                        } else if ($value['param'] == 'TS') {
+                            $kgtsRate = $value['kg_rate'];
+                        }
+                        $formula = $value['formula'];
+                    }
+                    $formula = str_replace('kgFATRate', number_format($kgfatRate, 2, '.', ''), $formula);
+                    $formula = str_replace('kgSNFRate', number_format($kgsnfRate, 2, '.', ''), $formula);
+                    $formula = str_replace('kgCLRRate', number_format($kgclrRate, 2, '.', ''), $formula);
+                    $formula = str_replace('kgTSRate', number_format($kgtsRate, 2, '.', ''), $formula);
+                    $formula = str_replace('qty', number_format($qty, 2, '.', ''), $formula);
+                    $formula = str_replace('fat', number_format($fat, 2, '.', ''), $formula);
+                    $formula = str_replace('snf', number_format($snf, 2, '.', ''), $formula);
+                    $formula = str_replace('clr', number_format($clr, 2, '.', ''), $formula);
+                    $command = \Yii::$app->db->createCommand("SELECT $formula as rtpl");
+                    $result = $command->queryAll();
+                    if (!empty($result)) {
+                        $result[0]['rtpl'] = round(bcdiv($result[0]['rtpl'], $qty, 3), 2);
+                        $response['status'] = 'success';
+                        $rtpl_data['list'] = $result[0];
+                        $response['data'] = $rtpl_data;
+                    }
+                }
+            } else {
+                $detail_model = new TblDcsPurchaseRateDetails();
+                $detail_model->rate_type_code = $model_data->rate_app_code;
+                $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
+                $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
+                $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
+                if (!empty($detail_data)) {
+                    $response['status'] = 'success';
+                    $rtpl_data['list'] = $detail_data;
+                    $response['data'] = $rtpl_data;
+                }
             }
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
@@ -357,8 +407,15 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $union = Yii::$app->request->post('union_code');
         (float) $clr = Yii::$app->request->post('clr');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
-        (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
-        (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        $org_code = Yii::$app->request->post('bmcCode');
+
+       (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
+       (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
+       if($lr1 == '' or $lr2 == '') {
+            (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
+            (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        }
+
         if ($is_clr_input == 0) {
             $data = ($snf - ($fat * $lr1) - $lr2) * 4;
         } else {
@@ -380,7 +437,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $conversion_const = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'ltr_to_kg_constant', 'BMC');
             $collectionApprovalConfig = Yii::$app->general->getUnionConfigResult($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval');
-            // $collection_approval = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval', 'PORTAL');
+// $collection_approval = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval', 'PORTAL');
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
                 $detail->rtpl = '';
@@ -389,7 +446,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             Model::loadMultiple($detailModel, Yii::$app->request->post());
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
-                // $conversion_const = Yii::$app->general->getUnionConfiguration($detail->union_code, 'ltr_to_kg_constant', 'BMC');
+// $conversion_const = Yii::$app->general->getUnionConfiguration($detail->union_code, 'ltr_to_kg_constant', 'BMC');
                 $detail->converted_qty = $detail->qty_mode == 1 ? $detail->qty / $conversion_const : $detail->qty * $conversion_const;
                 $modelData[] = $detail;
             }
@@ -399,7 +456,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $auto_key_config = [];
                 foreach ($modelData as $detailKey => $detalData) {
                     if (!empty($detalData->oldAttributes) && ($detalData->customer_code != $detalData->oldAttributes['customer_code'] || $detalData->route_code != $detalData->oldAttributes['route_code'] || $detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'] || $detalData->antibiotic != $detalData->oldAttributes['antibiotic'])) {
-                        // if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
+// if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
                         if (in_array($collectionApprovalConfig, [1, 2])) {
                             $approvalModel = new TblCollectionDataAlias();
                             $approvalModel->attributes = $detalData->attributes;
@@ -450,7 +507,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 } else {
                     $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
                 }
-                // $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
+// $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
                 }
@@ -589,7 +646,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 }
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(Yii::$app->request->referrer);
-                    //return $this->redirect(['index']);
+//return $this->redirect(['index']);
                 }
             }
         }
@@ -624,7 +681,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             foreach ($mapped as $map) {
                 $type[] = $map->milk_type_code;
             }
-            //Cow and Buffalo
+//Cow and Buffalo
             if (in_array(1, $type) && in_array(2, $type)) {
                 if ($range < $fat && $milk_type != 2) {
                     $response['status'] = 'success';
@@ -636,7 +693,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
                 }
             }
-            //Cow and Mix
+//Cow and Mix
             if (in_array(1, $type) && in_array(3, $type)) {
                 if ($range < $fat && $milk_type != 3) {
                     $response['status'] = 'success';
@@ -648,7 +705,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
                 }
             }
-            //Buffalo and Mix
+//Buffalo and Mix
             if (in_array(2, $type) && in_array(3, $type)) {
                 if ($range < $fat && $milk_type != 3) {
                     $response['status'] = 'success';

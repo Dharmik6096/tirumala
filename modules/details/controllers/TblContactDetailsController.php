@@ -282,5 +282,15 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         }
         return Json::encode($response);
     }
+    
+    public function actionIndexOther() {
+        $searchModel = new TblContactDetailsSearch();
+        $dataProvider = $searchModel->searchcontact(Yii::$app->request->queryParams);
+
+        return $this->render('index_other', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
 
 }

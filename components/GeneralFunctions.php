@@ -43,6 +43,7 @@ use app\modules\bkgprocess\models\TblFtpDetail;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\configuration\models\TblConfigMapping;
+use app\modules\configuration\models\TblConfig;
 use app\modules\general\models\TblAttachment;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use yii\db\Query;
@@ -1420,6 +1421,22 @@ class GeneralFunctions extends Component {
         $model = new TblUnionConfigResult();
         $data = $model->find()->select('config_result_key')->where(['union_code' => $union, 'config_key' => $field, 'config_for' => $for])->one();
         return !empty($data) ? $data->config_result_key : '';
+    }
+
+    public function getCheckBmcConfiguration($union, $field, $org_code,$org_type,$process_name) {
+        $model = new TblConfig();
+        $data = $model->find()->select(['tbl_config_mapping.config_result'])
+        ->join('inner join','tbl_config_mapping', 'tbl_config_mapping.config_code = tbl_config.config_code')
+        ->where([
+            'tbl_config.config_for' => $org_type,
+            'tbl_config.process_name' => $process_name,
+            'tbl_config.is_input_config' => 1,
+            'tbl_config.config_key' =>$field,
+            'tbl_config_mapping.org_type' => $org_type,
+            'tbl_config_mapping.org_code' => $org_code,
+            'tbl_config_mapping.union_code' => $union,
+        ])->asArray()->one();
+        return !empty($data) ? $data['config_result'] : '';
     }
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {

@@ -58,7 +58,7 @@ class TblDebitBankDetail extends \yii\db\ActiveRecord {
             [['branch_code'], 'string', 'max' => 9],
             [['ifsc', 'bank_account_no', 'account_holder_name', 'bank_email', 'bank_mobile', 'mobile_no', 'email', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['module_code'], 'unique', 'targetAttribute' => ['module_code', 'module_name']],
+            [['module_code'], 'unique', 'targetAttribute' => ['module_code', 'module_name', 'union_bank_payment_code']],
         ];
     }
 

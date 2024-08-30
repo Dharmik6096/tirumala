@@ -205,6 +205,7 @@ $script = "
         var union = $('#tbldcsmilkdispatchtxn-'+tr_key+'-union_code').val();
         var fat = $('#tbldcsmilkdispatchtxn-'+tr_key+'-avg_fat').val();
         var snf = $('#tbldcsmilkdispatchtxn-'+tr_key+'-avg_snf').val();
+        var bmcCode = $('#tbldcsmilkdispatchtxnsearch-bmc_code').val();
         console.log(union);
         console.log(fat);
         console.log(snf);
@@ -212,7 +213,7 @@ $script = "
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'bmcCode':bmcCode},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

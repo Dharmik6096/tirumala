@@ -208,13 +208,14 @@ $script = "
         var fat = $('#tblbmccollection-fat').val();
         var snf = $('#tblbmccollection-snf').val();
         var clr = $('#tblbmccollection-clr').val();
-        var is_clr_input = $('#is_clr_input').val();
+        var is_clr_input = $('#is_clr_input').val()
+        var bmcCode = $('#tblbmccollection-own_bmc_code').val();
 
             if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
@@ -253,11 +254,12 @@ $script = "
         var type = $('#tblbmccollection-customer_type').val();
         var union = $('#tblbmccollection-union_code').val();
         var bmc = $('#tblbmccollection-bmc_code').val();
-        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != '' && bmc != ''){
+        var qty = $('#tblbmccollection-qty').val();
+        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != '' && bmc != '' && qty != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc},
+                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc,'qty':qty},
                 success: function(data) {   
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success')
