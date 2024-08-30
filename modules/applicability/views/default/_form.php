@@ -425,7 +425,12 @@ $script = "
             setClass = 'col-sm-2';
 //            $('.applicableCodeArea .dcs-checklist').addClass('col-sm-2');
 //            $('.applicableCodeArea .dcs-checklist').removeClass('col-sm-4');
-        } else {
+        }else if (checkFilter == 'users') {
+            $('.selectMccArea').show();
+             setClass = 'col-sm-6';
+             $('.applicableCodeArea').removeClass('col-sm-12');
+             $('.applicableCodeArea').addClass('col-sm-6');
+        }else {
             $('#f_bmc_code-list').empty();
             $('.mccCheckboxes').prop('checked',false);
             $('#checkAllMccList').prop('checked',false);
@@ -547,7 +552,7 @@ $script = "
                                     $.each(obj1.dcsarray, function(index, value) {   
                                               $('#'+value).prop('checked', false);  
                                         });              
-                                }
+    }
                                 if((!($.isEmptyObject(chkbx)) && chkbx.checked) || (flag=='society')) {
                                     var flag_check = $('input[type=\'radio\']:checked').val();
                                     if(flag_check == flag){

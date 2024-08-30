@@ -727,4 +727,59 @@ class User extends UserIdentity {
         return $this->hasOne(User::className(), ['id' => 'secondary_parent']);
     }
 
+    public function getAppUserLists($login_type, $mcc_code = null) {
+        $query = $this->find()
+                ->alias('U')
+                ->select(['U.name', 'U.user_code', 'tuom.organization_type', 'tuom.organization_code'])
+                ->innerJoin('tbl_user_organization_mapping tuom', 'tuom.user_id = U.id')
+                ->andWhere(['U.allow_app_login' => 1]);
+
+        $model = new TblDcs();
+        $value = $model->getMCCDCS($mcc_code, TRUE);
+        $values = ArrayHelper::getColumn($value, 'dcs_code');
+
+        if (in_array($login_type, ['zonal_manager', 'mcc_incharge', 'service_engineer'])) {
+            $query->innerJoin('tbl_mcc_plant m', 'm.mcc_plant_code = tuom.organization_code')
+                    ->andWhere([
+                        'm.mcc_plant_code' => $mcc_code,
+                        'tuom.organization_type' => ['UNION', 'PLANT', 'MCC'],
+                        'tuom.organization_code' => $mcc_code,
+                        'U.login_type' => $login_type,
+            ]);
+        } elseif ($login_type == 'procurement_staff') {
+            $query->andWhere([
+                'tuom.organization_type' => ['UNION', 'PLANT'],
+                'tuom.organization_code' => $mcc_code,
+                'U.login_type' => 'procurement_staff',
+            ]);
+        } elseif ($login_type == 'route_supervisor') {
+            if (!empty($values)) {
+                $query->innerJoin('tbl_dcs d', 'd.dcs_code = tuom.organization_code')
+                        ->andWhere([
+                            'd.dcs_code' => $values,
+                            'tuom.organization_type' => ['UNION', 'PLANT', 'DCS'],
+                            'tuom.organization_code' => $values,
+                            'U.login_type' => 'route_supervisor',
+                ]);
+            } else {
+                return [];
+            }
+        } elseif ($login_type == 'az_manager') {
+            if (!empty($values)) {
+                $query->leftJoin('tbl_dcs d', 'd.dcs_code = tuom.organization_code')
+                        ->leftJoin('tbl_mcc_plant m', 'm.mcc_plant_code = tuom.organization_code')
+                        ->andWhere(['or', ['d.dcs_code' => $values], ['m.mcc_plant_code' => $mcc_code]])
+                        ->andWhere(['or', ['d.mcc_plant_code' => $mcc_code], ['m.mcc_plant_code' => $mcc_code]])
+                        ->andWhere(['tuom.organization_type' => ['UNION', 'PLANT', 'MCC', 'DCS'],
+                            'U.login_type' => 'az_manager']);
+            } else {
+                return [];
+            }
+        } else {
+            return [];
+        }
+        $data = $query->all();
+        return ArrayHelper::map($data, 'user_code', 'name');
+    }
+
 }

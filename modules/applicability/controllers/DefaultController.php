@@ -168,6 +168,10 @@ class DefaultController extends Controller {
                 $userModel = new User();
                 $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
                 break;
+            case in_array($filter, ['USERS']):
+                $userModel = new User();
+                $filter_data['applicable_code'] = $userModel->getAppUserLists($login_type, $mccCodes);
+                break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();
 //                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, 'VENDOR', $modelQuery);
