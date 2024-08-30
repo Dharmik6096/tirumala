@@ -212,7 +212,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 $xmlContent = $this->convertArrayToXml($output);
                 file_put_contents($filePath . $fileName, $xmlContent);
             } else if (Yii::$app->session->get('eiplCode') == 'DODLA') {
-                $objPHPExcel = new PHPExcel();
+                $objPHPExcel = new Spreadsheet();
                 $sheet = $objPHPExcel->getActiveSheet();
                 $sheet->setTitle('Sheet1');
                 $sheet->fromArray(
