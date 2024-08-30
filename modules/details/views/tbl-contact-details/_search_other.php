@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no') ?>
     </div>
-    <div class="col-sm-2 mt-21">
+    <div class="col-sm-2 mt-3">
         <?= Yii::$app->controls->search(); ?>
     </div>
     <?php ActiveForm::end(); ?>

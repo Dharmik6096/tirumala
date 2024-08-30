@@ -12,7 +12,7 @@ $defaultToggle = true;
 ?>
 
 <div class="modal modal-default fade" id="configSetModal" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog mw-42">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
