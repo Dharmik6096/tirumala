@@ -369,7 +369,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         foreach ($output as $item) {
             $headerElement = $xml->addChild('Header');
             foreach ($item as $key => $value) {
-                $headerElement->addChild($key, htmlspecialchars($value));
+                $headerElement->addChild($key, htmlspecialchars($value != null ? $value : ''));
             }
         }
         return $xml->asXML();
