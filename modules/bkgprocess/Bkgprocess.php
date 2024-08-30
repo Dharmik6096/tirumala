@@ -126,7 +126,7 @@ class Bkgprocess extends \yii\base\Module {
             ],
             'TblBmcCollection_Ananda' => [
                 'ext' => '.xml',
-                'param' => 'union_code,mcc_plant_code,bmc_code,from_date,to_date',
+                'param' => 'union_code,mcc_plant_code,from_date',
                 'sp_name' => 'rpt_MIS_WQSAPReport_Ananda',
                 'export_title' => 'module_code+_+SD+_+applicable_date:date+_+shift_code',
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
