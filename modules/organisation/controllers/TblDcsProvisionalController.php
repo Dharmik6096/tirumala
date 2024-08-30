@@ -310,12 +310,19 @@ class TblDcsProvisionalController extends ChildController {
                 $dcsModel->status = $status;
                 $dcsModel->remarks = $model->remarks;
                 $dcsModel->scenario = 'approveDcs';
+
+                $dcsCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($dcsModel->union_code, 'dcs_creation_pending_for_sap_approval', 'PORTAL');
+                $dcsModel->dcs_status = 0; // Approved
+                if (strtolower($status) == 'approve' && $dcsCreationPendingForSapApproval != '1') {
+                    $dcsModel->dcs_status = 1; // Created
+                }
+
                 $model_save[] = $dcsModel;
                 $all_doc = [];
                 $dcsdoc = [];
                 $message = '';
                 $dcs_error = '';
-                if ($status == 'Approve') {
+                if ($status == 'Approve'  && $dcsCreationPendingForSapApproval != '1') {
                     $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message);
                     if (!empty($message)) {
                         foreach ($message as $msg) {

@@ -179,6 +179,7 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord
             [['sap_vendor_code'], 'safe'],
             [['voter_id'], 'safe'],
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
+            [['latitude', 'longitude', 'dcs_status', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
         ];
     }
 

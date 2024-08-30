@@ -25,6 +25,9 @@ class Clienterp extends \yii\base\Module {
             'cargill' => [
                 'class' => 'app\modules\clienterp\cargill\Cargill',
             ],
+            'devmilk' => [
+                'class' => 'app\modules\clienterp\devmilk\Devmilk',
+            ],
         ];
     }
 

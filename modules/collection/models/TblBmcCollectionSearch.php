@@ -66,17 +66,6 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bmc_collection.customer_code');
-        $query->join('LEFT JOIN', 'tbl_customer_master', 'tbl_customer_master.customer_code = tbl_bmc_collection.customer_code');
-        $query->join('LEFT JOIN', 'tbl_customer_type', 'tbl_customer_type.customer_type = tbl_bmc_collection.customer_type AND tbl_customer_type.union_code = tbl_bmc_collection.union_code');
-        $query->join('LEFT JOIN', 'tbl_bmc', 'tbl_bmc.bmc_code = tbl_bmc_collection.bmc_code');
-        $query->join('LEFT JOIN', 'tbl_bmc_silos_info', 'tbl_bmc_silos_info.bmc_silos_info_code = tbl_bmc_collection.bmc_silos_info_code');
-//        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'mainBmcCode', 'silosCode']);
-
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_collection', 'tbl_bmc_collection', 'tbl_bmc_collection');
-
-        if (!empty($this->date_time_of_collection))
-            $query->andFilterWhere(['and', ['>=', 'tbl_bmc_collection.date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 23:59:59.000']]);
         // grid filtering conditions
 
 
@@ -93,6 +82,17 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         $to_date .= ' ' . $to_shift;
         $query->andFilterWhere(['<=', 'tbl_bmc_collection.date_time_of_collection', $to_date]);
 
+        $query->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bmc_collection.customer_code');
+        $query->join('LEFT JOIN', 'tbl_customer_master', 'tbl_customer_master.customer_code = tbl_bmc_collection.customer_code');
+        $query->join('LEFT JOIN', 'tbl_customer_type', 'tbl_customer_type.customer_type = tbl_bmc_collection.customer_type AND tbl_customer_type.union_code = tbl_bmc_collection.union_code');
+        $query->join('LEFT JOIN', 'tbl_bmc', 'tbl_bmc.bmc_code = tbl_bmc_collection.bmc_code');
+        $query->join('LEFT JOIN', 'tbl_bmc_silos_info', 'tbl_bmc_silos_info.bmc_silos_info_code = tbl_bmc_collection.bmc_silos_info_code');
+//        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'mainBmcCode', 'silosCode']);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_collection', 'tbl_bmc_collection', 'tbl_bmc_collection');
+
+        if (!empty($this->date_time_of_collection))
+            $query->andFilterWhere(['and', ['>=', 'tbl_bmc_collection.date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 23:59:59.000']]);
 
         $query->andFilterWhere([
             'tbl_bmc_collection.qty_mode' => $this->qty_mode,
@@ -225,7 +225,6 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         $this->load($params);
         $query = TblBmcCollection::find();
         // ->where(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
-
         // add conditions that should always apply here
 
 
@@ -288,7 +287,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
 
         $query->andWhere([
             'tbl_bmc_collection.bmc_code' => $this->bmc_code]);
-        
+
         if (empty($this->from_date)) {
             $this->from_date = date('d-m-Y');
             $this->from_shift = 1;

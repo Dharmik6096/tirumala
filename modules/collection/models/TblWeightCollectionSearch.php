@@ -54,6 +54,16 @@ class TblWeightCollectionSearch extends TblWeightCollection {
 
         $this->load($params);
 
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+        $from_date .= ' ' . $from_shift;
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+        $to_date .= ' ' . $to_shift;
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+        
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -65,15 +75,6 @@ class TblWeightCollectionSearch extends TblWeightCollection {
         if (!empty($this->qty)) {
             $query->andFilterWhere([$this->operator_qty, 'tbl_weight_collection.qty', $this->qty]);
         }
-        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-        $from_date .= ' ' . $from_shift;
-        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
-
-        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-        $to_date .= ' ' . $to_shift;
-        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
 
         if (!empty($this->date_time_of_collection))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_weight_collection.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);

@@ -162,7 +162,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     ]);
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                 ?>: </span> -->
+                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                  ?>: </span> -->
                         <div class="col-sm-1 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
@@ -273,7 +273,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         ?>
                         <div class="col-sm-8 padding_left_right_0">
                             <span class="col-sm-12 background_shadow float_right dashboardWidgetHeader">
-                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                 ?>: </span> -->
+                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                  ?>: </span> -->
                                 <div class="col-sm-6 searchFilterHeader">
                                     <?= Yii::$app->controls->date($model, $form, 'dup_search_date', '', true, false, false, false); ?>
                                 </div>
@@ -462,6 +462,7 @@ $('.dpu_data_icon').click(function(){
                     'dashboard_farmer_rmrd_blocks',
                     'mobile_analysis_dashboard_blocks',
                     'mobile_analysis_dashboard_pie_charts',
+                    'iot_temperature',
                     'today_vs_yesterday_collection',
                     'dashboard_farmer_status',
                     'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary'].indexOf(value) == -1) 
@@ -924,6 +925,33 @@ $('.dpu_data_icon').click(function(){
                         },
                         error:function(data){
                             //alert('Your data has not been submitted..Please try again');
+                        }
+                    });
+                }
+                 else if(['iot_temperature'].indexOf(value) == 0) {
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id = 'iot_temperature';
+                    var union = '" . $unionCode . "';
+                    var mcc = '" . $mccCode . "';
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-temperature-data']) . "',
+                        data: blockDataString + '&union=' + union + '&mcc=' + mcc,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success') {
+                                var result = obj1.results;
+                                var hours = [];
+                                var temperatures = [];
+                                $.each(result, function(index, value) {
+                                    hours.push(value.hour);
+                                    temperatures.push(parseInt(value.temperature, 10));
+                                });
+                                drawLineChart(id, hours, temperatures);
+                            }
+                        },
+                        error: function(data) {
+                            console.error('Error fetching temperature data');
                         }
                     });
                 }

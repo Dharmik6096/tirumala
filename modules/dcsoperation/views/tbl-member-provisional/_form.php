@@ -61,6 +61,9 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberprovisional-mcc_plant_code', 'bmc_code', true, false, '', '', $readonly); ?>
         </div>
+        <div class="col-sm-4 DCS">
+            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmemberprovisional-plant_code,tblmemberprovisional-mcc_plant_code,tblmemberprovisional-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+        </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmemberprovisional-bmc_code', 'dcs_code', true, false, '', $readonly); ?>         
         </div>  
@@ -68,6 +71,12 @@ if ($model->isNewRecord) {
         <?php //Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmemberprovisional-union_code', '', 'Society', '', $readonly); ?>
         </div> -->
         <?php //Html::activeHiddenInput($model, 'district_code'); ?>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'supervisor_employee_id')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'supervisor_employee_name')->textInput() ?>
+        </div>
         <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'ex_member_code')->textInput() ?>
         </div>
@@ -361,6 +370,32 @@ if ('$type' == 'create') {
                                     //alert('Your data has not been submitted..Please try again');
                                 }
             });
+    });
+    $('#tblmemberprovisional-route_code').on('change', function(e) {
+        var module_code = $(this).val();
+        var module_name = 'routeMapping';
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/details/tbl-contact-details/contact-details']) . "',
+            data: 'module_code='+module_code+'&module_name='+module_name,
+            success: function(response) {
+                var obj1 = $.parseJSON(response);
+                var data = obj1.data;
+                if(data){
+                    $('#tblmemberprovisional-supervisor_employee_id').val(data.employee_code);
+                    $('#tblmemberprovisional-supervisor_employee_name').val(data.firstname);
+                    if(data.employee_code != '' && data.employee_code != null){
+                        $('.field-tblmemberprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                    }
+                    if(data.firstname != '' && data.firstname != null){
+                        $('.field-tblmemberprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                    }
+                }                               
+            },
+            error:function(data){
+                //alert('Your data has not been submitted..Please try again');
+            }
+        });
     });
 }
 

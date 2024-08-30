@@ -67,7 +67,7 @@ class ChildController extends Controller {
             'access' => [
                 'class' => 'yii\filters\AccessControl',
                 'rules' => [
-                        [
+                    [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
