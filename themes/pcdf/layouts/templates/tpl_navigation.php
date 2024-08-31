@@ -212,6 +212,8 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Scheme Rate'), 'url' => ['/dcsoperation/tbl-scheme-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-scheme-rate-applicability-alias' && $action == 'applicabilty-approve')],
                     ]
                 ],
+                ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
+                ['label' => 'Local Milk Rate', 'url' => ['/dcsoperation/tbl-local-milk-rate/index'], 'active' => ($cntrl == 'tbl-local-milk-rate')],
             ],
         ],
         [
