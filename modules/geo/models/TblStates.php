@@ -56,7 +56,7 @@ class TblStates extends ChildModel
             [['state_code', 'state_name'], 'required'],
             [['state_code','state_name'], 'unique'],
             ['state_code', 'compare', 'compareValue' => '00', 'operator' => '!=', 'type' => 'number','message'=> Yii::t('app/validation', '{attribute} can not be "00".')],
-            [['created_at', 'updated_at','param','is_active'], 'safe'],
+            [['created_at', 'updated_at','param','is_active', 'ref_code', 'region_code'], 'safe'],
             [['state_code'], 'integer','message'=> Yii::t('app/validation', '{attribute} must be a digit. e.g. "01"')],
             [['state_code'], 'string', 'max' => 2,'min'=>2,'tooLong' =>  Yii::t('app/validation', '{attribute} must be of  2 digit. e.g."01"'),
             'tooShort' => Yii::t('app/validation', '{attribute} must be of  2 digit. e.g."01"')],

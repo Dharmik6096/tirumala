@@ -38,7 +38,7 @@ class TblDistrictsHistory extends \yii\db\ActiveRecord
     {
         return [
             [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at','updated_at','district_code','district_name','state_code'], 'safe'],
-            [['is_active', 'local_name'], 'safe'],
+            [['is_active', 'local_name', 'ref_code'], 'safe'],
         ];
     }
 
