@@ -49,7 +49,7 @@ class TblSubDistricts extends ChildModel {
             [['state'], 'required', 'message' => Yii::t('app/validation', '{attribute} cannot be blank.'), 'on' => 'add'],
             [['sub_district_code'], 'unique'],
             ['sub_district_code', 'compare', 'compareValue' => '00000', 'operator' => '!=', 'type' => 'number', 'message' => Yii::t('app/validation', '{attribute} can not be "00000".')],
-            [['created_at', 'updated_at', 'state', 'is_active'], 'safe'],
+            [['created_at', 'updated_at', 'state', 'is_active', 'ref_code'], 'safe'],
             [['sub_district_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "00001"')],
             [['sub_district_code'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must be of 5 digit. e.g."00001"'),
                 'tooShort' => Yii::t('app/validation', '{attribute} must be of 5 digit. e.g."00001"')],
