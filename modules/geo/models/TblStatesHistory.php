@@ -33,7 +33,7 @@ class TblStatesHistory extends \yii\db\ActiveRecord
     {
         return [
             [['is_active', 'created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at','state_code','state_name', 'updated_at'], 'safe'],
-            [['state_code'], 'safe'],
+            [['state_code', 'region_code', 'ref_code'], 'safe'],
             [['state_name'], 'safe'],
             [['created_by', 'updated_by', 'operation_type','local_name'], 'safe'],
         ];
