@@ -12,14 +12,12 @@ use app\modules\dcsoperation\models\TblLocalMilkSaleRate;
  */
 class TblLocalMilkSaleRateSearch extends TblLocalMilkSaleRate {
 
-    public $federation_code;
-
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['local_milk_sale_rate_code', 'wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code', 'federation_code'], 'safe'],
+            [['local_milk_sale_rate_code', 'wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code'], 'safe'],
         ];
     }
 
@@ -49,9 +47,7 @@ class TblLocalMilkSaleRateSearch extends TblLocalMilkSaleRate {
 
         $this->load($params);
 
-        $query->joinWith(['dcsCode', 'dcsCode.unionCode', 'dcsCode.unionCode.federationCode', 'milkClass']);
-
-        $query->andwhere(['tbl_federations.federation_code' => $this->federation_code]);
+        $query->joinWith(['dcsCode', 'dcsCode.unionCode', 'milkClass']);
 
         if (Yii::$app->session->get('Unions') !== '') {
             $query->andFilterWhere(['tbl_unions.union_code' => explode(',', Yii::$app->session->get('Unions'))]);

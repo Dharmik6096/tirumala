@@ -9,14 +9,17 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\dcsoperation\models\TblLocalMilkSaleRate;
+use app\modules\dcsoperation\models\TblLocalMilkSaleRateHistory;
+use yii\web\Response;
+use yii\helpers\Json;
 
 /**
- * TblLocalMilkSaleRateController implements the CRUD actions for TblLocalMilkSaleRate model.
+ * TblLocalMilkRateController implements the CRUD actions for TblLocalMilkRate model.
  */
 class TblLocalMilkRateController extends \app\controllers\ChildController {
 
     /**
-     * Lists all TblLocalMilkSaleRate models.
+     * Lists all TblLocalMilkRate models.
      * @return mixed
      */
     public function actionIndex() {
@@ -29,7 +32,7 @@ class TblLocalMilkRateController extends \app\controllers\ChildController {
         ]);
     }
 
-     /**
+    /**
      * Displays a single TblProductSaleRate model.
      * @param integer $id
      * @return mixed
@@ -57,9 +60,8 @@ class TblLocalMilkRateController extends \app\controllers\ChildController {
         $this->model = new TblLocalMilkRate();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
-//            $this->model->product_sale_rate_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Product Sale Rate', 'create']);
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Local Milk Rate', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -68,7 +70,7 @@ class TblLocalMilkRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Updates an existing TblLocalMilkSaleRate model.
+     * Updates an existing TblLocalMilkRate model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -86,7 +88,7 @@ class TblLocalMilkRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Deletes an existing TblLocalMilkSaleRate model.
+     * Deletes an existing TblLocalMilkRate model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -98,10 +100,10 @@ class TblLocalMilkRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Finds the TblLocalMilkSaleRate model based on its primary key value.
+     * Finds the TblLocalMilkRate model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return TblLocalMilkSaleRate the loaded model
+     * @return TblLocalMilkRate the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id) {
@@ -111,42 +113,71 @@ class TblLocalMilkRateController extends \app\controllers\ChildController {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
-     public function actionLocalMilkRateApplicability($id) {
+
+    public function actionLocalMilkRateApplicability($id) {
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblLocalMilkSaleRate();
         $appModel->model->wef_date = $model->wef_date;
+        $appModel->is_union = false;
         $appModel->union_code = $model->union_code;
-        $appModel->field_name = 'local_milk_sale_rate_code';
+        $appModel->field_name = 'local_milk_rate_code';
         $appModel->field_value = $id;
         $appModel->trans_label = 'local milk rate applicability';
-        $appModel->mcc_field_name = 'applicable_code';
-        $appModel->options = ['tanker_rate'];
-//        $appModel->assignStaticData = [
-//            'rate' => $model->rate,
-//        ];
         $appModel->header_title = ' [Local Milk Rate: ' . $model->rate . '] ';
+        $appModel->assignStaticData = [
+            'rate' => $model->rate,
+            'milk_quality_type_code' => $model->milk_quality_type_code,
+            'milk_class' => $model->milk_class,
+            'milk_type_code' => $model->milk_type_code,
+        ];
+
         $appModel->fields = [
-            
+            'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                }],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
+                }],
+            'name' => ['view' => ['grid'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                }],
             'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
-//            'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
-//                    return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
-//                }],
-            'dcs_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
-//            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
-//                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
-//                }],
-//            'name' => ['view' => ['grid'], 'value' => function($model) {
-//                    return $model->getName($model->applicable_for);
-//                }],
         ];
-        $appModel->dcs_filters = ['DCS' => Yii::t('app', 'DCS')];
-        $appModel->actions = ['delete' => ['option' => 'product_sale_rate_applicability_code,product_sale_rate_applicability_code,tbl-product-rate/delete-applicability,allowDelete()']];
 
+        $appModel->actions = ['delete' => ['option' => 'dcs_code,local_milk_rate_code,tbl-local-milk-rate/delete-local-milk-rate']];
         return $appModel->createApp();
+    }
+
+    public function actionDeleteLocalMilkRate() {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            $detailHistory = new TblLocalMilkSaleRateHistory();
+            $record = TblLocalMilkSaleRate::find()->where(['local_milk_rate_code' => Yii::$app->request->post('id')])->one();
+            Yii::$app->operation->history($record, $detailHistory, DELETE);
+            $master[] = $detailHistory->save(FALSE);
+            $master[] = $record->delete();
+            if (in_array(FALSE, $master)) {
+                $transaction->rollback();
+                $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+            } else {
+                $transaction->commit();
+                $record = ['status' => 'success', 'msg' => 'Record is successfuly deleted.'];
+            }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            $record = ['status' => 'error', 'msg' => $e->getMessage()];
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            $record = ['status' => 'error', 'msg' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')];
+        }
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

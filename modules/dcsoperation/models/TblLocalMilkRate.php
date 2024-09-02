@@ -81,4 +81,8 @@ class TblLocalMilkRate extends \app\models\ChildModel {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
+    public static function find() {
+        return new TblLocalMilkRateQuery(get_called_class());
+    }
+
 }

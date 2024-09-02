@@ -6,6 +6,8 @@ use Yii;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblSubCenter;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblAnimalType;
 
 /**
  * This is the model class for table "tbl_local_milk_sale".
@@ -150,6 +152,14 @@ class TblLocalMilkSale extends \app\models\ChildModel {
 
     public function entryType() {
         return [0 => 'Single Per Shift', 1 => 'Multiple Per Shift', 2 => 'Milk Consumer wise entry'];
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
 }

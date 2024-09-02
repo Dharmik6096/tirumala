@@ -28,6 +28,8 @@ use app\modules\dcsoperation\models\TblMilkClass;
  */
 class TblLocalMilkSaleRate extends \app\models\ChildModel {
 
+    public $applicable_for, $applicable_code;
+
     /**
      * @inheritdoc
      */
@@ -40,14 +42,9 @@ class TblLocalMilkSaleRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['applicable_for', 'applicable_code'], 'safe'],
-            [['local_milk_sale_rate_code', 'wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code'], 'safe'],
-            [['local_milk_sale_rate_code'], 'required'],
+            [['applicable_for', 'applicable_code', 'local_milk_rate_code'], 'safe'],
+            [['wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code'], 'safe'],
             [['rate'], 'number'],
-            [['local_milk_sale_rate_code'], 'string', 'max' => 20],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['dcs_code'], 'string', 'max' => 9],
-            [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
         ];
     }
 
@@ -56,7 +53,7 @@ class TblLocalMilkSaleRate extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'local_milk_sale_rate_code' => Yii::t('app', 'Local Sale Rate Code'),
+            'local_milk_sale_rate_code' => Yii::t('app', 'Local Milk Sale Rate Code'),
             'wef_date' => Yii::t('app', 'Effective From Date'),
             'milk_type_code' => Yii::t('app', 'Milk Type Code'),
             'milk_class' => Yii::t('app', 'Milk Class'),
