@@ -67,6 +67,7 @@ class TblLocalMilkRateSearch extends TblLocalMilkRate {
         ]);
 
         $query->andFilterWhere(['like', 'tbl_local_milk_rate.local_milk_rate_code', $this->local_milk_rate_code])
+                ->andFilterWhere(['like', 'tbl_local_milk_rate.milk_class', $this->milk_class])
                 ->andFilterWhere(['like', 'wef_date', (!empty($this->wef_date)) ? date('Y-m-d', strtotime($this->wef_date)) : '']);
 
         return $dataProvider;

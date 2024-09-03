@@ -10,17 +10,20 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 
 $attribute = [
-    [
-        'attribute' => 'union_code', 'filter' => false,
-        'value' => function($model) {
-            return (!empty($model->union_code) || isset($model->unionCode)) ? $model->unionCode->union_name : '-';
-        }],
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'visible' => FALSE, 'filter' => false],
     ['attribute' => 'milk_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
         }, 'filter' => FALSE],
     ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkQualityCode, 'milk_quality_type_name');
         }, 'filter' => FALSE],
+    ['attribute' => 'milk_class',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('rate_class', $searchModel, 'milk_class'),
+        'value' => function ($model) {
+            return !empty($model->milk_class) ? Yii::$app->dropdown->getRecords('rate_class')['data'][$model->milk_class] : 'None';
+        }, 'visible' => TRUE],
     ['attribute' => 'rate', 'filter' => false,],
     [
         'attribute' => 'wef_date',

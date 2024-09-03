@@ -35,6 +35,26 @@ class TblLocalMilkRate extends \app\models\ChildModel {
     public function rules() {
         return [
             [['milk_quality_type_code', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['milk_type_code', 'milk_quality_type_code', 'rate', 'wef_date'], 'required'],
+            [['milk_class'], 'default', 'value' => 0],
+            [['rate'], 'number'],
+            [['rate'], 'number', 'min' => 0],
+            [['milk_type_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+            [['milk_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'default_milk_type');
+                }, 'on' => 'importCsv'],
+            [['milk_quality_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
+                }, 'on' => 'importCsv'],
+            [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code'], 'on' => ['importCsv']],
+            [['milk_class'], function ($attribute, $params) {
+                    !empty($this->rate_class) ? Yii::$app->general->validateGlobalStatic($this, $attribute, 'rate_class') : '';
+                }, 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+            [['wef_date'], 'validateDate', 'on' => ['importCsv']],
+            [['wef_date'], 'unique', 'targetAttribute' => ['union_code', 'milk_quality_type_code', 'milk_type_code', 'wef_date'], 'message' => 'Rate is already taken on this WEF Date.'],
         ];
     }
 
@@ -49,7 +69,7 @@ class TblLocalMilkRate extends \app\models\ChildModel {
             'milk_class' => Yii::t('app', 'Milk Class'),
             'rate' => Yii::t('app', 'Rate'),
             'union_code' => Yii::t('app', 'Union'),
-            'wef_date' => Yii::t('app', 'Effective Date'),
+            'wef_date' => Yii::t('app', 'Wef Date'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -83,6 +103,29 @@ class TblLocalMilkRate extends \app\models\ChildModel {
 
     public static function find() {
         return new TblLocalMilkRateQuery(get_called_class());
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function validateDate($attribute, $params) {
+        if (empty($this->getErrors())) {
+            if ($this->wef_date < date('Y-m-d')) {
+                $this->addError($attribute, Yii::t('app/validation', 'Wef Date Must Not Allow Past Date'));
+                return false;
+            }
+        }
     }
 
 }

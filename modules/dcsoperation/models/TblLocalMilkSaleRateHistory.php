@@ -41,7 +41,7 @@ class TblLocalMilkSaleRateHistory extends \yii\db\ActiveRecord {
         return [
             'id' => 'ID',
             'local_milk_sale_rate_code' => Yii::t('app', 'Local Milk Sale Rate Code'),
-            'wef_date' => Yii::t('app', 'Effective From Date'),
+            'wef_date' => Yii::t('app', 'Wef Date'),
             'milk_type_code' => Yii::t('app', 'Milk Type Code'),
             'milk_class' => Yii::t('app', 'Milk Class'),
             'rate' => Yii::t('app', 'Rate'),

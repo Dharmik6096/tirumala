@@ -12,6 +12,7 @@ use app\modules\dcsoperation\models\TblLocalMilkSaleRate;
 use app\modules\dcsoperation\models\TblLocalMilkSaleRateHistory;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\dcsoperation\models\TblLocalMilkSaleRateSearch;
 
 /**
  * TblLocalMilkRateController implements the CRUD actions for TblLocalMilkRate model.
@@ -33,26 +34,22 @@ class TblLocalMilkRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Displays a single TblProductSaleRate model.
-     * @param integer $id
+     * Displays a single TblLocalMilkRate model.
+     * @param string $id
      * @return mixed
      */
     public function actionView($id) {
-        $searchModel = new TblLocalMilkRateSearch();
-        $query = TblLocalMilkRate::find()->select(['milk_quality_type_code', 'union_code'])->where(['local_milk_rate_code' => $id])->one();
-        $milk_quality_type_code = $query['milk_quality_type_code'];
-        $searchModel->milk_quality_type_code = $milk_quality_type_code;
-        $searchModel->union_code = $query['union_code'];
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $appsearchModel = new TblLocalMilkSaleRateSearch();
+        $appsearchModel->local_milk_rate_code = $id;
+        $appdataProvider = $appsearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'model' => $this->findModel($id),
+                    'model' => $this->findModel($id), 'appsearchModel' => $appsearchModel,
+                    'appdataProvider' => $appdataProvider,
         ]);
     }
 
     /**
-     * Creates a new TblProductSaleRate model.
+     * Creates a new TblLocalMilkRate model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */

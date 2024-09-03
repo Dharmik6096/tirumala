@@ -3,57 +3,84 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
-use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
 
-//$this->title = Yii::$app->label->title('view', 'Product Rate History');
-$this->title = Yii::t('app', 'Local Milk Rate History');
-//$this->params['menu'][] = Yii::$app->controls->update($model->rate_code);
+/* @var $this yii\web\View */
+/* @var $model app\modules\dcsoperation\models\TblPurchaseRate */
+
+$this->title = Yii::$app->label->title('view', 'Local Milk Rate');
 ?>
-<div class="tbl-purchase-rate-view">
-    <div class="panel panel-default panel-grid panel-main">
-        <div class="panel-heading">
-            <?= Yii::$app->controls->cancel($searchModel); ?>
-            <?= Html::encode($this->title) ?>
-        </div>
-        <div class="panel-body">
+
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="form-grid">
             <div class="table-responsive">
                 <?php
-                $attribute = [
-                    ['attribute' => 'local_milk_rate_code', 'label' => Yii::t('app', 'Rate Code'), 'value' => 'local_milk_rate_code'],
+                $attributes = [
                     [
-                        'attribute' => 'union_code', 'filter' => false,
-                        'value' => function($model) {
-                            return (!empty($model->union_code) || isset($model->union_code)) ? $model->unionCode->union_name : '-';
-                        }],
-                    ['attribute' => 'rate'],
-                    [
-                        'attribute' => 'wef_date', 'width' => '200px',
-                        'filterType' => GridView::FILTER_DATE,
-                        'filterWidgetOptions' => [
-                            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                                'autoclose' => true]
+                        'columns' => [
+                            [
+                                'attribute' => 'local_milk_rate_code',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'union_code',
+                                'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                         ],
-                        'value' => function($model) {
-                            return Yii::$app->controls->view_date($model->wef_date);
-                        }],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'wef_date',
+                                'format' => 'html',
+                                'value' => Yii::$app->controls->view_date($model->wef_date),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'originating_org_code',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'originating_org_type',
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
                 ];
 
-                $grid_option = [
-                    'id' => 'sale-rate-history-grid',
-                    'attributes' => $attribute,
-                    'active_column' => false,
-                    'actions' => [
-                        'applicabilty' => function ($url, $model) {
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
-                            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->local_milk_rate_code], $options);
-                        }
-                    ]
-                ];
-
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+                // View file rendering the widget
+                echo DetailView::widget([
+                    'model' => $model,
+                    'attributes' => $attributes,
+                    'mode' => 'view',
+                    'bordered' => true,
+                    'striped' => false,
+                    'responsive' => true,
+                    'hAlign' => 'left',
+                    'vAlign' => 'top',
+                    'deleteOptions' => [// your ajax delete parameters
+                        'params' => ['id' => 1000, 'kvdelete' => true],
+                    ],
+                    'container' => ['id' => 'kv-demo'],
+                ]);
                 ?>
             </div>
         </div>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Local Milk Rate Applicability') ?></h4>
+            </div>
+            <div class="form-grid">
+                <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>
+            </div> 
+        </div>
     </div>
-</div>

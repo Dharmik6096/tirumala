@@ -32,6 +32,9 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), FALSE, 'milk_quality_type_code'); ?>
     </div>
     <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group', $model->getAttributeLabel('milk_class'), false, 'milk_class', false); ?>
+    </div>
+    <div class="col-sm-2">
         <?= $form->field($model, 'rate')->textInput() ?>
     </div>
     <div class="col-sm-2">
@@ -46,62 +49,3 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-<?php
-$script = "
-    $(document).ready(function(){
-        setMinDate();
-  
-    function setMinDate() {
-        var id = $('#tblproductsalerate-product_code').val();
-        var code='{$model->local_milk_rate_code}';
-        var union='{$model->union_code}';
-        var odt='{$model->wef_date}';
-        if(id!=='' && id!==null){
-            $.ajax({
-                        type: 'post',
-                        url: '" . Url::to(['/product/tbl-product-rate/get-min-date']) . "',
-                        data: 'id='+id+'&code='+code+'&union='+union,
-                        success: function(data) {
-                            var obj1 = $.parseJSON(data);
-                            if (obj1.status == 'success')
-                            {
-                                var parts =obj1.date.split('-');
-                                var dt = new Date(parts[2],parts[1]-1,parts[0]); 
-                                var d = new Date();
-                                var curdt=formatDate(d);
-                                
-                                if((code!=='' && code!==null) || !(obj1.date===curdt))
-                                {
-                                    dt.setDate(dt.getDate() + 1);
-                                }
-                               if (!(obj1.date===curdt)){
-                                    $.fn.kvDatepicker.defaults.format = 'dd-mm-yyyy';
-                                    $('#tblproductsalerate-wef_date').parent().kvDatepicker('setStartDate',formatDate(dt));
-                                //$('#tblproductsalerate-wef_date').kvDatepicker({startDate:formatDate(dt)});
-                                 }else{
-                                  $('#tblproductsalerate-wef_date').parent().kvDatepicker('setStartDate','');
-                                 //$('#tblproductsalerate-wef_date').kvDatepicker({startDate:''});
-                                }
-                                $('#tblproductsalerate-wef_date').val(odt);
-                            }
-                        },
-                        error:function(data){
-                                    //alert('Your data has not been submitted..Please try again');
-                                }
-            }); 
-        }
-    }
-    function formatDate(d) {
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
-
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day;
-
-        return [day, month, year].join('-');
-    } 
-});
-";
-$this->registerJs($script, View::POS_END, 'village-code');
-?>
