@@ -275,4 +275,5 @@ return [
     'Member Bill Head Import' => 'Farmer Bill Head Import',
     'Delete Member Payment Restrict' => 'Delete Farmer Payment Restrict',
     'Bulk Delete Member Payment Restrict' => 'Bulk Delete Farmer Payment Restrict',
+    'Middle Name' => 'Father Name',
 ];
