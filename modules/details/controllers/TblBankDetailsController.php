@@ -172,6 +172,7 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->is_active = 0;
         $this->model->is_verified = 0;
+        $this->model->is_default = 0;
         $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
         if ($transaction !== FALSE) {
             Yii::$app->getSession()->setFlash('success', ['type' => 'success',
