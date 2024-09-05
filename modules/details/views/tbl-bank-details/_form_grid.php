@@ -33,8 +33,13 @@ $grid_option = [
     'actions' => [
         //'view' => true,
         'disable' => function ($url, $model) {
-            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
-            return $model->is_active == 1 ? Html::a('<i class="fa fa-times"></i>', ['/details/tbl-bank-details/deactivate', 'id' => $model->detail_code], $options) : '';
+            if ($model->is_active == 1) {
+                $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
+                return Html::a('<i class="fa fa-ban"></i>', ['/details/tbl-bank-details/deactivate', 'id' => $model->detail_code], $options);
+            } else {
+                $options = ['data-name' => $model->beneficiary_name, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user ', 'data-is-default' => $model->is_default];
+                return Html::a('<i class="fa fa-life-ring"></i>', ['/details/tbl-bank-details/activate', 'id' => $model->detail_code], $options);
+            }
         },
         'default' => function ($url, $model) {
             $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Set as Default', 'class' => 'set-default'];

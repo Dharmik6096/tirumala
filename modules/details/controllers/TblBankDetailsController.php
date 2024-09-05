@@ -184,6 +184,24 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $this->redirect(Url::previous());
     }
 
+    public function actionActivate($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblBankDetailsHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->is_active = 1;
+        if (!$this->model->validate()) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $this->model->module_name . ' - ' . $this->model->module_code . '.']);
+            return $this->redirect(Url::previous());
+        }
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
+        if ($transaction == 'customRedirect') {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Bank activated successfully.']);
+        } else {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Could not Activate. Please try again.']);
+        }
+        $this->redirect(Url::previous());
+    }
+
     public function actionSetDefault($id) {
         $this->model = $this->findModel($id);
         $historyModel = new TblBankDetailsHistory();
