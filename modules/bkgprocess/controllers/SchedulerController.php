@@ -657,12 +657,12 @@ class SchedulerController extends ChildController {
                                 $bankModel = new TblBankDetails();
                                 $existbankModel = $bankModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
                                 if (!empty($existbankModel)) {
-                                    $existbankModel->updateAll(['is_active' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
+                                    $existbankModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                                 }
                                 $contactModel = new TblContactDetails();
                                 $existcontactModel = $contactModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
                                 if (!empty($existcontactModel)) {
-                                    $existcontactModel->updateAll(['is_active' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code, 'module_name' => 'society']);
+                                    $existcontactModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code, 'module_name' => 'society']);
                                 }
                             }
                         }
