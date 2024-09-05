@@ -138,8 +138,8 @@ class TblMilkRejectController extends \app\controllers\ChildController {
         (float) $snf = $model->snf;
         $model->qty_mode = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_qty_mode', 'BMC');
     
-        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($model->union_code, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
-        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($model->union_code, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
+        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($model->union_code, 'clr_constant1',$org_code, 'BMC','RMRD_COLLECTION');
+        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($model->union_code, 'clr_constant2',$org_code, 'BMC','RMRD_COLLECTION');
         
         if($lr1 == '' or $lr2 == '') {
             (float) $lr1 = Yii::$app->general->getUnionConfiguration($model->union_code, 'clr_constant1', 'BMC');

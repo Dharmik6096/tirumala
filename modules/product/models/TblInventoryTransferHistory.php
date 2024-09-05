@@ -56,7 +56,7 @@ class TblInventoryTransferHistory extends \yii\db\ActiveRecord {
                 [['union_code'], 'safe'],
                 [['created_by', 'updated_by', 'history_created_by'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['operation_type'], 'safe'],
+                [['operation_type', 'data_post_status', 'response_msg'], 'safe'],
         ];
     }
 
