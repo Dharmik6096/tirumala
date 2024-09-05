@@ -189,13 +189,14 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $historyModel = new TblBankDetailsHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->is_active = 1;
+        $bankDetailModel = $this->model->bankDetails; 
         if (!$this->model->validate()) {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $this->model->module_name . ' - ' . $this->model->module_code . '.']);
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $bankDetailModel->module_name . ' - ' . $bankDetailModel->module_code . '.']);
             return $this->redirect(Url::previous());
         }
         $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
         if ($transaction == 'customRedirect') {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Bank activated successfully.']);
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Account activated successfully.']);
         } else {
             Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Could not Activate. Please try again.']);
         }
