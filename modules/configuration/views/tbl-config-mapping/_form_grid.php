@@ -22,6 +22,7 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'org_type', 'filter' => false],
     ['attribute' => 'process_name', 'filter' => false],
+    ['attribute' => 'config_type', 'filter' => false],
 ];
 $grid_option = [
     'id' => 'config-mapping-list',
@@ -34,5 +35,6 @@ $grid_option = [
         },
     ]
 ];
+
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

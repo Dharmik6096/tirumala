@@ -60,7 +60,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         return [
                 [['inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code'], 'required'],
                 [['inventory_transfer_code'], 'safe'],
-                [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code', 'product_code', 'qty', 'available_stock', 'unit_code', 'transaction_date', 'sap_batch_no'], 'safe'],
+                [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code', 'product_code', 'qty', 'available_stock', 'unit_code', 'transaction_date', 'sap_batch_no', 'data_post_status', 'response_msg'], 'safe'],
                 [['remarks'], 'string'],
                 [['originating_type'], 'integer'],
                 [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
@@ -119,6 +119,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                 [['transaction_date'], 'convertDateDot', 'on' => ['importCsv']],
                 [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
                 [['transaction_date'], 'convertDate', 'on' => ['importCsv']],
+                [['data_post_status'], 'default', 'value' => 0],
         ];
     }
 
@@ -317,10 +318,10 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                 $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock'] : 0;
                 $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
                 $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
-                if ($valid_avl_stock == 1 && strtoupper($this->to_type)=='DCS' && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
+                if ($valid_avl_stock == 1 && strtoupper($this->to_type) == 'DCS' && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
                     $this->addError('qty', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
                 } else if (!empty($existtoStock)) {
-                     $historyModel = new TblProductStockHistory();
+                    $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
                     array_push($saveModel, $historyModel);
                     $t_stock = $existtoStock->stock;
@@ -351,17 +352,17 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' Not Allow to Transfer to its self.'));
         }
         /* if (strtoupper($this->to_type) == 'BMC') {
-            $is_mcc = Yii::$app->general->getforeignkey($this->bmcToCode, 'is_mcc');
-            $bmc_name = Yii::$app->general->getforeignkey($this->bmcToCode, 'bmc_name');
-            if ($is_mcc == '1') {
-                $this->addError('to_code', Yii::t('app/validation', ' Not Allow to Transfer to BMC ' . $bmc_name));
-            }
-        } else if (strtoupper($this->to_type) == 'DCS') {
-            $dcs_detail = $this->dcsToCode;
-            if (!empty($dcs_detail) && $dcs_detail->is_bmc == '1') {
-                $this->addError('to_code', Yii::t('app/validation', ' Not Allow to Transfer to DCS ' . $dcs_detail->dcs_name));
-            }
-        } */
+          $is_mcc = Yii::$app->general->getforeignkey($this->bmcToCode, 'is_mcc');
+          $bmc_name = Yii::$app->general->getforeignkey($this->bmcToCode, 'bmc_name');
+          if ($is_mcc == '1') {
+          $this->addError('to_code', Yii::t('app/validation', ' Not Allow to Transfer to BMC ' . $bmc_name));
+          }
+          } else if (strtoupper($this->to_type) == 'DCS') {
+          $dcs_detail = $this->dcsToCode;
+          if (!empty($dcs_detail) && $dcs_detail->is_bmc == '1') {
+          $this->addError('to_code', Yii::t('app/validation', ' Not Allow to Transfer to DCS ' . $dcs_detail->dcs_name));
+          }
+          } */
     }
 
     public function validateSapBatchNo($attribute, $param) {
@@ -372,9 +373,8 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         $query = $stockModel->find()->where([
                     'product_code' => $this->product_code])
                 ->andWhere(['>', 'tbl_product_stock.stock', 0]);
-        if($batchNoWiseInventory==1)
-        {
-           $query->andWhere(['sap_batch_no' => $this->sap_batch_no]);
+        if ($batchNoWiseInventory == 1) {
+            $query->andWhere(['sap_batch_no' => $this->sap_batch_no]);
         }
         $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         if (strtoupper($type) == 'MCC') {

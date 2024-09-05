@@ -38,7 +38,7 @@ class TblConfigMappingSearch extends TblConfigMapping {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblConfigMapping::find()->select(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'config_for' => 'tbl_config.config_for', 'process_name' => 'tbl_config.process_name', 'org_type', 'org_code'])->groupBy(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'tbl_config.config_for', 'tbl_config.process_name', 'org_type', 'org_code']);
+        $query = TblConfigMapping::find()->select(['config_type' => 'tbl_config.config_type','tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'config_for' => 'tbl_config.config_for', 'process_name' => 'tbl_config.process_name', 'org_type', 'org_code'])->groupBy(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'tbl_config.config_for', 'tbl_config.process_name', 'org_type', 'org_code','tbl_config.config_type']);
 
         // add conditions that should always apply here
 
@@ -70,7 +70,7 @@ class TblConfigMappingSearch extends TblConfigMapping {
                 ->andFilterWhere(['like', 'org_code', $this->org_code])
 //                ->andFilterWhere(['like', 'tbl_config.config_for', $this->config_for])
                 ->andFilterWhere(['like', 'tbl_config.process_name', $this->process_name]);
-
+                
         return $dataProvider;
     }
 

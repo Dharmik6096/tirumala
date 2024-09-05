@@ -53,7 +53,7 @@ class TblVillages extends ChildModel {
             [['state', 'district','sub_district_code'], 'required', 'message' => Yii::t('app/validation', '{attribute} cannot be blank.'),'on'=>'add'],
             [['village_code'], 'unique'],
             ['village_code', 'compare', 'compareValue' => '000000', 'operator' => '!=', 'type' => 'number','message'=> Yii::t('app/validation', '{attribute} can not be "000000".')],
-            [['created_at', 'updated_at', 'state', 'district', 'sub_district_code','is_active'], 'safe'],
+            [['created_at', 'updated_at', 'state', 'district', 'sub_district_code','is_active', 'ref_code'], 'safe'],
             [['village_code'], 'integer','message'=> Yii::t('app/validation', '{attribute} must be a digit. e.g. "000001"')],
             [['village_code'], 'string', 'max' => 6, 'min' => 6,'tooLong' =>  Yii::t('app/validation', '{attribute} must be of 6 digit. e.g."000001"'),
             'tooShort' => Yii::t('app/validation', '{attribute} must be of 6 digit. e.g."000001"')],

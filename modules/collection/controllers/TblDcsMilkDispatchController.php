@@ -251,8 +251,8 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
         $union = Yii::$app->request->post('union_code');
         $org_code = Yii::$app->request->post('bmcCode');
         
-        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','BMC_COLLECTION');
-        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','BMC_COLLECTION');
+        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','RMRD_COLLECTION');
+        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','RMRD_COLLECTION');
         
         if($lr1 == '' or $lr2 == '') {
             (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
