@@ -884,15 +884,9 @@ class CustomValidation extends Component {
                             }, 'skipOnEmpty' => true],
                     ],
                 ],
-                'TblVehicleMaster' => [
-                    'default' => [],
-                ],
-                'TblBankDetails' => [
-                    'default' => [],
-                ],
-                'TblVspPayment' => [
-                    'default' => [],
-                ],
+                'TblVehicleMaster' => [],
+                'TblBankDetails' => [],
+                'TblVspPayment' => [],
             ],
             'KOTMALE' => [
                 'TblContactDetails' => [
@@ -1053,15 +1047,9 @@ class CustomValidation extends Component {
                             }, 'skipOnEmpty' => true],
                     ],
                 ],
-                'TblVehicleMaster' => [
-                    'default' => [],
-                ],
-                'TblVspPayment' => [
-                    'default' => [],
-                ],
-                'TblBankDetails' => [
-                    'default' => [],
-                ],
+                'TblVehicleMaster' => [],
+                'TblVspPayment' => [],
+                'TblBankDetails' => [],
             ],
             'SAAHAJ' => [
                 'TblMemberProvisional' => [
@@ -1121,9 +1109,7 @@ class CustomValidation extends Component {
                 ],
             ],
             'ABT' => [
-                'TblBankDetails' => [
-                    'default' => [],
-                ],
+                'TblBankDetails' => [],
                 'TblMember' => [
                         [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
                         [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
