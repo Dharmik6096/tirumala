@@ -190,8 +190,13 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->is_active = 1;
         if (!$this->model->validate()) {
+            $errors = $this->model->getErrors();
+            $errorMessages = '';
+            foreach ($errors as $field => $error) {
+                $errorMessages .= implode(', ', $error) . '<br>';
+            }
             $bankDetailModel = $this->model->bankDetails;
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $bankDetailModel->module_name . ' - ' . $bankDetailModel->module_code . '.']);
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $bankDetailModel->module_name . ' - ' . $bankDetailModel->module_code . '.<br>' . $errorMessages]);
             return $this->redirect(Url::previous());
         }
         $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
