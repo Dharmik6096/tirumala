@@ -734,14 +734,15 @@ class User extends UserIdentity {
                 ->innerJoin('tbl_user_organization_mapping tuom', 'tuom.user_id = U.id')
                 ->andWhere(['U.allow_app_login' => 1])
                 ->andWhere(['U.login_type' => $login_type])
-                ->andWhere(['tuom.organization_type' => ['UNION', 'PLANT', 'MCC', 'DCS']]);
+                ->andWhere(['tuom.organization_type' => ['UNION', 'PLANT', 'MCC', 'BMC', 'DCS']]);
         $model = new TblDcs();
         $value = $model->getOrgDCS($mcc_code, TRUE);
         $unionCodes = ArrayHelper::getColumn($value, 'union_code');
         $plantCodes = ArrayHelper::getColumn($value, 'plant_code');
         $mccCodes = ArrayHelper::getColumn($value, 'mcc_plant_code');
+        $bmcCodes = ArrayHelper::getColumn($value, 'bmc_code');
         $dcsCodes = ArrayHelper::getColumn($value, 'dcs_code');
-        $orgCodes = array_merge($unionCodes, $plantCodes, $mccCodes, $dcsCodes);
+        $orgCodes = array_merge($unionCodes, $plantCodes, $mccCodes, $bmcCodes, $dcsCodes);
 
         if (!empty($orgCodes)) {
             $org_string = "'" . implode(',', $orgCodes) . "'";

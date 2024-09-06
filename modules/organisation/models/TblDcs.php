@@ -1392,7 +1392,7 @@ class TblDcs extends ChildModel {
     }
 
     public function getOrgDCS($mccCode = [], $RLS = 'TRUE', $values = []) {
-        $query = $this->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'dcs_code'])
+        $query = $this->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'])
                         ->distinct()->where(['is_active' => 1]);
         if (!empty($mccCode))
             $query->andWhere(['mcc_plant_code' => $mccCode]);
