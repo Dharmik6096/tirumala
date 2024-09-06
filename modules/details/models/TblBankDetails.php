@@ -152,7 +152,7 @@ class TblBankDetails extends \app\models\ChildModel {
 
     public function getBankDetails() {
         return $this->find()
-                        ->where(['is_active' => 1, 'ifsc' => $this->ifsc])
+                        ->where(['is_active' => 1, 'ifsc' => $this->ifsc, 'bank_account_no' => $this->bank_account_no])
                         ->one();
     }
 

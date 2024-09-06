@@ -189,8 +189,8 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $historyModel = new TblBankDetailsHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->is_active = 1;
-        $bankDetailModel = $this->model->bankDetails; 
         if (!$this->model->validate()) {
+            $bankDetailModel = $this->model->bankDetails;
             Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Already Activated In Other ' . $bankDetailModel->module_name . ' - ' . $bankDetailModel->module_code . '.']);
             return $this->redirect(Url::previous());
         }
