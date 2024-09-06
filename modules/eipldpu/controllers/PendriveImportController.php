@@ -163,9 +163,20 @@ class PendriveImportController extends \app\controllers\ChildController {
                                         $model->save();
                                         $success_cnt += 1;
                                     } catch (\Throwable $ex) {
-                                        $main_data_model->response_msg = 'Not OK';
-                                        $main_data_model->save();
-                                        $error_cnt += 1;
+
+                                        try {
+                                            $main_data_model->response_msg = 'Not OK';
+                                            $main_data_model->save();
+                                            $error_cnt += 1;
+                                        } catch (\Throwable $th) {
+                                            $main_data_model -> dcs_code = $this->utfValidStr($main_data_model -> dcs_code);
+                                            $main_data_model -> vlccid = $this->utfValidStr( $main_data_model -> vlccid);
+                                            $main_data_model -> line_text = $this->utfValidStr( $main_data_model -> line_text);
+                                            $main_data_model->response_msg = 'Not OK(Junk)';
+                                            $main_data_model->save();
+                                            $error_cnt += 1;
+                                        }
+
                                     }
                                 } else {
                                     unset($packet_config['savelog']);
@@ -320,6 +331,10 @@ class PendriveImportController extends \app\controllers\ChildController {
             }
         }
         return FALSE;
+    }
+
+    public function utfValidStr($string){
+        return preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $string);
     }
 
 }
