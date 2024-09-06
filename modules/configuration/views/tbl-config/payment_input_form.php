@@ -26,11 +26,13 @@ use yii\helpers\ArrayHelper;
     <?php
     if (!empty($model[0])) {
         $bmc = $model[0]->bmc_code;
+        
         $bmcName = Yii::$app->general->getforeignkey($model[0]->mainBmcCode, 'bmc_name');
         $refCode = Yii::$app->general->getforeignkey($model[0]->mainBmcCode, 'ref_code');
     }
+    $pro_name = (isset($masterData[0]->process_name)) ? $masterData[0]->process_name : '';
     ?>
-    <div class="panel-heading">BMC: <?= $bmcName . '(' . $bmc . ')' ?>, Ref. Code: <?= $refCode ?></div>
+    <div class="panel-heading">Process Name : <?= $pro_name ?>, BMC : <?= $bmcName . '(' . $bmc . ')' ?>, Ref. Code: <?= $refCode ?></div>
 
     <div class="panel-body">
         <div class="row">
