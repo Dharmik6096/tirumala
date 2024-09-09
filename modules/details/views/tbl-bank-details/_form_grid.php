@@ -6,9 +6,7 @@
  */
 
 use yii\helpers\Html;
-use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
-use yii\web\View;
 
 Url::remember();
 $attribute = [
@@ -33,8 +31,13 @@ $grid_option = [
     'actions' => [
         //'view' => true,
         'disable' => function ($url, $model) {
-            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
-            return $model->is_active == 1 ? Html::a('<i class="fa fa-times"></i>', ['/details/tbl-bank-details/deactivate', 'id' => $model->detail_code], $options) : '';
+            if ($model->is_active == 1) {
+                $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
+                return Html::a('<i class="fa fa-ban"></i>', ['/details/tbl-bank-details/deactivate', 'id' => $model->detail_code], $options);
+            } else {
+                $options = ['data-name' => $model->beneficiary_name, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Activate', 'class' => 'react-user ', 'data-is-default' => $model->is_default];
+                return Html::a('<i class="fa fa-life-ring"></i>', ['/details/tbl-bank-details/activate', 'id' => $model->detail_code], $options);
+            }
         },
         'default' => function ($url, $model) {
             $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Set as Default', 'class' => 'set-default'];
@@ -47,38 +50,64 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->con
 ?>
 <?php
 
+$deactivateUrl = Url::to(['deactivate']);
+$activateUrl = Url::to(['activate']);
+
 $script = <<< JS
-              
-        $(".deactive").on('click',function(event){
-            event.preventDefault();
-            var trg=$(this);
-            var id=$(this).parents('tr').find('td:eq(1)').text();
-            var df = trg.attr("data-is-default");
-            if(df==1){ var msg = 'This is a Default bank account, Are you sure you want to deactivate bank account'; }
+
+$(document).ready(function(){
+    $(document).on('click', '.deactive', function(e) {
+        e.preventDefault();
+        var trg = $(this);
+        var id=$(this).parents('tr').find('td:eq(1)').text();
+        var df = trg.attr('data-is-default');
+        if(df==1){ var msg = 'This is a Default bank account, Are you sure you want to deactivate bank account'; }
             else { var msg = 'This can not be reactivate, Are you sure you want to deactivate bank account'; }
-            bootbox.confirm({
+        bootbox.confirm({
                 message: '<div class="row"><div class="col-sm-12"><div class="bg-info"><i class="fa fa-question"></i></div><span> '+msg+' "'+id+'"?</span></div></div>',
-                buttons: {
-                    'cancel': {
-                           label: 'No',
-                           className: 'btn-danger'
-                      },
-                    'confirm': {
-                           label: 'Yes',
-                           className: 'btn-primary'
-                     }
-                 },
-                callback: function(result) {
-                   if (result) {
-                      window.location = trg.attr('href');
-                   }
-                    else{
-                        //return false;
-                    }
+            buttons: {
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                },
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-primary'
                 }
-             });
+            },
+            callback: function(result) {
+                if (result) {
+                    window.location.href = trg.attr('href');
+                }
+            }
         });
+    });
         
+    $(document).on('click', '.react-user', function(e) {
+        e.preventDefault();
+        var trg = $(this);
+        var id=$(this).parents('tr').find('td:eq(1)').text();
+        var name = $(this).attr('data-name');
+        bootbox.confirm({
+            message: '<div class="row"><div class="col-sm-12"><div class="bg-info"><i class="fa fa-question"></i></div><span>Are you sure you want to activate the bank account "' + id + '"?</span></div></div>',
+            buttons: {
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                },
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-primary'
+                }
+            },
+            callback: function(result) {
+                if (result) {
+                    window.location.href = trg.attr('href');
+                }
+            }
+        });
+    });
+});
 JS;
-$this->registerJs($script, View::POS_READY);
+$this->registerJs($script, \yii\web\View::POS_READY);
 ?>

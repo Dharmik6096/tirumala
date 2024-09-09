@@ -233,9 +233,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $value = [];
         if (in_array(strtolower($model->login_type), ['farmer', 'vsp'])) {
             $value['DCS'] = 'VLCC';
-        } elseif (in_array(strtolower($model->login_type), ['mcc_incharge'])) {
-            $value['MCC'] = 'MCC';
-        } elseif (in_array(strtolower($model->login_type), ['procurement_staff', 'route_supervisor'])) {
+        } elseif (in_array(strtolower($model->login_type), ['procurement_staff', 'route_supervisor', 'mcc_incharge', 'zonal_manager', 'service_engineer', 'az_manager'])) {
             $value['USER'] = 'USER';
         } else {
             $value['USER'] = 'USER';

@@ -119,6 +119,7 @@ class DefaultController extends Controller {
         $wef_date = !empty(Yii::$app->request->post('wef_date')) ? date('Y-m-d', strtotime(Yii::$app->request->post('wef_date'))) : '';
         $isCheck = Yii::$app->request->post('checkdate');
         $periodic_applicability = Yii::$app->request->post('periodic_applicability');
+        $is_bulk_notification = Yii::$app->request->post('is_bulk_notification');
         $where = [];
         if ($isCheck == 1 || $isCheck == TRUE) {
             if ($model->hasAttribute('wef_date')) {
@@ -166,7 +167,11 @@ class DefaultController extends Controller {
                 break;
             case in_array($filter, ['USER']):
                 $userModel = new User();
-                $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
+                if (isset($is_bulk_notification) && ($is_bulk_notification == TRUE)) {
+                    $filter_data['applicable_code'] = $userModel->getAppUserLists($login_type, $mccCodes);
+                } else {
+                    $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
+                }
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();

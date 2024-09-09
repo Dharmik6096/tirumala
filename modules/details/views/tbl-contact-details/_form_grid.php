@@ -77,67 +77,64 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->con
 ?>
 <?php
 
+$deactivateUrl = Url::to(['deactivate']);
+$activateUrl = Url::to(['activate']);
+
 $script = <<< JS
-              
-        $(".deactive").on('click',function(event){
-            event.preventDefault();
-            var trg=$(this);
-            var id=$(this).parents('tr').find('td:eq(1)').text();
-            var df = trg.attr("data-is-default");
-            if(df==1){ var msg = 'This is a Default Contact, Are you sure you want to deactivate Contact Person'; }
+
+$(document).ready(function(){
+    $(document).on('click', '.deactive', function(e) {
+        e.preventDefault();
+        var trg = $(this);
+        var id=$(this).parents('tr').find('td:eq(1)').text();
+        var df = trg.attr('data-is-default');
+        if(df==1){ var msg = 'This is a Default Contact, Are you sure you want to deactivate Contact Person'; }
             else { var msg = 'This can not be reactivate, Are you sure you want to deactivate Contact Person'; }
-            bootbox.confirm({
+        bootbox.confirm({
                 message: '<div class="row"><div class="col-sm-12"><div class="bg-info"><i class="fa fa-question"></i></div><span> '+msg+' "'+id+'"?</span></div></div>',
-                buttons: {
-                    'cancel': {
-                           label: 'No',
-                           className: 'btn-danger'
-                      },
-                    'confirm': {
-                           label: 'Yes',
-                           className: 'btn-primary'
-                     }
-                 },
-                callback: function(result) {
-                   if (result) {
-                      window.location = trg.attr('href');
-                   }
-                    else{
-                        //return false;
-                    }
+            buttons: {
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                },
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-primary'
                 }
-             });
-        });
-        
-JS;
-$script = "$(document).ready(function(){
-    $(document).on('click','.react-user',function(e){
-    var id= $(this).attr('data-val');
-    var name = $(this).attr('data-name');
-    bootbox.confirm({
-        callback: function(result) {
-            if (result) {
-              $('#loader').show();
-                 $.ajax({
-                        type: 'get',
-                        url: '" . Url::to(['activate']) . "',
-                        data:{'id':id},
-                        success: function(data) {
-                            var obj1 = $.parseJSON(data);
-                            if (obj1.status == 'success')
-                            {
-                                $.pjax.reload({container: '#user-grid'});
-                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                            }
-                            else if (obj1.status == 'error'){
-                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                            }
-                        }
-            });
+            },
+            callback: function(result) {
+                if (result) {
+                    window.location.href = trg.attr('href');
+                }
             }
-        }
+        });
     });
-    });  
-});";
-$this->registerJs($script, View::POS_READY);
+        
+    $(document).on('click', '.react-user', function(e) {
+        e.preventDefault();
+        var trg = $(this);
+        var id=$(this).parents('tr').find('td:eq(1)').text();
+        var name = $(this).attr('data-name');
+        bootbox.confirm({
+            message: '<div class="row"><div class="col-sm-12"><div class="bg-info"><i class="fa fa-question"></i></div><span>Are you sure you want to activate Contact Person "' + id + '"?</span></div></div>',
+            buttons: {
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                },
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-primary'
+                }
+            },
+            callback: function(result) {
+                if (result) {
+                    window.location.href = trg.attr('href');
+                }
+            }
+        });
+    });
+});
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
 ?>
