@@ -276,7 +276,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Bonus Payment - Previous Data'), 'url' => ['/payment/tbl-bonus-payment-previous-data/index'], 'active' => ($cntrl == 'tbl-bonus-payment-previous-data' && $action == 'index')],
                 ['label' => Yii::t('app', 'Bonus Payment'), 'url' => ['/payment/tbl-bonus-payment/index'], 'active' => ($cntrl == 'tbl-bonus-payment' && $action == 'index')],
                 ['label' => Yii::t('app', 'Party Payment'), 'url' => ['/payment/tbl-party-payment/index'], 'active' => ($cntrl == 'tbl-party-payment' && $action == 'index')],
-                //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
+            //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
         //        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
@@ -837,6 +837,7 @@ echo GhostMenu::widget([
                         ['label' => '917-' . Yii::t('app', 'Log report of  the Mobile App'), 'url' => ['/misreports/reports/mobile-app-report']],
                         ['label' => '918-' . Yii::t('app', 'Asset Details Report'), 'url' => ['/misreports/reports/asset-details-report']],
                         ['label' => '919-' . Yii::t('app', 'User Organization Mapping Report'), 'url' => ['/misreports/reports/user-organization-mapping-report']],
+                        ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
                     ]
                 ],
                 [
@@ -1018,7 +1019,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => Yii::t('app', 'Feedback Item'), 'url' => ['/feedback/tbl-eipl-app-feedback-item/index']],
                         ['label' => Yii::t('app', 'Feedback Master'), 'url' => ['/feedback/tbl-eipl-app-feedback-master/index']],
-                        //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
+                    //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
                     ],
                 ],
                 [
@@ -1138,7 +1139,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Member Acknowledgement'), 'url' => ['/dcsoperation/tbl-member-download/index']],
                         ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                         ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/create']],
-                        //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
+                    //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
                     ]
                 ],
                 //                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],

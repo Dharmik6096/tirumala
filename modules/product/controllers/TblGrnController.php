@@ -406,7 +406,7 @@ class TblGrnController extends \app\controllers\ChildController {
                 foreach ($errors as $array) {
                     foreach ($array as $key => $value) {
                         if (isset($err[$key])) {
-                            $err[$key] .= $value . '<br>';
+                            $err[$key] .= $value[0] . '<br>';
                         } else {
                             $err[$key] = $value[0] . '<br>';
                         }

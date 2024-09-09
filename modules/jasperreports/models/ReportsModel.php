@@ -22,7 +22,7 @@ class ReportsModel extends Model {
     public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty;
     public $p_plant_code, $p_mcc_code, $p_bmc_code, $p_ltr_kg, $p_customer_code, $p_customer_type, $p_payment_cycle_code, $p_staff_member_code, $p_month, $p_dcsc_code, $p_billing_for;
     public $region_code, $area_code;
-    public $locale,$digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no;
+    public $locale, $digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no;
 
     function __construct() {
         if (Yii::$app->session->get('LanguageId') == 0) {
@@ -39,7 +39,7 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['locale','digit_config','p_provisional_member_code','p_language_code', 'p_lang_code'],'safe'],
+            [['locale', 'digit_config', 'p_provisional_member_code', 'p_language_code', 'p_lang_code'], 'safe'],
             [['p_customer_code', 'p_staff_member_code', 'p_dcs_code', 'p_member_code', 'p_dcsc_code', 'p_route_code', 'p_billing_for', 'route_code'], 'default', 'value' => '0'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionRegister'],
@@ -93,7 +93,8 @@ class ReportsModel extends Model {
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['MilkReceiptForBMC', 'ProductSaleInvoiceForCustomer', 'BmcCollectionSummary']],
             [['p_union_code', 'p_plant_code', 'p_mcc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ProductSaleSummary']],
             [['p_union_code', 'p_plant_code'], 'required', 'on' => ['VendorMilkBillSbd']],
-            [['p_provisional_member_code','p_lang_code'], 'required', 'on' => ['ProvisionalMemberRegister']],
+            [['p_provisional_member_code', 'p_lang_code'], 'required', 'on' => ['ProvisionalMemberRegister']],
+            [['p_from_date', 'p_to_date', 'p_lang_code'], 'required', 'on' => ['RptMemberRegisterAll']],
             [['p_date', 'p_lr_no', 'p_vehicle_no'], 'required', 'on' => ['MilkChillBillCenterWise', 'MilkChillingBillLrNoWise']],
         ];
     }

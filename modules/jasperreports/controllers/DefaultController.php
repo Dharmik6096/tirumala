@@ -422,14 +422,19 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'ProvisionalMemberRegister';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkChillBillCenterWise() {
         $this->report = 'MilkChillBillCenterWise';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkChillingBillLrNoWise() {
         $this->report = 'MilkChillingBillLrNoWise';
+        return $this->actionIndex();
+    }
+
+    public function actionRptMemberRegisterAll() {
+        $this->report = 'RptMemberRegisterAll';
         return $this->actionIndex();
     }
 
@@ -1029,6 +1034,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/MilkChillingBillLrNoWise',
                 'scenario' => 'MilkChillingBillLrNoWise',
                 'title' => 'Milk Chilling Bill Lr No Wise',
+            ],
+            'RptMemberRegisterAll' => [
+                'param' => 'p_from_date:string,p_to_date:string,p_lang_code,locale,digit_config',
+                'path' => 'MemberRegisterAll',
+                'scenario' => 'RptMemberRegisterAll',
+                'title' => 'Approve Farmer Data PDF',
             ],
         ];
         return $label[$l];
