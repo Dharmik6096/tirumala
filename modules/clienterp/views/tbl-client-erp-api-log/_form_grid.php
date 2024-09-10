@@ -49,7 +49,7 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'edit' => function ($url, $model) {
-            $disable = ($model->status_response == 'success') ? 'disabled' : '';
+            $disable = ($model->status_response == 'success' || $model->txn_type == 'cargill') ? 'disabled' : '';
             $options = ['title' => Yii::t('app', 'Repush'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-share-square-o"></i>', ['/clienterp/tbl-client-erp-api-log/repush', 'id' => $model->log_id], $options);
         },

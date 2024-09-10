@@ -36,7 +36,6 @@ class CargilljobController extends \yii\console\Controller {
                         $httpCode = '';
                         $header = '';
                         $response = '';
-                        $responseTimestamp = '';
                         try {
                             $this->ids = $milkVehical['VINV..Invoice_Number'];
                             $this->challan_no = $milkVehical['challan_no'];
@@ -48,7 +47,8 @@ class CargilljobController extends \yii\console\Controller {
                             $api->serverUrl = $this->base_url;
                             $api->apiurl = $this->end_point;
                             $api->body = $body;
-                            $api->authentication = Yii::$app->params['clienterp_authentication']['cargill']['authentication'];
+                            $authentication = Yii::$app->params['clienterp_authentication']['cargill']['authentication'];
+                            $api->header_info['Authorization'] = "Basic " . base64_encode($authentication);
                             $this->data = json_encode($body);
                             $response = $api->GuzzlePostData();
                             $responseTimestamp = date('Y-m-d H:i:s');
@@ -59,13 +59,28 @@ class CargilljobController extends \yii\console\Controller {
                             }
                             $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
                             $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
-                        }  catch (\Throwable $ex) {
+                        }  catch (\GuzzleHttp\Exception\RequestException $ex) {
+                            $response = $ex->hasResponse() ? $ex->getResponse()->getBody()->getContents() : $ex->getMessage();
+                            $httpCode = $ex->hasResponse() ? $ex->getResponse()->getStatusCode() : 408;
+                            $msg = substr($response, 0, 254);
+                            $responseTimestamp = date('Y-m-d H:i:s');                     
+                            $updateData = [
+                                'status' => 3, 
+                                'updated_at' => $responseTimestamp, 
+                                'response_datetime' => $responseTimestamp, 
+                                'response_msg' => 'Error: ' . $httpCode . ' - ' . $msg
+                            ];                          
+                            $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
+                            $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
+                        } catch (\Throwable $ex) {
                             if(!empty($this->ids)){
                                 $msg = substr($ex->getMessage(), 0, 254);
                                 $date = date('Y-m-d H:i:s');
                                 $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => $msg];
                                 $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
                                 $response = $ex->getMessage();
+                                $httpCode = 500;
+                                $responseTimestamp = date('Y-m-d H:i:s');
                                 $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
                             }
                         }
@@ -91,12 +106,12 @@ class CargilljobController extends \yii\console\Controller {
             'bmc_code' => !empty($request['bmc_code']) ? $request['bmc_code'] : '',
             'request_desc' => 'milk receipt',
             'txn_type' => 'eipl',
-            'date1' => !empty($request['Order_Date']) ? $request['Order_Date'] : '',
+            'date1' => !empty($request['Order_Date']) ? date('Y-m-d',strtotime($request['Order_Date'])) : '',
             'desc1' => !empty($request['Long_Address_Number_ALKY']) ? $request['Long_Address_Number_ALKY'] : '',
             'desc2' => !empty($request['VINV..Invoice_Number']) ? $request['VINV..Invoice_Number'] : '',
             'status_code' => $httpCode,
             'status_message' => !empty($response->jde__simpleMessage) ? json_encode($response->jde__simpleMessage) : '',
-            'status_response' => !empty($response->jde__status) ? $response->jde__status : '',
+            'status_response' => !empty($response->jde__status) ? $response->jde__status : 'ERROR',
             'request_header' => !empty($header) ? json_encode($header) : '',
             'request_url' => $this->url,
             'end_point' => $this->end_point,

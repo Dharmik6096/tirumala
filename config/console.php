@@ -31,6 +31,9 @@ $config = [
             ],
         ],
         'db' => $db,
+        'session' => [
+            'class' => 'yii\web\Session',
+        ],
     ],
     'modules' => [
         'user-management' => [
