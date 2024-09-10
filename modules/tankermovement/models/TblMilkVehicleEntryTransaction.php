@@ -169,8 +169,8 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
         }
     }
 
-    public function updateStatus($updateData, $ids, $challan_no) {
-        return $this->updateAll($updateData, ['milk_vehicle_entry_code' => $ids, 'challan_no' => $challan_no]);
+    public function updateStatus($updateData, $ids) {
+        return $this->updateAll($updateData, ['milk_vehicle_entry_transaction_code' => $ids]);
     }
 
 }

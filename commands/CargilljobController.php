@@ -13,7 +13,6 @@ class CargilljobController extends \yii\console\Controller {
     public $url = '';
     public $base_url = '';
     public $end_point = '';
-    public $challan_no = '';
     public $data = '';
     public function actionMilkReceiptSend(){
         $this->url = \Yii::$app->params['clienterp_authentication']['cargill']['jde_milk_receipt_url'];
@@ -28,36 +27,36 @@ class CargilljobController extends \yii\console\Controller {
                 if(!empty($output)){
                     $this->ids = array_column($output,'VINV..Invoice_Number');
                     $this->update_ids = $this->ids;
-                    $this->challan_no = array_column($output,'challan_no');
                     $date = date('Y-m-d H:i:s');
                     $updateData = ['status' => 1, 'updated_at' => $date, 'pick_datetime' => $date, 'cron_pick_datetime' => $date];
-                    $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
+                    $this->model->updateStatus($updateData, $this->ids);
                     foreach($output as $milkVehical){
                         $httpCode = '';
                         $header = '';
                         $response = '';
                         try {
                             $this->ids = $milkVehical['VINV..Invoice_Number'];
-                            $this->challan_no = $milkVehical['challan_no'];
                             $body = $milkVehical;
-                            unset($body['union_code'], $body['plant_code'], $body['mcc_plant_code'], $body['bmc_code'], $body['challan_no'], $body['milk_vehicle_entry_code']);
+                            unset($body['union_code'], $body['plant_code'], $body['mcc_plant_code'], $body['bmc_code']);
                             $body['GridIn_1_3'] = json_decode($body['GridIn_1_3']);
                             $requestTimestamp = date('Y-m-d H:i:s');
                             $api = new WebApi();
+                            $api->return_actual = true;
                             $api->serverUrl = $this->base_url;
                             $api->apiurl = $this->end_point;
                             $api->body = $body;
                             $authentication = Yii::$app->params['clienterp_authentication']['cargill']['authentication'];
                             $api->header_info['Authorization'] = "Basic " . base64_encode($authentication);
                             $this->data = json_encode($body);
-                            $response = $api->GuzzlePostData();
+                            $response = $api->GuzzleCURL();
+                            $httpCode = $response->getStatusCode();
                             $responseTimestamp = date('Y-m-d H:i:s');
-                            if ($response == false) {
-                                $updateData = ['status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => $response];
+                            if ($httpCode == 200) {
+                                $updateData = ['status' => 2, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Milk reciept send successfully'];    
                             } else {
-                                $updateData = ['status' => 2, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Milk reciept send successfully'];
+                                $updateData = ['status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Error: ' . $httpCode . ' - ' . $response->getBody()->getContents()];
                             }
-                            $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
+                            $this->model->updateStatus($updateData, $this->ids);
                             $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
                         }  catch (\GuzzleHttp\Exception\RequestException $ex) {
                             $response = $ex->hasResponse() ? $ex->getResponse()->getBody()->getContents() : $ex->getMessage();
@@ -70,14 +69,14 @@ class CargilljobController extends \yii\console\Controller {
                                 'response_datetime' => $responseTimestamp, 
                                 'response_msg' => 'Error: ' . $httpCode . ' - ' . $msg
                             ];                          
-                            $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
+                            $this->model->updateStatus($updateData, $this->ids);
                             $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
                         } catch (\Throwable $ex) {
                             if(!empty($this->ids)){
                                 $msg = substr($ex->getMessage(), 0, 254);
                                 $date = date('Y-m-d H:i:s');
                                 $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => $msg];
-                                $this->model->updateStatus($updateData, $this->ids, $this->challan_no);
+                                $this->model->updateStatus($updateData, $this->ids);
                                 $response = $ex->getMessage();
                                 $httpCode = 500;
                                 $responseTimestamp = date('Y-m-d H:i:s');
@@ -91,7 +90,7 @@ class CargilljobController extends \yii\console\Controller {
                     $msg = substr($ex->getMessage(), 0, 254);
                     $date = date('Y-m-d H:i:s');
                     $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => $msg];
-                    $this->model->updateStatus($updateData, $this->update_ids, $this->challan_no);
+                    $this->model->updateStatus($updateData, $this->update_ids);
                 }
             }
         }
