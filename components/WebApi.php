@@ -28,9 +28,6 @@ class WebApi {
     }
 
     public function GuzzlePostData() {
-        if ($this->authentication) {
-            $this->body = array_merge($this->authentication, $this->body);
-        }
         return $this->GuzzleCURL();
     }
 
