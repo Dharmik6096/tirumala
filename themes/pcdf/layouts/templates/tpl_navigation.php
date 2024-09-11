@@ -906,6 +906,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'DCS Wise Stock'), 'url' => ['/misreports/reports/stock-register-to-sap']],
                         ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap']],
                         ['label' => Yii::t('app', 'BMC Wise Stock'), 'url' => ['/misreports/reports/stock-register-bmc-to-sap']],
+                        ['label' => Yii::t('app', 'Indent Summary Detail'), 'url' => ['/misreports/reports/indent-summary-detail']],
                     ]
                 ],
                 [
