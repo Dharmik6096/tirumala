@@ -4,6 +4,7 @@ namespace app\commands;
 use app\components\WebApi;
 use app\modules\clienterp\components\EiplResponse;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
+use DateTime;
 use Yii;
 
 class CargilljobController extends \yii\console\Controller {
@@ -48,13 +49,14 @@ class CargilljobController extends \yii\console\Controller {
                             $authentication = Yii::$app->params['clienterp_authentication']['cargill']['authentication'];
                             $api->header_info['Authorization'] = "Basic " . base64_encode($authentication);
                             $this->data = json_encode($body);
-                            $response = $api->GuzzleCURL();
-                            $httpCode = $response->getStatusCode();
+                            $result = $api->GuzzleCURL();
+                            $httpCode = $result->getStatusCode();
+                            $response = $result->getBody()->getContents();
                             $responseTimestamp = date('Y-m-d H:i:s');
                             if ($httpCode == 200) {
                                 $updateData = ['status' => 2, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Milk reciept send successfully'];    
                             } else {
-                                $updateData = ['status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Error: ' . $httpCode . ' - ' . $response->getBody()->getContents()];
+                                $updateData = ['status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Error: ' . $httpCode . ' - ' . $response];
                             }
                             $this->model->updateStatus($updateData, $this->ids);
                             $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
@@ -105,7 +107,7 @@ class CargilljobController extends \yii\console\Controller {
             'bmc_code' => !empty($request['bmc_code']) ? $request['bmc_code'] : '',
             'request_desc' => 'milk receipt',
             'txn_type' => 'eipl',
-            'date1' => !empty($request['Order_Date']) ? date('Y-m-d',strtotime($request['Order_Date'])) : '',
+            'date1' => !empty($request['Order_Date']) ? DateTime::createFromFormat('d/m/Y', $request['Order_Date'])->format('Y-m-d') : '',
             'desc1' => !empty($request['Long_Address_Number_ALKY']) ? $request['Long_Address_Number_ALKY'] : '',
             'desc2' => !empty($request['VINV..Invoice_Number']) ? $request['VINV..Invoice_Number'] : '',
             'status_code' => $httpCode,
