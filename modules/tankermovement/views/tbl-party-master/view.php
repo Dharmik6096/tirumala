@@ -110,7 +110,7 @@ $this->title = Yii::$app->label->title('view', 'party master');
                         ],
                         [
                             'attribute' => 'branch_code',
-                            'value' => Yii::$app->general->getforeignkey($model->branchCode, 'branch_name'),                            
+                            'value' => Yii::$app->general->getforeignkey($model->branchCode, 'branch_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -143,7 +143,11 @@ $this->title = Yii::$app->label->title('view', 'party master');
                     'columns' => [
                         [
                             'attribute' => 'adhar_no',
-                            'valueColOptions' => ['style' => 'width:100%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'sap_vendor_code',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
