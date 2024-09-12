@@ -109,10 +109,11 @@ class PushRequestController extends PushMasterController {
             'date2' => !empty($request['dispatch_date']) ? $request['dispatch_date'] : '',
             'desc1' => !empty($request['document_no']) ? $request['document_no'] : '',
             'desc2' => !empty($request['remarks']) ? $request['remarks'] : '',
+            'status_response' => $statusCode == 200 ? 'SUCCESS' : 'ERROR',
             'status_code' => $statusCode,
             'status_message' => is_array($response->message) ? json_encode($response->message) : $response->message,            
-            //'status_message' => !empty($response->jde__simpleMessage) ? json_encode($response->jde__simpleMessage) : '',
-        ];        
+            'request_header' => !empty(Yii::$app->request->getHeaders()) ? json_encode(Yii::$app->request->getHeaders()->toArray()) : '',
+        ];     
         $response->logData = $logData;
         $response->saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp);
     }

@@ -56,30 +56,28 @@ class CargilljobController extends \yii\console\Controller {
                             if ($httpCode == 200) {
                                 $updateData = ['status' => 2, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Milk reciept send successfully'];    
                             } else {
-                                $updateData = ['status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => 'Error: ' . $httpCode . ' - ' . $response];
+                                $updateData = ['status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'response_msg' => json_encode($response)];
                             }
                             $this->model->updateStatus($updateData, $this->ids);
                             $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
                         }  catch (\GuzzleHttp\Exception\RequestException $ex) {
                             $response = $ex->hasResponse() ? $ex->getResponse()->getBody()->getContents() : $ex->getMessage();
                             $httpCode = $ex->hasResponse() ? $ex->getResponse()->getStatusCode() : 408;
-                            $msg = substr($response, 0, 254);
                             $responseTimestamp = date('Y-m-d H:i:s');                     
                             $updateData = [
                                 'status' => 3, 
                                 'updated_at' => $responseTimestamp, 
                                 'response_datetime' => $responseTimestamp, 
-                                'response_msg' => 'Error: ' . $httpCode . ' - ' . $msg
+                                'response_msg' => json_encode($response)
                             ];                          
                             $this->model->updateStatus($updateData, $this->ids);
                             $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
                         } catch (\Throwable $ex) {
                             if(!empty($this->ids)){
-                                $msg = substr($ex->getMessage(), 0, 254);
-                                $date = date('Y-m-d H:i:s');
-                                $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => $msg];
-                                $this->model->updateStatus($updateData, $this->ids);
                                 $response = $ex->getMessage();
+                                $date = date('Y-m-d H:i:s');
+                                $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => json_encode($response)];
+                                $this->model->updateStatus($updateData, $this->ids);
                                 $httpCode = 500;
                                 $responseTimestamp = date('Y-m-d H:i:s');
                                 $this->setLogData($milkVehical, $response, $requestTimestamp, $responseTimestamp, $this->data, $httpCode, $header);
@@ -89,9 +87,9 @@ class CargilljobController extends \yii\console\Controller {
                 }
             } catch (\Throwable $ex) {
                 if(!empty($this->ids)){
-                    $msg = substr($ex->getMessage(), 0, 254);
+                    $response = $ex->getMessage();
                     $date = date('Y-m-d H:i:s');
-                    $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => $msg];
+                    $updateData = ['status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'response_msg' => json_encode($response)];
                     $this->model->updateStatus($updateData, $this->update_ids);
                 }
             }
