@@ -79,6 +79,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'adhar_no')->textInput() ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">
         <div class="form-group">

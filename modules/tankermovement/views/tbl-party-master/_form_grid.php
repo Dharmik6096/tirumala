@@ -29,6 +29,7 @@ $attribute = [
     ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
     ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
 ];
 
 $grid_option = [

@@ -52,12 +52,14 @@ class TblClientErpApiLogController extends ChildController
                 $model->request_url = \Yii::$app->params['clienterp_authentication']['cargill']['jde_base_url'].$model->end_point;
                 $base_url = \Yii::$app->params['clienterp_authentication']['cargill']['jde_base_url'];           
                 $api = new WebApi();
+                $api->return_actual = true;
                 $api->serverUrl = $base_url;
                 $api->apiurl = $model->end_point;
                 $api->body = json_decode($model->request_payload);
                 $authentication = Yii::$app->params['clienterp_authentication']['cargill']['authentication'];
                 $api->header_info['Authorization'] = "Basic " . base64_encode($authentication);
-                $response = $api->GuzzlePostData();
+                $response = $api->GuzzleCURL();
+                $httpCode = $response->getStatusCode();
                 $responseTimestamp = date('Y-m-d H:i:s');
                 $this->setLogData($model, $response, $requestTimestamp, $responseTimestamp, $model->request_payload, $httpCode);
             }  catch (\GuzzleHttp\Exception\RequestException $ex) {
@@ -68,6 +70,7 @@ class TblClientErpApiLogController extends ChildController
             }  catch (\Throwable $ex) {
                 $responseTimestamp = date('Y-m-d H:i:s');
                 $response = $ex->getMessage();
+                $httpCode = 500;
                 $this->setLogData($model, $response, $requestTimestamp, $responseTimestamp, $model->request_payload, $httpCode);
             }
         }
