@@ -74,7 +74,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('calc_based_on', $model, $form, 'form-group', $model->getAttributeLabel('calculation_based_on'), false, 'calculation_based_on', false); ?>
     </div>
