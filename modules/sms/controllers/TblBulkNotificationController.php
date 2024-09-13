@@ -68,7 +68,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                 $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
                 $this->model->union_code = !empty(Yii::$app->session->get('Unions') && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL;
 
-                if ($this->model->notification_type == 4 || $this->model->notification_type == 3) {
+                if ($this->model->notification_type == 4) {
 
 
                     $this->model->filename = $files;
@@ -102,10 +102,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $to_date = $paymentCycle->to_date;
                     }
 
-                    if ($this->model->notification_type == 3) {
-                        $from_date = date('Y-m-d h:i:s', strtotime($this->model->from_date));
-                        $to_date = date('Y-m-d h:i:s', strtotime($this->model->to_date));
-                    }
+
                     foreach ($dcsCodes as $k => $dcs_data) {
                         $model = new TblBulkNotification();
                         $model->union_code = $dcs_data['union_code'];
@@ -122,9 +119,6 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                             $model->payment_cycle_code = $this->model->payment_cycle_code;
                             $model->login_type = $this->model->login_type;
                             $model->filename = ((int) $dcs_data['ref_code']) . '.pdf';
-                        } else {
-                            $model->filename = $this->model->bmc_code . $filename . '.pdf';
-                            $model->auto_scrolling = $this->model->auto_scrolling;
                         }
                         $model->file_path = $file_path . $model->filename;
 
@@ -147,6 +141,31 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $i++;
                     }
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Bulk Notification', 'create'], $auto_key_config);
+                } else
+                if ($this->model->notification_type == 3) {
+                    $this->model->filename = $files;
+                    $filesArray = explode('.', $files);
+                    $filename = $filesArray[0];
+                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    if (Yii::$app->general->checkDirectory($new_directory)) {
+                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+                    }
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $from_date = date('Y-m-d 00:00:00', strtotime($this->model->from_date));
+                    $to_date = date('Y-m-d 23:59:59', strtotime($this->model->to_date));
+                    $this->model->filename = $this->model->bmc_code . $filename . '.pdf';
+                    $this->model->file_path = $file_path . $this->model->filename;
+                    $this->model->from_date = $from_date;
+                    $this->model->to_date = $to_date;
+                    $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+                    $this->model->receiver_type = 'APP_NOTIFICATION';
+                    $this->model->entry_datetime = date('Y-m-d H:i:s');
+                    $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+                    $this->model->app_type = NULL;
+                    $this->model->login_type = NULL;
+                    $saveModel[] = $this->model;
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
                 } else {
                     $saveModel[] = $this->model;
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
