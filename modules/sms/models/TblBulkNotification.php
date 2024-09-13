@@ -51,35 +51,33 @@ class TblBulkNotification extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'payment_cycle_code', 'from_date', 'to_date','auto_scrolling'], 'safe'],
-            [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type'], 'safe'],
-            [['content_id', 'status'], 'integer'],
-            [['message', 'wef_date', 'notification_type'], 'required'],
-
-            [['status','auto_scrolling'], 'default', 'value' => 0],
-            [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'when' => function ($model) {
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'payment_cycle_code', 'from_date', 'to_date', 'auto_scrolling'], 'safe'],
+                [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type', 'auto_scrolling', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['content_id', 'status'], 'integer'],
+                [['message', 'wef_date', 'notification_type'], 'required'],
+                [['status', 'auto_scrolling'], 'default', 'value' => 0],
+                [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'when' => function ($model) {
                     return $model->notification_type == '4';
                 }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblbulknotification-notification_type').val() == '4'; 
                         }"],
-            [['title', 'from_date', 'to_date', 'campaign_name', 'wef_date'], 'required','when' => function ($model) {
-                return $model->notification_type == '3';
-            }, 'whenClient' => "function (attribute, value) { 
+                [['title', 'from_date', 'to_date', 'campaign_name', 'wef_date'], 'required', 'when' => function ($model) {
+                    return $model->notification_type == '3';
+                }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblbulknotification-notification_type').val() == '3'; 
-                    }"],       
-            [['login_type', 'receiver_type'], 'required','when' => function ($model) {
-                return $model->notification_type != '3';
-            }, 'whenClient' => "function (attribute, value) { 
+                    }"],
+                [['login_type', 'receiver_type'], 'required', 'when' => function ($model) {
+                    return $model->notification_type != '3';
+                }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblbulknotification-notification_type').val() != '3'; 
-                    }"],      
-            [
-                ['from_date', 'to_date'], 'required', 'when' => function ($model) {
+                    }"],
+                [
+                    ['from_date', 'to_date'], 'required', 'when' => function ($model) {
                     return !empty($model->auto_scrolling);
                 },
                 'whenClient' => "function (attribute, value) { return $('#tblbulknotification-auto_scrolling').is(':checked') }"
             ],
-                
         ];
     }
 
