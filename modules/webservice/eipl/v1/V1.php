@@ -758,6 +758,10 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_update_member_data',
                 'to_decrypt' => ['dob', 'adhar_no', 'pan_no'],
             ],
+            'report/milk-collection-audit' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
+                'sp' => 'sp_app_eipl_v1_milk_collection_history',
+            ],
         ];
         return $label;
     }
