@@ -79,7 +79,7 @@ class Applicability extends \yii\base\Module {
     public $with_wef_date = true;
     public $update_applicability = FALSE;
     public $rateMccCode = [];
-    public $with_applicable_for = false;
+    public $with_applicable_code = false;
 
     /**
      * @inheritdoc
@@ -1099,7 +1099,7 @@ class Applicability extends \yii\base\Module {
         $field_name = $this->field_name;
         if ($this->is_bulk_notification) {
             $mcc_field_name = $this->mcc_field_name;
-        } else if ($this->with_applicable_for) {
+        } else if ($this->with_applicable_code) {
             $mcc_field_name = $this->mcc_field_name;
         } else
             $mcc_field_name = ($model->hasAttribute('dcs_code')) ? 'dcs_code' : $this->mcc_field_name;

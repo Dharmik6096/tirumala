@@ -256,7 +256,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $appModel->options = ['tanker_rate'];
             $appModel->model->status = 2;
             $appModel->with_wef_date = FALSE;
-            $appModel->with_applicable_for = true;
+            $appModel->with_applicable_code = true;
         } else {
             if (in_array(strtolower($model->login_type), ['farmer', 'vsp'])) {
                 $value['DCS'] = 'VLCC';
