@@ -58,7 +58,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $this->model->login_type = 'MEMBER';
         $saveModel = [];
         if (Yii::$app->request->post()) {
-        
+
             if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
                 $postData = Yii::$app->request->post();
                 $files = !empty($postData['TblFtpTxnLog']['file_name']) ? $postData['TblFtpTxnLog']['file_name'] : '';
@@ -81,8 +81,8 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     }
 
                     $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
-                   
-                    if($this->model->notification_type == 4){
+
+                    if ($this->model->notification_type == 4) {
                         $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
                         $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
                         $crnt_dir = getcwd();
@@ -90,7 +90,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         exec($command);
                         chdir($crnt_dir);
                     }
-                    
+
                     $i = 1;
                     $auto_key_config = [];
                     $from_date = "";
@@ -102,9 +102,9 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $to_date = $paymentCycle->to_date;
                     }
 
-                    if($this->model->notification_type == 3){
-                        $from_date = date('Y-m-d h:i:s',strtotime($this->model->from_date));
-                        $to_date =  date('Y-m-d h:i:s',strtotime($this->model->to_date));
+                    if ($this->model->notification_type == 3) {
+                        $from_date = date('Y-m-d h:i:s', strtotime($this->model->from_date));
+                        $to_date = date('Y-m-d h:i:s', strtotime($this->model->to_date));
                     }
                     foreach ($dcsCodes as $k => $dcs_data) {
                         $model = new TblBulkNotification();
@@ -117,14 +117,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->from_date = $from_date;
                         $model->to_date = $to_date;
 
-                        
+
                         if ($model->notification_type == 4) {
                             $model->payment_cycle_code = $this->model->payment_cycle_code;
                             $model->login_type = $this->model->login_type;
                             $model->filename = ((int) $dcs_data['ref_code']) . '.pdf';
-                        }else{
-                            $model -> filename = $this->model->bmc_code . $filename. '.pdf';
-                            $model -> auto_scrolling = $this->model->auto_scrolling;
+                        } else {
+                            $model->filename = $this->model->bmc_code . $filename . '.pdf';
+                            $model->auto_scrolling = $this->model->auto_scrolling;
                         }
                         $model->file_path = $file_path . $model->filename;
 
@@ -145,7 +145,6 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $saveModel[$i] = $appModel;
                         $auto_key_config[$i] = ['self_key' => 'bulk_notification_id', 'parent_key' => 'bulk_notification_id', 'parent_index' => $i - 1];
                         $i++;
-
                     }
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Bulk Notification', 'create'], $auto_key_config);
                 } else {
@@ -251,12 +250,23 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblBulkNotificationApplicability();
         $value = [];
-        if (in_array(strtolower($model->login_type), ['farmer', 'vsp'])) {
-            $value['DCS'] = 'VLCC';
-        } elseif (in_array(strtolower($model->login_type), ['procurement_staff', 'route_supervisor', 'mcc_incharge', 'zonal_manager', 'service_engineer', 'az_manager'])) {
-            $value['USER'] = 'USER';
+        if ($model->notification_type == 3) {
+            $value['DCS'] = 'DCS';
+            $value['BMC'] = 'BMC';
+            $appModel->options = ['tanker_rate'];
+            $appModel->model->status = 2;
+            $appModel->with_wef_date = FALSE;
+            $appModel->with_applicable_for = true;
         } else {
-            $value['USER'] = 'USER';
+            if (in_array(strtolower($model->login_type), ['farmer', 'vsp'])) {
+                $value['DCS'] = 'VLCC';
+            } elseif (in_array(strtolower($model->login_type), ['procurement_staff', 'route_supervisor', 'mcc_incharge', 'zonal_manager', 'service_engineer', 'az_manager'])) {
+                $value['USER'] = 'USER';
+            } else {
+                $value['USER'] = 'USER';
+            }
+            $appModel->options = ['dcs_mcc_user'];
+            $appModel->is_bulk_notification = true;
         }
         $appModel->model->wef_date = $model->wef_date;
         $appModel->model->union_code = $model->union_code;
@@ -266,14 +276,11 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $appModel->field_value = $id;
         $appModel->trans_label = 'Bulk Notification Applicability';
         $appModel->mcc_field_name = 'applicable_code';
-        $appModel->options = ['dcs_mcc_user'];
         $appModel->header_title = ' (' . $model->login_type . ':' . $model->message . ')';
         $appModel->dcs_filters = $value;
         $appModel->login_type = $model->login_type;
-        $appModel->is_bulk_notification = true;
-
         $appModel->fields = [
-            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+            'wef_date' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }, 'filter' => FALSE],
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
@@ -283,6 +290,8 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                     } else if (strtolower($model->applicable_for) == 'mcc') {
                         return Yii::$app->general->getforeignkey($model->mccCode, 'name');
+                    } else if (strtolower($model->applicable_for) == 'bmc') {
+                        return Yii::$app->general->getforeignkey($model->bmcCodes, 'bmc_name');
                     } else {
                         return Yii::$app->general->getforeignkey($model->userCode, 'name');
                     }

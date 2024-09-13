@@ -79,6 +79,7 @@ class Applicability extends \yii\base\Module {
     public $with_wef_date = true;
     public $update_applicability = FALSE;
     public $rateMccCode = [];
+    public $with_applicable_for = false;
 
     /**
      * @inheritdoc
@@ -1098,9 +1099,14 @@ class Applicability extends \yii\base\Module {
         $field_name = $this->field_name;
         if ($this->is_bulk_notification) {
             $mcc_field_name = $this->mcc_field_name;
+        } else if ($this->with_applicable_for) {
+            $mcc_field_name = $this->mcc_field_name;
         } else
             $mcc_field_name = ($model->hasAttribute('dcs_code')) ? 'dcs_code' : $this->mcc_field_name;
-        $query = $this->model->find()->where([$mcc_field_name => $model->{$mcc_field_name}, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
+        $query = $this->model->find()->where([$mcc_field_name => $model->{$mcc_field_name}, $field_name => $this->field_value]);
+        if ($this->with_wef_date) {
+            $query->andWhere(['wef_date' => $model->wef_date]);
+        }
         foreach ($this->fields as $key => $f) {
             if (in_array('create', $f['view'])) {
                 $query->andWhere([$key => $model->{$key}]);
