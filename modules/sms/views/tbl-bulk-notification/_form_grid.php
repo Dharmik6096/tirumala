@@ -51,6 +51,17 @@ $attribute = [
             return Yii::$app->general->getStaticDropdownVal('notification_type', $model, 'notification_type');
         }, 'filter' => FALSE],
         ['attribute' => 'message'],
+        ['attribute' => 'title', 'filter' => FALSE],
+        ['attribute' => 'campaign_name', 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'from_date', 'value' => function($model) {
+            return Yii::$app->controls->view_date($model->from_date);
+        }, 'visible' => false, 'filter' => FALSE],
+        ['attribute' => 'to_date', 'value' => function($model) {
+            return Yii::$app->controls->view_date($model->to_date);
+        }, 'visible' => false, 'filter' => FALSE],
+        ['attribute' => 'auto_scrolling', 'label' => Yii::t('app', 'Is Auto Scrolling'), 'value' => function($model) {
+            return $model->auto_scrolling == 1 ? 'Active' : 'In Active';
+        }, 'filter' => false],
 ];
 
 $grid_option = [
@@ -69,6 +80,12 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/sms/tbl-bulk-notification/bulk-notification-applicability', 'id' => $model->bulk_notification_id], $options);
         },
         'delete' => ['option' => 'bulk_notification_id,bulk_notification_id,tbl-bulk-notification/delete'],
+        'view_document' => function ($url, $model) {
+            $document_url = $model->file_path;
+            $class = ($document_url != '') ? '' : 'disabled';
+            $options = ['target' => '_blank', 'class' => '' . $class,];
+            return GhostHtml::a('<i class="fa fa-eye"></i>', $document_url, $options);
+        },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
