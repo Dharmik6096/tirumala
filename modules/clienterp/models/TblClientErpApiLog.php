@@ -74,10 +74,10 @@ class TblClientErpApiLog extends ChildModel
     {
         return [
             'log_id' => Yii::t('app', 'Log ID'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
             'end_point' => Yii::t('app', 'End Point'),
             'request_url' => Yii::t('app', 'Request Url'),
             'request_desc' => Yii::t('app', 'Request Desc'),

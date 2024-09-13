@@ -34,8 +34,8 @@ class PushRequestController extends PushMasterController {
             } else {
                 $plantdisModel->document_date = $document_date->format('Y-m-d');
             }
+            $plant_data = $plantdisModel->plantCode;
             if ($plantdisModel->validate()) {
-                $plant_data = $plantdisModel->plantCode;
                 if (!empty($plant_data) && $plant_data->sap_vendor_code == $request['plant_code']) {
                     $plantdisModel->originating_org_code = $plantdisModel->union_code;
                     $plantdisModel->created_by = 'api';
