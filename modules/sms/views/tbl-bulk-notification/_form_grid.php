@@ -47,6 +47,9 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
+        ['attribute' => 'notificaton_type', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('notification_type', $model, 'notification_type');
+        }],
         ['attribute' => 'message'],
 ];
 
