@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\sms\models\TblBulkNotification;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_bulk_notification_applicability".
@@ -42,18 +43,21 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['bulk_notification_id'], 'required', 'except' => ['milkBillApplicability']],
-            [['applicable_code', 'wef_date', 'applicable_for'], 'required'],
-            [['bulk_notification_id', 'is_active', 'originating_type'], 'safe'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['applicable_for', 'applicable_code'], 'safe'],
-            [['union_code'], 'safe'],
-            [['created_by', 'updated_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type'], 'safe'],
-            [['is_active'], 'default', 'value' => 1],
-            [['status'], 'default', 'value' => 0],
-            [['entry_datetime'], 'default', 'value' => date('Y-m-d H:i:s')],
-            [['status', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['bulk_notification_id'], 'required', 'except' => ['milkBillApplicability']],
+                [['applicable_code', 'applicable_for'], 'required'],
+                [['bulk_notification_id', 'is_active', 'originating_type'], 'safe'],
+                [['wef_date', 'created_at', 'updated_at'], 'safe'],
+                [['applicable_for', 'applicable_code'], 'safe'],
+                [['union_code'], 'safe'],
+                [['created_by', 'updated_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['is_active'], 'default', 'value' => 1],
+                [['status'], 'default', 'value' => 0],
+                [['entry_datetime'], 'default', 'value' => date('Y-m-d H:i:s')],
+                [['status', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['wef_date'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->bulkNotification, 'notification_type') != '3';
+                },],
         ];
     }
 
@@ -124,6 +128,10 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'applicable_code']);
     }
 
+    public function getBmcCodes() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code']);
+    }
+
     public function setOrgDetail() {
         if ($this->applicable_for == 'DCS') {
             $this->dcs_code = $this->applicable_code;
@@ -133,6 +141,66 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
         } elseif ($this->applicable_for == 'MCC') {
             $this->mcc_plant_code = $this->applicable_code;
             $this->plant_code = Yii::$app->general->getforeignkey($this->mccCodes, 'plant_code');
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $bulkNotificationType = Yii::$app->general->getforeignkey($this->bulkNotification, 'notification_type');
+        if ($bulkNotificationType == 3) {
+            $sentboxArray = [];
+            $applicableFor = $this->applicable_for;
+            if ($applicableFor == 'DCS') {
+                $applicableFor = 'VLC';
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->applicable_code);
+            } else if ($applicableFor == 'BMC') {
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->applicable_code);
+            }
+
+            foreach ($sentboxArray as $sent) {
+                if ($applicableFor == $sent['type']) {
+                    $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+                    $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+                    $bulk_notification = TblBulkNotification::findOne($this->bulk_notification_id);
+                    if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                        if (!($sentbox->setSentbox($bulk_notification, $flag))) {
+                            throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function afterDelete() {
+        $bulkNotificationType = Yii::$app->general->getforeignkey($this->bulkNotification, 'notification_type');
+        if ($bulkNotificationType == 3) {
+            $sentboxArray = [];
+            $applicableFor = $this->applicable_for;
+            if ($applicableFor == 'DCS') {
+                $applicableFor = 'VLC';
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->applicable_code);
+            } else if ($applicableFor == 'BMC') {
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->applicable_code);
+            }
+            foreach ($sentboxArray as $sent) {
+                if ($applicableFor == $sent['type']) {
+                    $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+                    $bulk_notification = TblBulkNotification::findOne($this->bulk_notification_id);
+                    if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                        if (!($sentbox->setSentbox($bulk_notification, 'DELETE'))) {
+                            throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                        }
+                    }
+                }
+            }
         }
     }
 

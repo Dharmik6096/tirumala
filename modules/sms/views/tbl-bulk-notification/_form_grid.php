@@ -15,12 +15,12 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }],
-        ['attribute' => 'dcs_ref_code','label' => Yii::t('app', 'DCS') . ' Ref Code', 'value' => function($model) {
+        ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-                }, 'filter' => TRUE],
+        }, 'filter' => TRUE],
         ['attribute' => 'created_by', 'label' => (Yii::t('app', 'Notification Sender')), 'value' => function($model) {
-                    return Yii::$app->general->getforeignkey($model->userCode, 'name');
-                }, 'filter' => FALSE],
+            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        }, 'filter' => FALSE],
         [
         'attribute' => 'entry_datetime',
         'filterType' => GridView::FILTER_DATE,
@@ -47,6 +47,9 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
+        ['attribute' => 'notificaton_type', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('notification_type', $model, 'notification_type');
+        }, 'filter' => FALSE],
         ['attribute' => 'message'],
 ];
 
