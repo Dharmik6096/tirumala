@@ -84,7 +84,7 @@ $grid_option = [
             $document_url = $model->file_path;
             $class = ($document_url != '') ? '' : 'disabled';
             $options = ['target' => '_blank', 'class' => '' . $class,];
-            return GhostHtml::a('<i class="fa fa-eye"></i>', $document_url, $options);
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', $document_url, $options);
         },
     ]
 ];
