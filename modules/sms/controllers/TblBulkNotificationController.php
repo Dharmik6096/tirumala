@@ -105,8 +105,10 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->from_date = $from_date;
                         $model->to_date = $to_date;
                         $model->login_type = $this->model->login_type;
+                        if ($model->notification_type == 4) {
                         $model->filename = ((int) $dcs_data['ref_code']) . '.pdf';                       
                         $model->file_path = $file_path . $model->filename;
+                        }
                         $model->campaign_name = $this->model->campaign_name;
                         $model->title = $this->model->title;
                         $model->message = $this->model->message;
@@ -126,8 +128,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $i++;
                     }
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Bulk Notification', 'create'], $auto_key_config);
-                } else
-                if ($this->model->notification_type == 3) {
+                } else if ($this->model->notification_type == 3) {
                     $this->model->filename = $files;
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
