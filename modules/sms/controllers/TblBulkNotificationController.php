@@ -133,14 +133,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
                     $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $filename . '/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/';
                     if (Yii::$app->general->checkDirectory($new_directory)) {
                         rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                     }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' .  $filename . '/';
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/';
                     $from_date = date('Y-m-d 00:00:00', strtotime($this->model->from_date));
                     $to_date = date('Y-m-d 23:59:59', strtotime($this->model->to_date));
-                    $this->model->filename = $this->model->bmc_code . $filename . '.pdf';
+                    $this->model->filename = $filename . '.pdf';
                     $this->model->file_path = $file_path . $this->model->filename;
                     $this->model->from_date = $from_date;
                     $this->model->to_date = $to_date;
