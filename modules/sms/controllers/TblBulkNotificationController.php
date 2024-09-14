@@ -133,11 +133,11 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
                     $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $filename . '/';
                     if (Yii::$app->general->checkDirectory($new_directory)) {
                         rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                     }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' .  $filename . '/';
                     $from_date = date('Y-m-d 00:00:00', strtotime($this->model->from_date));
                     $to_date = date('Y-m-d 23:59:59', strtotime($this->model->to_date));
                     $this->model->filename = $this->model->bmc_code . $filename . '.pdf';
@@ -285,9 +285,6 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $appModel->dcs_filters = $value;
         $appModel->login_type = $model->login_type;
         $appModel->fields = [
-            'wef_date' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
-                    return Yii::$app->controls->view_date($model->wef_date);
-                }, 'filter' => FALSE],
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
             'applicable_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'Applicable Name'), 'value' => function($model) {
@@ -305,6 +302,15 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '';
                 }, 'filter' => FALSE],
         ];
+        if ($model->notification_type == 3) {
+            $appModel->fields['wef_date'] = ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
+                return Yii::$app->controls->view_date($model->wef_date);
+            }, 'filter' => FALSE];
+        }else{
+            $appModel->fields['wef_date'] = ['view' => ['grid','create'], 'type' => 'date', 'value' => function($model) {
+                return Yii::$app->controls->view_date($model->wef_date);
+            }, 'filter' => FALSE];
+        }
         $appModel->actions = [
             'delete' => ['option' => 'applicable_code,bulk_notification_app_code,tbl-bulk-notification/delete-mapping'],
         ];
