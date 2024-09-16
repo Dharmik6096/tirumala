@@ -7,11 +7,18 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Client Erp Api Log
             <?= $this->title; ?>
         </div>
         <div class="panel-body">
-            <?=
-            $this->render('_form_grid', [
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
-            ])
+            <?php
+            if($searchModel['erp_process_name'] == 1){
+                echo $this->render('_form_grid', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ]);   
+            } else {
+                echo $this->render('_milk_form_grid', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ]);   
+            }
             ?>
         </div>
     </div>

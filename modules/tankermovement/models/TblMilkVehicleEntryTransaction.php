@@ -147,6 +147,10 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'source_org_code']);
     }
 
+    public function getMilkVehicleEntryCode() {
+        return $this->hasOne(TblMilkVehicleEntry::className(), ['milk_vehicle_entry_code' => 'milk_vehicle_entry_code']);
+    }
+
     public function validateCreate($attribute, $params) {
         if (!empty($this->milk_vehicle_entry_code) && $this->entry_type == 'CONSOLIDATED') {
             $count = $this->find()
@@ -169,8 +173,8 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
         }
     }
 
-    public function updateStatus($updateData, $ids, $challan_no) {
-        return $this->updateAll($updateData, ['milk_vehicle_entry_code' => $ids, 'challan_no' => $challan_no]);
+    public function updateStatus($updateData, $ids) {
+        return $this->updateAll($updateData, ['milk_vehicle_entry_transaction_code' => $ids]);
     }
 
 }

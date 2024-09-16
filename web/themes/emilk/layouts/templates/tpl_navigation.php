@@ -901,6 +901,7 @@ echo GhostMenu::widget([
                         ['label' => '917-' . Yii::t('app', 'Log report of  the Mobile App'), 'url' => ['/misreports/reports/mobile-app-report']],
                         ['label' => '918-' . Yii::t('app', 'Asset Details Report'), 'url' => ['/misreports/reports/asset-details-report']],
                         ['label' => '919-' . Yii::t('app', 'User Organization Mapping Report'), 'url' => ['/misreports/reports/user-organization-mapping-report']],
+                        ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
                     ]
                 ],
                 [

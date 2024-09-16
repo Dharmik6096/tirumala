@@ -291,6 +291,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 $script = "
     $('.kv-panel-before').hide();
     var periodic_applicability = '{$periodic_applicability}';
+    var is_bulk_notification = '{$is_bulk_notification}';
     function checkBoxFilter(val){
         var id = $(val).attr('id');
         var value = $(val).val();
@@ -425,7 +426,12 @@ $script = "
             setClass = 'col-sm-2';
 //            $('.applicableCodeArea .dcs-checklist').addClass('col-sm-2');
 //            $('.applicableCodeArea .dcs-checklist').removeClass('col-sm-4');
-        } else {
+        }else if (is_bulk_notification == 1) {
+            $('.selectMccArea').show();
+             setClass = 'col-sm-6';
+             $('.applicableCodeArea').removeClass('col-sm-12');
+             $('.applicableCodeArea').addClass('col-sm-6');
+        }else {
             $('#f_bmc_code-list').empty();
             $('.mccCheckboxes').prop('checked',false);
             $('#checkAllMccList').prop('checked',false);
@@ -482,7 +488,7 @@ $script = "
         $.ajax({
             type: 'post',
             url: '{$furl}',
-            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute),'from_date':from_date,'to_date':to_date,'periodic_applicability':periodic_applicability},
+            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute),'from_date':from_date,'to_date':to_date,'periodic_applicability':periodic_applicability,'is_bulk_notification':is_bulk_notification},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if (obj1.status == 'success')
@@ -547,7 +553,7 @@ $script = "
                                     $.each(obj1.dcsarray, function(index, value) {   
                                               $('#'+value).prop('checked', false);  
                                         });              
-                                }
+    }
                                 if((!($.isEmptyObject(chkbx)) && chkbx.checked) || (flag=='society')) {
                                     var flag_check = $('input[type=\'radio\']:checked').val();
                                     if(flag_check == flag){

@@ -27,13 +27,6 @@ class WebApi {
         //  return $this->GuzzleCURL();
     }
 
-    public function GuzzlePostData() {
-        if ($this->authentication) {
-            $this->body = array_merge($this->authentication, $this->body);
-        }
-        return $this->GuzzleCURL();
-    }
-
     public function GuzzleCURL() {
         $url = $this->serverUrl . $this->apiurl;
         $client = new GuzzleHttp\Client();
@@ -47,6 +40,9 @@ class WebApi {
         ];
         $resp = $client->request('POST', $url, $postData);
         //var_dump(resp);die;
+        if ($this->return_actual) {
+            return $resp;
+        }
         return $resp->getBody();
     }
 

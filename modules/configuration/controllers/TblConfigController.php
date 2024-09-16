@@ -197,7 +197,7 @@ class TblConfigController extends \app\controllers\ChildController {
         $bmc = Yii::$app->request->get('bmc');
         $configModel = new TblConfig();
         $configModel->config_for = $code;
-        $configModel->config_type = 'CONTROL';
+        $configModel->config_type = array('CONTROL','CONFIG');
         $configModel->process_name = $process;
         $configModel->is_input_config = 1;
         $masterData = $configModel->getConfigDetail();
