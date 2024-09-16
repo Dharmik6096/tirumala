@@ -59,14 +59,6 @@ class ReportsController extends \app\controllers\ChildController {
         if (isset($this->data['export_file_name']) && empty($this->output)) {
             $this->data['export_file_name'] = $this->data['title'];
         }
-
-        $client_code = \Yii::$app->session->get('eiplCode');
-        if(isset($this->data['rmv_drp_opt']) && isset($this->data['rmv_drp_opt'][$client_code])){
-            $this->data['rmv_drp_opt'] = $this->data['rmv_drp_opt'][$client_code];
-        }else{
-            $this->data['rmv_drp_opt'] = [];
-        }
-
         $model->upload_ftp_file = '0';
         return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider, 'fileDownloadArr' => $this->fileDownloadArr]);
     }
@@ -2420,11 +2412,6 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_bank_payment',
                 'scenario' => 'MemberBankPayment',
                 'title' => '607 - Member Bank Payment',
-                'rmv_drp_opt' => [  
-                    'ABT' => 
-                    [
-                         'bank_type' => ['AU','Federal','IOB','NEFT'] ] 
-                    ]
             ],
             'MemberOutstandingDetail' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
