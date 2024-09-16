@@ -898,9 +898,18 @@ class DropDown extends Component {
             $records = [0 => Yii::t('app', 'All')] + $records;
         }
         if ($removeKey) {
-            foreach ($data['remove_key'] as $value) {
-                unset($records[$value]);
+
+            if(is_array($removeKey)){
+                foreach ($removeKey as $value) {
+                    unset($records[$value]);
+                }
+
+            }else{
+                foreach ($data['remove_key'] as $value) {
+                    unset($records[$value]);
+                }
             }
+
         }
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [

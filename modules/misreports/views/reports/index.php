@@ -288,10 +288,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 
                                         if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
+                                                    
+                                                $rmvlist = (isset($data['rmv_drp_opt'][$value]) && is_array($data['rmv_drp_opt'][$value])) ? $data['rmv_drp_opt'][$value] : false;
+                                                
                                                 ?>
 
                                                 <div class="col-sm-3">
-                                                    <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                    <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value,false,$rmvlist) ?> 
                                                 </div>
                                                 <?php
                                             }
