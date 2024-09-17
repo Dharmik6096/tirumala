@@ -564,7 +564,6 @@ echo GhostMenu::widget([
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="reportsNewDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Reports - New <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-menu-end' aria-labelledby='reportsNewDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
-<<<<<<< HEAD
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Report Request<b class="caret"></b></a>',
@@ -573,12 +572,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
                             ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
                     ],
-=======
-                    ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
-                    ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
-                    ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
-            ],
->>>>>>> origin/production_v5
                 ],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
@@ -731,19 +724,11 @@ echo GhostMenu::widget([
                             ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                             ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
                             ['label' => '408-' . Yii::t('app', 'CP liability Report'), 'url' => ['/misreports/reports/cpliability-report']],
-<<<<<<< HEAD
                             ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/reports/sap-wq-file']],
-                            ['label' => '410-' . Yii::t('app', 'Member Provisional Family Detail'), 'url' => ['/misreports/reports/member-provisional-family-detail']],
-                            ['label' => '411-' . Yii::t('app', 'Member Provisional SAP Export'), 'url' => ['/misreports/reports/member-provisional-sap-export']],
-                            ['label' => '412-' . Yii::t('app', 'SAP Date export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
-                            ['label' => '413-' . Yii::t('app', 'SAP Date export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
-=======
-                            ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/default/sap-wq-file']],
                             ['label' => '410-' . Yii::t('app', 'Member Provisional Family Detail'), 'url' => ['/misreports/reports/member-provisional-family-detail']],
                             ['label' => '411-' . Yii::t('app', 'Member Provisional SAP Export'), 'url' => ['/misreports/reports/member-provisional-sap-export']],
                             ['label' => '412-' . Yii::t('app', 'SAP Data export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
                             ['label' => '413-' . Yii::t('app', 'SAP Data export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
->>>>>>> origin/production_v5
                             ['label' => '414-' . Yii::t('app', 'SAP Data Export Feed Sale Member'), 'url' => ['/misreports/reports/sap-data-export-feed-sale-member']],
                     ]
                 ],
