@@ -940,6 +940,16 @@ class DropDown extends Component {
         $select2Options = ['data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]];
         !empty($form_id) ? ($select2Options['pluginOptions']['dropdownParent'] = '#' . $form_id) : '';
 
+        //client wise dropdown option remove
+        $client_code = \Yii::$app->session->get('eiplCode');
+        if(isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])){
+            foreach ($data['client_wise_rmv'][$client_code] as $value) {
+                unset($records[$value]);
+            }
+        }
+
+
+
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(
                             Select2::classname(), $select2Options
@@ -995,7 +1005,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1296,6 +1306,9 @@ class DropDown extends Component {
                 'name' => 'bank_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
+                'client_wise_rmv' => [
+                    'ABT' => ['AU','Federal','IOB','NEFT'] 
+                ]
             ],
             'payment_mode_member' => [
                 'name' => 'payment_mode_member',
@@ -1692,8 +1705,8 @@ class DropDown extends Component {
             'notification_type' => [
                 'name' => 'notification_type',
                 'prompt' => Yii::t('app', 'Select Notification Type'),
-                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'Special Message'), 4 => Yii::t('app', 'Milk Bill'), 5 => Yii::t('app', 'Bacteria Test')],
-                'remove_key' => ['2', '3', '5']
+                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'AMCS Special Message'), 4 => Yii::t('app', 'Milk Bill'), 5 => Yii::t('app', 'Bacteria Test')],
+                'remove_key' => ['2', '5']
             ],
             'month' => [
                 'name' => 'month',
@@ -1979,6 +1992,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'All'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
             ],
+            'erp_process_name' => [
+                'name' => 'process_name',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Inventory Plant Dispatch'), 2 => Yii::t('app', 'Milk Receipt')],
+            ],
         ];
         return $records[$l];
     }
@@ -2209,8 +2227,13 @@ class DropDown extends Component {
             'value' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [0],
             'multiSelectOptions' => [
                 'id' => $id,
+<<<<<<< HEAD
                 'pluginOptions' =>
                 [
+=======
+                'clientOptions' =>
+                    [
+>>>>>>> origin/production_v5
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

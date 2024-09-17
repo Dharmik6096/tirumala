@@ -1830,7 +1830,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'SapDataExportFeedSaleMember';
         return $this->actionIndex();
     }
-    
+
     public function actionPaymentCycleApplicabilityStatus() {
         $this->report = 'PaymentCycleApplicabilityStatus';
         return $this->actionIndex();
@@ -3832,13 +3832,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'sp_mis_sap_data_export_for_deduction',
                 'scenario' => 'SapDataExportForDeduction',
-                'title' => 'SAP Date export for Deduction',
+                'title' => 'SAP Data export for Deduction',
             ],
             'SapDataExportForVlcReplacement' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
                 'sp_name' => 'sp_mis_sap_data_export_for_vlc_replacement',
                 'scenario' => 'SapDataExportForVlcReplacement',
-                'title' => 'SAP Date export for VLC Replacement',
+                'title' => 'SAP Data export for VLC Replacement',
             ],
             'StockRegisterBmcToSap' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',

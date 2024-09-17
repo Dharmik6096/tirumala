@@ -3,6 +3,9 @@
 namespace app\modules\clienterp\models;
 
 use app\models\ChildModel;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
 use Yii;
 
@@ -71,10 +74,10 @@ class TblClientErpApiLog extends ChildModel
     {
         return [
             'log_id' => Yii::t('app', 'Log ID'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
             'end_point' => Yii::t('app', 'End Point'),
             'request_url' => Yii::t('app', 'Request Url'),
             'request_desc' => Yii::t('app', 'Request Desc'),
@@ -109,5 +112,17 @@ class TblClientErpApiLog extends ChildModel
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 }

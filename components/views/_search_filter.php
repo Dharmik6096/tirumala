@@ -329,7 +329,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
