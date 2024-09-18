@@ -902,6 +902,17 @@ class DropDown extends Component {
                 unset($records[$value]);
             }
         }
+
+        //client wise dropdown option remove
+        $client_code = \Yii::$app->session->get('eiplCode');
+        if(isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])){
+            foreach ($data['client_wise_rmv'][$client_code] as $value) {
+                unset($records[$value]);
+            }
+        }
+
+
+
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
                         'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
@@ -1258,6 +1269,9 @@ class DropDown extends Component {
                 'name' => 'bank_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
+                'client_wise_rmv' => [
+                    'ABT' => ['AU','Federal','IOB','NEFT'] 
+                ]
             ],
             'payment_mode_member' => [
                 'name' => 'payment_mode_member',
