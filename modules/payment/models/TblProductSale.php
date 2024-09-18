@@ -102,6 +102,7 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblproductsale-payment_mode').val() == 1; 
           }", 'tooSmall' => 'You must have atleast 1 installment to pay the due'],
+            [['no_of_installment'], 'validateInstallments', 'on' => 'saleProduct'],
             [['dcs_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
                     return ($this->customer_type == 'Member');
                 }, 'whenClient' => "function (attribute, value) { 
@@ -1129,6 +1130,13 @@ class TblProductSale extends \app\models\ChildModel {
         $cnt = $this->find()->where(['x_col1' => $this->x_col1])->count();
         if (!empty($cnt) && $cnt > 0) {
             $this->addError($attribute, Yii::t('app/validation', 'Duplplicate Record Found.'));
+        }
+    }
+
+    public function validateInstallments($attribute, $params) {
+        $allowedInstallments = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'product_sale_allowed_installment', 'PORTAL');
+        if ($this->payment_mode == 1 && !empty($allowedInstallments) && $this->$attribute > $allowedInstallments) {
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " cannot be more than {$allowedInstallments}."));
         }
     }
 
