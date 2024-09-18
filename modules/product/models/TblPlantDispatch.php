@@ -52,7 +52,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv', 'clienterp_cargill']],
-                [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
+                [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no', 'vendor_master_code'], 'safe'],
                 [['bmc_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
                 [['product_code', 'rate', 'qty'], 'required', 'on' => ['importCsv']],
                 [['sap_batch_no'], 'required', 'on' => ['importCsv'], 'when' => function ($model) {
@@ -72,6 +72,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
                 [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, TRUE);
                 }, 'on' => ['importCsv', 'clienterp_cargill']],
+                [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_master_code'], 'on' => 'importCsv'],
         ];
     }
 
@@ -103,6 +104,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'vendor_name' => Yii::t('app', 'Vendor Name'),
+            'vendor_master_code' => Yii::t('app', 'Vendor'),
         ];
     }
 
@@ -196,6 +198,10 @@ class TblPlantDispatch extends \app\models\ChildModel {
 
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getVendorCode() {
+        return $this->hasOne(TblVendorMaster::className(), ['vendor_master_code' => 'vendor_master_code']);
     }
 
 }

@@ -37,6 +37,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->controls->date($model, $form, 'dispatch_date', '', TRUE, date('Y-m-d'), TRUE, true); ?>
         </div>
         <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->depend_dropdown('vendor', $model, $form, 'tblplantdispatch-union_code', 'form-group', $model->getAttributeLabel('vendor_master_code'), 'vendor_master_code'); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblplantdispatch-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">

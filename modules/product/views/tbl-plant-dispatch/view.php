@@ -87,8 +87,15 @@ $this->title = Yii::$app->label->title('view', 'Plant Dispatch');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'vendor_name',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'attribute' => 'vendor_master_code',
+                                'value' => Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'vendor_master_code',
+                                'value' => Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_code'),
+                                'label' => Yii::t('app', 'Vendor Code'),
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
