@@ -50,29 +50,29 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                 $detail_type = '';
                 $code = $data['organization_code'];
                 $deviceMaster = new TblDeviceMasterMapping();
-                $deviceMapping = $deviceMaster->getDeviceMapping($data['device_id']);
-//                if (!empty($deviceMapping) && $deviceMapping->applicability_code == $code) {
-                if (TRUE) {
-                    if ($type == 'VLC') {
-                        $model = new TblDcs();
-                        $model->dcs_code = $code;
-                        $detail_type = 'society';
-                        $model_data = $model->getData(TRUE);
-                        $code = !empty($model_data) ? $model_data[0]->dcs_code : $code;
-                    } else if ($type == 'BMC') {
-                        $model = new TblDcsBmc();
-                        $model->bmc_code = $code;
-                        $detail_type = 'bmc';
-                        $model_data = $model->bmcData(TRUE);
-                        $code = !empty($model_data) ? $model_data[0]->bmc_code : $code;
-                    } else if ($type == 'MCC') {
-                        $model = new TblMccPlant();
-                        $model->mcc_plant_code = $code;
-                        $detail_type = 'mccPlant';
-                        $model_data = $model->getData(TRUE);
-                        $code = !empty($model_data) ? $model_data[0]->mcc_plant_code : $code;
-                    }
-                    if (!empty($model_data)) {
+                if ($type == 'VLC') {
+                    $model = new TblDcs();
+                    $model->dcs_code = $code;
+                    $detail_type = 'society';
+                    $model_data = $model->getData(TRUE);
+                    $code = !empty($model_data) ? $model_data[0]->dcs_code : $code;
+                } else if ($type == 'BMC') {
+                    $model = new TblDcsBmc();
+                    $model->bmc_code = $code;
+                    $detail_type = 'bmc';
+                    $model_data = $model->bmcData(TRUE);
+                    $code = !empty($model_data) ? $model_data[0]->bmc_code : $code;
+                } else if ($type == 'MCC') {
+                    $model = new TblMccPlant();
+                    $model->mcc_plant_code = $code;
+                    $detail_type = 'mccPlant';
+                    $model_data = $model->getData(TRUE);
+                    $code = !empty($model_data) ? $model_data[0]->mcc_plant_code : $code;
+                }
+                if (!empty($model_data)) {
+                    $deviceMapping = $deviceMaster->getDeviceMapping($data['device_id']);
+                    $amcsDeviceMappingValidate = Yii::$app->general->getUnionConfiguration($model_data[0]->union_code, 'amcs_device_mapping_validate', $type);
+                    if ($amcsDeviceMappingValidate != 1 || (!empty($deviceMapping) && $deviceMapping->applicability_code == $code)) {
                         $contact_data = Yii::$app->general->getDefaultContactDetail($code, $detail_type);
                         // Start: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
                         $hasDetails = false;
@@ -89,7 +89,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                         }
                         if ($hasDetails) {
                             // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
-//                  if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
+                            // if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
                             $master = [];
                             $andoidIdModel = new TblAndroidInstallation();
                             $andoidIdModel->organization_code = $code;
@@ -109,9 +109,9 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                             $andoidIdDetailModel->version_no = !empty($content['version_no']) ? $content['version_no'] : NULL;
                             $andoidIdDetailModel->d2d_request = !empty($data['d2d_request']) ? $data['d2d_request'] : 0;
                             $andoidIdDetailModelData = $andoidIdDetailModel->getActiveCount();
-//                        if (!empty($andoidIdDetailModelData)) {
-//                            $res_data['message'] = 'Mobile Number already registered.';
-//                        } else {
+                            //if (!empty($andoidIdDetailModelData)) {
+                            //   $res_data['message'] = 'Mobile Number already registered.';
+                            //} else {
                             $unionData = TblUnions::find()->where(['union_code' => $model_data[0]->union_code, 'is_active' => 1])->one();
                             $eiplCode = !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
 
@@ -130,13 +130,12 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                             }
                             $res_data['token'] = $andoidIdDetailModel->hash_key;
                             $res_data['org_pk_code'] = $code;
-//                        }
                         }
+                    } else {
+                        $this->response['error']['code'] = '401';
+                        $this->response['status'] = 'error';
+                        $this->response['error']['message'] = ['This device is not allowed to use for selected ' . $type];
                     }
-                } else {
-                    $this->response['error']['code'] = '401';
-                    $this->response['status'] = 'error';
-                    $this->response['error']['message'] = ['This device is not allowed to use for selected ' . $type];
                 }
             }
         }
