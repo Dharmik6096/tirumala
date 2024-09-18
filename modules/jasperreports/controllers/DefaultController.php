@@ -1036,6 +1036,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'MemberRegisterAll',
                 'scenario' => 'RptMemberRegisterAll',
                 'title' => 'Approve Farmer Data PDF',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
