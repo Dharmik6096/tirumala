@@ -149,7 +149,7 @@ class ChildController extends Controller {
                 return 'Error While Request Submit.';
             }
         }
-        return 'Your Request has been Pending For this Report ' . $config['title'] . '<br/>';
+        return 'Your request is pending for this report ' . $config['title'] . '<br/>You can register new request once this report is processed.';
     }
 
 }
