@@ -128,8 +128,8 @@ class ChildController extends Controller {
 
     public function RegisterReportRequest($report_type, $config, $controls) {
         $model = new TblReportTxnLog();
-        $recordCount = $model->find()->where(['user_code' => \Yii::$app->user->identity->user_code, 'status' => 0])->count();
-        if ($recordCount == 0) {
+        $txnLogExistRecord = $model->find()->where(['status' => 0, 'user_code' => \Yii::$app->user->identity->user_code])->one();
+        if (empty($txnLogExistRecord)) {
             $model->report_type = $report_type;
             $model->report_title = $config['title'];
             $model->sp_name = $report_type == 'mis' ? $config['sp_name'] : $config['path'];
@@ -149,7 +149,7 @@ class ChildController extends Controller {
                 return 'Error While Request Submit.';
             }
         }
-        return 'Your request is pending for this report ' . $config['title'] . '<br/>You can register new request once this report is processed.';
+        return 'Your request is pending for this report ' . $txnLogExistRecord->report_title . '<br/>You can register new request once this report is processed.';
     }
 
 }
