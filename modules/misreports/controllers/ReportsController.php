@@ -1050,11 +1050,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
             }
         } else {
-            if ($this->RegisterReportRequest('mis', $this->data, $controls)) {
-                $output = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
-            } else {
-                $output = 'Error While Request Submit.';
-            }
+            $output = $this->RegisterReportRequest('mis', $this->data, $controls);
         }
         $this->output = $output;
 

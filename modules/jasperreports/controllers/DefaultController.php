@@ -505,11 +505,7 @@ class DefaultController extends \app\controllers\ChildController {
                     echo $this->output;
                 }
             } else {
-                if ($this->RegisterReportRequest('jasper', $this->data, $controls)) {
-                    $msg = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
-                } else {
-                    $msg = 'Error While Request Submit.';
-                }
+                $msg = $this->RegisterReportRequest('jasper', $this->data, $controls);
                 $this->output = '<p><center><b>' . $msg . '<b/></center><p/>';
             }
         } else {
@@ -1040,6 +1036,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'MemberRegisterAll',
                 'scenario' => 'RptMemberRegisterAll',
                 'title' => 'Approve Farmer Data PDF',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
