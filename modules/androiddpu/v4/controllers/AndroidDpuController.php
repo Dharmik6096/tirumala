@@ -38,9 +38,11 @@ use app\modules\dcsoperation\models\TblMemberDeactive;
 /**
  * Default controller for the `vendorapi` module
  */
-class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\AndroidDpuController {
+class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\AndroidDpuController
+{
 
-    public function actionRegister() {
+    public function actionRegister()
+    {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['content'])) {
@@ -143,7 +145,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         return $this->response;
     }
 
-    public function actionVerification() {
+    public function actionVerification()
+    {
         $res_data = [];
         $saveModel = [];
         $sendNotificaton = FALSE;
@@ -265,7 +268,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                 $union = Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name');
                 $username = $androidUsr->username;
                 $pass = (!empty($androidUsr->password) && Yii::$app->general->decryptData($androidUsr->password) !== FALSE) ? Yii::$app->general->decryptData($androidUsr->password) : $androidUsr->password;
-//                $message = 'Welcome to ' . Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name') . ',' . PHP_EOL . ' Your user name is ' . $androidUsr->username . ' and password is ' . $pass . ' to login in AMCS application.';
+                //                $message = 'Welcome to ' . Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name') . ',' . PHP_EOL . ' Your user name is ' . $androidUsr->username . ' and password is ' . $pass . ' to login in AMCS application.';
                 $sms_data = [];
                 $templateModel = new TblAlertTemplate();
                 $templateData = $templateModel->getTemplateData('android_dpu', 'SMS', $androidUsr->union_code);
@@ -276,7 +279,6 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                     $message = str_replace($arrFrom, $arrTo, $word);
 
                     if (YII_ENV_DEV) {
-                        
                     } else {
                         Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, TRUE, $templateData->header_info);
                     }
@@ -297,7 +299,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         return $this->response;
     }
 
-    public function getParentDetails(&$res_data, $data) {
+    public function getParentDetails(&$res_data, $data)
+    {
         $code = $data['organization_code'];
         $type = $data['organization_type'];
         $parent_code = '';
@@ -341,7 +344,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         $res_data['parent_name'] = $parent_name;
     }
 
-    public function actionInitialization() {
+    public function actionInitialization()
+    {
         $db_file = 'everest_amcs_user_module.db';
         $db_file_version = '';
         $res_data = [];
@@ -414,44 +418,45 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         return $this->response;
     }
 
-    public function actionStartUp() {
+    public function actionStartUp()
+    {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
-            $deviceMaster = new TblDeviceMasterMapping();
-            $deviceMapping = $deviceMaster->getDeviceMapping($data['device_id']);
-//            if (!empty($deviceMapping) && $deviceMapping->applicability_code == $data['organization_code']) {
-            if (TRUE) {
-                $model = new TblAndroidInstallationDetails();
-                $id_model = $model->getActiveData($data);
-                if (!empty($id_model)) {
-                    $mobileNo = !empty($id_model->mobile_no) ? $id_model->mobile_no : '';
-                    $detailType = '';
-                    $res_data['config'] = [];
-                    $res_data['collectionConfig'] = [];
-                    $res_data['rate'] = [];
-                    $res_data['rate']['mPurchaseRateCode'] = "";
-                    $res_data['rate']['mPurchaseRateCodeBlock'] = "";
-                    $res_data['rate']['ePurchaseRateCode'] = "";
-                    $res_data['rate']['ePurchaseRateCodeBlock'] = "";
-                    $res_data['rate']['memberApplicableRate'] = "";
-                    $res_data['rate']['bmcApplicableRate'] = "";
-                    $res_data['memberDownload'] = FALSE;
-                    $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
-                    $res_data['shift_timing'] = [];
-                    $res_data['shift_time_exceed'] = [];
-                    $mcc_bmc_config = TRUE;
-                    $MappedMilkType = [];
-                    $org_code = $data['organization_code'];
-                    $org_type = $data['organization_type'];
-                    $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
-                    $dcs_code = $orgDetail['dcs_code'];
-                    $bmc_code = $orgDetail['bmc_code'];
-                    $mcc_plant_code = $orgDetail['mcc_plant_code'];
-                    $plant_code = $orgDetail['plant_code'];
-                    $union_code = $orgDetail['union_code'];
-                    $model_data = $orgDetail['model_data'];
-                    if (!empty($model_data)) {
+            $org_code = $data['organization_code'];
+            $org_type = $data['organization_type'];
+            $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+            $model_data = $orgDetail['model_data'];
+            if (!empty($model_data)) {
+                $deviceMaster = new TblDeviceMasterMapping();
+                $deviceMapping = $deviceMaster->getDeviceMapping($data['device_id']);
+                $amcsDeviceMappingValidate = Yii::$app->general->getUnionConfiguration($model_data->union_code, 'amcs_device_mapping_validate', $org_type);
+                if ($amcsDeviceMappingValidate != 1 || (!empty($deviceMapping) && $deviceMapping->applicability_code == $org_code)) {
+                    $model = new TblAndroidInstallationDetails();
+                    $id_model = $model->getActiveData($data);
+                    if (!empty($id_model)) {
+                        $mobileNo = !empty($id_model->mobile_no) ? $id_model->mobile_no : '';
+                        $detailType = '';
+                        $res_data['config'] = [];
+                        $res_data['collectionConfig'] = [];
+                        $res_data['rate'] = [];
+                        $res_data['rate']['mPurchaseRateCode'] = "";
+                        $res_data['rate']['mPurchaseRateCodeBlock'] = "";
+                        $res_data['rate']['ePurchaseRateCode'] = "";
+                        $res_data['rate']['ePurchaseRateCodeBlock'] = "";
+                        $res_data['rate']['memberApplicableRate'] = "";
+                        $res_data['rate']['bmcApplicableRate'] = "";
+                        $res_data['memberDownload'] = FALSE;
+                        $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
+                        $res_data['shift_timing'] = [];
+                        $res_data['shift_time_exceed'] = [];
+                        $mcc_bmc_config = TRUE;
+                        $MappedMilkType = [];
+                        $dcs_code = $orgDetail['dcs_code'];
+                        $bmc_code = $orgDetail['bmc_code'];
+                        $mcc_plant_code = $orgDetail['mcc_plant_code'];
+                        $plant_code = $orgDetail['plant_code'];
+                        $union_code = $orgDetail['union_code'];
                         if ($org_type == 'VLC') {
                             $rangeModel = new TblAllowDcsManualCollectionRange();
                             $detailType = 'society';
@@ -500,7 +505,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                             $collectionIncentive = [];
                         }
                         if ($mcc_bmc_config) {
-//                            $res_data['memberDownload'] = FALSE;
+                            //$res_data['memberDownload'] = FALSE;
                             $res_data['config']['collectionBlock'] = FALSE;
                             $res_data['config']['dcsBlock'] = FALSE;
                             $res_data['config']['dispatchMandate'] = FALSE;
@@ -656,22 +661,23 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                             }
                         }
                         // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
-//                    if (!empty($contact_data)) {
-//                        $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? '1' : '0';
-//                    }
+                        // if (!empty($contact_data)) {
+                        //    $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? '1' : '0';
+                        // }
                     }
+                } else {
+                    $this->response['error']['code'] = '401';
+                    $this->response['status'] = 'error';
+                    $this->response['error']['message'] = ['This device is not allowed to use for selected ' . $data['organization_type']];
                 }
-            } else {
-                $this->response['error']['code'] = '401';
-                $this->response['status'] = 'error';
-                $this->response['error']['message'] = ['This device is not allowed to use for selected ' . $data['organization_type']];
             }
         }
         $this->response['data'] = $res_data;
         return $this->response;
     }
 
-    public function actionAppLockConfig() {
+    public function actionAppLockConfig()
+    {
         $appLockConfig = [];
         $data = $this->post_data;
         if (!empty($data['device_id'])) {
@@ -681,7 +687,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
             if (!empty($appLockConfigData)) {
                 foreach ($appLockConfigData as $key => $appLockConfigD) {
                     $k = $appLockConfigD['config_key_value'];
-                    $appLockConfig[$k] = (boolean) $appLockConfigD['result'];
+                    $appLockConfig[$k] = (bool) $appLockConfigD['result'];
                 }
             }
         }
@@ -689,7 +695,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         return $this->response;
     }
 
-    public function DcsSentboxGenerate($post) {
+    public function DcsSentboxGenerate($post)
+    {
         $device = $post['device_id'];
         $model = new TblDcsDeactive();
         $deactiveData = $model->getDeactiveRecords(false, $post);
@@ -704,7 +711,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         $this->setSentBox($post, $MemberModel, $device, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
     }
 
-    public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {
+    public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error)
+    {
         if (!empty($data)) {
             $ids = array_map(function ($e) use ($key) {
                 return $e->{$key};
@@ -749,7 +757,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         }
     }
 
-    private function sentboxModel($code, $type, $union, $device) {
+    private function sentboxModel($code, $type, $union, $device)
+    {
         $sentbox = new TblSentbox();
         $sentbox->dest_org_id = $code;
         $sentbox->source_org_id = $union;
@@ -758,13 +767,14 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         return $sentbox;
     }
 
-    public function actionSendOtp() {
+    public function actionSendOtp()
+    {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['content'])) {
             $content = $data['content'];
             $androidUsr = TblUserAndroid::find()->where(['user_code' => $content['user_code'], 'is_active' => 1])->one();
-            if(!empty($androidUsr)){
+            if (!empty($androidUsr)) {
                 if (YII_ENV_DEV) {
                     $otp = 1234;
                 } else {
@@ -780,7 +790,6 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                     $word = $templateData->message;
                     $message = str_replace($arrFrom, $arrTo, $word);
                     if (YII_ENV_DEV) {
-
                     } else {
                         Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, TRUE, $templateData->header_info);
                     }
@@ -794,18 +803,19 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         }
     }
 
-    public function actionChangePassword() {
+    public function actionChangePassword()
+    {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['content'])) {
             $content = $data['content'];
             $androidUsr = TblUserAndroid::find()->where(['user_code' => $content['user_code'], 'is_active' => 1])->one();
-            if(!empty($androidUsr)){
-                if($content['password'] == $content['repeat_password']){
+            if (!empty($androidUsr)) {
+                if ($content['password'] == $content['repeat_password']) {
                     $androidUsr->password = $content['password'];
                     $androidUsr->repeat_password = $content['repeat_password'];
                     $res_data['message'] = "Password updated sucessfully.";
-                    if(!$androidUsr->save()){
+                    if (!$androidUsr->save()) {
                         $this->response['error']['message'] = ['Password not updated sucessfully.'];
                         $res_data['message'] = '';
                     }
