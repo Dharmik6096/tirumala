@@ -102,7 +102,7 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblproductsale-payment_mode').val() == 1; 
           }", 'tooSmall' => 'You must have atleast 1 installment to pay the due'],
-            [['no_of_installment'], 'validateInstallments', 'on' => 'saleProduct'],
+            [['no_of_installment'], 'validateInstallments', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
             [['dcs_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
                     return ($this->customer_type == 'Member');
                 }, 'whenClient' => "function (attribute, value) { 
