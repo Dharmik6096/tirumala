@@ -28,6 +28,9 @@ $attribute = [
         ['attribute' => 'bmc_code', 'filter' => false, 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'visible' => TRUE, 'filter' => false],
+        ['attribute' => 'vendor_master_code','label' => Yii::t('app', 'Vendor Code'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_code');
+        }, 'visible' => $vendor, 'filter' => false],
         ['attribute' => 'vendor_master_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name');
         }, 'visible' => $vendor,],
