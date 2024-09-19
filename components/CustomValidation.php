@@ -1065,6 +1065,11 @@ class CustomValidation extends Component {
                             [['daily_milk_total', 'home_consumption_milk', 'market_surplus_milk'], 'required', 'on' => ['member_detail']],
                     ],
                 ],
+                'TblMemberProvisionalShareDetails' => [
+                    'default' => [
+                            [['amount_deposit'], 'required', 'except' => ['import_receipt_detail']],
+                    ],
+                ],
             ],
             'ANANDA' => [
                 'TblMember' => [
