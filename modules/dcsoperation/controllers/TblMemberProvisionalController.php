@@ -165,8 +165,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->setModel();
         $this->model->scenario = 'update_provisional_member';
         $tblMember = new TblMember();
-        if ($this->model->provisional_from == 'mobile_app') {
-            $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code);
+        if (empty($this->model->ex_member_code)) {
+            $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code, $this->model);
         }
         if (isset($this->model->scenarios()[Yii::$app->session['eiplCode']])) {
             $this->model->scenario = Yii::$app->session['eiplCode'];
@@ -1120,6 +1120,17 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     'dataProvider' => $dataProvider,
                     'provisionalModel' => $provisionalModel,
         ]);
+    }
+
+    public function actionGetExMemberCode() {
+        $provisionalModel = new TblMemberProvisional();
+        $model = new TblMember();
+        $exMemberCode = '';
+        $dcsCode = Yii::$app->request->post('dcs_code');
+        if (!empty($dcsCode)) {
+            $exMemberCode = Yii::$app->general->getMaxCode($model, 'ex_member_code', $dcsCode, $provisionalModel);
+        }
+        return $exMemberCode;
     }
 
 }
