@@ -25,6 +25,7 @@ class ChildModel extends \yii\db\ActiveRecord {
     public $form_validation_type = 'default';
     public $hasImport = FALSE;
     public $import_union_config;
+    public $set_master_hierarchy = [];
 
     //put your code here
     public function beforeSave($insert) {
@@ -216,6 +217,11 @@ class ChildModel extends \yii\db\ActiveRecord {
     public function afterSave($insert, $changedAttributes) {
         parent::afterSave($insert, $changedAttributes);
         $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        if(!empty($this->set_master_hierarchy) && $flag == 'INSERT'){
+            foreach($this->set_master_hierarchy as $hierarchy) {
+                $hierarchy->save();
+            }
+        }
         $sentbox = new \app\modules\syncutility\models\TblSentbox();
         if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
             if (!($sentbox->setSentbox($this, $flag))) {
