@@ -1423,19 +1423,19 @@ class GeneralFunctions extends Component {
         return !empty($data) ? $data->config_result_key : '';
     }
 
-    public function getCheckBmcConfiguration($union, $field, $org_code,$org_type,$process_name) {
+    public function getCheckBmcConfiguration($union, $field, $org_code, $org_type, $process_name) {
         $model = new TblConfig();
         $data = $model->find()->select(['tbl_config_mapping.config_result'])
-        ->join('inner join','tbl_config_mapping', 'tbl_config_mapping.config_code = tbl_config.config_code')
-        ->where([
-            'tbl_config.config_for' => $org_type,
-            'tbl_config.process_name' => $process_name,
-            'tbl_config.is_input_config' => 1,
-            'tbl_config.config_key' =>$field,
-            'tbl_config_mapping.org_type' => $org_type,
-            'tbl_config_mapping.org_code' => $org_code,
-            'tbl_config_mapping.union_code' => $union,
-        ])->asArray()->one();
+                        ->join('inner join', 'tbl_config_mapping', 'tbl_config_mapping.config_code = tbl_config.config_code')
+                        ->where([
+                            'tbl_config.config_for' => $org_type,
+                            'tbl_config.process_name' => $process_name,
+                            'tbl_config.is_input_config' => 1,
+                            'tbl_config.config_key' => $field,
+                            'tbl_config_mapping.org_type' => $org_type,
+                            'tbl_config_mapping.org_code' => $org_code,
+                            'tbl_config_mapping.union_code' => $union,
+                        ])->asArray()->one();
         return !empty($data) ? $data['config_result'] : '';
     }
 
@@ -2363,7 +2363,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getMaxCode($model, $field, $dcs_code, $auto_inc = 1) {
+    public function getMaxCode($model, $field, $dcs_code, $proModel, $auto_inc = 1) {
         $tableName = $model->tableName();
         $val = (new \yii\db\Query)
                 ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
@@ -2371,14 +2371,31 @@ class GeneralFunctions extends Component {
                 ->where(['dcs_code' => $dcs_code])
                 ->andWhere(['<>', 'ISNULL(is_dcs_member, 0)', 1])
                 ->one();
-        $number = (int) $val[$field] + $auto_inc;
+        $maxNumber1 = (int) $val[$field] + $auto_inc;
 
-        $query = (new \yii\db\Query)
+        $proTableName = $proModel->tableName();
+        $proValue = (new \yii\db\Query)
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
+                ->from($proTableName)
+                ->where(['dcs_code' => $dcs_code])
+                ->one();
+        $maxNumber2 = (int) $proValue[$field] + $auto_inc;
+
+        $number = max($maxNumber1, $maxNumber2);
+
+        $existsInModel = (new \yii\db\Query)
                 ->select('ex_member_code')
                 ->from($tableName)
                 ->where(['dcs_code' => $dcs_code, 'ex_member_code' => $number])
-                ->one();
-        if (!empty($query)) {
+                ->exists();
+
+        $existsInProModel = (new \yii\db\Query)
+                ->select('ex_member_code')
+                ->from($proTableName)
+                ->where(['dcs_code' => $dcs_code, 'ex_member_code' => $number])
+                ->exists();
+
+        if (!empty($existsInModel) || !empty($existsInProModel)) {
             $number = (int) $number + $auto_inc;
         }
         $number = str_pad($number, 4, '0', STR_PAD_LEFT);

@@ -12,6 +12,7 @@ use app\modules\globalmaster\models\TblAnimalType;
 /* @var $form yii\widgets\ActiveForm */
 
 $readonly = $type == 'create' ? FALSE : TRUE;
+$ex_code_readonly = $type == 'create' ? TRUE : FALSE;
 $nameWarning = 0;
 $codeWarning = 0;
 if (!empty($_POST)) {
@@ -78,7 +79,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'supervisor_employee_name')->textInput() ?>
         </div>
         <div class="col-sm-4 number-validate">
-            <?= $form->field($model, 'ex_member_code')->textInput() ?>
+            <?= $form->field($model, 'ex_member_code')->textInput(['readonly' => $ex_code_readonly]) ?>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel('member_type_code')); ?>
@@ -372,6 +373,20 @@ if ('$type' == 'create') {
                                     //alert('Your data has not been submitted..Please try again');
                                 }
             });
+            
+            $.ajax({
+		type: 'post',
+		url: '" . Url::to(['/dcsoperation/tbl-member-provisional/get-ex-member-code']) . "',
+		data: {'dcs_code':id},
+		success: function(exMemberCode) {
+			if(exMemberCode){
+                            $('#tblmemberprovisional-ex_member_code').val(exMemberCode);
+			}
+		},
+		error:function(exMemberCode){
+                    //alert('Failed to retrieve ex_member_code.');
+		}
+            });
     });
     $('#tblmemberprovisional-route_code').on('change', function(e) {
         var module_code = $(this).val();
@@ -400,7 +415,7 @@ if ('$type' == 'create') {
         });
     });
 }
-
+  
     $('#tblmemberprovisional-no_of_buffalo, #tblmemberprovisional-no_of_cow_cross, #tblmemberprovisional-no_of_cow_ind').on('change',function(){
             var no_of_buffalo = document.getElementById('tblmemberprovisional-no_of_buffalo').value;
             var no_of_cow_cross = document.getElementById('tblmemberprovisional-no_of_cow_cross').value;
