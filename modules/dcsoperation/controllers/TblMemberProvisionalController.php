@@ -51,6 +51,8 @@ use Exception;
  */
 class TblMemberProvisionalController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['get-ex-member-code'];
+
     /**
      * Lists all TblMemberProvisional models.
      * @return mixed
