@@ -1831,6 +1831,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionIndentSummaryDetail() {
+        $this->report = 'IndentSummaryDetail';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3903,6 +3908,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_payment_cycle_applicability',
                 'scenario' => 'PaymentCycleApplicabilityStatus',
                 'title' => 'Payment Cycle Applicabilit Status',
+            ],
+            'IndentSummaryDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_mcc_wise_indent_summary',
+                'scenario' => 'IndentSummaryDetail',
+                'title' => 'Indent Summary Detail',
             ],
         ];
         return $label[$l];

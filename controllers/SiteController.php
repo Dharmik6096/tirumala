@@ -3217,4 +3217,30 @@ class SiteController extends Controller {
         return ['status' => 'success', 'results' => $results];
     }
 
+    public function actionMccWiseIndentSummary() {
+        $output = [];
+        $union = 0;
+        $mcc = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'mis_mcc_wise_indent_summary';
+        if (!empty(Yii::$app->request->post('Dashboard')['union_code'])) {
+            $union = Yii::$app->request->post('Dashboard')['union_code'];
+        }
+        if (!empty(Yii::$app->request->post('Dashboard')['mcc_code'])) {
+            $mcc = Yii::$app->request->post('Dashboard')['mcc_code'];
+        }
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = $mcc;
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date;
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $table = $this->renderAjax('_mcc_wise_indent_summary', ['output' => $output]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'mcc_wise_indent_summary' => $table];
+    }
+
 }
