@@ -182,8 +182,8 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'BMC Shift Lock'), 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock'), 'visible' => ($eiplCode == 'MMD') ? TRUE : FALSE],
                     ['label' => Yii::t('app', 'Shift Lock'), 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => ($eiplCode == 'MMD') ? FALSE : TRUE],
                     ['label' => Yii::t('app', 'Shift Lock (Member Data)'), 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
-                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
-                    ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
+                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index')],
+                    ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index')],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
