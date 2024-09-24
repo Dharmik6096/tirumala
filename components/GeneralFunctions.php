@@ -40,7 +40,7 @@ use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\syncutility\models\TblGenerateSentbox;
 use app\models\TblKeyPattern;
 use app\models\TblKeyPatternChild;
-use app\models\TblMasterHierarchy;
+use app\modules\organisation\models\TblMasterHierarchy;
 use app\modules\bkgprocess\models\TblFtpDetail;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
@@ -1729,7 +1729,7 @@ class GeneralFunctions extends Component {
                 $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
             }
             if($keyPattern['master_hierarchy_auto_entry'] == 1){
-                $this->setKeyPatternChild($keyPattern, $model, $table_name);
+                $this->setKeyPatternChild($keyPattern, $model, $table_name, $pk_code);
             }
             return $pk_code;
         } else {
@@ -1738,15 +1738,25 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function setKeyPatternChild($pattern, &$model, $table_name) {
+    public function setKeyPatternChild($pattern, &$model, $table_name, $pk_code, $master_key = '', $existData = []) {
         $childPattern = new TblKeyPatternChild();
-        $childKeyPatterns = $childPattern->find()->where(['key_pattern_code' => $pattern['key_pattern_code'], 'key_code_type' => 1])->all();
+        $childKeyPatterns = $childPattern->find()->where(['key_pattern_code' => $pattern['key_pattern_code']])->all();
         if(!empty($childKeyPatterns)){
-            $masterHierarchy = new TblMasterHierarchy();
-            $masterHierarchy->master_key = $model::primaryKey()[0];
-            $masterHierarchy->attributes = $model->attributes;
-            $masterHierarchy->is_active = 1;
-            $masterHierarchy->wef_date = date('Y-m-d');
+            if(!empty($existData)){
+                $masterHierarchy = $existData;
+            } else {
+                $masterHierarchy = new TblMasterHierarchy();
+                $pk_name = $model::primaryKey()[0];
+                if(!empty($master_key)){
+                    $masterHierarchy = $model;
+                    $pk_name = $master_key;
+                }
+                $masterHierarchy->attributes = $model->attributes;
+                $masterHierarchy->master_key = $pk_name;
+                $masterHierarchy->{$pk_name} = $pk_code;
+                $masterHierarchy->is_active = 1;
+                $masterHierarchy->wef_date = date('Y-m-d');
+            }
             foreach($childKeyPatterns as $key => $keyPattern){
                 $index = $key+1;
                 $masterHierarchy->master_type = $keyPattern->pattern_for;
@@ -1754,80 +1764,93 @@ class GeneralFunctions extends Component {
                 $key_fix_length = (int) $keyPattern['key_fix_length'];
                 $key_reset_on = $keyPattern['key_reset_on'];
                 $key_name = 'ref_code'.$index;
-                $data = $masterHierarchy->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT('.$key_name.',' . $key_length . ')as bigint)),0)+1'])
-                    ->where(['union_code' => $model->union_code])
-                    ->asArray()
-                    ->one();
-                $ref_code = ($key_length > 0 ) ? str_pad($data['ref_code'], $key_length, '0', STR_PAD_LEFT) : '';
-                $prefix_seq = explode(',', $keyPattern['prefix_field']);
-                foreach ($prefix_seq as $pre) {
-                    $pre_info = explode(':', $pre);
-                    if (isset($pre_info[1])) {
-                        $t_info = explode('#', $pre_info[0]);
-                        $table_name = $t_info[0];
-                        $where_key = $t_info[1];
-                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
-                        $append_field = $pre_info[1];
-                        $query = new Query();
-                        $res = $query->select($append_field)
-                                        ->from($table_name)
-                                        ->where([$where_key => $model->{$where_val}])->one();
-                        if (!empty($res)) {
-                            $masterHierarchy->{$key_name} .= $res[$append_field];
-                        } else {
-                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
-                            $model->addError('ref_code', $message);
-                            return;
-                        }
-                    } else {
-                        $masterHierarchy->{$key_name} .= $model->{$pre};
-                    }
-                }
-                $masterHierarchy->{$key_name} .= $ref_code;
-                if(!empty($keyPattern['suffix_field'])) {
-                    $suffix_seq = explode(',', $keyPattern['suffix_field']);
-                    foreach ($suffix_seq as $pre) {
-                        $pre_info = explode(':', $pre);
-                        if (isset($pre_info[1])) {
-                            $t_info = explode('#', $pre_info[0]);
-                            $table_name = $t_info[0];
-                            $where_key = $t_info[1];
-                            $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
-                            $append_field = $pre_info[1];
-                            $query = new Query();
-                            $res = $query->select($append_field)
-                                            ->from($table_name)
-                                            ->where([$where_key => $model->{$where_val}])->one();
-                            if (!empty($res)) {
-                                $masterHierarchy->{$key_name} .= $res[$append_field];
-                            } else {
-                                $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
-                                $model->addError('ref_code', $message);
-                                return;
+                // if(empty($masterHierarchy->{$key_name})){
+                    if(empty($masterHierarchy->{$key_name}) && $keyPattern['key_code_type'] == 1){
+                        $data = $masterHierarchy->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT('.$key_name.',' . $key_length . ')as bigint)),0)+1'])
+                            ->where(['union_code' => $model->union_code])
+                            ->asArray()
+                            ->one();
+                        $ref_code = ($key_length > 0 ) ? str_pad($data['ref_code'], $key_length, '0', STR_PAD_LEFT) : '';
+                        if(!empty($keyPattern['prefix_field'])) {
+                            $prefix_seq = explode(',', $keyPattern['prefix_field']);
+                            foreach ($prefix_seq as $pre) {
+                                $pre_info = explode(':', $pre);
+                                if (isset($pre_info[1])) {
+                                    $t_info = explode('#', $pre_info[0]);
+                                    $table_name = $t_info[0];
+                                    $where_key = $t_info[1];
+                                    $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                    $append_field = $pre_info[1];
+                                    $query = new Query();
+                                    $res = $query->select($append_field)
+                                                    ->from($table_name)
+                                                    ->where([$where_key => $model->{$where_val}])->one();
+                                    if (!empty($res)) {
+                                        $masterHierarchy->{$key_name} .= $res[$append_field];
+                                    } else {
+                                        $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
+                                        $model->addError('ref_code', $message);
+                                        return;
+                                    }
+                                } else {
+                                    $masterHierarchy->{$key_name} .= $model->{$pre};
+                                }
                             }
+                        }
+                        $masterHierarchy->{$key_name} .= $ref_code;
+                        if(!empty($keyPattern['suffix_field'])) {
+                            $suffix_seq = explode(',', $keyPattern['suffix_field']);
+                            foreach ($suffix_seq as $pre) {
+                                $pre_info = explode(':', $pre);
+                                if (isset($pre_info[1])) {
+                                    $t_info = explode('#', $pre_info[0]);
+                                    $table_name = $t_info[0];
+                                    $where_key = $t_info[1];
+                                    $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                    $append_field = $pre_info[1];
+                                    $query = new Query();
+                                    $res = $query->select($append_field)
+                                                    ->from($table_name)
+                                                    ->where([$where_key => $model->{$where_val}])->one();
+                                    if (!empty($res)) {
+                                        $masterHierarchy->{$key_name} .= $res[$append_field];
+                                    } else {
+                                        $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
+                                        $model->addError('ref_code', $message);
+                                        return;
+                                    }
+                                } else {
+                                    $masterHierarchy->{$key_name} .= $model->{$pre};
+                                }
+                            }
+                        }
+                    } else if($keyPattern['key_code_type'] == 2) {
+                        $masterHierarchy->{$key_name} = !empty($model->{$key_name}) ? $model->{$key_name} : NULL;
+                    }
+                    if($keyPattern['key_code_type'] == 1) {
+                        if (empty($masterHierarchy->{$key_name})) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+                        } else if (!preg_match('/^[0-9]*$/', $masterHierarchy->{$key_name})) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
                         } else {
-                            $masterHierarchy->{$key_name} .= $model->{$pre};
+                            $cnt = $masterHierarchy->getActiveCount($key_name, $key_reset_on);
+                            if ($cnt > 0) {
+                                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                            }
                         }
                     }
-                }
-                if (empty($masterHierarchy->{$key_name})) {
-                    $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
-                } else if (!preg_match('/^[0-9]*$/', $masterHierarchy->{$key_name})) {
-                    $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
-                } else {
-                    $cnt = $masterHierarchy->getActiveCount($key_name, $key_reset_on);
-                    if ($cnt > 0) {
-                        $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                    if(!empty($masterHierarchy->{$key_name})){
+                        $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);   
+                        if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $key_fix_length . '.'));
+                        }
                     }
-                }
-                $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);
-                if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
-                    $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $key_fix_length . '.'));
-                }
+                // }
             }
             $model->set_master_hierarchy[] = $masterHierarchy;
+            return;
         } else {
-            $model->addError('auto_code', Yii::t('app/validation', 'Child Key pattern config missing.'));
+            $model->addError('ref_code', Yii::t('app/validation', 'Child Key pattern config missing.'));
             return;
         }
     }

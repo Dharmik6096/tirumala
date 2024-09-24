@@ -125,6 +125,7 @@ class TblDcsController extends ChildController {
         $this->model->is_bmc = $is_bmc;
 
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->setModel();
             $this->model->dcs_code = $this->model->getCode();
 
             if ($this->model->street1 != '' && $this->model->street2 != '') {
@@ -134,7 +135,6 @@ class TblDcsController extends ChildController {
             } else {
                 $this->model->address = $this->model->street1;
             }
-            $this->setModel();
 
             /* if ($this->model->is_bmc == 3 && $this->model->destination_code == '') {
               $this->model->destination_code = 0;

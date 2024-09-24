@@ -655,6 +655,9 @@ class TblMember extends ChildModel {
                 $model->ref_code = $pk_code;
             }
             $model->ref_code = str_pad(($model->ref_code), $ref_code_fix_length, '0', STR_PAD_LEFT);
+            if($keyPattern['master_hierarchy_auto_entry'] == 1){
+                Yii::$app->general->setKeyPatternChild($keyPattern, $model, $table_name, $pk_code);
+            }
             return $pk_code;
         } else {
             $model->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
