@@ -71,7 +71,7 @@ $attribute = [
         ['attribute' => 'dispatch_qty',
         'label' => Yii::t('app', 'Dispatch Amount'),
         'value' => function($model) {
-            return (!empty($model->amount) && !empty($model->dispatch_qty)) ? $model->amount * $model->dispatch_qty : '0';
+            return (!empty($model->amount) && !empty($model->dispatch_qty)) ? $model->rate * $model->dispatch_qty : '0';
         }, 'filter' => false],
         ['attribute' => 'created_at', 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'created_by', 'value' => function($model) {
