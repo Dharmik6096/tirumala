@@ -200,6 +200,7 @@ class TblMember extends ChildModel {
             [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'check_is_dcs_member' => 'is_dcs_member'], 'message' => Yii::t('app/validation', 'DCS Member has already been taken.'), 'when' => function() {
                     return $this->is_dcs_member;
                 },],
+            [['member_code'], 'setNullValue'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -713,6 +714,14 @@ class TblMember extends ChildModel {
             return true;
         }
         return false;
+    }
+
+    public function setNullValue() {
+        foreach ($this->attributes as $key => $value) {
+            if ($value == '') {
+                $this->$key = null;
+            }
+        }
     }
 
 }
