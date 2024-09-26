@@ -495,11 +495,16 @@ class TblMember extends ChildModel {
 //        $model->is_download = 1;
 //        $model->upload_datetime = date('Y-m-d H:i:s');
 //        $model->save();
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        if(!empty($this->set_master_hierarchy) && $flag == 'INSERT'){
+            foreach($this->set_master_hierarchy as $hierarchy) {
+                $hierarchy->save();
+            }
+        }
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
             if (in_array(strtolower($sent['type']), ['mcc', 'bmc'])) {
-                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
                 $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
                 if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                     if (!($sentbox->setSentbox($this, $flag))) {

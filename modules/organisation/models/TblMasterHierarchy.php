@@ -97,7 +97,9 @@ class TblMasterHierarchy extends ChildModel {
     }
     
     public function getActiveCount($key_name, $key_reset_on){
-        return $this->find()->where(['union_code' => $this->union_code, $key_reset_on => $this->{$key_reset_on}, 'convert(bigint,'.$key_name.')' => (int) $this->{$key_name}])
-        ->count();
+        return $this->find()->where(['union_code' => $this->union_code, 'convert(bigint,'.$key_name.')' => (int) $this->{$key_name}])
+            ->andWhere(['<>','master_hierarchy_code', $this->master_hierarchy_code])
+            ->count();
+        // return $this->find()->where(['union_code' => $this->union_code, $key_reset_on => $this->{$key_reset_on}, 'convert(bigint,'.$key_name.')' => (int) $this->{$key_name}])
     }
 }

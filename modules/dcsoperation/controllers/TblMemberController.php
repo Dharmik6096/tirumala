@@ -110,6 +110,9 @@ class TblMemberController extends \app\controllers\ChildController {
 //var_dump($this->model->unionCode->federationCode);exit();
             $this->model->member_code = $this->model->getCode();
             $this->setModel();
+            if(!empty($this->model->set_master_hierarchy)){
+                $this->model->set_master_hierarchy[0]->member_code = $this->model->member_code;
+            }
 // $dcs = TblDcs::findOne($this->model->dcs_code);
 // $this->model->state_code = $dcs->state_code;
 //$this->model->district_code = $dcs->district_code;

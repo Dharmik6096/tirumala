@@ -2,16 +2,14 @@
 
 namespace app\components;
 
-use app\models\TblKeyPatternChild;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
-use app\modules\organisation\models\TblMasterHierarchy;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblRouteMapping;
 use ruskid\csvimporter\ARImportStrategy;
-use yii\widgets\ActiveForm;
 use Yii;
 use yii\base\UserException;
 
@@ -38,49 +36,57 @@ class MasterHerarchyImportStrategy extends ARImportStrategy {
                     if (!empty($this->scenario)) {
                         $model->scenario = $this->scenario;
                     }
-                    // $whereCondition = ['is_active' => 1];
                     foreach ($this->configs as $config) {
                         $value = call_user_func($config['value'], $row);
                         if (isset($config['attribute']) && ($model->hasAttribute($config['attribute']))) {
-                            //Set value to the model
                             ($model->hasAttribute($config['attribute'])) ? $model->setAttribute($config['attribute'], $value) : '';
                         } else if (property_exists($model, $config['attribute'])) {
-                            //Set value to the model of public attribute
                             $model->{$config['attribute']} = $value;
                         }
                     }
                     $this->setData($model, $row);
                     if ($model->validate()) {
                         $model->operation = 'INSERT';
-                        $existData = $model->find()->where([$model->master_key => $model->{$model->master_key}, 'is_active' => 1])->one();
+                        $existData = $model->find()->where([$model->master_key => $model->{$model->master_key}, 'master_type' => $model->master_type, 'is_active' => 1])->one();
                         $pattern = \Yii::$app->general->getKeyPattern($model->master_type);
                         if(!empty($pattern) && $pattern['master_hierarchy_auto_entry'] == 1){
                             if(!empty($existData)){
-                                for ($i = 1; $i <= 5; $i++) {
-                                    $ref_code_key = 'ref_code'.$i;
-                                    if(empty($existData->{$ref_code_key})){
-                                        $existData->{$ref_code_key} = $model->{$ref_code_key};
-                                    }   
+                                foreach ($model->attributes as $attribute => $value) {
+                                    if (empty($existData->{$attribute})) {
+                                        $existData->{$attribute} = $value;
+                                    }
                                 }
                                 $existData->operation = 'UPDATE';
-                                \Yii::$app->general->setKeyPatternChild($pattern, $existData, $existData->master_type, $existData->{$existData->master_key}, $existData->master_key, $existData);
-                                $modelList[] = $existData;
+                                \Yii::$app->general->setKeyPatternChild($pattern, $existData, $existData->master_type, $existData->{$existData->master_key}, $existData->master_key, $existData, true);
+                                $modelList = $existData;
                             } else {
-                                \Yii::$app->general->setKeyPatternChild($pattern, $model, $model->master_type, $model->{$model->master_key});                                
-                                $modelList[] = $model;
+                                $modelName = str_replace(' ', '', ucwords(str_replace('_', ' ', $model->master_type)));
+                                if($modelName == 'TblBmc'){
+                                    $modelName = 'TblDcsBmc';
+                                }
+                                $modelName = Yii::$app->path->define($modelName);
+                                $modelMaster = $modelName::find()->where(['or', [$model->master_key => $row[2]], ['ref_code' => $row[2]]])->one();
+                                \Yii::$app->general->setKeyPatternChild($pattern, $modelMaster, $model->master_type, $model->{$model->master_key}, $model->master_key, $model);                                
+                                $modelList = $model;
                             }
-                            foreach ($modelList as $modelRow) {
-                                $modelRow->set_master_hierarchy = [];
-                                $master[] = $modelRow->save();
-                            }
-                            if (!in_array(FALSE, $master)) {
-                                $trans->commit();
-                                $count++;
-                                $importedPks[] = $model->primaryKey;
+                            if (empty($modelList->getErrors())) {
+                                $modelList->set_master_hierarchy = [];
+                                $master[] = $modelList->save();
+                                if (!in_array(FALSE, $master)) {
+                                    $trans->commit();
+                                    $count++;
+                                    $importedPks[] = $modelList->primaryKey;
+                                } else {
+                                    $trans->rollback();
+                                    $message = '';
+                                    foreach ($modelList->getErrors() as $errorkey => $value) {
+                                        $message .= $value[0] . '<br/>';
+                                    }
+                                    return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
+                                }
                             } else {
-                                $trans->rollback();
                                 $message = '';
-                                foreach ($model->getErrors() as $errorkey => $value) {
+                                foreach ($modelList->getErrors() as $errorkey => $value) {
                                     $message .= $value[0] . '<br/>';
                                 }
                                 return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
@@ -104,51 +110,52 @@ class MasterHerarchyImportStrategy extends ARImportStrategy {
         }
     }
 
-    public function setData(&$model, $row) {
-        $member_code = '';
-        switch (strtoupper($row[1])) {
-            case 'MEMBER':
-                $modelData = TblMember::find()->where(['or', ['member_code' => $row[2]], ['ref_code' => $row[2]]])->one();
-                if(!empty($modelData)){
-                    $member_code = $modelData['member_code'];
+    public function setData(&$model, $row)
+    {
+        $mapping = [
+            'MEMBER'   => ['tbl_member', 'member_code', TblMember::class],
+            'CUSTOMER' => ['tbl_customer_master', 'customer_code', TblCustomerMaster::class],
+            'ROUTE'    => ['tbl_route_mapping', 'route_code', TblRouteMapping::class],
+            'DCS'      => ['tbl_dcs', 'dcs_code', TblDcs::class],
+            'BMC'      => ['tbl_bmc', 'bmc_code', TblDcsBmc::class],
+            'MCC'      => ['tbl_mcc_plant', 'mcc_plant_code', TblMccPlant::class],
+            'PLANT'    => ['tbl_plant', 'plant_code', TblPlant::class]
+        ];
+
+        $type = strtoupper($row[1]);
+        if (isset($mapping[$type])) {
+            [$master_type, $master_key, $class] = $mapping[$type];
+            $modelData = $class::find()->where(['or', [$master_key => $row[2]], ['ref_code' => $row[2]]])->one();
+            if ($modelData) {
+                if ($type === 'ROUTE') {
+                    $route_code = $modelData->route_code ?? null;
+                    $model->route_code = $route_code;
+                    $to_type = strtoupper($modelData->to_type);
+                    
+                    switch ($to_type) {
+                        case 'BMC':
+                            $modelData = $modelData->dcsBmcCode;
+                            break;
+                        case 'MCC':
+                            $modelData = $modelData->mccCode;
+                            break;
+                        case 'PLANT':
+                            $modelData = $modelData->activePlantCode;
+                            break;
+                    }
+                } else if ($type === 'MEMBER') {
+                    $model->member_code = $modelData->member_code ?? null;
                     $modelData = $modelData->dcsCode;
                 }
-                break;
 
-            case 'CUSTOMER':
-                $modelData = TblCustomerMaster::find()->where(['or', ['customer_code' => $row[2]], ['ref_code' => $row[2]]])->one();
-                break;
-
-            case 'DCS':
-                $modelData = TblDcs::find()->where(['or', ['dcs_code' => $row[2]], ['ref_code' => $row[2]]])->one();
-                break;
-        
-            case 'BMC':
-                $modelData = TblDcsBmc::find()->where(['or', ['bmc_code' => $row[2]], ['ref_code' => $row[2]]])->one();
-                break;
-        
-            case 'MCC':
-                $modelData = TblMccPlant::find()->where(['or', ['mcc_plant_code' => $row[2]], ['ref_code' => $row[2]]])->one();
-                break;
-        
-            case 'PLANT':
-                $modelData = TblPlant::find()->where(['or', ['plant_code' => $row[2]], ['ref_code' => $row[2]]])->one();
-                break;
-        
-            default:
-                $modelData = null;
-                break;
-        }
-        if(!empty($modelData)){
-            $model->master_type = $modelData::tableName();
-            $model->master_key = $modelData->primaryKey()[0];
-            $model->member_code = !empty($member_code) ? $member_code : NULL;
-            $model->customer_code = !empty($modelData['customer_code']) ? $modelData['customer_code'] : NULL;
-            $model->route_code = !empty($modelData['route_code']) ? $modelData['route_code'] : NULL;
-            $model->dcs_code = !empty($modelData['dcs_code']) ? $modelData['dcs_code'] : NULL;
-            $model->bmc_code = !empty($modelData['bmc_code']) ? $modelData['bmc_code'] : NULL;
-            $model->mcc_plant_code = !empty($modelData['mcc_plant_code']) ? $modelData['mcc_plant_code'] : NULL;
-            $model->plant_code = !empty($modelData['plant_code']) ? $modelData['plant_code'] : NULL;
+                $model->master_type = $master_type;
+                $model->master_key = $master_key;
+                $model->customer_code = $modelData->customer_code ?? null;
+                $model->dcs_code = $modelData->dcs_code ?? null;
+                $model->bmc_code = $modelData->bmc_code ?? null;
+                $model->mcc_plant_code = $modelData->mcc_plant_code ?? null;
+                $model->plant_code = $modelData->plant_code ?? null;
+            }
         }
     }
 }
