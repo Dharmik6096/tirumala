@@ -504,7 +504,8 @@ class CustomValidation extends Component {
                             [['aadhaar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
-                            [['route_code'], 'required', 'on' => ['createDcs']]
+                            [['route_code'], 'required', 'on' => ['createDcs']],
+                            [['dcs_code_ex'], 'required'],
                     ],
                 ],
                 'TblMemberProvisional' => [
@@ -556,7 +557,8 @@ class CustomValidation extends Component {
                             [['aadhaar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
-                            [['route_code'], 'required', 'on' => ['createDcs']]
+                            [['route_code'], 'required', 'on' => ['createDcs']],
+                            [['dcs_code_ex'], 'required'],
                     ],
                 ],
                 'TblMemberProvisional' => [
@@ -578,7 +580,8 @@ class CustomValidation extends Component {
                             [['aadhaar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
-                            [['route_code'], 'required', 'on' => ['createDcs']]
+                            [['route_code'], 'required', 'on' => ['createDcs']],
+                            [['dcs_code_ex'], 'required'],
                     ],
                 ],
                 'TblMemberProvisional' => [
