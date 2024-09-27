@@ -704,18 +704,6 @@ class TblMember extends ChildModel {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function beforeSave($insert) {
-        if (parent::beforeSave($insert)) {
-            foreach ($this->attributes as $key => $value) {
-                if ($value === '') {
-                    $this->$key = null;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
     public function setNullValue() {
         foreach ($this->attributes as $key => $value) {
             if ($value == '') {
