@@ -63,7 +63,11 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        
+        if (!$pending_approval) {
+            $query->andFilterWhere(['tbl_customer_master_provisional.status' => $this->status]);
+        }
+        
         // grid filtering conditions
         $query->andFilterWhere([
             'customer_provisional_code' => $this->customer_provisional_code,
