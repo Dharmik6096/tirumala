@@ -47,6 +47,8 @@ use app\models\ChildModel;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\document\controllers\TblAttachmentController;
+use app\modules\product\models\TblProductSaleRate;
+use app\modules\product\models\TblProductSaleRateApplicability;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -124,8 +126,26 @@ class TblDcsController extends ChildController {
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
 
+        $productSaleRateApplicability = new TblProductSaleRateApplicability;
+        $productSaleRate = new TblProductSaleRate;
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->dcs_code = $this->model->getCode();
+            $mapList = [];
+            $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'product_sale_rate_applicability_auto');
+            if (!empty($productSaleRateApplicabilityAuto)) {
+                $productSaleRate = $this->model->getProductSaleRates($this->model->union_code);
+                if (!empty($productSaleRate)) {
+                    foreach ($productSaleRate as $rate) {
+                        $productSaleRateApplicability = new TblProductSaleRateApplicability();
+                        $productSaleRateApplicability->attributes = $rate->attributes;
+                        $productSaleRateApplicability->applicable_for = 'DCS';
+                        $productSaleRateApplicability->applicable_code = $this->model->dcs_code;
+                        $productSaleRateApplicability->created_at = date('Y-m-d H:i:s');
+                        $productSaleRateApplicability->created_by = Yii::$app->user->identity->id;
+                        array_push($mapList, $productSaleRateApplicability);
+                    }
+                }
+            }
 
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
@@ -143,7 +163,6 @@ class TblDcsController extends ChildController {
 
 
             //set mapping data
-            $mapList = [];
             if (!empty($this->model->village_code)) {
                 $modelMapping = new TblDcsVillageMapping();
                 $this->setMapping($modelMapping);
@@ -1332,10 +1351,10 @@ class TblDcsController extends ChildController {
                 $mccCode = !empty($parents[1]) ? $parents[1] : '';
                 $bmcCode = !empty($parents[2]) ? $parents[2] : '';
                 $is_call = true;
-                if($parents[0] == 2 && empty($bmcCode)){
+                if ($parents[0] == 2 && empty($bmcCode)) {
                     $is_call = false;
                 }
-                if($is_call && !empty($mccCode)){
+                if ($is_call && !empty($mccCode)) {
                     $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode, $bmcCode);
                     foreach ($data as $key => $val) {
                         $out[] = array('id' => $key, 'name' => $val);
