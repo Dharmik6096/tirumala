@@ -1331,9 +1331,16 @@ class TblDcsController extends ChildController {
             if (!empty($parents[0])) {
                 $dcs = new TblDcs();
                 $mccCode = !empty($parents[1]) ? $parents[1] : '';
-                $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode);
-                foreach ($data as $key => $val) {
-                    $out[] = array('id' => $key, 'name' => $val);
+                $bmcCode = !empty($parents[2]) ? $parents[2] : '';
+                $is_call = true;
+                if($parents[0] == 2 && empty($bmcCode)){
+                    $is_call = false;
+                }
+                if($is_call && !empty($mccCode)){
+                    $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode, $bmcCode);
+                    foreach ($data as $key => $val) {
+                        $out[] = array('id' => $key, 'name' => $val);
+                    }
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
             }

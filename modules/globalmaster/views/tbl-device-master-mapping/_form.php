@@ -31,8 +31,20 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('applicability_type', $model, $form, 'form-group', $model->getAttributeLabel('applicability_type'), false, 'applicability_type', false); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tbldevicemastermapping-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbldevicemastermapping-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
+    </div>  
+    <div class="col-sm-2 default_hide">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbldevicemastermapping-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+    </div>    
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->merge_bmc_dcs($model, $form, 'tbldevicemastermapping-applicability_type', 'applicability_code', 'Applicable Name'); ?>
+        <?= Yii::$app->dropdown->merge_bmc_dcs($model, $form, 'tbldevicemastermapping-applicability_type,tbldevicemastermapping-mcc_plant_code,tbldevicemastermapping-bmc_code', 'applicability_code', 'Applicable Name'); ?>
     </div>
     <div class="col-sm-2"> 
         <?= Yii::$app->controls->date($model, $form, 'wef_date', 'form-group col-sm-3', false, false, false); ?>
@@ -48,3 +60,15 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php ActiveForm::end(); ?>
+<?php
+$script = "
+$('.default_hide').hide();
+$('#tbldevicemastermapping-applicability_type').on('change', function() {
+    $('.default_hide').hide();
+    if($(this).val() == '2'){
+        $('.default_hide').show();
+    }
+});
+";
+$this->registerJs($script, View::POS_END, 'create-mapping');
+?>
