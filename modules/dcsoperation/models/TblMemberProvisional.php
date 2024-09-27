@@ -224,7 +224,6 @@ class TblMemberProvisional extends ChildModel {
                 [['ex_member_code'], 'setProExMemberCode', 'on' => ['importCsv']],
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
                 [['provisional_from'], 'default', 'value' => 'collection'],
-                [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
                 [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
                 [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import']],

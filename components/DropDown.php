@@ -924,6 +924,14 @@ class DropDown extends Component {
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $data['data'];
 
+        //client wise dropdown option remove
+        $client_code = \Yii::$app->session->get('eiplCode');
+        if(isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])){
+            foreach ($data['client_wise_rmv'][$client_code] as $value) {
+                unset($records[$value]);
+            }
+        }
+
         if (!in_array($flag, array('p_type', 'payment_release_type'))) {
             asort($records, SORT_NATURAL | SORT_FLAG_CASE);
         }
@@ -939,16 +947,6 @@ class DropDown extends Component {
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
         $select2Options = ['data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]];
         !empty($form_id) ? ($select2Options['pluginOptions']['dropdownParent'] = '#' . $form_id) : '';
-
-        //client wise dropdown option remove
-        $client_code = \Yii::$app->session->get('eiplCode');
-        if(isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])){
-            foreach ($data['client_wise_rmv'][$client_code] as $value) {
-                unset($records[$value]);
-            }
-        }
-
-
 
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(
