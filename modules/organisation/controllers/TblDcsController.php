@@ -47,8 +47,6 @@ use app\models\ChildModel;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\document\controllers\TblAttachmentController;
-use app\modules\product\models\TblProductSaleRate;
-use app\modules\product\models\TblProductSaleRateApplicability;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -126,39 +124,8 @@ class TblDcsController extends ChildController {
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
 
-        $productSaleRateApplicability = new TblProductSaleRateApplicability;
-        $productSaleRate = new TblProductSaleRate;
-
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->dcs_code = $this->model->getCode();
-            $mapList = [];
-            $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'product_sale_rate_applicability_auto');
-            if (!empty($productSaleRateApplicabilityAuto)) {
-                $subQuery = TblProductSaleRate::find()
-                        ->select(['product_code', 'MAX(wef_date) AS max_wef_date'])
-                        ->groupBy('product_code');
-
-                $productSaleRate = TblProductSaleRate::find()
-                        ->alias('salerate')
-                        ->innerJoin(['subsalerate' => $subQuery], 'salerate.product_code = subsalerate.product_code AND salerate.wef_date = subsalerate.max_wef_date')
-                        ->where(['salerate.union_code' => $this->model->union_code, 'salerate.is_member_rate' => 1])
-                        ->orderBy(['salerate.wef_date' => SORT_DESC])
-                        ->all();
-
-                if (!empty($productSaleRate)) {
-                    foreach ($productSaleRate as $rate) {
-                        $productSaleRateApplicability = new TblProductSaleRateApplicability();
-                        $productSaleRateApplicability->attributes = $rate->attributes;
-                        $productSaleRateApplicability->applicable_for = 'DCS';
-                        $productSaleRateApplicability->applicable_code = $this->model->dcs_code;
-                        array_push($mapList, $productSaleRateApplicability);
-                    }
-                } 
-//                echo '<pre>';
-//                print_r($productSaleRateApplicability);
-//                die;
-            }
-
 
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
@@ -176,7 +143,7 @@ class TblDcsController extends ChildController {
 
 
             //set mapping data
-//            $mapList = [];
+            $mapList = [];
             if (!empty($this->model->village_code)) {
                 $modelMapping = new TblDcsVillageMapping();
                 $this->setMapping($modelMapping);
