@@ -514,7 +514,6 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
-                            [['route_code'], 'required']
                     ]
                 ],
             ],
@@ -567,7 +566,6 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
-                            [['route_code'], 'required']
                     ]
                 ],
             ],
@@ -590,7 +588,6 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
-                            [['route_code'], 'required']
                     ]
                 ],
             ],
