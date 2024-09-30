@@ -131,8 +131,9 @@ class Bkgprocess extends \yii\base\Module {
                 'sp_name' => 'rpt_MIS_WQSAPReport_Ananda',
                 'export_title' => 'module_code+_+SD+_+applicable_date:date+_+shift_code',
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
-                'ftp_path' => '/Gopaljee/SAPPOPRD/Inbound/',
+                'ftp_path' => '/Gopaljee/SAPPOPRD/Inbound',
                 'append_ftp_path' => TRUE,
+                'append_ftp_collection_code' => TRUE,
             ],
         ];
     }

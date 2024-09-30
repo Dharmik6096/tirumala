@@ -155,7 +155,6 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'WQ' : 'VM';
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 } else if ($eiplCode == 'ANANDA') {
-                    $FTPProcess['ftp_path'] .= 'Mcc' . $bmc;
                     $report_type = 'RMRD';
                     $collection_date = (!empty($download[0]) && !empty($download[0]['Collection_Date'])) ? $download[0]['Collection_Date'] : $data_array['from_date'];
                     $title = $report_type . '_' . $bmc . '_' . str_replace('-', '_', Yii::$app->controls->view_date($collection_date, 'php:dmY')) . '_' . date('His') . '_' . $data_array['shift_code'];
@@ -204,6 +203,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
         $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
         $skip_header = isset($FTPProcess['skip_header']) ? TRUE : FALSE;
+        $append_ftp_collection_code = isset($FTPProcess['append_ftp_collection_code']) ? TRUE : FALSE;
 
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
@@ -241,7 +241,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 fclose($txt_file);
             }
             //$data->save();
-            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email, $append_ftp_path);
+            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code);
         }
         return FALSE;
         /** csv generate * */
@@ -286,9 +286,9 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code) {
         $ftpDetail = new TblFtpDetail();
-        $ftpDetail->ftp_connection_code = $data->union_code;
+        $ftpDetail->ftp_connection_code = $append_ftp_collection_code ? $data->union_code . '_' . 'rmrd' : $data->union_code;
         $ftpData = $ftpDetail->getData();
         if (!empty($ftpData)) {
             $ftp_file_path = (empty($ftpPath) ? $ftpData->ftp_path : ($append_ftp_path ? $ftpData->ftp_path . $ftpPath : $ftpPath));
