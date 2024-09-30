@@ -209,14 +209,14 @@ $script = "
         var snf = $('#tblbmccollection-snf').val();
         var clr = $('#tblbmccollection-clr').val();
         var is_clr_input = $('#is_clr_input').val()
-        var type = $('#tblbmccollection-customer_type').val();
         var bmcCode = $('#tblbmccollection-own_bmc_code').val();
+        var type = $('#tblbmccollection-customer_type').val();
 
             if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode,'customer_type':type},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
@@ -224,12 +224,7 @@ $script = "
                             if(is_clr_input==0){
                                 $('#tblbmccollection-clr').val(obj.data.toFixed(2));
                             }else{
-                               if(type != 'DCS'){
-                                let dataVal = Math.floor(obj.data * 100) / 100;
-                                $('#tblbmccollection-snf').val(dataVal.toFixed(2));
-                               }else{
-                                $('#tblbmccollection-snf').val(obj.data.toFixed(2));
-                               }
+                                $('#tblbmccollection-snf').val(obj.data);
                             }
                             rtpl();
                         }
