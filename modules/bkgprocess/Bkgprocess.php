@@ -133,7 +133,7 @@ class Bkgprocess extends \yii\base\Module {
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
                 'ftp_path' => '/Gopaljee/SAPPOPRD/Inbound',
                 'append_ftp_path' => TRUE,
-                'append_ftp_collection_code' => TRUE,
+                'append_ftp_collection_code' => 'rmrd',
             ],
         ];
     }
