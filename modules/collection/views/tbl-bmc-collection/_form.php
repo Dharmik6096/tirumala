@@ -209,6 +209,7 @@ $script = "
         var snf = $('#tblbmccollection-snf').val();
         var clr = $('#tblbmccollection-clr').val();
         var is_clr_input = $('#is_clr_input').val()
+        var type = $('#tblbmccollection-customer_type').val();
         var bmcCode = $('#tblbmccollection-own_bmc_code').val();
 
             if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
@@ -223,7 +224,12 @@ $script = "
                             if(is_clr_input==0){
                                 $('#tblbmccollection-clr').val(obj.data.toFixed(2));
                             }else{
+                               if(type != 'DCS'){
+                                let dataVal = Math.floor(obj.data * 100) / 100;
+                                $('#tblbmccollection-snf').val(dataVal.toFixed(2));
+                               }else{
                                 $('#tblbmccollection-snf').val(obj.data.toFixed(2));
+                               }
                             }
                             rtpl();
                         }

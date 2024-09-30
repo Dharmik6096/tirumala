@@ -316,6 +316,7 @@ $script = "
         var clr = $('#tblbmccollection-'+tr_key+'-clr').val();
         var bmcCode = $('#tblbmccollectionsearch-bmc_code').val();
         var is_clr_input = $('#tblbmccollection-'+tr_key+'-is_clr_input').val();
+        var type = $('#tblbmccollection-'+tr_key+'-customer_type').val();
 
             if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
@@ -329,7 +330,12 @@ $script = "
                             if(is_clr_input==0){
                                 $('#tblbmccollection-'+tr_key+'-clr').val(obj.data.toFixed(2));
                             }else{
-                                $('#tblbmccollection-'+tr_key+'-snf').val(obj.data.toFixed(2));
+                                if(type != 'DCS'){
+                                    let dataVal = Math.floor(obj.data * 100) / 100;
+                                    $('#tblbmccollection-'+tr_key+'-snf').val(dataVal.toFixed(2));
+                                }else{
+                                    $('#tblbmccollection-'+tr_key+'-snf').val(obj.data.toFixed(2));
+                                }  
                             }
                             rtpl(tr_key);
                         }
