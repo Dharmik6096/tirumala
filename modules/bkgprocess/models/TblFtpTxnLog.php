@@ -155,6 +155,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'WQ' : 'VM';
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 } else if ($eiplCode == 'ANANDA') {
+                    $FTPProcess['ftp_path'] .= 'Mcc' . $bmc;
                     $report_type = 'RMRD';
                     $collection_date = (!empty($download[0]) && !empty($download[0]['Collection_Date'])) ? $download[0]['Collection_Date'] : $data_array['from_date'];
                     $title = $report_type . '_' . $bmc . '_' . str_replace('-', '_', Yii::$app->controls->view_date($collection_date, 'php:dmY')) . '_' . date('His') . '_' . $data_array['shift_code'];
