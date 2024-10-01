@@ -28,26 +28,28 @@ $attribute = [
         ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
         }, 'visible' => true, 'filter' => FALSE],
-        ['attribute' => 'route_code', 'label' => Yii::t('app', 'Route Code'), 'visible' => true, 'filter' => false],
         ['attribute' => 'route_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->routeMapping, 'route_name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'dcs_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        ['attribute' => 'route_code', 'label' => Yii::t('app', 'Route') . ' Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->routeMapping, 'ref_code');
         }, 'visible' => true, 'filter' => false],
         ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        }, 'visible' => true, 'filter' => false],
         ['attribute' => 'member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'member_code', 'value' => function($model) {
+        ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'ref_code');
         }, 'visible' => true, 'filter' => false],
         ['attribute' => 'customer_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerCode, 'customer_name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'customer_name', 'value' => function($model) {
+        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Customer') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
         }, 'visible' => true, 'filter' => false],
         ['attribute' => 'ref_code1', 'visible' => true],
@@ -75,12 +77,6 @@ $grid_option = [
     'active_column' => TRUE,
     'actions' => [
         'view' => TRUE,
-//        'update' => true,
-        // 'update' => function ($url, $model) {
-        //     $class = ($model->is_active === 0) ? 'link-disable' : '';
-        //     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code];
-        //     return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
-        // },
     ]
 ];
 

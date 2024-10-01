@@ -1828,8 +1828,6 @@ class GeneralFunctions extends Component {
                 if($keyPattern['key_code_type'] == 1) {
                     if (empty($masterHierarchy->{$key_name})) {
                         $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
-                    } else if (!preg_match('/^[0-9]*$/', $masterHierarchy->{$key_name})) {
-                        $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
                     } else {
                         $cnt = $masterHierarchy->getActiveCount($key_name, $key_reset_on);
                         if ($cnt > 0) {
