@@ -270,31 +270,31 @@ $script = "
         } 
         
     }
-    function checkPlantBatchNoExist() {
-        var sapNo = $('#tblplantdispatchtxn-sap_batch_no').val();
+    // function checkPlantBatchNoExist() {
+    //     var sapNo = $('#tblplantdispatchtxn-sap_batch_no').val();
 
-        if (setData(sapNo)) {
-            $.ajax({
-                type: 'post',
-                url: '" . Url::to(['check-unique-sap-no']) . "',
-                data: {'sapNo': sapNo},
-                success: function(data) {
-                    var obj = $.parseJSON(data);
-                    if (obj.status == 'error') {
-                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Sap No. Is Already available.') . "</span></div></div>', function(result) {
-                            setTimeout(function() {
-                                $('#tblplantdispatchtxn-sap_batch_no').focus();
-                            }, 100);
-                        });
-                        $('#tblplantdispatchtxn-sap_batch_no').val('');
-                    }
-                },
-                error: function(data) {
-                    // Handle error if needed
-                }
-            });
-        }
-    }
+    //     if (setData(sapNo)) {
+    //         $.ajax({
+    //             type: 'post',
+    //             url: '" . Url::to(['check-unique-sap-no']) . "',
+    //             data: {'sapNo': sapNo},
+    //             success: function(data) {
+    //                 var obj = $.parseJSON(data);
+    //                 if (obj.status == 'error') {
+    //                     bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Sap No. Is Already available.') . "</span></div></div>', function(result) {
+    //                         setTimeout(function() {
+    //                             $('#tblplantdispatchtxn-sap_batch_no').focus();
+    //                         }, 100);
+    //                     });
+    //                     $('#tblplantdispatchtxn-sap_batch_no').val('');
+    //                 }
+    //             },
+    //             error: function(data) {
+    //                 // Handle error if needed
+    //             }
+    //         });
+    //     }
+    // }
 ";
 $this->registerJs($script, View::POS_END, 'create-plant-dispatch');
 ?>

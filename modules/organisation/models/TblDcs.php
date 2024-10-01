@@ -1315,7 +1315,7 @@ class TblDcs extends ChildModel {
         return $query->all();
     }
 
-    public function getMergeBmcDcsList($type, $mcc = '') {
+    public function getMergeBmcDcsList($type, $mcc = '', $bmc_code = '') {
         if (in_array($type, [1])) {
             $bmcModel = new TblDcsBmc();
             $query = $bmcModel->find()->where(['is_active' => 1]);
@@ -1339,6 +1339,9 @@ class TblDcs extends ChildModel {
             }
             if (!empty($mcc)) {
                 $query->andWhere(['mcc_plant_code' => $mcc]);
+            }
+            if (!empty($bmc_code)) {
+                $query->andWhere(['bmc_code' => $bmc_code]);
             }
 
             $dcs = $query->all();
