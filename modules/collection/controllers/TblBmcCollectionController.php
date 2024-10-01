@@ -417,12 +417,13 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
         }
 
+       
         if ($is_clr_input == 0) {
             $data = ($snf - ($fat * $lr1) - $lr2) * 4;
         } else {
             $data = ($clr / 4) + ($fat * $lr1) + $lr2;
-
-            if($customer_type != 'DCS'){
+            
+            if($customer_type != 'DCS' && $customer_type != ''){
                 $formattedNumber = floor($data * 100) / 100;
                 $data = number_format($formattedNumber,2);
              }else{
