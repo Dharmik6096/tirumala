@@ -1134,7 +1134,7 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function validateInstallments($attribute, $params) {
-        $allowedInstallments = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'product_sale_allowed_installment', 'PORTAL');
+        $allowedInstallments = Yii::$app->general->getUnionConfiguration($this->union_code, 'product_sale_allowed_installment', 'PORTAL');
         if ($this->payment_mode == 1 && !empty($allowedInstallments) && $this->$attribute > $allowedInstallments) {
             $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " cannot be more than {$allowedInstallments}."));
         }
