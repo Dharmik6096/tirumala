@@ -751,6 +751,7 @@ echo GhostMenu::widget([
                         ['label' => '630-' . Yii::t('app', 'Payment summary'), 'url' => ['/misreports/reports/payment-summary']],
                         ['label' => '631-' . Yii::t('app', 'Vendor Payment Format 2'), 'url' => ['/misreports/reports/vendor-payment-format']],
                         ['label' => '632-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-sbd']],
+                        ['label' => '633-' . Yii::t('app', 'Member and Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-bill-elanad'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill-elanad']) ? (($eiplCode == 'ELANAD') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
                 [

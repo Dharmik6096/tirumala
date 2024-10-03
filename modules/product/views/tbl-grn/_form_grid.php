@@ -64,6 +64,9 @@ $attribute = [
         }, 'visible' => false, 'filter' => false],
         ['attribute' => 'no_of_installment', 'visible' => false, 'filter' => false],
         ['attribute' => 'amount', 'visible' => true, 'filter' => false],
+        ['attribute' => 'is_stock_posted', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_stock_posted');
+        }, 'visible' => TRUE, 'filter' => false],
         ['label' => Yii::t('app', 'Created date'), 'attribute' => 'created_at',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
