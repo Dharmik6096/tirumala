@@ -16,7 +16,7 @@ class Path extends Component {
         '\\app\modules\collection\models\\' =>
             ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory', 'TblMilkDispatch', 'TblMilkDispatchSearch', 'TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory', 'TblMACAlibration', 'TblMACAlibrationChange', 'TblMACleaning', 'CollectionFarmerLocalSale', 'TblDpuShiftEndSummary', 'TblMASerialNo', 'TblQualityCollection', 'TblWeightCollection', 'TblShiftSummary',
             'TblDcsMilkDispatch', 'TblDcsMilkDispatchTxn', 'TblMilkCollectionSummary', 'TblMilkCollectionSummaryHistory', 'TblDcsMilkDispatchHistory', 'TblDcsMilkDispatchTxnHistory', 'TblMilkReject', 'TblMilkRejectHistory', 'TblMilkRejectHistory', 'TblCollectionDataAliasReject', 'TblBulkDataImport', 'TblBmcCollectionNotExist', 'TblMilkCollectionNotExists', 'TblCollectionPenaltyRate', 'TblCollectionPenaltyRateApplicability', 'TblCollectionPenaltyType',
-            'TblAnalyzerCalibration', 'TblAnalyzerCleaning', 'TblMilkCollectionAudit', 'TblMilkCollectionAuditSearch', 'TblDcsClosing', 'TblDcsClosingHistory', 'TblMccShiftLockStaging', 'TblMccShiftLock', 'TblCollectionApproval', 'TblCollectionApprovalHistory', 'TblWeighBridgeData', 'TblMilkcostParam', 'TblMilkTransfer', 'TblBmcCollectionTransfer', 'TblWeightRejection', 'TblWeightRejectionHistory', 'TblAnalyzerSerialNo', 'TblIotTemperature' , 'TblIotTemperatureSearch'],
+            'TblAnalyzerCalibration', 'TblAnalyzerCleaning', 'TblMilkCollectionAudit', 'TblMilkCollectionAuditSearch', 'TblDcsClosing', 'TblDcsClosingHistory', 'TblMccShiftLockStaging', 'TblMccShiftLock', 'TblCollectionApproval', 'TblCollectionApprovalHistory', 'TblWeighBridgeData', 'TblMilkcostParam', 'TblMilkTransfer', 'TblBmcCollectionTransfer', 'TblWeightRejection', 'TblWeightRejectionHistory', 'TblAnalyzerSerialNo', 'TblIotTemperature', 'TblIotTemperatureSearch'],
         '\\app\modules\geo\models\\' =>
             ['TblStates', 'TblStatesHistory',
             'TblVillagesHistory', 'TblVillages', 'TblVillageMiscellaneous', 'TblVillagesSearch',
@@ -97,7 +97,7 @@ class Path extends Component {
         '\\app\modules\welfarescheme\models\\' => ['TblSchemeApplication', 'TblSchemeApplicationApproval', 'TblSchemeApplicationDisbursement', 'TblSchemeApplicationDocuments', 'TblSchemeApprovalStages', 'TblSchemeCriteria', 'TblSchemeDocumentMapping', 'TblDocumentMasterInfo', 'TblSchemeMaster'],
         '\\webvimark\modules\UserManagement\models\\' => ['User'],
         '\\app\modules\tms\models\\' => ['TblFormType', 'TblTaskType', 'TblTask', 'TblTaskActivity'],
-        '\\app\modules\document\models\\' => ['TblDocumentMapping', 'TblAttachment'],
+        '\\app\modules\document\models\\' => ['TblDocumentMapping', 'TblAttachment', 'TblDocumentMasterType'],
         '\\app\modules\webservice\eipl\models\\' =>
             ['TblEiplAppLogin'],
         '\\app\modules\feedback\models\\' => ['TblNonMemberHouseHoldVisit', 'TblNonMemberHouseHoldCurrentPouring', 'TblNonMemberHouseHoldVisitHistory'],
