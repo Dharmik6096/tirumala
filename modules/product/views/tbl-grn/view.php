@@ -86,6 +86,15 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_stock_posted',
+                                'value' => Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_stock_posted'),
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
                 ];
 
                 // View file rendering the widget
