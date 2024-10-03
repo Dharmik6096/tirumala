@@ -308,7 +308,6 @@ $form = ActiveForm::begin([
                     } else {
                         $('#tblcustomermasterprovisional-supervisor_employee_id').val(data.employee_code);
                         if(data.employee_code != '' && data.employee_code != null){
-                        alert('vivek');
                             $('.field-tblcustomermasterprovisional-supervisor_employee_id').addClass('disabled no_pointer');
                         }
                     }
