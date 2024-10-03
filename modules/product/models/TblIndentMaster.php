@@ -139,6 +139,7 @@ class TblIndentMaster extends \app\models\ChildModel {
             'route_code' => Yii::t('app', 'Route'),
             'warehouse_code' => Yii::t('app', 'Warehouse'),
             'dispatch_qty' => Yii::t('app', 'Dispatch Qty'),
+            'received_qty' => Yii::t('app', 'Acknowledgement Qty'),
         ];
     }
 

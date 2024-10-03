@@ -42,13 +42,13 @@ class TblUserAttendanceController extends ChildController {
         ]);
 
         $UserDetailIds = array_map(function($e) {
-            return $e->attendance_detail_code;
+            return $e->reference_code;
         }, $userDetailDataProvider->getModels());
 
         $total_hours = $user_detail->calculateTotalTimeDifference($UserDetailIds);
         $user_attachment = new TblAttachment();
         $attachmentDataProvider = new ActiveDataProvider([
-            'query' => $user_attachment->find()->where(['module_name' => ['tbl_user_attendance_detail_in', 'tbl_user_attendance_detail_out', 'module_code' => $UserDetailIds]]),
+            'query' => $user_attachment->find()->where(['module_name' => ['tbl_user_attendance_in', 'tbl_user_attendance_out'], 'module_code' => $UserDetailIds]),
         ]);
 
         return $this->render('view', [
