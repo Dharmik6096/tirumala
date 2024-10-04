@@ -271,10 +271,10 @@ class BiplSchedulerController extends ChildController {
                             Yii::$app->general->checkDirectory(\Yii::$app->params['sapDirPath'] . $dir);
                         }
                     }
-                    $ftp_path = ($row->file_path != null) ? explode('/', $row->file_path) : [];
+                    $ftp_path = !empty($row->file_path) ? explode('/', $row->file_path) : [];
                     unset($ftp_path[count($ftp_path) - 1]);
                     $ftp_path = implode('/', $ftp_path);
-                    $local_path = ($row->local_path != null) ? explode('/', $row->local_path) : [];
+                    $local_path = !empty($row->local_path) ? explode('/', $row->local_path) : [];
                     unset($local_path[count($local_path) - 1]);
                     $local_path = implode('/', $local_path);
                     $file_name = $row->file_name;
@@ -328,11 +328,11 @@ class BiplSchedulerController extends ChildController {
                 $upload_log = new TblFtpTxnLog();
                 $upload_log->attributes = $row->attributes;
                 $datafile = $row->local_path;
-                $local_path = ($row->local_path != null) ? explode('/', $row->local_path) : [];
+                $local_path = !empty($row->local_path) ? explode('/', $row->local_path) : [];
                 $upload_file_name = $row->file_name;
                 unset($local_path[count($local_path) - 1]);
                 $local_path = implode('/', $local_path);
-                $ftp_path = ($row->file_path != null) ? explode('/', $row->file_path) : [];
+                $ftp_path = !empty($row->file_path) ? explode('/', $row->file_path) : [];
                 unset($ftp_path[count($ftp_path) - 1]);
                 $ftp_path = implode('/', $ftp_path);
                 $is_portal = (strpos($local_path, '/PORTALPDFILES') !== false);
