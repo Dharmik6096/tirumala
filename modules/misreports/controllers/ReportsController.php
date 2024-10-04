@@ -1835,6 +1835,26 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'IndentSummaryDetail';
         return $this->actionIndex();
     }
+    
+    public function actionGheeGroupIndentReport() {
+        $this->report = 'GheeGroupIndentReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionCfGroupIndentReport() {
+        $this->report = 'CfGroupIndentReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionSapGheeGroupIndentReport() {
+        $this->report = 'SapGheeGroupIndentReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionSapCfGroupIndentReport() {
+        $this->report = 'SapCfGroupIndentReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3914,6 +3934,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_mcc_wise_indent_summary',
                 'scenario' => 'IndentSummaryDetail',
                 'title' => 'Indent Summary Detail',
+            ],
+            'GheeGroupIndentReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_ghee_indent_download_sap',
+                'scenario' => 'GheeGroupIndentReport',
+                'title' => 'Ghee Group Indent Report',
+            ],
+            'CfGroupIndentReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_cf_indent_download_sap',
+                'scenario' => 'CfGroupIndentReport',
+                'title' => 'CF Group Indent Report',
+            ],
+            'SapGheeGroupIndentReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_ghee_indent_upload_sap',
+                'scenario' => 'SapGheeGroupIndentReport',
+                'title' => 'SAP Ghee Group Indent Report',
+            ],
+            'SapCfGroupIndentReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_cf_indent_upload_sap',
+                'scenario' => 'SapCfGroupIndentReport',
+                'title' => 'SAP CF Group Indent Report',
             ],
         ];
         return $label[$l];
