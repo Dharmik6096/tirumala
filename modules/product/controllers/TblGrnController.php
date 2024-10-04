@@ -293,6 +293,7 @@ class TblGrnController extends \app\controllers\ChildController {
             $this->model->no_of_installment = $this->model->payment_mode == 1 ? $this->model->no_of_installment : 0;
             $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'grn_without_stock_entry');
             $this->model->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
+            $this->model->vendor_master_code = $dispatchData->vendor_master_code;
             if ($this->model->payment_mode == 1 && !empty($this->model->deduction_start_date)) {
                 $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                 $this->model->deduction_start_date = $dedStartDate;
@@ -306,6 +307,7 @@ class TblGrnController extends \app\controllers\ChildController {
                 $txModel->setAttributes($txn);
                 $txModel->union_code = $this->model->union_code;
                 $txModel->grn_code = $this->model->grn_code;
+                $txModel->is_stock_posted = $this->model->is_stock_posted;
                 $txModel->manuf_date = !empty($txModel->manuf_date) ? date('Y-m-d', strtotime($txModel->manuf_date)) : date('Y-m-d');
                 $txModel->gross_amount = $txn['amount'];
                 $txModel->basic_amount = $txn['amount'];

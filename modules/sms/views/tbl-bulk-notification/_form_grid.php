@@ -15,12 +15,12 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }],
-        ['attribute' => 'dcs_ref_code','label' => Yii::t('app', 'DCS') . ' Ref Code', 'value' => function($model) {
+        ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-                }, 'filter' => TRUE],
+        }, 'filter' => TRUE],
         ['attribute' => 'created_by', 'label' => (Yii::t('app', 'Notification Sender')), 'value' => function($model) {
-                    return Yii::$app->general->getforeignkey($model->userCode, 'name');
-                }, 'filter' => FALSE],
+            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        }, 'filter' => FALSE],
         [
         'attribute' => 'entry_datetime',
         'filterType' => GridView::FILTER_DATE,
@@ -47,7 +47,21 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
+        ['attribute' => 'notificaton_type', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('notification_type', $model, 'notification_type');
+        }, 'filter' => FALSE],
         ['attribute' => 'message'],
+        ['attribute' => 'title', 'filter' => FALSE],
+        ['attribute' => 'campaign_name', 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'from_date', 'value' => function($model) {
+            return Yii::$app->controls->view_date($model->from_date);
+        }, 'visible' => false, 'filter' => FALSE],
+        ['attribute' => 'to_date', 'value' => function($model) {
+            return Yii::$app->controls->view_date($model->to_date);
+        }, 'visible' => false, 'filter' => FALSE],
+        ['attribute' => 'auto_scrolling', 'label' => Yii::t('app', 'Is Auto Scrolling'), 'value' => function($model) {
+            return $model->auto_scrolling == 1 ? 'Active' : 'In Active';
+        }, 'filter' => false],
 ];
 
 $grid_option = [
@@ -66,7 +80,13 @@ $grid_option = [
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => '' . $class,];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/sms/tbl-bulk-notification/bulk-notification-applicability', 'id' => $model->bulk_notification_id], $options);
         },
-        'delete' => ['option' => 'bulk_notification_id,bulk_notification_id,tbl-bulk-notification/delete'],
+       // 'delete' => ['option' => 'bulk_notification_id,bulk_notification_id,tbl-bulk-notification/delete'],
+        'view_document' => function ($url, $model) {
+            $document_url = $model->file_path;
+            $class = ($document_url != '') ? '' : 'disabled';
+            $options = ['target' => '_blank', 'class' => '' . $class,];
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', $document_url, $options);
+        },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

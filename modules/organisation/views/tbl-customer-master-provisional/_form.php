@@ -6,6 +6,7 @@ use yii\web\View;
 use yii\helpers\Url;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
+$model->ref_code = ($type != 'create' && empty($model->ref_code)) ? $model->customer_code_ex : $model->ref_code;
 $nameWarning = 0;
 $nameWarning = !empty($_POST['warning']) ? $_POST['warning'] : 0;
 ?>
@@ -213,6 +214,14 @@ $form = ActiveForm::begin([
 
     <?php
     $script = "
+    var supervisorId = '$model->supervisor_employee_id';
+    var supervisorName = '$model->supervisor_employee_name';
+    if(supervisorId != '' && supervisorId != null){
+        $('.field-tblcustomermasterprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+    }
+    if(supervisorName != '' && supervisorName != null){
+        $('.field-tblcustomermasterprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+    } 
     $('#tblcustomermasterprovisional-bank_account_no').on('change', function(){
         $('#warning').val(0);
     });
@@ -288,15 +297,23 @@ $form = ActiveForm::begin([
                 var obj1 = $.parseJSON(response);
                 var data = obj1.data;
                 if(data){
-                    $('#tblcustomermasterprovisional-supervisor_employee_id').val(data.employee_code);
-                    $('#tblcustomermasterprovisional-supervisor_employee_name').val(data.firstname);
-                    if(data.employee_code != '' && data.employee_code != null){
-                        $('.field-tblcustomermasterprovisional-supervisor_employee_id').addClass('disabled no_pointer');
-                    }
-                    if(data.firstname != '' && data.firstname != null){
+                    if(supervisorName != '' && supervisorName != null){
                         $('.field-tblcustomermasterprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                    } else {
+                        $('#tblcustomermasterprovisional-supervisor_employee_name').val(data.firstname);
+                        if(data.firstname != '' && data.firstname != null){
+                            $('.field-tblcustomermasterprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                        }
                     }
-                }                               
+                    if(supervisorId != ''  && supervisorId != null){
+                        $('.field-tblcustomermasterprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                    } else {
+                        $('#tblcustomermasterprovisional-supervisor_employee_id').val(data.employee_code);
+                        if(data.employee_code != '' && data.employee_code != null){
+                            $('.field-tblcustomermasterprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                        }
+                    }
+                }
             },
             error:function(data){
                 //alert('Your data has not been submitted..Please try again');

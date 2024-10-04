@@ -38,6 +38,9 @@ $posting_date_visible = (isset($view) && $view == 1) ? TRUE : FALSE;
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->posting_date);
             }, 'visible' => $posting_date_visible],
+        ['attribute' => 'is_stock_posted', 'value' => function($model) {
+                return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_stock_posted');
+            }, 'visible' => TRUE, 'filter' => false],    
     ];
 
 

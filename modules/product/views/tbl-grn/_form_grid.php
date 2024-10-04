@@ -28,6 +28,9 @@ $attribute = [
         ['attribute' => 'bmc_code', 'filter' => false, 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'visible' => TRUE, 'filter' => false],
+        ['attribute' => 'vendor_master_code','label' => Yii::t('app', 'Vendor Code'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_code');
+        }, 'visible' => $vendor, 'filter' => false],
         ['attribute' => 'vendor_master_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name');
         }, 'visible' => $vendor,],
@@ -61,6 +64,9 @@ $attribute = [
         }, 'visible' => false, 'filter' => false],
         ['attribute' => 'no_of_installment', 'visible' => false, 'filter' => false],
         ['attribute' => 'amount', 'visible' => true, 'filter' => false],
+        ['attribute' => 'is_stock_posted', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_stock_posted');
+        }, 'visible' => TRUE, 'filter' => false],
         ['label' => Yii::t('app', 'Created date'), 'attribute' => 'created_at',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

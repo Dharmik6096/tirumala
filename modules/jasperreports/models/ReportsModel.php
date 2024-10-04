@@ -86,7 +86,7 @@ class ReportsModel extends Model {
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBill']],
             [['union_code', 'p_plant_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['InchargeRemuneration']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd', 'MemberPaymentVrs']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd', 'MemberPaymentVrs', 'VendorBillElanad']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => ['FarmerIncentive', 'VlccTransactionDataReport']],
             [['p_from_date', 'p_to_date', 'p_bmc_code'], 'required', 'on' => ['MccDayBookDispatchHub']],
             [['p_union_code', 'state_code', 'region_code', 'area_code', 'p_bmc_code'], 'required', 'on' => ['VlccTransactionDataReportRegion']],

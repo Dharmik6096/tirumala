@@ -119,6 +119,7 @@ class MemberImport extends TblMember {
                   [['nominee_relation'], 'validateRelationship'],
                   [['member_class'], 'validateClass'],
                  */
+            [['member_code'], 'setNullValue'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type, $this->import_eipl_code);
         $rules = array_merge($client_rules, $main_rules);

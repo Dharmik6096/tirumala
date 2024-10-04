@@ -438,6 +438,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVendorBillElanad() {
+        $this->report = 'VendorBillElanad';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -505,11 +510,7 @@ class DefaultController extends \app\controllers\ChildController {
                     echo $this->output;
                 }
             } else {
-                if ($this->RegisterReportRequest('jasper', $this->data, $controls)) {
-                    $msg = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
-                } else {
-                    $msg = 'Error While Request Submit.';
-                }
+                $msg = $this->RegisterReportRequest('jasper', $this->data, $controls);
                 $this->output = '<p><center><b>' . $msg . '<b/></center><p/>';
             }
         } else {
@@ -519,6 +520,12 @@ class DefaultController extends \app\controllers\ChildController {
                     \Yii::$app->pdf->generatePdfMMd($model);
                 } else {
                     \Yii::$app->pdf->generatePdfMMdTwo($model);
+                }
+            } else if (strtolower($client_code) == 'elanad') {
+                if (!in_array($this->type, ['tcpdf'])) {
+                    \Yii::$app->pdf->generatePdfAtmos($model);
+                } else {
+                    \Yii::$app->pdf->generatePdfElanad($model);
                 }
             } else {
                 \Yii::$app->pdf->generatePdfAtmos($model);
@@ -1040,6 +1047,14 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'MemberRegisterAll',
                 'scenario' => 'RptMemberRegisterAll',
                 'title' => 'Approve Farmer Data PDF',
+                'bkg_export' => TRUE,
+            ],
+            'VendorBillElanad' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:all_routes,p_dcsc_code:route_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/VendorBillFormated',
+                'scenario' => 'VendorBillElanad',
+                'title' => '633 - Member and Vendor Milk Bill',
+                'tcpdf' => true,
             ],
         ];
         return $label[$l];

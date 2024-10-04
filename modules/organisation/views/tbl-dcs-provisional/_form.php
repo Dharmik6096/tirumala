@@ -457,6 +457,14 @@ $form = ActiveForm::begin([
 
     <?php
     $script = "
+    var supervisorId = '$model->supervisor_employee_id';
+    var supervisorName = '$model->supervisor_employee_name';
+    if(supervisorId != '' && supervisorId != null){
+        $('.field-tbldcsprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+    }
+    if(supervisorName != '' && supervisorName != null){
+        $('.field-tbldcsprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+    } 
     var delay=2000;
     securityCheque($('#tbldcsprovisional-is_security_cheque').prop('checked'));	
     $('#tbldcsprovisional-is_security_cheque').on('change', function() {
@@ -601,13 +609,22 @@ $form = ActiveForm::begin([
                 var obj1 = $.parseJSON(response);
                 var data = obj1.data;
                 if(data){
-                    $('#tbldcsprovisional-supervisor_employee_id').val(data.employee_code);
-                    $('#tbldcsprovisional-supervisor_employee_name').val(data.firstname);
-                    if(data.employee_code != '' && data.employee_code != null){
-                        $('.field-tbldcsprovisional-supervisor_employee_id').addClass('disabled no_pointer');
-                    }
-                    if(data.firstname != '' && data.firstname != null){
+                    if(supervisorName != '' && supervisorName != null){
                         $('.field-tbldcsprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                    } else {
+                        $('#tbldcsprovisional-supervisor_employee_name').val(data.firstname);
+                        if(data.firstname != '' && data.firstname != null){
+                            $('.field-tbldcsprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                        }
+                    }
+                    if(supervisorId != ''  && supervisorId != null){
+                        $('.field-tbldcsprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                    } else {
+                        $('#tbldcsprovisional-supervisor_employee_id').val(data.employee_code);
+                        if(data.employee_code != '' && data.employee_code != null){
+                        alert('vivek');
+                            $('.field-tbldcsprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                        }
                     }
                 }                               
             },

@@ -1,68 +1,53 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use kartik\detail\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\clienterp\models\TblClientErpApiLog */
-
-$this->title = $model->log_id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Client Erp Api Logs'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('view', 'Client ERP API Log');
 ?>
-<div class="tbl-client-erp-api-log-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->log_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->log_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'log_id',
-            'union_code',
-            'plant_code',
-            'mcc_plant_code',
-            'bmc_code',
-            'end_point',
-            'request_url:url',
-            'request_desc',
-            'txn_type',
-            'date1',
-            'date2',
-            'desc1',
-            'desc2',
-            'request_header',
-            'request_payload',
-            'response_payload',
-            'request_timestamp',
-            'response_timestamp',
-            'status_code',
-            'status_type',
-            'status_response',
-            'status_message',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'originating_org_code',
-            'originating_org_type',
-            'originating_type',
-            'x_col1',
-            'x_col2',
-            'x_col3',
-            'x_col4',
-            'x_col5',
-        ],
-    ]) ?>
-
-</div>
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body hide-grid-settings">
+        <div class="form-grid">
+            <div class="table-responsive">
+                <?php
+                if ($erp_process_name == 2) {
+                    $attributes = include('_milk_view.php');
+                } else {
+                    $attributes = include('_log_view.php');
+                }
+                echo DetailView::widget([
+                    'model' => $model,
+                    'attributes' => $attributes,
+                    'mode' => 'view',
+                    'bordered' => true,
+                    'striped' => false,
+                    'responsive' => true,
+                    'hAlign' => 'left',
+                    'vAlign' => 'top',
+                    'container' => ['id' => 'kv-demo'],
+                ]);
+                ?>
+            </div>
+        </div>
+        <?php
+        if ($erp_process_name == 2) { ?>
+            <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Log Details') ?></h4>
+                </div>
+                <div class="form-grid">
+                    <?=
+                    $this->render('_log_grid', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                    ]);
+                    ?>
+                </div>
+            </div>
+        <?php
+        } ?>
+    </div>

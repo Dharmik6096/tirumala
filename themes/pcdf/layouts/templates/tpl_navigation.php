@@ -276,7 +276,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Bonus Payment - Previous Data'), 'url' => ['/payment/tbl-bonus-payment-previous-data/index'], 'active' => ($cntrl == 'tbl-bonus-payment-previous-data' && $action == 'index')],
                 ['label' => Yii::t('app', 'Bonus Payment'), 'url' => ['/payment/tbl-bonus-payment/index'], 'active' => ($cntrl == 'tbl-bonus-payment' && $action == 'index')],
                 ['label' => Yii::t('app', 'Party Payment'), 'url' => ['/payment/tbl-party-payment/index'], 'active' => ($cntrl == 'tbl-party-payment' && $action == 'index')],
-            //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
+                //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
         //        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
@@ -660,8 +660,8 @@ echo GhostMenu::widget([
                         ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/reports/sap-wq-file']],
                         ['label' => '410-' . Yii::t('app', 'Member Provisional Family Detail'), 'url' => ['/misreports/reports/member-provisional-family-detail']],
                         ['label' => '411-' . Yii::t('app', 'Member Provisional SAP Export'), 'url' => ['/misreports/reports/member-provisional-sap-export']],
-                        ['label' => '412-' . Yii::t('app', 'SAP Date export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
-                        ['label' => '413-' . Yii::t('app', 'SAP Date export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
+                        ['label' => '412-' . Yii::t('app', 'SAP Data export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
+                        ['label' => '413-' . Yii::t('app', 'SAP Data export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
                         ['label' => '414-' . Yii::t('app', 'SAP Data Export Feed Sale Member'), 'url' => ['/misreports/reports/sap-data-export-feed-sale-member']],
                     ]
                 ],
@@ -751,6 +751,7 @@ echo GhostMenu::widget([
                         ['label' => '630-' . Yii::t('app', 'Payment summary'), 'url' => ['/misreports/reports/payment-summary']],
                         ['label' => '631-' . Yii::t('app', 'Vendor Payment Format 2'), 'url' => ['/misreports/reports/vendor-payment-format']],
                         ['label' => '632-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-sbd']],
+                        ['label' => '633-' . Yii::t('app', 'Member and Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-bill-elanad'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill-elanad']) ? (($eiplCode == 'ELANAD') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
                 [
@@ -906,6 +907,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'DCS Wise Stock'), 'url' => ['/misreports/reports/stock-register-to-sap']],
                         ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap']],
                         ['label' => Yii::t('app', 'BMC Wise Stock'), 'url' => ['/misreports/reports/stock-register-bmc-to-sap']],
+                        ['label' => Yii::t('app', 'Indent Summary Detail'), 'url' => ['/misreports/reports/indent-summary-detail']],
                     ]
                 ],
                 [
@@ -1019,7 +1021,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => Yii::t('app', 'Feedback Item'), 'url' => ['/feedback/tbl-eipl-app-feedback-item/index']],
                         ['label' => Yii::t('app', 'Feedback Master'), 'url' => ['/feedback/tbl-eipl-app-feedback-master/index']],
-                    //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
+                        //  ['label' => Yii::t('app', 'Feedback Master Txn'), 'url' => ['/feedback/tbl-eipl-app-feedback-master-txn/index']],
                     ],
                 ],
                 [
@@ -1139,7 +1141,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Member Acknowledgement'), 'url' => ['/dcsoperation/tbl-member-download/index']],
                         ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                         ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/create']],
-                    //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
+                        //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
                     ]
                 ],
                 //                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],

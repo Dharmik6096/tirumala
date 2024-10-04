@@ -182,8 +182,8 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'BMC Shift Lock'), 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock'), 'visible' => ($eiplCode == 'MMD') ? TRUE : FALSE],
                     ['label' => Yii::t('app', 'Shift Lock'), 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => ($eiplCode == 'MMD') ? FALSE : TRUE],
                     ['label' => Yii::t('app', 'Shift Lock (Member Data)'), 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
-                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
-                    ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
+                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index')],
+                    ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index')],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
@@ -727,8 +727,8 @@ echo GhostMenu::widget([
                             ['label' => '409-' . Yii::t('app', 'SAP WQ File'), 'url' => ['/misreports/reports/sap-wq-file']],
                             ['label' => '410-' . Yii::t('app', 'Member Provisional Family Detail'), 'url' => ['/misreports/reports/member-provisional-family-detail']],
                             ['label' => '411-' . Yii::t('app', 'Member Provisional SAP Export'), 'url' => ['/misreports/reports/member-provisional-sap-export']],
-                            ['label' => '412-' . Yii::t('app', 'SAP Date export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
-                            ['label' => '413-' . Yii::t('app', 'SAP Date export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
+                            ['label' => '412-' . Yii::t('app', 'SAP Data export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
+                            ['label' => '413-' . Yii::t('app', 'SAP Data export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
                             ['label' => '414-' . Yii::t('app', 'SAP Data Export Feed Sale Member'), 'url' => ['/misreports/reports/sap-data-export-feed-sale-member']],
                     ]
                 ],
@@ -820,6 +820,7 @@ echo GhostMenu::widget([
                             ['label' => '630-' . Yii::t('app', 'Payment summary'), 'url' => ['/misreports/reports/payment-summary']],
                             ['label' => '631-' . Yii::t('app', 'Vendor Payment Format 2'), 'url' => ['/misreports/reports/vendor-payment-format']],
                             ['label' => '632-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-sbd']],
+                            ['label' => '633-' . Yii::t('app', 'Member and Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-bill-elanad'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill-elanad']) ? (($eiplCode == 'ELANAD') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
                     [
@@ -979,6 +980,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'DCS Wise Stock'), 'url' => ['/misreports/reports/stock-register-to-sap']],
                             ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap']],
                             ['label' => Yii::t('app', 'BMC Wise Stock'), 'url' => ['/misreports/reports/stock-register-bmc-to-sap']],
+                            ['label' => Yii::t('app', 'Indent Summary Detail'), 'url' => ['/misreports/reports/indent-summary-detail']],
                     ]
                 ],
                     [
@@ -1182,6 +1184,7 @@ echo GhostMenu::widget([
                             ]
                         ],
                             ['label' => Yii::t('app', 'Help Manual'), 'url' => ['/site/help-manual'], 'visible' => ($eiplCode == 'GYAN') ? TRUE : FALSE],
+                            ['label' => Yii::t('app', 'Client Erp Api Logs'), 'url' => ['/clienterp/tbl-client-erp-api-log/index']],
                             ['label' => Yii::t('app', 'Collection Pendrive File'), 'url' => ['/misreports/reports/collection-pendrive-file']],
                             ['label' => Yii::t('app', 'FAT/SNF Threshold'), 'url' => ['/general/tbl-fat-snf-threshold/index'], 'active' => ($cntrl == 'tbl-fat-snf-threshold')],
                             ['label' => Yii::t('app', 'Shift Time'), 'url' => ['/general/tbl-shift-time/index'], 'active' => ($cntrl == 'tbl-shift-time')],
@@ -1194,8 +1197,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Escalation'), 'url' => ['/email/tbl-email-rule-master/index']],
                             ['label' => Yii::t('app', 'Union Credit'), 'url' => ['/payment/tbl-union-credit-limit/index']],
                             ['label' => Yii::t('app', 'DPU Passwords'), 'url' => ['/setting/tbl-dpu-passwords/create'], 'active' => ($cntrl == 'tbl-dpu-passwords')],
-                            ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/sap-report'], 'active' => ($cntrl == 'default' && $action == 'sap-report'), 'visible' => ($eiplCode == 'DODLA') ? FALSE : TRUE],
-                            ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/sap-report-dodla'], 'active' => ($cntrl == 'reports' && $action == 'sap-report-dodla'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
+                            ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/sap-report'], 'active' => ($cntrl == 'default' && $action == 'sap-report'), 'visible' => User::canRoute(['/misreports/default/sap-report']) ? (($eiplCode == 'DODLA') ? FALSE : TRUE) : FALSE],
+                            ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/sap-report-dodla'], 'active' => ($cntrl == 'reports' && $action == 'sap-report-dodla'), 'visible' => (($eiplCode == 'DODLA') && User::canRoute(['/misreports/reports/sap-report-dodla'])) ? TRUE : FALSE],
                         //                        ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/sap-report-cdpl'], 'active' => ($cntrl == 'reports' && $action == 'sap-report-cdpl'), 'visible' => ($eiplCode == 'JERSEY') ? TRUE : FALSE],
                         ['label' => Yii::t('app', 'SAP Data Upload'), 'url' => ['/collection/tbl-milk-collection/sap-upload'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'sap-upload')], //, 'visible' => ($eiplCode == 'JERSEY') ? TRUE : FALSE],
                         ['label' => Yii::t('app', 'WQ/VM File Summary'), 'url' => ['/misreports/reports/sap-upload-summary'], 'active' => ($cntrl == 'reports' && $action == 'sap-upload-summary')], //, 'visible' => ($eiplCode == 'JERSEY') ? TRUE : FALSE],

@@ -89,6 +89,9 @@ class ReportsController extends \app\controllers\ChildController {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
                 $this->report = 'DcsCollectionConsolidate';
             }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'ConsolidatedWithBank';
+            }
         }
         return $this->actionIndex();
     }
@@ -1050,11 +1053,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
             }
         } else {
-            if ($this->RegisterReportRequest('mis', $this->data, $controls)) {
-                $output = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
-            } else {
-                $output = 'Error While Request Submit.';
-            }
+            $output = $this->RegisterReportRequest('mis', $this->data, $controls);
         }
         $this->output = $output;
 
@@ -1830,9 +1829,14 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'SapDataExportFeedSaleMember';
         return $this->actionIndex();
     }
-    
+
     public function actionPaymentCycleApplicabilityStatus() {
         $this->report = 'PaymentCycleApplicabilityStatus';
+        return $this->actionIndex();
+    }
+
+    public function actionIndentSummaryDetail() {
+        $this->report = 'IndentSummaryDetail';
         return $this->actionIndex();
     }
 
@@ -1977,7 +1981,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_wise_society_collection_date_shift_wise',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Date And Shift Wise Summary',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollDateWiseSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -3671,7 +3675,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_wise_society_collection_date_shift_wise_common',
                 'scenario' => 'BmcCollDateShiftWiseSummaryCommon',
                 'title' => '202 - BMC Collection Date And Shift Wise Summary',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+            ],
+            'ConsolidatedWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_bmc_collection_consolidated_with_bank',
+                'scenario' => 'BmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollDateWiseSummaryCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -3832,13 +3843,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'sp_mis_sap_data_export_for_deduction',
                 'scenario' => 'SapDataExportForDeduction',
-                'title' => 'SAP Date export for Deduction',
+                'title' => 'SAP Data export for Deduction',
             ],
             'SapDataExportForVlcReplacement' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
                 'sp_name' => 'sp_mis_sap_data_export_for_vlc_replacement',
                 'scenario' => 'SapDataExportForVlcReplacement',
-                'title' => 'SAP Date export for VLC Replacement',
+                'title' => 'SAP Data export for VLC Replacement',
             ],
             'StockRegisterBmcToSap' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
@@ -3901,6 +3912,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_payment_cycle_applicability',
                 'scenario' => 'PaymentCycleApplicabilityStatus',
                 'title' => 'Payment Cycle Applicabilit Status',
+            ],
+            'IndentSummaryDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_mcc_wise_indent_summary',
+                'scenario' => 'IndentSummaryDetail',
+                'title' => 'Indent Summary Detail',
             ],
         ];
         return $label[$l];
