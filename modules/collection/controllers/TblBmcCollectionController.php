@@ -408,6 +408,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         (float) $clr = Yii::$app->request->post('clr');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
         $org_code = Yii::$app->request->post('bmcCode');
+        $customer_type = Yii::$app->request->post('customer_type');
 
        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','RMRD_COLLECTION');
        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','RMRD_COLLECTION');
@@ -416,10 +417,19 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
         }
 
+       
         if ($is_clr_input == 0) {
             $data = ($snf - ($fat * $lr1) - $lr2) * 4;
         } else {
             $data = ($clr / 4) + ($fat * $lr1) + $lr2;
+            
+            if($customer_type != 'DCS' && $customer_type != ''){
+                $formattedNumber = floor($data * 100) / 100;
+                $data = number_format($formattedNumber,2);
+             }else{
+                $data = number_format($data,2);
+             }
+            
         }
         $response['data'] = $data;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);

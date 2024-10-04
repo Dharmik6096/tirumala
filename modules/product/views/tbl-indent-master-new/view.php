@@ -100,14 +100,11 @@ $this->title = Yii::$app->label->title('view', 'Indent Request');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'status_date',
-                                'format' => 'html',
-                                'value' => date('d-m-Y', strtotime($model->status_date)),
+                                'attribute' => 'received_qty',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'status_by',
-                                'value' => Yii::$app->general->getforeignkey($model->statusBy, 'name'),
+                                'attribute' => 'approve_qty',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -115,8 +112,27 @@ $this->title = Yii::$app->label->title('view', 'Indent Request');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'rejected_qty',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'status_date',
+                                'format' => 'html',
+                                'value' => date('d-m-Y', strtotime($model->status_date)),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'status_by',
+                                'value' => Yii::$app->general->getforeignkey($model->statusBy, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
                                 'attribute' => 'status_remarks',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],

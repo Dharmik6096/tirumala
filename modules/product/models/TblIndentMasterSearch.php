@@ -81,6 +81,10 @@ class TblIndentMasterSearch extends TblIndentMaster {
                 ->andFilterWhere(['like', 'qty', $this->qty])
                 ->andFilterWhere(['like', 'status', $this->status])
                 ->andFilterWhere(['like', 'status_by', $this->status_by])
+                ->andFilterWhere(['like', 'received_qty', $this->received_qty])
+                ->andFilterWhere(['like', 'approve_qty', $this->approve_qty])
+                ->andFilterWhere(['like', 'rejected_qty', $this->rejected_qty])
+                ->andFilterWhere(['like', 'dispatch_qty', $this->dispatch_qty])
                 ->andFilterWhere(['like', 'status_remarks', $this->status_remarks]);
 
         return $dataProvider;
