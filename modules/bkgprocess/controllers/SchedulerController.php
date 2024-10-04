@@ -42,7 +42,7 @@ use app\modules\complaint\models\TblComplain;
 use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
-
+use app\modules\collection\models\TblBulkBillingImport;
 class SchedulerController extends ChildController {
 
     public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data'];
@@ -326,6 +326,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_quality_test') {
                 $flag = 'bmc-quality-test';
                 $sp_name = 'DB_JOB_PORTAL_QUALITY_Collection';
+            } else if ($row->file_type == 'member_billing_import') {
+                $flag = 'member-billing-bulk';
+                $sp_name = '';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -356,20 +359,26 @@ class SchedulerController extends ChildController {
                         }
                     }
                     $data = array_combine($header, $line);
-                    $model = new TblBulkDataImport();
-                    $model->attributes = $data;
-                    $model->uuid = $uuid;
-                    $model->union_code = $row->union_code;
-                    $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
-                    $FileType = ['milk_collection_dpu_data', 'milk_collection_other_data'];
-                    if (in_array($row->file_type, $FileType)) {
-                        $model->SetDataForShagunDPU();
+                    if ($flag == 'member-billing-bulk') {
+                        $model = new TblBulkDataImport();
+                        $model->attributes = $data;
+                        $model->uuid = $uuid;
                     } else {
-                        $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
-                        $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                        $model = new TblBulkBillingImport();
+                        $model->attributes = $data;
+                        $model->uuid = $uuid;
+                        $model->union_code = $row->union_code;
+                        $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
+                        $FileType = ['milk_collection_dpu_data', 'milk_collection_other_data'];
+                        if (in_array($row->file_type, $FileType)) {
+                            $model->SetDataForShagunDPU();
+                        } else {
+                            $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
+                            $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                        }
+                        $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
+                        $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
                     }
-                    $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
-                    $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
                     if ($model->save()) {
                         $success++;
                     } else {
