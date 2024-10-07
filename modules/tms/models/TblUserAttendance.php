@@ -131,7 +131,7 @@ class TblUserAttendance extends \app\models\ChildModel {
     }
 
     public function getAttachment() {
-        return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code'])->andOnCondition(['module_name' => ['tbl_user_attendance_detail_in', 'tbl_user_attendance_detail_out']]);
+        return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code'])->andOnCondition(['module_name' => ['tbl_user_attendance_in', 'tbl_user_attendance_out']]);
     }
 
     public function getAttendanceRecords() {
