@@ -46,7 +46,7 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
     public function rules() {
         return [
             [['product_code', 'unit_code', 'qty', 'available_stock'], 'required'],
-            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no'], 'safe'],
+            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no', 'is_stock_posted'], 'safe'],
             [['available_stock', 'qty'], 'number'],
             [['unit_code', 'originating_type'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
@@ -89,6 +89,7 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'is_stock_posted' => Yii::t('app', 'Is Stock Posted'),
         ];
     }
 
