@@ -1855,6 +1855,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'SapCfGroupIndentReport';
         return $this->actionIndex();
     }
+    
+    public function actionBillHeadDetail() {
+        $this->report = 'BillHeadDetail';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3958,6 +3963,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_cf_indent_upload_sap',
                 'scenario' => 'SapCfGroupIndentReport',
                 'title' => 'SAP CF Group Indent Report',
+            ],
+            'BillHeadDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,bill_head_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bill_head_detail',
+                'scenario' => 'BillHeadDetail',
+                'title' => 'Bill Head Detail',
             ],
         ];
         return $label[$l];
