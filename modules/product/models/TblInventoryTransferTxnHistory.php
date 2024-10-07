@@ -44,7 +44,7 @@ class TblInventoryTransferTxnHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no'], 'safe'],
+            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no', 'is_stock_posted'], 'safe'],
             [['available_stock', 'qty'], 'safe'],
             [['unit_code', 'originating_type'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
@@ -82,6 +82,7 @@ class TblInventoryTransferTxnHistory extends \yii\db\ActiveRecord {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'is_stock_posted' => Yii::t('app', 'Is Stock Posted'),
         ];
     }
 
