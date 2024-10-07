@@ -21,6 +21,9 @@ $visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
             }, 'visible' => TRUE, 'filter' => false],
         ['attribute' => 'available_stock', 'visible' => true, 'filter' => false],
         ['attribute' => 'qty', 'filter' => false],
+        ['attribute' => 'is_stock_posted', 'value' => function($model) {
+                return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_stock_posted');
+            }, 'visible' => TRUE, 'filter' => false],
     ];
 
 

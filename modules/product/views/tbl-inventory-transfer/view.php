@@ -94,6 +94,15 @@ $this->title = Yii::$app->label->title('view', 'Inventory Transfer');
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_stock_posted',
+                                'value' => Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_stock_posted'),
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget
