@@ -12,6 +12,7 @@ use yii\helpers\Html;
 use PHPExcel;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\vsp\models\TblBillHead;
 
 /**
  * Default controller for the import module
@@ -298,10 +299,30 @@ class DefaultController extends \app\controllers\ChildController {
         }
         $a = str_replace($this->old_att, $this->change_att, $a);
         $fields = explode(',', $a);
-        $fields = array_map(function($str) {
-            return ucwords(str_replace('_', ' ', $str));
-        }, $fields);
+        $model_name = (!empty($data['class_attribute']) && is_object($data['class_attribute'])) ? $data['class_attribute'] : '';
+        if (!empty($data['bill_head_for'])) {
+            $bill_head = TblBillHead::find()->select(['bill_head_name', 'sequence_no'])->where(['union_code' => Yii::$app->session->get('Unions'), 'bill_head_for' => $data['bill_head_for']])->asArray()->all();
 
+            $resultArray = [];
+            foreach ($bill_head as $item) {
+                $key = str_replace(' ', '_', ('head_val_seq' . $item['sequence_no']));
+                $resultArray[$key] = $item['bill_head_name'];
+            }
+            $fields = array_map(function($str) use ($model_name, $resultArray) {
+                if (!empty($model_name)) {
+                    if (isset($resultArray[$str])) {
+                        return $resultArray[$str];
+                    } else {
+                        return $model_name->getAttributeLabel($str);
+                    }
+                }
+                return ucwords(str_replace('_', ' ', $str));
+            }, $fields);
+        } else {
+            $fields = array_map(function($str) {
+                return ucwords(str_replace('_', ' ', $str));
+            }, $fields);
+        }
         foreach ($fields as $col) {
             $objPHPExcel->getActiveSheet()->setCellValue($column . $rowCount, $col);
             $column++;
