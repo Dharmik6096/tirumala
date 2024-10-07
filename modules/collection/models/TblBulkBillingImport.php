@@ -87,7 +87,7 @@ class TblBulkBillingImport extends \yii\db\ActiveRecord {
             'billing_import_code' => Yii::t('app', 'Billing Import Code'),
             'billing_type' => Yii::t('app', 'Billing Type'),
             'union_code' => Yii::t('app', 'Union Code'),
-            'bmc_code' => Yii::t('app', 'BMC'),
+            'bmc_code' => Yii::t('app', 'Bmc Code'),
             'dcs_code' => Yii::t('app', 'Dcs Code'),
             'customer_type' => Yii::t('app', 'Customer Type'),
             'customer_code' => Yii::t('app', 'Customer Code'),
