@@ -43,6 +43,7 @@ use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
 use app\modules\collection\models\TblBulkBillingImport;
+
 class SchedulerController extends ChildController {
 
     public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data'];
@@ -328,7 +329,10 @@ class SchedulerController extends ChildController {
                 $sp_name = 'DB_JOB_PORTAL_QUALITY_Collection';
             } else if ($row->file_type == 'member_billing_import') {
                 $flag = 'member-billing-bulk';
-                $sp_name = '';
+                $sp_name = 'DB_JOB_PORTAL_MEMBER_BILLING';
+            } else if ($row->file_type == 'vendor_billing_import') {
+                $flag = 'vendor-billing-bulk';
+                $sp_name = 'DB_JOB_PORTAL_VSP_BILLING';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -359,12 +363,22 @@ class SchedulerController extends ChildController {
                         }
                     }
                     $data = array_combine($header, $line);
-                    if ($flag == 'member-billing-bulk') {
-                        $model = new TblBulkDataImport();
+                    if (($flag == 'member-billing-bulk') || ($flag == 'vendor-billing-bulk')) {
+                        $model = new TblBulkBillingImport();
                         $model->attributes = $data;
                         $model->uuid = $uuid;
+                        $model->union_code = $row->union_code;
+                        if ($flag == 'member-billing-bulk') {
+                            $model->billing_type = 'Member';
+                            $model->customer_type = 'Member';
+                        } else if ($flag == 'vendor-billing-bulk') {
+                            $model->billing_type = 'vendor_billing';
+                            $model->customer_type = 'DCS';
+                        }
+                        $model->from_date = !empty($model->from_date) ? date('Y-m-d', strtotime($model->from_date)) : '';
+                        $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
                     } else {
-                        $model = new TblBulkBillingImport();
+                        $model = new TblBulkDataImport();
                         $model->attributes = $data;
                         $model->uuid = $uuid;
                         $model->union_code = $row->union_code;
