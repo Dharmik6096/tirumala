@@ -58,20 +58,20 @@ class TblInventoryTransfer extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code'], 'required'],
-                [['inventory_transfer_code'], 'safe'],
-                [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code', 'product_code', 'qty', 'available_stock', 'unit_code', 'transaction_date', 'sap_batch_no', 'data_post_status', 'response_msg'], 'safe'],
-                [['remarks'], 'string'],
-                [['originating_type'], 'integer'],
-                [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
-                [['union_code'], 'string', 'max' => 3],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-                [['from_type', 'to_type'], function ($attribute, $params) {
+            [['inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code'], 'required'],
+            [['inventory_transfer_code'], 'safe'],
+            [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code', 'product_code', 'qty', 'available_stock', 'unit_code', 'transaction_date', 'sap_batch_no', 'data_post_status', 'response_msg', 'is_stock_posted'], 'safe'],
+            [['remarks'], 'string'],
+            [['originating_type'], 'integer'],
+            [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
+            [['union_code'], 'string', 'max' => 3],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+            [['from_type', 'to_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'org_type');
                 }, 'on' => 'importCsv'],
-                [['from_code'], function ($attribute, $params) {
+            [['from_code'], function ($attribute, $params) {
                     if (strtoupper($this->from_type == 'BMC')) {
                         return Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                     } else if (strtoupper($this->from_type == 'MCC')) {
@@ -84,7 +84,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                         return !empty($this->from_code) ? $this->from_code : $this->addError('from_code', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is Invalid.'));
                     }
                 }, 'on' => ['importCsv']],
-                [['to_code'], function ($attribute, $params) {
+            [['to_code'], function ($attribute, $params) {
                     if (strtoupper($this->to_type == 'BMC')) {
                         return Yii::$app->general->validateBMC($this, 'to_code', 'bmc_code');
                     } else if (strtoupper($this->to_type == 'MCC')) {
@@ -97,29 +97,33 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                         return !empty($this->to_code) ? $this->to_code : $this->addError('to_code', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is Invalid.'));
                     }
                 }, 'on' => ['importCsv']],
-                [['inventory_transfer_no'], 'setImport', 'on' => ['importCsv']],
-                [['from_mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['from_mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
-                [['from_bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['from_bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
-                [['from_dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['from_dcs_code' => 'dcs_code'], 'on' => 'importCsv'],
-                [['to_mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['to_mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
-                [['to_bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['to_bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
-                [['to_dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['to_dcs_code' => 'dcs_code'], 'on' => 'importCsv'],
-                [['inventory_transfer_no'], 'checkStock', 'on' => ['importCsv']],
-                [['inventory_transfer_date'], 'convertDateDot', 'on' => ['importCsv']],
-                [['inventory_transfer_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['inventory_transfer_date'], 'convertDate', 'on' => ['importCsv']],
-                [['to_code'], 'validateToTransfer', 'except' => ['androidsync']],
-                [
-                    ['transaction_date'], 'required', 'when' => function ($model) {
+            [['inventory_transfer_no'], 'setImport', 'on' => ['importCsv']],
+            [['from_mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['from_mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+            [['from_bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['from_bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
+            [['from_dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['from_dcs_code' => 'dcs_code'], 'on' => 'importCsv'],
+            [['to_mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['to_mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+            [['to_bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['to_bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
+            [['to_dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['to_dcs_code' => 'dcs_code'], 'on' => 'importCsv'],
+            [['inventory_transfer_no'], 'checkStock', 'on' => ['importCsv']],
+            [['inventory_transfer_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['inventory_transfer_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['inventory_transfer_date'], 'convertDate', 'on' => ['importCsv']],
+            [['to_code'], 'validateToTransfer', 'except' => ['androidsync']],
+            [
+                ['transaction_date'], 'required', 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     return $batchNoWiseInventory == 1;
                 },
             ],
-                [['sap_batch_no'], 'validateSapBatchNo', 'on' => ['importCsv']],
-                [['transaction_date'], 'convertDateDot', 'on' => ['importCsv']],
-                [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['transaction_date'], 'convertDate', 'on' => ['importCsv']],
-                [['data_post_status'], 'default', 'value' => 0],
+            [['sap_batch_no'], 'validateSapBatchNo', 'on' => ['importCsv']],
+            [['transaction_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['transaction_date'], 'convertDate', 'on' => ['importCsv']],
+            [['data_post_status'], 'default', 'value' => 0],
+            [['is_stock_posted'], 'default', 'value' => function () {
+                    $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->union_code, 'grn_without_stock_entry', $this);
+                    return ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
+                }, 'on' => ['importCsv']],
         ];
     }
 
@@ -154,6 +158,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             'from_dcs_code' => Yii::t('app', 'From DCS'),
             'to_dcs_code' => Yii::t('app', 'To DCS'),
             'transaction_date' => Yii::t('app', 'Actual Date'),
+            'is_stock_posted' => Yii::t('app', 'Is Stock Posted'),
         ];
     }
 
@@ -255,6 +260,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
     public function setChildTable(&$model, &$saveModel, &$errors) {
         if (!empty($model)) {
             $txModel = new TblInventoryTransferTxn();
+            $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->union_code, 'grn_without_stock_entry', $this);
             $txModel->inventory_transfer_code = $model->inventory_transfer_code;
             $txModel->inventory_transfer_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->inventory_transfer_code);
             $txModel->product_code = $model->product_code;
@@ -263,6 +269,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             $txModel->qty = $model->qty;
             $txModel->union_code = $model->union_code;
             $txModel->sap_batch_no = $model->sap_batch_no;
+            $txModel->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
 
             if (!$txModel->validate()) {
                 $errors[] = $txModel->getErrors();
@@ -270,79 +277,80 @@ class TblInventoryTransfer extends \app\models\ChildModel {
 
             if (empty($txModel->getErrors()) && $txModel->validate()) {
                 array_push($saveModel, $txModel);
+                if ($txModel->is_stock_posted) {
+                    $fstockModel = new TblProductStock();
+                    $fstockModel->setCodes($this->from_type, $this->from_code);
+                    $fstockModel->product_code = $txModel->product_code;
+                    $fstockModel->union_code = $txModel->union_code;
+                    $batch = !empty($txModel->sap_batch_no) ? $txModel->sap_batch_no : '';
+                    $existfromStock = $fstockModel->getExistStock($this->from_type);
 
-                $fstockModel = new TblProductStock();
-                $fstockModel->setCodes($this->from_type, $this->from_code);
-                $fstockModel->product_code = $txModel->product_code;
-                $fstockModel->union_code = $txModel->union_code;
-                $batch = !empty($txModel->sap_batch_no) ? $txModel->sap_batch_no : '';
-                $existfromStock = $fstockModel->getExistStock($this->from_type);
+                    $f_stock = 0;
+                    $qty = $txModel->qty;
+                    if (!empty($existfromStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                        array_push($saveModel, $historyModel);
+                        $f_stock = $existfromStock->stock;
+                        $existfromStock->stock = $f_stock - $qty;
+                        $fstockModel = $existfromStock;
+                    } else {
+                        $fstockModel->product_stock_code = $fstockModel->getCode();
+                        $fstockModel->stock = $f_stock - $qty;
+                        $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                    }
+                    array_push($saveModel, $fstockModel);
+                    $i = 1;
+                    $fstockTxnModel = new TblProductStockTransaction();
+                    $fstockTxnModel->attributes = $fstockModel->attributes;
+                    $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                    $fstockTxnModel->old_value = $f_stock;
+                    $fstockTxnModel->new_value = $qty;
+                    $fstockTxnModel->final_value = $fstockModel->stock;
+                    $fstockTxnModel->transaction_type = 'INVENTORY TRANSFER';
+                    $fstockTxnModel->transaction_date = date('Y-m-d');
+                    $fstockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
+                    array_push($saveModel, $fstockTxnModel);
+                    $i++;
 
-                $f_stock = 0;
-                $qty = $txModel->qty;
-                if (!empty($existfromStock)) {
-                    $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
-                    array_push($saveModel, $historyModel);
-                    $f_stock = $existfromStock->stock;
-                    $existfromStock->stock = $f_stock - $qty;
-                    $fstockModel = $existfromStock;
-                } else {
-                    $fstockModel->product_stock_code = $fstockModel->getCode();
-                    $fstockModel->stock = $f_stock - $qty;
-                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                    //set to stock
+                    $stockModel = new TblProductStock();
+                    $stockModel->setCodes($this->to_type, $this->to_code);
+                    $stockModel->product_code = $txModel->product_code;
+                    $stockModel->union_code = $txModel->union_code;
+                    $stockModel->sap_batch_no = $batch;
+                    $existtoStock = $stockModel->getExistStock($this->to_type);
+
+                    $t_stock = 0;
+                    $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock'] : 0;
+                    $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
+                    $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
+                    if ($valid_avl_stock == 1 && strtoupper($this->to_type) == 'DCS' && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
+                        $this->addError('qty', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
+                    } else if (!empty($existtoStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
+                        array_push($saveModel, $historyModel);
+                        $t_stock = $existtoStock->stock;
+                        $existtoStock->stock = $t_stock + $qty;
+                        $stockModel = $existtoStock;
+                    } else {
+                        $stockModel->product_stock_code = $stockModel->getCode($i);
+                        $stockModel->stock = $t_stock + $qty;
+                        $stockModel->x_col1 = Yii::$app->general->getUuid();
+                    }
+                    array_push($saveModel, $stockModel);
+                    $stockTxnModel = new TblProductStockTransaction();
+                    $stockTxnModel->attributes = $stockModel->attributes;
+                    $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
+                    $stockTxnModel->old_value = $t_stock;
+                    $stockTxnModel->new_value = $qty;
+                    $stockTxnModel->final_value = $stockModel->stock;
+                    $stockTxnModel->transaction_type = 'INVENTORY RECEIVED';
+                    $stockTxnModel->transaction_date = date('Y-m-d');
+                    $stockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
+                    array_push($saveModel, $stockTxnModel);
                 }
-                array_push($saveModel, $fstockModel);
-                $i = 1;
-                $fstockTxnModel = new TblProductStockTransaction();
-                $fstockTxnModel->attributes = $fstockModel->attributes;
-                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
-                $fstockTxnModel->old_value = $f_stock;
-                $fstockTxnModel->new_value = $qty;
-                $fstockTxnModel->final_value = $fstockModel->stock;
-                $fstockTxnModel->transaction_type = 'INVENTORY TRANSFER';
-                $fstockTxnModel->transaction_date = date('Y-m-d');
-                $fstockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
-                array_push($saveModel, $fstockTxnModel);
-                $i++;
-
-                //set to stock
-                $stockModel = new TblProductStock();
-                $stockModel->setCodes($this->to_type, $this->to_code);
-                $stockModel->product_code = $txModel->product_code;
-                $stockModel->union_code = $txModel->union_code;
-                $stockModel->sap_batch_no = $batch;
-                $existtoStock = $stockModel->getExistStock($this->to_type);
-
-                $t_stock = 0;
-                $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock'] : 0;
-                $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
-                $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
-                if ($valid_avl_stock == 1 && strtoupper($this->to_type) == 'DCS' && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
-                    $this->addError('qty', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
-                } else if (!empty($existtoStock)) {
-                    $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
-                    array_push($saveModel, $historyModel);
-                    $t_stock = $existtoStock->stock;
-                    $existtoStock->stock = $t_stock + $qty;
-                    $stockModel = $existtoStock;
-                } else {
-                    $stockModel->product_stock_code = $stockModel->getCode($i);
-                    $stockModel->stock = $t_stock + $qty;
-                    $stockModel->x_col1 = Yii::$app->general->getUuid();
-                }
-                array_push($saveModel, $stockModel);
-                $stockTxnModel = new TblProductStockTransaction();
-                $stockTxnModel->attributes = $stockModel->attributes;
-                $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
-                $stockTxnModel->old_value = $t_stock;
-                $stockTxnModel->new_value = $qty;
-                $stockTxnModel->final_value = $stockModel->stock;
-                $stockTxnModel->transaction_type = 'INVENTORY RECEIVED';
-                $stockTxnModel->transaction_date = date('Y-m-d');
-                $stockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
-                array_push($saveModel, $stockTxnModel);
             }
         }
     }
