@@ -416,6 +416,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 <div id="chartToTable"></div>
 
 <?php
+$sortjs = $this->theme->getUrl('/assets/js/');
 $script = "  
     var clientCodeForData = '" . $client_code . "';
 // $( '.sortable' ).sortable();
@@ -427,7 +428,17 @@ $('.dpu_data_icon').click(function(){
     $('#modal_widget_selection').collapse('hide');
 });
 
-    $(document).ready(function() {
+        $(document).ready(function() {
+        var script = document.createElement('script');
+        script.src = '$sortjs/jquery-ui.js';
+        document.head.appendChild(script);
+        var checkForJQueryUI = setInterval(function() {
+            if (typeof $.ui !== 'undefined' && typeof $.ui.sortable !== 'undefined') {
+                clearInterval(checkForJQueryUI);
+                    $( '.sortable' ).sortable();
+                }
+        }, 100); 
+        
         if('" . $widget_type . "' == '' || '" . $widget_type . "' == 'farmer'){
             $('#hidden_widget_type').val('farmer');
             $('#radio-farmer').prop('checked', true);
