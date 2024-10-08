@@ -1958,6 +1958,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Inventory Plant Dispatch'), 2 => Yii::t('app', 'Milk Receipt')],
             ],
+            'data_post_status' => [
+                'name' => 'data_post_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'PENDING'), 1 => Yii::t('app', 'PUSHED TO SAP'), 2 => Yii::t('app', 'SUCCESS '), 3 => Yii::t('app', 'ERROR'), 4 => Yii::t('app', 'RBP')],
+            ],
         ];
         return $records[$l];
     }

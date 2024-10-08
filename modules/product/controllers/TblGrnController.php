@@ -456,4 +456,22 @@ class TblGrnController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionRePush($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblGrnHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $saveModel[] = $historyModel;
+        $this->model->data_post_status = 0;
+
+        $saveModel[] = $this->model;
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['GRN', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'GRN re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push GRN.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }
