@@ -7,7 +7,8 @@ if ($allow_stop_payment_member == '1') {
     $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Stop Payment'), ['/payment/tbl-member-payment/create-stop-payment'], true);
 }
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Disburse Farmer Payment'), ['/payment/tbl-member-payment/member-payment-disburse'], true);
-$this->params['menu'][] = Yii::$app->controls->import('member-billing-bulk', $this, Yii::t('app', 'Member Billing Import Data'));
+$url = ['/payment/tbl-member-payment/member-payment-import'];
+$this->params['menu'][] = Yii::$app->controls->import('member-billing-bulk', $this, Yii::t('app', 'Member Billing Import Data'), [], '', $url);
 ?>
 
 <div class="panel panel-default panel-grid panel-main">
