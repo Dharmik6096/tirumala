@@ -126,13 +126,13 @@ class TblDcsController extends ChildController {
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
 
-        $productSaleRateApplicability = new TblProductSaleRateApplicability;
-        $productSaleRate = new TblProductSaleRate;
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->dcs_code = $this->model->getCode();
             $mapList = [];
             $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'product_sale_rate_applicability_auto');
             if (!empty($productSaleRateApplicabilityAuto)) {
+                $productSaleRateApplicability = new TblProductSaleRateApplicability;
+                $productSaleRate = new TblProductSaleRate;
                 $productSaleRate = $this->model->getProductSaleRates($this->model->union_code);
                 if (!empty($productSaleRate)) {
                     foreach ($productSaleRate as $rate) {
@@ -141,6 +141,7 @@ class TblDcsController extends ChildController {
                         $productSaleRateApplicability->applicable_for = 'DCS';
                         $productSaleRateApplicability->applicable_code = $this->model->dcs_code;
                         $productSaleRateApplicability->created_at = date('Y-m-d H:i:s');
+                        $productSaleRateApplicability->wef_date = date('Y-m-d H:i:s');
                         $productSaleRateApplicability->created_by = Yii::$app->user->identity->id;
                         array_push($mapList, $productSaleRateApplicability);
                     }
