@@ -93,7 +93,7 @@ class Controls extends Component {
         ])->checkbox(['checked' => $checkboxValue]);
     }
 
-    public function import($flag, $view, $text = '', $fields = [], $appendId = 'SingleFile') {
+    public function import($flag, $view, $text = '', $fields = [], $appendId = 'SingleFile', $urlPermission = '') {
         if ($flag == 'member_limited')
             $model = new TblMember();
         else
@@ -102,7 +102,7 @@ class Controls extends Component {
         $baseurl = Yii::$app->request->baseUrl . '/';
         $checkUrl = str_replace($baseurl, '', Yii::$app->request->url);
         $checkUrl = Yii::$app->general->base64url_decode($checkUrl);
-        $url = str_replace('index', 'create', $checkUrl);
+        $url = !empty($urlPermission) ? $urlPermission : str_replace('index', 'create', $checkUrl);
         $btnText = !empty($text) ? $text : 'Import Data';
         if (User::canRoute($url)) {
             $check = \app\modules\import\importData::getLabels($flag);
@@ -357,9 +357,9 @@ class Controls extends Component {
                     'item' =>
                     function ($index, $label, $name, $checked, $value) {
                         return Html::checkbox($name, $checked, [
-                            'value' => $value,
-                            'id' => $value,
-                        ]) . '<label for=' . $value . '>' . $label . '</label>';
+                                    'value' => $value,
+                                    'id' => $value,
+                                ]) . '<label for=' . $value . '>' . $label . '</label>';
                     },]);
     }
 

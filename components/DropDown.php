@@ -926,7 +926,7 @@ class DropDown extends Component {
 
         //client wise dropdown option remove
         $client_code = \Yii::$app->session->get('eiplCode');
-        if(isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])){
+        if (isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])) {
             foreach ($data['client_wise_rmv'][$client_code] as $value) {
                 unset($records[$value]);
             }
@@ -1305,7 +1305,7 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
                 'client_wise_rmv' => [
-                    'ABT' => ['AU','Federal','IOB','NEFT'] 
+                    'ABT' => ['AU', 'Federal', 'IOB', 'NEFT']
                 ]
             ],
             'payment_mode_member' => [
@@ -1995,6 +1995,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Inventory Plant Dispatch'), 2 => Yii::t('app', 'Milk Receipt')],
             ],
+            'data_post_status' => [
+                'name' => 'data_post_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'PENDING'), 1 => Yii::t('app', 'PUSHED TO SAP'), 2 => Yii::t('app', 'SUCCESS '), 3 => Yii::t('app', 'ERROR'), 4 => Yii::t('app', 'RBP')],
+            ],
         ];
         return $records[$l];
     }
@@ -2137,6 +2142,7 @@ class DropDown extends Component {
             'relation_code' => ['name' => 'relationship_code', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
             'product_depend_group' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'product_group_code'],
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
+            'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
         ];
         return $label[$l];
     }

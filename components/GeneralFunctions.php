@@ -56,6 +56,8 @@ use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use PHPExcel;
+use yii\helpers\Url;
+use yii\web\View;
 
 class GeneralFunctions extends Component {
 
@@ -1441,14 +1443,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -2296,16 +2298,16 @@ class GeneralFunctions extends Component {
         $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
 
         $query->andFilterWhere(['or',
-                ['pd.union_code' => $unions],
-                ['ms.union_code' => $unions],
-                ['md.union_code' => $unions],
-                ['cs.union_code' => $unions],
-                ['cd.union_code' => $unions]
+            ['pd.union_code' => $unions],
+            ['ms.union_code' => $unions],
+            ['md.union_code' => $unions],
+            ['cs.union_code' => $unions],
+            ['cd.union_code' => $unions]
         ]);
         $form_to = !empty($mccs) ? $mccs : $plants;
         $query->andFilterWhere(['or',
-                [$main_table . '.' . $from_dest => $form_to],
-                [$main_table . '.' . $to_dest => $form_to],
+            [$main_table . '.' . $from_dest => $form_to],
+            [$main_table . '.' . $to_dest => $form_to],
         ]);
     }
 
@@ -2573,6 +2575,62 @@ class GeneralFunctions extends Component {
             'MCC' => 'MCC',
             'DCS' => 'DCS',
         );
+    }
+
+    public function createRePushLink($url, $model, $gridId, $pk, $var = 'data_post_status') {
+        $class = 're-push ' . ((isset($model->is_stock_posted) && $model->is_stock_posted == 1) ? 'disabled' : ($model->$var == '3' ? '' : 'disabled'));
+        $options = [
+            'title' => Yii::t('app', 'Repush'),
+            'data-toggle' => 'tooltip',
+            'data-placement' => 'top',
+            'class' => $class,
+            'data-val' => $model->$pk
+        ];
+
+        $link = GhostHtml::a_alert('<i class="fa fa-share-square-o"></i>', $url, $options);
+
+        $script = "
+        $(document).ready(function(){
+            $(document).on('click','.re-push',function(e){
+                var id= $(this).attr('data-val');
+                bootbox.confirm({
+                    message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to Re-Push Data?</span></div></div>',
+                    buttons: {
+                        'cancel': {
+                            label: 'Cancel',
+                            className: 'btn btn-danger'
+                        },
+                        'confirm': {
+                            label: 'Ok',
+                            className: 'btn btn-primary'
+                        }
+                    },
+                    callback: function(result) {
+                        if (result) {
+                            $('#loader').show();
+                            $.ajax({
+                                type: 'get',
+                                url: '" . Url::to(['rfc-re-push']) . "',
+                                data: {'id':id},
+                                success: function(data) {
+                                    var obj1 = $.parseJSON(data);
+                                    if (obj1.status == 'success'){
+                                         $.pjax.reload({container: '#" . $gridId . "'});
+                                        bootbox.alert(\"<div class='row'><div class='col-sm-12'><div class='bg-info'><i class='fa fa-info'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                                    } else if (obj1.status == 'error'){
+                                        bootbox.alert(\"<div class='row'><div class='col-sm-12'><div class='bg-danger'><i class='fa fa-times'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                                    }
+                                },
+                            });
+                        }
+                    }
+                });
+            });
+        });
+        ";
+        Yii::$app->view->registerJs($script, View::POS_END, 're-push');
+
+        return $link;
     }
 
 }

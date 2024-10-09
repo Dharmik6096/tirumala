@@ -777,7 +777,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $finalP = 0;
         $moduleCodes = [];
         foreach ($d as $p) {
-            if(!in_array($p->mcc_plant_code, $moduleCodes)){
+            if (!in_array($p->mcc_plant_code, $moduleCodes)) {
                 array_push($moduleCodes, $p->mcc_plant_code);
             }
             $pAmt = !empty($p->final_amount) ? $p->final_amount : 0;
@@ -796,16 +796,16 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             if ($is_bank_integrated) {
                 // $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
                 $union_bank = TblUnionBankPayment::find()
-                    ->alias('ubp')
-                    ->select(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
-                    ->innerJoin('tbl_debit_bank_detail as dbd', 'dbd.union_bank_payment_code = ubp.union_bank_payment_code')
-                    ->where(['ubp.union_code' => $model->union_code, 'ubp.is_active' => 1])
-                    ->andWhere(['in', 'dbd.module_code', $moduleCodes])
-                    ->groupBy(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
-                    ->asArray()
-                    ->all();
+                        ->alias('ubp')
+                        ->select(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
+                        ->innerJoin('tbl_debit_bank_detail as dbd', 'dbd.union_bank_payment_code = ubp.union_bank_payment_code')
+                        ->where(['ubp.union_code' => $model->union_code, 'ubp.is_active' => 1])
+                        ->andWhere(['in', 'dbd.module_code', $moduleCodes])
+                        ->groupBy(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
+                        ->asArray()
+                        ->all();
                 $result = array_diff($moduleCodes, array_column($union_bank, 'module_code'));
-                if(!empty($result)){
+                if (!empty($result)) {
                     $union_bank = [];
                 }
             }
@@ -1963,6 +1963,10 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             return Json::encode(['status' => $status, 'message' => $msg]);
         }
+    }
+
+    public function actionMemberPaymentImport() {
+        
     }
 
 }

@@ -418,16 +418,16 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 <?php
 $script = "  
     var clientCodeForData = '" . $client_code . "';
-// $( '.sortable' ).sortable();
+$( '.sortable' ).sortable();
 $('.widget_table_setting_btn').click(function(){
-    $('#dpu_widget_filter').collapse('hide');
+    $('#dpu_widget_filter').removeClass('show');
 });
 
 $('.dpu_data_icon').click(function(){
-    $('#modal_widget_selection').collapse('hide');
+    $('#modal_widget_selection').removeClass('show');
 });
 
-    $(document).ready(function() {
+$(document).ready(function() {
         if('" . $widget_type . "' == '' || '" . $widget_type . "' == 'farmer'){
             $('#hidden_widget_type').val('farmer');
             $('#radio-farmer').prop('checked', true);

@@ -3541,9 +3541,6 @@ input[type="checkbox"]:after{
 .field-farmer_widgets_list{
     box-shadow: -2px 1px 7px 2px rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1) !important;
     margin: 3px;
-    position: fixed;
-    background-color: inherit;
-    width: -webkit-fill-available;
 }
 
 .field-rmrd_widgets_list .help-block,
@@ -4628,9 +4625,7 @@ td.custom_grid_normal.dynamic_value {
     box-shadow: -2px 1px 7px 2px rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1) !important;
     padding: 3px;
     background: #fff !important;
-    right: 16px;
-    position: fixed;
-    width: 32%;
+    margin-left: 248px;
 }
 
 .margin_top_22_reverse{
@@ -5270,7 +5265,7 @@ tr.highlightRow {
 .hide {
     display: none !important;
 }
-.collapse.in{
+.collapse.show{
     display: block;
 }
 .d-contents{

@@ -680,11 +680,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 }
             }
         } else {
-            return $this->render('_bulk_delete',
-                            [
-                                'searchModel' => $searchModel,
-                                'dataProvider' => $dataProvider,
-                                'type' => $type,
+            return $this->render('_bulk_delete', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => $type,
             ]);
         }
     }
@@ -724,11 +723,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 }
             }
         } else {
-            return $this->render('_bulk_delete',
-                            [
-                                'searchModel' => $searchModel,
-                                'dataProvider' => $dataProvider,
-                                'type' => $type,
+            return $this->render('_bulk_delete', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => $type,
             ]);
         }
     }
@@ -743,7 +741,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $model->product_code = $detailModel->product_code;
 //            $model->sale_type = 'DCS';
             $saleDate = date('Y-m-d', strtotime($model->invoice_date));
-            $model->invoice_date = $saleDate;              
+            $model->invoice_date = $saleDate;
             if ($model->validate() && $detailModel->validate()) {
                 $master = [];
                 $child = [];
@@ -756,9 +754,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $model->paid_amount = $model->payment_mode == 1 ? 0 : $model->amount_due;
                 $model->is_installment = $model->payment_mode == 1 ? 1 : 0;
                 $model->no_of_installment = $model->payment_mode == 1 ? $model->no_of_installment : 0;
-                if($model->payment_mode==1 && !empty($model->deduction_start_date))
-                {
-                    $dedStartDate =  date('Y-m-d', strtotime($model->deduction_start_date));
+                if ($model->payment_mode == 1 && !empty($model->deduction_start_date)) {
+                    $dedStartDate = date('Y-m-d', strtotime($model->deduction_start_date));
                     $model->deduction_start_date = $dedStartDate;
                 }
                 $detailModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($detailModel, $detailModel->product_sale_code);
@@ -1143,4 +1140,21 @@ class TblProductSaleController extends \app\controllers\ChildController {
             ]);
         }
     }
+
+    public function actionRfcRePush($id) {
+        $this->model = TblProductSaleTransaction::findOne($id);
+        $historyModel = new TblProductSaleTransactionHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->send_status = 0;
+        $record = [];
+        if ($this->model->save(true,false)) {
+            $historyModel->save();
+            $record = ['status' => 'success', 'msg' => 'Product Sale Transaction re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push Product Sale Transaction.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }

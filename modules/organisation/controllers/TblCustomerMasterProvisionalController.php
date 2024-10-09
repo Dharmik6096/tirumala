@@ -339,4 +339,36 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         }
     }
 
+    public function actionApprovedAttachmentDetails() {
+        $searchModel = new TblCustomerMasterProvisionalSearch();
+        $searchModel->scenario = 'ApprovedAttachmentDetails';
+        $dataProvider = $searchModel->approvedattachmentdetailssearch(Yii::$app->request->queryParams);
+        
+        $from_date = Yii::$app->request->getQueryParam('from_date');
+        $to_date = Yii::$app->request->getQueryParam('to_date');
+        
+        return $this->render('index_other', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+        ]);
+    }
+        
+    public function actionRfcRePush($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblCustomerMasterProvisionalHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->data_post_status = 0;
+        $record = [];
+        if ($this->model->save(true,false)) {
+            $historyModel->save();
+            $record = ['status' => 'success', 'msg' => 'Customer Master Provisional re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push Customer Master Provisional.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }

@@ -97,7 +97,7 @@ AppAsset::register($this);
     });
     $(document).on('click', function(event) {
         if (!$(event.target).closest('#plus-icon, #menu_buttons').length) {
-            $('#menu_buttons').collapse('hide');
+            $('#menu_buttons').removeClass('show');
         }
     });
 </script>
