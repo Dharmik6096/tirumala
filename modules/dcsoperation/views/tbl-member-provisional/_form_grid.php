@@ -207,9 +207,8 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register', 'provisional_member_code' => $model->provisional_member_code], $options);
             }
         },
-        'repush' => function ($url, $model) {
-                return Yii::$app->general->createRePushLink($url, $model, 'provisional_member_code', 'data_post_status');
-                
+        'repush' => function ($url, $model) use ($gridId) {
+            return Yii::$app->general->createRePushLink($url, $model, $gridId, 'provisional_member_code');
         },
     ]
 ];
@@ -244,5 +243,4 @@ $(document).on('click','.view_data',function(e){
 });
 ";
 $this->registerJs($script, View::POS_END, 'provisional-data');
-Yii::$app->general->registerRePushScript($this, $gridId);
 ?>

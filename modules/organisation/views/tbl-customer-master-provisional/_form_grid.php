@@ -156,11 +156,10 @@ $grid_option = [
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-customer-master-provisional/document-upload', 'id' => $model->customer_provisional_code], $options);
         },
-        'repush' => function ($url, $model) {
-                return Yii::$app->general->createRePushLink($url, $model, 'customer_provisional_code', 'data_post_status');
+        'repush' => function ($url, $model) use ($gridId) {
+                return Yii::$app->general->createRePushLink($url, $model, $gridId, 'customer_provisional_code');
         },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-Yii::$app->general->registerRePushScript($this, $gridId);
 ?>
