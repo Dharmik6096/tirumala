@@ -125,6 +125,7 @@ class TblDcsController extends ChildController {
         $this->model->is_bmc = $is_bmc;
 
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->setModel();
             $this->model->dcs_code = $this->model->getCode();
 
             if ($this->model->street1 != '' && $this->model->street2 != '') {
@@ -134,7 +135,6 @@ class TblDcsController extends ChildController {
             } else {
                 $this->model->address = $this->model->street1;
             }
-            $this->setModel();
 
             /* if ($this->model->is_bmc == 3 && $this->model->destination_code == '') {
               $this->model->destination_code = 0;
@@ -1184,6 +1184,9 @@ class TblDcsController extends ChildController {
                         $memberModel->attributes = $model->attributes;
                         $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                         $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
+                        if(!empty($memberModel->set_master_hierarchy)){
+                            $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
+                        }
                         $memberModel->animal_type_code = 1;
                         $memberModel->address = $model->dcs_name;
                         $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;

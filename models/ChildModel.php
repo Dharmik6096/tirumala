@@ -25,6 +25,7 @@ class ChildModel extends \yii\db\ActiveRecord {
     public $form_validation_type = 'default';
     public $hasImport = FALSE;
     public $import_union_config;
+    public $set_master_hierarchy = [];
 
     //put your code here
     public function beforeSave($insert) {
