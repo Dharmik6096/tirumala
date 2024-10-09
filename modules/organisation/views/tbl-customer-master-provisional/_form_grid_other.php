@@ -4,7 +4,7 @@ use yii\web\View;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $attribute = [
-    ['attribute' => 'translate_table_name', 'filter' => false, 'visible' => true],
+    ['attribute' => 'process_name', 'filter' => false, 'visible' => true],
     ['attribute' => 'total_count', 'filter' => false, 'visible' => true],
     ['attribute' => 'approved_count', 'filter' => false, 'visible' => true],
 ];

@@ -165,7 +165,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return $member->provisional_status == 'approve';
             });
             $results[] = [
-                'translate_table_name' =>  Yii::t('app', 'Provisional Member') ,
+                'process_name' =>  Yii::t('app', 'Provisional Member') ,
                 'table_name' => 'tbl_member_provisional',
                 'approved_count' => count($approvedProvisionalMembers),
                 'total_count' => count($provisionalMembers),
@@ -180,7 +180,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return $society->status == 'approve';
             });
             $results[] = [
-                'translate_table_name' => Yii::t('app', 'Provisional Society'),
+                'process_name' => Yii::t('app', 'Provisional Society'),
                 'table_name' => 'tbl_dcs_provisional',
                 'approved_count' => count($approvedProvisionalSocieties),
                 'total_count' => count($provisionalSocieties),
@@ -195,7 +195,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return $vendor->state_code == 'approve';
             });
             $results[] = [
-                'translate_table_name' => Yii::t('app', 'Provisional Vendor/Customer'),
+                'process_name' => Yii::t('app', 'Provisional Vendor/Customer'),
                 'table_name' => 'tbl_customer_master_provisional',
                 'approved_count' => count($approvedProvisionalVendors),
                 'total_count' => count($provisionalVendors),
