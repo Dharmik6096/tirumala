@@ -2569,7 +2569,7 @@ class GeneralFunctions extends Component {
         );
     }
 
-    public function createRePushLink($url, $model, $pk, $var = 'data_post_status') {
+    public function createRePushLink($url, $model, $gridId, $pk, $var = 'data_post_status') {
         $class = 're-push ' . ((isset($model->is_stock_posted) && $model->is_stock_posted == 1) ? 'disabled' : ($model->$var == '3' ? '' : 'disabled'));
         $options = [
             'title' => Yii::t('app', 'Repush'),
@@ -2579,10 +2579,8 @@ class GeneralFunctions extends Component {
             'data-val' => $model->$pk
         ];
 
-        return GhostHtml::a_alert('<i class="fa fa-share-square-o"></i>', $url, $options);
-    }
+        $link = GhostHtml::a_alert('<i class="fa fa-share-square-o"></i>', $url, $options);
 
-    public function registerRePushScript($view, $gridId) {
         $script = "
         $(document).ready(function(){
             $(document).on('click','.re-push',function(e){
@@ -2622,7 +2620,9 @@ class GeneralFunctions extends Component {
             });
         });
         ";
-        $view->registerJs($script, View::POS_END, 're-push');
+        Yii::$app->view->registerJs($script, View::POS_END, 're-push');
+
+        return $link;
     }
 
 }
