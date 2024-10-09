@@ -6,6 +6,7 @@ $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-mon
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Remunaration Payment'), ['/payment/tbl-remuneration-summary/create'], true);
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Stop Remunaration Payment'), ['/payment/tbl-remuneration-summary/create-stop-payment'], true);
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Disburse Remunaration Payment'), ['/payment/tbl-remuneration-summary/payment-disburse'], true);
+$this->params['menu'][] = Yii::$app->controls->import('vendor-billing-bulk', $this, Yii::t('app', 'Vendor Billing Import Data'));
 ?>
 
 <div class="panel panel-default panel-grid panel-main">

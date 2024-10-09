@@ -16,7 +16,8 @@ use yii\web\View;
     ]);
     ?>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('master_types', $model, $form, 'form-group', $model->getAttributeLabel('master_type'), false, 'master_type', false); ?>
+        <?= Yii::$app->dropdown->dropdown('documnet_master_type', $model, $form, '', $model->getAttributeLabel('master_type'), false, 'master_type'); ?>
+        <?php //  Yii::$app->dropdown->dropdownStatic('master_types', $model, $form, 'form-group', $model->getAttributeLabel('master_type'), false, 'master_type', false); ?>
     </div>
 
     <?php ActiveForm::end(); ?>
