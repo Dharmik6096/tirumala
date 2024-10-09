@@ -43,6 +43,7 @@ use app\modules\complaint\models\TblComplain;
 use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
+use app\modules\collection\models\TblBulkBillingImport;
 
 class SchedulerController extends ChildController {
 
@@ -327,6 +328,12 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_quality_test') {
                 $flag = 'bmc-quality-test';
                 $sp_name = 'DB_JOB_PORTAL_QUALITY_Collection';
+            } else if ($row->file_type == 'member_billing_import') {
+                $flag = 'member-billing-bulk';
+                $sp_name = 'DB_JOB_PORTAL_MEMBER_BILLING';
+            } else if ($row->file_type == 'vendor_billing_import') {
+                $flag = 'vendor-billing-bulk';
+                $sp_name = 'DB_JOB_PORTAL_VSP_BILLING';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -357,20 +364,37 @@ class SchedulerController extends ChildController {
                         }
                     }
                     $data = array_combine($header, $line);
-                    $model = new TblBulkDataImport();
-                    $model->attributes = $data;
-                    $model->uuid = $uuid;
-                    $model->union_code = $row->union_code;
-                    $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
-                    $FileType = ['milk_collection_dpu_data', 'milk_collection_other_data'];
-                    if (in_array($row->file_type, $FileType)) {
-                        $model->SetDataForShagunDPU();
+                    if (($flag == 'member-billing-bulk') || ($flag == 'vendor-billing-bulk')) {
+                        $model = new TblBulkBillingImport();
+                        $model->attributes = $data;
+                        $model->uuid = $uuid;
+                        $model->union_code = $row->union_code;
+                        if ($flag == 'member-billing-bulk') {
+                            $model->billing_type = 'Member';
+                            $model->customer_type = 'Member';
+                        } else if ($flag == 'vendor-billing-bulk') {
+                            $model->billing_type = 'vendor_billing';
+                            $model->customer_type = 'DCS';
+                            $model->customer_code = !empty($model->customer_code) ? $model->customer_code : $model->dcs_code;
+                        }
+                        $model->from_date = !empty($model->from_date) ? date('Y-m-d', strtotime($model->from_date)) : '';
+                        $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
                     } else {
-                        $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
-                        $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                        $model = new TblBulkDataImport();
+                        $model->attributes = $data;
+                        $model->uuid = $uuid;
+                        $model->union_code = $row->union_code;
+                        $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
+                        $FileType = ['milk_collection_dpu_data', 'milk_collection_other_data'];
+                        if (in_array($row->file_type, $FileType)) {
+                            $model->SetDataForShagunDPU();
+                        } else {
+                            $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
+                            $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                        }
+                        $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
+                        $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
                     }
-                    $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
-                    $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
                     if ($model->save()) {
                         $success++;
                     } else {
@@ -653,16 +677,16 @@ class SchedulerController extends ChildController {
                             } else {
                                 $statusModel->save(FALSE);
                             }
-                            if ($status == '0' && $statusModel->customer_type == 'DCS') {
+                            if ($status == '0' && strtolower($statusModel->customer_type) != 'member') {
                                 $bankModel = new TblBankDetails();
-                                $existbankModel = $bankModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
+                                $existbankModel = $bankModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
                                 if (!empty($existbankModel)) {
                                     $existbankModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                                 }
                                 $contactModel = new TblContactDetails();
-                                $existcontactModel = $contactModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
+                                $existcontactModel = $contactModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
                                 if (!empty($existcontactModel)) {
-                                    $existcontactModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code, 'module_name' => 'society']);
+                                    $existcontactModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                                 }
                             }
                         }
