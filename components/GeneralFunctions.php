@@ -2604,7 +2604,7 @@ class GeneralFunctions extends Component {
                             $('#loader').show();
                             $.ajax({
                                 type: 'get',
-                                url: '" . Url::to(['re-push']) . "',
+                                url: '" . Url::to(['rfc-re-push']) . "',
                                 data: {'id':id},
                                 success: function(data) {
                                     var obj1 = $.parseJSON(data);

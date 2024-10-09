@@ -339,4 +339,20 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         }
     }
 
+    public function actionRfcRePush($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblCustomerMasterProvisionalHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->data_post_status = 0;
+        $record = [];
+        if ($this->model->save(true,false)) {
+            $historyModel->save();
+            $record = ['status' => 'success', 'msg' => 'Customer Master Provisional re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push Customer Master Provisional.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }

@@ -1141,15 +1141,14 @@ class TblProductSaleController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionRePush($id) {
+    public function actionRfcRePush($id) {
         $this->model = TblProductSaleTransaction::findOne($id);
         $historyModel = new TblProductSaleTransactionHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-        $saveModel[] = $historyModel;
         $this->model->send_status = 0;
-        $saveModel[] = $this->model;
-        $transaction = $this->generalModel->saveTransaction($saveModel, ['Product Sale Transaction', 'edit']);
-        if ($transaction == 'customRedirect') {
+        $record = [];
+        if ($this->model->save(true,false)) {
+            $historyModel->save();
             $record = ['status' => 'success', 'msg' => 'Product Sale Transaction re-pushed successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'Failed to re-push Product Sale Transaction.'];
