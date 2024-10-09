@@ -666,16 +666,16 @@ class SchedulerController extends ChildController {
                             } else {
                                 $statusModel->save(FALSE);
                             }
-                            if ($status == '0' && $statusModel->customer_type == 'DCS') {
+                            if ($status == '0' && strtolower($statusModel->customer_type) != 'member') {
                                 $bankModel = new TblBankDetails();
-                                $existbankModel = $bankModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
+                                $existbankModel = $bankModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
                                 if (!empty($existbankModel)) {
                                     $existbankModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                                 }
                                 $contactModel = new TblContactDetails();
-                                $existcontactModel = $contactModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
+                                $existcontactModel = $contactModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
                                 if (!empty($existcontactModel)) {
-                                    $existcontactModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code, 'module_name' => 'society']);
+                                    $existcontactModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                                 }
                             }
                         }

@@ -96,9 +96,9 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
-        'repush' => function ($url, $model) use ($grnWithoutStockEntry) {
+        'repush' => function ($url, $model) use ($grnWithoutStockEntry, $gridId) {
             if ($grnWithoutStockEntry) {
-                return Yii::$app->general->createRePushLink($url, $model, 'inventory_transfer_code');
+                return Yii::$app->general->createRePushLink($url, $model, $gridId, 'inventory_transfer_code');
             }
             return '';
         },
@@ -106,5 +106,4 @@ $grid_option = [
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-Yii::$app->general->registerRePushScript($this, $gridId);
 ?>
