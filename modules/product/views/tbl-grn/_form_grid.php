@@ -103,14 +103,13 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
-        'repush' => function ($url, $model) use ($grnWithoutStockEntry) {
+        'repush' => function ($url, $model) use ($grnWithoutStockEntry, $gridId) {
             if ($grnWithoutStockEntry) {
-                return Yii::$app->general->createRePushLink($url, $model, 'grn_code');
+                return Yii::$app->general->createRePushLink($url, $model, $gridId, 'grn_code');
             }
             return '';
         },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-Yii::$app->general->registerRePushScript($this, $gridId);
 ?>
