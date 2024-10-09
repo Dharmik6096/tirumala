@@ -299,15 +299,12 @@ class DefaultController extends \app\controllers\ChildController {
         }
         $a = str_replace($this->old_att, $this->change_att, $a);
         $fields = explode(',', $a);
-        $model_name = (!empty($data['class_attribute']) && is_object($data['class_attribute'])) ? $data['class_attribute'] : '';
-        if (!empty($data['bill_head_for'])) {
-            $bill_head = TblBillHead::find()->select(['bill_head_name', 'sequence_no'])->where(['union_code' => Yii::$app->session->get('Unions'), 'bill_head_for' => $data['bill_head_for']])->asArray()->all();
+        $modelName = str_replace('_', ' ', $data['table_name']);
+        $modelName = str_replace(' ', '', ucwords($modelName));
+        $model_name = Yii::$app->path->getModel($modelName);
 
-            $resultArray = [];
-            foreach ($bill_head as $item) {
-                $key = str_replace(' ', '_', ('head_val_seq' . $item['sequence_no']));
-                $resultArray[$key] = $item['bill_head_name'];
-            }
+        if (!empty($data['set_dynamic_label'])) {
+            $resultArray = $model_name->getLabels($data['set_dynamic_label']);
             $fields = array_map(function($str) use ($model_name, $resultArray) {
                 if (!empty($model_name)) {
                     if (isset($resultArray[$str])) {

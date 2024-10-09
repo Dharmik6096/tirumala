@@ -3,6 +3,7 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use app\modules\vsp\models\TblBillHead;
 
 /**
  * This is the model class for table "tbl_bulk_billing_import".
@@ -139,6 +140,17 @@ class TblBulkBillingImport extends \yii\db\ActiveRecord {
             $this->addError($attribute, Yii::t('app/validation', 'To Date Must be Greater than From Date.'));
             return false;
         }
+    }
+
+    public function getLabels($bill_head_for) {
+        $bill_head = TblBillHead::find()->select(['bill_head_name', 'sequence_no'])->where(['union_code' => Yii::$app->session->get('Unions'), 'bill_head_for' => $bill_head_for])
+                        ->asArray()->all();
+        $resultArray = [];
+        foreach ($bill_head as $item) {
+            $key = str_replace(' ', '_', ('head_val_seq' . $item['sequence_no']));
+            $resultArray[$key] = $item['bill_head_name'];
+        }
+        return $resultArray;
     }
 
 }

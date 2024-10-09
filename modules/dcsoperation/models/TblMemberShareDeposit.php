@@ -25,6 +25,8 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblMemberShareDeposit extends \app\models\ChildModel {
 
+    public $import_eipl_code, $import_union_code, $import_key_pattern;
+
     /**
      * @inheritdoc
      */
@@ -38,9 +40,6 @@ class TblMemberShareDeposit extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['member_code', 'folio_no', 'originating_type', 'updated_at', 'created_at', 'originating_org_code', 'originating_org_type', 'updated_by', 'created_by', 'allotted_share', 'proposed_share', 'total_share', 'share_amount', 'till_date'], 'safe'],
-                [['member_code'], 'string', 'max' => 16, 'min' => 16, 'skipOnEmpty' => true, 'on' => ['importCsv']],
-                [['till_date'], 'convertDateDot', 'on' => ['importCsv']],
-                [['till_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
                 [['till_date'], 'convertDate', 'on' => ['importCsv']],
         ];
     }
@@ -66,18 +65,6 @@ class TblMemberShareDeposit extends \app\models\ChildModel {
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
         ];
-    }
-
-    public function getUnionCode() {
-        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
-    }
-
-    public function convertDateDot() {
-        try {
-            $this->till_date = Yii::$app->controls->view_date($this->till_date, 'php:d.m.Y');
-        } catch (\Exception $e) {
-            $this->till_date = '-';
-        }
     }
 
     public function convertDate() {
