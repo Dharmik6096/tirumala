@@ -2,8 +2,6 @@
 
 namespace app\modules\import;
 
-use app\modules\collection\models\TblBulkBillingImport;
-
 /**
  * import module definition class
  */
