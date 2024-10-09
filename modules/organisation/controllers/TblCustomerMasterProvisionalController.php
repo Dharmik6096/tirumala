@@ -339,4 +339,20 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         }
     }
 
+    public function actionApprovedAttachmentDetails() {
+        $searchModel = new TblCustomerMasterProvisionalSearch();
+        $searchModel->scenario = 'ApprovedAttachmentDetails';
+        $dataProvider = $searchModel->approvedattachmentdetailssearch(Yii::$app->request->queryParams);
+        
+        $from_date = Yii::$app->request->getQueryParam('from_date');
+        $to_date = Yii::$app->request->getQueryParam('to_date');
+        
+        return $this->render('index_other', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+        ]);
+    }
+
 }
