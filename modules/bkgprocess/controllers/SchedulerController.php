@@ -374,7 +374,7 @@ class SchedulerController extends ChildController {
                         } else if ($flag == 'vendor-billing-bulk') {
                             $model->billing_type = 'vendor_billing';
                             $model->customer_type = 'DCS';
-                            $model->customer_code = $data['dcs_code'];
+                            $model->customer_code = !empty($model->customer_code) ? $model->customer_code : $model->dcs_code;
                         }
                         $model->from_date = !empty($model->from_date) ? date('Y-m-d', strtotime($model->from_date)) : '';
                         $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
