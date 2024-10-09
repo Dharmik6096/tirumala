@@ -37,6 +37,4 @@ $script = '
     $(".kv-panel-before").hide();
 ';
 $this->registerJs($script, View::POS_END, 'approved-attachment-details-list');
-
-
-// http://localhost/VRS_V5_ISSUE_3/bWlzcmVwb3J0cy9yZXBvcnRzL21lbWJlci1tYXN0ZXI?ReportsModel%5Bunion_code%5D=001&ReportsModel%5Bplant_code%5D=&ReportsModel%5Bmcc_code%5D=&ReportsModel%5Boutput_type%5D=DOWNLOAD&html=html
+?>
