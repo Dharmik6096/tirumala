@@ -111,6 +111,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Provisional Member'), 'url' => ['/dcsoperation/tbl-member-provisional/index'], 'active' => ($cntrl == 'tbl-member-provisional')],
                             ['label' => Yii::t('app', 'Provisional Society'), 'url' => ['/organisation/tbl-dcs-provisional/index'], 'active' => ($cntrl == 'tbl-dcs-provisional' || (Yii::$app->request->get('type') == 'dcs' || Yii::$app->request->get('type') == 'DCS'))],
                             ['label' => Yii::t('app', 'Provisional Vendor/Customer'), 'url' => ['/organisation/tbl-customer-master-provisional/index'], 'active' => ($cntrl == 'tbl-customer-master-provisional')],
+                            ['label' => Yii::t('app', 'Approved Attachment Details'), 'url' => ['/organisation/tbl-customer-master-provisional/approved-attachment-details'], 'active' => ($cntrl == 'tbl-customer-master-provisional')],
                     ]
                 ],
             ],
@@ -1263,6 +1264,7 @@ echo GhostMenu::widget([
                     'items' => [
                             ['label' => Yii::t('app', 'Banner Process'), 'url' => ['/general/tbl-banner/index'], 'active' => ($cntrl == 'tbl-banner')],
                             ['label' => Yii::t('app', 'Contact Detail Info.'), 'url' => ['/details/tbl-contact-details/index-other'], 'active' => ($cntrl == 'tbl-contact-detail')],
+                            ['label' => Yii::t('app', 'Member Share Detail Import'), 'url' => ['/dcsoperation/tbl-member-share-deposit/index'], 'active' => ($cntrl == 'tbl-member-share-deposit')],
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],

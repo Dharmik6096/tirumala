@@ -109,10 +109,23 @@ $attribute = [
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status] : '';
         }],
+    ['attribute' => 'data_post_status',
+    'value' => function($model) {
+        return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status] : 'Pending';
+    }, 'filter' => false, 'visible' => false],
+    ['attribute' => 'picked_datetime',
+    'value' => function($model) {
+        return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+    }, 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'response_datetime',
+    'value' => function($model) {
+        return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+    }, 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
 ];
-
+$gridId = 'customer-master-list';
 $grid_option = [
-    'id' => 'customer-master-list',
+    'id' => $gridId,
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
@@ -143,8 +156,11 @@ $grid_option = [
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-customer-master-provisional/document-upload', 'id' => $model->customer_provisional_code], $options);
         },
+        'repush' => function ($url, $model) {
+                return Yii::$app->general->createRePushLink($url, $model, 'customer_provisional_code', 'data_post_status');
+        },
     ]
 ];
-
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+Yii::$app->general->registerRePushScript($this, $gridId);
 ?>
