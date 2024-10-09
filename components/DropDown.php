@@ -2100,7 +2100,7 @@ class DropDown extends Component {
             'relation_code' => ['name' => 'relationship_code', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
             'product_depend_group' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'product_group_code'],
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
-            'documnet_master_type' => ['name' => 'master_type', 'fields' => 'master_type,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
+            'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
         ];
         return $label[$l];
     }

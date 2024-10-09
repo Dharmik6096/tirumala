@@ -7,7 +7,6 @@ use Yii;
 /**
  * This is the model class for table "tbl_document_master_type".
  *
- * @property integer $document_master_id
  * @property string $master_type
  * @property string $master_type_name
  * @property string $originating_org_code
@@ -32,7 +31,7 @@ class TblDocumentMasterType extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['master_type', 'master_type_name', 'originating_type', 'updated_at', 'created_at', 'originating_org_code', 'originating_org_type', 'updated_by', 'created_by'], 'safe'],
+                [['master_type_code', 'master_type_name', 'originating_type', 'updated_at', 'created_at', 'originating_org_code', 'originating_org_type', 'updated_by', 'created_by'], 'safe'],
         ];
     }
 
@@ -41,7 +40,6 @@ class TblDocumentMasterType extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'document_master_id' => Yii::t('app', 'Document Master ID'),
             'master_type' => Yii::t('app', 'Master Type'),
             'master_type_name' => Yii::t('app', 'Master Type Name'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
