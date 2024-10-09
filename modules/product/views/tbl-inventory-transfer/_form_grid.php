@@ -85,7 +85,7 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'data_post_status',
         'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status] : '';
+            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status] : 'PENDING';
         }, 'filter' => false, 'visible' => false],
     ['attribute' => 'response_msg', 'filter' => FALSE, 'visible' => false],
 ];
@@ -105,6 +105,6 @@ $grid_option = [
 //        'delete' => ['option' => 'inventory_transfer_no,inventory_transfer_code,tbl-inventory-transfer/delete'],
     ]
 ];
-Yii::$app->general->registerRePushScript($this, $gridId);
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+Yii::$app->general->registerRePushScript($this, $gridId);
 ?>

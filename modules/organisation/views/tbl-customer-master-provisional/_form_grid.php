@@ -161,6 +161,6 @@ $grid_option = [
         },
     ]
 ];
-Yii::$app->general->registerRePushScript($this, $gridId);
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+Yii::$app->general->registerRePushScript($this, $gridId);
 ?>

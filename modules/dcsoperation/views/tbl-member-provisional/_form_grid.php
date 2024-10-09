@@ -243,6 +243,6 @@ $(document).on('click','.view_data',function(e){
 });
 });
 ";
-// $this->registerJs($script, View::POS_END, 'provisional-data');
+$this->registerJs($script, View::POS_END, 'provisional-data');
 Yii::$app->general->registerRePushScript($this, $gridId);
 ?>

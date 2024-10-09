@@ -17,7 +17,7 @@ $attribute = [
     ['attribute' => 'remarks'],
     ['attribute' => 'send_status',
         'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status] : '';
+            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status] : 'PENDING';
         }, 'filter' => false, 'visible' => false],
     ['attribute' => 'picked_datetime',
         'value' => function($model) {
@@ -44,6 +44,6 @@ $grid_option = [
         },
     ]
 ];
-Yii::$app->general->registerRePushScript($this, $gridId);
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+Yii::$app->general->registerRePushScript($this, $gridId);
 ?>

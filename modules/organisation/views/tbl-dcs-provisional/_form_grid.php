@@ -353,6 +353,6 @@ $(document).ready(function(){
     });
     
 });";
-// $this->registerJs($script, View::POS_END, 'provisional-dcs-index');
+$this->registerJs($script, View::POS_END, 'provisional-dcs-index');
 Yii::$app->general->registerRePushScript($this, $gridId);
 ?>
