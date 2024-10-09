@@ -35,7 +35,7 @@ class TblRouteMappingSources extends \app\models\ChildModel {
 
     public $dcs_code, $dcs_name, $dcs_code_ex, $ref_code;
     public $is_sentbox;
-    public $customer_code, $customer_type, $union_code;
+    public $customer_code, $customer_type, $union_code, $user_code;
 
     /**
      * @inheritdoc

@@ -48,6 +48,8 @@ use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\document\controllers\TblAttachmentController;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use app\modules\product\models\TblProductSaleRate;
+use app\modules\product\models\TblProductSaleRateApplicability;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -126,7 +128,27 @@ class TblDcsController extends ChildController {
         $this->model->is_bmc = $is_bmc;
 
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->setModel();
             $this->model->dcs_code = $this->model->getCode();
+            $mapList = [];
+            $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'product_sale_rate_applicability_auto');
+            if (!empty($productSaleRateApplicabilityAuto)) {
+                $productSaleRateApplicability = new TblProductSaleRateApplicability;
+                $productSaleRate = new TblProductSaleRate;
+                $productSaleRate = $this->model->getProductSaleRates($this->model->union_code);
+                if (!empty($productSaleRate)) {
+                    foreach ($productSaleRate as $rate) {
+                        $productSaleRateApplicability = new TblProductSaleRateApplicability();
+                        $productSaleRateApplicability->attributes = $rate->attributes;
+                        $productSaleRateApplicability->applicable_for = 'DCS';
+                        $productSaleRateApplicability->applicable_code = $this->model->dcs_code;
+                        $productSaleRateApplicability->created_at = date('Y-m-d H:i:s');
+                        $productSaleRateApplicability->wef_date = date('Y-m-d H:i:s');
+                        $productSaleRateApplicability->created_by = Yii::$app->user->identity->id;
+                        array_push($mapList, $productSaleRateApplicability);
+                    }
+                }
+            }
 
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
@@ -135,7 +157,6 @@ class TblDcsController extends ChildController {
             } else {
                 $this->model->address = $this->model->street1;
             }
-            $this->setModel();
 
             /* if ($this->model->is_bmc == 3 && $this->model->destination_code == '') {
               $this->model->destination_code = 0;
@@ -144,7 +165,6 @@ class TblDcsController extends ChildController {
 
 
             //set mapping data
-            $mapList = [];
             if (!empty($this->model->village_code)) {
                 $modelMapping = new TblDcsVillageMapping();
                 $this->setMapping($modelMapping);
@@ -1185,6 +1205,9 @@ class TblDcsController extends ChildController {
                         $memberModel->attributes = $model->attributes;
                         $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                         $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
+                        if(!empty($memberModel->set_master_hierarchy)){
+                            $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
+                        }
                         $memberModel->animal_type_code = 1;
                         $memberModel->address = $model->dcs_name;
                         $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
@@ -1333,10 +1356,10 @@ class TblDcsController extends ChildController {
                 $mccCode = !empty($parents[1]) ? $parents[1] : '';
                 $bmcCode = !empty($parents[2]) ? $parents[2] : '';
                 $is_call = true;
-                if($parents[0] == 2 && empty($bmcCode)){
+                if ($parents[0] == 2 && empty($bmcCode)) {
                     $is_call = false;
                 }
-                if($is_call && !empty($mccCode)){
+                if ($is_call && !empty($mccCode)) {
                     $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode, $bmcCode);
                     foreach ($data as $key => $val) {
                         $out[] = array('id' => $key, 'name' => $val);

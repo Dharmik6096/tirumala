@@ -330,15 +330,20 @@ class TblMccPlant extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->mcc_plant_code, '');
         foreach ($sentboxArray as $sent) {
-            $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
+            }
+        }
+        if(!empty($this->set_master_hierarchy) && $flag == 'INSERT'){
+            foreach($this->set_master_hierarchy as $hierarchy) {
+                $hierarchy->save();
             }
         }
     }
