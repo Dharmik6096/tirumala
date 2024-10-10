@@ -492,7 +492,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                 $customerModel = new TblCustomerMaster();
                 $customerModel->customer_type = $model->applicable_for;
                 $customerModelData = $customerModel->find()
-                        ->where(['customer_type' => $model->applicable_for])
+                        ->where(['customer_type' => $model->applicable_for, 'bmc_code' => $model->bmc_code])
                         ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->applicable_code])
                         ->all();
                 if (count($customerModelData) == 1) {
