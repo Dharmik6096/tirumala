@@ -56,7 +56,7 @@ use Exception;
 use app\modules\general\models\TblProcessApproval;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use PHPExcel;
 use yii\helpers\Url;
 use yii\web\View;
@@ -2718,7 +2718,7 @@ class GeneralFunctions extends Component {
             'data-val' => $model->$pk
         ];
 
-        $link = GhostHtml::a_alert('<i class="fa fa-share-square-o"></i>', $url, $options);
+        $link = GhostHtml::a_alert('<i class="fa fa-share-square"></i>', $url, $options);
 
         $script = "
         $(document).ready(function(){
