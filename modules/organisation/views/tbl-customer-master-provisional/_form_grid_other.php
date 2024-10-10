@@ -1,7 +1,7 @@
 <?php
 
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $attribute = [
     ['attribute' => 'process_name', 'filter' => false, 'visible' => true],
@@ -20,7 +20,7 @@ $grid_option = [
             'title' => Yii::t('app', 'Download Report'), 
             'class' => ($model['approved_count'] > 0) ? '' : 'disabled',
         ];
-        return GhostHtml::a('<i class="fa fa-file-o"></i>', [
+        return GhostHtml::a('<i class="fa fa-file"></i>', [
             '/misreports/reports/approved-attachment-details','ReportsModel' => [
                 'from_date' => $searchModel->from_date,
                 'to_date' => $searchModel->to_date,
