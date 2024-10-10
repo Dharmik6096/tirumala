@@ -499,7 +499,7 @@ class TblMember extends ChildModel {
 //        $model->is_download = 1;
 //        $model->upload_datetime = date('Y-m-d H:i:s');
 //        $model->save();
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {

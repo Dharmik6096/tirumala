@@ -284,7 +284,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
         foreach ($sentboxArray as $sent) {

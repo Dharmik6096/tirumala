@@ -5,7 +5,6 @@
  */
 
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 <?php
 $attribute = [

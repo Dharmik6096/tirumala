@@ -1,7 +1,5 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
-
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Master Hierarchy'));
 $this->params['menu'][] = Yii::$app->controls->import('master-hierarchy', $this);
 ?>

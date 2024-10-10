@@ -346,7 +346,7 @@ class TblRouteMapping extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
         $sentboxArray = [];
         $this->to_type = trim($this->to_type);
         if ($this->to_type == 'bmc') {
