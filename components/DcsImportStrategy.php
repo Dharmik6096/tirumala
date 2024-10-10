@@ -20,6 +20,8 @@ use app\modules\organisation\models\TblDcsMilkTypeHistory;
 use app\modules\organisation\models\TblRouteMappingSources;
 use app\modules\organisation\models\TblRouteMappingSourcesHistory;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\product\models\TblProductSaleRate;
+use app\modules\product\models\TblProductSaleRateApplicability;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -280,7 +282,25 @@ class DcsImportStrategy extends ARImportStrategy {
                             array_push($modelList, $sourceMapping);
                         }
                         $model->default_milk_type = $model->milk_type_code;
-
+                        
+                        $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'product_sale_rate_applicability_auto');
+                        if (!empty($productSaleRateApplicabilityAuto)) {
+                            $productSaleRateApplicability = new TblProductSaleRateApplicability;
+                            $productSaleRate = new TblProductSaleRate;
+                            $productSaleRate = $model->getProductSaleRates($model->union_code);
+                            if (!empty($productSaleRate)) {
+                                foreach ($productSaleRate as $rate) {
+                                    $productSaleRateApplicability = new TblProductSaleRateApplicability();
+                                    $productSaleRateApplicability->attributes = $rate->attributes;
+                                    $productSaleRateApplicability->applicable_for = 'DCS';
+                                    $productSaleRateApplicability->applicable_code = $model->dcs_code;
+                                    $productSaleRateApplicability->created_at = date('Y-m-d H:i:s');
+                                    $productSaleRateApplicability->wef_date = date('Y-m-d H:i:s');
+                                    $productSaleRateApplicability->created_by = Yii::$app->user->identity->id;
+                                    array_push($modelList, $productSaleRateApplicability);
+                                }
+                            }
+                        }
 
                         $master[] = $model->save(TRUE, FALSE);
                         foreach ($modelList as $modelRow) {
