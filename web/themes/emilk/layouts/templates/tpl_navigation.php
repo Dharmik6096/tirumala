@@ -732,6 +732,10 @@ echo GhostMenu::widget([
                             ['label' => '412-' . Yii::t('app', 'SAP Data export for Deduction'), 'url' => ['/misreports/reports/sap-data-export-for-deduction']],
                             ['label' => '413-' . Yii::t('app', 'SAP Data export for VLC Replacement'), 'url' => ['/misreports/reports/sap-data-export-for-vlc-replacement']],
                             ['label' => '414-' . Yii::t('app', 'SAP Data Export Feed Sale Member'), 'url' => ['/misreports/reports/sap-data-export-feed-sale-member']],
+                            ['label' => '415-' . Yii::t('app', 'Ghee Group Indent Report'), 'url' => ['/misreports/reports/ghee-group-indent-report']],
+                            ['label' => '416-' . Yii::t('app', 'CF Group Indent Report'), 'url' => ['/misreports/reports/cf-group-indent-report']],
+                            ['label' => '417-' . Yii::t('app', 'SAP Ghee Group Indent Report'), 'url' => ['/misreports/reports/sap-ghee-group-indent-report']],
+                            ['label' => '418-' . Yii::t('app', 'SAP CF Group Indent Report'), 'url' => ['/misreports/reports/sap-cf-group-indent-report']],
                     ]
                 ],
                     [
@@ -748,6 +752,7 @@ echo GhostMenu::widget([
                             ['label' => '507 -' . Yii::t('app', 'Company Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment-cycle-wise-union-wise']],
                             ['label' => '508 -' . Yii::t('app', 'Company Total Payment'), 'url' => ['/misreports/reports/total-payment-company-wise-payment-cycle-wise']],
                             ['label' => '509 -' . Yii::t('app', 'DCS Wise Bill Head Applicability'), 'url' => ['/misreports/reports/dcs-wise-bill-head-applicability']],
+                            ['label' => '510 -' . Yii::t('app', 'Bill Head Detail'), 'url' => ['/misreports/reports/bill-head-detail']],
                     ]
                 ],
                     [

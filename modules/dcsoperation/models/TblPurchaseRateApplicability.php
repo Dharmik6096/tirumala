@@ -493,7 +493,10 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                 $customerModel->customer_type = $model->applicable_for;
                 $customerModelData = $customerModel->find()
                         ->where(['customer_type' => $model->applicable_for, 'bmc_code' => $model->bmc_code])
-                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->applicable_code])
+                        ->andWhere(['or',
+                            ['CAST(REPLACE(customer_code_ex, \'A\', \'\') as int)' => (int) $model->applicable_code],
+                            ['customer_code' => (int) $model->applicable_code]
+                        ])
                         ->all();
                 if (count($customerModelData) == 1) {
                     $Code = $customerModelData[0]->customer_code;
