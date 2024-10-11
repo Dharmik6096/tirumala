@@ -136,10 +136,23 @@ $attribute = [
         ['attribute' => 'is_aadhar_verify', 'value' => function($model) {
             return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_aadhar_verify');
         }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'data_post_status',
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status] : 'Pending';
+        }, 'filter' => false, 'visible' => false],
+        ['attribute' => 'picked_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'response_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
 ];
-
+$gridId = 'member-grid';
 $grid_option = [
-    'id' => 'member-grid',
+    'id' => $gridId,
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
@@ -194,6 +207,9 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register', 'provisional_member_code' => $model->provisional_member_code], $options);
             }
         },
+        'repush' => function ($url, $model) use ($gridId) {
+            return Yii::$app->general->createRePushLink($url, $model, $gridId, 'provisional_member_code');
+        },
     ]
 ];
 
@@ -226,6 +242,5 @@ $(document).on('click','.view_data',function(e){
 });
 });
 ";
-
 $this->registerJs($script, View::POS_END, 'provisional-data');
 ?>

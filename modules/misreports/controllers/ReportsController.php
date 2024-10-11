@@ -1861,6 +1861,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionApprovedAttachmentDetails() {
+        $this->report = 'ApprovedAttachmentDetails';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3969,6 +3974,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bill_head_detail',
                 'scenario' => 'BillHeadDetail',
                 'title' => 'Bill Head Detail',
+            ],
+            'ApprovedAttachmentDetails' => [
+                'param' => 'from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_approved_attachment_details',
+                'scenario' => 'ApprovedAttachmentDetails',
+                'report_type' => [Yii::t('app', 'tbl_member_provisional'), Yii::t('app', 'tbl_dcs_provisional'), Yii::t('app', 'tbl_customer_master_provisional')],
+                'title' => 'Approved Attachment Details',
             ],
         ];
         return $label[$l];

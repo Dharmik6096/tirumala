@@ -456,4 +456,20 @@ class TblGrnController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionRfcRePush($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblGrnHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->data_post_status = 0;
+        $record = [];
+        if ($this->model->save(true,false)) {
+            $historyModel->save();
+            $record = ['status' => 'success', 'msg' => 'GRN re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push GRN.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }
