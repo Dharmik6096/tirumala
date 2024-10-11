@@ -465,8 +465,12 @@ class BiplSchedulerController extends ChildController {
                                     if ($collectionModel->hasAttribute('ftp_txn_log_id')) {
                                         $collectionModel->ftp_txn_log_id = !empty($row->ftp_txn_log_id) ? $row->ftp_txn_log_id : NULL;
                                     }
-                                    $collectionModel->amount = ($collectionModel->amount == 'NA') ? 0 : $collectionModel->amount;
-                                    $collectionModel->rate = ($collectionModel->rate == 'NA') ? 0 : $collectionModel->rate;
+                                    $collectionModel->amount = ($collectionModel->amount == 'NA') ? 0 : floatval($collectionModel->amount);
+                                    $collectionModel->rate = ($collectionModel->rate == 'NA') ? 0 : floatval($collectionModel->rate);
+                                    $collectionModel->fat = ($collectionModel->fat == 'NA') ? 0 : floatval($collectionModel->fat);
+                                    $collectionModel->snf = ($collectionModel->snf == 'NA') ? 0 : floatval($collectionModel->snf);
+                                    $collectionModel->quantity = ($collectionModel->quantity == 'NA') ? 0 : floatval($collectionModel->quantity);
+                                    $collectionModel->awm = ($collectionModel->awm == 'NA') ? 0 : floatval($collectionModel->awm);
                                     if (empty($collectionModel->cp_code)) {
                                         $collectionModel->cp_code = $cp_code;
                                     }
