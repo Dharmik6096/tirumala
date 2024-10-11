@@ -30,7 +30,7 @@ class PullRequestController extends PullMasterController {
         return $this->response;
     }
 
-    public function actionBmcCollectionIncentive() {
+    public function actionVspPayment() {
 
         $request = Yii::$app->request->getRawBody();
         if (!empty($request) && !empty($request['bmc_code']) && !empty($request['from_date']) && !empty(!empty($request['to_date']))) {
@@ -39,7 +39,7 @@ class PullRequestController extends PullMasterController {
                 $sp_param[] = $request['bmc_code'];
                 $sp_param[] = $request['from_date'];
                 $sp_param[] = $request['to_date'];
-                $sp_name = 'sp_clienterp_devmilk_pull_bmc_collection_incentive';
+                $sp_name = 'clienterp_devmilk_pull_vsp_payment';
                 $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
                 $this->response->setData($response, FALSE);
             } catch (\Throwable $ex) {
