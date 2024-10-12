@@ -74,10 +74,10 @@ use app\components\ActiveForm;
                                 ])
                                 ?>
                                 <?php if (!empty($menu['children'])) { ?>
-                                    <a href="#Menu-<?= $i ?>" data-toggle="collapse" data-parent="#Menu-<?= $i ?>" class="colps"><i class="fa fa-caret-down"></i></a>
+                                    <a href="#Menu-<?= $i ?>" data-bs-toggle="collapse" data-parent="#Menu-<?= $i ?>" class="colps"><i class="fa fa-caret-down"></i></a>
                                 <?php } ?>
                             </div>
-                            <div class="collapse in" id="Menu-<?= $i ?>">
+                            <div class="collapse show" id="Menu-<?= $i ?>">
                                 <?php
                                 if (isset($menu['children'])) {
                                     foreach ($menu['children'] as $submenu) {
@@ -92,10 +92,10 @@ use app\components\ActiveForm;
                                                 'value' => $submenu['action_code'], 'class' => 'route-checkbox checkAll ' . $class_menu]);
                                             ?>
                                             <?php if (!empty($submenu['children'])) { ?>
-                                                <a href="#SubMenu-<?= $i . $j ?>" data-toggle="collapse" data-parent="#SubMenu-<?= $i . $j ?>" class="colps"><i class="fa fa-caret-down"></i></a>
+                                                <a href="#SubMenu-<?= $i . $j ?>" data-bs-toggle="collapse" data-parent="#SubMenu-<?= $i . $j ?>" class="colps"><i class="fa fa-caret-down"></i></a>
                                             <?php } ?>
                                         </div>
-                                        <div class="collapse in" id="SubMenu-<?= $i . $j ?>">
+                                        <div class="collapse show" id="SubMenu-<?= $i . $j ?>">
                                             <?php
                                             if (isset($submenu['children'])) {
                                                 foreach ($submenu['children'] as $route) {
@@ -110,10 +110,10 @@ use app\components\ActiveForm;
                                                             'value' => $route['action_code'], 'class' => 'route-checkbox checkAll ' . $class_submenu . ' ' . $class_menu])
                                                         ?>
                                                         <?php if (!empty($route['children'])) { ?>
-                                                            <a href="#ChildMenu-<?= $i . $j . $k ?>" data-toggle="collapse" data-parent="#ChildMenu-<?= $i . $j . $k ?>" class="colps"><i class="fa fa-caret-down"></i></a>
+                                                            <a href="#ChildMenu-<?= $i . $j . $k ?>" data-bs-toggle="collapse" data-parent="#ChildMenu-<?= $i . $j . $k ?>" class="colps"><i class="fa fa-caret-down"></i></a>
                                                         <?php } ?>
                                                     </div>
-                                                    <div class="collapse in" id="ChildMenu-<?= $i . $j . $k ?>">
+                                                    <div class="collapse show" id="ChildMenu-<?= $i . $j . $k ?>">
                                                         <?php
                                                         if (isset($route['children'])) {
                                                             foreach ($route['children'] as $route_sub) {
@@ -128,7 +128,7 @@ use app\components\ActiveForm;
                                                                         'value' => $route_sub['action_code'], 'class' => 'route-checkbox checkAll ' . $class_route . ' ' . $class_submenu . ' ' . $class_menu])
                                                                     ?>
                                                                     <?php if (!empty($route_sub['children'])) { ?>
-                                                                        <a href="#SubChildMenu-<?= $i . $j . $k . $l ?>" data-toggle="collapse" data-parent="#SubChildMenu-<?= $i . $j . $k . $l ?>" class="colps"><i class="fa fa-caret-down"></i></a>
+                                                                        <a href="#SubChildMenu-<?= $i . $j . $k . $l ?>" data-bs-toggle="collapse" data-parent="#SubChildMenu-<?= $i . $j . $k . $l ?>" class="colps"><i class="fa fa-caret-down"></i></a>
                                                                     <?php } ?>
                                                                 </div>
                                                                 <?php
