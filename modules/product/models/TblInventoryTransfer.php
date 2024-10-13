@@ -323,7 +323,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                     $stockModel->product_code = $txModel->product_code;
                     $stockModel->union_code = $txModel->union_code;
                     $stockModel->sap_batch_no = $batch;
-                    $existtoStock = $stockModel->getExistStock($this->to_type);
+                    $existtoStock = $stockModel->getExistStock($this->to_type, $stockModel->sap_batch_no);
 
                     $t_stock = 0;
                     $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock'] : 0;
