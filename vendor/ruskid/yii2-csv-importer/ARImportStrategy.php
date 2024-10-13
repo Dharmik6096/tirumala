@@ -267,7 +267,8 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                     if(!empty($model->auto_key_config)){
                         $model->save();
                     } else {
-                        $modelList[] = $model;
+                     //   $modelList[] = $model;
+                        $master[] = $model->save();
                     }
                     foreach ($modelList as $modelRow) {
                         if(!empty($model->auto_key_config)){

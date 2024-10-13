@@ -343,6 +343,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                         $stockModel->stock = $t_stock + $qty;
                         $stockModel->x_col1 = Yii::$app->general->getUuid();
                     }
+                    $stockModel->rate = $fstockModel->rate;
                     array_push($saveModel, $stockModel);
                     $stockTxnModel = new TblProductStockTransaction();
                     $stockTxnModel->attributes = $stockModel->attributes;
