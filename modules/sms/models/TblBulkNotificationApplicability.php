@@ -158,7 +158,7 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
 
             foreach ($sentboxArray as $sent) {
                 if ($applicableFor == $sent['type']) {
-                    $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+                    $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
                     $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
                     $bulk_notification = TblBulkNotification::findOne($this->bulk_notification_id);
                     if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {

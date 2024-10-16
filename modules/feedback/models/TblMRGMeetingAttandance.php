@@ -77,6 +77,7 @@ class TblMRGMeetingAttandance extends ChildModel {
     }
 
     public function getAttachmentCode() {
+        $this->MRG_M_attandance_id = (string) $this->MRG_M_attandance_id;
         return $this->hasOne(TblAttachment::className(), ['module_code' => 'MRG_M_attandance_id']);
     }
 

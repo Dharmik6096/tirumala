@@ -130,8 +130,7 @@ class TblClientErpApiLogController extends ChildController
         $logData['status_message'] = !empty($response->jde__simpleMessage) ? json_encode($response->jde__simpleMessage) : '';
         $logData['status_response'] = !empty($response->jde__status) ? json_encode($response->jde__status) : 'ERROR';
         unset($logData['created_at'], $logData['created_by'], $logData['updated_at'], $logData['updated_by']);
-        $eiplResponse->logData = $logData;
-        $eiplResponse->saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp, $requestJson);
+        $eiplResponse->saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp, $logData, $requestJson);
     }
 
     /**
