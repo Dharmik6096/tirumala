@@ -12,7 +12,6 @@ class EiplResponse {
     public $statusCode;
     public $message = [];
     public $data = [];
-    public $logData = [];
 
     /**
      *
@@ -81,14 +80,14 @@ class EiplResponse {
         return $res_data;
     }
 
-    public function saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp, $requestJson = ''){
+    public function saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp, $logData, $requestJson = ''){
         $logModel = new TblClientErpApiLog();
         if(!empty($requestJson)){
             $request_payload = $requestJson;
-            $logModel->setAttributes($this->logData->attributes);
+            $logModel->setAttributes($logData->attributes);
         } else {
             $request_payload = json_encode($request);
-            $logModel->setAttributes($this->logData);
+            $logModel->setAttributes($logData);
         }
         $logModel->request_payload = $request_payload;
         $logModel->response_payload = json_encode($response);
@@ -97,7 +96,6 @@ class EiplResponse {
         // $logModel->status_response = ($logModel->status_code >= 200 && $logModel->status_code < 300) ? 'success' : 'error';
         $logModel->status_message = $logModel->status_message;
         $logModel->save();
-        unset($response->logData);
     }
 
 }
