@@ -134,7 +134,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'available_stock')->textInput(['readonly' => TRUE]) ?>
                 </div>
-                <div class="col-sm-1 reset_field qty-validate">
+                <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'quantity')->textInput() ?>
                 </div>
                 <div class="col-sm-1 reset_field">
