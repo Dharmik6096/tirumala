@@ -307,7 +307,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $dcsCode = $memberPayment->dcs_code;
                     $memberPayment->payment_status = ($auto_adjust_stop_payment_member != '1' && in_array($dcsCode, $stop_payment_dcs)) ? 'Process' : $processFlag;
                     if ($auto_adjust_stop_payment_member == '1' && $processFlag == 'Lock' && in_array($dcsCode, $stop_payment_dcs)) {
-                        $memberPayment->hold_amount = !empty($memberPayment->hold_amount) ? ($memberPayment->hold_amount + $memberPayment->final_amount) : $memberPayment->final_amount;
+                        $memberPayment->hold_amount = !empty($memberPayment->hold_amount) ? ((float) $memberPayment->hold_amount + (float) $memberPayment->final_amount) : $memberPayment->final_amount;
                         $memberPayment->final_amount = 0;
                         $memberPayment->adjust_remark .= !empty($stop_payment_reason[$dcsCode]['stop_payment_type']) ? $stop_payment_reason[$dcsCode]['stop_payment_type'] : 'dispute';
                         $memberPayment->adjust_remark .= ' Auto adjust with 0.';
