@@ -1869,6 +1869,16 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'ApprovedAttachmentDetails';
         return $this->actionIndex();
     }
+    
+    public function actionBmcCollectionRouteWise() {
+        $this->report = 'BmcCollectionRouteWise';
+        return $this->actionIndex();
+    }
+    
+    public function actionPlantWiseMilkCollectionTracking() {
+        $this->report = 'PlantWiseMilkCollectionTracking';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3985,6 +3995,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ApprovedAttachmentDetails',
                 'report_type' => [Yii::t('app', 'tbl_member_provisional'), Yii::t('app', 'tbl_dcs_provisional'), Yii::t('app', 'tbl_customer_master_provisional')],
                 'title' => 'Approved Attachment Details',
+            ],
+            'BmcCollectionRouteWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_route_wise',
+                'scenario' => 'BmcCollectionRouteWise',
+                'title' => 'Bmc Wise Milk Collection',
+            ],
+            'PlantWiseMilkCollectionTracking' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_plant_wise_milk_collection_tracking',
+                'scenario' => 'PlantWiseMilkCollectionTracking',
+                'title' => 'Plant Wise Milk Collection',
             ],
         ];
         return $label[$l];

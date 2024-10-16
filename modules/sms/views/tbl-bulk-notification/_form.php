@@ -70,7 +70,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'title')->textInput() ?>
     </div>
     <div class="col-sm-2 mt15 auto_scrol_s">
-        <?= $form->field($model, 'auto_scrolling', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'auto_scrolling'); ?>
     </div>
 
     <div class="col-sm-6">
