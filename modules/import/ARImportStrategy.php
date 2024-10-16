@@ -198,13 +198,14 @@ class ARImportStrategy extends CsvimporterARImportStrategy {
                 }
 
                 if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
-                    if(!empty($model->auto_key_config)){
+                    if (!empty($model->auto_key_config)) {
                         $model->save();
                     } else {
-                        $modelList[] = $model;
+                        //  $modelList[] = $model;
+                        $master[] = $model->save();
                     }
                     foreach ($modelList as $modelRow) {
-                        if(!empty($model->auto_key_config)){
+                        if (!empty($model->auto_key_config)) {
                             $m_name = $modelRow::className();
                             $m_name = explode("\\", $m_name);
                             $m_name = $m_name[count($m_name) - 1];
