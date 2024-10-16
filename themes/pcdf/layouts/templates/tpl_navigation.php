@@ -609,7 +609,6 @@ echo GhostMenu::widget([
                                     ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
                                     ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
                                     ['label' => '225 -' . Yii::t('app', 'Root Wise Difference'), 'url' => ['/misreports/reports/root-wise-difference']],
-                                    ['label' => '226 -' . Yii::t('app', 'Route Wise Collection'), 'url' => ['/misreports/reports/bmc-collection-route-wise']],
                             ]
                         ],
                             [
@@ -862,6 +861,8 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'BIPL Data Admin'), 'url' => ['/misreports/reports/bipl-data-admin']],
                                     ['label' => Yii::t('app', 'App Startup Report'), 'url' => ['/misreports/reports/app-startup-report']],
                                     ['label' => Yii::t('app', 'Payment Cycle Applicability Status'), 'url' => ['/misreports/reports/payment-cycle-applicability-status']],
+                                    ['label' => Yii::t('app', 'Bmc Wise Milk Collection'), 'url' => ['/misreports/reports/bmc-collection-route-wise']],
+                                    ['label' => Yii::t('app', 'Plant Wise Milk Collection'), 'url' => ['/misreports/reports/plant-wise-milk-collection-tracking']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
