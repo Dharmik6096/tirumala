@@ -934,6 +934,8 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'BIPL Data Admin'), 'url' => ['/misreports/reports/bipl-data-admin']],
                                     ['label' => Yii::t('app', 'App Startup Report'), 'url' => ['/misreports/reports/app-startup-report']],
                                     ['label' => Yii::t('app', 'Payment Cycle Applicability Status'), 'url' => ['/misreports/reports/payment-cycle-applicability-status']],
+                                    ['label' => Yii::t('app', 'Bmc Wise Milk Collection'), 'url' => ['/misreports/reports/bmc-collection-route-wise']],
+                                    ['label' => Yii::t('app', 'Plant Wise Milk Collection'), 'url' => ['/misreports/reports/plant-wise-milk-collection-tracking']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],

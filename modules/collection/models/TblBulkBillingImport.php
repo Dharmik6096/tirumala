@@ -77,6 +77,11 @@ class TblBulkBillingImport extends \yii\db\ActiveRecord {
                 [['from_date', 'to_date', 'bmc_code', 'dcs_code', 'customer_name', 'pan_no', 'total_qty', 'kg_fat', 'kg_snf', 'head_val_seq1', 'head_val_seq2', 'head_val_seq3', 'tds_rate', 'head_val_seq4', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'head_val_seq5', 'net_payable_own_account', 'remarks'], 'required', 'on' => ['vendor_billing_import']],
                 [['from_date', 'to_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['member_billing_import', 'vendor_billing_import']],
                 [['to_date'], 'validateToDate', 'on' => ['member_billing_import', 'vendor_billing_import']],
+                [['kg_fat', 'kg_snf', 'total_qty', 'head_val_seq1', 'head_val_seq2', 'head_val_seq3', 'head_val_seq4', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'tds_rate', 'milk_commitment', 'qty_till_date', 'net_payable_own_account', 'net_payable_joint_account', 'head_val_seq5', 'head_val_seq6', 'head_val_seq7'],
+                function ($attribute, $params) {
+                    $this->$attribute = $this->removeCommas($this->$attribute);
+                }
+            ],
         ];
     }
 
@@ -151,6 +156,10 @@ class TblBulkBillingImport extends \yii\db\ActiveRecord {
             $resultArray[$key] = $item['bill_head_name'];
         }
         return $resultArray;
+    }
+
+    public function removeCommas($value) {
+        return str_replace(',', '', $value);
     }
 
 }
