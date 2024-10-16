@@ -225,7 +225,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
     public function actionListMemberPaymentSummaryData() {
         // Farmer Payment Process : Step 2 (Display DCS Wise Data)
         if (Yii::$app->request->post('TblMemberPaymentAlias')) {
-            $auto_adjust_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$session_union]['auto_adjust_stop_payment_member']) ? Yii::$app->session->get('unionConfig')[$session_union]['auto_adjust_stop_payment_member'] : 0;
             $postData = Yii::$app->request->post();
             $getParam = Yii::$app->request->post('TblMemberPaymentAlias');
             $getParam['dcs_code'] = json_decode($getParam['dcs_code']);
@@ -291,6 +290,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_id = [];
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = $getParam;
+            $auto_adjust_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$memberPaymentModel->union_code]['auto_adjust_stop_payment_member']) ? Yii::$app->session->get('unionConfig')[$memberPaymentModel->union_code]['auto_adjust_stop_payment_member'] : 0;
             $is_validate = true;
             $is_bank_integrated = Yii::$app->general->getUnionConfiguration($memberPaymentModel->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
             if ($is_bank_integrated && $processFlag == 'Lock') {
