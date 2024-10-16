@@ -674,6 +674,7 @@ echo GhostMenu::widget([
                                     ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
                                     ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
                                     ['label' => '225 -' . Yii::t('app', 'Root Wise Difference'), 'url' => ['/misreports/reports/root-wise-difference']],
+                                    ['label' => '226 -' . Yii::t('app', 'Route Wise Collection'), 'url' => ['/misreports/reports/bmc-collection-route-wise']],
                             ]
                         ],
                             [
