@@ -329,7 +329,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $historyModel = new TblMemberPaymentSummaryAliasHistory();
                     Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
                     $dcs = $summaryData->dcs_code;
-                    $summaryData->payment_status = in_array($dcs, $stop_payment_dcs) ? 'Process' : $processFlag;
+                    $summaryData->payment_status = ($auto_adjust_stop_payment_member != '1' && in_array($dcs, $stop_payment_dcs)) ? 'Process' : $processFlag;
                     if (!empty($adjustmentSummary[$dcs])) {
                         $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
                         $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];

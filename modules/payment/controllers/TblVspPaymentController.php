@@ -264,8 +264,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     }
                     if ($auto_adjust_stop_payment_vendor == '1' && $processFlag == 'locked' && in_array($data->customer_code, $stop_payment_customer)) {
                         $updateData = true;
-                        $data->hold_amount = !empty($data->hold_amount) ? ((float) $data->hold_amount + (float) $data->final_amount) : $data->final_amount;
-                        $data->final_amount = 0;
+                        $data->hold_amount = !empty($data->hold_amount) ? ((float) $data->hold_amount + (float) $data->final_pay) : $data->final_pay;
+                        $data->final_pay = 0;
                         $data->adjust_remark .= !empty($stop_payment_reason[$data->customer_code]['stop_payment_type']) ? $stop_payment_reason[$data->customer_code]['stop_payment_type'] : 'dispute';
                         $data->adjust_remark .= ' Auto adjust with 0.';
                     }
@@ -278,8 +278,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $data->status = ($auto_adjust_stop_payment_vendor != '1' && in_array($data->customer_code, $stop_payment_customer)) ? 'processed' : $processFlag;
                     if (!empty($oldData) && ($oldData['status'] != $data->status)) {
                         if ($auto_adjust_stop_payment_vendor == '1' && $processFlag == 'locked' && in_array($data->customer_code, $stop_payment_customer)) {
-                            $data->hold_amount = !empty($data->hold_amount) ? ((float) $data->hold_amount + (float) $data->final_amount) : $data->final_amount;
-                            $data->final_amount = 0;
+                            $data->hold_amount = !empty($data->hold_amount) ? ((float) $data->hold_amount + (float) $data->final_pay) : $data->final_pay;
+                            $data->final_pay = 0;
                             $data->adjust_remark .= !empty($stop_payment_reason[$data->customer_code]['stop_payment_type']) ? $stop_payment_reason[$data->customer_code]['stop_payment_type'] : 'dispute';
                             $data->adjust_remark .= ' Auto adjust with 0.';
                         }
