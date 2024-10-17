@@ -71,8 +71,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 'on' => ['saleProduct', 'SaleImport']],
                 [['data_lock'], 'default', 'value' => 0],
                 [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
-                [['quantity'], 'integer', 'except' => ['locksale', 'androidsync', 'androidsyncsplit']],
-                [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
+            //   [['quantity'], 'integer', 'except' => ['locksale', 'androidsync', 'androidsyncsplit']],
+            [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
         ];
     }
 

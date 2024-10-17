@@ -64,9 +64,9 @@ $form = ActiveForm::begin(['options' => [
 
 <div class="col-sm-12 margin-top-10 form-group" >
     <?php if (!empty($dataProvider->getModels())) { ?>
-        <?= GhostHtml::a_alert(Yii::t('app', 'LOCK'), ['/collection/tbl-mcc-shift-lock/member-data-lock'], ['class' => 'btn btn-primary save', 'name' => 'lock-data']); ?>
-        <?= GhostHtml::a_alert(Yii::t('app', 'UN-LOCK'), ['/collection/tbl-mcc-shift-lock/member-data-unlock'], ['class' => 'btn btn-primary save', 'name' => 'unlock-data']); ?>
-        <?= Yii::$app->controls->custombutton('Cancel', 'index-member'); ?> 
+        <?= GhostHtml::a_alert(Yii::t('app', 'LOCK'), ['/collection/tbl-mcc-shift-lock/member-data-lock'], ['class' => 'btn-login btn btn-primary save', 'name' => 'lock-data']); ?>
+        <?= GhostHtml::a_alert(Yii::t('app', 'UN-LOCK'), ['/collection/tbl-mcc-shift-lock/member-data-unlock'], ['class' => 'btn-login btn btn-primary save', 'name' => 'unlock-data']); ?>
+        <?= Yii::$app->controls->custombutton('Cancel', 'index-member', '', 'btn-login'); ?> 
     <?php } ?>
 </div>
 

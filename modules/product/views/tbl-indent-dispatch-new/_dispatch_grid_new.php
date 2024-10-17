@@ -7,7 +7,7 @@
     use yii\web\View;
 
 $models = new app\modules\product\models\TblIndentMaster();
-    $dataProvide = $models->indentDetail($model);
+$dataProvide = $models->indentDetail($model);
     ?>
     <div class="no-effect">
         <?php
@@ -42,7 +42,7 @@ $models = new app\modules\product\models\TblIndentMaster();
                     'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
                         echo Html::activeHiddenInput($dispatchModel, '[' . $model['indent_code'] . ']indent_code', ['value' => $model->indent_code]);
                         echo Html::activeHiddenInput($dispatchModel, '[' . $model['indent_code'] . ']approve_qty', ['value' => $model->approve_qty]);
-                        return $form->field($dispatchModel, '[' . $model['indent_code'] . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate integer-input qty-dispatch dispatch_qty-' . $model->indent_code.' '.$model['product_code'], 'data-class' => $model['product_code'], 'data-id' => $model['indent_code']])->label(FALSE);
+                        return $form->field($dispatchModel, '[' . $model['indent_code'] . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch dispatch_qty-' . $model->indent_code.' '.$model['product_code'], 'data-class' => $model['product_code'], 'data-id' => $model['indent_code']])->label(FALSE);
                     },
                 ],
                 ['attribute' => 'remaining_qty', 'label' => Yii::t('app', 'Remaining Qty'), 'filter' => FALSE,
