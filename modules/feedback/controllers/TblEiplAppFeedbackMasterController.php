@@ -156,7 +156,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
                 $attachment = new TblAttachment();
                 $attachment->module_name = 'feedback_txn';
                 $ext = (explode(".", $attachment_file));
-                $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/feedback_upload/' . $attachment_file;
+                $file = Yii::$app->urlManager->createAbsoluteUrl('') . Yii::$app->params['feedback_upload'] . $attachment_file;
                 $attachment->attachment = $file;
                 $attachment->file_name = $attachment_file;
                 $attachment->attachment_type = $ext[1];
