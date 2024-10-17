@@ -12,9 +12,8 @@ $attribute = [
     ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
             return Yii::$app->general->generateActivityStatus($model, 'created_at', 'Feedback Activity');
         }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
-    ['attribute' => 'user_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->userCodeById, 'name');
-        }],
+    ['attribute' => 'eipl_app_feedback_master_code', 'filter' => FALSE],
+    ['attribute' => 'name'],
     ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccCode, 'name');
         }, 'filter' => false],
@@ -23,9 +22,6 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '';
-        }, 'filter' => false],
-    ['attribute' => 'member_code', 'value' => function($model) {
-            return strtolower($model->user_type) == 'farmer' ? Yii::$app->general->getforeignkey($model->userCodeById, 'name') : '';
         }, 'filter' => false],
     ['attribute' => 'eipl_app_feedback_item_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->eiplAppFeedbackItemCode, 'feedback_item_name');
