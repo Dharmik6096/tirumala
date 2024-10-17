@@ -934,6 +934,8 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'BIPL Data Admin'), 'url' => ['/misreports/reports/bipl-data-admin']],
                                     ['label' => Yii::t('app', 'App Startup Report'), 'url' => ['/misreports/reports/app-startup-report']],
                                     ['label' => Yii::t('app', 'Payment Cycle Applicability Status'), 'url' => ['/misreports/reports/payment-cycle-applicability-status']],
+                                    ['label' => Yii::t('app', 'Bmc Wise Milk Collection'), 'url' => ['/misreports/reports/bmc-collection-route-wise']],
+                                    ['label' => Yii::t('app', 'Plant Wise Milk Collection'), 'url' => ['/misreports/reports/plant-wise-milk-collection-tracking']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
@@ -1270,6 +1272,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Banner Process'), 'url' => ['/general/tbl-banner/index'], 'active' => ($cntrl == 'tbl-banner')],
                             ['label' => Yii::t('app', 'Contact Detail Info.'), 'url' => ['/details/tbl-contact-details/index-other'], 'active' => ($cntrl == 'tbl-contact-detail')],
                             ['label' => Yii::t('app', 'Member Share Detail Import'), 'url' => ['/dcsoperation/tbl-member-share-deposit/index'], 'active' => ($cntrl == 'tbl-member-share-deposit')],
+                            ['label' => Yii::t('app', 'Transit Recovery Import'), 'url' => ['/vsp/tbl-transit-recovery/index'], 'active' => ($cntrl == 'tbl-transit-recovery')],
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],

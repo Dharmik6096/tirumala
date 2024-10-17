@@ -7,6 +7,7 @@ use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblUnions;
 use app\modules\document\models\TblAttachment;
+use app\modules\document\models\TblDocumentMasterType;
 
 /**
  * This is the model class for table "tbl_document_mapping".
@@ -120,6 +121,10 @@ class TblDocumentMapping extends \app\models\ChildModel {
     public function uploadedDocument($doc_id, $module_code, $module_name) {
         $module_code = (string) $module_code;
         return TblAttachment::find()->where(['doc_id' => $doc_id, 'module_code' => $module_code, 'module_name' => $module_name])->one();
+    }
+
+    public function getMasterType() {
+        return $this->hasOne(TblDocumentMasterType::className(), ['master_type_code' => 'master_type']);
     }
 
 }
