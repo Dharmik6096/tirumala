@@ -29,42 +29,42 @@ $this->title = Yii::t('app', 'Indent Dispatch');
         ?>
         <?php
         $attribute = [
-                ['class' => 'kartik\grid\CheckboxColumn',
+            ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model, $key, $index) {
-                    return ['class' => 'checkbox child-checkbox-'.$model['indent_code'], 'value' => $model['indent_code']];
+                    return ['class' => 'checkbox child-checkbox-' . $model['indent_code'], 'value' => $model['indent_code']];
                 }],
-                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
-                ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
+            ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
-                ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'value' => function($model) {
+            ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
-                ['attribute' => 'status_date', 'label' => Yii::t('app', 'Indent Approve Date'), 'value' => function($model) {
+            ['attribute' => 'status_date', 'label' => Yii::t('app', 'Indent Approve Date'), 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->status_date);
                 }, 'filter' => FALSE],
-                ['attribute' => 'warehouse_code', 'value' => function($model) {
+            ['attribute' => 'warehouse_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->warehouseCode, 'store_location_name');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
-                ['attribute' => 'product_code', 'value' => function($model) {
+            ['attribute' => 'product_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
                 }, 'filter' => FALSE],
-                ['attribute' => 'available_stock', 'value' => function($model) {
+            ['attribute' => 'available_stock', 'value' => function($model) {
                     return (empty($model['warehouse_code']) || $model['warehouse_code'] == 0) ? $model->getExistingStock($model) : 0;
                 }, 'filter' => FALSE],
 //                ['attribute' => 'qty', 'filter' => FALSE],
             ['attribute' => 'approve_qty', 'filter' => FALSE],
-                ['attribute' => 'dispatch_qty', 'filter' => FALSE,
+            ['attribute' => 'dispatch_qty', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
                     echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']indent_code', ['value' => $model->indent_code]);
                     echo Html::activeHiddenInput($dispatchModel, '[' . $key . ']approve_qty', ['value' => $model->approve_qty]);
-                    return $form->field($dispatchModel, '[' . $key . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch qty-dispatch-' . $model->product_code.' dispatch_qty-' . $model->indent_code, 'data-id' => $key, 'data-key' => $model->product_code])->label(FALSE);
+                    return $form->field($dispatchModel, '[' . $key . ']dispatch_qty')->textInput(['value' => $dispatchModel->dispatch_qty, 'class' => 'form-control number-validate qty-dispatch qty-dispatch-' . $model->product_code . ' dispatch_qty-' . $model->indent_code, 'data-id' => $key, 'data-key' => $model->product_code])->label(FALSE);
                 },
             ],
-                ['attribute' => 'remaining_qty', 'label' => Yii::t('app', 'Remaining Qty'), 'filter' => FALSE,
+            ['attribute' => 'remaining_qty', 'label' => Yii::t('app', 'Remaining Qty'), 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form, $dispatchModel) {
                     $remaining_qty = $model->approve_qty - $dispatchModel->dispatch_qty;
@@ -73,7 +73,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                     return '<span id="tblindentdispatch-' . $key . '-remaining">' . $remaining_qty . '</span>';
                 },
             ],
-                ['attribute' => 'received_qty', 'filter' => FALSE],
+            ['attribute' => 'received_qty', 'filter' => FALSE],
         ];
 
         $grid_option = [
@@ -134,11 +134,11 @@ $script = '
         });
         $("#" + dataKey + " .remaining_stock").text(totalStock.toFixed(2));
 
-        if (!isNaN(remaining_qty) && parseInt(dispatch_qty) <= 0 && dispatch_qty != "") {
+        if (!isNaN(remaining_qty) && parseFloat(dispatch_qty) <= 0 && dispatch_qty != "") {
             $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val("");
             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Dispatch quantity must be greater than zero.</span></div></div>");
-        } else if(!isNaN(remaining_qty) && parseInt(dispatch_qty) <= parseInt(approve_qty)){
-            new_remaining_qty=parseInt(new_remaining_qty).toFixed(2);
+        } else if(!isNaN(remaining_qty) && parseFloat(dispatch_qty) <= parseFloat(approve_qty)){
+            new_remaining_qty=parseFloat(new_remaining_qty).toFixed(2);
             $("#tblindentdispatch-" + tr_key +"-remaining").text(new_remaining_qty);                     
         } else {
             $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val("");

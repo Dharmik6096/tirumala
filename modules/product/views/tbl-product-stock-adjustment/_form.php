@@ -83,11 +83,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 create_fields reset_field">
             <?= $form->field($txModel, 'stock')->textInput(['readonly' => TRUE])->label(Yii::t('app', 'Available Stock')) ?>
         </div>
-        <div class="col-sm-2 create_fields reset_field qty-validate">
+        <div class="col-sm-2 create_fields reset_field number-validate">
             <?= $form->field($txModel, 'qty')->textInput()->label(Yii::t('app', 'Quantity')) ?>
         </div>
         <?php if ($type == 'issue') { ?>
-            <div class="col-sm-2 create_fields reset_field qty-validate">
+            <div class="col-sm-2 create_fields reset_field number-validate">
                 <?= Yii::$app->dropdown->dropdownStatic('product_stock_issue_reason', $txModel, $form, 'form-group', true, false, 'reason', false); ?>
             </div>
         <?php }

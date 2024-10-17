@@ -84,7 +84,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'rate')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field qty-validate">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'qty')->textInput() ?>
         </div>
         <div class="col-sm-1 reset_field">
@@ -114,7 +114,11 @@ $form = ActiveForm::begin([
                 <th><?= Yii::t('app', 'Product Code') ?></th>
                 <th><?= $txModel->getAttributeLabel('product_code') ?></th>
                 <th><?= $txModel->getAttributeLabel('unit_code') ?></th>
-                <?php if ($batchNoWiseInventory) {echo '<th>' . $txModel->getAttributeLabel('sap_batch_no') . '</th>'; } ?>
+                <?php
+                if ($batchNoWiseInventory) {
+                    echo '<th>' . $txModel->getAttributeLabel('sap_batch_no') . '</th>';
+                }
+                ?>
                 <th><?= $txModel->getAttributeLabel('rate') ?></th>
                 <th><?= $txModel->getAttributeLabel('qty') ?></th>
                 <th><?= $txModel->getAttributeLabel('amount') ?></th>
@@ -158,7 +162,7 @@ $form = ActiveForm::begin([
         AjaxSubmitButton::end();
         ?>
         <?= Yii::$app->controls->reset(); ?>
-<?= Yii::$app->controls->cancel($model); ?>
+        <?= Yii::$app->controls->cancel($model); ?>
     </div>
 </div>
 

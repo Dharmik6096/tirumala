@@ -8,12 +8,12 @@
     use yii\helpers\Url;
     use webvimark\modules\UserManagement\components\GhostHtml;
 
-    $this->title = Yii::t('app', 'Indent Approval');
+$this->title = Yii::t('app', 'Indent Approval');
     ?>
     <div class=" no-effect">
         <?php
         $form = ActiveForm::begin([
-            'id' => 'indent-approval-new',
+                    'id' => 'indent-approval-new',
         ]);
         ?>
         <div class="">
@@ -39,8 +39,8 @@
                 ['attribute' => 'member_name', 'filter' => FALSE],
                 ['attribute' => 'qty', 'filter' => FALSE],
                 ['attribute' => 'indent_date', 'value' => function ($model) {
-                    return Yii::$app->controls->view_date($model['indent_date']);
-                }, 'filter' => FALSE],
+                        return Yii::$app->controls->view_date($model['indent_date']);
+                    }, 'filter' => FALSE],
                 [
                     'attribute' => 'approve_qty', 'filter' => FALSE,
                     'format' => 'raw',
@@ -52,7 +52,7 @@
                             $id = $model['dcs_code'] . $member_code . $model['product_code'];
                             echo Html::activeHiddenInput($indentMaster, '[' . $model['process_approval_code'] . ']qty', ['value' => $model['qty'], 'id' => 'tblindentmaster-' . $id . '-qty']);
                             echo Html::activeHiddenInput($indentMaster, '[' . $model['process_approval_code'] . ']rate', ['value' => $model['rate'], 'id' => 'tblindentmaster-' . $id . '-rate']);
-                            return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']approve_qty')->textInput(['value' => $model['qty'], 'class' => 'form-control number-validate integer-input approve_qty', 'id' => 'tblindentmaster-' . $id . '-approve_qty', 'data-id' => $id, 'disabled' => $disabled])->label(FALSE);
+                            return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']approve_qty')->textInput(['value' => $model['qty'], 'class' => 'form-control number-validate approve_qty', 'id' => 'tblindentmaster-' . $id . '-approve_qty', 'data-id' => $id, 'disabled' => $disabled])->label(FALSE);
                         } else {
                             return $model['approve_qty'];
                         }
@@ -89,7 +89,7 @@
                             $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
                             $member_code = !empty($model['member_code']) ? $model['member_code'] : 0;
                             $id = $model['dcs_code'] . $member_code . $model['product_code'];
-                            return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']approve_remarks')->textInput(['value' => $model['approve_remarks'], 'class' => 'form-control', 'id' => 'tblindentmaster-'.$id.'-approve_remarks', 'disabled' => $disabled])->label(FALSE);
+                            return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']approve_remarks')->textInput(['value' => $model['approve_remarks'], 'class' => 'form-control', 'id' => 'tblindentmaster-' . $id . '-approve_remarks', 'disabled' => $disabled])->label(FALSE);
                         } else {
                             return $model['approve_remarks'];
                         }
