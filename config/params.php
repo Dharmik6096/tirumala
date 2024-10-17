@@ -46,6 +46,7 @@ $eipl_params = [
     'document_upload' => 'document_upload/',
     'banner_upload' => '/uploads/banner_upload/',
     'import_path' => 'import/',
+    'feedback_upload' => '/uploads/feedback_upload/',
 ];
 /* Application Server wise custom param file changes - asmita - 15/06/2023 */
 
