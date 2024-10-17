@@ -44,7 +44,7 @@ $eipl_params = [
     'data_exchange_pw' => 'P@1234',
     'bsVersion' => '5.x',
     'document_upload' => 'document_upload/',
-    'banner_upload' => 'uploads/banner_upload/',
+    'banner_upload' => '/uploads/banner_upload/',
     'import_path' => 'import/',
 ];
 /* Application Server wise custom param file changes - asmita - 15/06/2023 */
