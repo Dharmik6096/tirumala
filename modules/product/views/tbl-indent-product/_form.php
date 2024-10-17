@@ -38,7 +38,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_warehouse'); ?>
     </div>
 
-    <div class="col-sm-2 qty-validate">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'qty')->textInput() ?>
     </div>
 

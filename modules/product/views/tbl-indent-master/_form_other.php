@@ -66,7 +66,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 reset_field">
             <?= Yii::$app->dropdown->indent_product($model, $form, 'tblindentmaster-union_code,tblindentmaster-indent_type', 'product_code', Yii::t('app', 'Product')); ?>
         </div>
-        <div class="col-sm-1 reset_field qty-validate">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($model, 'qty')->textInput() ?>
         </div>
         <div class="col-sm-1 reset_field">
