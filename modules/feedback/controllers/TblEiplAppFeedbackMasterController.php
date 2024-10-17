@@ -107,7 +107,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
     }
 
     public function actionAttachmentFile() {
-        $path = Yii::$app->basePath . '/web/uploads/feedback_upload/';
+        $path = Yii::$app->basePath . Yii::$app->params['feedback_upload'];
         if (!is_dir($path)) {
             mkdir($path);
             chmod($path, 0777);
