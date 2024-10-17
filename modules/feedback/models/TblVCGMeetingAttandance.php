@@ -72,6 +72,7 @@ class TblVCGMeetingAttandance extends ChildModel {
     }
 
     public function getAttachmentCode() {
+        $this->VCG_M_attandance_id = (string) $this->VCG_M_attandance_id;
         return $this->hasOne(TblAttachment::className(), ['module_code' => 'VCG_M_attandance_id']);
     }
 

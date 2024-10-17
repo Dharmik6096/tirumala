@@ -114,9 +114,8 @@ class CargilljobController extends \yii\console\Controller {
             'request_header' => !empty($header) ? json_encode($header) : '',
             'request_url' => $this->url,
             'end_point' => $this->end_point,
-        ];        
-        $this->response->logData = $logData;
-        $this->response->saveRequestResponseLog($requestJson, $response, $requestTimestamp, $responseTimestamp);
+        ];
+        $this->response->saveRequestResponseLog($requestJson, $response, $requestTimestamp, $responseTimestamp, $logData);
     }
 }
 ?>
