@@ -442,6 +442,16 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VendorBillElanad';
         return $this->actionIndex();
     }
+    
+    public function actionMppSurvey() {
+        $this->report = 'MppSurvey';
+        return $this->actionIndex();
+    }
+    
+    public function actionVcgMeeting() {
+        $this->report = 'VcgMeeting';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1055,6 +1065,18 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VendorBillElanad',
                 'title' => '633 - Member and Vendor Milk Bill',
                 'tcpdf' => true,
+            ],
+            'MppSurvey' => [
+                'param' => 'p_mpp_survey_id,p_lang_code,locale,digit_config',
+                'path' => 'MPPSurveyForm',
+                'scenario' => 'MppSurvey',
+                'title' => 'MPP Survey',
+            ],
+            'VcgMeeting' => [
+                'param' => 'p_VCG_M_Id,p_lang_code,locale,digit_config',
+                'path' => 'VCGMeeting',
+                'scenario' => 'VcgMeeting',
+                'title' => 'VCG Meeting',
             ],
         ];
         return $label[$l];
