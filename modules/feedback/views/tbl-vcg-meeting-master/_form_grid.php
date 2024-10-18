@@ -6,6 +6,7 @@
 
 use kartik\grid\GridView;
 use yii\helpers\Html;
+use app\modules\usermanagement\components\GhostHtml;
 ?>
 
 <?php
@@ -71,6 +72,10 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
+        'report' => function ($url, $model) {
+                $options = ['title' => Yii::t('app', 'View Report'), 'target' => '_blank'];
+                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/vcg-meeting', 'code' => $model->VCG_M_Id], $options);
+        },
     ]
 ];
 ?>
