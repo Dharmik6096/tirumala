@@ -38,7 +38,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'is_warehouse', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
 
-    <div class="col-sm-2 qty-validate">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'qty')->textInput() ?>
     </div>
 
