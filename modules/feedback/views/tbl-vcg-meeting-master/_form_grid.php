@@ -74,7 +74,7 @@ $grid_option = [
         'view' => true,
         'report' => function ($url, $model) {
                 $options = ['title' => Yii::t('app', 'View Report'), 'target' => '_blank'];
-                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/vcg-meeting', 'code' => $model->VCG_M_Id], $options);
+                return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/jasperreports/default/vcg-meeting', 'code' => $model->VCG_M_Id], $options);
         },
     ]
 ];
