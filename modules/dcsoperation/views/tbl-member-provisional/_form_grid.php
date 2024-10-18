@@ -209,7 +209,7 @@ $grid_option = [
                 $disable = (strtolower($model->provisional_status) == 'approve') ? '' : 'disabled';
                 $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable, 'target' => '_blank'];
                 // return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register'], $options);
-                return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/jasperreports/default/provisional-member-register', 'provisional_member_code' => $model->provisional_member_code], $options);
+                return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/jasperreports/default/provisional-member-register', 'code' => $model->provisional_member_code], $options);
             }
         },
         'repush' => function ($url, $model) use ($gridId) {

@@ -328,9 +328,9 @@ $defaultToggle = true;
                                         </div>
                                         <?php
                                     }
-                                    if (in_array($value, array('p_provisional_member_code'))) {
-                                        if (Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['provisional_member_code'])) {
-                                            $model->{$value} = Yii::$app->request->queryParams['provisional_member_code'];
+                                    if (in_array($value, array('p_provisional_member_code', 'p_mpp_survey_id', 'p_VCG_M_Id'))) {
+                                        if (Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['code'])) {
+                                            $model->{$value} = Yii::$app->request->queryParams['code'];
                                         }
                                         echo Html::activeHiddenInput($model, $value);
                                     }

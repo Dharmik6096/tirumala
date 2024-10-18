@@ -66,14 +66,14 @@ $form = ActiveForm::begin([
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'rejected_qty_change\'>' . $form->field($model, '[' . $index . ']rejected_qty')->textInput(['value' => $model->rejected_qty, 'class' => 'form-control number-validate-js',])->label(FALSE) . '</span>';
+                return '<span class=\'rejected_qty_change\'>' . $form->field($model, '[' . $index . ']rejected_qty')->textInput(['value' => $model->rejected_qty, 'class' => 'form-control number-validate-js number-validate',])->label(FALSE) . '</span>';
             },
         ],
         ['attribute' => 'missing_qty',
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'missing_qty_change\'>' . $form->field($model, '[' . $index . ']missing_qty')->textInput(['value' => $model->missing_qty, 'class' => 'form-control number-validate-js'])->label(FALSE) . '</span>';
+                return '<span class=\'missing_qty_change\'>' . $form->field($model, '[' . $index . ']missing_qty')->textInput(['value' => $model->missing_qty, 'class' => 'form-control number-validate-js number-validate'])->label(FALSE) . '</span>';
             },
         ],
         ['attribute' => 'amount',
@@ -101,7 +101,7 @@ $form = ActiveForm::begin([
             },
         ],
     ];
-            
+
 
     $grid_option = [
         'id' => 'product-wise-detail-test',

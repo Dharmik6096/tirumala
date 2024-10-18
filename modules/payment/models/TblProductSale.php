@@ -140,7 +140,7 @@ class TblProductSale extends \app\models\ChildModel {
               return $('#tblproductsale-payment_mode').val() == 1;
               }", 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']], */
             //  [['sap_batch_no'], 'validateSapBatchNo', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['quantity'], 'integer', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            //[['quantity'], 'integer', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['product_sale_code'], 'validateDuplicate', 'on' => ['androidsync']],
             [['deduction_start_date'], 'required', 'on' => ['saleProduct'], 'when' => function () {
                     return $this->payment_mode == 1;
