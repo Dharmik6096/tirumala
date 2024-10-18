@@ -6,6 +6,7 @@
 
 use kartik\grid\GridView;
 use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 
 <?php
@@ -85,6 +86,10 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
+        'report' => function ($url, $model) {
+                $options = ['title' => Yii::t('app', 'View Report'), 'target' => '_blank'];
+                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/mpp-survey', 'mpp_survey_id' => $model->mpp_survey_id], $options);
+        },
     ]
 ];
 ?>

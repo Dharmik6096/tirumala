@@ -331,6 +331,18 @@ $defaultToggle = true;
                                             }
                                             echo Html::activeHiddenInput($model, $value);
                                         }
+                                        if (in_array($value, array('p_mpp_survey_id'))) {
+                                            if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['mpp_survey_id'])){
+                                                $model->{$value} = Yii::$app->request->queryParams['mpp_survey_id'];
+                                            }
+                                            echo Html::activeHiddenInput($model, $value);
+                                        }
+                                        if (in_array($value, array('p_VCG_M_Id'))) {
+                                            if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['VCG_M_Id'])){
+                                                $model->{$value} = Yii::$app->request->queryParams['VCG_M_Id'];
+                                            }
+                                            echo Html::activeHiddenInput($model, $value);
+                                        }
                                         if (in_array($value, array('p_lang_code'))) {
                                             ?>
                                             <div class="col-sm-3">
