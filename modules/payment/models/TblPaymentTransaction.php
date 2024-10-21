@@ -229,16 +229,16 @@ class TblPaymentTransaction extends \app\models\ChildModel {
 //                $memberPaymentModel->dcs_code = $data->dcs_code;
 //                $memberPaymentModel->union_code = $data->union_code;
                 $disburseCount = $memberPaymentModel->find()->select('count(*) as count,payment_status')
-                                ->where(['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
+                                ->where(['union_code' => $data->union_code, 'payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
                                 ->groupBy(['payment_status'])->asArray()->all();
                 $count = count($disburseCount);
-                if ($count == 1 && lower($disburseCount[0]['payment_status']) == 'disburse') {
+                if ($count == 1 && strtolower($disburseCount[0]['payment_status']) == 'disburse') {
                     Yii::$app->db->createCommand()
                             ->update('tbl_member_payment_summary', [
                                 'disburse_amount' => new Expression('final_amount'),
                                 'disburse_date' => $date,
                                 'payment_status' => 'Disburse',
-                                    ], ['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code, new Expression('LOWER(payment_status) = "sent"')])
+                                    ], ['union_code' => $data->union_code, 'payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code,'LOWER(payment_status)'  => "sent"])
                             ->execute();
                 }
             }

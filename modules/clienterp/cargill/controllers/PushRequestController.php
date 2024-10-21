@@ -113,9 +113,8 @@ class PushRequestController extends PushMasterController {
             'status_code' => $statusCode,
             'status_message' => is_array($response->message) ? json_encode($response->message) : $response->message,            
             'request_header' => !empty(Yii::$app->request->getHeaders()) ? json_encode(Yii::$app->request->getHeaders()->toArray()) : '',
-        ];     
-        $response->logData = $logData;
-        $response->saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp);
+        ];
+        $response->saveRequestResponseLog($request, $response, $requestTimestamp, $responseTimestamp, $logData);
     }
 
 

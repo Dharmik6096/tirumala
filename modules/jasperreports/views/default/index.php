@@ -325,9 +325,9 @@ $defaultToggle = true;
                                             </div> 
                                             <?php
                                         }
-                                        if (in_array($value, array('p_provisional_member_code'))) {
-                                            if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['provisional_member_code'])){
-                                                $model->{$value} = Yii::$app->request->queryParams['provisional_member_code'];
+                                        if (in_array($value, array('p_provisional_member_code', 'p_mpp_survey_id', 'p_VCG_M_Id'))) {
+                                            if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['code'])){
+                                                $model->{$value} = Yii::$app->request->queryParams['code'];
                                             }
                                             echo Html::activeHiddenInput($model, $value);
                                         }
@@ -401,7 +401,7 @@ $defaultToggle = true;
                                             $client_code = \Yii::$app->session->get('eiplCode');
                                             $titleTcpdf = 'pdf';
                                             $iconClass = ' fa fa-file-pdf-o ';
-                                            if (strtolower($client_code) == 'mmd') {
+                                            if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
                                                 $titleTcpdf = 'Milktype Wise Bill';
                                                 $iconClass = ' fa fa-file-text-o ';
                                             }

@@ -1433,6 +1433,276 @@ class PDF extends TCPDF {
 //        return;
     }
 
+    public function generatePdfElanad($model) {
+        $parameters = $model;
+        $sp_name = 'rpt_slip_milk_collection_date_shift_wise_elanad';
+        $param = [];
+        $param[] = $parameters['p_union_code'];
+        $param[] = $parameters['p_plant_code'];
+        $param[] = $parameters['p_mcc_code'];
+        $param[] = $parameters['p_bmc_code'];
+        $param[] = $parameters['p_billing_for'];
+        $param[] = $parameters['route_code'];
+        $param[] = $parameters['p_dcsc_code'];
+        $param[] = $parameters['p_payment_cycle_code'];
+        $output = \Yii::$app->general->getSpData($sp_name, $param);
+        $bill_transaction = [];
+        $bill_transaction_am = [];
+        $bill_transaction_pm = [];
+        $memberWiseDates = [];
+        $array = [];
+        foreach ($output as $key => $value) {
+            $array[$value['member_code']] = [];
+            $array[$value['member_code']]['basic'] = [];
+            $bill_detail = [];
+            $bill_detail['payment_cycle'] = $value['payment_cycle'];
+            $bill_detail['member_code'] = $value['member_code'];
+            $bill_detail['member_name'] = $value['member_name'];
+            $bill_detail['periods'] = $value['periods'];
+            $bill_detail['bmc_name'] = $value['bmc_name'] . '(' . $value['bmc_code'] . ')';
+            $bill_detail['dcs_name'] = $value['dcs_name'] . '(' . $value['ref_code'] . ')';
+            $bill_detail['bmc_code'] = $value['bmc_code'];
+            $bill_detail['ref_code'] = $value['ref_code'];
+            $bill_detail['route'] = $value['route_name'];
+
+            if (empty($main[$value['member_code']]['basic'])) {
+                array_push($array[$value['member_code']]['basic'], $bill_detail);
+            } else {
+                foreach ($array[$value['member_code']]['basic'] as $key => $master) {
+                    if ($master['payment_cycle'] != $bill_detail['payment_cycle']) {
+                        array_push($array[$value['member_code']]['basic'], $bill_detail);
+                    }
+                }
+            }
+            $bill_transaction['collection_date'] = $value['collection_date'];
+            $bill_transaction['bm_qty'] = $value['bm_qty'];
+            $bill_transaction['bm_avgFAT'] = $value['bm_avgFAT'];
+            $bill_transaction['bm_avgSNF'] = $value['bm_avgSNF'];
+            $bill_transaction['rate'] = $value['rate'];
+            $bill_transaction['bm_amount'] = $value['bm_amount'];
+            $bill_transaction['shift'] = $value['shift'];
+            $bill_transaction['member_code'] = $value['member_code'];
+            $bill_transaction['type'] = $value['type'];
+            $bill_transaction['total_addition'] = $value['total_addition'];
+            $bill_transaction['total_deduction'] = $value['total_deduction'];
+            $bill_transaction['final_pay'] = $value['final_pay'];
+            $memberCode = $value['member_code'];
+            $memberDate = $value['collection_date'];
+            if (empty($memberWiseDates[$memberCode])) {
+                $memberWiseDates[$memberCode] = [];
+            }
+            $memberWiseDates[$memberCode][$memberDate] = $memberDate;
+            if ($value['shift'] == 'AM') {
+                if (empty($bill_transaction_am[$memberCode])) {
+                    $bill_transaction_am[$memberCode] = [];
+                }
+                $bill_transaction_am[$memberCode][$memberDate] = $bill_transaction;
+            }
+            if ($value['shift'] == 'PM') {
+                if (empty($bill_transaction_pm[$memberCode])) {
+                    $bill_transaction_pm[$memberCode] = [];
+                }
+                $bill_transaction_pm[$memberCode][$memberDate] = $bill_transaction;
+            }
+        }
+        foreach ($array as $key => $value) {
+            $member_code = $key;
+            if (!empty($memberWiseDates[$member_code])) {
+                $bill_transaction = [];
+                $bill_transaction['collection_date'] = '';
+                $bill_transaction['bm_qty'] = 0;
+                $bill_transaction['bm_avgFAT'] = 0;
+                $bill_transaction['bm_avgSNF'] = 0;
+                $bill_transaction['rate'] = 0;
+                $bill_transaction['bm_amount'] = 0;
+                $bill_transaction['shift'] = 0;
+                $bill_transaction['member_code'] = 0;
+                $bill_transaction['type'] = 0;
+                $bill_transaction['total_addition'] = 0;
+                $bill_transaction['total_deduction'] = 0;
+                $bill_transaction['final_pay'] = 0;
+                foreach ($memberWiseDates[$member_code] as $keyDate => $valueDate) {
+                    $bill_transaction['collection_date'] = $keyDate;
+                    $array[$member_code]['details'][$keyDate]['am'] = [];
+                    $array[$member_code]['details'][$keyDate]['pm'] = [];
+                    if (!empty($bill_transaction_am[$member_code][$keyDate])) {
+                        array_push($array[$member_code]['details'][$keyDate]['am'], $bill_transaction_am[$member_code][$keyDate]);
+                    } else {
+                        array_push($array[$member_code]['details'][$keyDate]['am'], $bill_transaction);
+                    }
+                    if (!empty($bill_transaction_pm[$member_code][$keyDate])) {
+                        array_push($array[$member_code]['details'][$keyDate]['pm'], $bill_transaction_pm[$member_code][$keyDate]);
+                    } else {
+                        array_push($array[$member_code]['details'][$keyDate]['pm'], $bill_transaction);
+                    }
+                }
+            }
+        }
+
+        if (!empty($array)) {
+            $i = 1;
+            $path = Yii::$app->basePath . '/web/pdf_report_log/';
+            if (Yii::$app->general->checkDirectory($path)) {
+                $file = $path . 'Shift_Wise_Bill_' . date('YmdHis') . ".txt";
+
+                $txt = fopen($file, "w") or die("Unable to open file!");
+                foreach ($array as $key => $value) {
+                    $textContent = '';
+                    $periods = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['periods'] : '');
+                    $textContent .= str_pad('', 74, ' ', STR_PAD_LEFT);
+                    $textContent .= $periods;
+                    $textContent .= "\n";
+                    $textContent .= str_pad('', 84, ' ', STR_PAD_LEFT);
+                    $textContent .= $i++;
+                    $textContent .= "\n";
+
+                    $dcsRefCode = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ref_code'] : '');
+                    $bmcCode = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bmc_code'] : '');
+                    $route = (!empty($value['basic']) && !empty($value['basic'][0]) ? substr($value['basic'][0]['route'], 0, 16) : '');
+                    $textContent .= str_pad('', 5, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($dcsRefCode, 15, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad('', 5, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($bmcCode, 20, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad('', 8, ' ', STR_PAD_RIGHT);
+                    $textContent .= str_pad($route, 18, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+                    $textContent .= date('d.m.Y');
+                    $textContent .= "\n";
+                    $textContent .= "\n";
+                    $textContent .= "\n";
+                    $total_qty_am = 0;
+                    $total_qty_pm = 0;
+                    $total_bm_amount_am = 0;
+                    $total_bm_amount_pm = 0;
+                    $total_amount = 0;
+                    $total_rate_am = 0;
+                    $total_rate_pm = 0;
+                    $total_FAT_am = 0;
+                    $total_FAT_pm = 0;
+                    $total_SNF_am = 0;
+                    $total_SNF_pm = 0;
+                    $total_addition = 0;
+                    $total_deduction = 0;
+                    $final_pay = 0;
+                    $member_type = '';
+                    $mDevideCount = 0;
+                    $eDevideCount = 0;
+                    foreach ($value['details'] as $tbl_key => $tbl_value) {        
+                        $collDate = (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['collection_date'] : ((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['collection_date'] : '')));
+                        // $textContent .= $collDate;
+                        $textContent .= str_pad($collDate, 4, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_qty']) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : ''), 8, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : ''), 8.5, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['rate']) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_amount']) ? (float) $tbl_value['am'][0]['bm_amount'] : ''), 10, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_qty']) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : ''), 10, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : ''), 8, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['rate']) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                        $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_amount']) ? (float) $tbl_value['pm'][0]['bm_amount'] : ''), 10, ' ', STR_PAD_LEFT);
+                        $textContent .= "\n";
+                        $total_qty_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_qty'] != '-' ? $tbl_value['am'][0]['bm_qty'] : 0) + $total_qty_am;
+                        $total_qty_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_qty'] != '-' ? $tbl_value['pm'][0]['bm_qty'] : 0) + $total_qty_pm;
+
+                        $total_rate_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['rate'] != '-' ? $tbl_value['am'][0]['rate'] : 0) + $total_rate_am;
+                        $total_rate_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['rate'] != '-' ? $tbl_value['pm'][0]['rate'] : 0) + $total_rate_pm;
+
+                        $total_FAT_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_avgFAT'] != '-' ? $tbl_value['am'][0]['bm_avgFAT'] : 0) + $total_FAT_am;
+                        $total_FAT_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_avgFAT'] != '-' ? $tbl_value['pm'][0]['bm_avgFAT'] : 0) + $total_FAT_pm;
+
+                        $total_SNF_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_avgSNF'] != '-' ? $tbl_value['am'][0]['bm_avgSNF'] : 0) + $total_SNF_am;
+                        $total_SNF_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_avgSNF'] != '-' ? $tbl_value['pm'][0]['bm_avgSNF'] : 0) + $total_SNF_pm;
+
+                        $total_bm_amount_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_amount'] != '-' ? $tbl_value['am'][0]['bm_amount'] : 0) + $total_bm_amount_am;
+                        $total_bm_amount_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_amount'] != '-' ? $tbl_value['pm'][0]['bm_amount'] : 0) + $total_bm_amount_pm;
+                        $total_amount = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_amount'] != '-' ? $tbl_value['am'][0]['bm_amount'] : 0) + (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0] && $tbl_value['pm'][0]['bm_amount'] != '-') ? $tbl_value['pm'][0]['bm_amount'] : 0) + $total_amount;
+
+                        if (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['total_addition'] != '-') {
+                            $total_addition = $tbl_value['pm'][0]['total_addition'];
+                        } else if (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['total_addition'] != '-') {
+                            $total_addition = $tbl_value['am'][0]['total_addition'];
+                        }
+
+                        if (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['total_deduction'] != '-') {
+                            $total_deduction = $tbl_value['pm'][0]['total_deduction'];
+                        } else if (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['total_deduction'] != '-') {
+                            $total_deduction = $tbl_value['am'][0]['total_deduction'];
+                        }
+
+                        if (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['final_pay'] != '-') {
+                            $final_pay = $tbl_value['pm'][0]['final_pay'];
+                        } else if (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['final_pay'] != '-') {
+                            $final_pay = $tbl_value['am'][0]['final_pay'];
+                        }
+                        $member_type = !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['type'] : 'Member';
+
+                        if ((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_avgFAT'] != '-') || !empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_avgSNF'] != '-') {
+                            $mDevideCount++;
+                        }
+                        if ((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_avgFAT'] != '-') || !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_avgSNF'] != '-') {
+                            $eDevideCount++;
+                        }
+                    }
+                    for ($j = 0; $j <= 8 - count($value['details']); $j++) {
+                        $textContent .= str_pad('', 96, ' ', STR_PAD_LEFT);
+                        $textContent .= "\n";
+                    }
+                    $textContent .= str_pad('', 6, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($total_qty_am, 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($mDevideCount) ? number_format(($total_FAT_am / $mDevideCount), 2) : 0), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($mDevideCount) ? number_format(($total_SNF_am / $mDevideCount), 2) : 0), 8.5, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($total_bm_amount_am, 10, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($total_qty_pm, 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_FAT_pm / $eDevideCount), 2) : 0), 10, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_SNF_pm / $eDevideCount), 2) : 0), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($total_bm_amount_pm, 10, ' ', STR_PAD_LEFT);
+                    $textContent .= "\n";
+
+                    $bmAmt = !empty($total_bm_amount_pm) ? $total_bm_amount_pm : 0;
+                    $bmAmtP = !empty($total_bm_amount_am) ? $total_bm_amount_am : 0;
+                    $totalQtyP = !empty($total_qty_pm) ? $total_qty_pm : 0;
+                    $totalQtyA = !empty($total_qty_am) ? $total_qty_am : 0;
+                    $totalQty = $totalQtyP + $totalQtyA;
+                    $totalAmt = $bmAmt + $bmAmtP;
+                    $final_payable = $totalAmt + $total_addition - $total_deduction;
+                    $RTPL = number_format($final_payable / $totalQty,2);
+
+                    $textContent .= str_pad('', 82.5, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad(number_format($totalQty,2), 14, ' ', STR_PAD_LEFT);
+                    $textContent .= "\n";;
+                    $textContent .= str_pad('', 56, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($total_deduction, 13.5, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($RTPL, 14, ' ', STR_PAD_LEFT);
+                    $textContent .= "\n";
+                    $textContent .= str_pad('', 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad(number_format($totalAmt, 2), 34, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad('', 12, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad(number_format($total_addition, 2), 14.5, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad(number_format($final_payable, 2), 14, ' ', STR_PAD_LEFT);
+                    $textContent .= "\n";
+                    $textContent .= "\n";
+                    $textContent .= "\n";
+                    fwrite($txt, $textContent);
+                }
+                fclose($txt);
+                header('Content-Description: File Transfer');
+                header('Content-Disposition: attachment; filename=' . basename($file));
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . filesize($file));
+                header("Content-Type: text/plain");
+                readfile($file);
+                unlink($file);
+                die;
+            }
+        }
+    }
 }
 
 ?>

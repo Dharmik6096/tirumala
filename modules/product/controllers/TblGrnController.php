@@ -307,6 +307,7 @@ class TblGrnController extends \app\controllers\ChildController {
                 $txModel->setAttributes($txn);
                 $txModel->union_code = $this->model->union_code;
                 $txModel->grn_code = $this->model->grn_code;
+                $txModel->is_stock_posted = $this->model->is_stock_posted;
                 $txModel->manuf_date = !empty($txModel->manuf_date) ? date('Y-m-d', strtotime($txModel->manuf_date)) : date('Y-m-d');
                 $txModel->gross_amount = $txn['amount'];
                 $txModel->basic_amount = $txn['amount'];
@@ -453,6 +454,22 @@ class TblGrnController extends \app\controllers\ChildController {
         } else {
             return Json::encode(['status' => 'error']);
         }
+    }
+
+    public function actionRfcRePush($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblGrnHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->data_post_status = 0;
+        $record = [];
+        if ($this->model->save(true,false)) {
+            $historyModel->save();
+            $record = ['status' => 'success', 'msg' => 'GRN re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push GRN.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

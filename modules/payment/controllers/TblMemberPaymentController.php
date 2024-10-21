@@ -290,21 +290,28 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_id = [];
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = $getParam;
+            $auto_adjust_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$memberPaymentModel->union_code]['auto_adjust_stop_payment_member']) ? Yii::$app->session->get('unionConfig')[$memberPaymentModel->union_code]['auto_adjust_stop_payment_member'] : 0;
             $is_validate = true;
             $is_bank_integrated = Yii::$app->general->getUnionConfiguration($memberPaymentModel->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
             if ($is_bank_integrated && $processFlag == 'Lock') {
                 $memberPaymentModel->scenario = 'finalize_payment';
-                if(!$memberPaymentModel->validate()){
+                if (!$memberPaymentModel->validate()) {
                     $is_validate = false;
                 }
             }
-            if($is_validate){
+            if ($is_validate) {
                 $memberPaymentModelData = $memberPaymentModel->getRecords(false)->all();
                 foreach ($memberPaymentModelData as $memberPayment) {
                     $historyModel = new TblMemberPaymentAliasHistory();
                     Yii::$app->operation->history($memberPayment, $historyModel, UPDATE);
                     $dcsCode = $memberPayment->dcs_code;
-                    $memberPayment->payment_status = in_array($dcsCode, $stop_payment_dcs) ? 'Process' : $processFlag;
+                    $memberPayment->payment_status = ($auto_adjust_stop_payment_member != '1' && in_array($dcsCode, $stop_payment_dcs)) ? 'Process' : $processFlag;
+                    if ($auto_adjust_stop_payment_member == '1' && $processFlag == 'Lock' && in_array($dcsCode, $stop_payment_dcs)) {
+                        $memberPayment->hold_amount = !empty($memberPayment->hold_amount) ? ((float) $memberPayment->hold_amount + (float) $memberPayment->final_amount) : $memberPayment->final_amount;
+                        $memberPayment->final_amount = 0;
+                        $memberPayment->adjust_remark .= !empty($stop_payment_reason[$dcsCode]['stop_payment_type']) ? $stop_payment_reason[$dcsCode]['stop_payment_type'] : 'dispute';
+                        $memberPayment->adjust_remark .= ' Auto adjust with 0.';
+                    }
                     $save_model[] = $historyModel;
                     $save_model[] = $memberPayment;
                     $holdAmount = !empty($memberPayment->hold_amount) ? $memberPayment->hold_amount : 0;
@@ -322,7 +329,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $historyModel = new TblMemberPaymentSummaryAliasHistory();
                     Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
                     $dcs = $summaryData->dcs_code;
-                    $summaryData->payment_status = in_array($dcs, $stop_payment_dcs) ? 'Process' : $processFlag;
+                    $summaryData->payment_status = ($auto_adjust_stop_payment_member != '1' && in_array($dcs, $stop_payment_dcs)) ? 'Process' : $processFlag;
                     if (!empty($adjustmentSummary[$dcs])) {
                         $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
                         $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
@@ -339,7 +346,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         if (!empty($old_stop_all)) {
                             foreach ($old_stop_all as $old_stop) {
                                 $historyModel = new TblPaymentStopHistory();
-                                if (in_array($dcs, $stop_payment_dcs)) {
+                                if ($auto_adjust_stop_payment_member != '1' && in_array($dcs, $stop_payment_dcs)) {
                                     Yii::$app->operation->history($old_stop, $historyModel, UPDATE);
                                     $old_stop->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
                                     $save_model[] = $old_stop;
@@ -351,7 +358,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                 $save_model[] = $historyModel;
                             }
                         } else {
-                            if (in_array($dcs, $stop_payment_dcs)) {
+                            if ($auto_adjust_stop_payment_member != '1' && in_array($dcs, $stop_payment_dcs)) {
                                 $stop_pay = new TblPaymentStop();
                                 $stop_pay->attributes = $summaryData->attributes;
                                 $stop_pay->customer_type = 'DCS';
@@ -385,7 +392,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $model = new TblMemberPaymentAlias();
 //            $model->load(Yii::$app->request->get());
             $model->attributes = $getParam;
-            if(!$is_validate){
+            if (!$is_validate) {
                 $model = $memberPaymentModel;
             }
 //            if ($reGenerate == 1) {
@@ -777,7 +784,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $finalP = 0;
         $moduleCodes = [];
         foreach ($d as $p) {
-            if(!in_array($p->mcc_plant_code, $moduleCodes)){
+            if (!in_array($p->mcc_plant_code, $moduleCodes)) {
                 array_push($moduleCodes, $p->mcc_plant_code);
             }
             $pAmt = !empty($p->final_amount) ? $p->final_amount : 0;
@@ -796,16 +803,16 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             if ($is_bank_integrated) {
                 // $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
                 $union_bank = TblUnionBankPayment::find()
-                    ->alias('ubp')
-                    ->select(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
-                    ->innerJoin('tbl_debit_bank_detail as dbd', 'dbd.union_bank_payment_code = ubp.union_bank_payment_code')
-                    ->where(['ubp.union_code' => $model->union_code, 'ubp.is_active' => 1])
-                    ->andWhere(['in', 'dbd.module_code', $moduleCodes])
-                    ->groupBy(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
-                    ->asArray()
-                    ->all();
+                        ->alias('ubp')
+                        ->select(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
+                        ->innerJoin('tbl_debit_bank_detail as dbd', 'dbd.union_bank_payment_code = ubp.union_bank_payment_code')
+                        ->where(['ubp.union_code' => $model->union_code, 'ubp.is_active' => 1])
+                        ->andWhere(['in', 'dbd.module_code', $moduleCodes])
+                        ->groupBy(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
+                        ->asArray()
+                        ->all();
                 $result = array_diff($moduleCodes, array_column($union_bank, 'module_code'));
-                if(!empty($result)){
+                if (!empty($result)) {
                     $union_bank = [];
                 }
             }
@@ -1608,7 +1615,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 }
 
                 //Alias table update
-               if ((($existAmount + $existAliasData->net_payable) - $totalAmount ) >= 0) {
+                if ((($existAmount + $existAliasData->net_payable) - $totalAmount ) >= 0) {
 
                     $aliashistoryModel = new TblMemberPaymentAliasHistory();
                     Yii::$app->operation->history($existAliasData, $aliashistoryModel, 'UPDATE');
@@ -1635,7 +1642,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
                     $instModel = !empty($instModel) ? $instModel : $delete;
                     $union_code = !empty($instModel->union_code) ? $instModel->union_code : $delete->union_code;
-                    
+
                     // head table update
                     $pro_sale_head = TblBillHead::find()->where(['default_bill_head_code' => 6, 'bill_head_for' => 'MEMBER', 'union_code' => $union_code])->one();
                     $headSummary = new TblMemberPaymentHeadSummary();
@@ -1964,4 +1971,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             return Json::encode(['status' => $status, 'message' => $msg]);
         }
     }
+
+    public function actionMemberPaymentImport() {
+        
+    }
+
 }
