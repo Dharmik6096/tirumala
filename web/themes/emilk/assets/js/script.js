@@ -84,7 +84,7 @@ var initDepdropMs;
 
         var specialDecimalKeys = new Array();
         specialDecimalKeys.push(8);
-        $(document).bind("keypress", ".number-validate", function(e) {
+        $(document).on("keypress", ".number-validate", function(e) {
             var keyCode = e.which ? e.which : e.keyCode
             var ret = ((keyCode >= 48 && keyCode <= 57) || (specialDecimalKeys.indexOf(keyCode) != -1) || keyCode == 9 || keyCode == 46);
             return ret;
