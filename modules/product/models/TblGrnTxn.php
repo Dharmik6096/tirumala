@@ -54,8 +54,8 @@ class TblGrnTxn extends \app\models\ChildModel {
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'manuf_date', 'posting_date'], 'safe'],
             [['rejected_qty', 'received_qty', 'missing_qty'], 'default', 'value' => 0],
             [['rejected_qty'], 'number', 'min' => 0],
-            [['received_qty', 'rate', 'tax', 'basic_amount', 'gross_amount'], 'number', 'min' => 1, 'except' => ['batchcreate']],
-            [['received_qty'], 'number', 'min' => 1],
+            [['received_qty', 'rate', 'tax', 'basic_amount', 'gross_amount'], 'number', 'min' => 0, 'except' => ['batchcreate']],
+            [['received_qty'], 'number', 'min' => 0],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
             [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code']],
             [['sap_batch_no'], 'required', 'when' => function ($model) {
