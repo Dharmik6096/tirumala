@@ -89,7 +89,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -1844,7 +1844,7 @@ class SiteController extends Controller {
                 $ignore_tables = ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'];
                 $version_no = 0;
                 $update_ids = array_column($modelData, 'uuid');
-                $model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
+                //$model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
                         $process_record = TRUE;
