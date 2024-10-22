@@ -17,77 +17,75 @@ $this->title = Yii::$app->label->title('view', 'Feedback Master');
         <div class="table-responsive">
             <?php
             $attributes = [
-                    [
+                [
                     'columns' => [
-                            [
-                            'attribute' => 'user_code',
-                            'value' => Yii::$app->general->getforeignkey($model->userCodeById, 'name'),
+                        [
+                            'attribute' => 'eipl_app_feedback_master_code',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
+                        [
+                            'attribute' => 'name',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
                             'attribute' => 'plant_code',
                             'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
-                            'attribute' => 'mcc_plant_code',
-                            'value' => Yii::$app->general->getforeignkey($model->mccCode, 'name'),
+                        [
+                            'attribute' => 'dcs_code',
+                            'value' => (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
+                        [
                             'attribute' => 'bmc_code',
                             'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
-                            'attribute' => 'dcs_code',
-                            'value' => (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                            [
-                            'attribute' => 'member_code',
-                            'value' => strtolower($model->user_type) == 'farmer' ? Yii::$app->general->getforeignkey($model->userCodeById, 'name') : '',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                    ],
-                ],
-                    [
-                    'columns' => [
-                            [
+                        [
                             'attribute' => 'eipl_app_feedback_master_code',
                             'value' => Yii::$app->general->getforeignkey($model->eiplAppFeedbackItemCode, 'feedback_item_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
+                        [
                             'attribute' => 'feedback_message',
                             'valueColOptions' => ['style' => 'width:30%', 'class' => 'text-wrap'],
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'feedback_message_datetime',
-                                'value' => Yii::$app->controls->view_date($model->feedback_message_datetime),
+                            'value' => Yii::$app->controls->view_date($model->feedback_message_datetime),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
+                        [
                             'attribute' => 'user_type',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'feedback_status',
                             'value' => Yii::$app->dropdown->getRecords('feedback_status')['data'][$model->feedback_status],
                             'valueColOptions' => ['style' => 'width:80%'],
@@ -113,12 +111,12 @@ $this->title = Yii::$app->label->title('view', 'Feedback Master');
             ]);
             ?>
         </div>
-        <?=
-        $this->render('message_thread', [
-            'model' => $model,
-            'feedbackMasterTxn' => $feedbackMasterTxn
-        ])
-        ?>
+            <?=
+            $this->render('message_thread', [
+                'model' => $model,
+                'feedbackMasterTxn' => $feedbackMasterTxn
+            ])
+            ?>
     </div>
 </div>
 <?php
