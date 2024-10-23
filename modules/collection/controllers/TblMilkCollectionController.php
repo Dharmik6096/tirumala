@@ -112,7 +112,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     if ($collectionApprovalConfig == 2) {
                         $i = 0;
                         $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE);
+                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                     } else {
                         $modelSave[] = $approvalModel;
                     }
@@ -358,11 +358,11 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         (float) $snf = Yii::$app->request->post('snf');
         $union = Yii::$app->request->post('union_code');
         $org_code = Yii::$app->request->post('bmcCode');
-        
-        $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','MEMBER_COLLECTION');
-        $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','MEMBER_COLLECTION');
-        
-        if($lr1 == '' or $lr2 == '') {
+
+        $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $org_code, 'BMC', 'MEMBER_COLLECTION');
+        $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $org_code, 'BMC', 'MEMBER_COLLECTION');
+
+        if ($lr1 == '' or $lr2 == '') {
             $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
             $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
         }
@@ -428,7 +428,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
                             if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
-                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE);
+                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                                 $i++;
                             } else {
                                 $saveModel[] = $approvalModel;
@@ -567,7 +567,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $ApprovalModel->action_perform = 'DELETE';
                             if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
-                                $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE);
+                                $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                                 $i++;
                             } else {
                                 $saveModel[] = $ApprovalModel;

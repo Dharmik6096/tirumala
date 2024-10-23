@@ -1963,6 +1963,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'PENDING'), 1 => Yii::t('app', 'PUSHED TO SAP'), 2 => Yii::t('app', 'SUCCESS '), 3 => Yii::t('app', 'ERROR'), 4 => Yii::t('app', 'RBP')],
             ],
+            'table_name' => [
+                'name' => 'table_name',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['tbl_milk_collection' => Yii::t('app', 'Milk Collection'), 'tbl_bmc_collection' => Yii::t('app', 'BMC Collection'), 'tbl_weight_collection' => Yii::t('app', 'Weight Collection'), 'tbl_quality_collection' => Yii::t('app', 'Quality Collection')],
+            ],
+            'entry_type' => [
+                'name' => 'entry_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['backdate' => Yii::t('app', 'Back Date'), 'realtime' => Yii::t('app', 'Real Time')],
+            ],
+            'manual_approve_status' => [
+                'name' => 'approval_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+            ],
         ];
         return $records[$l];
     }

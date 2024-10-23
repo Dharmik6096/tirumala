@@ -138,6 +138,7 @@ echo GhostMenu::widget([
                             ['label' => 'Milk Dispatch Approval', 'url' => ['/collection/tbl-collection-data-alias/milk-dispatch-approve'], 'active' => ($cntrl == 'tbl-collection-data-alias' && $action == 'milk-dispatch-approve')],
                     ]
                 ],
+                    ['label' => Yii::t('app', 'Allow Manual Collection Range'), 'url' => ['/collection/tbl-allow-manual-collection-range/index'], 'active' => ($cntrl == 'tbl-allow-manual-collection-range')],
                     ['label' => Yii::t('app', 'Milk Collection'), 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
                     ['label' => Yii::t('app', 'Manual Collection Approval'), 'url' => ['/collection/tbl-collection-approval/index'], 'active' => ($cntrl == 'tbl-collection-approval')],
                     ['label' => Yii::t('app', 'Milk Dispatch'), 'url' => ['/collection/tbl-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-milk-dispatch')],

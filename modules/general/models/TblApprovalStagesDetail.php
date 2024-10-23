@@ -113,7 +113,7 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
 
     public function setApprovalData($union_code, $process, $processCode, &$modelSave, &$approval_stages, $create_level = FALSE) {
         $approval_stages = $this->approvalStages($union_code, $process);
-        $processCode = (string)$processCode;
+        $processCode = (string) $processCode;
         $existDataApproval = TblProcessApproval::find()->where(['process_code' => $processCode, 'process_name' => $process])->count();
         if ($existDataApproval == 0 || $create_level) {
             $i = 1;
@@ -146,7 +146,7 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
         return $levels;
     }
 
-    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag = FALSE) {
+    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag = FALSE, $parent_key = '') {
         $approvalStage = $this->approvalStages($unionCode, $processName);
         $approvalModel->approval_status = 'Pending';
         $saveModel[] = $approvalModel;
@@ -162,7 +162,7 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
                 unset($stage_model->created_by);
                 $saveModel[] = $stage_model;
                 if ($processFlag) {
-                    $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => 'collection_data_alias_code', 'parent_index' => $parent_index];
+                    $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => $parent_key, 'parent_index' => $parent_index];
                 }
             }
         }
