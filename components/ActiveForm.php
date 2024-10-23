@@ -2,6 +2,6 @@
 
 namespace app\components;
 
-class ActiveForm extends \yii\widgets\ActiveForm {
+class ActiveForm extends \yii\bootstrap\ActiveForm {
 
 }
