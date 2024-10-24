@@ -135,12 +135,12 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
         'view' => true,
-        'deactive' => function ($url, $model) {
-            $name = $model->member_name;
-            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/dcsoperation/tbl-member/deactivate-user'], $options);
-        },
+//        'deactive' => function ($url, $model) {
+//            $name = $model->member_name;
+//            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
+//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+//            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/dcsoperation/tbl-member/deactivate-user'], $options);
+//        },
         //'delete' => ['option' => 'member_name,member_code,tbl-member/delete'],
         'block-unblock' => function ($url, $model) {
             $name = $model->member_name;
