@@ -27,8 +27,11 @@ if (!empty($eipl_code)) {
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <?php if (false && (Url::home() . 'site' == Yii::$app->request->url || Url::home() . 'site/index' == Yii::$app->request->url)) { ?>
                 <span class="pull-right dashboard_set_icon"><a data-toggle="collapse" href="#collapse1"><i class="fa fa-cog faa-spin animated faa-slow"></i></a></span>
-                    <?php } ?>
-                    <?php require_once('tpl_navigation.php'); ?>
+                    <?php }
+            if(!Yii::$app->user->isGuest){
+                require_once('tpl_navigation.php'); 
+            }
+            ?>
         </div>
     </div>
 </div>
