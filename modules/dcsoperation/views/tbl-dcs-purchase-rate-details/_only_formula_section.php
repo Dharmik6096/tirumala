@@ -151,7 +151,7 @@ $script = "
             if (obj1.status == 'success')
             {
                 $.each( obj1.data, function( key, value ) {
-                    $('select#tbldcspurchaseratebased-0-formula').append('<option value='+value+'>'+value+'</option>');
+                    $('select#tbldcspurchaseratebased-0-formula').append('<option value=\''+value+'\'>'+value+'</option>');
                     $('#tbldcspurchaseratebased-0-formula_code').val(key);
                 });
             }

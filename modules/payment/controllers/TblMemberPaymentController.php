@@ -290,6 +290,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_id = [];
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = $getParam;
+            $auto_adjust_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$memberPaymentModel->union_code]['auto_adjust_stop_payment_member']) ? Yii::$app->session->get('unionConfig')[$memberPaymentModel->union_code]['auto_adjust_stop_payment_member'] : 0;
             $is_validate = true;
             $is_bank_integrated = Yii::$app->general->getUnionConfiguration($memberPaymentModel->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
             if ($is_bank_integrated && $processFlag == 'Lock') {
@@ -304,7 +305,13 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $historyModel = new TblMemberPaymentAliasHistory();
                     Yii::$app->operation->history($memberPayment, $historyModel, UPDATE);
                     $dcsCode = $memberPayment->dcs_code;
-                    $memberPayment->payment_status = in_array($dcsCode, $stop_payment_dcs) ? 'Process' : $processFlag;
+                    $memberPayment->payment_status = ($auto_adjust_stop_payment_member != '1' && in_array($dcsCode, $stop_payment_dcs)) ? 'Process' : $processFlag;
+                    if ($auto_adjust_stop_payment_member == '1' && $processFlag == 'Lock' && in_array($dcsCode, $stop_payment_dcs)) {
+                        $memberPayment->hold_amount = !empty($memberPayment->hold_amount) ? ((float) $memberPayment->hold_amount + (float) $memberPayment->final_amount) : $memberPayment->final_amount;
+                        $memberPayment->final_amount = 0;
+                        $memberPayment->adjust_remark .= !empty($stop_payment_reason[$dcsCode]['stop_payment_type']) ? $stop_payment_reason[$dcsCode]['stop_payment_type'] : 'dispute';
+                        $memberPayment->adjust_remark .= ' Auto adjust with 0.';
+                    }
                     $save_model[] = $historyModel;
                     $save_model[] = $memberPayment;
                     $holdAmount = !empty($memberPayment->hold_amount) ? $memberPayment->hold_amount : 0;
@@ -322,7 +329,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $historyModel = new TblMemberPaymentSummaryAliasHistory();
                     Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
                     $dcs = $summaryData->dcs_code;
-                    $summaryData->payment_status = in_array($dcs, $stop_payment_dcs) ? 'Process' : $processFlag;
+                    $summaryData->payment_status = ($auto_adjust_stop_payment_member != '1' && in_array($dcs, $stop_payment_dcs)) ? 'Process' : $processFlag;
                     if (!empty($adjustmentSummary[$dcs])) {
                         $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
                         $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
@@ -339,7 +346,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         if (!empty($old_stop_all)) {
                             foreach ($old_stop_all as $old_stop) {
                                 $historyModel = new TblPaymentStopHistory();
-                                if (in_array($dcs, $stop_payment_dcs)) {
+                                if ($auto_adjust_stop_payment_member != '1' && in_array($dcs, $stop_payment_dcs)) {
                                     Yii::$app->operation->history($old_stop, $historyModel, UPDATE);
                                     $old_stop->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
                                     $save_model[] = $old_stop;
@@ -351,7 +358,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                 $save_model[] = $historyModel;
                             }
                         } else {
-                            if (in_array($dcs, $stop_payment_dcs)) {
+                            if ($auto_adjust_stop_payment_member != '1' && in_array($dcs, $stop_payment_dcs)) {
                                 $stop_pay = new TblPaymentStop();
                                 $stop_pay->attributes = $summaryData->attributes;
                                 $stop_pay->customer_type = 'DCS';
