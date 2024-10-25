@@ -980,5 +980,34 @@ class TblMemberProvisional extends ChildModel {
             }
         }
     }
+    
+    public function getUpdatedExCode() {
+        $ex_code = $this->ex_member_code;
+
+        $member = TblMember::find()
+                ->where(['dcs_code' => $this->dcs_code, 'ex_member_code' => $ex_code])
+                ->asArray()
+                ->one();
+
+        if (!empty($member)) {
+            $ex_code = TblMember::find()
+                    ->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code AS int)), 0) + 1'])
+                    ->where(['dcs_code' => $this->dcs_code])
+                    ->scalar();
+
+            $member = TblMemberProvisional::find()
+                    ->where(['dcs_code' => $this->dcs_code, 'ex_member_code' => $ex_code])
+                    ->asArray()
+                    ->one();
+
+            if (!empty($member)) {
+                $ex_code = TblMemberProvisional::find()
+                        ->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code AS int)), 0) + 1'])
+                        ->where(['dcs_code' => $this->dcs_code])
+                        ->scalar();
+            }
+        }
+        return $ex_code;
+    }
 
 }

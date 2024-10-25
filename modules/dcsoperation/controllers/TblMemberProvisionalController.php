@@ -166,6 +166,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $validate = 1;
         $this->setModel();
         $this->model->scenario = 'update_provisional_member';
+        $dcs_code = $this->model->dcs_code;
         $tblMember = new TblMember();
         if (empty($this->model->ex_member_code)) {
             $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code, $this->model);
@@ -177,6 +178,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $historyModel = new TblMemberProvisionalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
+            if ($dcs_code != $this->model->dcs_code) {
+                $ex_code = $this->model->getUpdatedExCode();
+                $this->model->ex_member_code = $ex_code;
+            }
             $this->model->member_code = $this->model->getCode();
             $provisionalStatus = ['Register', 'Pending', 'Inprogress'];
             if ($_POST['warning'] == 0)

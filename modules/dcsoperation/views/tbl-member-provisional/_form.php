@@ -66,8 +66,9 @@ if ($model->isNewRecord) {
             <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmemberprovisional-plant_code,tblmemberprovisional-mcc_plant_code,tblmemberprovisional-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
         </div>
         <div class="col-sm-4">
+            <?php $readonly = ($model->provisional_status == 'Pending') ? false : true; ?>
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmemberprovisional-bmc_code', 'dcs_code', true, false, '', $readonly); ?>         
-        </div>  
+        </div>
         <!-- <div class="col-sm-4">
         <?php //Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmemberprovisional-union_code', '', 'Society', '', $readonly); ?>
         </div> -->
