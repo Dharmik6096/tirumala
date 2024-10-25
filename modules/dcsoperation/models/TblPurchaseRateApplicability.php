@@ -264,8 +264,8 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 
             $txt = '>START_TIME		= ' . date('d.m.Y H:i:s') . PHP_EOL .
                     '>END_TIME		= ' . date('d.m') . '.2099 23:59:59' . PHP_EOL .
-                    '>CP_NAME		= ' . $dcs->dcs_name . PHP_EOL .
-                    '>CP_ADDRESS		= ' . $dcs->dcs_name . PHP_EOL .
+                    '>CP_NAME		= ' . substr($dcs->dcs_name, 0, 35) . PHP_EOL .
+                    '>CP_ADDRESS		= ' . substr($dcs->dcs_name, 0, 35) . PHP_EOL .
                     '>CP_CODE		= ' . $dcs->ref_code . PHP_EOL .
                     '>FILE_NAME		= ' . $fileName . PHP_EOL .
                     '>RATE_FAT_BELOW_MIN	= 0.0' . PHP_EOL .
