@@ -28,4 +28,24 @@ class ProductSaleLiveController extends RestController {
         return $this->response;
     }
 
+    public function actionAddProductSale() {
+        $data = $this->post_data;
+        $content = $data['content'];
+        $res_data = [];
+        $msg = 'Error while save data.';
+        if (!empty($content['product_sale']) && !empty($content['product_sale_trasaction'])) {
+            $master = $content['product_sale'];
+            $txn = $content['product_sale_trasaction'];
+            $result = Yii::$app->general->getSpData('sp_exchange_eipl32_product_sale_2', [$master['dcs_code'], $master['customer_code'], $txn['product_code'], $txn['quantity'], $txn['rate'], $txn['amount'], $master['payment_mode'], $master['invoice_date'], 'amcs-live', $txn['sap_batch_no'], $master['no_of_installment'], $master['originating_org_code'], $master['originating_org_type'], '24']);
+            if (!empty($result[0]) && !empty($result[0]['return_count'])) {
+                $msg = 'Data saved successfully.';
+            }
+        } else {
+            $msg = 'Empty request received.';
+        }
+        $res_data['msg'] = $msg;
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
 }
