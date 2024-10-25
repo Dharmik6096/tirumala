@@ -80,8 +80,8 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
                 } else {
                     $this->model->is_approved = 1;
                     $this->model->approval_status = 'Approve';
-                    $this->model->approved_at = date('Y-m-d H:i:s');
-                    $this->model->approved_by = Yii::$app->session['UserCode'];
+//                    $this->model->approved_at = date('Y-m-d H:i:s');
+//                    $this->model->approved_by = Yii::$app->session['UserCode'];
                     $master_model[] = $this->model;
                 }
                 if (!empty($auto_key_config)) {

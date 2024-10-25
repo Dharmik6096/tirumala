@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\general\models\TblApprovalStagesDetail;
 
 /**
  * This is the model class for table "tbl_allow_manual_collection_range".
@@ -65,13 +66,13 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'entry_type', 'from_shift', 'to_shift', 'from_date', 'to_date', 'table_name'], 'required', 'on' => ['create']],
-                [['from_date'], 'checkUnique', 'skipOnError' => true, 'on' => ['create']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'entry_type', 'from_shift', 'to_shift', 'from_date', 'to_date', 'table_name'], 'required', 'on' => ['create', 'hosync']],
+                [['from_date'], 'checkUnique', 'skipOnError' => true, 'on' => ['create', 'hosync']],
                 [['dcs_code'], 'required', 'when' => function ($model) {
                     return $model->table_name == 'tbl_milk_collection';
                 }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblallowmanualcollectionrange-table_name').val() == 'tbl_milk_collection'; 
-                    }", 'on' => ['create']
+                    }", 'on' => ['create', 'hosync']
             ],
         ];
     }
@@ -156,6 +157,34 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         }
         if (empty($this->is_weight_manual) && empty($this->is_quality_manual)) {
             $this->addError('is_quality_manual', Yii::t('app/validation', 'Please Check Any One Check Box - Weight Manual OR Quality Manual'));
+        }
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$childModel, &$auto_key_config) {
+        $model->scenario = 'hosync';
+        $model->is_approved = 0;
+        $model->from_date = empty($model->from_date) ? NULL : Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($model->from_shift);
+        $model->to_date = empty($model->to_date) ? NULL : Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($model->to_shift);
+        $model->application_type = 'BMC';
+        if ($model->table_name == 'tbl_milk_collection') {
+            $model->application_type = 'DCS';
+        }
+        $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_for_manual_collection', 'PORTAL');
+        if (in_array($manualCollectionConfig, [1, 2])) {
+            if ($manualCollectionConfig == 2) {
+                $i = 0;
+                $modelStages = new TblApprovalStagesDetail();
+                $modelStages->setProcessWiseApprovalData($model, $model->union_code, 'tbl_allow_manual_collection_range', $childModel, $auto_key_config, $i, true, 'allow_manual_collection_code');
+            } else {
+                $model->approval_status = 'Pending';
+                $childModel[] = $model;
+            }
+        } else {
+            $model->is_approved = 1;
+            $model->approval_status = 'Approve';
+            $childModel[] = $model;
+            //$this->model->approved_at = date('Y-m-d H:i:s');
+            //$this->model->approved_by = Yii::$app->session['UserCode'];
         }
     }
 

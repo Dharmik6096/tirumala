@@ -34,7 +34,7 @@ class RequestMasterController extends MasterController {
                 $sp_param[] = $param_val;
             }
             $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            if(!empty($response)){
+            if (!empty($response)) {
                 $dataToDecrypt = !empty($data['to_decrypt']) ? $data['to_decrypt'] : [];
                 if (!empty($dataToDecrypt)) {
                     for ($i = 0; $i < count($response); $i++) {
@@ -85,6 +85,7 @@ class RequestMasterController extends MasterController {
             $saveModel = true;
             $childModel = [];
             $deleteModel = [];
+            $auto_key_config = [];
             $message = Yii::t('app', 'Successfully Saved!');
             if (isset($transaction_data['operation_type']) && in_array(strtolower($transaction_data['operation_type']), ['update', 'delete'])) {
                 $opType = strtoupper($transaction_data['operation_type']);
@@ -106,7 +107,10 @@ class RequestMasterController extends MasterController {
                 }
                 $saveModel = $opType == 'DELETE' ? false : true;
             }
-            if (isset($moduleDetails['save_child']) && $moduleDetails['save_child']) {
+            if (isset($moduleDetails['multi_auto_increment_key']) && $moduleDetails['multi_auto_increment_key']) {
+                $model->setChildTable($model, $transaction_data, $childModel, $auto_key_config);
+                $saveModel = true;
+            } else if (isset($moduleDetails['save_child']) && $moduleDetails['save_child']) {
                 $model->setChildTable($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
@@ -114,12 +118,16 @@ class RequestMasterController extends MasterController {
                 $model->setChildTableOther($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
-            if ($saveModel) {
+            if ($saveModel && !isset($moduleDetails['multi_auto_increment_key'])) {
                 $master = [];
                 $master[] = $model;
             }
-            $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
+            if (!empty($auto_key_config)) {
+                $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($childModel, ['transactional data', 'create'], $auto_key_config);
+            } else {
+                $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
 //            $transaction = $this->generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
+            }
             if ($transaction == 'customRedirect') {
                 $message = $message;
             } else {

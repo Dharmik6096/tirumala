@@ -765,6 +765,10 @@ class V1 extends \yii\base\Module {
                 'param' => 'organization_type#organization_code',
                 'sp' => 'sp_app_eipl_v1_manual_collection',
             ],
+            'manual-collection' => [
+                'main_table' => 'TblAllowManualCollectionRange',
+                'multi_auto_increment_key' => true
+            ],
         ];
         return $label;
     }
