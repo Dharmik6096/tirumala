@@ -15,6 +15,8 @@ use app\modules\feedback\models\TblVCGMeetingPreviousActionsSearch;
 use app\modules\feedback\models\TblVCGMeetingStatisticsSearch;
 use app\modules\feedback\models\TblVCGMRGUpdateSearch;
 use yii\web\NotFoundHttpException;
+use app\modules\document\models\TblAttachment;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblVcgMeetingMasterController implements the CRUD actions for TblVCGMeetingMaster model.
@@ -69,6 +71,10 @@ class TblVcgMeetingMasterController extends ChildController
         $updateSearchModel = new TblVCGMRGUpdateSearch();
         $updateSearchModel->VCG_M_id = $id;
         $updateDataProvider = $updateSearchModel->search($params);
+        $attachment = new TblAttachment();
+        $dataProviderOther = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_VCG_meeting_master']),
+        ]);
         return $this->render('view', [
             'model' => $this->model,
             'dataProvider' => $dataProvider,
@@ -87,6 +93,8 @@ class TblVcgMeetingMasterController extends ChildController
             'previousSearchModel' => $previousSearchModel,
             'updateDataProvider' => $updateDataProvider,
             'updateSearchModel' => $updateSearchModel,
+            'dataProviderOther' => $dataProviderOther,
+            'attachment' => $attachment,
         ]);
     }
 
