@@ -17,21 +17,6 @@ use app\controllers\ChildController;
  */
 class TblNotificationsController extends ChildController {
     /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Lists all TblNotifications models.
      * @return mixed
      */

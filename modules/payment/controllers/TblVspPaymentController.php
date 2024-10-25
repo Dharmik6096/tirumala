@@ -232,6 +232,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     return ['status' => 'error', 'msg' => $msg];
                 }
             }
+            $auto_adjust_stop_payment_vendor = isset(Yii::$app->session->get('unionConfig')[$postData['union_code']]['auto_adjust_stop_payment_vendor']) ? Yii::$app->session->get('unionConfig')[$postData['union_code']]['auto_adjust_stop_payment_vendor'] : 0;
             $stop_payment_customer = !empty($postData['selection']) ? $postData['selection'] : [];
             $stop_payment_reason = !empty($postData['TblVspPayment']) ? $postData['TblVspPayment'] : [];
             $types_title = !empty($postData['types_title']) ? $postData['types_title'] : '';
@@ -258,9 +259,16 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $data->adjust_remark = $adjust_remark[$key];
                     $data->hold_amount = $hold_amt[$key];
                     $data->final_pay = (float) $data->net_payable + (float) $adjust_amt[$key] - (float) $hold_amt[$key];
-                    $data->status = in_array($data->customer_code, $stop_payment_customer) ? 'processed' : $processFlag;
+                    $data->status = ($auto_adjust_stop_payment_vendor != '1' && in_array($data->customer_code, $stop_payment_customer)) ? 'processed' : $processFlag;
                     if (!empty($oldData) && ($oldData['status'] != $data->status || $oldData['hold_amount'] != $data->hold_amount || $oldData['adjust_amount'] != $data->adjust_amount || $oldData['adjust_remark'] != $data->adjust_remark)) {
                         $updateData = true;
+                    }
+                    if ($auto_adjust_stop_payment_vendor == '1' && $processFlag == 'locked' && in_array($data->customer_code, $stop_payment_customer)) {
+                        $updateData = true;
+                        $data->hold_amount = !empty($data->hold_amount) ? ((float) $data->hold_amount + (float) $data->final_pay) : $data->final_pay;
+                        $data->final_pay = 0;
+                        $data->adjust_remark .= !empty($stop_payment_reason[$data->customer_code]['stop_payment_type']) ? $stop_payment_reason[$data->customer_code]['stop_payment_type'] : 'dispute';
+                        $data->adjust_remark .= ' Auto adjust with 0.';
                     }
                     if ($updateData) {
                         $save_model[] = $historyModel;
@@ -268,8 +276,14 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                         $cnt++;
                     }
                 } else {
-                    $data->status = in_array($data->customer_code, $stop_payment_customer) ? 'processed' : $processFlag;
+                    $data->status = ($auto_adjust_stop_payment_vendor != '1' && in_array($data->customer_code, $stop_payment_customer)) ? 'processed' : $processFlag;
                     if (!empty($oldData) && ($oldData['status'] != $data->status)) {
+                        if ($auto_adjust_stop_payment_vendor == '1' && $processFlag == 'locked' && in_array($data->customer_code, $stop_payment_customer)) {
+                            $data->hold_amount = !empty($data->hold_amount) ? ((float) $data->hold_amount + (float) $data->final_pay) : $data->final_pay;
+                            $data->final_pay = 0;
+                            $data->adjust_remark .= !empty($stop_payment_reason[$data->customer_code]['stop_payment_type']) ? $stop_payment_reason[$data->customer_code]['stop_payment_type'] : 'dispute';
+                            $data->adjust_remark .= ' Auto adjust with 0.';
+                        }
                         $save_model[] = $historyModel;
                         $save_model[] = $data;
                     }
@@ -285,7 +299,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     if (!empty($old_stop_all)) {
                         foreach ($old_stop_all as $old_stop) {
                             $historyModel = new TblPaymentStopHistory();
-                            if (in_array($data->customer_code, $stop_payment_customer)) {
+                            if ($auto_adjust_stop_payment_vendor != '1' && in_array($data->customer_code, $stop_payment_customer)) {
                                 Yii::$app->operation->history($old_stop, $historyModel, UPDATE);
                                 $old_stop->stop_reason = !empty($stop_payment_reason[$data->customer_code]['stop_payment_type']) ? $stop_payment_reason[$data->customer_code]['stop_payment_type'] : 'dispute';
                                 $save_model[] = $old_stop;
@@ -297,7 +311,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                             $save_model[] = $historyModel;
                         }
                     } else {
-                        if (in_array($data->customer_code, $stop_payment_customer)) {
+                        if ($auto_adjust_stop_payment_vendor != '1' && in_array($data->customer_code, $stop_payment_customer)) {
                             $stop_pay = new TblPaymentStop();
                             $stop_pay->attributes = $data->attributes;
                             $stop_pay->payment_type = 'VENDOR_PAYMENT';
@@ -620,7 +634,11 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
                         $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated_vendor', 'PORTAL') == 1 ? true : false;
                         if ($is_bank_integrated) {
                             // $union_bank = TblUnionBankPayment::find()->select(['union_bank_payment_code', 'bank_name'])->where(['union_code' => $model->union_code, 'is_active' => 1])->all();
-                            $moduleCodes = $model->mcc_plant_code;
+                            if(!is_array($model->mcc_plant_code)){
+                                $moduleCodes[] = $model->mcc_plant_code;
+                            } else {
+                                $moduleCodes = $model->mcc_plant_code;
+                            }
                             $union_bank = TblUnionBankPayment::find()
                                     ->alias('ubp')
                                     ->select(['ubp.union_bank_payment_code', 'ubp.bank_name', 'dbd.module_code'])
