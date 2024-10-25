@@ -3807,7 +3807,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'User Task Activity MIS',
             ],
             'MemberProvisionalFamilyDetail' => [
-                'param' => 'union_code,p_date:string',
+                'param' => 'union_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_import_member_provisional_data_saahaj',
                 'scenario' => 'MemberProvisionalFamilyDetail',
                 'title' => 'Member Provisional Family Detail',
