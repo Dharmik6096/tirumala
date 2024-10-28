@@ -86,15 +86,14 @@ $this->title = Yii::$app->label->title('view', 'Non Member House Hold Visit');
                         ],
                     ],
                 ],
-
                 [
                     'columns' => [
                         [
-                            'attribute' => 'mobile_no',
+                            'attribute' => 'milch_animal_cow_cnt',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
-                            'attribute' => 'milch_animal_cow_cnt',
+                            'attribute' => 'milch_animal_cow_ear_tags',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
@@ -106,7 +105,19 @@ $this->title = Yii::$app->label->title('view', 'Non Member House Hold Visit');
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
+                            'attribute' => 'milch_animal_buff_ear_tags',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'milch_animal_country_cow_cnt',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'mobile_no',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
