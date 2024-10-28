@@ -225,11 +225,11 @@ $this->title = Yii::$app->label->title('view', 'Mrg Meeting Master');
         </div>
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#master_attendance_grid" aria-expanded="true" aria-controls="attendance_grid">
+                <h4 class="theme-box-heading accordion" data-bs-toggle="collapse" data-bs-target="#master_attendance_grid" aria-expanded="true" aria-controls="attendance_grid">
                     MRG Meeting Attachment
                 </h4>
             </div>
-            <div class="col-sm-12 collapse in" id="master_attendance_grid">
+            <div class="col-sm-12 collapse show" id="master_attendance_grid">
                 <?=
                 $this->render('_attachment_list', [
                     'dataProviderOther' => $dataProviderOther,
