@@ -208,7 +208,7 @@ class TblIndentMaster extends \app\models\ChildModel {
     }
 
     public function validateMember() {
-        return TblMember::find()->where(['is_active' => 1])->andWhere(['or', ['member_code' => $this->customer_code], ['ex_member_code' => $this->customer_code]])->one();
+        return TblMember::find()->where(['is_active' => 1])->andWhere(['or', ['member_code' => $this->customer_code], ['ex_member_code' => $this->customer_code], ['ref_code' => $this->customer_code], ['sap_farmer_code' => $this->customer_code], ['vendor_code' => $this->customer_code]])->one();
     }
 
     public function importFieldSet($attribute, $params) {
@@ -237,7 +237,7 @@ class TblIndentMaster extends \app\models\ChildModel {
     public function importFieldSetOther($attribute, $params) {
         if (empty($this->getErrors())) {
             $DcsCode = $this->customer_code;
-            if($this->customer_type == 'MEMBER'){
+            if ($this->customer_type == 'MEMBER') {
                 $memberCodeData = $this->validateMember();
                 $DcsCode = '';
                 if (!empty($memberCodeData)) {
