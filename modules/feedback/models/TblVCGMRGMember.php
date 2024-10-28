@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblRouteMapping;
+use app\modules\document\models\TblAttachment;
 
 /**
  * This is the model class for table "tbl_VCG_MRG_member".
@@ -38,21 +39,21 @@ use app\modules\organisation\models\TblRouteMapping;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblVCGMRGMember extends ChildModel
-{
+class TblVCGMRGMember extends ChildModel {
+
+    public $attachment;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_VCG_MRG_member';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['wef_date', 'end_date', 'approved_at', 'transaction_date', 'created_at', 'updated_at', 'originating_type', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'type', 'member_code', 'approved_by', 'originating_org_code', 'originating_org_type', 'member_tr_code', 'attachment_sign_key', 'attachment_photo_key', 'status', 'remark', 'created_by', 'updated_by'], 'safe'],
             [['status'], 'required', 'on' => ['vcgMrgApproval']]
@@ -62,8 +63,7 @@ class TblVCGMRGMember extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'VCG_MRG_member_id' => Yii::t('app', 'Vcg Mrg Member ID'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
@@ -115,4 +115,9 @@ class TblVCGMRGMember extends ChildModel
     public function updateStatus($operation, $codes) {
         return $this->updateAll(['status' => $operation], ['VCG_MRG_member_id' => $codes]);
     }
+
+    public function getAttachmentCode() {
+        return $this->hasMany(TblAttachment::className(), ['module_code' => 'VCG_MRG_member_id']);
+    }
+
 }
