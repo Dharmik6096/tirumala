@@ -13,21 +13,19 @@ use yii\base\Model;
 /**
  * TblVcgMrgMemberController implements the CRUD actions for TblVCGMRGMember model.
  */
-class TblVcgMrgMemberController extends ChildController
-{
+class TblVcgMrgMemberController extends ChildController {
 
     /**
      * Lists all TblVCGMRGMember models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblVCGMRGMemberSearch();
         $dataProvider = $searchModel->searchDcsWise(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -36,17 +34,22 @@ class TblVcgMrgMemberController extends ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         $this->model = TblVCGMRGMember::find()->where(['dcs_code' => $id])->one();
         $searchModel = new TblVCGMRGMemberSearch();
         $searchModel->dcs_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('view', [
-            'model' => $this->model,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'model' => $this->model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionViewMember($id) {
+        return $this->render('view_member', [
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -56,21 +59,20 @@ class TblVcgMrgMemberController extends ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
             $historyModel = new TblVCGMRGMemberHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
-            if(!empty($this->model->end_date)){
+            if (!empty($this->model->end_date)) {
                 $this->model->end_date = Yii::$app->formatter->asDate($this->model->end_date, DATE_FORMAT);
-                if($this->model->end_date <= date('Y-m-d')){
+                if ($this->model->end_date <= date('Y-m-d')) {
                     $this->model->status = 'INACTIVATE';
                 }
             }
-            if($this->model->validate()){
+            if ($this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['VCG MRG Member', 'edit']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
@@ -78,7 +80,7 @@ class TblVcgMrgMemberController extends ChildController
             }
         }
         return $this->render('update', [
-            'model' => $this->model
+                    'model' => $this->model
         ]);
     }
 
@@ -92,10 +94,10 @@ class TblVcgMrgMemberController extends ChildController
             if (isset($_REQUEST['selection'])) {
                 $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
                 $operation = Yii::$app->request->post('operation');
-                $msg = 'VCG/MRG Member is not'.ucfirst(strtolower($operation)).' Successfully';
+                $msg = 'VCG/MRG Member is not' . ucfirst(strtolower($operation)) . ' Successfully';
                 $type = 'error';
-                if($memberModel->updateStatus($operation, $codes)){
-                    $msg = 'VCG/MRG Member is '.ucfirst(strtolower($operation)).' Successfully';
+                if ($memberModel->updateStatus($operation, $codes)) {
+                    $msg = 'VCG/MRG Member is ' . ucfirst(strtolower($operation)) . ' Successfully';
                     $type = 'success';
                 }
                 Yii::$app->getSession()->setFlash('success', ['type' => $type,
@@ -104,9 +106,9 @@ class TblVcgMrgMemberController extends ChildController
             }
         }
         return $this->render('approval', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'memberModel' => $memberModel,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'memberModel' => $memberModel,
         ]);
     }
 
@@ -117,12 +119,12 @@ class TblVcgMrgMemberController extends ChildController
      * @return TblVCGMRGMember the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblVCGMRGMember::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

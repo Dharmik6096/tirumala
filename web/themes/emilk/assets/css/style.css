@@ -5526,3 +5526,28 @@ div#w12 > .card.border-default {
 .col-xs-12{
     width: 100%;
 }
+
+.attachment{
+    text-align: center;
+}
+
+.attachment_head{
+    color: #00a3de;
+    padding: 14px 10px 0px;
+}
+
+.attachment_section{
+    display: flex;
+    padding: 5px;
+    justify-content: center;
+}
+
+.image_section{
+    padding: 5px;
+    border: 3px solid #00a3de;
+    margin: 5px;
+    border-radius: 5px;
+    width: 200px;
+    align-items: center;
+    display: flex;
+}
