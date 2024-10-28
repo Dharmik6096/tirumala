@@ -33,8 +33,3 @@ $grid_option = [
 ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-$script = '
-    $(".kv-panel-before").hide();
-';
-$this->registerJs($script, View::POS_END, 'approved-attachment-details-list');
-?>
