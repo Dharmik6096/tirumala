@@ -210,30 +210,11 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $data['fat'] = Yii::$app->request->post('fat');
         $data['snf'] = Yii::$app->request->post('snf');
         $member = Yii::$app->request->post('member');
-        $this->model = new TblMilkCollection();
-        $this->model->member_code = $member;
-        $rateClass = Yii::$app->general->getforeignkey($this->model->memberCode, 'rate_class');
 
-        $data['rate_class'] = empty($rateClass) ? 0 : $rateClass;
+        $model = new TblMilkCollection();
+        $response = $model->calculateData('rtpl_calculate', '', '', $data['fat'], $data['snf'], $data['milk_type'], $data, $member);
 
-        $model = new TblPurchaseRateApplicability();
-        $model->dcs_code = $data['dcs_code'];
-        $model->wef_date = $data['dt_date'];
-        $model_data = $model->getPurchaseRateApplicableData($data);
 
-        if (!empty($model_data)) {
-            $detail_model = new TblPurchaseRateDetails();
-            $detail_model->rate_type_code = $model_data->rate_app_code;
-            $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-            $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
-            $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
-
-            if (!empty($detail_data)) {
-                $response['status'] = 'success';
-                $rtpl_data['list'] = $detail_data;
-                $response['data'] = $rtpl_data;
-            }
-        }
         return Json::encode($response);
     }
 
@@ -358,20 +339,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         (float) $snf = Yii::$app->request->post('snf');
         $union = Yii::$app->request->post('union_code');
         $org_code = Yii::$app->request->post('bmcCode');
-
-        $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $org_code, 'BMC', 'MEMBER_COLLECTION');
-        $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $org_code, 'BMC', 'MEMBER_COLLECTION');
-
-        if ($lr1 == '' or $lr2 == '') {
-            $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
-            $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
-        }
-        // $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
-        // $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
-        (float) $lr1 = empty($lr1) ? 1 : $lr1;
-        (float) $lr2 = empty($lr2) ? 0 : $lr2;
-        $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
-        $response['data'] = $clr;
+        $model = new TblMilkCollection();
+        $result = $model->calculateData('calculate_clr', $union, $org_code, $fat, $snf);
+        $response['data'] = $result['clr'];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
@@ -671,59 +641,14 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
     }
 
     public function actionCheckFatRange() {
-        $response = [];
-        $response['status'] = 'error';
-        $response['data'] = '';
         (float) $fat = Yii::$app->request->post('fat');
         $union = Yii::$app->request->post('union_code');
         $bmc = Yii::$app->request->post('bmc');
         $milk_type = Yii::$app->request->post('milk_type');
-        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member'] : '';
-        $mapping = new TblBmcMilkType();
-        $mapped = $mapping->find()->where(['bmc_code' => $bmc, 'is_active' => 1])->all();
-
-        if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
-            $type = [];
-            foreach ($mapped as $map) {
-                $type[] = $map->milk_type_code;
-            }
-            //Cow and Buffalo
-            if (in_array(1, $type) && in_array(2, $type)) {
-                if ($range < $fat && $milk_type != 2) {
-                    $response['status'] = 'success';
-                    $response['data'] = 2;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
-                } elseif ($range >= $fat && $milk_type != 1) {
-                    $response['status'] = 'success';
-                    $response['data'] = 1;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
-                }
-            }
-            //Cow and Mix
-            if (in_array(1, $type) && in_array(3, $type)) {
-                if ($range < $fat && $milk_type != 3) {
-                    $response['status'] = 'success';
-                    $response['data'] = 3;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
-                } elseif ($range >= $fat && $milk_type != 1) {
-                    $response['status'] = 'success';
-                    $response['data'] = 1;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
-                }
-            }
-            //Buffalo and Mix
-            if (in_array(2, $type) && in_array(3, $type)) {
-                if ($range < $fat && $milk_type != 3) {
-                    $response['status'] = 'success';
-                    $response['data'] = 3;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
-                } elseif ($range >= $fat && $milk_type != 2) {
-                    $response['status'] = 'success';
-                    $response['data'] = 2;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
-                }
-            }
-        }
+        $model = new TblMilkCollection();
+        $response = $model->calculateData('check_fat_range', $union, $bmc, '', '', $milk_type);
+        $response['status'] = 'error';
+        $response['data'] = '';
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }

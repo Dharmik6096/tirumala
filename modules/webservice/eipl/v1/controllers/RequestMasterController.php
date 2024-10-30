@@ -114,7 +114,11 @@ class RequestMasterController extends MasterController {
                 $model->setChildTable($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
-            if (isset($moduleDetails['save_child_other']) && $moduleDetails['save_child_other']) {
+
+            if (isset($moduleDetails['multi_auto_inc_key_save_other']) && $moduleDetails['multi_auto_inc_key_save_other']) {
+                $model->setChildTableOther($model, $transaction_data, $childModel, $auto_key_config);
+                $saveModel = true;
+            } else if (isset($moduleDetails['save_child_other']) && $moduleDetails['save_child_other']) {
                 $model->setChildTableOther($model, $transaction_data, $childModel);
                 $saveModel = true;
             }

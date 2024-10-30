@@ -769,6 +769,10 @@ class V1 extends \yii\base\Module {
                 'main_table' => 'TblAllowManualCollectionRange',
                 'multi_auto_increment_key' => true
             ],
+            'milk-collection' => [
+                'main_table' => 'TblMilkCollection',
+                'multi_auto_inc_key_save_other' => true
+            ],
         ];
         return $label;
     }
