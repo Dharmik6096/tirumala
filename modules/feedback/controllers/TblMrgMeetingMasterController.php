@@ -15,6 +15,8 @@ use app\modules\feedback\models\TblMRGMeetingOrgMappingSearch;
 use app\modules\feedback\models\TblMRGMeetingPreviousActionsSearch;
 use app\modules\feedback\models\TblMRGMeetingStatisticsSearch;
 use yii\web\NotFoundHttpException;
+use app\modules\document\models\TblAttachment;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblMrgMeetingMasterController implements the CRUD actions for TblMRGMeetingMaster model.
@@ -66,6 +68,10 @@ class TblMrgMeetingMasterController extends ChildController
         $mappingSearchModel = new TblMRGMeetingOrgMappingSearch();
         $mappingSearchModel->MRG_M_Id = $id;
         $mappingDataProvider = $mappingSearchModel->search($params);
+        $attachment = new TblAttachment();
+        $dataProviderOther = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_MRG_meeting_master']),
+        ]);
         return $this->render('view', [
             'model' => $this->model,
             'dataProvider' => $dataProvider,
@@ -82,6 +88,8 @@ class TblMrgMeetingMasterController extends ChildController
             'previousSearchModel' => $previousSearchModel,
             'mappingDataProvider' => $mappingDataProvider,
             'mappingSearchModel' => $mappingSearchModel,
+            'dataProviderOther' => $dataProviderOther,
+            'attachment' => $attachment,
         ]);
     }
 
