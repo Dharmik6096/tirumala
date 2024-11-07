@@ -20,7 +20,7 @@ use app\modules\usermanagement\models\User;
  * TblTaskController implements the CRUD actions for TblTask model.
  */
 class TblTaskController extends ChildController {
-    
+
     public $freeAccessActions = ['task-user-selection'];
 
     /**
@@ -94,6 +94,7 @@ class TblTaskController extends ChildController {
 
     public function actionViewForm($id) {
         $model = TblTaskActivity::findOne($id);
+        $model->form_data = !empty($model->form_data) ? $model->form_data : '';
         $form_data = json_decode($model->form_data, TRUE);
         $form_data = !empty($form_data['details']) ? $form_data['details'] : [];
         $attachment = new TblAttachment();
@@ -190,7 +191,7 @@ class TblTaskController extends ChildController {
             $i++;
         }
     }
-    
+
     public function actionTaskUserSelection() {
         $out = [];
         if (isset($_POST['depdrop_parents'][0]) && !empty($_POST['depdrop_parents'][0])) {
@@ -214,4 +215,3 @@ class TblTaskController extends ChildController {
     }
 
 }
- 
