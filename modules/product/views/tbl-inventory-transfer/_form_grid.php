@@ -85,7 +85,7 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'data_post_status',
         'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status] : 'PENDING';
+            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status] : 'Pending';
         }, 'filter' => false, 'visible' => false],
     ['attribute' => 'response_msg', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'picked_datetime',
