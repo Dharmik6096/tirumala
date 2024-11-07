@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_eipl_app_feedback_master".
@@ -100,7 +101,7 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
     }
 
     public function getMemberCode() {
-        return $this->hasOne(Masterfarmer::className(), ['member_code' => 'member_code']);
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
     }
 
     public function getEiplAppFeedbackItemCode() {
