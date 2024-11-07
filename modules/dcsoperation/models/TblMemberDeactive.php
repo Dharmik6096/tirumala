@@ -9,7 +9,6 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblMember;
-use app\modules\feedback\models\TblVCGMRGMember;
 
 /**
  * This is the model class for table "tbl_member_deactive".
@@ -34,7 +33,7 @@ use app\modules\feedback\models\TblVCGMRGMember;
  */
 class TblMemberDeactive extends \app\models\ChildModel {
 
-    public $member;
+    public $member, $wef_date, $is_active;
 
     /**
      * @inheritdoc
@@ -47,23 +46,32 @@ class TblMemberDeactive extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
             [['member_deactive_code'], 'required', 'except' => ['importCsv']],
             [['member_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'wef_date', 'is_active'], 'safe'],
             [['originating_type'], 'integer'],
-            [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['from_date'], 'convertDate', 'on' => ['importCsv']],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'from_date'], 'required', 'except' => ['importCsv']],
-            [['dcs_code', 'member', 'from_date'], 'required', 'on' => ['importCsv']],
+            [['dcs_code', 'member', 'wef_date', 'is_active'], 'required', 'on' => ['importCsv']],
+            [['is_active'], 'boolean', 'on' => ['importCsv']],
             [['to_date'], 'required', 'on' => ['activeMember']],
-            [['from_date'], 'validateFromDate', 'except' => ['activeMember']],
-            [['to_date'], 'validateToRange', 'on' => ['activeMember']],
-            [['member', 'dcs_code', 'from_date'], 'required', 'on' => ['importCsv']],
             [['member'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['from_date'], 'validateFromDate', 'except' => ['activeMember', 'importCsv']],
+            [['to_date'], 'validateToRange', 'on' => ['activeMember']],
+            [['to_date'], 'validateToRange', 'on' => ['importCsv'], 'when' => function($model) {
+                    return ($this->is_active == 1) ? true : false;
+                }],
+            [['from_date'], 'validateFromDate', 'on' => ['importCsv'], 'when' => function($model) {
+                    return ($this->is_active == 0) ? true : false;
+                }],
             [['data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'member'], 'safe'],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblMemberDeactive', $this->form_validation_type);
+        $rules = array_merge($main_rules, $client_rules);
+        return $rules;
     }
 
     /**
@@ -120,8 +128,9 @@ class TblMemberDeactive extends \app\models\ChildModel {
                 ->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code])
                 ->andfilterWhere(['!=', 'member_deactive_code', $this->member_deactive_code])
                 ->andWhere(['IS', 'to_date', NULL])
-                ->one();
-        if (!empty($existDCS)) {
+                ->count();
+
+        if ($existDCS > 0) {
             $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'Member') . ' Is Already Deactivated.'));
             return false;
         }
@@ -129,8 +138,9 @@ class TblMemberDeactive extends \app\models\ChildModel {
                 ->where('dcs_code=\'' . $this->dcs_code . '\' and member_code=\'' . $this->member_code . '\'')
                 ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date))')
                 ->andfilterWhere(['!=', 'member_deactive_code', $this->member_deactive_code])
-                ->all();
-        if (!empty($dateData)) {
+                ->count();
+
+        if ($dateData > 0) {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
@@ -144,41 +154,39 @@ class TblMemberDeactive extends \app\models\ChildModel {
             return false;
         }
 
-        $dateData = $this->find()
-                ->where('dcs_code=\'' . $this->dcs_code . '\' and member_code=\'' . $this->member_code . '\'')
-                ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))')
-                ->andfilterWhere(['!=', 'member_deactive_code', $this->member_deactive_code])
-                ->all();
-        if (!empty($dateData)) {
-            $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
-            return false;
-        }
+//        $dateData = $this->find()
+//                ->where('dcs_code=\'' . $this->dcs_code . '\' and member_code=\'' . $this->member_code . '\'')
+//                ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))')
+//                ->andfilterWhere(['!=', 'member_deactive_code', $this->member_deactive_code])
+//                ->all();
+//        if (!empty($dateData)) {
+//            $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
+//            return false;
+//        }
     }
 
     public function convertDateDot() {
         try {
-            $this->from_date = Yii::$app->controls->view_date($this->from_date, 'php:d.m.Y');
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
         } catch (\Exception $e) {
-            $this->from_date = '-';
+            $this->wef_date = '-';
         }
     }
 
     public function convertDate() {
         if (empty($this->getErrors())) {
-            $this->from_date = !empty($this->from_date) ? Yii::$app->controls->view_date($this->from_date, 'php:Y-m-d') : NULL;
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
         }
     }
 
     public function setImport($attribute, $params) {
         $date = date('Y-m-d');
-        $fromDate = date('Y-m-d', strtotime($this->from_date));
-        if ($date > $fromDate) {
-            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'From Date') . ' Must not past date'));
+        $wefDate = date('Y-m-d', strtotime($this->wef_date));
+        if ($date > $wefDate) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'WEF Date') . ' Must not past date'));
             return false;
         }
 
-        $dcs = new TblDcs();
-        $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
         if (empty($this->dcs_code)) {
             $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
             return false;
@@ -189,10 +197,17 @@ class TblMemberDeactive extends \app\models\ChildModel {
                 return false;
             }
         }
-        $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
-        $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
-        $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
-        $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+        $dcs_code = $this->dcsCode;
+        $this->bmc_code = $dcs_code->bmc_code;
+        $this->union_code = $dcs_code->union_code;
+        $this->plant_code = $dcs_code->plant_code;
+        $this->mcc_plant_code = $dcs_code->mcc_plant_code;
+
+        if ($this->is_active == 1) {
+            $this->to_date = date('Y-m-d', strtotime('-1 day', strtotime($this->wef_date)));
+        } else {
+            $this->from_date = date('Y-m-d', strtotime($this->wef_date));
+        }
     }
 
     public function getDeactiveRecords($checkStatus = true, $data = '', $limit = '') {
@@ -234,7 +249,7 @@ class TblMemberDeactive extends \app\models\ChildModel {
     public function updateFileStatus($value, $status) {
         return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['member_deactive_code' => $value]);
     }
-    
+
     public function getDeactiveMember($union_code, $dcs, $dateFilter) {
         $checkdate = date('Y-m-d', strtotime($dateFilter));
         $deactivateMemberList = $this->find()
@@ -245,10 +260,10 @@ class TblMemberDeactive extends \app\models\ChildModel {
         return $deactivateMemberList;
     }
 
-    public function updateChildRecord($model, $status){
-        if($status == 0){
-            $vcgMrgMemberModel = TblVCGMRGMember::find()->where(['member_code' => $model->member_code, 'status'=>['DRAFT','APPROVED']])->one();
-            if(!empty($vcgMrgMemberModel)){
+    public function updateChildRecord($model, $status) {
+        if ($status == 0) {
+            $vcgMrgMemberModel = TblVCGMRGMember::find()->where(['member_code' => $model->member_code, 'status' => ['DRAFT', 'APPROVED']])->one();
+            if (!empty($vcgMrgMemberModel)) {
                 $vcgMrgMemberModel->status = 'INACTIVATE';
                 $vcgMrgMemberModel->end_date = date('Y-m-d');
                 $vcgMrgMemberModel->save();
