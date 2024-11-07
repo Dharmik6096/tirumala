@@ -122,7 +122,7 @@ class RequestMasterController extends MasterController {
                 $model->setChildTableOther($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
-            if ($saveModel && !isset($moduleDetails['multi_auto_increment_key'])) {
+            if ($saveModel && !isset($moduleDetails['multi_auto_increment_key']) && !isset($moduleDetails['multi_auto_inc_key_save_other'])) {
                 $master = [];
                 $master[] = $model;
             }

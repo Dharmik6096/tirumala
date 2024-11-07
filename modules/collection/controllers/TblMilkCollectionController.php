@@ -82,45 +82,14 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $modelSave = [];
         $message = 'Milk Collection';
         $type = 'create';
+        $auto_key_config = [];
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
-            $datetime = date('Y-m-d H:i:s');
-            $this->model->date_time_of_collection = Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->shift_code);
-            $this->model->date_time_of_recieve = $datetime;
-            $this->model->qlty_time = $datetime;
-            $this->model->qty_time = $datetime;
-            $this->model->type_of_data_receive = 'Manual';
-            $this->model->qty_mode = 0;
-            $this->model->qlty_auto = 0;
-            $this->model->qty_auto = 0;
-            $this->model->setModel($this->model);
-            $this->model->scenario = 'create';
-            $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'VLC');
-            $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'VLC');
-            $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
-            $conversion_const = empty($conversion_const) ? 1 : $conversion_const;
-            $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
+            $this->model->setCollectionData($this->model, 'create');
+
             if ($this->model->validate()) {
-                $auto_key_config = [];
-                $collectionApprovalConfig = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'collection_approval');
-                if (in_array($collectionApprovalConfig, [1, 2])) {
-                    $approvalModel = new TblCollectionDataAlias();
-                    $approvalModel->attributes = $this->model->attributes;
-                    $approvalModel->table_name = 'tbl_milk_collection';
-                    $approvalModel->action_perform = 'CREATE';
-                    $approvalModel->setOldAttributesValues($approvalModel);
-                    if ($collectionApprovalConfig == 2) {
-                        $i = 0;
-                        $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
-                    } else {
-                        $modelSave[] = $approvalModel;
-                    }
-                    $message = 'Data For Approval';
-                    $type = 'create';
-                } else {
-                    $modelSave[] = $this->model;
-                }
+                $this->model->postDataSet($this->model, 'create', $modelSave, $auto_key_config, $message, $type);
+
                 if (!empty($auto_key_config)) {
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($modelSave, [$message, $type], $auto_key_config);
                 } else {
