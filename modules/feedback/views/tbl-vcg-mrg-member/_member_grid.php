@@ -56,11 +56,11 @@ $grid_option = [
     'actions' => [
         'update' => function ($url, $model) {
             $class = in_array($model->status, ['REJECTED', 'INACTIVATE']) ? 'disabled' : '';
-            $options = ['data-code' => $model->VCG_MRG_member_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Asset Detail Bom', 'class' => $class,];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/feedback/tbl-vcg-mrg-member/update', 'id' => $model->VCG_MRG_member_id], $options);
+            $options = ['data-code' => $model->VCG_MRG_member_id, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Asset Detail Bom', 'class' => $class,];
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/feedback/tbl-vcg-mrg-member/update', 'id' => $model->VCG_MRG_member_id], $options);
         },
         'view_detail' => function($url, $model) {
-            $options = ['data-code' => $model->VCG_MRG_member_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Member'];
+            $options = ['data-code' => $model->VCG_MRG_member_id, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View Member'];
             return Html::a('<i class="fa fa-eye"></i>', ['/feedback/tbl-vcg-mrg-member/view-member', 'id' => $model->VCG_MRG_member_id], $options);
         },
     ]
