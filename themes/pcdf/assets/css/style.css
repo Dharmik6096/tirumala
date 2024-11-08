@@ -5895,3 +5895,9 @@ tr.highlightRow {
     align-items: center;
     display: flex;
 }
+.feedback_image{
+    border: 1px solid #cfcfcf;
+    padding: 10px;
+    background: #fff;
+    margin-bottom: 5px;
+}
