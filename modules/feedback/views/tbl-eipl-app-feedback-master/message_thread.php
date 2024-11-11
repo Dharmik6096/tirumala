@@ -36,9 +36,11 @@ use yii\web\View;
                         <?php
                             $value->eipl_app_feedback_master_txn_code = (string) $value->eipl_app_feedback_master_txn_code;
                             $attachments = Yii::$app->general->getAttachment('feedback_txn', $value->eipl_app_feedback_master_txn_code, FALSE, '', '', TRUE, TRUE);
-                            foreach ($attachments as $att) {
-                                echo '<div class="feedback_image">' . $att . '</div>';
-                            }
+                            if (!empty($attachments)) {
+                                foreach ($attachments as $att) {
+                                    echo '<div class="feedback_image">' . $att . '</div>';
+                                }
+                            }       
                         ?>
                         </div>
                     <div class="triangle"></div>
@@ -61,13 +63,12 @@ use yii\web\View;
                             echo $message;?>
                         </p>                        
                         <?php
-                        if(!empty($value->file_path)){ ?>
-                            <div class="feedback_image">
-                                <?php
-                                echo $value->file_path; ?>
-                            </div>
-                            <?php
-                        } ?>
+                            $value->eipl_app_feedback_master_txn_code = (string) $value->eipl_app_feedback_master_txn_code;
+                            $attachment = Yii::$app->general->getAttachment('feedback_txn', $value->eipl_app_feedback_master_txn_code, FALSE, '', '', TRUE);
+                            if (!empty($attachment)) {
+                                echo '<div class="feedback_image">' . $attachment . '</div>';
+                            }
+                        ?>
                     </div>
                     <div class="triangle"></div>
                 </div>
