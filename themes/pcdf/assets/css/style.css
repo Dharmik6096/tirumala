@@ -2746,7 +2746,7 @@ div.crystalstyle {
 .panel.panel-default {
     /* min-height: calc(100vH - 100px); */
     min-height: calc(100vH - 200px);
-    overflow: auto;
+    /*overflow: auto;*/
     padding-bottom: 18px;
 }
 
