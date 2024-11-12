@@ -17,7 +17,7 @@ $attribute = [
     ['attribute' => 'remarks'],
     ['attribute' => 'send_status',
         'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status] : 'PENDING';
+            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status] : 'Pending';
         }, 'filter' => false, 'visible' => false],
     ['attribute' => 'picked_datetime',
         'value' => function($model) {
