@@ -69,13 +69,15 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $searchModel->load(Yii::$app->request->queryParams);
             if ($this->model->validate()) {
-                $dcs_codes = [];
+                $dcs_codes = $customerType = $calcFor = [];
                 $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
                 foreach ($codes as $code) {
                     $c = explode('###', $code);
                     $dcs_codes[] = $c[0];
+                    $customerType[] = !empty($c[1]) ? $c[1] : '';
+                    $calcFor[] = !empty($c[2]) ? $c[2] : '';
                 }
-                return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, $this->model->shift_applicability, 'all', $codes);
+                return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, $this->model->shift_applicability, 'all', $codes, $customerType, $calcFor);
             }
         } else {
             $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams);
@@ -102,18 +104,20 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             $searchModel->load(Yii::$app->request->queryParams);
             $dcs_codes = $rateCodes = $shiftApplicability = [];
             $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+            $customerType = $calcFor = [];
             foreach ($codes as $code) {
                 $c = explode('###', $code);
                 $dcs_codes[] = $c[0];
                 $rateCodes[] = $c[1];
                 $shiftApplicability[] = $c[7];
+                $customerType[] = !empty($c[4]) ? $c[4] : '';
+                $calcFor[] = !empty($c[5]) ? $c[5] : '';
             }
             $this->model->rate_code = $rateCodes;
             $this->model->shift_applicability = $shiftApplicability;
             $this->model->recalc_for = $searchModel->recalc_for;
             if ($this->model->validate()) {
-
-                return $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, $shiftApplicability, 'custom', $codes);
+                return $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, $shiftApplicability, 'custom', $codes, $customerType, $calcFor);
             }
         }
         $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams, 'sp_Portal_Data_Recalculation_Custom');
@@ -126,27 +130,13 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function saveAndRedirect($dcs_codes, $searchModel, $rateCode, $shiftApplicability, $rtype, $data = [], $customeCode = []) {
+    public function saveAndRedirect($dcs_codes, $searchModel, $rateCode, $shiftApplicability, $rtype, $data = [], $customerType = [], $calcFor = []) {
         $master = [];
         //$coll_data = $dataProvider->allModels;//->getModels();
         if (empty($dcs_codes)) {
             $dcs_codes[] = NULL;
         } else if (!is_array($dcs_codes) && $rtype == 'custom') {
             $dcs_codes = [$searchModel->dcs_code];
-        }
-        $customerType = $calcFor = [];
-        if ($rtype == 'custom') {
-            foreach ($data as $code) {
-                $c = explode('###', $code);
-                $customerType[] = !empty($c[4]) ? $c[4] : '';
-                $calcFor[] = !empty($c[5]) ? $c[5] : '';
-            }
-        } else {
-            foreach ($data as $code) {
-                $c = explode('###', $code);
-                $customerType[] = !empty($c[1]) ? $c[1] : '';
-                $calcFor[] = !empty($c[2]) ? $c[2] : '';
-            }
         }
         if (!empty($dcs_codes)) {
             foreach ($dcs_codes as $key => $dcs_code) {
