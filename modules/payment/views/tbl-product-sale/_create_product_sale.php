@@ -554,6 +554,7 @@ $script = "
         setVendorCode();
             $('#tblproductsale-payment_mode').val('');
             $('#tblproductsale-payment_mode').trigger('change');
+            $('#tblproductsale-avl_credit').val(0);
     });
     $('#tblproductsale-invoice_date').change(function(){
         $('#tblproductsale-ex_code').val('');
@@ -710,7 +711,6 @@ $script = "
                     data: {'date':date,'type':type,'code':code,'union':union,'bmc':bmc,'pay_mode':pay_mode,'amount_due':amount_due,'noi':noi},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
-                        console.log(data);
                         if (obj.status == 'success')
                         {
                            $('#tblproductsale-avl_credit').val(obj.credit);
