@@ -43,14 +43,6 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
      */
     public function actionView($id) {
         $model = $this->findModel($id);
-        if (!empty($model)) {
-            foreach ($model->feedbackMasterTxn as $key => $value) {
-                if (empty($value->feedback_message)) {
-                    $value->eipl_app_feedback_master_txn_code = (string) $value->eipl_app_feedback_master_txn_code;
-                    $value->file_path = Yii::$app->general->getAttachment('feedback_txn', $value->eipl_app_feedback_master_txn_code, FALSE, '', '', TRUE);
-                }
-            }
-        }
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'feedbackMasterTxn' => $model->feedbackMasterTxn
@@ -107,7 +99,7 @@ class TblEiplAppFeedbackMasterController extends \app\controllers\ChildControlle
     }
 
     public function actionAttachmentFile() {
-        $path = Yii::$app->basePath . Yii::$app->params['feedback_upload'];
+        $path = \Yii::getAlias('@webroot') . Yii::$app->params['feedback_upload'];
         if (!is_dir($path)) {
             mkdir($path);
             chmod($path, 0777);

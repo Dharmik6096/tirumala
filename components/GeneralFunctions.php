@@ -1443,14 +1443,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -2183,32 +2183,35 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getAttachment($module_name, $reference_code, $link = TRUE, $OnlyData = FALSE, $remarks = NULL, $downloadOnly = false) {
+    public function getAttachment($module_name, $reference_code, $link = true, $OnlyData = false, $remarks = null, $downloadOnly = false, $multiple = false) {
         $model = new TblAttachment();
         $model->module_name = $module_name;
         $model->module_code = $reference_code;
         $model->remarks = $remarks;
-        $attachment = $model->getData();
+        $attachments = $model->getData();
         if ($OnlyData) {
-            return $attachment;
+            return $attachments;
         }
-
-        if ($attachment) {
-            if ($downloadOnly && $attachment[0]->attachment_type == 'pdf') {
-                return Html::a('<i class="fa fa-download"></i> ' . $attachment[0]->file_name, $attachment[0]->attachment, [
-                            'title' => 'Download',
-                            'download' => $reference_code . $attachment[0]->attachment_type,
-                            'class' => 'text-white hover-black',
-                ]);
-            } else if ($link) {
-                return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [
-                            //                            'title' => 'Download',
-                            'class' => 'image-popup-no-margins',
-                            'download' => $attachment[0]->attachment_type,
-                ]);
-            } else {
-                return Html::img($attachment[0]->attachment, ['class' => 'img-responsive disp_image', 'alt' => '']);
+        $attachmentsList = [];
+        if ($attachments) {
+            foreach ($attachments as $attachment) {
+                if ($downloadOnly && $attachment->attachment_type == 'pdf') {
+                    $attachmentsList[] = Html::a('<i class="fa fa-download"></i> ' . $attachment->file_name, $attachment->attachment, [
+                                'title' => 'Download',
+                                'download' => $reference_code . $attachment->attachment_type,
+                                'class' => 'text-white hover-black',
+                    ]);
+                } else if ($link) {
+                    $attachmentsList[] = Html::a(Html::img($attachment->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment->attachment, [
+                                //                            'title' => 'Download',
+                                'class' => 'image-popup-no-margins',
+                                'download' => $attachment->attachment_type,
+                    ]);
+                } else {
+                    $attachmentsList[] = Html::img($attachment->attachment, ['class' => 'disp_image', 'alt' => '']);
+                }
             }
+            return $multiple ? $attachmentsList : $attachmentsList[0];
         }
         return "";
     }
@@ -2298,16 +2301,16 @@ class GeneralFunctions extends Component {
         $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
 
         $query->andFilterWhere(['or',
-            ['pd.union_code' => $unions],
-            ['ms.union_code' => $unions],
-            ['md.union_code' => $unions],
-            ['cs.union_code' => $unions],
-            ['cd.union_code' => $unions]
+                ['pd.union_code' => $unions],
+                ['ms.union_code' => $unions],
+                ['md.union_code' => $unions],
+                ['cs.union_code' => $unions],
+                ['cd.union_code' => $unions]
         ]);
         $form_to = !empty($mccs) ? $mccs : $plants;
         $query->andFilterWhere(['or',
-            [$main_table . '.' . $from_dest => $form_to],
-            [$main_table . '.' . $to_dest => $form_to],
+                [$main_table . '.' . $from_dest => $form_to],
+                [$main_table . '.' . $to_dest => $form_to],
         ]);
     }
 
