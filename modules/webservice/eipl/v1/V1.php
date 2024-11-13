@@ -773,6 +773,14 @@ class V1 extends \yii\base\Module {
                 'main_table' => 'TblMilkCollection',
                 'multi_auto_inc_key_save_other' => true
             ],
+            'milk-collection/list' => [
+                'param' => 'from_datetime#to_datetime#dcs',
+                'sp' => 'sp_app_eipl_milk_collection',
+            ],
+//            'list/dcs-config' => [
+//                'param' => 'union#dcs',
+//                'sp' => 'sp_dcs_config_list',
+//            ],
         ];
         return $label;
     }
