@@ -75,6 +75,7 @@ class TblDocumentMasterInfoSearch extends TblDocumentMasterInfo {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => FALSE,
         ]);
 
         if (!$this->validate()) {

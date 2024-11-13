@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_eipl_app_feedback_master".
@@ -54,7 +55,7 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
         return [
             [['user_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'feedback_message', 'user_type', 'created_by', 'updated_by'], 'string'],
             [['eipl_app_feedback_item_code', 'feedback_status'], 'integer'],
-            [['feedback_message_datetime', 'created_at', 'updated_at', 'activityStatus'], 'safe'],
+            [['feedback_message_datetime', 'created_at', 'updated_at', 'activityStatus', 'name'], 'safe'],
         ];
     }
 
@@ -75,6 +76,7 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
             'feedback_message_datetime' => Yii::t('app', 'Feedback Message Date'),
             'user_type' => Yii::t('app', 'User Type'),
             'feedback_status' => Yii::t('app', 'Feedback Status'),
+            'name' => Yii::t('app', 'User Name'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -84,10 +86,6 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
 
     public function getFeedbackMasterTxn() {
         return $this->hasMany(TblEiplAppFeedbackMasterTxn::className(), ['eipl_app_feedback_master_code' => 'eipl_app_feedback_master_code']);
-    }
-
-    public function getUserCodeById() {
-        return $this->hasOne(User::className(), ['id' => 'user_code']);
     }
 
     public function getMccCode() {
@@ -103,7 +101,7 @@ class TblEiplAppFeedbackMaster extends \app\models\ChildModel {
     }
 
     public function getMemberCode() {
-        return $this->hasOne(Masterfarmer::className(), ['member_code' => 'member_code']);
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
     }
 
     public function getEiplAppFeedbackItemCode() {

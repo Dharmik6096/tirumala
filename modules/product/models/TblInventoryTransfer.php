@@ -204,8 +204,12 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         $stockModel->setCodes($from_type, $from_code);
         $stockModel->product_code = $product;
         $stockModel->union_code = $union_code;
-
-        $existtoStock = $stockModel->getExistStock($from_type);
+        $batch_no = '';
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($this->union_code, 'batch_no_wise_inventory', 'PORTAL');
+        if ($batchNoWiseInventory == 1) {
+            $batch_no = $this->sap_batch_no;
+        }
+        $existtoStock = $stockModel->getExistStock($from_type, $batch_no);
         if (!empty($existtoStock->stock)) {
             $this->available_stock = $existtoStock->stock;
         } else {
@@ -277,49 +281,48 @@ class TblInventoryTransfer extends \app\models\ChildModel {
 
             if (empty($txModel->getErrors()) && $txModel->validate()) {
                 array_push($saveModel, $txModel);
+                $fstockModel = new TblProductStock();
+                $fstockModel->setCodes($this->from_type, $this->from_code);
+                $fstockModel->product_code = $txModel->product_code;
+                $fstockModel->union_code = $txModel->union_code;
+                $batch = !empty($txModel->sap_batch_no) ? $txModel->sap_batch_no : '';
+                $existfromStock = $fstockModel->getExistStock($this->from_type, $batch);
+
+                $f_stock = 0;
+                $qty = $txModel->qty;
+                if (!empty($existfromStock)) {
+                    $historyModel = new TblProductStockHistory();
+                    Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                    array_push($saveModel, $historyModel);
+                    $f_stock = $existfromStock->stock;
+                    $existfromStock->stock = $f_stock - $qty;
+                    $fstockModel = $existfromStock;
+                } else {
+                    $fstockModel->product_stock_code = $fstockModel->getCode();
+                    $fstockModel->stock = $f_stock - $qty;
+                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                }
+                array_push($saveModel, $fstockModel);
+                $i = 1;
+                $fstockTxnModel = new TblProductStockTransaction();
+                $fstockTxnModel->attributes = $fstockModel->attributes;
+                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                $fstockTxnModel->old_value = $f_stock;
+                $fstockTxnModel->new_value = $qty;
+                $fstockTxnModel->final_value = $fstockModel->stock;
+                $fstockTxnModel->transaction_type = 'INVENTORY TRANSFER';
+                $fstockTxnModel->transaction_date = date('Y-m-d');
+                $fstockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
+                array_push($saveModel, $fstockTxnModel);
+                $i++;
                 if ($txModel->is_stock_posted) {
-                    $fstockModel = new TblProductStock();
-                    $fstockModel->setCodes($this->from_type, $this->from_code);
-                    $fstockModel->product_code = $txModel->product_code;
-                    $fstockModel->union_code = $txModel->union_code;
-                    $batch = !empty($txModel->sap_batch_no) ? $txModel->sap_batch_no : '';
-                    $existfromStock = $fstockModel->getExistStock($this->from_type);
-
-                    $f_stock = 0;
-                    $qty = $txModel->qty;
-                    if (!empty($existfromStock)) {
-                        $historyModel = new TblProductStockHistory();
-                        Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
-                        array_push($saveModel, $historyModel);
-                        $f_stock = $existfromStock->stock;
-                        $existfromStock->stock = $f_stock - $qty;
-                        $fstockModel = $existfromStock;
-                    } else {
-                        $fstockModel->product_stock_code = $fstockModel->getCode();
-                        $fstockModel->stock = $f_stock - $qty;
-                        $fstockModel->x_col1 = Yii::$app->general->getUuid();
-                    }
-                    array_push($saveModel, $fstockModel);
-                    $i = 1;
-                    $fstockTxnModel = new TblProductStockTransaction();
-                    $fstockTxnModel->attributes = $fstockModel->attributes;
-                    $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
-                    $fstockTxnModel->old_value = $f_stock;
-                    $fstockTxnModel->new_value = $qty;
-                    $fstockTxnModel->final_value = $fstockModel->stock;
-                    $fstockTxnModel->transaction_type = 'INVENTORY TRANSFER';
-                    $fstockTxnModel->transaction_date = date('Y-m-d');
-                    $fstockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
-                    array_push($saveModel, $fstockTxnModel);
-                    $i++;
-
                     //set to stock
                     $stockModel = new TblProductStock();
                     $stockModel->setCodes($this->to_type, $this->to_code);
                     $stockModel->product_code = $txModel->product_code;
                     $stockModel->union_code = $txModel->union_code;
                     $stockModel->sap_batch_no = $batch;
-                    $existtoStock = $stockModel->getExistStock($this->to_type);
+                    $existtoStock = $stockModel->getExistStock($this->to_type, $stockModel->sap_batch_no);
 
                     $t_stock = 0;
                     $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock'] : 0;
@@ -339,6 +342,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                         $stockModel->stock = $t_stock + $qty;
                         $stockModel->x_col1 = Yii::$app->general->getUuid();
                     }
+                    $stockModel->rate = $fstockModel->rate;
                     array_push($saveModel, $stockModel);
                     $stockTxnModel = new TblProductStockTransaction();
                     $stockTxnModel->attributes = $stockModel->attributes;

@@ -279,15 +279,7 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
                                     ->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0])
                                     ->groupBy(['level', 'approval_mode'])
                                     ->count();
-
-                            if ($existApprovalLevel == '1') {
-                                $approval_flag = TblProcessApproval::find()
-                                        ->select(['COUNT(*) as cnt', 'approval_mode', 'level'])
-                                        ->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0,])
-                                        ->groupBy(['level', 'approval_mode'])
-                                        ->asArray()
-                                        ->one();
-                            }
+                                    
                             $historyModel = new TblIndentMasterHistory();
                             Yii::$app->operation->history($existIndentData, $historyModel, 'UPDATE');
                             $saveModel[] = $historyModel;

@@ -264,8 +264,8 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 
             $txt = '>START_TIME		= ' . date('d.m.Y H:i:s') . PHP_EOL .
                     '>END_TIME		= ' . date('d.m') . '.2099 23:59:59' . PHP_EOL .
-                    '>CP_NAME		= ' . $dcs->dcs_name . PHP_EOL .
-                    '>CP_ADDRESS		= ' . $dcs->dcs_name . PHP_EOL .
+                    '>CP_NAME		= ' . substr($dcs->dcs_name, 0, 35) . PHP_EOL .
+                    '>CP_ADDRESS		= ' . substr($dcs->dcs_name, 0, 35) . PHP_EOL .
                     '>CP_CODE		= ' . $dcs->ref_code . PHP_EOL .
                     '>FILE_NAME		= ' . $fileName . PHP_EOL .
                     '>RATE_FAT_BELOW_MIN	= 0.0' . PHP_EOL .
@@ -493,7 +493,10 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                 $customerModel->customer_type = $model->applicable_for;
                 $customerModelData = $customerModel->find()
                         ->where(['customer_type' => $model->applicable_for, 'bmc_code' => $model->bmc_code])
-                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->applicable_code])
+                        ->andWhere(['or',
+                            ['CAST(REPLACE(customer_code_ex, \'A\', \'\') as int)' => (int) $model->applicable_code],
+                            ['customer_code' => (int) $model->applicable_code]
+                        ])
                         ->all();
                 if (count($customerModelData) == 1) {
                     $Code = $customerModelData[0]->customer_code;

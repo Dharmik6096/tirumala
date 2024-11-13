@@ -2746,7 +2746,7 @@ div.crystalstyle {
 .panel.panel-default {
     /* min-height: calc(100vH - 100px); */
     min-height: calc(100vH - 200px);
-    overflow: auto;
+    /*overflow: auto;*/
     padding-bottom: 18px;
 }
 
@@ -3582,7 +3582,7 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {}
 .table-hover tbody tr:nth-child(odd) {
     background-color: #f1f1f1
         /*dfedff*/
-    ;
+        ;
 }
 
 .cont {
@@ -5129,7 +5129,7 @@ table.dataTable tbody td {
 table.dataTable tbody tr:nth-child(odd) {
     background-color: #f1f1f1
         /*dfedff*/
-    ;
+        ;
 }
 
 .dropdown-check-list {
@@ -5869,4 +5869,35 @@ tr.highlightRow {
 
 .text-wrap td {
     text-wrap: wrap !important;
+}
+
+.attachment{
+    text-align: center;
+}
+
+.attachment_head{
+    color: #00a3de;
+    padding: 14px 10px 0px;
+}
+
+.attachment_section{
+    display: flex;
+    padding: 5px;
+    justify-content: center;
+}
+
+.image_section{
+    padding: 5px;
+    border: 3px solid #00a3de;
+    margin: 5px;
+    border-radius: 5px;
+    width: 200px;
+    align-items: center;
+    display: flex;
+}
+.feedback_image{
+    border: 1px solid #cfcfcf;
+    padding: 10px;
+    background: #fff;
+    margin-bottom: 5px;
 }

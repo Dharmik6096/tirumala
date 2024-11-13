@@ -162,7 +162,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                     ->andFilterWhere(['=', 'union_code', $this->union_code])
                     ->all();
             $approvedProvisionalMembers = array_filter($provisionalMembers, function($member) {
-                return $member->provisional_status == 'approve';
+                return strtolower($member->provisional_status) == 'approve';
             });
             $results[] = [
                 'process_name' =>  Yii::t('app', 'Provisional Member') ,
@@ -177,7 +177,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                     ->andFilterWhere(['=', 'union_code', $this->union_code])
                     ->all();
             $approvedProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
-                return $society->status == 'approve';
+                return strtolower($society->status) == 'approve';
             });
             $results[] = [
                 'process_name' => Yii::t('app', 'Provisional Society'),
@@ -192,7 +192,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                     ->andFilterWhere(['=', 'union_code', $this->union_code])
                     ->all();
             $approvedProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
-                return $vendor->state_code == 'approve';
+                return strtolower($vendor->state_code) == 'approve';
             });
             $results[] = [
                 'process_name' => Yii::t('app', 'Provisional Vendor/Customer'),

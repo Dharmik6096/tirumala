@@ -70,7 +70,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                 <div class="clearfix"></div>
                 <?php
                 $lable = Yii::t('app', 'Code');
-                    if($type === 'memberWiseSale'){
+                if ($type === 'memberWiseSale') {
                     $lable = Yii::t('app', 'Member Code');
                 }
                 ?>
@@ -80,7 +80,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                 <div class="col-sm-2 reset_field">
                     <?php
                     $lable = Yii::t('app', 'name');
-                    if($type === 'memberWiseSale'){
+                    if ($type === 'memberWiseSale') {
                         $lable = Yii::t('app', 'Member name');
                     }
                     ?>
@@ -134,7 +134,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'available_stock')->textInput(['readonly' => TRUE]) ?>
                 </div>
-                <div class="col-sm-1 reset_field qty-validate">
+                <div class="col-sm-1 reset_field number-validate">
                     <?= $form->field($detailModel, 'quantity')->textInput() ?>
                 </div>
                 <div class="col-sm-1 reset_field">
@@ -158,7 +158,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                     <?= $form->field($model, 'no_of_installment')->textInput() ?>
                 </div>  
                 <div class="col-sm-2 dedStartDate reset_field">
-                    <?= Yii::$app->controls->date($model, $form, 'deduction_start_date','', date('Y-m-d'), false, false); ?>
+                    <?= Yii::$app->controls->date($model, $form, 'deduction_start_date', '', date('Y-m-d'), false, false); ?>
                 </div>  
                 <?php if ($cashSale) { ?>
                     <div class="col-sm-1 reset_field">
@@ -554,6 +554,7 @@ $script = "
         setVendorCode();
             $('#tblproductsale-payment_mode').val('');
             $('#tblproductsale-payment_mode').trigger('change');
+            $('#tblproductsale-avl_credit').val(0);
     });
     $('#tblproductsale-invoice_date').change(function(){
         $('#tblproductsale-ex_code').val('');
@@ -710,7 +711,6 @@ $script = "
                     data: {'date':date,'type':type,'code':code,'union':union,'bmc':bmc,'pay_mode':pay_mode,'amount_due':amount_due,'noi':noi},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
-                        console.log(data);
                         if (obj.status == 'success')
                         {
                            $('#tblproductsale-avl_credit').val(obj.credit);

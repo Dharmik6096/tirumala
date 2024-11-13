@@ -1844,7 +1844,7 @@ class SiteController extends Controller {
                 $ignore_tables = ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'];
                 $version_no = 0;
                 $update_ids = array_column($modelData, 'uuid');
-                $model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
+                //$model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
                         $process_record = TRUE;
@@ -3220,15 +3220,15 @@ class SiteController extends Controller {
     public function actionMccWiseIndentSummary() {
         $output = [];
         $union = 0;
-        $mcc = 0;
         $sp_param = [];
         $rlsData = $this->setRlsData();
         $sp_name = 'mis_mcc_wise_indent_summary';
-        if (!empty(Yii::$app->request->post('Dashboard')['union_code'])) {
-            $union = Yii::$app->request->post('Dashboard')['union_code'];
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
         }
-        if (!empty(Yii::$app->request->post('Dashboard')['mcc_code'])) {
-            $mcc = Yii::$app->request->post('Dashboard')['mcc_code'];
+        $mcc = !empty($rlsData['mcc']) ? $rlsData['mcc'] : 0;
+        if (!empty(Yii::$app->request->post('mcc'))) {
+            $mcc = Yii::$app->request->post('mcc');
         }
         $date = Yii::$app->request->post('Dashboard')['date'];
         $date = date('Y-m-d', strtotime($date));
