@@ -93,7 +93,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                         $no_of_lines = count(file($file->file_path));
                         $attributes = [];
                         $header_line = FALSE;
-                        if ($file->dpu_type == 8) {
+                        if ($file->dpu_type == 8 || $file->dpu_type == 32) {
                             $attributes = [
                                 'dtdate' => '',
                                 'shift' => '',
