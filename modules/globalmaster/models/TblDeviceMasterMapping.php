@@ -26,6 +26,7 @@ use app\modules\globalmaster\models\TblDeviceMaster;
 class TblDeviceMasterMapping extends \app\models\ChildModel {
 
     public $device_id, $collection_center_type, $collection_center_code, $eff_date;
+    public $union_code, $plant_code, $mcc_plant_code, $bmc_code;
 
     /**
      * @inheritdoc

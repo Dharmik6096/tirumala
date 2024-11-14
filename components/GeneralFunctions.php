@@ -39,6 +39,8 @@ use yii\helpers\ArrayHelper;
 use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\syncutility\models\TblGenerateSentbox;
 use app\models\TblKeyPattern;
+use app\models\TblKeyPatternChild;
+use app\modules\organisation\models\TblMasterHierarchy;
 use app\modules\bkgprocess\models\TblFtpDetail;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
@@ -1631,6 +1633,8 @@ class GeneralFunctions extends Component {
                 $key_config['ref_code_type'] = $data->ref_code_type;
                 $key_config['ref_code_length'] = $data->ref_code_length;
                 $key_config['ref_code_fix_length'] = $data->ref_code_fix_length;
+                $key_config['master_hierarchy_auto_entry'] = $data->master_hierarchy_auto_entry;
+                $key_config['key_pattern_code'] = $data->key_pattern_code;
 //                $key_config['has_prefix'] = $data->has_prefix;
 //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
                 $PatternArray[$data->pattern_for] = $key_config;
@@ -1726,9 +1730,136 @@ class GeneralFunctions extends Component {
             if (strlen($model->ref_code) != $ref_code_fix_length) {
                 $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
             }
+            if($keyPattern['master_hierarchy_auto_entry'] == 1){
+                $this->setKeyPatternChild($keyPattern, $model, $table_name, $pk_code);
+            }
             return $pk_code;
         } else {
             $model->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
+            return;
+        }
+    }
+
+    public function setKeyPatternChild($pattern, &$model, $table_name, $pk_code, $master_key = '', $hierarchyData = [], $is_exist = false) {
+        $childPattern = new TblKeyPatternChild();
+        $childKeyPatterns = $childPattern->find()->where(['key_pattern_code' => $pattern['key_pattern_code']])->all();
+        if(!empty($childKeyPatterns)){
+            if(!empty($hierarchyData)){
+                $masterHierarchy = $hierarchyData;
+            } else {
+                $masterHierarchy = new TblMasterHierarchy();
+                $pk_name = $model::primaryKey()[0];
+                $masterHierarchy->attributes = $model->attributes;
+                $masterHierarchy->master_key = $pk_name;
+                $masterHierarchy->{$pk_name} = $pk_code;
+            }
+            $masterHierarchy->wef_date = !empty($masterHierarchy->wef_date) ? $masterHierarchy->wef_date : date('Y-m-d');
+            $masterHierarchy->is_active = 1;
+            foreach($childKeyPatterns as $key => $keyPattern){
+                $index = $key+1;
+                $key_name = 'ref_code'.$index;
+                $masterHierarchy->master_type = $keyPattern->pattern_for;
+                $key_length = (int) $keyPattern['key_length'];
+
+                $key_fix_length = (int) $keyPattern['key_fix_length'];
+                $key_reset_on = $keyPattern['key_reset_on'];
+
+                if(!$is_exist && $keyPattern['key_code_type'] == 1){
+                    $data = $masterHierarchy->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT('.$key_name.',' . $key_length . ')as bigint)),0)+1'])
+                        ->where(['union_code' => $model->union_code])
+                        ->asArray()
+                        ->one();
+                    $ref_code = ($key_length > 0 ) ? str_pad($data['ref_code'], $key_length, '0', STR_PAD_LEFT) : '';
+                    if(!empty($keyPattern['prefix_field'])) {
+                        $masterHierarchy->{$key_name} = '';
+                        $prefix_seq = explode(',', $keyPattern['prefix_field']);
+                        foreach ($prefix_seq as $pre) {
+                            $pre_info = explode(':', $pre);
+                            if (isset($pre_info[1])) {
+                                $t_info = explode('#', $pre_info[0]);
+                                $table_name = $t_info[0];
+                                $where_key = $t_info[1];
+                                $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                $append_field = $pre_info[1];
+                                $query = new Query();
+                                $res = $query->select($append_field)
+                                                ->from($table_name)
+                                                ->where([$where_key => $model->{$where_val}])->one();
+                                if (!empty($res)) {
+                                    $masterHierarchy->{$key_name} .= $res[$append_field];
+                                } else {
+                                    $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
+                                    $model->addError('ref_code', $message);
+                                    return;
+                                }
+                            } else {
+                                $masterHierarchy->{$key_name} .= $model->{$pre};
+                            }
+                        }
+                    }
+                    $masterHierarchy->{$key_name} .= $ref_code;
+                    if(!empty($keyPattern['suffix_field'])) {
+                        $suffix_seq = explode(',', $keyPattern['suffix_field']);
+                        foreach ($suffix_seq as $pre) {
+                            $pre_info = explode(':', $pre);
+                            if (isset($pre_info[1])) {
+                                $t_info = explode('#', $pre_info[0]);
+                                $table_name = $t_info[0];
+                                $where_key = $t_info[1];
+                                $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                $append_field = $pre_info[1];
+                                $query = new Query();
+                                $res = $query->select($append_field)
+                                                ->from($table_name)
+                                                ->where([$where_key => $model->{$where_val}])->one();
+                                if (!empty($res)) {
+                                    $masterHierarchy->{$key_name} .= $res[$append_field];
+                                } else {
+                                    $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
+                                    $model->addError('ref_code', $message);
+                                    return;
+                                }
+                            } else {
+                                $masterHierarchy->{$key_name} .= $model->{$pre};
+                            }
+                        }
+                    }
+                } else if($keyPattern['key_code_type'] == 2) {
+                    $masterHierarchy->{$key_name} = !empty($masterHierarchy->{$key_name}) ? $masterHierarchy->{$key_name} : NULL;
+                }
+                if($keyPattern['key_code_type'] == 1) {
+                    if (empty($masterHierarchy->{$key_name})) {
+                        $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+                    } else {
+                        $cnt = $masterHierarchy->getActiveCount($key_name, $key_reset_on);
+                        if ($cnt > 0) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                        }
+                    }
+                    if(!empty($masterHierarchy->{$key_name})){
+                        $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);
+                        if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $key_fix_length . '.'));
+                        }
+                    }
+                }
+                if(!empty($hierarchyData)){
+                    $cnt = $masterHierarchy->getActiveCount($key_name, $key_reset_on);
+                    if ($cnt > 0) {
+                        $model->addError($key_name, Yii::t('app/validation', $model->getAttributeLabel($key_name) . ' has already been taken.'));
+                    }
+                    if(!empty($masterHierarchy->{$key_name})){
+                        $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);   
+                        if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
+                            $model->addError($key_name, Yii::t('app/validation', $model->getAttributeLabel($key_name) . ' length must be ' . $key_fix_length . '.'));
+                        }
+                    }
+                }
+            }
+            $model->set_master_hierarchy[] = $masterHierarchy;
+            return;
+        } else {
+            $model->addError('ref_code', Yii::t('app/validation', 'Child Key pattern config missing.'));
             return;
         }
     }
@@ -2176,32 +2307,35 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getAttachment($module_name, $reference_code, $link = TRUE, $OnlyData = FALSE, $remarks = NULL, $downloadOnly = false) {
+    public function getAttachment($module_name, $reference_code, $link = true, $OnlyData = false, $remarks = null, $downloadOnly = false, $multiple = false) {
         $model = new TblAttachment();
         $model->module_name = $module_name;
         $model->module_code = $reference_code;
         $model->remarks = $remarks;
-        $attachment = $model->getData();
+        $attachments = $model->getData();
         if ($OnlyData) {
-            return $attachment;
+            return $attachments;
         }
-
-        if ($attachment) {
-            if ($downloadOnly && $attachment[0]->attachment_type == 'pdf') {
-                return Html::a('<i class="fa fa-download"></i> ' . $attachment[0]->file_name, $attachment[0]->attachment, [
-                            'title' => 'Download',
-                            'download' => $reference_code . $attachment[0]->attachment_type,
-                            'class' => 'text-white hover-black',
-                ]);
-            } else if ($link) {
-                return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [
-//                            'title' => 'Download',
-                            'class' => 'image-popup-no-margins',
-                            'download' => $attachment[0]->attachment_type,
-                ]);
-            } else {
-                return Html::img($attachment[0]->attachment, ['class' => 'img-responsive disp_image', 'alt' => '']);
+        $attachmentsList = [];
+        if ($attachments) {
+            foreach ($attachments as $attachment) {
+                if ($downloadOnly && $attachment->attachment_type == 'pdf') {
+                    $attachmentsList[] = Html::a('<i class="fa fa-download"></i> ' . $attachment->file_name, $attachment->attachment, [
+                                'title' => 'Download',
+                                'download' => $reference_code . $attachment->attachment_type,
+                                'class' => 'text-white hover-black',
+                    ]);
+                } else if ($link) {
+                    $attachmentsList[] = Html::a(Html::img($attachment->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment->attachment, [
+                                //                            'title' => 'Download',
+                                'class' => 'image-popup-no-margins',
+                                'download' => $attachment->attachment_type,
+                    ]);
+                } else {
+                    $attachmentsList[] = Html::img($attachment->attachment, ['class' => 'disp_image', 'alt' => '']);
+                }
             }
+            return $multiple ? $attachmentsList : $attachmentsList[0];
         }
         return "";
     }
