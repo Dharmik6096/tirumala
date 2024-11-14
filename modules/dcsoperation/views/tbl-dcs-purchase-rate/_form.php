@@ -88,7 +88,6 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                     }"),
                     'success' => new JsExpression('function(data){                             
                                     if (data.status == "success"){
-                                    console.log(data);
                                             var purchaseRate = [];
                                             purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"shift":data.shift,"description":data.description,"shift_id":data.shift_id,"for_member":data.for_member,"rate_value":data.rate_value};
                                             localStorage.setItem("purchaseRate", JSON.stringify(purchaseRate));
