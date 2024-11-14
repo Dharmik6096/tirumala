@@ -12,7 +12,7 @@ $this->title = Yii::t('app', 'Allow Collection Approval');
         </div>
         <div class="clearfix"></div>
         <?php
-        echo $this->render('_approval_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'is_concate' => true]);
+        echo $this->render('_approval_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'is_concate' => true, 'manualCollectionModel' => $manualCollectionModel]);
         ?>
     </div>
 </div>

@@ -106,12 +106,15 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
     }
 
     public function actionManualCollectionApproval() {
+        $manualCollectionModel = new TblAllowManualCollectionRange();
         $collection_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'workflow_for_manual_collection', 'PORTAL');
         if (Yii::$app->request->post()) {
             $successCount = 0;
             $errorCount = 0;
             if (isset($_REQUEST['selection'])) {
                 $deletedata = Yii::$app->request->post('selection');
+                $collectionPostData = Yii::$app->request->post()['TblAllowManualCollectionRange'];
+                $remarks = Yii::$app->request->post()['approve_remarks'];
                 foreach ($deletedata as $key => $value_code) {
                     $codes = explode('###', $value_code);
                     $value = $codes[0];
@@ -123,7 +126,8 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
                     if (strtolower($operation) == 'approve') {
                         if ($collection_config == 2 && !empty($approval_code)) {
                             $status = 1;
-                            $this->updateApprovalHistory($approval_code, $saveModel, $status);
+                            $remark = $remarks . $collectionPostData[$value_code]['remark'];
+                            $this->updateApprovalHistory($approval_code, $saveModel, $status, $remark);
                         }
 
                         $historyModel = new TblAllowManualCollectionRangeHistory();
@@ -133,23 +137,22 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
                             $existData->approval_status = $status;
                             $existData->approved_at = date('Y-m-d H:i:s');
                             $existData->approved_by = Yii::$app->session['UserCode'];
-                            $saveModel[] = $existData;
+                            $existData->remark = $remarks . $collectionPostData[$value_code]['remark'];
                         }
-
                         if (strtolower($status) == 'approve' || empty($approval_code)) {
                             $existData->approval_status = 'Approve';
                             $existData->approved_at = date('Y-m-d H:i:s');
                             $existData->approved_by = Yii::$app->session['UserCode'];
-                            $saveModel[] = $existData;
+                            $existData->remark = $remarks . $collectionPostData[$value_code]['remark'];
                         }
                         if (strtolower($status) == 'approve' || strtolower($existData->approval_status) == 'approve') {
                             $existData->is_approved = 1;
-                            $saveModel[] = $existData;
                         }
+                        $saveModel[] = $existData;
                     } else if (strtolower($operation) == 'reject') {
                         if ($collection_config == 2) {
                             $status = 2;
-                            $this->updateApprovalHistory($approval_code, $saveModel, $status);
+                            $this->updateApprovalHistory($approval_code, $saveModel, $status, $existData->remark);
                         }
                         if (strtolower($status) == 'reject' || empty($approval_code)) {
                             $historyModel = new TblAllowManualCollectionRangeHistory();
@@ -158,10 +161,10 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
                             $existData->approval_status = 'Reject';
                             $existData->approved_at = date('Y-m-d H:i:s');
                             $existData->approved_by = Yii::$app->session['UserCode'];
-                            $saveModel[] = $existData;
                         }
+                        $existData->remark = $remarks . $collectionPostData[$value_code]['remark'];
+                        $saveModel[] = $existData;
                     }
-
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Allow Collection Approval', 'edit']);
                     if ($transaction == 'customRedirect') {
                         $successCount++;
@@ -190,16 +193,18 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
         return $this->render('approve_collection', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'manualCollectionModel' => $manualCollectionModel,
         ]);
     }
 
-    protected function updateApprovalHistory($approval_code, &$saveModel, &$status) {
+    protected function updateApprovalHistory($approval_code, &$saveModel, &$status, $remarks = '') {
         $approvalModel = TblProcessApproval::findOne($approval_code);
         if ($approvalModel) {
             $historyApproval = new TblProcessApprovalHistory();
             Yii::$app->operation->history($approvalModel, $historyApproval, 'UPDATE');
             $saveModel[] = $historyApproval;
             $approvalModel->status = $status;
+            $approvalModel->remarks = $remarks;
             $saveModel[] = $approvalModel;
             $approvalModel->ApprovalList($approvalModel, $saveModel, $status);
         }

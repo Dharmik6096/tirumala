@@ -781,6 +781,15 @@ class V1 extends \yii\base\Module {
 //                'param' => 'union#dcs',
 //                'sp' => 'sp_dcs_config_list',
 //            ],
+            'manual-collection-approve/list' => [
+                'param' => 'organization_type#organization_code',
+                'sp' => 'sp_app_eipl_manual_collection_approve_list',
+                'login_data_fetch' => true
+            ],
+            'manual-collection-approve-data' => [
+                'main_table' => 'TblAllowManualCollectionRange',
+                'save_child_other' => true
+            ],
         ];
         return $label;
     }

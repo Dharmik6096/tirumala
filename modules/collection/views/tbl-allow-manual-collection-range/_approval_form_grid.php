@@ -11,7 +11,9 @@ use kartik\grid\GridView;
                 'id' => 'approve-manual-collection',
     ]);
     ?>
-
+    <?php
+    echo Html::hiddenInput('approve_remarks', 'approve_remarks', ['class' => 'set_remarks']);
+    ?>
     <?php
     $attribute = [
             ['class' => 'kartik\grid\CheckboxColumn',
@@ -22,16 +24,16 @@ use kartik\grid\GridView;
                 $code = $model['allow_manual_collection_code'] . '###' . $model['process_approval_code'];
                 return ['class' => 'checkbox-collection', 'value' => $code];
             }],
-            ['attribute' => 'union_code', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-            }, 'filter' => false],
-            ['attribute' => 'plant_code', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-            }, 'filter' => false],
-            ['attribute' => 'mcc_plant_code', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-            }, 'filter' => false],
-            ['attribute' => 'bmc_code', 'value' => function($model) {
+//            ['attribute' => 'union_code', 'value' => function($model) {
+//                return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+//            }, 'filter' => false],
+//            ['attribute' => 'plant_code', 'value' => function($model) {
+//                return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+//            }, 'filter' => false],
+//            ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+//                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+//            }, 'filter' => false],
+        ['attribute' => 'bmc_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
             }, 'filter' => false],
             ['attribute' => 'dcs_code', 'value' => function($model) {
@@ -61,6 +63,9 @@ use kartik\grid\GridView;
             ['attribute' => 'approval_status', 'value' => function($model) {
                 return isset(Yii::$app->dropdown->getRecords('manual_approve_status')['data'][$model->approval_status]) ? Yii::$app->dropdown->getRecords('manual_approve_status')['data'][$model->approval_status] : '';
             }, 'filter' => false],
+            ['attribute' => 'remark', 'format' => 'raw', 'value' => function ($model, $key, $index) use ($form) {
+                return '<span class=\'remark\'>' . $form->field($model, '[' . $model['allow_manual_collection_code'] . '###' . $model['process_approval_code'] . ']remark')->textInput(['value' => $model->remark, 'class' => 'form-control',])->label(FALSE) . '</span>';
+            },],
     ];
 
     $grid_option = [
@@ -75,6 +80,8 @@ use kartik\grid\GridView;
 </div>
 <div class="panel-footer" >
     <?php if (!empty($dataProvider->getModels())) { ?>
+        <?= $form->field($manualCollectionModel, 'remark', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
+        <div class="clearfix"></div>
         <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
         <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }
@@ -90,6 +97,8 @@ $script = '
     $(".submit").click(function() {
      var id= $(this).attr("value");
      $(".set_operation").val(id);
+        var remarks = $("#tblallowmanualcollectionrange-remark").val();
+        $(".set_remarks").val(remarks);
         var len = $("input[class=\"checkbox-collection kv-row-checkbox\"]:checked").length;
             if(len == 0){
                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Collection.</span></div></div>");
