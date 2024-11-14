@@ -188,7 +188,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                 $result = 'success';
                 Yii::$app->response->format = trim(Response::FORMAT_JSON);
                 $url = \yii\helpers\Url::to(['tbl-dcs-purchase-rate-details/create-rate', 'id' => -1, 'method' => $this->model->rate_gen_method_code]);
-                return ['status' => $result, 'url' => $url, 'originating_org_type' => $this->model->originating_org_type, 'originating_org_code' => $this->model->originating_org_code, 'rate_method' => $this->model->rate_gen_method_code, 'wef_date' => $this->model->wef_date, 'shift' => $this->model->shift_applicability, 'description' => $this->model->description, 'shift_id' => $this->model->shift_id, 'union_code' => $this->model->union_code];
+                return ['status' => $result, 'url' => $url, 'originating_org_type' => $this->model->originating_org_type, 'originating_org_code' => $this->model->originating_org_code, 'rate_method' => $this->model->rate_gen_method_code, 'wef_date' => $this->model->wef_date, 'shift' => $this->model->shift_applicability, 'description' => $this->model->description, 'shift_id' => $this->model->shift_id, 'union_code' => $this->model->union_code, 'rate_value' => $this->model->rate_value];
             } else {
                 $file = [];
                 if ($_POST['file_name'] != '')
