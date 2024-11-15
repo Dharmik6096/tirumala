@@ -137,13 +137,12 @@ class RequestMasterController extends MasterController {
                 $model->setChildTableOther($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
-            if ($saveModel && !isset($moduleDetails['multi_auto_increment_key']) && !isset($moduleDetails['multi_auto_inc_key_save_other'])) {
+            if ($saveModel && !isset($moduleDetails['multi_auto_increment_key']) && !isset($moduleDetails['multi_auto_inc_key_save_other']) && !isset($moduleDetails['not_save_model'])) {
                 $master = [];
                 $master[] = $model;
             }
             if (!empty($auto_key_config)) {
                 $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($childModel, ['transactional data', 'create'], $auto_key_config);
-//                $master[] = $childModel;
             } else {
                 $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
 //            $transaction = $this->generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);

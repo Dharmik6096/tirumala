@@ -777,10 +777,6 @@ class V1 extends \yii\base\Module {
                 'param' => 'from_datetime#to_datetime#dcs',
                 'sp' => 'sp_app_eipl_milk_collection',
             ],
-//            'list/dcs-config' => [
-//                'param' => 'union#dcs',
-//                'sp' => 'sp_dcs_config_list',
-//            ],
             'manual-collection-approve/list' => [
                 'param' => 'organization_type#organization_code',
                 'sp' => 'sp_app_eipl_manual_collection_approve_list',
@@ -788,7 +784,8 @@ class V1 extends \yii\base\Module {
             ],
             'manual-collection-approve-data' => [
                 'main_table' => 'TblAllowManualCollectionRange',
-                'save_child_other' => true
+                'save_child_other' => true,
+                'not_save_model' => true
             ],
         ];
         return $label;

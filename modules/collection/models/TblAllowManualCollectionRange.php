@@ -10,6 +10,8 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * This is the model class for table "tbl_allow_manual_collection_range".
@@ -65,7 +67,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back', 'approve_remarks'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back', 'approve_remarks', 'allow_manual_collection_code'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'entry_type', 'from_shift', 'to_shift', 'from_date', 'to_date', 'table_name'], 'required', 'on' => ['create', 'hosync']],
                 [['from_date'], 'checkUnique', 'skipOnError' => true, 'on' => ['create', 'hosync']],
                 [['dcs_code'], 'required', 'when' => function ($model) {
@@ -161,6 +163,9 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
     }
 
     public function setChildTable(&$model, &$modelSave, &$childModel, &$auto_key_config) {
+        $login_data = Yii::$app->eiplapp->identity;
+        $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
+
         $model->scenario = 'hosync';
         $model->is_approved = 0;
         $model->from_date = empty($model->from_date) ? NULL : Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($model->from_shift);
@@ -169,12 +174,17 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         if ($model->table_name == 'tbl_milk_collection') {
             $model->application_type = 'DCS';
         }
+        $model->originating_org_type = 'HO';
+        $model->originating_org_code = $created_by;
+        $model->created_by = $created_by;
+
         $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_for_manual_collection', 'PORTAL');
+        $manualCollectionConfig = 2;
         if (in_array($manualCollectionConfig, [1, 2])) {
             if ($manualCollectionConfig == 2) {
                 $i = 0;
                 $modelStages = new TblApprovalStagesDetail();
-                $modelStages->setProcessWiseApprovalData($model, $model->union_code, 'tbl_allow_manual_collection_range', $childModel, $auto_key_config, $i, true, 'allow_manual_collection_code');
+                $modelStages->setProcessWiseApprovalData($model, $model->union_code, 'tbl_allow_manual_collection_range', $childModel, $auto_key_config, $i, true, 'allow_manual_collection_code', $created_by);
             } else {
                 $model->approval_status = 'Pending';
                 $childModel[] = $model;
@@ -185,6 +195,71 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             $childModel[] = $model;
             //$this->model->approved_at = date('Y-m-d H:i:s');
             //$this->model->approved_by = Yii::$app->session['UserCode'];
+        }
+    }
+
+    public function setChildTableOther(&$model, $transaction_data, &$childModel) {
+        $login_data = Yii::$app->eiplapp->identity;
+        $manualCollectionData = TblAllowManualCollectionRange::find()->where(['allow_manual_collection_code' => $model->allow_manual_collection_code])->one();
+        $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($manualCollectionData->union_code, 'workflow_for_manual_collection', 'PORTAL');
+        $approval_code = !empty($transaction_data['content']['process_approval_code']) ? $transaction_data['content']['process_approval_code'] : '';
+        $status_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
+        if (strtolower($model->approval_status) == 'approve') {
+            if ($manualCollectionConfig == 2 && !empty($approval_code)) {
+                $status = 1;
+                $this->updateApprovalHistory($approval_code, $childModel, $status, $model->remark, $status_by);
+            }
+            $historyModel = new TblAllowManualCollectionRangeHistory();
+            Yii::$app->operation->history($manualCollectionData, $historyModel, 'UPDATE');
+            $childModel[] = $historyModel;
+            if ($manualCollectionConfig == 2) {
+                $manualCollectionData->approval_status = $status;
+                $manualCollectionData->approved_at = date('Y-m-d H:i:s');
+                $manualCollectionData->approved_by = $status_by;
+                $manualCollectionData->remark = $model->remark;
+            }
+            if (strtolower($model->approval_status) == 'approve' && empty($approval_code)) {
+                $manualCollectionData->approval_status = 'Approve';
+                $manualCollectionData->approved_at = date('Y-m-d H:i:s');
+                $manualCollectionData->approved_by = $status_by;
+                $manualCollectionData->remark = $model->remark;
+            }
+            if (strtolower($model->approval_status) == 'approve' || strtolower($manualCollectionData->approval_status) == 'approve') {
+                $manualCollectionData->is_approved = 1;
+            }
+            $manualCollectionData->originating_org_type = 'HO';
+            $manualCollectionData->originating_org_code = $status_by;
+            $manualCollectionData->updated_by = $status_by;
+            $childModel[] = $manualCollectionData;
+        } else if (strtolower($model->approval_status) == 'reject') {
+            if ($manualCollectionConfig == 2) {
+                $status = 2;
+                $this->updateApprovalHistory($approval_code, $childModel, $status, $manualCollectionData->remark, $status_by);
+            }
+            if (strtolower($status) == 'reject' || empty($approval_code)) {
+                $historyModel = new TblAllowManualCollectionRangeHistory();
+                Yii::$app->operation->history($manualCollectionData, $historyModel, 'UPDATE');
+                $childModel[] = $historyModel;
+                $manualCollectionData->approval_status = 'Reject';
+                $manualCollectionData->approved_at = date('Y-m-d H:i:s');
+                $manualCollectionData->approved_by = $status_by;
+            }
+            $manualCollectionData->remark = $model->remark;
+            $childModel[] = $manualCollectionData;
+        }
+    }
+
+    public function updateApprovalHistory($approval_code, &$childModel, &$status, $remarks = '', $status_by = '') {
+        $approvalModel = TblProcessApproval::findOne($approval_code);
+        if ($approvalModel) {
+            $historyApproval = new TblProcessApprovalHistory();
+            Yii::$app->operation->history($approvalModel, $historyApproval, 'UPDATE');
+            $childModel[] = $historyApproval;
+            $approvalModel->status = $status;
+            $approvalModel->remarks = $remarks;
+            $approvalModel->originating_org_type = 'HO';
+            $childModel[] = $approvalModel;
+            $approvalModel->ApprovalList($approvalModel, $childModel, $status, $status_by);
         }
     }
 
