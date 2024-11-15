@@ -136,10 +136,10 @@ class TblDcsMilkType extends ChildModel {
         }
     }
 
-    public function rateChart($union, $app_type) {
+    public function rateChart($union) {
         return TblUnionRatechartRange::find()
                         ->where(['tbl_union_ratechart_range.union_code' => $union])
-                        ->andWhere(['tbl_union_ratechart_range.config_for' => $app_type])
+                        ->andWhere(['tbl_union_ratechart_range.config_for' => 'VLC'])
                         ->all();
     }
 
