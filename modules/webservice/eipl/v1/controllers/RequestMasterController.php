@@ -23,8 +23,8 @@ class RequestMasterController extends MasterController {
         $data = V1::getLabels($endpoint);
         if (isset($data['login_data_fetch']) && !empty($data['login_data_fetch'])) {
             $login_data = Yii::$app->eiplapp->identity;
-            if (isset($login_data['mobile_no'])) {
-                $data['param'] .= '#mobile_no';
+            if (isset($login_data['access_token'])) {
+                $data['param'] .= '#access_token';
             }
         }
         $response = [];
@@ -42,8 +42,8 @@ class RequestMasterController extends MasterController {
             foreach ($param as $value) {
                 $array_val = explode(':', $value);
                 $param_val = !empty($array_val[1]) ? $array_val[1] : (isset($req_data[$value]) ? $req_data[$value] : NULL);
-                if ($value === 'mobile_no' && isset($login_data['mobile_no'])) {
-                    $param_val = $login_data['mobile_no'];
+                if ($value === 'access_token' && isset($login_data['access_token'])) {
+                    $param_val = $login_data['access_token'];
                 }
                 $param_val = empty($param_val) && isset($org_codes[$value]) ? (!empty($org_codes[$value]) && (!$orgToZero || in_array($value, $rlsArray)) ? (is_array($org_codes[$value]) ? (',' . implode(',', $org_codes[$value]) . ',') : $org_codes[$value]) : '0' ) : ((is_array($param_val) ? (',' . implode(',', $param_val) . ',') : $param_val));
                 $sp_param[] = $param_val;
@@ -213,116 +213,42 @@ class RequestMasterController extends MasterController {
         $data = Yii::$app->request->getRawBody();
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
             $res_data['config'] = [];
-            $org_code = $data['organization_code'];
-            $org_type = $data['organization_type'];
-            $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
-            $model_data = $orgDetail['model_data'];
-            if (!empty($model_data)) {
-                $animalType = [];
-                $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
-                $milktype = new TblDcsMilkType();
-                $rate_chart_range = $milktype->rateChart($model_data->union_code, $org_type);
-                foreach ($rate_chart_range as $rate_chart) {
-                    if (!empty($rate_chart)) {
-                        $min_fat = $rate_chart->min_fat;
-                        $max_fat = $rate_chart->max_fat;
-                        $min_snf = $rate_chart->min_snf;
-                        $max_snf = $rate_chart->max_snf;
-                        $min_clr = $rate_chart->min_clr;
-                        $max_clr = $rate_chart->max_clr;
-                        $milk_type_data = TblAnimalType::find()->select(['animal_type_code', 'animal_type_name'])->where(['animal_type_code' => $rate_chart->animal_type_code])->one();
-                    }
-                    $animalType[] = [
-                        'milk_type_code' => !empty($milk_type_data->animal_type_code) ? $milk_type_data->animal_type_code : '',
-                        'milk_type_name' => !empty($milk_type_data->animal_type_name) ? $milk_type_data->animal_type_name : '',
-                        'min_fat' => $min_fat,
-                        'max_fat' => $max_fat,
-                        'min_snf' => $min_snf,
-                        'max_snf' => $max_snf,
-                        'min_clr' => $min_clr,
-                        'max_clr' => $max_clr
-                    ];
+            $animalType = [];
+            $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
+            $milktype = new TblDcsMilkType();
+            $rate_chart_range = $milktype->rateChart($data['organization_code']);
+            foreach ($rate_chart_range as $rate_chart) {
+                if (!empty($rate_chart)) {
+                    $min_fat = $rate_chart->min_fat;
+                    $max_fat = $rate_chart->max_fat;
+                    $min_snf = $rate_chart->min_snf;
+                    $max_snf = $rate_chart->max_snf;
+                    $min_clr = $rate_chart->min_clr;
+                    $max_clr = $rate_chart->max_clr;
+                    $milk_type_data = TblAnimalType::find()->select(['animal_type_code', 'animal_type_name'])->where(['animal_type_code' => $rate_chart->animal_type_code])->one();
                 }
-                $res_data['collectionConfig']['allowedMilkType'] = $animalType;
+                $animalType[] = [
+                    'milk_type_code' => !empty($milk_type_data->animal_type_code) ? $milk_type_data->animal_type_code : '',
+                    'milk_type_name' => !empty($milk_type_data->animal_type_name) ? $milk_type_data->animal_type_name : '',
+                    'min_fat' => $min_fat,
+                    'max_fat' => $max_fat,
+                    'min_snf' => $min_snf,
+                    'max_snf' => $max_snf,
+                    'min_clr' => $min_clr,
+                    'max_clr' => $max_clr
+                ];
             }
+            $res_data['collectionConfig']['allowedMilkType'] = $animalType;
+
             $model = new TblUnionConfigResult();
-            $model->union_code = $model_data->union_code;
-            $model->config_for = $org_type;
+            $model->union_code = $data['organization_code'];
+            $model->config_for = 'VLC';
             foreach ($model->getConfigList() as $d) {
                 $res_data['config'][$d['config_key']] = $d['config_result_key'];
             }
         }
         $this->response->setData($res_data);
         return $this->response;
-    }
-
-    public function getOrgDetail($type, $code, $is_string = TRUE) {
-        $dcs_code = [];
-        $bmc_code = [];
-        $mcc_plant_code = [];
-        $plant_code = [];
-        $union_code = '';
-        $model_data = [];
-        if ($type == 'VLC') {
-            $model = new TblDcs();
-            $model->dcs_code = $code;
-            $dcs_code[] = $code;
-            $model_data = $model->getData();
-            if (!empty($model_data)) {
-                $union_code = $model_data->union_code;
-                $bmc_code[] = $model_data->bmc_code;
-                $mcc_plant_code[] = $model_data->mcc_plant_code;
-                $plant_code[] = $model_data->plant_code;
-            }
-        } else if ($type == 'BMC') {
-            $model = new TblDcsBmc();
-            $model->bmc_code = $code;
-            $model_data = $model->singleBmcData();
-            if (!empty($model_data)) {
-                $union_code = $model_data->union_code;
-                $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
-                $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlant->tblMccPlantGroup, 'p_mcc_plant_code');
-                $mcc_plant_code[] = $model_data->mcc_plant_code;
-                $bmc_code = ArrayHelper::getColumn($model_data->tblBmcGroup, 'p_bmc_code');
-                $bmc_code[] = $model_data->bmc_code;
-                $dcs_code = ArrayHelper::getColumn($model_data->dcsCodes, 'dcs_code');
-                foreach ($model_data->tblBmcGroup as $bmc) {
-                    $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($bmc->tblDcsCode, 'dcs_code'));
-                }
-            }
-        } else if ($type == 'MCC') {
-            $model = new TblMccPlant();
-            $model->mcc_plant_code = $code;
-            $model_data = $model->getData();
-            if (!empty($model_data)) {
-                $union_code = $model_data->union_code;
-                $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
-                $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlantGroup, 'p_mcc_plant_code');
-                $mcc_plant_code[] = $model_data->mcc_plant_code;
-                $bmc_code = ArrayHelper::getColumn($model_data->bmcCodes, 'bmc_code');
-                $dcs_code = ArrayHelper::getColumn($model_data->tblDcs, 'dcs_code');
-                foreach ($model_data->tblMccPlantGroup as $mcc) {
-                    $bmc_code = array_merge($bmc_code, ArrayHelper::getColumn($mcc->tblBmcCode, 'bmc_code'));
-                    $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
-                }
-            }
-        } else if ($type == 'ROUTE') {
-            $model = new TblDcs();
-            $model->route_code = $code;
-            $model_data = $model->getRouteDcs($code);
-            $dcs_code = ArrayHelper::getColumn($model_data, 'dcs_code');
-        }
-        if ($is_string) {
-            $dcs_code = implode('\',\'', $dcs_code);
-            $bmc_code = implode('\',\'', $bmc_code);
-            $mcc_plant_code = implode('\',\'', $mcc_plant_code);
-            $plant_code = implode('\',\'', $plant_code);
-            $dcs_code = !empty($dcs_code) ? '\'' . $dcs_code . '\'' : $dcs_code;
-            $bmc_code = !empty($bmc_code) ? '\'' . $bmc_code . '\'' : $bmc_code;
-            $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
-            $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
-        }
-        return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data];
     }
 
 }
