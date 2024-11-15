@@ -722,7 +722,6 @@ class V1 extends \yii\base\Module {
             'branch/master' => [
                 'param' => 'bank_code',
                 'param' => 'select_param:*#organization_type:bank_code#bank_code#table:tbl_branch:condition:ifsc IS NOT NULL',
-
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'gender/master' => [
@@ -744,7 +743,7 @@ class V1 extends \yii\base\Module {
             'district/master' => [
                 'param' => 'select_param:*#organization_type:state_code#state_code#table:tbl_districts',
                 'sp' => 'sp_app_eipl_v1_master_data',
-            ],            
+            ],
             'sub-district/master' => [
                 'param' => 'select_param:*#organization_type:district_code#district_code#table:tbl_sub_districts',
                 'sp' => 'sp_app_eipl_v1_master_data',
@@ -761,6 +760,32 @@ class V1 extends \yii\base\Module {
             'report/milk-collection-audit' => [
                 'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
                 'sp' => 'sp_app_eipl_v1_milk_collection_history',
+            ],
+            'manual-collection/master' => [
+                'param' => 'organization_type#organization_code',
+                'sp' => 'sp_app_eipl_v1_manual_collection',
+            ],
+            'manual-collection' => [
+                'main_table' => 'TblAllowManualCollectionRange',
+                'multi_auto_increment_key' => true
+            ],
+            'milk-collection' => [
+                'main_table' => 'TblMilkCollection',
+                'multi_auto_inc_key_save_other' => true
+            ],
+            'milk-collection/list' => [
+                'param' => 'from_datetime#to_datetime#dcs',
+                'sp' => 'sp_app_eipl_milk_collection',
+            ],
+            'manual-collection-approve/list' => [
+                'param' => 'organization_type#organization_code',
+                'sp' => 'sp_app_eipl_manual_collection_approve_list',
+                'login_data_fetch' => true
+            ],
+            'manual-collection-approve-data' => [
+                'main_table' => 'TblAllowManualCollectionRange',
+                'save_child_other' => true,
+                'not_save_model' => true
             ],
         ];
         return $label;
