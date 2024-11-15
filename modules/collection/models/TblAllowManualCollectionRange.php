@@ -67,7 +67,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back', 'approve_remarks', 'allow_manual_collection_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back', 'approve_remarks'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'entry_type', 'from_shift', 'to_shift', 'from_date', 'to_date', 'table_name'], 'required', 'on' => ['create', 'hosync']],
                 [['from_date'], 'checkUnique', 'skipOnError' => true, 'on' => ['create', 'hosync']],
                 [['dcs_code'], 'required', 'when' => function ($model) {
@@ -179,7 +179,6 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         $model->created_by = $created_by;
 
         $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_for_manual_collection', 'PORTAL');
-        $manualCollectionConfig = 2;
         if (in_array($manualCollectionConfig, [1, 2])) {
             if ($manualCollectionConfig == 2) {
                 $i = 0;
@@ -200,6 +199,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
 
     public function setChildTableOther(&$model, $transaction_data, &$childModel) {
         $login_data = Yii::$app->eiplapp->identity;
+        $model->allow_manual_collection_code = $transaction_data['content']['allow_manual_collection_code'];
         $manualCollectionData = TblAllowManualCollectionRange::find()->where(['allow_manual_collection_code' => $model->allow_manual_collection_code])->one();
         $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($manualCollectionData->union_code, 'workflow_for_manual_collection', 'PORTAL');
         $approval_code = !empty($transaction_data['content']['process_approval_code']) ? $transaction_data['content']['process_approval_code'] : '';

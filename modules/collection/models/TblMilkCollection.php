@@ -1142,7 +1142,10 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function postDataSet(&$model, $flag, &$modelSave, &$auto_key_config, &$message = '', &$type = '') {
         $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
-
+        $login_data = Yii::$app->eiplapp->identity;
+        $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
+        $model->originating_org_type = 'HO';
+        $model->originating_org_code = $created_by;
         if (in_array($collectionApprovalConfig, [1, 2])) {
             $approvalModel = new TblCollectionDataAlias();
             $approvalModel->attributes = $model->attributes;
@@ -1155,7 +1158,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             if ($collectionApprovalConfig == 2) {
                 $i = 0;
                 $modelStages = new TblApprovalStagesDetail();
-                $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
+                $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code', $created_by);
             } else {
                 $modelSave[] = $approvalModel;
             }
