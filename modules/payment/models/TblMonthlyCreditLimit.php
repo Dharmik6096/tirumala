@@ -63,9 +63,6 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
             [['customer_type', 'customer_code'], 'required', 'on' => ['importCsv']],
             [['final_amount'], 'required'],
             [['customer_name', 'ex_code', 'wef_date'], 'required', 'except' => ['update', 'importCsv', 'importCsvOther']],
-//            [['customer_code'], function ($attribute, $params) {
-//                    $this->milk_amount = $this->manual_amount = $this->$attribute;
-//                }],
             [['dcs_code'], 'required', 'except' => ['importCsv', 'importCsvOther'], 'when' => function () {
                     return ($this->customer_type == 'MEMBER');
                 }, 'whenClient' => "function (attribute, value) { 

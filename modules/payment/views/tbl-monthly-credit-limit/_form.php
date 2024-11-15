@@ -150,23 +150,7 @@ $script = "
     
     $('#tblmonthlycreditlimit-wef_date').change(function(){
         $('#tblmonthlycreditlimit-ex_code').val('');
-//        setAvailableCredit();
     });
-
-//    $('#tblmonthlycreditlimit-bmc_code').on('change', function(){
-//        getAvailableStock();
-//        setAvailableCredit();
-//    });
-    
-//    $('#tblmonthlycreditlimit-customer_type').on('change', function(){
-//        getAvailableStock();
-//    });
-    
-
-    
-//    $('#tblmonthlycreditlimit-dcs_code').on('change', function(){
-//        getAvailableStock();
-//    });
     
     function setAvailableCredit(){
         var type = $('#tblmonthlycreditlimit-customer_type').val();
