@@ -9,10 +9,7 @@ use app\modules\webservice\components\EiplRequest;
 use yii\helpers\Json;
 use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 use app\modules\configuration\models\TblUnionConfigResult;
-use app\modules\organisation\models\TblDcs;
-use app\modules\organisation\models\TblMccPlant;
-use app\modules\organisation\models\TblDcsBmc;
-use app\modules\organisation\models\TblDcsMilkType;
+use app\modules\configuration\models\TblUnionRatechartRange;
 use app\modules\globalmaster\models\TblAnimalType;
 
 class RequestMasterController extends MasterController {
@@ -143,6 +140,7 @@ class RequestMasterController extends MasterController {
             }
             if (!empty($auto_key_config)) {
                 $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($childModel, ['transactional data', 'create'], $auto_key_config);
+                $master = $childModel[0];
             } else {
                 $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
 //            $transaction = $this->generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
@@ -150,7 +148,27 @@ class RequestMasterController extends MasterController {
             if ($transaction == 'customRedirect') {
                 $message = $message;
             } else {
-                $message = Yii::t('app', 'Unable to save!');
+                $message = '';
+                if (!empty($auto_key_config)) {
+                    $errors = $master->getErrors();
+                    if ($errors) {
+                        foreach ($errors as $attribute => $errorMessages) {
+                            $message .= implode(' ', $errorMessages) . ' ';
+                        }
+                    }
+                } else {
+                    foreach ($master as $singleModel) {
+                        $errors = $singleModel->getErrors();
+                        if ($errors) {
+                            foreach ($errors as $attribute => $errorMessages) {
+                                $message .= implode(' ', $errorMessages) . ' ';
+                            }
+                        }
+                    }
+                }
+                if (empty($message)) {
+                    $message = Yii::t('app', 'Unable to save!');
+                }
             }
         }
         $this->response->setMessage([$message]);
@@ -215,8 +233,8 @@ class RequestMasterController extends MasterController {
             $res_data['config'] = [];
             $animalType = [];
             $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
-            $milktype = new TblDcsMilkType();
-            $rate_chart_range = $milktype->rateChart($data['organization_code']);
+            $rateChart = new TblUnionRatechartRange();
+            $rate_chart_range = $rateChart->rateChart($data['organization_code']);
             foreach ($rate_chart_range as $rate_chart) {
                 if (!empty($rate_chart)) {
                     $min_fat = $rate_chart->min_fat;

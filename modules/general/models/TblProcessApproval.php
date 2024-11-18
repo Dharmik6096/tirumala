@@ -9,6 +9,7 @@ use app\modules\usermanagement\models\User;
 use yii\db\Expression;
 use app\modules\configuration\models\TblShiftTimeExceed;
 use app\modules\organisation\models\TblCustomerMasterProvisional;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_process_approval".
@@ -217,6 +218,14 @@ class TblProcessApproval extends \app\models\ChildModel {
             $model_save[] = $level;
         }
         $status = 'Reject';
+    }
+
+    public function getManualCollectionUserCode() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'user_code']);
+    }
+
+    public function getManualCollectionUpdatedBy() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'status_by']);
     }
 
 }
