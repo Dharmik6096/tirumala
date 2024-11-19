@@ -1381,6 +1381,7 @@ class GeneralFunctions extends Component {
     }
 
     public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false) {
+        $type = !empty($type) ? $type : '';
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
