@@ -67,10 +67,10 @@ class EIPLSecurity extends Component {
     }
 
     function UrlDecrypt($encryptedData, $login_session_key = FALSE) {
-        $decryptedData = '';
+        $decryptedData = $encryptedData;
         $key = ($login_session_key) ? Yii::$app->session->get('login_enc_key') : 'eipl1234567891';
-        $encryptedData = base64_decode($encryptedData);
-        if (!empty($encryptedData)) {
+        if (!empty($key) && !empty($encryptedData)) {
+            $encryptedData = base64_decode($encryptedData);
             $decryptedData = openssl_decrypt(
                     $encryptedData, 'aes-128-ecb', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
             );
