@@ -37,8 +37,13 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
      * @return mixed
      */
     public function actionView($id) {
+        $this->model = $this->findModel($id);
+        $searchModel = new TblAllowManualCollectionRangeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $this->model,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
         ]);
     }
 

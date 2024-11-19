@@ -5,7 +5,6 @@ namespace app\modules\organisation\models;
 use Yii;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\models\ChildModel;
-use app\modules\configuration\models\TblUnionRatechartRange;
 
 /**
  * This is the model class for table "tbl_dcs_milk_type".
@@ -134,13 +133,6 @@ class TblDcsMilkType extends ChildModel {
             array_push($modelSave, $dcsCode);
             array_push($modelSave, $dcsHistoryModel);
         }
-    }
-
-    public function rateChart($union) {
-        return TblUnionRatechartRange::find()
-                        ->where(['tbl_union_ratechart_range.union_code' => $union])
-                        ->andWhere(['tbl_union_ratechart_range.config_for' => 'VLC'])
-                        ->all();
     }
 
 }

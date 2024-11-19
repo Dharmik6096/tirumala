@@ -1,6 +1,7 @@
 <?php
 
 use kartik\grid\GridView;
+use yii\helpers\Html;
 
 ?>
 <?php
@@ -66,12 +67,19 @@ $attribute = [
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('manual_approve_status')['data'][$model->approval_status]) ? Yii::$app->dropdown->getRecords('manual_approve_status')['data'][$model->approval_status] : '';
         }],
+        ['attribute' => 'remark', 'filter' => false],
 ];
 
 $grid_option = [
     'id' => 'allow-collection-list',
     'attributes' => $attribute,
     'active_column' => false,
+    'actions' => [
+        'views' => function($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Allow Manual Collection View'];
+            return Html::a('<i class="fa fa-eye"></i>', ['/collection/tbl-allow-manual-collection-range/view', 'id' => $model->allow_manual_collection_code], $options);
+        }
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

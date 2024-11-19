@@ -263,4 +263,9 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         }
     }
 
+    public function getcollectionApproval() {
+        $this->allow_manual_collection_code = (string) $this->allow_manual_collection_code;
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'allow_manual_collection_code'])->orderBy('level ASC');
+    }
+
 }
