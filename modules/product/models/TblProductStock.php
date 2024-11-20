@@ -135,7 +135,7 @@ class TblProductStock extends \app\models\ChildModel {
         $orgCode = 'PORTAL-' . $this->bmc_code . '-';
         $len = strlen($orgCode);
         $val = $this->find()
-                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,6))) AS " . $primaryKey])
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,8))) AS " . $primaryKey])
                 ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
