@@ -5,6 +5,7 @@ namespace app\modules\organisation\models;
 use Yii;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\models\ChildModel;
+use app\modules\configuration\models\TblUnionRatechartRange;
 
 /**
  * This is the model class for table "tbl_dcs_milk_type".
