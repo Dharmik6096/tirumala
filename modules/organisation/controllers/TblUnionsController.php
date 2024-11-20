@@ -315,13 +315,16 @@ class TblUnionsController extends ChildController {
                     unlink($exist_logo);
                 }
             }
-            $logo_name = 'logo_UNION_' . $this->model->union_code . '.' . explode('.', $file_name)[1];
-            $upload = copy($file, $path . $logo_name);
-            if ($upload) {
-                if (file_exists($file)) {
-                    unlink($file);
+//            $logo_name = 'logo_UNION_' . $this->model->union_code . '.' . explode('.', $file_name)[1];
+            if (!empty($file_name)) {
+                $logo_name = !empty(Yii::$app->session->get('eiplCode')) ? strtolower(Yii::$app->session->get('eiplCode')) . '.' . explode('.', $file_name)[1] : '';
+                $upload = copy($file, $path . $logo_name);
+                if ($upload) {
+                    if (file_exists($file)) {
+                        unlink($file);
+                    }
+                    $this->model->logo = $base_url . $logo_path . $logo_name;
                 }
-                $this->model->logo = $base_url . $logo_path . $logo_name;
             }
         }
     }
@@ -334,7 +337,7 @@ class TblUnionsController extends ChildController {
 
     public function actionDistrictList() {
         $out = null;
-        $selected ='';
+        $selected = '';
         if (isset($_POST['depdrop_parents'])) {
 
             $value = $_POST['depdrop_parents'];
@@ -387,18 +390,21 @@ class TblUnionsController extends ChildController {
     }
 
     public function actionUploadImg() {
-
-        $path = Yii::$app->basePath . Yii::$app->params['temp_logo_path'];
-        if (!is_dir($path)) {
-            mkdir($path);
-            chmod($path, 0777);
-        }
-        $file = \yii\web\UploadedFile::getInstanceByName('file');
-        $name = 'logo_' . Yii::$app->session->get('organizations_type') . Yii::$app->session->get('organizations_code') . '.' . $file->extension;
-//        $name = 'logo_' . Yii::$app->session->get('organizations_type') . '_' . '002' . '.' . $file->extension;
-        if ($file->saveAs($path . $name)) {
-            chmod($path . $name, 0777);
-            echo $name;
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (!empty(Yii::$app->session->get('eiplCode'))) {
+            $path = Yii::getAlias('@webroot') . Yii::$app->params['temp_logo_path'];
+            if (!is_dir($path)) {
+                mkdir($path);
+                chmod($path, 0777);
+            }
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = strtolower(Yii::$app->session->get('eiplCode')) . '.' . $file->extension;
+            if ($file->saveAs($path . $name)) {
+                chmod($path . $name, 0777);
+                return ['status' => 'success', 'msg' => $name];
+            }
+        } else {
+            return ['status' => 'error', 'msg' => 'Eipl Code Not Available (Set Eipl Code or Remove Logo).'];
         }
     }
 
