@@ -84,13 +84,8 @@ $form = ActiveForm::begin([
             ],
             'clientEvents' => [
                 'success' => "function( file, response ){
-                    if(response.status=='error'){
-                    $('.dz-remove').trigger('click');
-                        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+response.msg+\"</span></div></div>\");
-                    } else {
-                        $('#file_name').val(response.msg);
-                    }                         
-                }",
+                                                $('#file_name').val(response);
+                                        }",
                 'removedfile' => "function( file, response ){
                                                 $('#file_name').val('');
                                         }",
