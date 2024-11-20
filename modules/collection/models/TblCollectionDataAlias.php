@@ -14,7 +14,6 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblDcsMilkDispatchTxn;
 use app\modules\organisation\models\TblRouteMapping;
-use app\modules\configuration\models\TblUnionRatechartRange;
 
 /**
  * This is the model class for table "tbl_collection_data_alias".
@@ -116,7 +115,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                 [['bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty_mode', 'no_of_can', 'qlty_auto', 'qty_auto', 'converted_qty_mode', 'send_status', 'collection_type', 'doc_no', 'old_no_of_can', 'old_purchase_rate_code', 'originating_type'], 'integer'],
                 [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'number'],
                 [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'created_at', 'updated_at', 'old_milk_quality_type_code', 'old_milk_type_code', 'shift_code', 'own_bmc_code', 'antibiotic_sms_sent', 'antibiotic', 'is_sms_sent', 'old_customer_code', 'can_no', 'old_route_code', 'old_antibiotic', 'converted_amount', 'process_approval_code', 'approved_at', 'approved_by', 'approval_status'], 'safe'],
-                [['dcs_code'], 'validateMilkCollection', 'on' => ['MilkCollection', 'ho_sync_create']],
+                [['dcs_code'], 'validateMilkCollection', 'on' => ['MilkCollection']],
                 [['customer_code'], 'validateBmcCollection', 'on' => ['BmcCollection']],
                 [['dcs_code'], 'validateMilkDispatch', 'on' => ['MilkDispatch']],
                 [['error_desc'], 'string', 'on' => ['approve']],
@@ -133,12 +132,12 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                         }
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $type, $flag);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection', 'MilkDispatch', 'ho_sync_create']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection', 'MilkDispatch']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', '', 'member_lock');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'ho_sync_create']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', '', 'bmc_lock');
@@ -147,13 +146,6 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                 [['bmc_code'], 'setNoOfCan'],
                 [['is_antibiotic', 'scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
                 [['bmc_code'], 'convertedAmount'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'date_time_of_collection', 'milk_type_code', 'shift_code', 'dcs_code', 'fat', 'snf', 'bmc_code', 'qty', 'milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'on' => ['ho_sync_create']],
-                [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['ho_sync_create']],
-                [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'on' => ['ho_sync_create']],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'on' => ['ho_sync_create']],
-                [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
-                [['qty'], 'qtyValidate', 'on' => ['ho_sync_create']],
-                [['member_code'], 'validateUnique', 'on' => ['ho_sync_create']],
         ];
     }
 
@@ -386,28 +378,6 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     public function convertedAmount($attribute, $params) {
         if (!empty($this->converted_qty) && !empty($this->rtpl)) {
             $this->converted_amount = $this->converted_qty * $this->rtpl;
-        }
-    }
-
-    public function validateUnique($attribute, $params) {
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
-        $model = new TblMember();
-        $data = $model->validMember($this->member_code);
-        if (empty($data)) {
-            $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' is Invalid'));
-        }
-        Yii::$app->general->validateDeactivateDcs($this, $this->date_time_of_collection, '', TRUE);
-        Yii::$app->general->validateRateRange($this);
-    }
-
-    public function getRateRange() {
-        return $this->hasOne(TblUnionRatechartRange::className(), ['union_code' => 'union_code', 'animal_type_code' => 'milk_type_code']);
-    }
-
-    public function qtyValidate($attribute, $params) {
-        $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'max_qty_limit_member', 'PORTAL');
-        if ($config > 0 && $this->qty > $config) {
-            $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' must not be greater than ' . $config));
         }
     }
 

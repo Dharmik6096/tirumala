@@ -57,6 +57,8 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
         $this->viewFile = 'create';
         $message = 'Manual Collection';
         $type = 'create';
+        $error = '';
+        $backUrl[] = '/collection/tbl-allow-manual-collection-range/create';
         $master_model = [];
         $this->model->scenario = 'create';
         if (Yii::$app->request->post()) {
@@ -64,18 +66,15 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
             $this->model->is_approved = 0;
             $this->model->from_date = Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->from_shift);
             $this->model->to_date = Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->to_shift);
-            $this->model->application_type = 'BMC';
-            if ($this->model->table_name == 'tbl_milk_collection') {
-                $this->model->application_type = 'DCS';
-            }
             if ($this->model->validate()) {
                 $auto_key_config = [];
-                $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'workflow_for_manual_collection', 'PORTAL');
+                $config_key = 'manual_collection_request_approval_' . $this->model->entry_type;
+                $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($this->model->union_code, $config_key, 'PORTAL');
                 if (in_array($manualCollectionConfig, [1, 2])) {
                     if ($manualCollectionConfig == 2) {
                         $i = 0;
                         $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setProcessWiseApprovalData($this->model, $this->model->union_code, 'tbl_allow_manual_collection_range', $master_model, $auto_key_config, $i, true, 'allow_manual_collection_code');
+                        $modelStages->setProcessWiseApprovalData($this->model, $this->model->union_code, 'tbl_allow_manual_collection_range', $master_model, $auto_key_config, $i, true, 'allow_manual_collection_code', '', $error);
                     } else {
                         $this->model->approval_status = 'Pending';
                         $master_model[] = $this->model;
@@ -89,13 +88,18 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
 //                    $this->model->approved_by = Yii::$app->session['UserCode'];
                     $master_model[] = $this->model;
                 }
-                if (!empty($auto_key_config)) {
-                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($master_model, [$message, $type], $auto_key_config);
+                if ($error == '') {
+                    if (!empty($auto_key_config)) {
+                        $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($master_model, [$message, $type], $auto_key_config);
+                    } else {
+                        $transaction = $this->generalModel->saveTransaction($master_model, [$message, $type]);
+                    }
+                    if ($transaction == 'customRedirect') {
+                        return $this->{$transaction}();
+                    }
                 } else {
-                    $transaction = $this->generalModel->saveTransaction($master_model, [$message, $type]);
-                }
-                if ($transaction == 'customRedirect') {
-                    return $this->{$transaction}();
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $error]);
+                    return $this->redirect($backUrl);
                 }
             }
         }
@@ -112,7 +116,7 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
 
     public function actionManualCollectionApproval() {
         $manualCollectionModel = new TblAllowManualCollectionRange();
-        $collection_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'workflow_for_manual_collection', 'PORTAL');
+
         if (Yii::$app->request->post()) {
             $successCount = 0;
             $errorCount = 0;
@@ -127,6 +131,8 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
                     $saveModel = [];
                     $operation = Yii::$app->request->post('TblAllowManualCollectionRange')['operation'];
                     $existData = $this->findModel($value);
+                    $config_key = 'manual_collection_request_approval_' . $existData->entry_type;
+                    $collection_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), $config_key, 'PORTAL');
                     $status = '';
                     if (strtolower($operation) == 'approve') {
                         if ($collection_config == 2 && !empty($approval_code)) {
@@ -155,7 +161,7 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
                         }
                         $saveModel[] = $existData;
                     } else if (strtolower($operation) == 'reject') {
-                        if ($collection_config == 2) {
+                        if (!empty($approval_code)) {
                             $status = 2;
                             $this->updateApprovalHistory($approval_code, $saveModel, $status, $existData->remark);
                         }
@@ -189,12 +195,8 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
         }
 
         $searchModel = new TblAllowManualCollectionRangeSearch();
-        if ($collection_config == 2) {
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true, true);
-        } else {
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, false, true);
-        }
-        $searchModel->scenario = 'approvalCollection';
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true, true);
+
         return $this->render('approve_collection', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

@@ -522,14 +522,17 @@ class SearchFilter {
             ],
             'TblMilkVehicleEntryTransactionSearch' => [
                 'filter' => ['erp_process_name', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
-            ], 
+            ],
             'TblMasterHierarchySearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
-            ],            
+            ],
             'TblEiplAppFeedbackMasterSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
-            ],   
+            ],
             'TblComplainSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+            ],
+            'TblAllowManualCollectionRangeSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
             ],
         ];

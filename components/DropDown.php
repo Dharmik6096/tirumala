@@ -668,7 +668,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-banner/tap-event-list', Yii::t('app', 'Select Tap Event'), $multiple, '', $readonly);
     }
-    
+
     public function RouteUserList($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/user-list', Yii::t('app', 'Select User'), $multiple, '', $readonly);
@@ -1971,7 +1971,7 @@ class DropDown extends Component {
             'table_name' => [
                 'name' => 'table_name',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['tbl_milk_collection' => Yii::t('app', 'Milk Collection'), 'tbl_bmc_collection' => Yii::t('app', 'BMC Collection'), 'tbl_weight_collection' => Yii::t('app', 'Weight Collection'), 'tbl_quality_collection' => Yii::t('app', 'Quality Collection')],
+                'data' => ['tbl_milk_collection' => Yii::t('app', 'Milk Collection'), 'tbl_bmc_collection' => Yii::t('app', 'BMC Collection')],
             ],
             'entry_type' => [
                 'name' => 'entry_type',
@@ -2257,7 +2257,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dynamicreport/default/get-sp-data-drop-list', 'Select ' . $islable, FALSE, '', FALSE, '', TRUE, $session);
     }
-    
+
     public function poured_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/poured-bmc-list', Yii::t('app', 'Select Poured BMC'), $multiple, $extra_param, $readonly, $id);

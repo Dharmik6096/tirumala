@@ -3,7 +3,6 @@
 namespace app\modules\details\models;
 
 use Yii;
-use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_contact_details".
@@ -181,10 +180,6 @@ class TblContactDetails extends \app\models\ChildModel {
                         ['mobile_no' => $this->mobile_no]
                 ])->andWhere(['module_name' => $this->module_name, 'is_active' => 1, 'is_default' => 1])
                 ->all();
-    }
-
-    public function getCollectionUserCode() {
-        return $this->hasOne(User::className(), ['user_code' => 'module_code']);
     }
 
 }

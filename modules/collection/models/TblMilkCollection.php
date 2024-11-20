@@ -170,6 +170,10 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['antibiotic_sms_sent'], 'default', 'value' => 0],
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'other_reading'], 'safe'],
                 [['qty'], 'qtyValidate', 'on' => ['create', 'update', 'ho_sync_create']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'date_time_of_collection', 'milk_type_code', 'shift_code', 'dcs_code', 'fat', 'snf', 'bmc_code', 'qty', 'milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'on' => ['ho_sync_create']],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'on' => ['ho_sync_create']],
+                [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
+                [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create']],
         ];
     }
 
@@ -981,21 +985,18 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function setChildTableOther(&$model, &$transaction_data, &$childModel, &$auto_key_config) {
         $this->setCollectionData($model, 'api_create');
-        $model->originating_org_type = 'HO';
-        $flag = ['check_fat_range', 'calculate_clr', 'qlty_wise_config', 'rtpl_calculate'];
+//        $model->originating_org_type = 'HO';
+        $flag = ['calculate_clr', 'rtpl_calculate'];
         $data = [];
         $data['dcs_code'] = $model->dcs_code;
         $data['milk_type'] = $model->milk_type_code;
         $data['milk_quality_type'] = $model->milk_quality_type_code;
-        $data['dt_date'] = $model->date_time_of_collection;
-        $data['dt_date'] = empty($model->date_time_of_collection) ? NULL : Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d');
         $data['shift'] = $model->shift_code;
-        $data['dt_date'] = $data['dt_date'] . ' ' . \Yii::$app->general->getshift($data['shift']);
+        $data['dt_date'] = empty($model->date_time_of_collection) ? NULL : Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d') . ' ' . \Yii::$app->general->getshift($data['shift']);
         $data['fat'] = $model->fat;
         $data['snf'] = $model->snf;
         $resdata = $this->calculateData($flag, $model->union_code, $model->bmc_code, $model->fat, $model->snf, $model->milk_type_code, $data, $model->member_code);
         $model->clr = $resdata['clr'];
-        $model->milk_quality_type_code = $resdata['milk_quality_type_code'];
         $responseData = $resdata['data']['list'];
         $rtpl = $responseData['rtpl'];
         $model->actual_rate = number_format($rtpl, 2);
@@ -1012,6 +1013,12 @@ class TblMilkCollection extends \app\models\ChildModel {
         $model->amount = number_format($amount, 2);
 
         $this->postDataSet($model, 'api_create', $childModel, $auto_key_config);
+        $collmodel = new TblMilkCollection();
+        $collmodel->attributes = $model->attributes;
+        $collmodel->scenario = 'ho_sync_create';
+        if (!$collmodel->validate()) {
+            $childModel[0]->addErrors($collmodel->errors);
+        }
     }
 
     public function calculateData($flag, $union = '', $bmcCode = '', $fat = '', $snf = '', $milk_type = '', $data = [], $member = '') {
@@ -1041,7 +1048,7 @@ class TblMilkCollection extends \app\models\ChildModel {
 
         if (in_array('check_fat_range', $flagArray)) {
 //calculate fat range
-            $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member'] : '';
+            $range = Yii::$app->general->getUnionConfiguration($union, 'buf_min_fat_range_member', 'PORTAL');
             $mapping = new TblBmcMilkType();
             $mapped = $mapping->find()->where(['bmc_code' => $bmcCode, 'is_active' => 1])->all();
 
@@ -1087,12 +1094,6 @@ class TblMilkCollection extends \app\models\ChildModel {
                     }
                 }
             }
-        }
-
-        if (in_array('qlty_wise_config', $flagArray)) {
-//milk qulty type code based on config
-            $qlty_wise_config = isset(Yii::$app->session->get('unionConfig')[$union]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$union]['qlty_wise_collection'] : 0;
-            $response['milk_quality_type_code'] = $qlty_wise_config != 1 ? 1 : '';
         }
 
         if (in_array('rtpl_calculate', $flagArray)) {
@@ -1142,23 +1143,27 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function postDataSet(&$model, $flag, &$modelSave, &$auto_key_config, &$message = '', &$type = '') {
         $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
-        $login_data = Yii::$app->eiplapp->identity;
-        $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
-        $model->originating_org_type = 'HO';
-        $model->originating_org_code = $created_by;
+
+        if ($flag == 'api_create') {
+            $login_data = Yii::$app->eiplapp->identity;
+            $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
+            $model->originating_org_type = 'HO';
+            $model->originating_org_code = $model->union_code;
+        }
         if (in_array($collectionApprovalConfig, [1, 2])) {
             $approvalModel = new TblCollectionDataAlias();
             $approvalModel->attributes = $model->attributes;
             $approvalModel->table_name = 'tbl_milk_collection';
             $approvalModel->action_perform = 'CREATE';
             $approvalModel->setOldAttributesValues($approvalModel);
-            if ($flag == 'api_create') {
-                $approvalModel->scenario = 'ho_sync_create';
-            }
             if ($collectionApprovalConfig == 2) {
                 $i = 0;
                 $modelStages = new TblApprovalStagesDetail();
-                $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code', $created_by);
+                if ($flag == 'api_create') {
+                    $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code', $created_by);
+                } else {
+                    $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
+                }
             } else {
                 $modelSave[] = $approvalModel;
             }
@@ -1166,6 +1171,14 @@ class TblMilkCollection extends \app\models\ChildModel {
             $type = 'create';
         } else {
             $modelSave[] = $model;
+        }
+    }
+
+    public function validateMilkType($attribute, $params) {
+        $resdata = $this->calculateData('check_fat_range', $this->union_code, $this->bmc_code, $this->fat, '', $this->milk_type_code);
+        if (!empty($resdata['msg'])) {
+            $this->addError('milk_type_code', $resdata['msg']);
+            return FALSE;
         }
     }
 

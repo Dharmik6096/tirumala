@@ -148,6 +148,7 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
 
     public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag = FALSE, $parent_key = '', $created_by = '') {
         $approvalStage = $this->approvalStages($unionCode, $processName);
+        $errorMessage = '';
         $approvalModel->approval_status = 'Pending';
         $saveModel[] = $approvalModel;
         $parent_index = $i;
@@ -169,6 +170,8 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
                     $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => $parent_key, 'parent_index' => $parent_index];
                 }
             }
+        } else {
+            $errorMessage = "No approval stages found.";
         }
     }
 

@@ -19,7 +19,6 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
     public function rules() {
         return [
                 [['allow_manual_collection_code', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'remark', 'entry_type', 'table_name', 'application_type', 'approved_at', 'approved_by', 'approval_status', 'complain_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalCollection']],
         ];
     }
 
@@ -62,48 +61,43 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
             $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_allow_manual_collection_range.allow_manual_collection_code) = convert(varchar(max),ap.process_code)')
                     ->addSelect(['tbl_allow_manual_collection_range.*', 'ap.process_approval_code as process_approval_code']);
         }
+        $query->andWhere([
+            'tbl_allow_manual_collection_range.approval_status' => ['Pending', 'Inprogress']
+        ]);
         // grid filtering conditions
-
         if ($date_search) {
-            $query->andWhere([
+            $query->andFilterWhere([
                 'tbl_allow_manual_collection_range.union_code' => $this->union_code,
                 'tbl_allow_manual_collection_range.plant_code' => $this->plant_code,
                 'tbl_allow_manual_collection_range.mcc_plant_code' => $this->mcc_plant_code,
-                'tbl_allow_manual_collection_range.bmc_code' => $this->bmc_code,
-                'tbl_allow_manual_collection_range.approval_status' => ['Pending', 'Inprogress']
+                'tbl_allow_manual_collection_range.bmc_code' => $this->bmc_code
             ]);
-
-            if (!empty($this->from_date) || !empty($this->from_shift)) {
-                $from_date = date('Y-m-d', strtotime($this->from_date));
-                $from_shift = \Yii::$app->general->getshift($this->from_shift);
-                $from_date .= ' ' . $from_shift;
-                $query->andFilterWhere(['>=', 'from_date', $from_date]);
-            }
-
-            if (!empty($this->to_date) || !empty($this->to_shift)) {
-                $to_date = date('Y-m-d', strtotime($this->to_date));
-                $to_shift = \Yii::$app->general->getshift($this->to_shift);
-                $to_date .= ' ' . $to_shift;
-                $query->andFilterWhere(['<=', 'to_date', $to_date]);
-            }
-        } else {
             if (!empty($this->from_date)) {
-                $query->andwhere(['cast(from_date as date)' => date('Y-m-d', strtotime($this->from_date))]);
+                $from_date = date('Y-m-d', strtotime($this->from_date));
             }
             if (!empty($this->to_date)) {
-                $query->andwhere(['cast(to_date as date)' => date('Y-m-d', strtotime($this->to_date))]);
+                $to_date = date('Y-m-d', strtotime($this->to_date));
             }
+        } else {
+            Yii::$app->general->filterByOrg($query, $this, 'tbl_allow_manual_collection_range', 'tbl_allow_manual_collection_range', 'tbl_allow_manual_collection_range', 'tbl_allow_manual_collection_range');
+
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        }
+        if (isset($from_date) && isset($to_date)) {
+            $query->andFilterWhere(['>=', 'cast(from_date as date)', $from_date]);
+            $query->andFilterWhere(['<=', 'cast(to_date as date)', $to_date]);
         }
         $query->andFilterWhere([
             'tbl_allow_manual_collection_range.is_quality_manual' => $this->is_quality_manual,
             'tbl_allow_manual_collection_range.is_weight_manual' => $this->is_weight_manual,
             'tbl_allow_manual_collection_range.is_approved' => $this->is_approved,
+            'tbl_allow_manual_collection_range.table_name' => $this->table_name,
         ]);
 
         $query->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'remark', $this->remark])
                 ->andFilterWhere(['like', 'entry_type', $this->entry_type])
-                ->andFilterWhere(['like', 'table_name', $this->table_name])
                 ->andFilterWhere(['like', 'application_type', $this->application_type])
                 ->andFilterWhere(['like', 'approved_by', $this->approved_by])
                 ->andFilterWhere(['like', 'approval_status', $this->approval_status])

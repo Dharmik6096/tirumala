@@ -76,6 +76,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
                         return $('#tblallowmanualcollectionrange-table_name').val() == 'tbl_milk_collection'; 
                     }", 'on' => ['create', 'hosync']
             ],
+                [['application_type'], 'default', 'value' => 'MOBILE'],
         ];
     }
 
@@ -103,7 +104,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             'remark' => Yii::t('app', 'Remark'),
             'is_approved' => Yii::t('app', 'Is Approved'),
             'entry_type' => Yii::t('app', 'Entry Type'),
-            'table_name' => Yii::t('app', 'Table Name'),
+            'table_name' => Yii::t('app', 'Process Name'),
             'application_type' => Yii::t('app', 'Application Type'),
             'approved_at' => Yii::t('app', 'Approved At'),
             'approved_by' => Yii::t('app', 'Approved By'),
@@ -170,15 +171,9 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         $model->is_approved = 0;
         $model->from_date = empty($model->from_date) ? NULL : Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($model->from_shift);
         $model->to_date = empty($model->to_date) ? NULL : Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($model->to_shift);
-        $model->application_type = 'BMC';
-        if ($model->table_name == 'tbl_milk_collection') {
-            $model->application_type = 'DCS';
-        }
-        $model->originating_org_type = 'HO';
-        $model->originating_org_code = $created_by;
-        $model->created_by = $created_by;
 
-        $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_for_manual_collection', 'PORTAL');
+        $config_key = 'manual_collection_request_approval_' . $model->entry_type;
+        $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($model->union_code, $config_key, 'PORTAL');
         if (in_array($manualCollectionConfig, [1, 2])) {
             if ($manualCollectionConfig == 2) {
                 $i = 0;
@@ -201,7 +196,9 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         $login_data = Yii::$app->eiplapp->identity;
         $model->allow_manual_collection_code = $transaction_data['content']['allow_manual_collection_code'];
         $manualCollectionData = TblAllowManualCollectionRange::find()->where(['allow_manual_collection_code' => $model->allow_manual_collection_code])->one();
-        $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($manualCollectionData->union_code, 'workflow_for_manual_collection', 'PORTAL');
+
+        $config_key = 'manual_collection_request_approval_' . $manualCollectionData->entry_type;
+        $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($manualCollectionData->union_code, $config_key, 'PORTAL');
         $approval_code = !empty($transaction_data['content']['process_approval_code']) ? $transaction_data['content']['process_approval_code'] : '';
         $status_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
         if (strtolower($model->approval_status) == 'approve') {

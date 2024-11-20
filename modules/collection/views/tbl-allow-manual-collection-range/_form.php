@@ -66,6 +66,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt10">
         <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['readonly' => TRUE]); ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'remark')->textarea() ?>
+    </div>
     <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>

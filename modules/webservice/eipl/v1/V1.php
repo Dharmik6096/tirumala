@@ -761,11 +761,11 @@ class V1 extends \yii\base\Module {
                 'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
                 'sp' => 'sp_app_eipl_v1_milk_collection_history',
             ],
-            'manual-collection/master' => [
-                'param' => 'organization_type#organization_code',
+            'manual-collection-request/list' => [
+                'param' => 'union#plant#mcc#bmc#dcs#process_name',
                 'sp' => 'sp_app_eipl_v1_manual_collection',
             ],
-            'manual-collection' => [
+            'manual-collection-request' => [
                 'main_table' => 'TblAllowManualCollectionRange',
                 'multi_auto_increment_key' => true
             ],
@@ -774,15 +774,14 @@ class V1 extends \yii\base\Module {
                 'multi_auto_inc_key_save_other' => true
             ],
             'milk-collection/list' => [
-                'param' => 'from_datetime#to_datetime#dcs',
-                'sp' => 'sp_app_eipl_milk_collection',
+                'param' => 'collection_date#dcs',
+                'sp' => 'sp_app_eipl_v1_milk_collection',
             ],
-            'manual-collection-approve/list' => [
-                'param' => 'organization_type#organization_code',
-                'sp' => 'sp_app_eipl_manual_collection_approve_list',
-                'login_data_fetch' => true
+            'manual-collection-request-approve/list' => [
+                'param' => 'union#plant#mcc#bmc#dcs#process_name#login_type#access_token',
+                'sp' => 'sp_app_eipl_v1_manual_collection_approve_list',
             ],
-            'manual-collection-approve-data' => [
+            'manual-collection-request-approve/save' => [
                 'main_table' => 'TblAllowManualCollectionRange',
                 'save_child_other' => true,
                 'not_save_model' => true

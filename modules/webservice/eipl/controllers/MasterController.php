@@ -162,6 +162,7 @@ class MasterController extends ActiveController {
         $data['device_id'] = Yii::$app->eiplapp->identity->device_id;
         $data['department'] = Yii::$app->eiplapp->identity->department;
         $data['login_type'] = Yii::$app->eiplapp->identity->login_type;
+        $data['access_token'] = Yii::$app->eiplapp->identity->access_token;
         return $data;
     }
 

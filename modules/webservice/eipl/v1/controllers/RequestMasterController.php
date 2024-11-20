@@ -18,12 +18,6 @@ class RequestMasterController extends MasterController {
         $req_data = Yii::$app->request->getRawBody();
         $endpoint = !empty($req_data['endpoint']) ? $req_data['endpoint'] : NULL;
         $data = V1::getLabels($endpoint);
-        if (isset($data['login_data_fetch']) && !empty($data['login_data_fetch'])) {
-            $login_data = Yii::$app->eiplapp->identity;
-            if (isset($login_data['access_token'])) {
-                $data['param'] .= '#access_token';
-            }
-        }
         $response = [];
         if (!empty($data) && !empty($data['sp']) && (!isset($data['call_action']) || !$data['call_action'])) {
             $sp_name = $data['sp'];
@@ -39,9 +33,6 @@ class RequestMasterController extends MasterController {
             foreach ($param as $value) {
                 $array_val = explode(':', $value);
                 $param_val = !empty($array_val[1]) ? $array_val[1] : (isset($req_data[$value]) ? $req_data[$value] : NULL);
-                if ($value === 'access_token' && isset($login_data['access_token'])) {
-                    $param_val = $login_data['access_token'];
-                }
                 $param_val = empty($param_val) && isset($org_codes[$value]) ? (!empty($org_codes[$value]) && (!$orgToZero || in_array($value, $rlsArray)) ? (is_array($org_codes[$value]) ? (',' . implode(',', $org_codes[$value]) . ',') : $org_codes[$value]) : '0' ) : ((is_array($param_val) ? (',' . implode(',', $param_val) . ',') : $param_val));
                 $sp_param[] = $param_val;
             }
@@ -119,6 +110,11 @@ class RequestMasterController extends MasterController {
                 }
                 $saveModel = $opType == 'DELETE' ? false : true;
             }
+            $model->originating_org_type = 'HO';
+            $model->originating_type = 0;
+            $orgCodes = $this->getOrgCodes();
+            $model->originating_org_code = !empty($this->getOrgCodes()['union'][0]) ? $this->getOrgCodes()['union'][0] : '';
+            $model->created_by = !empty(Yii::$app->eiplapp->identity['module_code']) ? Yii::$app->eiplapp->identity['module_code'] : '';
             if (isset($moduleDetails['multi_auto_increment_key']) && $moduleDetails['multi_auto_increment_key']) {
                 $model->setChildTable($model, $transaction_data, $childModel, $auto_key_config);
                 $saveModel = true;
