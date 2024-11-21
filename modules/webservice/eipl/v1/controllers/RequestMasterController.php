@@ -112,8 +112,6 @@ class RequestMasterController extends MasterController {
             }
             $model->originating_org_type = 'HO';
             $model->originating_type = 0;
-            $orgCodes = $this->getOrgCodes();
-            $model->originating_org_code = !empty($this->getOrgCodes()['union'][0]) ? $this->getOrgCodes()['union'][0] : '';
             $model->created_by = !empty(Yii::$app->eiplapp->identity['module_code']) ? Yii::$app->eiplapp->identity['module_code'] : '';
             if (isset($moduleDetails['multi_auto_increment_key']) && $moduleDetails['multi_auto_increment_key']) {
                 $model->setChildTable($model, $transaction_data, $childModel, $auto_key_config);
@@ -132,6 +130,9 @@ class RequestMasterController extends MasterController {
             }
             if ($saveModel && !isset($moduleDetails['multi_auto_increment_key']) && !isset($moduleDetails['multi_auto_inc_key_save_other'])) {
                 $master = [];
+                if (isset($model->union_code)) {
+                    $model->originating_org_code = $model->union_code;
+                }
                 $master[] = $model;
             }
             if (!empty($auto_key_config)) {
