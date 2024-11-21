@@ -784,7 +784,6 @@ class V1 extends \yii\base\Module {
             'manual-collection-request-approve/save' => [
                 'main_table' => 'TblAllowManualCollectionRange',
                 'save_child_other' => true,
-                'not_save_model' => true
             ],
         ];
         return $label;

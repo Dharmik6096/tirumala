@@ -130,7 +130,7 @@ class RequestMasterController extends MasterController {
                 $model->setChildTableOther($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
-            if ($saveModel && !isset($moduleDetails['multi_auto_increment_key']) && !isset($moduleDetails['multi_auto_inc_key_save_other']) && !isset($moduleDetails['not_save_model'])) {
+            if ($saveModel && !isset($moduleDetails['multi_auto_increment_key']) && !isset($moduleDetails['multi_auto_inc_key_save_other'])) {
                 $master = [];
                 $master[] = $model;
             }
@@ -225,25 +225,26 @@ class RequestMasterController extends MasterController {
     public function actionStartUp() {
         $res_data = [];
         $data = Yii::$app->request->getRawBody();
-        if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
-            $res_data['config'] = [];
+        $orgCodes = $this->getOrgCodes();
+        $union = !empty($orgCodes['union'][0]) ? $orgCodes['union'][0] : '';
+
+        if (!empty($union)) {
             $animalType = [];
             $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
             $rateChart = new TblUnionRatechartRange();
-            $rate_chart_range = $rateChart->rateChart($data['organization_code']);
+            $rate_chart_range = $rateChart->rateChart($union);
             foreach ($rate_chart_range as $rate_chart) {
                 if (!empty($rate_chart)) {
-                    $min_fat = $rate_chart->min_fat;
-                    $max_fat = $rate_chart->max_fat;
-                    $min_snf = $rate_chart->min_snf;
-                    $max_snf = $rate_chart->max_snf;
-                    $min_clr = $rate_chart->min_clr;
-                    $max_clr = $rate_chart->max_clr;
-                    $milk_type_data = TblAnimalType::find()->select(['animal_type_code', 'animal_type_name'])->where(['animal_type_code' => $rate_chart->animal_type_code])->one();
+                    $min_fat = $rate_chart['min_fat'];
+                    $max_fat = $rate_chart['max_fat'];
+                    $min_snf = $rate_chart['min_snf'];
+                    $max_snf = $rate_chart['max_snf'];
+                    $min_clr = $rate_chart['min_clr'];
+                    $max_clr = $rate_chart['max_clr'];
                 }
-                $animalType[] = [
-                    'milk_type_code' => !empty($milk_type_data->animal_type_code) ? $milk_type_data->animal_type_code : '',
-                    'milk_type_name' => !empty($milk_type_data->animal_type_name) ? $milk_type_data->animal_type_name : '',
+                $animalType = [
+                    'milk_type_code' => !empty($rate_chart['animal_type_code']) ? $rate_chart['animal_type_code'] : '',
+                    'milk_type_name' => !empty($rate_chart['animal_type_name']) ? $rate_chart['animal_type_name'] : '',
                     'min_fat' => $min_fat,
                     'max_fat' => $max_fat,
                     'min_snf' => $min_snf,
@@ -251,14 +252,14 @@ class RequestMasterController extends MasterController {
                     'min_clr' => $min_clr,
                     'max_clr' => $max_clr
                 ];
+                $res_data[strtolower($rate_chart['config_for'])]['collectionConfig']['allowedMilkType'][] = $animalType;
             }
-            $res_data['collectionConfig']['allowedMilkType'] = $animalType;
 
             $model = new TblUnionConfigResult();
-            $model->union_code = $data['organization_code'];
-            $model->config_for = 'VLC';
+            $model->union_code = $union;
+            $model->config_for = ['VLC', 'BMC'];
             foreach ($model->getConfigList() as $d) {
-                $res_data['config'][$d['config_key']] = $d['config_result_key'];
+                $res_data[strtolower($d['config_for'])]['config'][$d['config_key']] = $d['config_result_key'];
             }
         }
         $this->response->setData($res_data);

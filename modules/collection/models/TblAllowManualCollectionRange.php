@@ -193,22 +193,25 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
     }
 
     public function setChildTableOther(&$model, $transaction_data, &$childModel) {
+        $request_model = $model;
         $login_data = Yii::$app->eiplapp->identity;
         $model->allow_manual_collection_code = $transaction_data['content']['allow_manual_collection_code'];
-        $manualCollectionData = TblAllowManualCollectionRange::find()->where(['allow_manual_collection_code' => $model->allow_manual_collection_code])->one();
-
+        $manualCollectionData = $this->find()->where(['allow_manual_collection_code' => $model->allow_manual_collection_code])->one();
         $config_key = 'manual_collection_request_approval_' . $manualCollectionData->entry_type;
         $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($manualCollectionData->union_code, $config_key, 'PORTAL');
         $approval_code = !empty($transaction_data['content']['process_approval_code']) ? $transaction_data['content']['process_approval_code'] : '';
         $status_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
+
+        $historyModel = new TblAllowManualCollectionRangeHistory();
+        Yii::$app->operation->history($manualCollectionData, $historyModel, 'UPDATE');
+        $childModel[] = $historyModel;
+        $manualCollectionData->attributes = $request_model->toArray();
+
         if (strtolower($model->approval_status) == 'approve') {
             if ($manualCollectionConfig == 2 && !empty($approval_code)) {
                 $status = 1;
                 $this->updateApprovalHistory($approval_code, $childModel, $status, $model->remark, $status_by);
             }
-            $historyModel = new TblAllowManualCollectionRangeHistory();
-            Yii::$app->operation->history($manualCollectionData, $historyModel, 'UPDATE');
-            $childModel[] = $historyModel;
             if ($manualCollectionConfig == 2) {
                 $manualCollectionData->approval_status = $status;
                 $manualCollectionData->approved_at = date('Y-m-d H:i:s');
@@ -227,23 +230,19 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             $manualCollectionData->originating_org_type = 'HO';
             $manualCollectionData->originating_org_code = $status_by;
             $manualCollectionData->updated_by = $status_by;
-            $childModel[] = $manualCollectionData;
         } else if (strtolower($model->approval_status) == 'reject') {
             if ($manualCollectionConfig == 2) {
                 $status = 2;
                 $this->updateApprovalHistory($approval_code, $childModel, $status, $manualCollectionData->remark, $status_by);
             }
             if (strtolower($status) == 'reject' || empty($approval_code)) {
-                $historyModel = new TblAllowManualCollectionRangeHistory();
-                Yii::$app->operation->history($manualCollectionData, $historyModel, 'UPDATE');
-                $childModel[] = $historyModel;
                 $manualCollectionData->approval_status = 'Reject';
                 $manualCollectionData->approved_at = date('Y-m-d H:i:s');
                 $manualCollectionData->approved_by = $status_by;
             }
             $manualCollectionData->remark = $model->remark;
-            $childModel[] = $manualCollectionData;
         }
+        $model = $manualCollectionData;
     }
 
     public function updateApprovalHistory($approval_code, &$childModel, &$status, $remarks = '', $status_by = '') {
