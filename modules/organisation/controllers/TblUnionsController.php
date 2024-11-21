@@ -334,7 +334,7 @@ class TblUnionsController extends ChildController {
 
     public function actionDistrictList() {
         $out = null;
-        $selected ='';
+        $selected = '';
         if (isset($_POST['depdrop_parents'])) {
 
             $value = $_POST['depdrop_parents'];
