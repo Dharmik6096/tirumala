@@ -83,7 +83,7 @@ $form = ActiveForm::begin([
         <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
+    <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
 </div> 
 
 <?php ActiveForm::end(); ?>
