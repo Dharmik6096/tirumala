@@ -616,7 +616,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $bmc = Yii::$app->request->post('bmc');
         $milk_type = Yii::$app->request->post('milk_type');
         $model = new TblMilkCollection();
-        $response = $model->calculateData('check_fat_range', $union, $bmc, '', '', $milk_type);
+        $response = $model->calculateData('check_fat_range', $union, $bmc, $fat, '', $milk_type);
         $response['status'] = 'error';
         $response['data'] = '';
         Yii::$app->response->format = trim(Response::FORMAT_JSON);

@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Allow Manual Collection Range');
+$this->title = Yii::$app->label->title('create', 'Manual Collection Request');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

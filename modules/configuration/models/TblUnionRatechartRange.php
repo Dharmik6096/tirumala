@@ -72,8 +72,11 @@ class TblUnionRatechartRange extends \yii\db\ActiveRecord {
     }
 
     public function rateChart($union) {
-        return $this->find()->where(['tbl_union_ratechart_range.union_code' => $union])
-                        ->andWhere(['tbl_union_ratechart_range.config_for' => 'VLC'])
+        return $this->find()->select(['tbl_union_ratechart_range.*', 'tbl_animal_type.animal_type_name'])
+                        ->join('INNER JOIN', 'tbl_animal_type', 'tbl_animal_type.animal_type_code = tbl_union_ratechart_range.animal_type_code')
+                        ->where(['tbl_union_ratechart_range.union_code' => $union])
+                        ->andWhere(['tbl_union_ratechart_range.config_for' => ['VLC', 'BMC']])
+                        ->asArray()
                         ->all();
     }
 

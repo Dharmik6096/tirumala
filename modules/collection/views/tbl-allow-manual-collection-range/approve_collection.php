@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'Allow Collection Approval');
+$this->title = Yii::t('app', 'Manual Collection Request Approval');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -7,7 +7,7 @@ $this->title = Yii::t('app', 'Allow Collection Approval');
     </div>
     <div class="panel-body">
         <div class="grid-search large-search hidden-print">
-            <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
+            <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
         </div>
         <div class="clearfix"></div>
