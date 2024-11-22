@@ -184,7 +184,7 @@ class TblMonthlyCreditLimitController extends \app\controllers\ChildController {
         $code = Yii::$app->request->post('code');
         $bmc = Yii::$app->request->post('bmc');
         $union = Yii::$app->request->post('union');
-        $date = Yii::$app->request->post('wef_date');
+        $date = Yii::$app->request->post('date');
         list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($date, 'current');
         $model = new TblMonthlyCreditLimit();
         $AvailableAmount = $model->find()
