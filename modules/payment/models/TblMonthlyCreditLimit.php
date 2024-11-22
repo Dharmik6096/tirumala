@@ -119,6 +119,10 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
             'customer_name' => Yii::t('app', 'Name'),
         ];
     }
+    
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code, 'customer_code_ex' => $this->ex_code]);
+    }
 
     public function getCustomerType() {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type']);
