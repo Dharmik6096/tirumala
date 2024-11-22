@@ -3226,7 +3226,7 @@ class SiteController extends Controller {
         if (!empty(Yii::$app->request->post('union'))) {
             $union = Yii::$app->request->post('union');
         }
-        $mcc = !empty($rlsData['mcc']) ? $rlsData['mcc'] : 0;
+        $mcc = !empty($rlsData['mcc']) ? ',' . $rlsData['mcc'] . ',' : 0;
         if (!empty(Yii::$app->request->post('mcc'))) {
             $mcc = Yii::$app->request->post('mcc');
         }
