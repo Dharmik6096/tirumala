@@ -33,21 +33,6 @@ class TblMonthlyCreditLimitController extends \app\controllers\ChildController {
     }
 
     /**
-     * Displays a single TblMonthlyCreditLimit model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id) {
-        $searchModel = new TblMonthlyCreditLimitSearch();
-        $searchModel->monthly_credit_limit_code = $id;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
-                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
      * Creates a new TblMonthlyCreditLimit model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -111,7 +96,7 @@ class TblMonthlyCreditLimitController extends \app\controllers\ChildController {
     protected function processMonthlyCreditLimit($model) {
         $modelSave = [];
         $type = 'create';
-        $monthlyCreditLimitData = $model->find()->where(['customer_type' => $model->customer_type, 'customer_code' => $model->customer_code])->one();
+        $monthlyCreditLimitData = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'customer_type' => $model->customer_type, 'customer_code' => $model->customer_code])->one();
 
         if (!empty($monthlyCreditLimitData)) {
             $type = 'edit';
@@ -194,4 +179,23 @@ class TblMonthlyCreditLimitController extends \app\controllers\ChildController {
         return Json::encode($response);
     }
 
+    public function actionSetAvailableCredit() {
+        $type = Yii::$app->request->post('type');
+        $code = Yii::$app->request->post('code');
+        $bmc = Yii::$app->request->post('bmc');
+        $union = Yii::$app->request->post('union');
+        $date = Yii::$app->request->post('wef_date');
+        list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($date, 'current');
+        $model = new TblMonthlyCreditLimit();
+        $AvailableAmount = $model->find()
+                ->select(['final_amount' => 'ISNULL(SUM(ISNULL(final_amount, 0)),0)'])
+                ->where(['from_date' => $fromDate, 'to_date' => $toDate, 'customer_type' => $type, 'customer_code' => $code, 'bmc_code' => $bmc, 'union_code' => $union,])
+                ->one();
+
+        return Json::encode([
+            'status' => !empty($AvailableAmount->final_amount) ? 'success' : 'error',
+            'available_amount' => $AvailableAmount->final_amount ?? 0
+        ]);
+    }
+    
 }

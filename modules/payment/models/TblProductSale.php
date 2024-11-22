@@ -312,15 +312,15 @@ class TblProductSale extends \app\models\ChildModel {
                 $model->applicable_code = $this->bmc_code;
                 $model->applicable_for = 'BMC';
                 $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
-                $creditLimitCheckMonthly = Yii::$app->general->getUnionConfiguration($this->union_code, 'credit_limit_check_monthly', 'PORTAL');
-                if (!empty($modelData) || $creditLimitCheckMonthly == 1) {
-                    if ($creditLimitCheckMonthly != 1 && $modelData->data_lock_bmc == 1) {
+                if (!empty($modelData)) {
+                    if ($modelData->data_lock_bmc == 1) {
                         $this->addError($attribute, "Payment Cycle is locked for Sale Date.");
                         return false;
                     }
                     // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_credit_limit', 'PORTAL');
                     $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'check_credit_limit', $this);
                     if ($config == 1) {
+                        $creditLimitCheckMonthly = Yii::$app->general->getUnionConfiguration($this->union_code, 'credit_limit_check_monthly', 'PORTAL');
                         if ($creditLimitCheckMonthly == 1) {
                             list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($this->invoice_date, 'current');
                         } else {
@@ -341,7 +341,6 @@ class TblProductSale extends \app\models\ChildModel {
                         }
                         $creditAmount = 0;
                         if ($creditLimitCheckMonthly == 1) {
-                            
                             $model = new TblMonthlyCreditLimit();
                             $model->customer_type = $this->customer_type;
                             $model->customer_code = $this->customer_code;

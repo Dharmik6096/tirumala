@@ -59,7 +59,7 @@ use kartik\helpers\Html;
             </div>
             <div class="col-sm-2 reset_field">
                 <?php
-                $lable = Yii::t('app', 'name');
+                $lable = Yii::t('app', 'Name');
                 if ($type === 'memberWiseCredit') {
                     $lable = Yii::t('app', 'Member name');
                 }
@@ -67,7 +67,10 @@ use kartik\helpers\Html;
                 <?= Html::activeHiddenInput($model, 'customer_code') ?>
                 <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true])->label($lable) ?>
             </div>
-            <div class="col-sm-1 avlCredit reset_field">
+            <div class="col-sm-1 avlAmount reset_field">
+                <?= $form->field($model, 'avl_amount')->textInput(['readOnly' => true])->label('Available Amount') ?>
+            </div>
+            <div class="col-sm-1 reset_field">
                 <?= $form->field($model, 'final_amount')->textInput(['readOnly' => false]) ?>
             </div>
 
@@ -85,25 +88,15 @@ use kartik\helpers\Html;
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-    $(document).on('change','#tblmonthlycreditlimit-bmc_code',function(){
-        $('#tblmonthlycreditlimit-ex_code').val('');
-        $('#tblmonthlycreditlimit-ex_code').trigger('change');
+    $(document).on('change', '#tblmonthlycreditlimit-bmc_code, #tblmonthlycreditlimit-dcs_code, #tblmonthlycreditlimit-customer_type, #tblmonthlycreditlimit-wef_date', function() {
+        $('#tblmonthlycreditlimit-ex_code').val('').trigger('change');
+        $('#tblmonthlycreditlimit-final_amount').val('').trigger('change');        
     });
-    
-    $(document).on('change','#tblmonthlycreditlimit-dcs_code',function(){
-        $('#tblmonthlycreditlimit-ex_code').val('');
-        $('#tblmonthlycreditlimit-ex_code').trigger('change');
-    });
-    
-    $(document).on('change','#tblmonthlycreditlimit-customer_type',function(){
-        $('#tblmonthlycreditlimit-ex_code').val('');
-        $('#tblmonthlycreditlimit-ex_code').trigger('change');
-    });
-    
-    $(document).on('change','#tblmonthlycreditlimit-ex_code',function(){
+
+    $(document).on('change', '#tblmonthlycreditlimit-ex_code', function() {
         setVendorCode();
     });
-    
+
     function setVendorCode(){
         $('#tblmonthlycreditlimit-customer_code').val('');
         $('#tblmonthlycreditlimit-customer_name').val('');
@@ -130,6 +123,7 @@ $script = "
                         $('#tblmonthlycreditlimit-customer_name').val(obj.data); 
                         $('#tblmonthlycreditlimit-customer_code').val(obj.code); 
                         $('#tblmonthlycreditlimit-customer_code').trigger('change');
+                        setAvailableCredit();
                     }else{
                         bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Please enter valid Code.') . "</span></div></div>', function(result){
                             setTimeout(function(){
@@ -147,43 +141,37 @@ $script = "
             });
         }
     }
-    
-    $('#tblmonthlycreditlimit-wef_date').change(function(){
-        $('#tblmonthlycreditlimit-ex_code').val('');
-    });
-    
-    function setAvailableCredit(){
+
+    function setAvailableCredit() {
         var type = $('#tblmonthlycreditlimit-customer_type').val();
         var date = $('#tblmonthlycreditlimit-wef_date').val();
         var union = $('#tblmonthlycreditlimit-union_code').val();
-        var bmc =   $('#tblmonthlycreditlimit-bmc_code').val();
-        var pay_mode=$('#tblmonthlycreditlimit-payment_mode').val();
-        var amount_due=$('#tblmonthlycreditlimit-amount_due').val();
-        var noi=$('#tblmonthlycreditlimit-no_of_installment').val();
+        var bmc = $('#tblmonthlycreditlimit-bmc_code').val();
         var code = $('#tblmonthlycreditlimit-customer_code').val();
         if(setData(date) && setData(type) && setData(code)){
-             $.ajax({
-                    type: 'post',
-                    url:'" . Url::to(['set-available-credit']) . "',
-                    data: {'date':date,'type':type,'code':code,'union':union,'bmc':bmc,'pay_mode':pay_mode,'amount_due':amount_due,'noi':noi},
-                    success: function(data) {                                        
-                        var obj = $.parseJSON(data);
-                        console.log(data);
-                        if (obj.status == 'success')
-                        {
-                           $('#tblmonthlycreditlimit-avl_credit').val(obj.credit);
-                        }else{
-                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Payment Cycle aplicability not available for Sale Date.') . "</span></div></div>', function(result){
-                            setTimeout(function(){
-                                $('#tblmonthlycreditlimit-ex_code').focus();
-                            },100);
-                        });                         
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['set-available-credit']) . "',
+                data: { 'date': date, 'type': type, 'code': code, 'union': union, 'bmc': bmc },
+                success: function(data) {
+                    var obj = $.parseJSON(data);
+                    if (obj.status === 'success') {
+                        $('#tblmonthlycreditlimit-avl_amount').val(obj.available_amount);
                     }
                 },
-                error:function(data){
-            }
-        });
-    } 
-}";
+                error: function(data) {
+                }
+            });
+        }
+    }
+
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }  
+";
 $this->registerJs($script, View::POS_END, 'create-monthly-credit-limit-form');
 ?>

@@ -1081,7 +1081,6 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 if (!empty($modelData->final_amount)) {
                     $creditAmount = $modelData->final_amount;
                 }
-                $date = Yii::$app->request->post('date');
                 list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($date, 'current');
             } else {
                 $model = new TblPaymentCycleApplicability();

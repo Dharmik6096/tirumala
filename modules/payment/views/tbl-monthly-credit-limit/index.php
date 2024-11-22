@@ -1,9 +1,9 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Monthly Credit Limit'));
-$this->params['menu'][] = Yii::$app->controls->add('Monthly Credit Limit');
+$this->params['menu'][] = Yii::$app->controls->add('Monthly Credit Limit (Vendor)');
 $this->params['menu'][] = Yii::$app->controls->add('Monthly Credit Limit (Member)', ['create-member']);
-$this->params['menu'][] = Yii::$app->controls->import('monthly-credit-limit', $this, Yii::t('app', 'Monthly Credit Limit Import'));
-$this->params['menu'][] = Yii::$app->controls->import('monthly-credit-limit-member', $this, Yii::t('app', 'Monthly Credit Limit (Member) Import'), [], 'monthlycreditlimit_member');
+$this->params['menu'][] = Yii::$app->controls->import('monthly-credit-limit', $this, Yii::t('app', 'Monthly Credit Limit Import (Vendor)'));
+$this->params['menu'][] = Yii::$app->controls->import('monthly-credit-limit-member', $this, Yii::t('app', 'Monthly Credit Limit Import (Member)'), [], 'monthlycreditlimit_member');
 
 ?>
 <div class="panel panel-default panel-grid panel-main">

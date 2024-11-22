@@ -41,7 +41,7 @@ class TblMonthlyCreditLimitSearch extends TblMonthlyCreditLimit {
             'query' => $query,
         ]);
         $this->load($params);
-
+        Yii::$app->general->filterByOrg($query, $this);
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'memberCode', 'bmcCode']);
 
         if (!empty($this->from_date)) {
