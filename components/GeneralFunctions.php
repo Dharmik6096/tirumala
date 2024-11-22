@@ -451,18 +451,14 @@ class GeneralFunctions extends Component {
         return $value;
     }
 
-    public function getCodeAutoIncrement($model, $auto_inc = 1) {
-
+    public function getCodeAutoIncrement($model, $autoIncrement = 1){
         $primaryKey = $model->tableSchema->primaryKey[0];
         $tableName = $model->tableName();
-        $val = (new \yii\db\Query)
-                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
-//->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
-                ->from($tableName)
-                ->one();
-        $number = (int) $val[$primaryKey] + $auto_inc;
-
-        return $number;
+        $maxValue = (new \yii\db\Query())
+            ->select(["MAX(CAST(LTRIM(RTRIM([{$primaryKey}])) AS INT)) AS max_value"])
+            ->from($tableName)
+            ->scalar();
+        return (int)$maxValue + $autoIncrement;
     }
 
     public function getOrganizationName() {

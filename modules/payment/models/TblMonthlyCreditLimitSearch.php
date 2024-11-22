@@ -44,6 +44,9 @@ class TblMonthlyCreditLimitSearch extends TblMonthlyCreditLimit {
         Yii::$app->general->filterByOrg($query, $this);
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'memberCode', 'bmcCode']);
 
+        $this->from_date = empty($this->from_date) ? date('Y-m-01', strtotime('first day of last month')) : $this->from_date;
+        $this->to_date = empty($this->to_date) ? date('Y-m-t') : $this->to_date;
+
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $query->andFilterWhere(['>=', 'CAST(tbl_monthly_credit_limit.from_date as date)', $from_date]);

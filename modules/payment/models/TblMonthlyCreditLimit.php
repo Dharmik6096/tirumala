@@ -61,6 +61,7 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
             [['wef_date'], 'convertDateDot', 'on' => ['importCsv', 'importCsvOther']],
             [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importCsvOther']],
             [['wef_date'], 'convertDate'],
+            [['milk_amount'], 'default', 'value' => 0],
             [['customer_type'], 'default', 'value' => 'MEMBER', 'on' => ['importCsvOther']],
             [['customer_type', 'customer_code'], 'required', 'except' => ['importCsvOther']],
             [['wef_date'], 'required', 'except' => ['update']],
