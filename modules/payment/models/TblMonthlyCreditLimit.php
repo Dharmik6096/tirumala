@@ -41,7 +41,7 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblMonthlyCreditLimit extends \app\models\ChildModel {
 
-    public $wef_date, $member_code, $customer_name, $ex_code;
+    public $wef_date, $member_code, $customer_name, $ex_code, $avl_amount;
 
     /**
      * @inheritdoc
@@ -55,28 +55,28 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'final_amount', 'milk_amount', 'manual_amount', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'wef_date', 'customer_name', 'ex_code'], 'safe'],
+            [['customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'final_amount', 'milk_amount', 'manual_amount', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'wef_date', 'customer_name', 'ex_code', 'avl_amount', 'member_code'], 'safe'],
             [['customer_type', 'customer_code'], 'string', 'max' => 20],
+            [['final_amount'], 'required'],
             [['wef_date'], 'convertDateDot', 'on' => ['importCsv', 'importCsvOther']],
             [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importCsvOther']],
             [['wef_date'], 'convertDate'],
-            [['customer_type', 'customer_code'], 'required', 'on' => ['importCsv']],
-            [['final_amount'], 'required'],
-            [['customer_name', 'ex_code', 'wef_date'], 'required', 'except' => ['update', 'importCsv', 'importCsvOther']],
-            [['dcs_code'], 'required', 'except' => ['importCsv', 'importCsvOther'], 'when' => function () {
-                    return ($this->customer_type == 'MEMBER');
-                }, 'whenClient' => "function (attribute, value) { 
-              return $('#tblmonthlycreditlimit-customer_type').val() == 'MEMBER'; 
-            }"],
+            [['customer_type'], 'default', 'value' => 'MEMBER', 'on' => ['importCsvOther']],
+            [['customer_type', 'customer_code'], 'required', 'except' => ['importCsvOther']],
+            [['wef_date'], 'required', 'except' => ['update']],
+            [['customer_name', 'ex_code'], 'required', 'except' => ['update', 'importCsv', 'importCsvOther']],
+            [['member_code'], 'required', 'on' => ['importCsvOther']],
+            [['dcs_code'], 'required', 'except' => ['importCsv'], 'when' => function ($model) {
+                    return ($model->customer_type == 'MEMBER');
+                }],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['importCsv', 'importCsvOther']],
-            [['customer_type'], 'default', 'value' => 'member', 'on' => ['importCsvOther']],
             [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'filter' => ['is_product_sale' => 1], 'on' => ['importCsv']],
             [['final_amount'], function ($attribute, $params) {
-                    $this->milk_amount = $this->manual_amount = $this->$attribute;
+                    $this->manual_amount = $this->$attribute;
                 }],
             [['final_amount'], 'importFieldSet', 'on' => ['importCsv', 'importCsvOther']],
             [['bmc_code'], function ($attribute, $params) {
@@ -95,7 +95,7 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
             'customer_code' => Yii::t('app', 'Customer Code'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
-            'mcc_plant_code' => Yii::t('app', 'MCC Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'DCS'),
             'from_date' => Yii::t('app', 'From Date'),
@@ -143,45 +143,48 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
+    public function getMainDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
     public function importFieldSet() {
         if (empty($this->getErrors())) {
-            if (!empty($this->customer_type) && strtolower($this->customer_type) == 'member') {
-                $dcsData = $this->validDcs();
-                if (empty($dcsData)) {
+            if (!empty($this->member_code)) {
+                $dcs = new TblDcs();
+                $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
+                if (empty($this->dcs_code)) {
                     $this->addError('dcs_code', Yii::t('app/validation', $this->getAttributeLabel('dcs_code') . ' is Invalid.'));
                 } else {
                     $memberModel = new TblMember();
                     $memberCode = str_pad($this->member_code, 4, '0', STR_PAD_LEFT);
-                    $memberData = $memberModel->validateMember($dcsData->dcs_code, $memberCode);
-                    if (empty($memberData)) {
-                        $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' is Invalid.'));
+                    $data = $memberModel->validateMember($this->dcs_code, $memberCode);
+                    $this->customer_type = 'MEMBER';
+
+
+                    if (empty($data)) {
+                        $this->addError('member_code', Yii::t('app/validation', 'Member Code Is Invalid.'));
                     } else {
-                        $this->customer_code = $memberData->member_code;
-                        $this->customer_type = 'MEMBER';
-                        $this->setHierarchy($dcsData);
+                        $this->customer_code = $data->member_code;
+                        $bmcData = $this->mainDcsCode;
+                        $this->setHierarchy($bmcData);
+                        $detail = Yii::$app->general->validateDeactivateDcs($this, $this->wef_date, '', TRUE, $this->customer_code);
+                        if ($detail === false) {
+                            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Or Member is Deactivated.'));
+                        }
                     }
                 }
-            } else if (!empty($this->customer_type) && strtolower($this->customer_type) != 'dcs') {
-                $customerData = $this->validateCustomer($this->union_code, $this->customer_code, $this->customer_type, $this->bmc_code);
-                if (empty($customerData)) {
-                    $this->addError('customer_code', Yii::t('app/validation', $this->getAttributeLabel('customer_code') . ' is Invalid.'));
-                } else {
-                    $this->customer_type = $customerData->customer_type;
-                    $this->customer_code = $customerData->customer_code;
-                    $this->mcc_plant_code = $customerData->mcc_plant_code;
-                    $this->plant_code = $customerData->plant_code;
-                }
             } else {
-                $this->dcs_code = $this->customer_code;
-                $data = $this->validDcs();
-                if (empty($data)) {
-                    $this->addError('dcs_code', Yii::t('app/validation', $this->getAttributeLabel('dcs_code') . ' is Invalid.'));
-                } else {
-                    $this->setHierarchy($data);
-                    $this->customer_type = 'DCS';
-                    $this->customer_code = $data->dcs_code;
+                Yii::$app->general->validateCustomer($this);
+                if (!empty($this->customer_type) && strtolower($this->customer_type) == 'dcs') {
+                    $this->dcs_code = $this->customer_code;
+                    $detail = Yii::$app->general->validateDeactivateDcs($this, $this->wef_date);
+                    if ($detail === false) {
+                        $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is Deactivated.'));
+                    }
                 }
             }
+            $bmcData = $this->bmcCode;
+            $this->setHierarchy($bmcData);
         }
     }
 
@@ -191,49 +194,7 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
             $this->plant_code = $data->plant_code;
             $this->mcc_plant_code = $data->mcc_plant_code;
             $this->bmc_code = $data->bmc_code;
-            $this->dcs_code = $data->dcs_code;
         }
-    }
-
-    public function validateCustomer($union, $code, $type, $bmc) {
-        if (!empty($code) && strtolower($type) != 'dcs') {
-            $this->union_code = $union;
-            $this->bmc_code = $bmc;
-            $customer_type = $this->customerType;
-            $prefix = $customer_type->code_prefix;
-            $length = $customer_type->code_length;
-            $Code = '';
-            if (!empty($prefix) && is_numeric($this->customer_code)) {
-                $customerModel = new TblCustomerMaster();
-                $customerModel->customer_type = $this->customer_type;
-
-                $customerModelData = $customerModel->find()
-                        ->select(['customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'])
-                        ->where(['customer_type' => $type, 'bmc_code' => $bmc])
-                        ->andWhere(['or', ['CAST(REPLACE(customer_code_ex, \'' . $prefix . '\', \'\') as int)' => (int) $code], ['ref_code' => $code], ['customer_code' => $code]])
-                        ->all();
-                if (count($customerModelData) == 1) {
-                    $Code = $customerModelData[0];
-                }
-            } else {
-                $this->ex_code = !empty($length) ? $prefix . str_pad($code, $length, '0', STR_PAD_LEFT) : '';
-                $Code = $this->customerCode;
-            }
-
-            return $data = empty($Code) ? '' : $Code;
-        }
-    }
-
-    public function validDcs() {
-        $query = TblDcs::find()
-                ->select(['dcs_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'])
-                ->where(['or', ['dcs_code' => $this->dcs_code], ['dcs_code_ex' => $this->dcs_code], ['ref_code' => $this->dcs_code]])
-                ->andWhere(['is_active' => 1]);
-        if (!empty($this->bmc_code)) {
-            $query->andWhere(['bmc_code' => $this->bmc_code]);
-        }
-        $data = $query->all();
-        return count($data) === 1 ? $data[0] : '';
     }
 
     public function convertDateDot() {
@@ -255,9 +216,7 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
 
     public function getMonthlyCreditLimit($date) {
         list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($date, 'previous');
-        return $this->find()->where('CAST(from_date AS DATE) <= :toDate AND CAST(to_date AS DATE) >= :fromDate', [':fromDate' => $fromDate, ':toDate' => $toDate])
-                        ->andWhere(['customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'union_code' => $this->union_code])
-                        ->one();
+        return $this->find()->Where(['from_date' => $fromDate, 'to_date' => $toDate, 'customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'union_code' => $this->union_code])->one();
     }
 
 }

@@ -32,7 +32,6 @@ $attribute = [
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type) : '';
         }, 'vAlign' => 'middle', 'filter' => TRUE, 'visible' => TRUE],
-    
     ['attribute' => 'milk_amount', 'filter' => FALSE, 'visible' => FALSE],
     ['attribute' => 'manual_amount', 'filter' => FALSE, 'visible' => FALSE],
     ['attribute' => 'from_date',
