@@ -451,18 +451,14 @@ class GeneralFunctions extends Component {
         return $value;
     }
 
-    public function getCodeAutoIncrement($model, $auto_inc = 1) {
-
+    public function getCodeAutoIncrement($model, $autoIncrement = 1){
         $primaryKey = $model->tableSchema->primaryKey[0];
         $tableName = $model->tableName();
-        $val = (new \yii\db\Query)
-                ->select("MAX(convert(bigint,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
-                //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
-                ->from($tableName)
-                ->one();
-        $number = (int) $val[$primaryKey] + $auto_inc;
-
-        return $number;
+        $maxValue = (new \yii\db\Query())
+            ->select(["MAX(CAST(LTRIM(RTRIM([{$primaryKey}])) AS INT)) AS max_value"])
+            ->from($tableName)
+            ->scalar();
+        return (int)$maxValue + $autoIncrement;
     }
 
     public function getOrganizationName() {
@@ -1735,7 +1731,7 @@ class GeneralFunctions extends Component {
             if (strlen($model->ref_code) != $ref_code_fix_length) {
                 $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
             }
-            if($keyPattern['master_hierarchy_auto_entry'] == 1){
+            if ($keyPattern['master_hierarchy_auto_entry'] == 1) {
                 $this->setKeyPatternChild($keyPattern, $model, $table_name, $pk_code);
             }
             return $pk_code;
@@ -1748,8 +1744,8 @@ class GeneralFunctions extends Component {
     public function setKeyPatternChild($pattern, &$model, $table_name, $pk_code, $master_key = '', $hierarchyData = [], $is_exist = false) {
         $childPattern = new TblKeyPatternChild();
         $childKeyPatterns = $childPattern->find()->where(['key_pattern_code' => $pattern['key_pattern_code']])->all();
-        if(!empty($childKeyPatterns)){
-            if(!empty($hierarchyData)){
+        if (!empty($childKeyPatterns)) {
+            if (!empty($hierarchyData)) {
                 $masterHierarchy = $hierarchyData;
             } else {
                 $masterHierarchy = new TblMasterHierarchy();
@@ -1760,22 +1756,22 @@ class GeneralFunctions extends Component {
             }
             $masterHierarchy->wef_date = !empty($masterHierarchy->wef_date) ? $masterHierarchy->wef_date : date('Y-m-d');
             $masterHierarchy->is_active = 1;
-            foreach($childKeyPatterns as $key => $keyPattern){
-                $index = $key+1;
-                $key_name = 'ref_code'.$index;
+            foreach ($childKeyPatterns as $key => $keyPattern) {
+                $index = $key + 1;
+                $key_name = 'ref_code' . $index;
                 $masterHierarchy->master_type = $keyPattern->pattern_for;
                 $key_length = (int) $keyPattern['key_length'];
 
                 $key_fix_length = (int) $keyPattern['key_fix_length'];
                 $key_reset_on = $keyPattern['key_reset_on'];
 
-                if(!$is_exist && $keyPattern['key_code_type'] == 1){
-                    $data = $masterHierarchy->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT('.$key_name.',' . $key_length . ')as bigint)),0)+1'])
-                        ->where(['union_code' => $model->union_code])
-                        ->asArray()
-                        ->one();
+                if (!$is_exist && $keyPattern['key_code_type'] == 1) {
+                    $data = $masterHierarchy->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(' . $key_name . ',' . $key_length . ')as bigint)),0)+1'])
+                            ->where(['union_code' => $model->union_code])
+                            ->asArray()
+                            ->one();
                     $ref_code = ($key_length > 0 ) ? str_pad($data['ref_code'], $key_length, '0', STR_PAD_LEFT) : '';
-                    if(!empty($keyPattern['prefix_field'])) {
+                    if (!empty($keyPattern['prefix_field'])) {
                         $masterHierarchy->{$key_name} = '';
                         $prefix_seq = explode(',', $keyPattern['prefix_field']);
                         foreach ($prefix_seq as $pre) {
@@ -1803,7 +1799,7 @@ class GeneralFunctions extends Component {
                         }
                     }
                     $masterHierarchy->{$key_name} .= $ref_code;
-                    if(!empty($keyPattern['suffix_field'])) {
+                    if (!empty($keyPattern['suffix_field'])) {
                         $suffix_seq = explode(',', $keyPattern['suffix_field']);
                         foreach ($suffix_seq as $pre) {
                             $pre_info = explode(':', $pre);
@@ -1829,10 +1825,10 @@ class GeneralFunctions extends Component {
                             }
                         }
                     }
-                } else if($keyPattern['key_code_type'] == 2) {
+                } else if ($keyPattern['key_code_type'] == 2) {
                     $masterHierarchy->{$key_name} = !empty($masterHierarchy->{$key_name}) ? $masterHierarchy->{$key_name} : NULL;
                 }
-                if($keyPattern['key_code_type'] == 1) {
+                if ($keyPattern['key_code_type'] == 1) {
                     if (empty($masterHierarchy->{$key_name})) {
                         $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
                     } else {
@@ -1841,20 +1837,20 @@ class GeneralFunctions extends Component {
                             $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
                         }
                     }
-                    if(!empty($masterHierarchy->{$key_name})){
+                    if (!empty($masterHierarchy->{$key_name})) {
                         $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);
                         if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
                             $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $key_fix_length . '.'));
                         }
                     }
                 }
-                if(!empty($hierarchyData)){
+                if (!empty($hierarchyData)) {
                     $cnt = $masterHierarchy->getActiveCount($key_name, $key_reset_on);
                     if ($cnt > 0) {
                         $model->addError($key_name, Yii::t('app/validation', $model->getAttributeLabel($key_name) . ' has already been taken.'));
                     }
-                    if(!empty($masterHierarchy->{$key_name})){
-                        $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);   
+                    if (!empty($masterHierarchy->{$key_name})) {
+                        $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);
                         if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
                             $model->addError($key_name, Yii::t('app/validation', $model->getAttributeLabel($key_name) . ' length must be ' . $key_fix_length . '.'));
                         }
@@ -2766,6 +2762,14 @@ class GeneralFunctions extends Component {
         Yii::$app->view->registerJs($script, View::POS_END, 're-push');
 
         return $link;
+    }
+
+    public function getMonthStartEndDate($date, $monthType = 'current') {
+        $modifier = $monthType === 'previous' ? 'last month' : 'this month';
+        $dateTime = new \DateTime($date);
+        $fromDate = $dateTime->modify("first day of $modifier")->format('Y-m-d');
+        $toDate = (new \DateTime($date))->modify("last day of $modifier")->format('Y-m-d');
+        return [$fromDate, $toDate];
     }
 
 }
