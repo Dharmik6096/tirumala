@@ -146,7 +146,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $approvalModel->setOldAttributesValues($approvalModel);
                     if ($collectionApprovalConfig == 2) {
                         $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_bmc_collection', $modelSave, $auto_key_config, $i, TRUE);
+                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_bmc_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                     } else {
                         $modelSave[] = $approvalModel;
                     }
@@ -410,26 +410,25 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $org_code = Yii::$app->request->post('bmcCode');
         $customer_type = Yii::$app->request->post('customer_type');
 
-       (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','RMRD_COLLECTION');
-       (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','RMRD_COLLECTION');
-       if($lr1 == '' or $lr2 == '') {
+        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $org_code, 'BMC', 'RMRD_COLLECTION');
+        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $org_code, 'BMC', 'RMRD_COLLECTION');
+        if ($lr1 == '' or $lr2 == '') {
             (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
             (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
         }
 
-       
+
         if ($is_clr_input == 0) {
             $data = ($snf - ($fat * $lr1) - $lr2) * 4;
         } else {
             $data = ($clr / 4) + ($fat * $lr1) + $lr2;
-            
-            if($customer_type != 'DCS' && $customer_type != ''){
+
+            if ($customer_type != 'DCS' && $customer_type != '') {
                 $formattedNumber = floor($data * 100) / 100;
-                $data = number_format($formattedNumber,2);
-             }else{
-                $data = number_format($data,2);
-             }
-            
+                $data = number_format($formattedNumber, 2);
+            } else {
+                $data = number_format($data, 2);
+            }
         }
         $response['data'] = $data;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
@@ -489,7 +488,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 
                             if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
-                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, TRUE);
+                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                                 $i++;
                             } else {
                                 $saveModel[] = $approvalModel;
@@ -635,7 +634,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $ApprovalModel->action_perform = 'DELETE';
                         if ($collectionApprovalConfig == 2) {
                             $modelStages = new TblApprovalStagesDetail();
-                            $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, TRUE);
+                            $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                             $i++;
                         } else {
                             $saveModel[] = $ApprovalModel;
