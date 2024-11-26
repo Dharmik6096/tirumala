@@ -207,7 +207,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         Yii::$app->operation->history($manualCollectionData, $historyModel, 'UPDATE');
         $childModel[] = $historyModel;
         $manualCollectionData->attributes = $request_model->toArray();
-
+        $status = '';
         if (strtolower($model->approval_status) == 'approve') {
             if ($manualCollectionConfig == 2 && !empty($approval_code)) {
                 $status = 1;
