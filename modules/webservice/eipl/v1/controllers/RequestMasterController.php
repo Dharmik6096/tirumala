@@ -158,6 +158,7 @@ class RequestMasterController extends MasterController {
             if (!empty($transaction) && $transaction == 'customRedirect') {
                 $message = $message;
             } else {
+                $is_validate = false;
                 $message = '';
                 if (!$is_validate) {
                     foreach ($master as $singleModel) {
