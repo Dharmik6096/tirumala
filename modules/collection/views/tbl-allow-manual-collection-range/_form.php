@@ -46,7 +46,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'from_date_back', '', date('d-m-Y'), FALSE, $readonly); ?> 
     </div>
     <div class="col-sm-2 front-from-date">
-        <?= Yii::$app->controls->date($model, $form, 'from_date_real', '', FALSE, date('d-m-Y'), $readonly); ?> 
+        <?= Yii::$app->controls->date($model, $form, 'from_date_real', '', date('d-m-Y'), date('d-m-Y'), $readonly); ?> 
     </div>
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift', true, $readonly, 'from_shift'); ?>
@@ -55,7 +55,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'to_date_back', '', date('d-m-Y'), FALSE, $readonly); ?> 
     </div>
     <div class="col-sm-2 front-to-date">
-        <?= Yii::$app->controls->date($model, $form, 'to_date_real', '', FALSE, date('d-m-Y')); ?> 
+        <?= Yii::$app->controls->date($model, $form, 'to_date_real', '', date('d-m-Y'), date('d-m-Y')); ?> 
     </div>
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift', true, FALSE, 'to_shift'); ?>
@@ -103,6 +103,12 @@ $script = "
     $('#tblallowmanualcollectionrange-entry_type').on('change', function() {
         var entryType = $(this).val();
         updateDateFields(entryType);
+        if(entryType !='realtime'){
+            $('#tblallowmanualcollectionrange-to_date_real').val('');
+            $('.field-tblallowmanualcollectionrange-to_date_real').removeClass('disabled no_pointer');
+            $('#tblallowmanualcollectionrange-to_shift').val('').change();
+            $('.field-tblallowmanualcollectionrange-to_shift').removeClass('disabled no_pointer');
+        }
     });
         
     function updateDateFields(entryType) {
@@ -124,10 +130,29 @@ $script = "
     }    
     
     $('#tblallowmanualcollectionrange-from_date_back, #tblallowmanualcollectionrange-from_date_real').on('change', function() {
-        var fromDate = $('#tblallowmanualcollectionrange-from_date_back').val() || $('#tblallowmanualcollectionrange-from_date_real').val();
+        
+    var type = $('#tblallowmanualcollectionrange-entry_type').val();
+     var fromDate = $('#tblallowmanualcollectionrange-from_date_back').val() || $('#tblallowmanualcollectionrange-from_date_real').val();
         $('#tblallowmanualcollectionrange-from_date').val(fromDate);
+        if(type=='realtime'){
+            $('#tblallowmanualcollectionrange-to_date_real').val(fromDate);
+            $('.field-tblallowmanualcollectionrange-to_date_real').addClass('disabled no_pointer');
+        }else{
+            $('#tblallowmanualcollectionrange-to_date_real').val('');
+            $('.field-tblallowmanualcollectionrange-to_date_real').removeClass('disabled no_pointer');
+        }
     });
-
+    $('#tblallowmanualcollectionrange-from_shift').on('change', function() {
+        var to_shift_val = $(this).val();
+        var type = $('#tblallowmanualcollectionrange-entry_type').val();
+        if(type=='realtime'){
+            $('#tblallowmanualcollectionrange-to_shift').val(to_shift_val).change();
+            $('.field-tblallowmanualcollectionrange-to_shift').addClass('disabled no_pointer');
+        }else{
+            $('#tblallowmanualcollectionrange-to_shift').val('').change();
+            $('.field-tblallowmanualcollectionrange-to_shift').removeClass('disabled no_pointer');
+        }
+    });
     $('#tblallowmanualcollectionrange-to_date_back, #tblallowmanualcollectionrange-to_date_real').on('change', function() {
         var toDate = $('#tblallowmanualcollectionrange-to_date_back').val() || $('#tblallowmanualcollectionrange-to_date_real').val();
         $('#tblallowmanualcollectionrange-to_date').val(toDate);
