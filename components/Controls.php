@@ -121,7 +121,7 @@ class Controls extends Component {
         echo $form->field($model, $field)->textArea(['maxlength' => true, 'class' => 'form-control local-control']);
     }
 
-    public function date($model, $form, $name = 'date', $class = 'form-group col-sm-2', $maxdate = true, $mindate = false, $disabled = false, $label = true, $id = false, $max_val = '') {
+    public function date($model, $form, $name = 'date', $class = 'form-group col-sm-2', $maxdate = true, $mindate = false, $disabled = false, $label = true, $id = false, $max_val = '', $monthYearOnly = false) {
         $maxdate_value = '';
         $mindate_value = '';
         $options = ['class' => 'form-control'];
@@ -143,7 +143,9 @@ class Controls extends Component {
             'value' => date('Y-m-d'),
 //            'convertFormat'=>TRUE,
             'pluginOptions' => [
-                'format' => 'dd-mm-yyyy',
+                'format' => $monthYearOnly ? 'mm-yyyy' : 'dd-mm-yyyy',
+                'startView' => $monthYearOnly ? 'months' : '',
+                'minViewMode' => $monthYearOnly ? 'months' : '',
                 'todayHighlight' => true,
                 'autoclose' => true,
                 'endDate' => $maxdate_value,
