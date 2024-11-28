@@ -45,7 +45,7 @@ use kartik\helpers\Html;
                 ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->controls->date($model, $form, 'wef_date', '', true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'month', '', true, false, false, true, false, '', true); ?>
             </div>
             <div class="clearfix"></div>
             <?php
@@ -88,7 +88,7 @@ use kartik\helpers\Html;
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-    $(document).on('change', '#tblmonthlycreditlimit-bmc_code, #tblmonthlycreditlimit-dcs_code, #tblmonthlycreditlimit-customer_type, #tblmonthlycreditlimit-wef_date', function() {
+    $(document).on('change', '#tblmonthlycreditlimit-bmc_code, #tblmonthlycreditlimit-dcs_code, #tblmonthlycreditlimit-customer_type, #tblmonthlycreditlimit-month', function() {
         $('#tblmonthlycreditlimit-ex_code').val('').trigger('change');
         $('#tblmonthlycreditlimit-final_amount').val('').trigger('change');        
     });
@@ -104,7 +104,7 @@ $script = "
         var type= $('#tblmonthlycreditlimit-customer_type').val(); 
         var union= $('#tblmonthlycreditlimit-union_code').val(); 
         var bmc= $('#tblmonthlycreditlimit-bmc_code').val(); 
-        var date= $('#tblmonthlycreditlimit-wef_date').val(); 
+        var date= $('#tblmonthlycreditlimit-month').val(); 
         var plant= $('#tblmonthlycreditlimit-plant_code').val(); 
         var mcc= $('#tblmonthlycreditlimit-mcc_plant_code').val(); 
         var dcsCode = '';
@@ -144,7 +144,7 @@ $script = "
 
     function setAvailableCredit() {
         var type = $('#tblmonthlycreditlimit-customer_type').val();
-        var date = $('#tblmonthlycreditlimit-wef_date').val();
+        var date = $('#tblmonthlycreditlimit-month').val();
         var union = $('#tblmonthlycreditlimit-union_code').val();
         var bmc = $('#tblmonthlycreditlimit-bmc_code').val();
         var code = $('#tblmonthlycreditlimit-customer_code').val();
