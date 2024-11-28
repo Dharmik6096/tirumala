@@ -996,12 +996,12 @@ class TblMilkCollection extends \app\models\ChildModel {
         $data['fat'] = $model->fat;
         $data['snf'] = $model->snf;
         $resdata = $this->calculateData($flag, $model->union_code, $model->bmc_code, $model->fat, $model->snf, $model->milk_type_code, $data, $model->member_code);
-        $model->clr = $resdata['clr'];
-        $responseData = $resdata['data']['list'];
-        $rtpl = $responseData['rtpl'];
-        $model->actual_rate = number_format($rtpl, 2);
-        $model->purchase_rate_code = $responseData['purchase_rate_code'];
-        if ($responseData['scheme_rate_rtpl'] != '' && $responseData['scheme_rate_rtpl'] != null) {
+        $model->clr = isset($resdata['clr']) ? $resdata['clr'] : 0;
+        $responseData = isset($resdata['data']['list']) ? $resdata['data']['list'] : '';
+        $rtpl = isset($responseData['rtpl']) ? $responseData['rtpl'] : '';
+        $model->actual_rate = !empty($rtpl) ? number_format($rtpl, 2) : 0;
+        $model->purchase_rate_code = isset($responseData['purchase_rate_code']) ? $responseData['purchase_rate_code'] : '';
+        if (isset($responseData['scheme_rate_rtpl']) && $responseData['scheme_rate_rtpl'] != '' && $responseData['scheme_rate_rtpl'] != null) {
             $rtpl = $rtpl + $responseData['scheme_rate_rtpl'];
             $model->scheme_rate_code = $responseData['scheme_rate_code'];
             $model->scheme_rate = $responseData['scheme_rate_rtpl'];

@@ -77,6 +77,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
                     }", 'on' => ['create', 'hosync']
             ],
                 [['application_type'], 'default', 'value' => 'MOBILE'],
+                [['to_date'], 'checkUniqueDate', 'skipOnError' => true, 'on' => ['create', 'hosync']],
         ];
     }
 
@@ -206,7 +207,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         Yii::$app->operation->history($manualCollectionData, $historyModel, 'UPDATE');
         $childModel[] = $historyModel;
         $manualCollectionData->attributes = $request_model->toArray();
-
+        $status = '';
         if (strtolower($model->approval_status) == 'approve') {
             if ($manualCollectionConfig == 2 && !empty($approval_code)) {
                 $status = 1;
@@ -262,6 +263,29 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
     public function getcollectionApproval() {
         $this->allow_manual_collection_code = (string) $this->allow_manual_collection_code;
         return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'allow_manual_collection_code'])->orderBy('level ASC');
+    }
+
+    public function checkUniqueDate($attribute, $params) {
+        if ($this->from_date > $this->to_date) {
+            $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+            return false;
+        }
+
+        $dataCheck = $this->find()
+                ->where(['in', 'approval_status', ['Pending', 'Inprogress']])
+                ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))');
+
+        if ($this->table_name == 'tbl_milk_collection') {
+            $dataCheck->andWhere(['dcs_code' => $this->dcs_code]);
+        } else {
+            $dataCheck->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => '']);
+        }
+        $dataExist = $dataCheck->one();
+
+        if ($dataExist) {
+            $this->addError($attribute, Yii::t('app/validation', 'This date range data already in pending request'));
+            return false;
+        }
     }
 
 }

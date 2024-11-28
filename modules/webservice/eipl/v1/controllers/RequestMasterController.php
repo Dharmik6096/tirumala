@@ -67,6 +67,7 @@ class RequestMasterController extends MasterController {
         $message = Yii::t('app', 'Unable to save!');
         $success_id = [];
         $error_id = [];
+        $is_validate = true;
         $transaction_data = Yii::$app->request->getRawBody();
         if (!empty($transaction_data['module_name'])) {
             $master = [];
@@ -136,24 +137,30 @@ class RequestMasterController extends MasterController {
                 $master[] = $model;
             }
             if (!empty($auto_key_config)) {
-                $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($childModel, ['transactional data', 'create'], $auto_key_config);
-                $master = $childModel[0];
+                $is_validate = false;
+                if (empty($childModel[0]->getErrors())) {
+                    $is_validate = true;
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($childModel, ['transactional data', 'create'], $auto_key_config);
+                }
+                $master[] = $childModel[0];
             } else {
-                $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
+                if (!empty($master) && !empty($master[0]->getErrors())) {
+                    $is_validate = false;
+                } else if (empty($master) && !empty($childModel[0]->getErrors())) {
+                    $is_validate = false;
+                    $master[] = $childModel[0];
+                }
+                if ($is_validate) {
+                    $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
+                }
 //            $transaction = $this->generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
             }
-            if ($transaction == 'customRedirect') {
+            if (!empty($transaction) && $transaction == 'customRedirect') {
                 $message = $message;
             } else {
+                $is_validate = false;
                 $message = '';
-                if (!empty($auto_key_config)) {
-                    $errors = $master->getErrors();
-                    if ($errors) {
-                        foreach ($errors as $attribute => $errorMessages) {
-                            $message .= implode(' ', $errorMessages) . ' ';
-                        }
-                    }
-                } else {
+                if (!$is_validate) {
                     foreach ($master as $singleModel) {
                         $errors = $singleModel->getErrors();
                         if ($errors) {
