@@ -10,7 +10,7 @@ $this->title = Yii::$app->label->title('view', 'Customer Master Provisional');
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
         <?= Yii::$app->controls->cancel($model); ?>
-<?= Html::encode($this->title) ?>
+        <?= Html::encode($this->title) ?>
     </div>
     <div class="panel-body">
         <div class="table-responsive">
@@ -256,6 +256,14 @@ $this->title = Yii::$app->label->title('view', 'Customer Master Provisional');
                             [
                             'attribute' => 'mobile_no',
                             'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'aadhaar_no',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
