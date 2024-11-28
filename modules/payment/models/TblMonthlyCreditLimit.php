@@ -41,7 +41,7 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblMonthlyCreditLimit extends \app\models\ChildModel {
 
-    public $wef_date, $member_code, $customer_name, $ex_code, $avl_amount;
+    public $month, $member_code, $customer_name, $ex_code, $avl_amount;
 
     /**
      * @inheritdoc
@@ -55,16 +55,16 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'final_amount', 'milk_amount', 'manual_amount', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'wef_date', 'customer_name', 'ex_code', 'avl_amount', 'member_code'], 'safe'],
+            [['customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'final_amount', 'milk_amount', 'manual_amount', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'month', 'customer_name', 'ex_code', 'avl_amount', 'member_code'], 'safe'],
             [['customer_type', 'customer_code'], 'string', 'max' => 20],
             [['final_amount'], 'required'],
-            [['wef_date'], 'convertDateDot', 'on' => ['importCsv', 'importCsvOther']],
-            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importCsvOther']],
-            [['wef_date'], 'convertDate'],
+            [['month'], 'convertDateDot', 'on' => ['importCsv', 'importCsvOther']],
+            [['month'], 'validateDateFormat', 'on' => ['importCsv', 'importCsvOther']],
+            [['month'], 'convertDate'],
             [['milk_amount'], 'default', 'value' => 0],
             [['customer_type'], 'default', 'value' => 'MEMBER', 'on' => ['importCsvOther']],
             [['customer_type', 'customer_code'], 'required', 'except' => ['importCsvOther']],
-            [['wef_date'], 'required', 'except' => ['update']],
+            [['month'], 'required', 'except' => ['update']],
             [['customer_name', 'ex_code'], 'required', 'except' => ['update', 'importCsv', 'importCsvOther']],
             [['member_code'], 'required', 'on' => ['importCsvOther']],
             [['dcs_code'], 'required', 'except' => ['importCsv'], 'when' => function ($model) {
@@ -119,7 +119,7 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
             'customer_name' => Yii::t('app', 'Name'),
         ];
     }
-    
+
     public function getCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code, 'customer_code_ex' => $this->ex_code]);
     }
@@ -165,14 +165,13 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
                     $data = $memberModel->validateMember($this->dcs_code, $memberCode);
                     $this->customer_type = 'MEMBER';
 
-
                     if (empty($data)) {
                         $this->addError('member_code', Yii::t('app/validation', 'Member Code Is Invalid.'));
                     } else {
                         $this->customer_code = $data->member_code;
                         $bmcData = $this->mainDcsCode;
                         $this->setHierarchy($bmcData);
-                        $detail = Yii::$app->general->validateDeactivateDcs($this, $this->wef_date, '', TRUE, $this->customer_code);
+                        $detail = Yii::$app->general->validateDeactivateDcs($this, $this->month, '', TRUE, $this->customer_code);
                         if ($detail === false) {
                             $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Or Member is Deactivated.'));
                         }
@@ -182,7 +181,7 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
                 Yii::$app->general->validateCustomer($this);
                 if (!empty($this->customer_type) && strtolower($this->customer_type) == 'dcs') {
                     $this->dcs_code = $this->customer_code;
-                    $detail = Yii::$app->general->validateDeactivateDcs($this, $this->wef_date);
+                    $detail = Yii::$app->general->validateDeactivateDcs($this, $this->month);
                     if ($detail === false) {
                         $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is Deactivated.'));
                     }
@@ -202,19 +201,35 @@ class TblMonthlyCreditLimit extends \app\models\ChildModel {
         }
     }
 
+    public function validateDateFormat($attribute) {
+        $formats = ['m.Y', 'd.m.Y'];
+        foreach ($formats as $format) {
+            if (\DateTime::createFromFormat($format, $this->$attribute) && \DateTime::createFromFormat($format, $this->$attribute)->format($format) === $this->$attribute) {
+                return;
+            }
+        }
+        $this->addError($attribute, Yii::t('app/validation', 'Please enter date in valid format e.g. 12.2018 or 01.12.2018'));
+    }
+
     public function convertDateDot() {
         try {
-            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+            if (preg_match('/^\d{2}.\d{4}$/', $this->month)) {
+                $this->month = '01.' . $this->month;
+            }
+            $this->month = Yii::$app->controls->view_date($this->month, 'php:d.m.Y');
         } catch (\Exception $e) {
-            $this->wef_date = '-';
+            $this->month = '-';
         }
     }
 
     public function convertDate() {
         if (empty($this->getErrors())) {
-            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
-            if ($this->wef_date) {
-                list($this->from_date, $this->to_date) = Yii::$app->general->getMonthStartEndDate($this->wef_date);
+            if (preg_match('/^\d{2}-\d{4}$/', $this->month)) {
+                $this->month = '01-' . $this->month;
+            }
+            $this->month = !empty($this->month) ? Yii::$app->controls->view_date($this->month, 'php:Y-m-d') : NULL;
+            if ($this->month) {
+                list($this->from_date, $this->to_date) = Yii::$app->general->getMonthStartEndDate($this->month);
             }
         }
     }
