@@ -43,9 +43,8 @@ class TblCollectionApprovalController extends \app\controllers\ChildController {
         if ($this->model->load(Yii::$app->request->post())) {
             $historyModel = new TblCollectionApprovalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-
-            $this->model->approve_date = date('Y-m-d H:i:s');
-            $this->model->allow_till_date = date('Y-m-d H:i:s', strtotime('+' . $this->model->valid_hours . ' hours'));
+            $this->model->approve_date = date('Y-m-d');
+            $this->model->allow_till_date = date('Y-m-d', strtotime('+'.$this->model->valid_hours. 'hours'));
             $this->model->approved_by = !empty(Yii::$app->session->get('UserCode')) ? Yii::$app->session->get('UserCode') : '';
             $this->model->is_approve = 1;
             if ($this->model->validate()) {

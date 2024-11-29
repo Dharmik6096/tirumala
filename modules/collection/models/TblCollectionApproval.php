@@ -46,7 +46,8 @@ class TblCollectionApproval extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['valid_hours'], 'required', 'on' => 'approve'],
+                [['uuid','date','shift_code','collection_type','code','is_approve','requested_by','approved_by','approve_date','allow_till_date','valid_hours','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+                [['valid_hours'], 'required', 'on' => 'approve', 'except' => 'androidsync'],
                 [['date', 'approve_date', 'allow_till_date', 'created_at', 'updated_at'], 'safe'],
                 [['shift_code', 'collection_type', 'is_approve', 'valid_hours', 'originating_type'], 'integer'],
                 [['uuid'], 'string', 'max' => 255],
