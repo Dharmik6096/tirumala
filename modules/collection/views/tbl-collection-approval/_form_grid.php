@@ -39,11 +39,11 @@ $attribute = [
         }],
         ['label' => 'Approve Date', 'attribute' => 'approve_date',
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->approve_date);
+            return Yii::$app->controls->view_date($model->approve_date);
         }, 'filter' => false],
         ['label' => 'Allow Till Date', 'attribute' => 'allow_till_date',
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->allow_till_date);
+            return Yii::$app->controls->view_date($model->allow_till_date);
         }, 'filter' => false],
         ['attribute' => 'valid_hours'],
         [
