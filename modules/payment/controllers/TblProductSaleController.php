@@ -1088,25 +1088,27 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $model->applicable_code = $bmc;
                 $model->applicable_for = 'BMC';
                 $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
-                $fromDate = date('Y-m-d', strtotime($modelData->from_date));
-                $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                if(!empty($modelData)){
+                    $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                    $toDate = date('Y-m-d', strtotime($modelData->to_date));
 
-                $model = new TblBmcCollection();
-                $collWhere = [];
-                $collWhere = ['customer_type' => $type, 'customer_code' => $code];
-                if (strtolower($type) == 'member') {
-                    $model = new TblMilkCollection();
-                    $collWhere = ['member_code' => $code];
-                }
+                    $model = new TblBmcCollection();
+                    $collWhere = [];
+                    $collWhere = ['customer_type' => $type, 'customer_code' => $code];
+                    if (strtolower($type) == 'member') {
+                        $model = new TblMilkCollection();
+                        $collWhere = ['member_code' => $code];
+                    }
 
-                $modelData = $model->find()
-                        ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
-                        ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
-                        ->andWhere($collWhere)
-                        ->one();
+                    $modelData = $model->find()
+                            ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                            ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                            ->andWhere($collWhere)
+                            ->one();
 
-                if (!empty($modelData->amount)) {
-                    $creditAmount = $modelData->amount;
+                    if (!empty($modelData->amount)) {
+                        $creditAmount = $modelData->amount;
+                    }
                 }
             }
             if (!empty($fromDate)) {

@@ -185,6 +185,9 @@ class TblMonthlyCreditLimitController extends \app\controllers\ChildController {
         $bmc = Yii::$app->request->post('bmc');
         $union = Yii::$app->request->post('union');
         $date = Yii::$app->request->post('date');
+        if (preg_match('/^\d{2}.\d{4}$/', $date)) {
+            $date = '01.' . $date;
+        }
         list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($date, 'current');
         $model = new TblMonthlyCreditLimit();
         $AvailableAmount = $model->find()
@@ -193,9 +196,9 @@ class TblMonthlyCreditLimitController extends \app\controllers\ChildController {
                 ->one();
 
         return Json::encode([
-            'status' => !empty($AvailableAmount->final_amount) ? 'success' : 'error',
-            'available_amount' => $AvailableAmount->final_amount ?? 0
+                    'status' => !empty($AvailableAmount->final_amount) ? 'success' : 'error',
+                    'available_amount' => $AvailableAmount->final_amount ?? 0
         ]);
     }
-    
+
 }

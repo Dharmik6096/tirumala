@@ -662,6 +662,7 @@ td.action-cell a:hover i{
 .pagination{
     margin: 10px 5px 5px;
     display: inline-flex;
+    font: -webkit-small-control;
 }
 .pagination > li:first-child > a, .pagination > li:first-child > span{
     border-top-left-radius: 2px;
@@ -2420,12 +2421,12 @@ div.crystalstyle{
     white-space: nowrap;
 }
 
-.panel  {
-    /*min-height: calc(100vH - 100px);*/
+/*.panel  {
+    min-height: calc(100vH - 100px);
     height: auto;
     margin: 0;
     overflow: hidden;
-}
+}*/
 /* .panel:hover{
     overflow-y:scroll;
 } */

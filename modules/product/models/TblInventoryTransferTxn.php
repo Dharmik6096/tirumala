@@ -63,6 +63,13 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
                     return $batchNoWiseInventory == 1;
                 },
             ],
+            [['product_code'],
+                'unique',
+                'targetAttribute' => array_merge(
+                        ['inventory_transfer_code', 'product_code'], Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? ['sap_batch_no'] : []
+                ),
+                'message' => 'Product already exists for this transaction.'
+            ],
         ];
     }
 
