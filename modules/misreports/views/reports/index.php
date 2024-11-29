@@ -1,5 +1,6 @@
 <?php
 
+use app\components\CustomDataTable;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\modules\usermanagement\components\GhostHtml;
@@ -662,7 +663,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                 echo '</div>';
                 // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';
                 // var_dump($dataProvider->getModels());
-                echo DataTable::widget([
+                echo CustomDataTable::widget([
                     'id' => 'custom_report',
                     'autoWidth' => true,
 //                    'searching' => true,
