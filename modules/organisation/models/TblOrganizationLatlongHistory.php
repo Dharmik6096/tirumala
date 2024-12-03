@@ -34,7 +34,7 @@ class TblOrganizationLatlongHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['organization_latlong_code','customer_type','customer_code','lat_long','address','is_active','created_at','created_by','updated_at','updated_by','originating_org_type','originating_org_code','originating_type','history_created_at','history_created_by','operation_type'], 'safe'],
+            [['organization_latlong_code','union_code','customer_type','customer_code','lat_long','address','is_active','created_at','created_by','updated_at','updated_by','originating_org_type','originating_org_code','originating_type','history_created_at','history_created_by','operation_type'], 'safe'],
         ];
     }
 
@@ -47,6 +47,7 @@ class TblOrganizationLatlongHistory extends \yii\db\ActiveRecord {
             'organization_latlong_code' => Yii::t('app', 'Organization Latlong Code'),
             'customer_type' => Yii::t('app', 'customer Name'),
             'customer_code' => Yii::t('app', 'customer Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'lat_long' => Yii::t('app', 'Lat Long'),
             'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
