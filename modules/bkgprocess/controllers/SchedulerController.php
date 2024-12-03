@@ -43,10 +43,12 @@ use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
 use app\modules\collection\models\TblBulkBillingImport;
+use app\modules\collection\models\TblMilkCollection;
+use app\modules\organisation\models\TblUnions;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -1397,6 +1399,47 @@ class SchedulerController extends ChildController {
                     $errorMessage = substr($e->getMessage(), 0, 250);
                     $model->updateErrorApiStatus($errorMessage, $ids);
                 }
+            }
+        }
+    }
+
+    public function actionMilkCollectionFtpUpload() {
+        $model = new TblMilkCollection();
+        $modelData = $model->getPickRecords();
+        $data = $modelData;
+        if (!empty($modelData)) {
+            try {
+                $union = TblUnions::find()->select('union_code')->where(['eipl_code' => 'ANANDA'])->one();
+
+                $from_date = date('Y-m-d', strtotime('-1 days'));
+                $to_date = date('Y-m-d');
+                $data_array = [];
+                $data_array['module_name'] = 'TblMilkCollection_Ananda';
+                $data_array['module_code'] = $modelData[0]['Plant'];
+                $data_array['mcc_plant_code'] = $modelData[0]['Plant'];
+                $data_array['union_code'] = $union->union_code;
+                $data_array['applicable_date'] = $from_date . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+                $data_array['shift_code'] = $modelData[0]['shift_code'];
+                $data_array['bmc_code'] = NULL;
+                $data_array['from_date'] = $from_date . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+                $data_array['to_date'] = $to_date . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+
+                $modelData = array_map(function($item) {
+                    unset($item['data_post_status'], $item['ftp_txn_file_name']); // Remove specific keys
+                    return $item;
+                }, $modelData);
+                $title = $data[0]['ftp_txn_file_name'];
+                $ftp_model = new TblFtpTxnLog();
+                $result = $ftp_model->exportData($data_array, $title, $modelData);
+                if (!empty($result)) {
+                    $model->updateProcessStatus('SUCCESS', '2', 2, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                } else {
+                    $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                }
+            } catch (\yii\db\Exception $e) {
+                $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+            } catch (\Throwable $e) {
+                $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
             }
         }
     }
