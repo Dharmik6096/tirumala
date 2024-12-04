@@ -19,21 +19,21 @@ class TblMilkCollectionSearch extends TblMilkCollection {
      * @inheritdoc
      */
     public $union_code;
-    public $operator_fat, $operator_snf, $operator_qty, $operator_amount;
+    public $operator_fat, $operator_snf, $operator_qty, $operator_amount, $data_type_filter;
     public $from_date, $to_date, $from_shift, $to_shift, $sap_collection_type, $sap_data_post_status, $ref_code;
 
     public function rules() {
         return [
-            [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
-            [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type', 'sap_data_post_status', 'mcc_plant_code', 'bmc_code', 'ref_code', 'dcs_name'], 'safe'],
-            [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
-            [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'scheme_rate', 'actual_rate', 'scheme_rate_code'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection', 'bulkdeleteMilkCollection']],
-            [['to_date'], 'validateToDate', 'on' => ['bulkdeleteMilkCollection']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['sap-upload']],
+                [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
+                [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type', 'sap_data_post_status', 'mcc_plant_code', 'bmc_code', 'ref_code', 'dcs_name', 'data_type_filter'], 'safe'],
+                [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
+                [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'scheme_rate', 'actual_rate', 'scheme_rate_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection', 'bulkdeleteMilkCollection']],
+                [['to_date'], 'validateToDate', 'on' => ['bulkdeleteMilkCollection']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['sap-upload']],
         ];
     }
 
@@ -446,7 +446,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 'from_date' => '',
                 'from_shift' => '',
                 'to_date' => '',
-                'to_shift' => ''
+                'to_shift' => '',
+                'data_type_filter' => ''
             ];
             if (empty($this->dcs_code)) {
                 $this->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
