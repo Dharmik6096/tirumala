@@ -51,7 +51,7 @@ class Path extends Component {
             'TblRoutes', 'TblRoutesHistory', 'TblRoutesLocl', 'TblRoutesSearch', 'TblRouteMappingSources', 'TblRouteMappingSourcesHistory', 'TblRouteMapping', 'TblRouteMappingHistory',
             'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch',
             'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch', 'TblDcsConfigHistory', 'TblSocietyCodes', 'TblMccMilkType', 'TblBmcMilkType', 'TblMccMilkTypeHistory', 'TblBmcMilkTypeHistory',
-            'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory', 'TblCustomerDeactive', 'TblDcsVendorStatus', 'TblAllowDcsManualCollectionRange', 'TblChannelMaster', 'TblAnimalInspector', 'TblAnimalInspectorApplicability', 'TblAnimalInspectorRequest', 'TblCustomerMasterProvisional', 'TblMasterHierarchy'
+            'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory', 'TblCustomerDeactive', 'TblDcsVendorStatus', 'TblAllowDcsManualCollectionRange', 'TblChannelMaster', 'TblAnimalInspector', 'TblAnimalInspectorApplicability', 'TblAnimalInspectorRequest', 'TblCustomerMasterProvisional', 'TblMasterHierarchy', 'TblOrganizationLatlong', 'TblOrganizationLatlongSearch', 'TblOrganizationLatlongHistory'
         ],
         '\\app\modules\details\models\\' =>
             ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],

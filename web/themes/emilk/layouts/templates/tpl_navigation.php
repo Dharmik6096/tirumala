@@ -63,6 +63,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Vendor/Customer'), 'url' => ['/organisation/tbl-customer-master/index'], 'active' => ($cntrl == 'tbl-customer-master')],
                     ['label' => Yii::t('app', 'Member'), 'url' => ['/dcsoperation/tbl-member/index'], 'active' => ($cntrl == 'tbl-member')],
                     ['label' => Yii::t('app', 'Master Hierarchy'), 'url' => ['/organisation/tbl-master-hierarchy/index'], 'active' => ($cntrl == 'tbl-master-hierarchy')],
+                    ['label' => Yii::t('app', 'Master Organization Latlong'), 'url' => ['/organisation/tbl-organization-latlong/index'], 'active' => ($cntrl == 'tbl-organization-latlong')],
                     ['label' => Yii::t('app', 'Provisional Member'), 'url' => ['/dcsoperation/tbl-member-provisional/index'], 'active' => ($cntrl == 'tbl-member-provisional')],
                     ['label' => Yii::t('app', 'Transfer Request'), 'url' => ['/organisation/tbl-master-transfer/index'], 'active' => ($cntrl == 'tbl-master-transfer')],
                     ['label' => Yii::t('app', 'Bulk Notification'), 'url' => ['/sms/tbl-bulk-notification/index'], 'active' => ($cntrl == 'tbl-bulk-notification')],

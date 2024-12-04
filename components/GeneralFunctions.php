@@ -451,14 +451,14 @@ class GeneralFunctions extends Component {
         return $value;
     }
 
-    public function getCodeAutoIncrement($model, $autoIncrement = 1){
+    public function getCodeAutoIncrement($model, $autoIncrement = 1) {
         $primaryKey = $model->tableSchema->primaryKey[0];
         $tableName = $model->tableName();
         $maxValue = (new \yii\db\Query())
-            ->select(["MAX(CAST(LTRIM(RTRIM([{$primaryKey}])) AS INT)) AS max_value"])
-            ->from($tableName)
-            ->scalar();
-        return (int)$maxValue + $autoIncrement;
+                ->select(["MAX(CAST(LTRIM(RTRIM([{$primaryKey}])) AS INT)) AS max_value"])
+                ->from($tableName)
+                ->scalar();
+        return (int) $maxValue + $autoIncrement;
     }
 
     public function getOrganizationName() {
@@ -2762,6 +2762,113 @@ class GeneralFunctions extends Component {
         Yii::$app->view->registerJs($script, View::POS_END, 're-push');
 
         return $link;
+    }
+
+    public function getField($model, $type, $field = '') {
+        $type = strtolower($type);
+        $fieldname = 'name';
+        if (!empty($field)) {
+            if (in_array($type, ['home', 'office', 'other'])) {
+                $fieldname = 'user_code';
+            } else if ($field === 'code_ex') {
+                $fieldname = ($type === 'mcc') ? "{$type}_plant_code_ex" : "{$type}_code_ex";
+            } elseif ($field === 'ref_code') {
+                $fieldname = 'ref_code';
+            }
+        } else if (in_array($type, ['mcc', 'plant'])) {
+            $fieldname = 'name';
+        } else if (in_array($type, ['bmc', 'dcs'], true)) {
+            $fieldname = "{$type}_name";
+        } else if ($type == 'bulkven') {
+            $fieldname = 'customer_name';
+        }
+
+        switch ($type) {
+            case 'plant':
+                $code = $model->plantCode;
+                break;
+            case 'mcc':
+                $code = $model->mccPlantCode;
+                break;
+            case 'bmc':
+                $code = $model->bmcCode;
+                break;
+            case 'dcs':
+                $code = $model->dcsCode;
+                break;
+            case 'home':
+            case 'office':
+            case 'other':
+                $code = $model->userCode;
+                break;
+            default:
+                $code = $model->customerCode;
+        }
+
+        return $this->getforeignkey($code, $fieldname);
+    }
+
+    public function fetchData($mod, $type, $code) {
+        $new_code = '';
+        $data = '';
+        $modelMapping = [
+            'plant' => TblPlant::class,
+            'mcc' => TblMccPlant::class,
+            'bmc' => TblDcsBmc::class,
+            'dcs' => TblDcs::class,
+            'user' => User::class,
+            'customer' => TblCustomerMaster::class,
+        ];
+        if (!isset($modelMapping[$type])) {
+            throw new \Exception("Invalid module: {$type}");
+        }
+        $model = $modelMapping[$type];
+        $query = $model::find();
+        $query->andWhere(['is_active' => 1]);
+
+        switch ($type) {
+            case 'plant':
+                $data = $query->andWhere(['or', ['plant_code' => $code], ['ref_code' => $code], ['plant_code_ex' => $code]])->all();
+                $new_code = (count($data) === 1) ? $data[0]->plant_code : [];
+                break;
+
+            case 'mcc':
+                $data = $query->andWhere(['or', ['mcc_plant_code' => $code], ['ref_code' => $code], ['mcc_plant_code_ex' => $code]])->all();
+                $new_code = (count($data) === 1) ? $data[0]->mcc_plant_code : [];
+                break;
+
+            case 'bmc':
+                $data = $query->andWhere(['or', ['bmc_code' => $code], ['ref_code' => $code], ['bmc_code_ex' => $code]])->all();
+                $new_code = (count($data) === 1) ? $data[0]->bmc_code : [];
+                break;
+
+            case 'dcs':
+                $data = $query
+                                ->andWhere(['bmc_code' => $mod->bmc_code])
+                                ->andWhere(['or',
+                                        ['dcs_code' => $code],
+                                        ['dcs_code_ex' => $code],
+                                        ['ref_code' => $code]
+                                ])->all();
+                $new_code = (!empty($data) && count($data) === 1) ? $data[0]->dcs_code : '';
+                break;
+
+            case 'user':
+                $data = $query->andWhere(['id' => $code])->one();
+                $new_code = (!empty($data)) ? $data->id : '';
+                break;
+
+            case 'customer':
+                $data = $query->andWhere(['bmc_code' => $mod->bmc_code])
+                                ->andWhere(['or', ['customer_code' => $code], ['ref_code' => $code], ['customer_code_ex' => $code]])->all();
+                $new_code = (count($data) === 1) ? $data[0]->customer_code : [];
+                break;
+
+            default:
+                break;
+        }
+        $mod->union_code = (!empty($data) && $type != 'user') ? $data[0]->union_code : '';
+        return $new_code;
     }
 
     public function getMonthStartEndDate($date, $monthType = 'current') {
