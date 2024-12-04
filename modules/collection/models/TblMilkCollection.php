@@ -1010,7 +1010,7 @@ class TblMilkCollection extends \app\models\ChildModel {
         $rate = is_numeric($model->rtpl) ? (float) $model->rtpl : 0;
         $qty = is_numeric($model->qty) ? (float) $model->qty : 0;
         $amount = $rate * $qty;
-        $model->amount = number_format($amount, 2);
+        $model->amount = number_format($amount, 2, '.', '');
 
         $this->postDataSet($model, 'api_create', $childModel, $auto_key_config);
         $collmodel = new TblMilkCollection();
