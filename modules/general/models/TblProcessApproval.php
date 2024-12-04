@@ -9,6 +9,7 @@ use app\modules\usermanagement\models\User;
 use yii\db\Expression;
 use app\modules\configuration\models\TblShiftTimeExceed;
 use app\modules\organisation\models\TblCustomerMasterProvisional;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_process_approval".
@@ -148,7 +149,7 @@ class TblProcessApproval extends \app\models\ChildModel {
         return $this->hasOne(TblShiftTimeExceed::className(), ['shift_time_exceed_code' => 'process_code']);
     }
 
-    public function approvalList($model, &$model_save, &$status) {
+    public function approvalList($model, &$model_save, &$status, $status_by = '') {
         if ($model->status != '2') {
             $next_count = TblProcessApproval::find()
                     ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])
@@ -160,11 +161,11 @@ class TblProcessApproval extends \app\models\ChildModel {
                                 ->andWhere(['level' => $model->level])->all();
 
                 foreach ($all_level as $level) {
-                    $this->updateApprovalHistory($level, $model_save, $model);
+                    $this->updateApprovalHistory($level, $model_save, $model, $status_by);
                 }
             } else {
                 $model->status_date = date('Y-m-d H:i:s');
-                $model->status_by = \Yii::$app->user->identity->user_code;
+                $model->status_by = !empty($status_by) ? $status_by : \Yii::$app->user->identity->user_code;
                 $model_save[] = $model;
             }
             $next_count = $next_count->count();
@@ -172,7 +173,7 @@ class TblProcessApproval extends \app\models\ChildModel {
             $all_level = TblProcessApproval::find()
                             ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])->all();
             foreach ($all_level as $level) {
-                $this->updateApprovalHistory($level, $model_save, $model);
+                $this->updateApprovalHistory($level, $model_save, $model, $status_by);
             }
         }
         if ($model->status == '2') {
@@ -184,14 +185,14 @@ class TblProcessApproval extends \app\models\ChildModel {
         }
     }
 
-    private function updateApprovalHistory($level, &$model_save, $model) {
+    private function updateApprovalHistory($level, &$model_save, $model, $status_by = '') {
         if ($model->process_approval_code != $level->process_approval_code) {
             $approvalHistoryModel = new TblProcessApprovalHistory();
-            Yii::$app->operation->history($level, $approvalHistoryModel, UPDATE);
+            Yii::$app->operation->history($level, $approvalHistoryModel, 'UPDATE');
             $model_save[] = $approvalHistoryModel;
         }
         $level->status_date = date('Y-m-d H:i:s');
-        $level->status_by = \Yii::$app->user->identity->user_code;
+        $level->status_by = (isset($status_by) && !empty($status_by)) ? $status_by : \Yii::$app->user->identity->user_code;
         $level->status = $model->status;
         $level->remarks = $model->remarks;
         $model_save[] = $level;
@@ -200,7 +201,7 @@ class TblProcessApproval extends \app\models\ChildModel {
     public function getCustomerProvisional() {
         return $this->hasOne(TblCustomerMasterProvisional::className(), ['customer_provisional_code' => 'process_code']);
     }
-    
+
     public function RejectList($model, &$model_save, &$status, $autoCode) {
         $all_level = TblProcessApproval::find()->where(['process_code' => $model->process_code, 'process_name' => $model->process_name])->all();
         foreach ($all_level as $level) {
@@ -217,6 +218,14 @@ class TblProcessApproval extends \app\models\ChildModel {
             $model_save[] = $level;
         }
         $status = 'Reject';
+    }
+
+    public function getManualCollectionUserCode() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'user_code']);
+    }
+
+    public function getManualCollectionUpdatedBy() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'status_by']);
     }
 
 }

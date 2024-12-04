@@ -42,6 +42,7 @@ use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblMilkCollection;
 use app\modules\product\models\TblProductReceipt;
 use app\modules\product\models\TblProductReceiptTransaction;
+use app\modules\payment\models\TblMonthlyCreditLimit;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
@@ -1068,17 +1069,49 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $pay_mode = Yii::$app->request->post('pay_mode');
         $amount_due = Yii::$app->request->post('amount_due');
         $no_of_installment = Yii::$app->request->post('noi');
+        $creditLimitCheckMonthly = Yii::$app->general->getUnionConfiguration($union, 'credit_limit_check_monthly', 'PORTAL');
         if (!empty($date) && $pay_mode == 1) {
+            $creditAmount = 0;
+            if ($creditLimitCheckMonthly == 1) {
+                $model = new TblMonthlyCreditLimit();
+                $model->customer_type = $type;
+                $model->customer_code = $code;
+                $model->union_code = $union;
+                $modelData = $model->getMonthlyCreditLimit(date('Y-m-d', strtotime($date)));
+                if (!empty($modelData->final_amount)) {
+                    $creditAmount = $modelData->final_amount;
+                }
+                list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($date, 'current');
+            } else {
+                $model = new TblPaymentCycleApplicability();
+                $model->applicable_type = strtolower($type) == 'member' ? 'DCS' : $type;
+                $model->applicable_code = $bmc;
+                $model->applicable_for = 'BMC';
+                $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
+                if(!empty($modelData)){
+                    $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                    $toDate = date('Y-m-d', strtotime($modelData->to_date));
 
-            $model = new TblPaymentCycleApplicability();
-            $model->applicable_type = strtolower($type) == 'member' ? 'DCS' : $type;
-            $model->applicable_code = $bmc;
-            $model->applicable_for = 'BMC';
-            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
-            if (!empty($modelData)) {
+                    $model = new TblBmcCollection();
+                    $collWhere = [];
+                    $collWhere = ['customer_type' => $type, 'customer_code' => $code];
+                    if (strtolower($type) == 'member') {
+                        $model = new TblMilkCollection();
+                        $collWhere = ['member_code' => $code];
+                    }
 
-                $fromDate = date('Y-m-d', strtotime($modelData->from_date));
-                $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                    $modelData = $model->find()
+                            ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                            ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                            ->andWhere($collWhere)
+                            ->one();
+
+                    if (!empty($modelData->amount)) {
+                        $creditAmount = $modelData->amount;
+                    }
+                }
+            }
+            if (!empty($fromDate)) {
                 $saledAmount = 0;
                 $where = [];
                 $where = ['payment_mode' => $pay_mode, 'customer_type' => $type, 'customer_code' => $code];
@@ -1088,26 +1121,11 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         ->where(['between', 'cast(invoice_date as date)', $fromDate, $toDate])
                         ->andWhere($where)
                         ->one();
+
                 if (!empty($data->amount_due)) {
                     $saledAmount = $data->amount_due;
                 }
-                $model = new TblBmcCollection();
-                $collWhere = [];
-                $collWhere = ['customer_type' => $type, 'customer_code' => $code];
-                if (strtolower($type) == 'member') {
-                    $model = new TblMilkCollection();
-                    $collWhere = ['member_code' => $code];
-                }
 
-                $modelData = $model->find()
-                        ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
-                        ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
-                        ->andWhere($collWhere)
-                        ->one();
-                $creditAmount = 0;
-                if (!empty($modelData->amount)) {
-                    $creditAmount = $modelData->amount;
-                }
                 $availableCredit = $creditAmount - $saledAmount;
                 return Json::encode(['status' => 'success', 'credit' => $availableCredit]);
             } else {
@@ -1147,7 +1165,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->send_status = 0;
         $record = [];
-        if ($this->model->save(true,false)) {
+        if ($this->model->save(true, false)) {
             $historyModel->save();
             $record = ['status' => 'success', 'msg' => 'Product Sale Transaction re-pushed successfully.'];
         } else {
