@@ -8,6 +8,9 @@ use app\modules\webservice\eipl\v1\V1;
 use app\modules\webservice\components\EiplRequest;
 use yii\helpers\Json;
 use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
+use app\modules\configuration\models\TblUnionConfigResult;
+use app\modules\configuration\models\TblUnionRatechartRange;
+use app\modules\globalmaster\models\TblAnimalType;
 
 class RequestMasterController extends MasterController {
 
@@ -34,7 +37,7 @@ class RequestMasterController extends MasterController {
                 $sp_param[] = $param_val;
             }
             $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            if(!empty($response)){
+            if (!empty($response)) {
                 $dataToDecrypt = !empty($data['to_decrypt']) ? $data['to_decrypt'] : [];
                 if (!empty($dataToDecrypt)) {
                     for ($i = 0; $i < count($response); $i++) {
@@ -64,6 +67,7 @@ class RequestMasterController extends MasterController {
         $message = Yii::t('app', 'Unable to save!');
         $success_id = [];
         $error_id = [];
+        $is_validate = true;
         $transaction_data = Yii::$app->request->getRawBody();
         if (!empty($transaction_data['module_name'])) {
             $master = [];
@@ -85,6 +89,7 @@ class RequestMasterController extends MasterController {
             $saveModel = true;
             $childModel = [];
             $deleteModel = [];
+            $auto_key_config = [];
             $message = Yii::t('app', 'Successfully Saved!');
             if (isset($transaction_data['operation_type']) && in_array(strtolower($transaction_data['operation_type']), ['update', 'delete'])) {
                 $opType = strtoupper($transaction_data['operation_type']);
@@ -106,24 +111,68 @@ class RequestMasterController extends MasterController {
                 }
                 $saveModel = $opType == 'DELETE' ? false : true;
             }
-            if (isset($moduleDetails['save_child']) && $moduleDetails['save_child']) {
+            $model->originating_org_type = 'HO';
+            $model->originating_type = 0;
+            $model->created_by = !empty(Yii::$app->eiplapp->identity['module_code']) ? Yii::$app->eiplapp->identity['module_code'] : '';
+            if (isset($moduleDetails['multi_auto_increment_key']) && $moduleDetails['multi_auto_increment_key']) {
+                $model->setChildTable($model, $transaction_data, $childModel, $auto_key_config);
+                $saveModel = true;
+            } else if (isset($moduleDetails['save_child']) && $moduleDetails['save_child']) {
                 $model->setChildTable($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
-            if (isset($moduleDetails['save_child_other']) && $moduleDetails['save_child_other']) {
+
+            if (isset($moduleDetails['multi_auto_inc_key_save_other']) && $moduleDetails['multi_auto_inc_key_save_other']) {
+                $model->setChildTableOther($model, $transaction_data, $childModel, $auto_key_config);
+                $saveModel = true;
+            } else if (isset($moduleDetails['save_child_other']) && $moduleDetails['save_child_other']) {
                 $model->setChildTableOther($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
-            if ($saveModel) {
+            if ($saveModel && !isset($moduleDetails['multi_auto_increment_key']) && !isset($moduleDetails['multi_auto_inc_key_save_other'])) {
                 $master = [];
+                if (isset($model->union_code)) {
+                    $model->originating_org_code = $model->union_code;
+                }
                 $master[] = $model;
             }
-            $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
+            if (!empty($auto_key_config)) {
+                $is_validate = false;
+                if (empty($childModel[0]->getErrors())) {
+                    $is_validate = true;
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($childModel, ['transactional data', 'create'], $auto_key_config);
+                }
+                $master[] = $childModel[0];
+            } else {
+                if (!empty($master) && !empty($master[0]->getErrors())) {
+                    $is_validate = false;
+                } else if (empty($master) && !empty($childModel[0]->getErrors())) {
+                    $is_validate = false;
+                    $master[] = $childModel[0];
+                }
+                if ($is_validate) {
+                    $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
+                }
 //            $transaction = $this->generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
-            if ($transaction == 'customRedirect') {
+            }
+            if (!empty($transaction) && $transaction == 'customRedirect') {
                 $message = $message;
             } else {
-                $message = Yii::t('app', 'Unable to save!');
+                $is_validate = false;
+                $message = '';
+                if (!$is_validate) {
+                    foreach ($master as $singleModel) {
+                        $errors = $singleModel->getErrors();
+                        if ($errors) {
+                            foreach ($errors as $attribute => $errorMessages) {
+                                $message .= implode(' ', $errorMessages) . ' ';
+                            }
+                        }
+                    }
+                }
+                if (empty($message)) {
+                    $message = Yii::t('app', 'Unable to save!');
+                }
             }
         }
         $this->response->setMessage([$message]);
@@ -178,6 +227,50 @@ class RequestMasterController extends MasterController {
         $this->response->setData($response);
         $message = 'Successfully Saved!';
         $this->response->setMessage([$message]);
+        return $this->response;
+    }
+
+    public function actionStartUp() {
+        $res_data = [];
+        $data = Yii::$app->request->getRawBody();
+        $orgCodes = $this->getOrgCodes();
+        $union = !empty($orgCodes['union'][0]) ? $orgCodes['union'][0] : '';
+
+        if (!empty($union)) {
+            $animalType = [];
+            $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
+            $rateChart = new TblUnionRatechartRange();
+            $rate_chart_range = $rateChart->rateChart($union);
+            foreach ($rate_chart_range as $rate_chart) {
+                if (!empty($rate_chart)) {
+                    $min_fat = $rate_chart['min_fat'];
+                    $max_fat = $rate_chart['max_fat'];
+                    $min_snf = $rate_chart['min_snf'];
+                    $max_snf = $rate_chart['max_snf'];
+                    $min_clr = $rate_chart['min_clr'];
+                    $max_clr = $rate_chart['max_clr'];
+                }
+                $animalType = [
+                    'milk_type_code' => !empty($rate_chart['animal_type_code']) ? $rate_chart['animal_type_code'] : '',
+                    'milk_type_name' => !empty($rate_chart['animal_type_name']) ? $rate_chart['animal_type_name'] : '',
+                    'min_fat' => $min_fat,
+                    'max_fat' => $max_fat,
+                    'min_snf' => $min_snf,
+                    'max_snf' => $max_snf,
+                    'min_clr' => $min_clr,
+                    'max_clr' => $max_clr
+                ];
+                $res_data[strtolower($rate_chart['config_for'])]['collectionConfig']['allowedMilkType'][] = $animalType;
+            }
+
+            $model = new TblUnionConfigResult();
+            $model->union_code = $union;
+            $model->config_for = ['VLC', 'BMC'];
+            foreach ($model->getConfigList() as $d) {
+                $res_data[strtolower($d['config_for'])]['config'][$d['config_key']] = $d['config_result_key'];
+            }
+        }
+        $this->response->setData($res_data);
         return $this->response;
     }
 

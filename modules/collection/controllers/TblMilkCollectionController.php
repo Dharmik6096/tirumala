@@ -82,45 +82,14 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $modelSave = [];
         $message = 'Milk Collection';
         $type = 'create';
+        $auto_key_config = [];
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
-            $datetime = date('Y-m-d H:i:s');
-            $this->model->date_time_of_collection = Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->shift_code);
-            $this->model->date_time_of_recieve = $datetime;
-            $this->model->qlty_time = $datetime;
-            $this->model->qty_time = $datetime;
-            $this->model->type_of_data_receive = 'Manual';
-            $this->model->qty_mode = 0;
-            $this->model->qlty_auto = 0;
-            $this->model->qty_auto = 0;
-            $this->model->setModel($this->model);
-            $this->model->scenario = 'create';
-            $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'VLC');
-            $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'VLC');
-            $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
-            $conversion_const = empty($conversion_const) ? 1 : $conversion_const;
-            $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
+            $this->model->setCollectionData($this->model, 'create');
+
             if ($this->model->validate()) {
-                $auto_key_config = [];
-                $collectionApprovalConfig = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'collection_approval');
-                if (in_array($collectionApprovalConfig, [1, 2])) {
-                    $approvalModel = new TblCollectionDataAlias();
-                    $approvalModel->attributes = $this->model->attributes;
-                    $approvalModel->table_name = 'tbl_milk_collection';
-                    $approvalModel->action_perform = 'CREATE';
-                    $approvalModel->setOldAttributesValues($approvalModel);
-                    if ($collectionApprovalConfig == 2) {
-                        $i = 0;
-                        $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setProcessWiseApprovalData($approvalModel, $this->model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE);
-                    } else {
-                        $modelSave[] = $approvalModel;
-                    }
-                    $message = 'Data For Approval';
-                    $type = 'create';
-                } else {
-                    $modelSave[] = $this->model;
-                }
+                $this->model->postDataSet($this->model, 'create', $modelSave, $auto_key_config, $message, $type);
+
                 if (!empty($auto_key_config)) {
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($modelSave, [$message, $type], $auto_key_config);
                 } else {
@@ -210,30 +179,11 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $data['fat'] = Yii::$app->request->post('fat');
         $data['snf'] = Yii::$app->request->post('snf');
         $member = Yii::$app->request->post('member');
-        $this->model = new TblMilkCollection();
-        $this->model->member_code = $member;
-        $rateClass = Yii::$app->general->getforeignkey($this->model->memberCode, 'rate_class');
 
-        $data['rate_class'] = empty($rateClass) ? 0 : $rateClass;
+        $model = new TblMilkCollection();
+        $response = $model->calculateData('rtpl_calculate', '', '', $data['fat'], $data['snf'], $data['milk_type'], $data, $member);
 
-        $model = new TblPurchaseRateApplicability();
-        $model->dcs_code = $data['dcs_code'];
-        $model->wef_date = $data['dt_date'];
-        $model_data = $model->getPurchaseRateApplicableData($data);
 
-        if (!empty($model_data)) {
-            $detail_model = new TblPurchaseRateDetails();
-            $detail_model->rate_type_code = $model_data->rate_app_code;
-            $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-            $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
-            $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
-
-            if (!empty($detail_data)) {
-                $response['status'] = 'success';
-                $rtpl_data['list'] = $detail_data;
-                $response['data'] = $rtpl_data;
-            }
-        }
         return Json::encode($response);
     }
 
@@ -358,20 +308,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         (float) $snf = Yii::$app->request->post('snf');
         $union = Yii::$app->request->post('union_code');
         $org_code = Yii::$app->request->post('bmcCode');
-        
-        $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','MEMBER_COLLECTION');
-        $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','MEMBER_COLLECTION');
-        
-        if($lr1 == '' or $lr2 == '') {
-            $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
-            $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
-        }
-        // $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
-        // $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
-        (float) $lr1 = empty($lr1) ? 1 : $lr1;
-        (float) $lr2 = empty($lr2) ? 0 : $lr2;
-        $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
-        $response['data'] = $clr;
+        $model = new TblMilkCollection();
+        $result = $model->calculateData('calculate_clr', $union, $org_code, $fat, $snf);
+        $response['data'] = $result['clr'];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
@@ -428,7 +367,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
                             if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
-                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE);
+                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                                 $i++;
                             } else {
                                 $saveModel[] = $approvalModel;
@@ -567,7 +506,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $ApprovalModel->action_perform = 'DELETE';
                             if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
-                                $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE);
+                                $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                                 $i++;
                             } else {
                                 $saveModel[] = $ApprovalModel;
@@ -671,59 +610,14 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
     }
 
     public function actionCheckFatRange() {
-        $response = [];
-        $response['status'] = 'error';
-        $response['data'] = '';
         (float) $fat = Yii::$app->request->post('fat');
         $union = Yii::$app->request->post('union_code');
         $bmc = Yii::$app->request->post('bmc');
         $milk_type = Yii::$app->request->post('milk_type');
-        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member'] : '';
-        $mapping = new TblBmcMilkType();
-        $mapped = $mapping->find()->where(['bmc_code' => $bmc, 'is_active' => 1])->all();
-
-        if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
-            $type = [];
-            foreach ($mapped as $map) {
-                $type[] = $map->milk_type_code;
-            }
-            //Cow and Buffalo
-            if (in_array(1, $type) && in_array(2, $type)) {
-                if ($range < $fat && $milk_type != 2) {
-                    $response['status'] = 'success';
-                    $response['data'] = 2;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
-                } elseif ($range >= $fat && $milk_type != 1) {
-                    $response['status'] = 'success';
-                    $response['data'] = 1;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
-                }
-            }
-            //Cow and Mix
-            if (in_array(1, $type) && in_array(3, $type)) {
-                if ($range < $fat && $milk_type != 3) {
-                    $response['status'] = 'success';
-                    $response['data'] = 3;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
-                } elseif ($range >= $fat && $milk_type != 1) {
-                    $response['status'] = 'success';
-                    $response['data'] = 1;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
-                }
-            }
-            //Buffalo and Mix
-            if (in_array(2, $type) && in_array(3, $type)) {
-                if ($range < $fat && $milk_type != 3) {
-                    $response['status'] = 'success';
-                    $response['data'] = 3;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
-                } elseif ($range >= $fat && $milk_type != 2) {
-                    $response['status'] = 'success';
-                    $response['data'] = 2;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
-                }
-            }
-        }
+        $model = new TblMilkCollection();
+        $response = $model->calculateData('check_fat_range', $union, $bmc, $fat, '', $milk_type);
+        $response['status'] = 'error';
+        $response['data'] = '';
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }

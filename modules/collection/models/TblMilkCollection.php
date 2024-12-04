@@ -27,6 +27,8 @@ use app\modules\collection\models\TblMccShiftLock;
 use app\modules\collection\models\TblAnalyzerCleaning;
 use app\modules\collection\models\TblAnalyzerCalibration;
 use app\modules\collection\models\TblAnalyzerSerialNo;
+use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\general\models\TblApprovalStagesDetail;
 
 /**
  * This is the model class for table "tbl_milk_collection".
@@ -98,7 +100,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
-                [['fat', 'snf', 'bmc_code'], 'required', 'except' => ['create', 'create_allow']],
+                [['fat', 'snf', 'bmc_code'], 'required', 'except' => ['create', 'create_allow', 'ho_sync_create']],
                 [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['create', 'importCsv', 'create_allow']],
                 [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
                 [['milk_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
@@ -143,13 +145,13 @@ class TblMilkCollection extends \app\models\ChildModel {
                 ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
                 [['tag_1'], 'default', 'value' => 'X'],
                 [['adt_param', 'adt_value', 'received_timestamp', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
-                [['member_code'], 'validateUnique', 'on' => ['create', 'create_allow']],
+                [['member_code'], 'validateUnique', 'on' => ['create', 'create_allow', 'ho_sync_create']],
                 [['milk_type_code'], 'validateUpdate', 'on' => ['update', 'update_allow']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv', 'ho_sync_create']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member', 'sync_lock_member']);
@@ -163,11 +165,15 @@ class TblMilkCollection extends \app\models\ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll', 'ho_sync_create']],
                 [['antibiotic_sms_sent', 'antibiotic', 'is_antibiotic'], 'safe'],
                 [['antibiotic_sms_sent'], 'default', 'value' => 0],
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'other_reading'], 'safe'],
-                [['qty'], 'qtyValidate', 'on' => ['create', 'update']],
+                [['qty'], 'qtyValidate', 'on' => ['create', 'update', 'ho_sync_create']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'date_time_of_collection', 'milk_type_code', 'shift_code', 'dcs_code', 'fat', 'snf', 'bmc_code', 'qty', 'milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'on' => ['ho_sync_create']],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'on' => ['ho_sync_create']],
+                [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
+                [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create']],
         ];
     }
 
@@ -339,7 +345,7 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function getSampleNo() {
         $data = $this->find()
                 ->select('max(sample_no) as sample_no')
-                ->where(['dcs_code' => $this->dcs_code, 'shift_code' => $this->shift_code, 'CONVERT(date,date_time_of_collection)' => Yii::$app->formatter->asDate($this->date_time_of_collection, DATE_FORMAT)])
+                ->where(['dcs_code' => $this->dcs_code, 'shift_code' => $this->shift_code, 'CONVERT(date,date_time_of_collection)' => Yii::$app->controls->view_date($this->date_time_of_collection, 'php:Y-m-d')])
                 ->one();
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
@@ -541,7 +547,7 @@ class TblMilkCollection extends \app\models\ChildModel {
         $model->mobile_no = Yii::$app->general->getforeignkey($model->memberCode, 'mobile_no');
         $model->name = Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         $model->village_code = Yii::$app->general->getforeignkey($model->dcsCode, 'village_code');
-        $model->dt_date = Yii::$app->formatter->asDate($datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($model->shift_code);
+        $model->dt_date = empty($datetime) ? NULL : Yii::$app->controls->view_date($datetime, 'php:Y-m-d') . ' ' . \Yii::$app->general->getshift($model->shift_code);
         $model->route_code = Yii::$app->general->getforeignkey($model->dcsCode, 'route_code');
         $model->last_edited_type = 'P';
         $model->own_mcc_plant_code = $model->mcc_plant_code;
@@ -974,6 +980,205 @@ class TblMilkCollection extends \app\models\ChildModel {
                 }
             }
             /* FATSCAN Calibration Parsing */
+        }
+    }
+
+    public function setChildTableOther(&$model, &$transaction_data, &$childModel, &$auto_key_config) {
+        $this->setCollectionData($model, 'api_create');
+//        $model->originating_org_type = 'HO';
+        $flag = ['calculate_clr', 'rtpl_calculate'];
+        $data = [];
+        $data['dcs_code'] = $model->dcs_code;
+        $data['milk_type'] = $model->milk_type_code;
+        $data['milk_quality_type'] = $model->milk_quality_type_code;
+        $data['shift'] = $model->shift_code;
+        $data['dt_date'] = empty($model->date_time_of_collection) ? NULL : Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d') . ' ' . \Yii::$app->general->getshift($data['shift']);
+        $data['fat'] = $model->fat;
+        $data['snf'] = $model->snf;
+        $resdata = $this->calculateData($flag, $model->union_code, $model->bmc_code, $model->fat, $model->snf, $model->milk_type_code, $data, $model->member_code);
+        $model->clr = isset($resdata['clr']) ? $resdata['clr'] : 0;
+        $responseData = isset($resdata['data']['list']) ? $resdata['data']['list'] : '';
+        $rtpl = isset($responseData['rtpl']) ? $responseData['rtpl'] : '';
+        $model->actual_rate = !empty($rtpl) ? number_format($rtpl, 2) : 0;
+        $model->purchase_rate_code = isset($responseData['purchase_rate_code']) ? $responseData['purchase_rate_code'] : '';
+        if (isset($responseData['scheme_rate_rtpl']) && $responseData['scheme_rate_rtpl'] != '' && $responseData['scheme_rate_rtpl'] != null) {
+            $rtpl = $rtpl + $responseData['scheme_rate_rtpl'];
+            $model->scheme_rate_code = $responseData['scheme_rate_code'];
+            $model->scheme_rate = $responseData['scheme_rate_rtpl'];
+        }
+        $model->rtpl = $rtpl;
+        $rate = is_numeric($model->rtpl) ? (float) $model->rtpl : 0;
+        $qty = is_numeric($model->qty) ? (float) $model->qty : 0;
+        $amount = $rate * $qty;
+        $model->amount = number_format($amount, 2);
+
+        $this->postDataSet($model, 'api_create', $childModel, $auto_key_config);
+        $collmodel = new TblMilkCollection();
+        $collmodel->attributes = $model->attributes;
+        $collmodel->scenario = 'ho_sync_create';
+        if (!$collmodel->validate()) {
+            $childModel[0]->addErrors($collmodel->errors);
+        }
+    }
+
+    public function calculateData($flag, $union = '', $bmcCode = '', $fat = '', $snf = '', $milk_type = '', $data = [], $member = '') {
+        $response = [];
+        $flagArray = [];
+        if (!is_array($flag)) {
+            $flagArray[] = $flag;
+        } else {
+            $flagArray = $flag;
+        }
+//calculate clr
+        if (in_array('calculate_clr', $flagArray)) {
+            $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, 'BMC', 'MEMBER_COLLECTION');
+            $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, 'BMC', 'MEMBER_COLLECTION');
+
+            if ($lr1 == '' or $lr2 == '') {
+                $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
+                $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
+            }
+// $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
+// $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
+            (float) $lr1 = empty($lr1) ? 1 : $lr1;
+            (float) $lr2 = empty($lr2) ? 0 : $lr2;
+            $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
+            $response['clr'] = $clr;
+        }
+
+        if (in_array('check_fat_range', $flagArray)) {
+//calculate fat range
+            $range = Yii::$app->general->getUnionConfiguration($union, 'buf_min_fat_range_member', 'PORTAL');
+            $mapping = new TblBmcMilkType();
+            $mapped = $mapping->find()->where(['bmc_code' => $bmcCode, 'is_active' => 1])->all();
+
+            if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
+                $type = [];
+                foreach ($mapped as $map) {
+                    $type[] = $map->milk_type_code;
+                }
+//Cow and Buffalo
+                if (in_array(1, $type) && in_array(2, $type)) {
+                    if ($range < $fat && $milk_type != 2) {
+                        $response['status'] = 'success';
+                        $response['data'] = 2;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+                    } elseif ($range >= $fat && $milk_type != 1) {
+                        $response['status'] = 'success';
+                        $response['data'] = 1;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+                    }
+                }
+//Cow and Mix
+                if (in_array(1, $type) && in_array(3, $type)) {
+                    if ($range < $fat && $milk_type != 3) {
+                        $response['status'] = 'success';
+                        $response['data'] = 3;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
+                    } elseif ($range >= $fat && $milk_type != 1) {
+                        $response['status'] = 'success';
+                        $response['data'] = 1;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+                    }
+                }
+//Buffalo and Mix
+                if (in_array(2, $type) && in_array(3, $type)) {
+                    if ($range < $fat && $milk_type != 3) {
+                        $response['status'] = 'success';
+                        $response['data'] = 3;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
+                    } elseif ($range >= $fat && $milk_type != 2) {
+                        $response['status'] = 'success';
+                        $response['data'] = 2;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+                    }
+                }
+            }
+        }
+
+        if (in_array('rtpl_calculate', $flagArray)) {
+//calculate rtpl 
+            $this->member_code = $member;
+            $rateClass = Yii::$app->general->getforeignkey($this->memberCode, 'rate_class');
+
+            $data['rate_class'] = empty($rateClass) ? 0 : $rateClass;
+            $model = new TblPurchaseRateApplicability();
+            $model->dcs_code = $data['dcs_code'];
+            $model->wef_date = $data['dt_date'];
+            $model_data = $model->getPurchaseRateApplicableData($data);
+            if (!empty($model_data)) {
+                $detail_model = new TblPurchaseRateDetails();
+                $detail_model->rate_type_code = $model_data->rate_app_code;
+                $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
+                $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
+                $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
+                if (!empty($detail_data)) {
+                    $response['status'] = 'success';
+                    $rtpl_data['list'] = $detail_data;
+                    $response['data'] = $rtpl_data;
+                }
+            }
+        }
+        return $response;
+    }
+
+    public function setCollectionData(&$model, $flag) {
+        $datetime = date('Y-m-d H:i:s');
+        $model->date_time_of_collection = empty($model->date_time_of_collection) ? NULL : Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($model->shift_code);
+        $model->date_time_of_recieve = $datetime;
+        $model->qlty_time = $datetime;
+        $model->qty_time = $datetime;
+        $model->type_of_data_receive = 'Manual';
+        $model->qty_mode = 0;
+        $model->qlty_auto = 0;
+        $model->qty_auto = 0;
+        $model->setModel($model);
+        $model->scenario = $flag == 'create' ? 'create' : 'ho_sync_create';
+        $model->qty_mode = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_qty_mode', 'VLC');
+        $conversion_const = Yii::$app->general->getUnionConfiguration($model->union_code, 'ltr_to_kg_constant', 'VLC');
+        $model->converted_qty_mode = $model->qty_mode == 1 ? 0 : 1;
+        $conversion_const = empty($conversion_const) ? 1 : $conversion_const;
+        $model->converted_qty = $model->qty_mode == 1 ? $model->qty / $conversion_const : $model->qty * $conversion_const;
+    }
+
+    public function postDataSet(&$model, $flag, &$modelSave, &$auto_key_config, &$message = '', &$type = '') {
+        $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
+
+        if ($flag == 'api_create') {
+            $login_data = Yii::$app->eiplapp->identity;
+            $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
+            $model->originating_org_type = 'HO';
+            $model->originating_org_code = $model->union_code;
+        }
+        if (in_array($collectionApprovalConfig, [1, 2])) {
+            $approvalModel = new TblCollectionDataAlias();
+            $approvalModel->attributes = $model->attributes;
+            $approvalModel->table_name = 'tbl_milk_collection';
+            $approvalModel->action_perform = 'CREATE';
+            $approvalModel->setOldAttributesValues($approvalModel);
+            if ($collectionApprovalConfig == 2) {
+                $i = 0;
+                $modelStages = new TblApprovalStagesDetail();
+                if ($flag == 'api_create') {
+                    $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code', $created_by);
+                } else {
+                    $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
+                }
+            } else {
+                $modelSave[] = $approvalModel;
+            }
+            $message = 'Data For Approval';
+            $type = 'create';
+        } else {
+            $modelSave[] = $model;
+        }
+    }
+
+    public function validateMilkType($attribute, $params) {
+        $resdata = $this->calculateData('check_fat_range', $this->union_code, $this->bmc_code, $this->fat, '', $this->milk_type_code);
+        if (!empty($resdata['msg'])) {
+            $this->addError('milk_type_code', $resdata['msg']);
+            return FALSE;
         }
     }
 

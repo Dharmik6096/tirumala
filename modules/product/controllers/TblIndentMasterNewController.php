@@ -17,6 +17,7 @@ use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\product\models\TblIndentMasterHistory;
 use app\modules\payment\models\TblPaymentCycleApplicability;
+use app\modules\payment\models\TblMonthlyCreditLimit;
 
 /**
  * TblIndentMasterNewController implements the CRUD actions for TblIndentMaster model.
@@ -279,7 +280,7 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
                                     ->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0])
                                     ->groupBy(['level', 'approval_mode'])
                                     ->count();
-                                    
+
                             $historyModel = new TblIndentMasterHistory();
                             Yii::$app->operation->history($existIndentData, $historyModel, 'UPDATE');
                             $saveModel[] = $historyModel;
@@ -320,21 +321,21 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
         }
         $dataProvider = $searchModel->indentapprovesearch(Yii::$app->request->queryParams, 'portal_sp_pending_indent_approval_other');
         $isIndentApprovalCreditLimitCheck = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'is_indent_approval_credit_limit_check', 'PORTAL') == 1 ? TRUE : FALSE;
-        if(!empty($searchModel->group_by) && !empty($dataProvider->allModels)) {
+        if (!empty($searchModel->group_by) && !empty($dataProvider->allModels)) {
             $resultArray = [];
             foreach ($dataProvider->allModels as $item) {
                 $key = $item['dcs_code'] . '-' . $item['member_code'] . '-' . $item['product_code'] . '-' . $item['product_name'];
                 if (!isset($resultArray[$key])) {
                     $creditAmount = 'Not Applicable';
-                    if(!empty($item['member_code']) && $isIndentApprovalCreditLimitCheck){
+                    if (!empty($item['member_code']) && $isIndentApprovalCreditLimitCheck) {
                         $fromDate = date('Y-m-d', strtotime($searchModel->from_date));
                         $toDate = date('Y-m-d', strtotime($searchModel->to_date));
                         $model = new TblMilkCollection();
                         $modelData = $model->find()
-                            ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
-                            ->where(['between', 'date_time_of_collection', $fromDate, $toDate])
-                            ->andWhere(['member_code' => $item['member_code']])
-                            ->one();
+                                ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                                ->where(['between', 'date_time_of_collection', $fromDate, $toDate])
+                                ->andWhere(['member_code' => $item['member_code']])
+                                ->one();
                         $creditAmount = 0;
                         if (!empty($modelData->amount)) {
                             $creditAmount = $modelData->amount;
@@ -418,33 +419,48 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
+
     public function actionGetAvailableCredit() {
-        $model = new TblPaymentCycleApplicability();
         $union = Yii::$app->request->post('union_code');
         $bmc = Yii::$app->request->post('bmc_code');
         $date = Yii::$app->request->post('indent_date');
         $code = Yii::$app->request->post('customer_code');
-        $model->applicable_type = 'DCS';
-        $model->applicable_code = $bmc;
-        $model->applicable_for = 'BMC';
+        $creditLimitCheckMonthly = Yii::$app->general->getUnionConfiguration($union, 'credit_limit_check_monthly', 'PORTAL');
+        $creditAmount = 0;
 
-        $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
-        if (!empty($modelData)) {
-
-            $fromDate = date('Y-m-d', strtotime($modelData->from_date));
-            $toDate = date('Y-m-d', strtotime($modelData->to_date));
-
-            $model = new TblMilkCollection();
-            $modelData = $model->find()
-                    ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
-                    ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
-                    ->andWhere(['member_code' => $code, 'union_code' => $union])
-                    ->one();
-            $creditAmount = 0;
-            if (!empty($modelData->amount)) {
-                $creditAmount = $modelData->amount;
+        if ($creditLimitCheckMonthly == 1) {
+            $model = new TblMonthlyCreditLimit();
+            $model->customer_type = 'MEMBER';
+            $model->customer_code = $code;
+            $model->union_code = $union;
+            $modelData = $model->getMonthlyCreditLimit(date('Y-m-d', strtotime($date)));
+            if (!empty($modelData->final_amount)) {
+                $creditAmount = $modelData->final_amount;
             }
+            $date = Yii::$app->request->post('date');
+            list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($date, 'current');
+        } else {
+            $model = new TblPaymentCycleApplicability();
+            $model->applicable_type = 'DCS';
+            $model->applicable_code = $bmc;
+            $model->applicable_for = 'BMC';
+            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
+            if (!empty($modelData)) {
+                $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                $model = new TblMilkCollection();
+                $modelData = $model->find()
+                        ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                        ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                        ->andWhere(['member_code' => $code, 'union_code' => $union])
+                        ->one();
 
+                if (!empty($modelData->amount)) {
+                    $creditAmount = $modelData->amount;
+                }
+            }
+        }
+        if (!empty($fromDate)) {
             $model = new TblIndentMaster();
             $data = $model->find()
                     ->select(['indent_total_amount' => 'ISNULL(SUM(ISNULL(amount, 0)),0)'])
@@ -462,4 +478,5 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
             return Json::encode(['status' => 'error', 'credit' => 0]);
         }
     }
+
 }

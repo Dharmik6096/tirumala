@@ -668,7 +668,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-banner/tap-event-list', Yii::t('app', 'Select Tap Event'), $multiple, '', $readonly);
     }
-    
+
     public function RouteUserList($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/user-list', Yii::t('app', 'Select User'), $multiple, '', $readonly);
@@ -1973,6 +1973,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['DCS' => Yii::t('app', 'DCS'), 'BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'PLANT' => Yii::t('app', 'PLANT'), 'BULKVEN' => Yii::t('app', 'VENDOR'), 'HOME' => Yii::t('app', 'HOME'), 'OFFICE' => Yii::t('app', 'OFFICE'), 'OTHER' => Yii::t('app', 'OTHER')],
             ],
+            'table_name' => [
+                'name' => 'table_name',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['tbl_milk_collection' => Yii::t('app', 'Milk Collection'), 'tbl_bmc_collection' => Yii::t('app', 'BMC Collection')],
+            ],
+            'entry_type' => [
+                'name' => 'entry_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['backdate' => Yii::t('app', 'Back Date'), 'realtime' => Yii::t('app', 'Real Time')],
+            ],
+            'manual_approve_status' => [
+                'name' => 'approval_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+            ],
         ];
         return $records[$l];
     }
@@ -2247,7 +2262,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dynamicreport/default/get-sp-data-drop-list', 'Select ' . $islable, FALSE, '', FALSE, '', TRUE, $session);
     }
-    
+
     public function poured_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/poured-bmc-list', Yii::t('app', 'Select Poured BMC'), $multiple, $extra_param, $readonly, $id);

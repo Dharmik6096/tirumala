@@ -141,6 +141,7 @@ echo GhostMenu::widget([
                             ['label' => 'Milk Dispatch Approval', 'url' => ['/collection/tbl-collection-data-alias/milk-dispatch-approve'], 'active' => ($cntrl == 'tbl-collection-data-alias' && $action == 'milk-dispatch-approve')],
                     ]
                 ],
+                    ['label' => Yii::t('app', 'Allow Manual Collection Range'), 'url' => ['/collection/tbl-allow-manual-collection-range/index'], 'active' => ($cntrl == 'tbl-allow-manual-collection-range')],
                     ['label' => Yii::t('app', 'Milk Collection'), 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
                     ['label' => Yii::t('app', 'Manual Collection Approval'), 'url' => ['/collection/tbl-collection-approval/index'], 'active' => ($cntrl == 'tbl-collection-approval')],
                     ['label' => Yii::t('app', 'Milk Dispatch'), 'url' => ['/collection/tbl-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-milk-dispatch')],
@@ -227,6 +228,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Product Purchase Rate'), 'url' => ['/product/tbl-product-purchase-rate/index'], 'active' => ($cntrl == 'tbl-product-purchase-rate')],
                     ['label' => 'Product Sale Rate', 'url' => ['/product/tbl-product-rate/index'], 'active' => ($cntrl == 'tbl-product-rate')],
                     ['label' => Yii::t('app', 'Product Sale'), 'url' => ['/payment/tbl-product-sale/index'], 'active' => ($cntrl == 'tbl-product-sale')],
+                    ['label' => Yii::t('app', 'Monthly Credit Limit'), 'url' => ['/payment/tbl-monthly-credit-limit/index'], 'active' => ($cntrl == 'tbl-monthly-credit-limit')],
                     ['label' => Yii::t('app', 'DPU Product Demand'), 'url' => ['/product/tbl-dpu-product-demand/index'], 'active' => ($cntrl == 'tbl-dpu-product-demand')],
                     ['label' => Yii::t('app', 'Product Receipt'), 'url' => ['/product/tbl-product-receipt/index'], 'active' => ($cntrl == 'tbl-product-receipt')],
                     ['label' => Yii::t('app', 'Product Requisition'), 'url' => ['/product/tbl-product-requisition/index'], 'active' => ($cntrl == 'tbl-product-requisition')],

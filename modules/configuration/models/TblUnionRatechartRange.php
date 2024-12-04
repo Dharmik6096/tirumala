@@ -35,10 +35,10 @@ class TblUnionRatechartRange extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['animal_type_code'], 'integer'],
-            [['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr'], 'number'],
-            [['union_code', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'config_for'], 'safe'],
+                [['animal_type_code'], 'integer'],
+                [['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr'], 'number'],
+                [['union_code', 'created_by', 'updated_by'], 'string'],
+                [['created_at', 'updated_at', 'config_for'], 'safe'],
         ];
     }
 
@@ -69,6 +69,15 @@ class TblUnionRatechartRange extends \yii\db\ActiveRecord {
      */
     public static function find() {
         return new TblUnionRatechartRangeQuery(get_called_class());
+    }
+
+    public function rateChart($union) {
+        return $this->find()->select(['tbl_union_ratechart_range.*', 'tbl_animal_type.animal_type_name'])
+                        ->join('INNER JOIN', 'tbl_animal_type', 'tbl_animal_type.animal_type_code = tbl_union_ratechart_range.animal_type_code')
+                        ->where(['tbl_union_ratechart_range.union_code' => $union])
+                        ->andWhere(['tbl_union_ratechart_range.config_for' => ['VLC', 'BMC']])
+                        ->asArray()
+                        ->all();
     }
 
 }

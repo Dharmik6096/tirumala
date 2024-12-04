@@ -320,14 +320,17 @@ class TblProductSale extends \app\models\ChildModel {
                     // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_credit_limit', 'PORTAL');
                     $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'check_credit_limit', $this);
                     if ($config == 1) {
-                        $fromDate = date('Y-m-d', strtotime($modelData->from_date));
-                        $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                        $creditLimitCheckMonthly = Yii::$app->general->getUnionConfiguration($this->union_code, 'credit_limit_check_monthly', 'PORTAL');
+                        if ($creditLimitCheckMonthly == 1) {
+                            list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($this->invoice_date, 'current');
+                        } else {
+                            $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                            $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                        }
                         $saledAmount = 0;
                         $where = [];
                         $where = ['payment_mode' => $this->payment_mode, 'customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
-//                if (strtolower($this->sale_type) == 'member') {
-//                    $where['member_code'] = $this->member_code;
-//                }
+
                         $data = $this->find()
                                 ->select(['amount_due' => 'ISNULL(SUM(ISNULL(amount_due, 0)),0)'])
                                 ->where(['between', 'cast(invoice_date as date)', $fromDate, $toDate])
@@ -336,22 +339,35 @@ class TblProductSale extends \app\models\ChildModel {
                         if (!empty($data->amount_due)) {
                             $saledAmount = $data->amount_due;
                         }
-                        $model = new TblBmcCollection();
-                        $collWhere = [];
-                        $collWhere = ['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
-                        if (strtolower($this->customer_type) == 'member') {
-                            $model = new TblMilkCollection();
-                            $collWhere = ['member_code' => $this->customer_code];
-                        }
-                        $modelData = $model->find()
-                                ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
-                                ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
-                                ->andWhere($collWhere)
-                                ->one();
                         $creditAmount = 0;
-                        if (!empty($modelData->amount)) {
-                            $creditAmount = $modelData->amount;
+                        if ($creditLimitCheckMonthly == 1) {
+                            $model = new TblMonthlyCreditLimit();
+                            $model->customer_type = $this->customer_type;
+                            $model->customer_code = $this->customer_code;
+                            $model->union_code = $this->union_code;
+                            $modelData = $model->getMonthlyCreditLimit(date('Y-m-d', strtotime($this->invoice_date)));
+                            if (!empty($modelData->final_amount)) {
+                                $creditAmount = $modelData->final_amount;
+                            }
+                        } else {
+                            $model = new TblBmcCollection();
+                            $collWhere = [];
+                            $collWhere = ['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
+                            if (strtolower($this->customer_type) == 'member') {
+                                $model = new TblMilkCollection();
+                                $collWhere = ['member_code' => $this->customer_code];
+                            }
+                            $modelData = $model->find()
+                                    ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                                    ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                                    ->andWhere($collWhere)
+                                    ->one();
+
+                            if (!empty($modelData->amount)) {
+                                $creditAmount = $modelData->amount;
+                            }
                         }
+                        
                         $availableCredit = $creditAmount - $saledAmount;
                         $amt = !empty($this->amount_due) ? $this->amount_due : 0;
                         $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
