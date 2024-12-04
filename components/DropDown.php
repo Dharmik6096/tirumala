@@ -1968,6 +1968,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Sent To SAP'), 3 => Yii::t('app', 'ERROR'), 4 => Yii::t('app', 'Ack Initiated'), 5 => Yii::t('app', 'SAP Ack SUCCESS')],
             ],
+            'organization_latlong_type' => [
+                'name' => 'Type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['DCS' => Yii::t('app', 'DCS'), 'BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'PLANT' => Yii::t('app', 'PLANT'), 'BULKVEN' => Yii::t('app', 'VENDOR'), 'HOME' => Yii::t('app', 'HOME'), 'OFFICE' => Yii::t('app', 'OFFICE'), 'OTHER' => Yii::t('app', 'OTHER')],
+            ],
         ];
         return $records[$l];
     }

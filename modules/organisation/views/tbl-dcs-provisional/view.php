@@ -413,6 +413,14 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                             ],
                         ],
                     ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'pan_no',
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget
