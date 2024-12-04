@@ -812,7 +812,7 @@ class DefaultController extends \app\controllers\ChildController {
             ],
             'MemberMilkPayment' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
-                'path' => 'vsp/MemberPaymentBill',
+                'path' => ['EIPLCOMMON' => 'vsp/MemberPaymentBill', 'DHAMALE' => 'vsp/MemberPaymentBillDhamale'],
                 'scenario' => 'MemberMilkPayment',
                 'title' => '605 - Member Milk Payment',
                 'bkg_export' => TRUE,
