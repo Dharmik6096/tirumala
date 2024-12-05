@@ -983,11 +983,6 @@ class TblMilkCollection extends \app\models\ChildModel {
         }
     }
 
-    public function getPickRecords() {
-        $output = \Yii::$app->general->getSpData('rpt_MIS_SDSAPReport_Ananda_Clone', []);
-        return $output;
-    }
-
     public function updateProcessStatus($resp_desc, $resp_status, $data_post_status, $data_status, $file_name) {
         return $this->updateAll(['resp_desc' => $resp_desc, 'resp_status' => $resp_status, 'data_post_status' => $data_post_status, 'response_datetime' => date('Y-m-d H:i:s')], ['data_post_status' => $data_status, 'ftp_txn_file_name' => $file_name]);
     }

@@ -48,7 +48,7 @@ use app\modules\organisation\models\TblUnions;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -1403,29 +1403,25 @@ class SchedulerController extends ChildController {
         }
     }
 
-    public function actionMilkCollectionFtpUpload() {
+    public function actionMilkCollectionFtpUploadAnanda() {
         $model = new TblMilkCollection();
-        $modelData = $model->getPickRecords();
+        $modelData = \Yii::$app->general->getSpData('rpt_MIS_SDSAPReport_Ananda_Ftp_Auto_Push', []);
         $data = $modelData;
         if (!empty($modelData)) {
             try {
-                $union = TblUnions::find()->select('union_code')->where(['eipl_code' => 'ANANDA'])->one();
-
-                $from_date = date('Y-m-d', strtotime('-1 days'));
-                $to_date = date('Y-m-d');
                 $data_array = [];
                 $data_array['module_name'] = 'TblMilkCollection_Ananda';
-                $data_array['module_code'] = $modelData[0]['Plant'];
-                $data_array['mcc_plant_code'] = $modelData[0]['Plant'];
-                $data_array['union_code'] = $union->union_code;
-                $data_array['applicable_date'] = $from_date . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+                $data_array['module_code'] = NULL;
+                $data_array['mcc_plant_code'] = NULL;
+                $data_array['union_code'] = $modelData[0]['union_code'];
+                $data_array['applicable_date'] = $modelData[0]['from_date'] . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
                 $data_array['shift_code'] = $modelData[0]['shift_code'];
                 $data_array['bmc_code'] = NULL;
-                $data_array['from_date'] = $from_date . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
-                $data_array['to_date'] = $to_date . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+                $data_array['from_date'] = $modelData[0]['from_date'] . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+                $data_array['to_date'] = $modelData[0]['to_date'] . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
 
                 $modelData = array_map(function($item) {
-                    unset($item['data_post_status'], $item['ftp_txn_file_name']); // Remove specific keys
+                    unset($item['union_code'], $item['from_date'], $item['to_date'], $item['data_post_status'], $item['ftp_txn_file_name']); // Remove specific keys
                     return $item;
                 }, $modelData);
                 $title = $data[0]['ftp_txn_file_name'];
