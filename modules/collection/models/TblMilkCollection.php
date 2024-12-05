@@ -80,7 +80,7 @@ use app\modules\general\models\TblApprovalStagesDetail;
  */
 class TblMilkCollection extends \app\models\ChildModel {
 
-    public $collection_date, $member, $dcs_name;
+    public $collection_date, $member, $dcs_name, $org_type;
 
     /**
      * @inheritdoc
@@ -114,7 +114,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
             //[['sms_status'],'default','n'],
 //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long', 'is_sms_sent', 'dcs_name'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long', 'is_sms_sent', 'dcs_name', 'org_type'], 'safe'],
                 [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
                 [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync', 'importCsv', 'androidsync_coll']],
                 [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
@@ -220,7 +220,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'dcs_name' => Yii::t('app', 'Society Name'),
             'tag_1' => Yii::t('app', 'SAP Status'),
             'error_desc' => Yii::t('app', 'Status Desc.'),
-            'originating_org_type' => Yii::t('app', 'Originated At'),
+            'originating_org_type' => Yii::t('app', 'Orignated Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'adt_param' => Yii::t('app', 'Adultration Param'),
             'adt_value' => Yii::t('app', 'Adultration Value'),
@@ -233,6 +233,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'scheme_rate' => Yii::t('app', 'Scheme Rate'),
             'scheme_rate_code' => Yii::t('app', 'Scheme Rate'),
             'actual_rate' => Yii::t('app', 'Actual Rate'),
+            'org_type' => Yii::t('app', 'Originated At'),
         ];
     }
 
@@ -1147,7 +1148,7 @@ class TblMilkCollection extends \app\models\ChildModel {
         if ($flag == 'api_create') {
             $login_data = Yii::$app->eiplapp->identity;
             $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
-            $model->originating_org_type = 'HO';
+            $model->originating_org_type = 'MOBILE';
             $model->originating_org_code = $model->union_code;
         }
         if (in_array($collectionApprovalConfig, [1, 2])) {
