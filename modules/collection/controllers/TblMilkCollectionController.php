@@ -1208,52 +1208,64 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         $this->fileDownloadArr = $fileArray;
                     }
                 }
+
                 if ($eiplCode == 'ANANDA') {
-                    $data = explode('###', $codes[0]);
-                    $controls['union_code'] = $data[0];
-                    $controls['mcc_plant_code'] = $data[2];
-                    $controls['bmc_code'] = $data[3];
-                    $controls['from_date'] = $data[5];
-                    $controls['to_date'] = $data[5];
-                    $controls['operation'] = $status;
-                    $sp = 'rpt_MIS_SDSAPReport_Ananda_upload';
+                    $dateToDcsMapping = [];
 
-                    $output = \Yii::$app->general->getSpData($sp, $controls);
-                    $update_data = $output;
+                    foreach ($codes as $code) {
+                        $data = explode('###', $code);
+                        $shift = $data[6];
+                        $dateToDcsMapping[$data[5]]['dcs_codes'][] = $data[4];
+                    }
+                    foreach ($dateToDcsMapping as $date => $controlData) {
+                        $controls['union_code'] = $data[0];
+                        $controls['mcc_plant_code'] = $data[2];
+                        $controls['dcs_code'] = ',' . implode(',', $controlData['dcs_codes']) . ',';
+                        $controls['from_date'] = $date;
+                        $controls['to_date'] = $date;
+                        $controls['operation'] = $status;
+                        $sp = 'rpt_MIS_SDSAPReport_Ananda_upload';
 
-                    if (!empty($output)) {
-                        $data_array = [];
-                        $data_array['module_name'] = 'TblMilkCollection_Ananda';
-                        $data_array['module_code'] = !empty($output[0]['Plant']) ? $output[0]['Plant'] : '';
-                        $data_array['mcc_plant_code'] = !empty($output[0]['Plant']) ? $output[0]['Plant'] : '';
-                        $data_array['union_code'] = $data[0];
-                        $data_array['applicable_date'] = $searchModel->from_date . ' ' . Yii::$app->general->getshift($searchModel->from_shift);
-                        $data_array['shift_code'] = $searchModel->from_shift;
-                        $data_array['bmc_code'] = NULL;
-                        $data_array['from_date'] = $searchModel->from_date . ' ' . Yii::$app->general->getshift($searchModel->from_shift);
-                        $data_array['to_date'] = $searchModel->to_date . ' ' . Yii::$app->general->getshift($searchModel->to_shift);
-                        $title = $update_data[0]['ftp_txn_file_name'];
+                        $output = \Yii::$app->general->getSpData($sp, $controls);
+                        $update_data = $output;
 
-                        $output = array_map(function($item) {
-                            unset($item['ftp_txn_file_name'], $item['data_post_status'], $item['ftp_txn_file_name']);
-                            return $item;
-                        }, $output);
+                        foreach ($output as $bulk_output) {
+                            $all_data[] = $bulk_output;
+                        }
+                        if (!empty($output)) {
+                            $data_array = [];
+                            $data_array['module_name'] = 'TblMilkCollection_Ananda';
+                            $data_array['module_code'] = !empty($output[0]['Plant']) ? $output[0]['Plant'] : '';
+                            $data_array['mcc_plant_code'] = !empty($output[0]['Plant']) ? $output[0]['Plant'] : '';
+                            $data_array['union_code'] = $data[0];
+                            $data_array['applicable_date'] = $searchModel->from_date . ' ' . Yii::$app->general->getshift($searchModel->from_shift);
+                            $data_array['shift_code'] = $searchModel->from_shift;
+                            $data_array['bmc_code'] = NULL;
+                            $data_array['from_date'] = $searchModel->from_date . ' ' . Yii::$app->general->getshift($searchModel->from_shift);
+                            $data_array['to_date'] = $searchModel->to_date . ' ' . Yii::$app->general->getshift($searchModel->to_shift);
+                            $title = $update_data[0]['ftp_txn_file_name'];
 
-                        if ($status == 'upload') {
-                            $ftp_model = new TblFtpTxnLog();
-                            $result = $ftp_model->exportData($data_array, $title, $output);
-                            if (!empty($result)) {
-                                $model = new TblMilkCollection();
-                                $model->updateProcessStatus('SUCCESS', '2', 2, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
-                            } else {
-                                $model->updateProcessStatus('ERROR', '3', 3, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
-                            }
-                        } else if ($status = 'download') {
-                            $this->downloadData($title, $output, $fileArray);
-                            $this->fileDownloadArr = $fileArray;
+                            $all_data = array_map(function($item) {
+                                unset($item['ftp_txn_file_name'], $item['data_post_status'], $item['ftp_txn_file_name']);
+                                return $item;
+                            }, $all_data);
                         }
                     }
+                    if ($status == 'upload') {
+                        $ftp_model = new TblFtpTxnLog();
+                        $result = $ftp_model->exportData($data_array, $title, $all_data);
+                        if (!empty($result)) {
+                            $model = new TblMilkCollection();
+                            $model->updateProcessStatus('SUCCESS', '2', 2, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                        } else {
+                            $model->updateProcessStatus('ERROR', '3', 3, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                        }
+                    } else if ($status = 'download') {
+                        $this->downloadData($title, $all_data, $fileArray);
+                        $this->fileDownloadArr = $fileArray;
+                    }
                 }
+
                 if ($status == 'upload') {
                     $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',
