@@ -140,6 +140,23 @@ class CronjobController extends \yii\console\Controller {
             $sheet->fromArray($output, NULL, $data_cell);
             //        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data Chunk ' . $a);
             $a++;
+
+            $columnIndex = 1;
+            $rowIndex = 2;
+            array_walk_recursive($output, function (&$value, $key) use ($sheet, &$columnIndex, &$rowIndex) {
+                $cell = $sheet->getCellByColumnAndRow($columnIndex, $rowIndex);
+                if (is_numeric($value) && preg_match('/^([0-9]+)$/', $value)) {
+                    $sheet->setCellValueExplicit($cell->getCoordinate(), $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                } else {
+                    $sheet->setCellValue($cell->getCoordinate(), $value);
+                }
+                $columnIndex++;
+                if ($columnIndex > count(array_keys($this->output[0]))) {
+                    $rowIndex++;
+                    $columnIndex = 1;
+                }
+            });
+            
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');
         //  $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
