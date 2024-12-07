@@ -808,6 +808,8 @@ class GeneralFunctions extends Component {
     }
 
     public function decryptData($string) {
+		if($string == null)
+			return FALSE;
         $decryptedData = \Yii::$app->encrypter->decrypt($string);
         if ($decryptedData) {
             return $decryptedData;

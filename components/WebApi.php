@@ -67,7 +67,7 @@ class WebApi {
         if ($this->return_actual) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         }  // Skip SSL Verification
-        curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
+        curl_setopt($ch, CURLOPT_CAINFO, 'C:\Everest\Apache2454\conf\sapcerts\cacert.pem');
         $result = curl_exec($ch);
         curl_close($ch);
         $res = json_decode($result);
