@@ -1230,7 +1230,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
 
                         $output = \Yii::$app->general->getSpData($sp, $controls);
                         $update_data = $output;
-                   
+
                         foreach ($output as $bulk_output) {
                             $all_data[] = $bulk_output;
                         }
@@ -1288,7 +1288,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'from_date' => !empty($search_param['from_date']) ? $search_param['from_date'] : NULL,
                     'from_shift' => !empty($search_param['from_shift']) ? $search_param['from_shift'] : NULL,
                     'to_date' => !empty($search_param['to_date']) ? $search_param['to_date'] : NULL,
-                    'to_shift' => !empty($search_param['to_shift']) ? $search_param['to_shift'] : NULL
+                    'to_shift' => !empty($search_param['to_shift']) ? $search_param['to_shift'] : NULL,
+                    'data_type_filter' => !empty($search_param['data_type_filter']) ? $search_param['data_type_filter'] : NULL
                 ];
 
                 return $this->redirect(['sap-upload', 'TblMilkCollectionSearch' => $query_param, 'fileDownloadArr' => $this->fileDownloadArr]);
