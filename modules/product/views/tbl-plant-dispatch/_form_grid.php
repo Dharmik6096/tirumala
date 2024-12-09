@@ -72,6 +72,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
+        'delete' => ['option' => 'plant_dispatch_code,plant_dispatch_code,/product/tbl-plant-dispatch/delete,checkStatus()'],
     ]
 ];
 

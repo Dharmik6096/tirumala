@@ -1417,6 +1417,7 @@ class TblDcs extends ChildModel {
     public function getProductSaleRates($unionCode) {
         $subQuery = TblProductSaleRate::find()
                 ->select(['product_code', 'MAX(wef_date) AS max_wef_date'])
+                ->where(['union_code' => $unionCode, 'is_member_rate' => 1])
                 ->groupBy('product_code');
 
         return TblProductSaleRate::find()
