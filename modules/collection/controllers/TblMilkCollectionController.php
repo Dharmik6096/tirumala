@@ -275,7 +275,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 return $this->redirect(['repost-sap-data']);
             }
         }
-        //        var_dump($searchModel->validate());die;
+//        var_dump($searchModel->validate());die;
         return $this->render('_repost_sap_data', [
                     'model' => $searchModel,
                     'dataProvider' => $dataProvider
@@ -334,7 +334,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
-                //                $detail->rtpl = '';
+//                $detail->rtpl = '';
             }
             $modelData = [];
             Model::loadMultiple($detailModel, Yii::$app->request->post());
@@ -1148,7 +1148,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     foreach ($checkArray as $checkKey => $checkAr) {
                         $dcs_codes = array_unique($checkAr['dcs_code']);
                         $dateArr = explode('~~', $checkKey);
-                        // $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
+// $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
                         $controls['union_code'] = $checkAr['union_code'];
                         $controls['mcc_plant_code'] = $checkAr['mcc_plant_code'];
                         $controls['bmc_code'] = $checkAr['bmc_code'];
@@ -1252,18 +1252,20 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             }, $all_data);
                         }
                     }
-                    if ($status == 'upload') {
-                        $ftp_model = new TblFtpTxnLog();
-                        $result = $ftp_model->exportData($data_array, $title, $all_data);
-                        if (!empty($result)) {
-                            $model = new TblMilkCollection();
-                            $model->updateProcessStatus('SUCCESS', '2', 2, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
-                        } else {
-                            $model->updateProcessStatus('ERROR', '3', 3, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                    if (!empty($all_data)) {
+                        if ($status == 'upload') {
+                            $ftp_model = new TblFtpTxnLog();
+                            $result = $ftp_model->exportData($data_array, $title, $all_data);
+                            if (!empty($result)) {
+                                $model = new TblMilkCollection();
+                                $model->updateProcessStatus('SUCCESS', '2', 2, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                            } else {
+                                $model->updateProcessStatus('ERROR', '3', 3, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                            }
+                        } else if ($status = 'download') {
+                            $this->downloadData($title, $all_data, $fileArray);
+                            $this->fileDownloadArr = $fileArray;
                         }
-                    } else if ($status = 'download') {
-                        $this->downloadData($title, $all_data, $fileArray);
-                        $this->fileDownloadArr = $fileArray;
                     }
                 }
 
