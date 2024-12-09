@@ -1230,7 +1230,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
 
                         $output = \Yii::$app->general->getSpData($sp, $controls);
                         $update_data = $output;
-
+                   
                         foreach ($output as $bulk_output) {
                             $all_data[] = $bulk_output;
                         }
@@ -1253,18 +1253,20 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             }, $all_data);
                         }
                     }
-                    if ($status == 'upload') {
-                        $ftp_model = new TblFtpTxnLog();
-                        $result = $ftp_model->exportData($data_array, $title, $all_data);
-                        if (!empty($result)) {
-                            $model = new TblMilkCollection();
-                            $model->updateProcessStatus('SUCCESS', '2', 2, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
-                        } else {
-                            $model->updateProcessStatus('ERROR', '3', 3, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                    if (!empty($all_data)) {
+                        if ($status == 'upload') {
+                            $ftp_model = new TblFtpTxnLog();
+                            $result = $ftp_model->exportData($data_array, $title, $all_data);
+                            if (!empty($result)) {
+                                $model = new TblMilkCollection();
+                                $model->updateProcessStatus('SUCCESS', '2', 2, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                            } else {
+                                $model->updateProcessStatus('ERROR', '3', 3, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                            }
+                        } else if ($status = 'download') {
+                            $this->downloadData($title, $all_data, $fileArray);
+                            $this->fileDownloadArr = $fileArray;
                         }
-                    } else if ($status = 'download') {
-                        $this->downloadData($title, $all_data, $fileArray);
-                        $this->fileDownloadArr = $fileArray;
                     }
                 }
 
