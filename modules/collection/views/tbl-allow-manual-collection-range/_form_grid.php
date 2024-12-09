@@ -72,6 +72,7 @@ $attribute = [
             return isset(Yii::$app->dropdown->getRecords('manual_approve_status')['data'][$model->approval_status]) ? Yii::$app->dropdown->getRecords('manual_approve_status')['data'][$model->approval_status] : '';
         }],
         ['attribute' => 'remark', 'filter' => false],
+        ['attribute' => 'originating_org_type', 'filter' => false],
 ];
 
 $grid_option = [
