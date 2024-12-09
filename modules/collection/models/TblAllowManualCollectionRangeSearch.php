@@ -60,10 +60,12 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
             $subQuery = $approval->getApproveLavel('tbl_allow_manual_collection_range');
             $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_allow_manual_collection_range.allow_manual_collection_code) = convert(varchar(max),ap.process_code)')
                     ->addSelect(['tbl_allow_manual_collection_range.*', 'ap.process_approval_code as process_approval_code']);
+
+            $query->andWhere([
+                'tbl_allow_manual_collection_range.approval_status' => ['Pending', 'Inprogress']
+            ]);
         }
-        $query->andWhere([
-            'tbl_allow_manual_collection_range.approval_status' => ['Pending', 'Inprogress']
-        ]);
+
         // grid filtering conditions
         if ($date_search) {
             $query->andFilterWhere([

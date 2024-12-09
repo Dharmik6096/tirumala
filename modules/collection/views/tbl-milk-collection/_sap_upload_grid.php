@@ -82,7 +82,7 @@ $form = ActiveForm::begin([
 <div class="col-sm-12 margin-top-10 form-group" >
     <?php
     if (!empty($dataProvider->getModels() && $eiplCode != 'DODLA')) {
-        echo Html::button(Yii::t('app', 'PUSH To FTP'), ['class' => 'btn btn-primary', 'id' => 'upload', 'value' => 'upload', 'name' => 'upload']);
+        echo Html::button(Yii::t('app', 'PUSH To FTP'), ['class' => 'btn-login btn btn-primary', 'id' => 'upload', 'value' => 'upload', 'name' => 'upload']);
     }
     if (!empty($dataProvider->getModels())) {
         echo Html::button(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn-login btn btn-primary', 'id' => 'download', 'value' => 'download', 'name' => 'download']);
@@ -92,7 +92,7 @@ $form = ActiveForm::begin([
         }
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>
