@@ -44,7 +44,6 @@ use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
 use app\modules\collection\models\TblBulkBillingImport;
 use app\modules\collection\models\TblMilkCollection;
-use app\modules\organisation\models\TblUnions;
 
 class SchedulerController extends ChildController {
 
@@ -1409,19 +1408,20 @@ class SchedulerController extends ChildController {
         $data = $modelData;
         if (!empty($modelData)) {
             try {
+                $cnt = count($modelData);
                 $data_array = [];
                 $data_array['module_name'] = 'TblMilkCollection_Ananda';
                 $data_array['module_code'] = NULL;
                 $data_array['mcc_plant_code'] = NULL;
                 $data_array['union_code'] = $modelData[0]['union_code'];
-                $data_array['applicable_date'] = $modelData[0]['from_date'] . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+                $data_array['applicable_date'] = Yii::$app->formatter->asDate($modelData[0]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
                 $data_array['shift_code'] = $modelData[0]['shift_code'];
                 $data_array['bmc_code'] = NULL;
-                $data_array['from_date'] = $modelData[0]['from_date'] . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
-                $data_array['to_date'] = $modelData[0]['to_date'] . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+                $data_array['from_date'] = $data_array['applicable_date'];
+                $data_array['to_date'] = Yii::$app->formatter->asDate($modelData[$cnt - 1]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($modelData[$cnt - 1]['shift_code']);
 
                 $modelData = array_map(function($item) {
-                    unset($item['union_code'], $item['from_date'], $item['to_date'], $item['data_post_status'], $item['ftp_txn_file_name']); // Remove specific keys
+                    unset($item['union_code'], $item['data_post_status'], $item['ftp_txn_file_name']); // Remove specific keys
                     return $item;
                 }, $modelData);
                 $title = $data[0]['ftp_txn_file_name'];
