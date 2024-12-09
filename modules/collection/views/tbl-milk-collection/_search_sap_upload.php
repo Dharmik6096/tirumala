@@ -50,7 +50,7 @@ $eipl_code = Yii::$app->session->get('eiplCode');
     <?php
     if ($eipl_code == 'ANANDA') {
         ?>
-        <div class="col-sm-2">
+        <div class="col-sm-1">
             <?= Yii::$app->dropdown->dropdownStatic('data_type_filter', $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('data_type_filter'), FALSE, 'data_type_filter') ?> 
         </div>
     <?php } ?>
