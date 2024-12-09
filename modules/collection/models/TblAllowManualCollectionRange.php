@@ -228,7 +228,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             if (strtolower($model->approval_status) == 'approve' || strtolower($manualCollectionData->approval_status) == 'approve') {
                 $manualCollectionData->is_approved = 1;
             }
-            $manualCollectionData->originating_org_type = 'HO';
+            $manualCollectionData->originating_org_type = 'MOBILE';
             $manualCollectionData->originating_org_code = $status_by;
             $manualCollectionData->updated_by = $status_by;
         } else if (strtolower($model->approval_status) == 'reject') {
@@ -254,7 +254,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             $childModel[] = $historyApproval;
             $approvalModel->status = $status;
             $approvalModel->remarks = $remarks;
-            $approvalModel->originating_org_type = 'HO';
+            $approvalModel->originating_org_type = 'MOBILE';
             $childModel[] = $approvalModel;
             $approvalModel->ApprovalList($approvalModel, $childModel, $status, $status_by);
         }

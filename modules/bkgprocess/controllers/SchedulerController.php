@@ -43,10 +43,11 @@ use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
 use app\modules\collection\models\TblBulkBillingImport;
+use app\modules\collection\models\TblMilkCollection;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -1397,6 +1398,44 @@ class SchedulerController extends ChildController {
                     $errorMessage = substr($e->getMessage(), 0, 250);
                     $model->updateErrorApiStatus($errorMessage, $ids);
                 }
+            }
+        }
+    }
+
+    public function actionMilkCollectionFtpUploadAnanda() {
+        $model = new TblMilkCollection();
+        $modelData = \Yii::$app->general->getSpData('rpt_MIS_SDSAPReport_Ananda_Ftp_Auto_Push', []);
+        $data = $modelData;
+        if (!empty($modelData)) {
+            try {
+                $cnt = count($modelData);
+                $data_array = [];
+                $data_array['module_name'] = 'TblMilkCollection_Ananda';
+                $data_array['module_code'] = NULL;
+                $data_array['mcc_plant_code'] = NULL;
+                $data_array['union_code'] = $modelData[0]['union_code'];
+                $data_array['applicable_date'] = Yii::$app->formatter->asDate($modelData[0]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
+                $data_array['shift_code'] = $modelData[0]['shift_code'];
+                $data_array['bmc_code'] = NULL;
+                $data_array['from_date'] = $data_array['applicable_date'];
+                $data_array['to_date'] = Yii::$app->formatter->asDate($modelData[$cnt - 1]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($modelData[$cnt - 1]['shift_code']);
+
+                $modelData = array_map(function($item) {
+                    unset($item['union_code'], $item['data_post_status'], $item['ftp_txn_file_name']); // Remove specific keys
+                    return $item;
+                }, $modelData);
+                $title = $data[0]['ftp_txn_file_name'];
+                $ftp_model = new TblFtpTxnLog();
+                $result = $ftp_model->exportData($data_array, $title, $modelData);
+                if (!empty($result)) {
+                    $model->updateProcessStatus('SUCCESS', '2', 2, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                } else {
+                    $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                }
+            } catch (\yii\db\Exception $e) {
+                $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+            } catch (\Throwable $e) {
+                $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
             }
         }
     }
