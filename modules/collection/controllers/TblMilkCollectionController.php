@@ -276,7 +276,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 return $this->redirect(['repost-sap-data']);
             }
         }
-        //        var_dump($searchModel->validate());die;
+//        var_dump($searchModel->validate());die;
         return $this->render('_repost_sap_data', [
                     'model' => $searchModel,
                     'dataProvider' => $dataProvider
@@ -335,7 +335,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
-                //                $detail->rtpl = '';
+//                $detail->rtpl = '';
             }
             $modelData = [];
             Model::loadMultiple($detailModel, Yii::$app->request->post());
@@ -1149,7 +1149,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     foreach ($checkArray as $checkKey => $checkAr) {
                         $dcs_codes = array_unique($checkAr['dcs_code']);
                         $dateArr = explode('~~', $checkKey);
-                        // $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
+// $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
                         $controls['union_code'] = $checkAr['union_code'];
                         $controls['mcc_plant_code'] = $checkAr['mcc_plant_code'];
                         $controls['bmc_code'] = $checkAr['bmc_code'];
