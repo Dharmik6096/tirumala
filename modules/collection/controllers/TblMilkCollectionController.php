@@ -1056,6 +1056,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
     public function actionSapUpload() {
         $searchModel = new TblMilkCollectionSearch();
         $searchModel->scenario = 'sap-upload';
+        $dataProvider = $searchModel->searchsapupload(Yii::$app->request->queryParams);
+
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -1067,72 +1069,74 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $fileArray = [];
                 $checkArray = [];
                 $eiplCode = Yii::$app->session->get('eiplCode');
-                foreach ($codes as $code) {
-                    $data = explode('###', $code);
-                    $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
-                    $data_array['module_code'] = $data[4];
-                    $data_array['mcc_plant_code'] = $data[2];
-                    $data_array['union_code'] = $data[0];
-                    $data_array['applicable_date'] = $data[5];
-                    $data_array['shift_code'] = $data[6];
-                    $data_array['bmc_code'] = $data[3];
-                    $data_array['dcs_code'] = $data[4];
-                    $data_array['from_date'] = $data[5];
-                    $data_array['to_date'] = $data[5];
-                    if ($status == 'upload') {
-                        $ftp_model = new TblFtpTxnLog();
-                        $ftp_model->exportData($data_array, $title = '', $output, $mccRefCode = '', FALSE, FALSE);
-                    } elseif (in_array($status, ['download', 'bulk_download', 'bulk_download_shift_wise'])) {
-                        if ($eiplCode == 'DODLA') {
-                            $searchParam = !empty(Yii::$app->request->queryParams['TblMilkCollectionSearch']) ? Yii::$app->request->queryParams['TblMilkCollectionSearch'] : NULL;
-                            if (in_array($status, ['bulk_download', 'bulk_download_shift_wise']) && !empty($searchParam) && !empty($searchParam['from_date']) && !empty($searchParam['from_shift']) && !empty($searchParam['to_date']) && !empty($searchParam['to_shift'])) {
-                                $from_datetime = Yii::$app->formatter->asDate($searchParam['from_date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($searchParam['from_shift']);
-                                $to_datetime = Yii::$app->formatter->asDate($searchParam['to_date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($searchParam['to_shift']);
-                                $key = $from_datetime . '~~' . $to_datetime;
-                            } else {
-                                $from_datetime = date('Y-m-d', strtotime($data[5])) . ' ' . Yii::$app->general->getshift($data[6]);
-                                $key = $from_datetime . '~~' . $from_datetime;
-                            }
-                            if (empty($checkArray[$key]['dcs_code'])) {
-                                $checkArray[$key]['dcs_code'] = [];
-                            }
-                            $checkArray[$key]['union_code'] = $data[0];
-                            $checkArray[$key]['mcc_plant_code'] = $data[2];
-                            $checkArray[$key]['bmc_code'] = $data[3];
-                            $checkArray[$key]['dcs_code'][] = $data[4];
-                        } else {
-                            $controls['union_code'] = $data[0];
-                            $controls['mcc_plant_code'] = $data[2];
-                            $controls['bmc_code'] = $data[3];
-                            $controls['dcs_code'] = $data[4];
-                            $controls['from_date'] = $data[5];
-                            $controls['to_date'] = $data[5];
-                            $sp = 'mis_vmcc_collection_date_wise';
-
+                if ($eiplCode != 'ANANDA') {
+                    foreach ($codes as $code) {
+                        $data = explode('###', $code);
+                        $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
+                        $data_array['module_code'] = $data[4];
+                        $data_array['mcc_plant_code'] = $data[2];
+                        $data_array['union_code'] = $data[0];
+                        $data_array['applicable_date'] = $data[5];
+                        $data_array['shift_code'] = $data[6];
+                        $data_array['bmc_code'] = $data[3];
+                        $data_array['dcs_code'] = $data[4];
+                        $data_array['from_date'] = $data[5];
+                        $data_array['to_date'] = $data[5];
+                        if ($status == 'upload') {
+                            $ftp_model = new TblFtpTxnLog();
+                            $ftp_model->exportData($data_array, $title = '', $output, $mccRefCode = '', FALSE, FALSE);
+                        } elseif (in_array($status, ['download', 'bulk_download', 'bulk_download_shift_wise'])) {
                             if ($eiplCode == 'DODLA') {
-                                $sp = 'mis_vmcc_collection_date_wise_dodla';
-                            }
-                            $output = \Yii::$app->general->getSpData($sp, $controls);
+                                $searchParam = !empty(Yii::$app->request->queryParams['TblMilkCollectionSearch']) ? Yii::$app->request->queryParams['TblMilkCollectionSearch'] : NULL;
+                                if (in_array($status, ['bulk_download', 'bulk_download_shift_wise']) && !empty($searchParam) && !empty($searchParam['from_date']) && !empty($searchParam['from_shift']) && !empty($searchParam['to_date']) && !empty($searchParam['to_shift'])) {
+                                    $from_datetime = Yii::$app->formatter->asDate($searchParam['from_date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($searchParam['from_shift']);
+                                    $to_datetime = Yii::$app->formatter->asDate($searchParam['to_date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($searchParam['to_shift']);
+                                    $key = $from_datetime . '~~' . $to_datetime;
+                                } else {
+                                    $from_datetime = date('Y-m-d', strtotime($data[5])) . ' ' . Yii::$app->general->getshift($data[6]);
+                                    $key = $from_datetime . '~~' . $from_datetime;
+                                }
+                                if (empty($checkArray[$key]['dcs_code'])) {
+                                    $checkArray[$key]['dcs_code'] = [];
+                                }
+                                $checkArray[$key]['union_code'] = $data[0];
+                                $checkArray[$key]['mcc_plant_code'] = $data[2];
+                                $checkArray[$key]['bmc_code'] = $data[3];
+                                $checkArray[$key]['dcs_code'][] = $data[4];
+                            } else {
+                                $controls['union_code'] = $data[0];
+                                $controls['mcc_plant_code'] = $data[2];
+                                $controls['bmc_code'] = $data[3];
+                                $controls['dcs_code'] = $data[4];
+                                $controls['from_date'] = $data[5];
+                                $controls['to_date'] = $data[5];
+                                $sp = 'mis_vmcc_collection_date_wise';
 
-                            if (!empty($output)) {
-                                $downLoadArray = [];
-                                foreach ($output as $detail) {
-                                    $plant = 'Agent_Code';
-                                    if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
-                                        if (empty($downLoadArray[$detail[$plant]])) {
-                                            $downLoadArray[$detail[$plant]] = [];
+                                if ($eiplCode == 'DODLA') {
+                                    $sp = 'mis_vmcc_collection_date_wise_dodla';
+                                }
+                                $output = \Yii::$app->general->getSpData($sp, $controls);
+
+                                if (!empty($output)) {
+                                    $downLoadArray = [];
+                                    foreach ($output as $detail) {
+                                        $plant = 'Agent_Code';
+                                        if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                                            if (empty($downLoadArray[$detail[$plant]])) {
+                                                $downLoadArray[$detail[$plant]] = [];
+                                            }
+                                            $downLoadArray[$detail[$plant]][] = $detail;
                                         }
-                                        $downLoadArray[$detail[$plant]][] = $detail;
                                     }
-                                }
-                                foreach ($downLoadArray as $bmc => $download) {
-                                    $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
-                                    if ($eiplCode == 'DODLA') {
-                                        $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                    foreach ($downLoadArray as $bmc => $download) {
+                                        $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                        if ($eiplCode == 'DODLA') {
+                                            $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                        }
+                                        $this->downloadData($title, $download, $fileArray);
                                     }
-                                    $this->downloadData($title, $download, $fileArray);
+                                    $this->fileDownloadArr = $fileArray;
                                 }
-                                $this->fileDownloadArr = $fileArray;
                             }
                         }
                     }
@@ -1205,6 +1209,65 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         $this->fileDownloadArr = $fileArray;
                     }
                 }
+
+                if ($eiplCode == 'ANANDA') {
+                    $dateToDcsMapping = [];
+
+                    foreach ($codes as $code) {
+                        $data = explode('###', $code);
+                        $shift = $data[6];
+                        $dateToDcsMapping[$data[5]]['dcs_codes'][] = $data[4];
+                    }
+                    foreach ($dateToDcsMapping as $date => $controlData) {
+                        $controls['union_code'] = $data[0];
+                        $controls['mcc_plant_code'] = $data[2];
+                        $controls['dcs_code'] = ',' . implode(',', $controlData['dcs_codes']) . ',';
+                        $controls['from_date'] = $date;
+                        $controls['to_date'] = $date;
+                        $controls['operation'] = $status;
+                        $controls['data_type_filter'] = $searchModel->data_type_filter;
+                        $sp = 'rpt_MIS_SDSAPReport_Ananda_upload';
+
+                        $output = \Yii::$app->general->getSpData($sp, $controls);
+                        $update_data = $output;
+
+                        foreach ($output as $bulk_output) {
+                            $all_data[] = $bulk_output;
+                        }
+                        if (!empty($output)) {
+                            $data_array = [];
+                            $data_array['module_name'] = 'TblMilkCollection_Ananda';
+                            $data_array['module_code'] = !empty($output[0]['Plant']) ? $output[0]['Plant'] : '';
+                            $data_array['mcc_plant_code'] = !empty($output[0]['Plant']) ? $output[0]['Plant'] : '';
+                            $data_array['union_code'] = $data[0];
+                            $data_array['applicable_date'] = $searchModel->from_date . ' ' . Yii::$app->general->getshift($searchModel->from_shift);
+                            $data_array['shift_code'] = $searchModel->from_shift;
+                            $data_array['bmc_code'] = NULL;
+                            $data_array['from_date'] = $searchModel->from_date . ' ' . Yii::$app->general->getshift($searchModel->from_shift);
+                            $data_array['to_date'] = $searchModel->to_date . ' ' . Yii::$app->general->getshift($searchModel->to_shift);
+                            $title = $update_data[0]['ftp_txn_file_name'];
+
+                            $all_data = array_map(function($item) {
+                                unset($item['ftp_txn_file_name'], $item['data_post_status'], $item['ftp_txn_file_name']);
+                                return $item;
+                            }, $all_data);
+                        }
+                    }
+                    if ($status == 'upload') {
+                        $ftp_model = new TblFtpTxnLog();
+                        $result = $ftp_model->exportData($data_array, $title, $all_data);
+                        if (!empty($result)) {
+                            $model = new TblMilkCollection();
+                            $model->updateProcessStatus('SUCCESS', '2', 2, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                        } else {
+                            $model->updateProcessStatus('ERROR', '3', 3, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                        }
+                    } else if ($status = 'download') {
+                        $this->downloadData($title, $all_data, $fileArray);
+                        $this->fileDownloadArr = $fileArray;
+                    }
+                }
+
                 if ($status == 'upload') {
                     $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',
@@ -1231,10 +1294,10 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 return $this->redirect(['sap-upload']);
             }
         }
-        $dataProvider = $searchModel->searchsapupload(Yii::$app->request->queryParams);
         if (empty($this->fileDownloadArr) && !empty(Yii::$app->request->queryParams['fileDownloadArr'])) {
             $this->fileDownloadArr = Yii::$app->request->queryParams['fileDownloadArr'];
         }
+
         return $this->render('sap_upload', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

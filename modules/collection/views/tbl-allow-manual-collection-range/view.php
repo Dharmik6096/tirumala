@@ -181,13 +181,13 @@ $approval_detail = $model->collectionApproval;
                                 <tr>
                                     <td><?= $approval->level; ?></td>
                                     <td><?= $approval->approval_mode; ?></td>
-                                    <?php if ($model->originating_org_type == 'HO') { ?>
+                                    <?php if ($model->originating_org_type == 'MOBILE') { ?>
                                         <td><?= Yii::$app->general->getforeignkey($approval->manualCollectionUserCode, 'firstname') ?></td>
                                     <?php } else { ?>
                                         <td><?= Yii::$app->general->getforeignkey($approval->userCode, 'name') ?></td>
                                     <?php } ?>
                                     <td><?= $approval->login_type; ?></td>
-                                    <?php if ($model->originating_org_type == 'HO') { ?>
+                                    <?php if ($model->originating_org_type == 'MOBILE') { ?>
                                         <td><?= Yii::$app->general->getforeignkey($approval->manualCollectionUpdatedBy, 'firstname') ?></td>
                                     <?php } else { ?>
                                         <td><?= Yii::$app->general->getforeignkey($approval->updatedBy, 'name') ?></td>
