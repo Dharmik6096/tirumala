@@ -1224,6 +1224,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         $controls['from_date'] = $date;
                         $controls['to_date'] = $date;
                         $controls['operation'] = $status;
+                        $controls['data_type_filter'] = $searchModel->data_type_filter;
                         $sp = 'rpt_MIS_SDSAPReport_Ananda_upload';
 
                         $output = \Yii::$app->general->getSpData($sp, $controls);
