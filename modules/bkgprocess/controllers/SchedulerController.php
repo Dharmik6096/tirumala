@@ -654,6 +654,16 @@ class SchedulerController extends ChildController {
                             $row->data_post_status = $success;
                             $row->response_datetime = date('Y-m-d H:i:s');
                             $row->resp_desc = 'Sentbox Generated';
+                            $unionConfigData = Yii::$app->general->getUnionConfiguration($data[0]->union_code, 'reset_data_on_deactivation', 'PORTAL');
+                            if (!empty($unionConfigData) && $status == '0') {
+                                $historyModelName = $model_name . 'History';
+                                $modelHistory = new $historyModelName();
+                                Yii::$app->operation->history($existData, $modelHistory, UPDATE);
+                                $modelHistory->save();
+                                $existData->resetData();
+                                $existData->save(TRUE, FALSE);
+                                $row->remarks = $row->remarks . ' Deactivation CBPA Removed';
+                            }
                             $row->save(FALSE);
                             $statusModel = new TblDcsVendorStatus();
                             $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);

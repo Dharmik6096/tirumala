@@ -727,5 +727,9 @@ class TblMember extends ChildModel {
         return $this->find()->select(['union_code', 'dcs_code', 'member_code'])
                         ->where(['vendor_code' => $sap_farmer_code, 'is_active' => 1])->one();
     }
+    
+    public function resetData() {
+        $this->adhar_no = $this->pan_no = $this->mobile_no = $this->bank_code = $this->branch_code = $this->bank_account_no = $this->ifsc = null;
+    }
 
 }
