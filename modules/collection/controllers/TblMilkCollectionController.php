@@ -1293,21 +1293,64 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionDcsWiseFtpUpload($union_code, $mcc_plant_code, $bmc_code, $dcs_code, $date_time_of_collection, $shift_id) {
+    public function actionDcsWiseFtpUpload($union_code, $mcc_plant_code, $bmc_code, $dcs_code, $date_time_of_collection, $shift_id, $data_type) {
         $data_array = [];
         $output = [];
-        $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
-        $data_array['module_code'] = $dcs_code;
-        $data_array['mcc_plant_code'] = $mcc_plant_code;
-        $data_array['union_code'] = $union_code;
-        $data_array['applicable_date'] = $date_time_of_collection;
-        $data_array['shift_code'] = $shift_id;
-        $data_array['bmc_code'] = $bmc_code;
-        $data_array['dcs_code'] = $dcs_code;
-        $data_array['from_date'] = $date_time_of_collection;
-        $data_array['to_date'] = $date_time_of_collection;
-        $ftp_model = new TblFtpTxnLog();
-        $ftp_model->exportData($data_array, $title = '', $output);
+        $eiplCode = Yii::$app->session->get('eiplCode');
+
+        if ($eiplCode == 'ANANDA') {
+            $controls['union_code'] = $union_code;
+            $controls['mcc_plant_code'] = $mcc_plant_code;
+            $controls['dcs_code'] = $dcs_code;
+            $controls['from_date'] = $date_time_of_collection;
+            $controls['to_date'] = $date_time_of_collection;
+            $controls['operation'] = 'upload';
+            $controls['data_type_filter'] = $data_type;
+            $sp = 'rpt_MIS_SDSAPReport_Ananda_upload';
+
+            $output = \Yii::$app->general->getSpData($sp, $controls);
+            $data = $output;
+            if (!empty($output)) {
+                $data_array['module_name'] = 'TblMilkCollection_Ananda';
+                $data_array['module_code'] = !empty($output[0]['Plant']) ? $output[0]['Plant'] : '';
+                $data_array['mcc_plant_code'] = !empty($output[0]['Plant']) ? $output[0]['Plant'] : '';
+                $data_array['union_code'] = $union_code;
+                $data_array['applicable_date'] = $date_time_of_collection;
+                $data_array['shift_code'] = $date_time_of_collection;
+                $data_array['bmc_code'] = NULL;
+                $data_array['from_date'] = $date_time_of_collection;
+                $data_array['to_date'] = $date_time_of_collection;
+                $title = $data[0]['ftp_txn_file_name'];
+
+                $output = array_map(function($item) {
+                    unset($item['ftp_txn_file_name'], $item['data_post_status'], $item['ftp_txn_file_name']);
+                    return $item;
+                }, $output);
+
+                $ftp_model = new TblFtpTxnLog();
+                $result = $ftp_model->exportData($data_array, $title, $output);
+                if (!empty($result)) {
+                    $model = new TblMilkCollection();
+                    $model->updateProcessStatus('SUCCESS', '2', 2, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                } else {
+                    $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                }
+            }
+        } else {
+            $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
+            $data_array['module_code'] = $dcs_code;
+            $data_array['mcc_plant_code'] = $mcc_plant_code;
+            $data_array['union_code'] = $union_code;
+            $data_array['applicable_date'] = $date_time_of_collection;
+            $data_array['shift_code'] = $shift_id;
+            $data_array['bmc_code'] = $bmc_code;
+            $data_array['dcs_code'] = $dcs_code;
+            $data_array['from_date'] = $date_time_of_collection;
+            $data_array['to_date'] = $date_time_of_collection;
+            $ftp_model = new TblFtpTxnLog();
+            $ftp_model->exportData($data_array, $title = '', $output);
+        }
+
         $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
         Yii::$app->getSession()->setFlash('success');
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
