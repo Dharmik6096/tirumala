@@ -1067,6 +1067,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $output = [];
                 $fileArray = [];
                 $checkArray = [];
+                $msg = '';
                 $eiplCode = Yii::$app->session->get('eiplCode');
                 if ($eiplCode != 'ANANDA') {
                     foreach ($codes as $code) {
@@ -1084,6 +1085,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         if ($status == 'upload') {
                             $ftp_model = new TblFtpTxnLog();
                             $ftp_model->exportData($data_array, $title = '', $output, $mccRefCode = '', FALSE, FALSE);
+                            $msg = Yii::t('app', 'FTP Uploaded Successfully.');
                         } elseif (in_array($status, ['download', 'bulk_download', 'bulk_download_shift_wise'])) {
                             if ($eiplCode == 'DODLA') {
                                 $searchParam = !empty(Yii::$app->request->queryParams['TblMilkCollectionSearch']) ? Yii::$app->request->queryParams['TblMilkCollectionSearch'] : NULL;
@@ -1255,24 +1257,28 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     if (!empty($all_data)) {
                         if ($status == 'upload') {
                             $ftp_model = new TblFtpTxnLog();
-                            $result = $ftp_model->exportData($data_array, $title, $all_data);
+                            $result = $ftp_model->exportData($data_array, $title, $all_data, '', false, TRUE, TRUE);
+                            $model = new TblMilkCollection();
                             if (!empty($result)) {
-                                $model = new TblMilkCollection();
                                 $model->updateProcessStatus('SUCCESS', '2', 2, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                                $msg = Yii::t('app', 'FTP Uploaded Successfully.');
                             } else {
-                                $model->updateProcessStatus('ERROR', '3', 3, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                                $model->updateProcessStatus('ERROR', '0', 0, $update_data[0]['data_post_status'], $update_data[0]['ftp_txn_file_name']);
+                                $msg = Yii::t('app', 'FTP Upload Failed. Please try again later.');
                             }
                         } else if ($status = 'download') {
                             $this->downloadData($title, $all_data, $fileArray);
                             $this->fileDownloadArr = $fileArray;
                         }
+                    } else {
+                        $msg = Yii::t('app', 'No data found for the given parameters.');
                     }
                 }
 
                 if ($status == 'upload') {
                     $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => 'FTP Uploaded Successfully.']);
+                        'message' => $msg]);
                 }
             }
         }
@@ -1328,13 +1334,17 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 }, $output);
 
                 $ftp_model = new TblFtpTxnLog();
-                $result = $ftp_model->exportData($data_array, $title, $output);
+                $result = $ftp_model->exportData($data_array, $title, $output, '', false, TRUE, TRUE);
+                $model = new TblMilkCollection();
                 if (!empty($result)) {
-                    $model = new TblMilkCollection();
                     $model->updateProcessStatus('SUCCESS', '2', 2, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                    $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
                 } else {
-                    $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                    $model->updateProcessStatus('ERROR', '0', 0, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                    $record = ['status' => 'error', 'msg' => 'FTP Upload Failed. Please try again later.'];
                 }
+            } else {
+                $record = ['status' => 'error', 'msg' => 'No data found for the given parameters.'];
             }
         } else {
             $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
@@ -1349,10 +1359,10 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $data_array['to_date'] = $date_time_of_collection;
             $ftp_model = new TblFtpTxnLog();
             $ftp_model->exportData($data_array, $title = '', $output);
+            $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
         }
 
-        $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
-        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->getSession()->setFlash($record['status'], $record['msg']);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
