@@ -175,7 +175,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create']],
                 [['fat', 'snf', 'rtpl', 'amount'], 'required', 'on' => ['importApproval']],
-                [['dcs_code'], 'validateQtyImportData', 'on' => ['importApproval']],
+                [['dcs_code'], 'validateUnique', 'on' => ['importApproval']],
         ];
     }
 
@@ -1189,52 +1189,5 @@ class TblMilkCollection extends \app\models\ChildModel {
         }
     }
 
-    public function validateQtyImportData($attribute, $params) {
-        $this->qtyImportValidate($this);
-    }
-
-    public function qtyImportValidate($model) {
-        $sameMilkType = Yii::$app->general->getUnionConfiguration($model->union_code, 'multi_entry_same_milk', 'VLC');
-        $diffMilkType = Yii::$app->general->getUnionConfiguration($model->union_code, 'multi_entry_other_milk', 'VLC');
-
-        if ($sameMilkType != 1 && $diffMilkType != 1) {
-            $returnModel = $model->find()->where(['dcs_code' => $model->dcs_code,
-                        'member_code' => $model->member_code,
-                        'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model->date_time_of_collection)),
-                        'shift_code' => $model->shift_code])->one();
-        } else if ($sameMilkType != 1 && $diffMilkType == 1) {
-            $returnModel = $model->find()->where(['dcs_code' => $model->dcs_code,
-                        'member_code' => $model->member_code,
-                        'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model->date_time_of_collection)),
-                        'shift_code' => $model->shift_code,
-                        'milk_type_code' => $model->milk_type_code])->one();
-            if ((!empty($returnModel))) {
-                $model->addError('milk_type_code', "Milk Type Must Not Same.");
-                return FALSE;
-            }
-        } else if ($sameMilkType == 1 && $diffMilkType != 1) {
-            $returnModel = $model->find()->where(['dcs_code' => $model->dcs_code,
-                                'member_code' => $model->member_code,
-                                'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model->date_time_of_collection)),
-                                'shift_code' => $model->shift_code])
-                            ->andWhere(['!=', 'milk_type_code', $model->milk_type_code])->one();
-            if (!empty($returnModel)) {
-                $model->addError('milk_type_code', "Milk Type Must Same.");
-                return FALSE;
-            }
-        } else if ($sameMilkType == 1 && $diffMilkType == 1) {
-            $returnModel = $model->find()->where(['dcs_code' => $model->dcs_code,
-                        'member_code' => $model->member_code,
-                        'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model->date_time_of_collection)),
-                        'milk_type_code' => $model->milk_type_code,
-                        'shift_code' => $model->shift_code,
-                        'qty' => $model->qty, 'fat' => $model->fat, 'snf' => $model->snf])->one();
-        }
-
-        if (!empty($returnModel)) {
-            $model->addError('milk_type_code', "Record is Already Exist.");
-            return FALSE;
-        }
-    }
-
+   
 }
