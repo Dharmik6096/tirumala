@@ -145,7 +145,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
                 [['tag_1'], 'default', 'value' => 'X'],
                 [['adt_param', 'adt_value', 'received_timestamp', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
-                [['member_code'], 'validateUnique', 'on' => ['create', 'create_allow', 'ho_sync_create']],
+                [['member_code','dcs_code'], 'validateUnique', 'on' => ['create', 'create_allow', 'ho_sync_create','importApproval']],
                 [['milk_type_code'], 'validateUpdate', 'on' => ['update', 'update_allow']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
@@ -175,7 +175,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create']],
                 [['fat', 'snf', 'rtpl', 'amount'], 'required', 'on' => ['importApproval']],
-                [['dcs_code'], 'validateUnique', 'on' => ['importApproval']],
+            
         ];
     }
 
