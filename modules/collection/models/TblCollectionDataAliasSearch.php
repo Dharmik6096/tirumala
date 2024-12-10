@@ -24,7 +24,9 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'converted_amount', 'approved_at', 'approved_by', 'approval_status'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['approvalCollection']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['approvalDispatch']],
-        ];
+                [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalQtyImport']],
+        
+            ];
     }
 
     /**
