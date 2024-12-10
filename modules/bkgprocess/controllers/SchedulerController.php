@@ -1426,16 +1426,16 @@ class SchedulerController extends ChildController {
                 }, $modelData);
                 $title = $data[0]['ftp_txn_file_name'];
                 $ftp_model = new TblFtpTxnLog();
-                $result = $ftp_model->exportData($data_array, $title, $modelData);
+                $result = $ftp_model->exportData($data_array, $title, $modelData, '', false, TRUE, TRUE);
                 if (!empty($result)) {
                     $model->updateProcessStatus('SUCCESS', '2', 2, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
                 } else {
-                    $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                    $model->updateProcessStatus('ERROR', '0', 0, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
                 }
             } catch (\yii\db\Exception $e) {
-                $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                $model->updateProcessStatus('ERROR', '0', 0, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
             } catch (\Throwable $e) {
-                $model->updateProcessStatus('ERROR', '3', 3, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                $model->updateProcessStatus('ERROR', '0', 0, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
             }
         }
     }
