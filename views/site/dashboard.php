@@ -1652,7 +1652,6 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                 var htmlData = '';
 
                 $.each(obj1.res, function(key,value) {
-                console.log(obj1);
                     htmlData = htmlData + '<tr>';
                     htmlData = htmlData + '<td>'+value.bmc_name+' '+value.bmc_code+'</td>';
                     htmlData += '<td>' + (obj1.fromDate) + '</td>';
