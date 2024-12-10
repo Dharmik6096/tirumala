@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
@@ -78,7 +78,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
         <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'qty-import-approval'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'qty-import-approval','','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>
