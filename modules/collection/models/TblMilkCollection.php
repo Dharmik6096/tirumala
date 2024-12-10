@@ -156,7 +156,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member', 'sync_lock_member']);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync_coll']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync_coll','importApproval']],
                 [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
@@ -165,7 +165,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll', 'ho_sync_create']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll', 'ho_sync_create','importApproval']],
                 [['antibiotic_sms_sent', 'antibiotic', 'is_antibiotic'], 'safe'],
                 [['antibiotic_sms_sent'], 'default', 'value' => 0],
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'other_reading'], 'safe'],
@@ -174,6 +174,8 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'on' => ['ho_sync_create']],
                 [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create']],
+                [['fat', 'snf', 'rtpl', 'amount'], 'required', 'on' => ['importApproval']],
+                [['dcs_code'], 'validateQtyImportData', 'on' => ['importApproval']],
         ];
     }
 
@@ -1183,6 +1185,54 @@ class TblMilkCollection extends \app\models\ChildModel {
         $resdata = $this->calculateData('check_fat_range', $this->union_code, $this->bmc_code, $this->fat, '', $this->milk_type_code);
         if (!empty($resdata['msg'])) {
             $this->addError('milk_type_code', $resdata['msg']);
+            return FALSE;
+        }
+    }
+
+    public function validateQtyImportData($attribute, $params) {
+        $this->qtyImportValidate($this);
+    }
+
+    public function qtyImportValidate($model) {
+        $sameMilkType = Yii::$app->general->getUnionConfiguration($model->union_code, 'multi_entry_same_milk', 'VLC');
+        $diffMilkType = Yii::$app->general->getUnionConfiguration($model->union_code, 'multi_entry_other_milk', 'VLC');
+
+        if ($sameMilkType != 1 && $diffMilkType != 1) {
+            $returnModel = $model->find()->where(['dcs_code' => $model->dcs_code,
+                        'member_code' => $model->member_code,
+                        'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model->date_time_of_collection)),
+                        'shift_code' => $model->shift_code])->one();
+        } else if ($sameMilkType != 1 && $diffMilkType == 1) {
+            $returnModel = $model->find()->where(['dcs_code' => $model->dcs_code,
+                        'member_code' => $model->member_code,
+                        'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model->date_time_of_collection)),
+                        'shift_code' => $model->shift_code,
+                        'milk_type_code' => $model->milk_type_code])->one();
+            if ((!empty($returnModel))) {
+                $model->addError('milk_type_code', "Milk Type Must Not Same.");
+                return FALSE;
+            }
+        } else if ($sameMilkType == 1 && $diffMilkType != 1) {
+            $returnModel = $model->find()->where(['dcs_code' => $model->dcs_code,
+                                'member_code' => $model->member_code,
+                                'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model->date_time_of_collection)),
+                                'shift_code' => $model->shift_code])
+                            ->andWhere(['!=', 'milk_type_code', $model->milk_type_code])->one();
+            if (!empty($returnModel)) {
+                $model->addError('milk_type_code', "Milk Type Must Same.");
+                return FALSE;
+            }
+        } else if ($sameMilkType == 1 && $diffMilkType == 1) {
+            $returnModel = $model->find()->where(['dcs_code' => $model->dcs_code,
+                        'member_code' => $model->member_code,
+                        'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model->date_time_of_collection)),
+                        'milk_type_code' => $model->milk_type_code,
+                        'shift_code' => $model->shift_code,
+                        'qty' => $model->qty, 'fat' => $model->fat, 'snf' => $model->snf])->one();
+        }
+
+        if (!empty($returnModel)) {
+            $model->addError('milk_type_code', "Record is Already Exist.");
             return FALSE;
         }
     }

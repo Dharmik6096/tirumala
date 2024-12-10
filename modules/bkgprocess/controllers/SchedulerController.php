@@ -334,6 +334,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'vendor_billing_import') {
                 $flag = 'vendor-billing-bulk';
                 $sp_name = 'DB_JOB_PORTAL_VSP_BILLING';
+            }else if ($row->file_type == 'milk_collection_qty') {
+                $flag = 'milk-collection-qty';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection_qty_wise';
             }
             if (!empty($flag)) {
                 $error_lines = [];
