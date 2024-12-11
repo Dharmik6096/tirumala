@@ -174,7 +174,6 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'on' => ['ho_sync_create']],
                 [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create']],
-                [['fat', 'snf', 'rtpl', 'amount'], 'required', 'on' => ['importApproval']],
             
         ];
     }
