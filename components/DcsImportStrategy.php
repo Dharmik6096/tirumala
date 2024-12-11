@@ -22,6 +22,9 @@ use app\modules\organisation\models\TblRouteMappingSourcesHistory;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\product\models\TblProductSaleRate;
 use app\modules\product\models\TblProductSaleRateApplicability;
+use app\models\TblUserOrganizationMapping;
+use app\modules\usermanagement\models\User;
+use yii\base\UserException;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -282,7 +285,7 @@ class DcsImportStrategy extends ARImportStrategy {
                             array_push($modelList, $sourceMapping);
                         }
                         $model->default_milk_type = $model->milk_type_code;
-                        
+
                         $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'product_sale_rate_applicability_auto');
                         if (!empty($productSaleRateApplicabilityAuto)) {
                             $productSaleRateApplicability = new TblProductSaleRateApplicability;
@@ -299,6 +302,22 @@ class DcsImportStrategy extends ARImportStrategy {
                                     $productSaleRateApplicability->created_by = Yii::$app->user->identity->id;
                                     array_push($modelList, $productSaleRateApplicability);
                                 }
+                            }
+                        }
+
+                        if (!empty($model->employee_id)) {
+                            $userModel = new User();
+                            $userDetail = $userModel->getUserId($model->employee_id);
+
+                            $orgMapping = new TblUserOrganizationMapping();
+                            $orgMapping->organization_code = $model->dcs_code;
+                            $orgMapping->organization_type = 'DCS';
+                            $existingMappings = $orgMapping->getAllUserOrgMapping();
+                            if (empty($existingMappings)) {
+                                $orgMapping->user_id = $userDetail->id;
+                                $orgMapping->is_active = $userDetail->is_active;
+                                Yii::$app->operation->defaults($orgMapping, INSERT);
+                                array_push($modelList, $orgMapping);
                             }
                         }
 
@@ -326,7 +345,7 @@ class DcsImportStrategy extends ARImportStrategy {
                                 $memberModel->attributes = $model->attributes;
                                 $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                                 $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
-                                if(!empty($memberModel->set_master_hierarchy)){
+                                if (!empty($memberModel->set_master_hierarchy)) {
                                     $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
                                 }
                                 $memberModel->animal_type_code = 1;

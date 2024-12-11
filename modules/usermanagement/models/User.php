@@ -20,7 +20,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
             [['role'], 'required', 'on' => ['newUser']],
             [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
 //			['username', 'unique'],
-            ['user_code', 'unique'],
+            [['user_code', 'employee_id'], 'unique'],
             ['username', 'trim'],
             [['status', 'email_confirmed', 'is_active'], 'integer'],
             ['email', 'email', 'except' => ['DeactiveUser']],
@@ -181,6 +181,14 @@ class User extends \webvimark\modules\UserManagement\models\User {
                 });
 
         return $user;
+    }
+
+    public function getUserId($id) {
+        $userData = $this->find()
+                ->where(['is_active' => 1])
+                ->andWhere(['or', ['id' => $id], ['user_code' => $id], ['employee_id' => $id]])
+                ->one();
+        return $userData ?: null;
     }
 
 }
