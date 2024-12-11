@@ -78,7 +78,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
         <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'qty-import-approval'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'qty-import-approval','','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>
