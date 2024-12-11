@@ -59,12 +59,6 @@ class AlertNotification {
                         break;
                     }
                 }
-            /*    $request_param['param'] = array (
-                    'headers' => !empty($headers) ? $headers : [],
-                    'form_params' => $param,
-                );*/
-                
-
                 $option_array=[];
                 $option_array[$request_param['param']]=  $param;
                 if(!empty($headers)){
