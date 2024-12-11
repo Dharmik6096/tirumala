@@ -12,7 +12,7 @@ if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->g
 } else {
     $this->params['menu'][] = Yii::$app->controls->import('milk-collection-bulk', $this, Yii::t('app', 'Import Data'));
 }
-
+$this->params['menu'][] = Yii::$app->controls->import('milk-collection-qty', $this, Yii::t('app', 'QTY Import'), [], 'milk_collection_qty');
 $this->params['menu'][] = Yii::$app->controls->import('import-shagun-dpu-data', $this, Yii::t('app', 'Import Shagun DPU Data'), [], 'import_shagun_dpu_data');
 $this->params['menu'][] = Yii::$app->controls->import('import-other-dpu-data', $this, Yii::t('app', 'Import Other DPU Data'), [], 'import_other_dpu_data');
 $this->params['menu'][] = Yii::$app->controls->custombutton('Online Farmer', 'online-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-map-marker"></i>');
