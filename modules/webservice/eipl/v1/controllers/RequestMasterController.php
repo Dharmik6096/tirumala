@@ -111,7 +111,7 @@ class RequestMasterController extends MasterController {
                 }
                 $saveModel = $opType == 'DELETE' ? false : true;
             }
-            $model->originating_org_type = 'HO';
+            $model->originating_org_type = 'MOBILE';
             $model->originating_type = 0;
             $model->created_by = !empty(Yii::$app->eiplapp->identity['module_code']) ? Yii::$app->eiplapp->identity['module_code'] : '';
             if (isset($moduleDetails['multi_auto_increment_key']) && $moduleDetails['multi_auto_increment_key']) {

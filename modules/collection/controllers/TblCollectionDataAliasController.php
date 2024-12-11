@@ -429,4 +429,74 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         }
     }
 
+
+    public function actionQtyImportApproval() {
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $succCount = 0;
+                $errorCount = 0;
+                $deletedata = Yii::$app->request->post('selection');
+                $i = 1;
+                foreach ($deletedata as $key => $value) {
+                    $operation = Yii::$app->request->post('TblCollectionDataAlias')['operation'];
+                    $saveModel = [];
+                    $deleteModel = [];
+                    $existData = $this->findModel($value);
+                    if ($operation == 'approve') {
+                        $MainModel = new TblMilkCollection();
+                        $MainModel->attributes = $existData->attributes;
+                        $MainModel->setModel($MainModel);
+                        // $MainModel->sample_no = $MainModel->getSampleNo();
+                        $MainModel->scenario = 'importApproval';
+                        $historyModel = new TblCollectionDataAliasHistory();
+                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    } else if ($operation == 'reject') {
+                        $MainModel = new TblCollectionDataAliasReject();
+                        $MainModel->attributes = $existData->attributes;
+                        $saveModel[] = $MainModel;
+                        $historyModel = new TblCollectionDataAliasHistory();
+                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    }
+                    $deleteModel[] = $existData;
+                    $saveModel[] = $MainModel;
+                    $saveModel[] = $historyModel;
+
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Milk Collection approved', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $succCount++;
+                    } else {
+                        $errorCount++;
+                        $errorMsg = [];
+                        foreach ($MainModel->getErrors() as $err) {
+                            if (!empty($err[0])) {
+                                $errorMsg[] = $err[0];
+                            }
+                        }
+                        $existData->error_desc = implode(', ', $errorMsg);
+                        $existData->save();
+                    }
+                }
+
+                $msg = 'Milk Collection approved successfully. <br />Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount;
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                    'message' => $msg]);
+                $getData = Yii::$app->request->queryParams;
+                if (!empty($getData['TblCollectionDataAliasSearch'])) {
+                    return $this->redirect(['qty-import-approval', 'TblCollectionDataAliasSearch' => $getData['TblCollectionDataAliasSearch']]);
+                } else {
+                    return $this->redirect(['qty-import-approval']);
+                }
+            }
+        }
+        $searchModel = new TblCollectionDataAliasSearch();
+        $searchModel->table_name = 'qty_import_approval';
+        $searchModel->action_perform = 'IMPORT';
+        $dataProvider = $searchModel->qtyimportsearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'approvalQtyImport';
+        return $this->render('_import_approval', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
 }
