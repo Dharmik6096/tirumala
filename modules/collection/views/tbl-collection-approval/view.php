@@ -67,13 +67,13 @@ $this->title = Yii::$app->label->title('view', 'Manual Collection Approval');
                                 [
                                 'attribute' => 'approve_date',
                                 'format' => 'html',
-                                'value' => Yii::$app->controls->view_datetime($model->approve_date),
+                                'value' => Yii::$app->controls->view_date($model->approve_date),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                                 [
                                 'attribute' => 'allow_till_date',
                                 'format' => 'html',
-                                'value' => Yii::$app->controls->view_datetime($model->allow_till_date),
+                                'value' => Yii::$app->controls->view_date($model->allow_till_date),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],

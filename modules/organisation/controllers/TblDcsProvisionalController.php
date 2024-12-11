@@ -539,6 +539,9 @@ class TblDcsProvisionalController extends ChildController {
                         $memberModel->attributes = $model->attributes;
                         $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                         $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
+                        if(!empty($memberModel->set_master_hierarchy)){
+                            $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
+                        }
                         $memberModel->animal_type_code = 1;
                         $memberModel->address = $model->dcs_name;
                         $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
