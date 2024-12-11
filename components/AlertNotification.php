@@ -59,11 +59,18 @@ class AlertNotification {
                         break;
                     }
                 }
-                $request_param['param'] = array (
+            /*    $request_param['param'] = array (
                     'headers' => !empty($headers) ? $headers : [],
-                    'form_params' => $param
-                );
-                $response = $client->request($request_param['method'], $url, $request_param['param']);     //send request with method,url,request_param
+                    'form_params' => $param,
+                );*/
+                
+
+                $option_array=[];
+                $option_array[$request_param['param']]=  $param;
+                if(!empty($headers)){
+                    $option_array['headers']=$headers;
+                }
+                $response = $client->request($request_param['method'], $url, $option_array);   
                 $data = $response->getBody(); //get response . guzzle return respone in stream object
                 $stream = Psr7\stream_for($data); //convert stream response to string
                 return json_encode($stream->getContents()); //getreponse in string format
