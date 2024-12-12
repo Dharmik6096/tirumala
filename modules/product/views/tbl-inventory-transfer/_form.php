@@ -53,6 +53,7 @@ var userType = '$userType';
         $('#to_mcc').hide(); 
         $('#to_bmc').hide(); 
         $('#to_dcs').hide();
+        $('#to_dcs_sap_vendor').hide();
         if(userType == 5){
             $('#tblinventorytransfer-from_type').val('BMC');
             $('#tblinventorytransfer-from_type').trigger('select2:select');
@@ -127,6 +128,7 @@ var userType = '$userType';
             $('#to_mcc').show(); 
             $('#to_bmc').show();
             $('#to_dcs').hide();
+            $('#to_dcs_sap_vendor').hide();
             
             if(setData(f_mcc)){
                 $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
@@ -159,6 +161,7 @@ var userType = '$userType';
             $('#to_mcc').show(); 
             $('#to_bmc').show();
             $('#to_dcs').show();
+            $('#to_dcs_sap_vendor').show();
             
             if(setData(f_mcc)){
             setTimeout(function() {
@@ -206,6 +209,7 @@ var userType = '$userType';
             $('#to_mcc').hide(); 
             $('#to_bmc').hide(); 
             $('#to_dcs').hide();
+            $('#to_dcs_sap_vendor').hide();
         }
     });
     
@@ -217,6 +221,7 @@ var userType = '$userType';
     });
     $('#tblinventorytransfer-to_dcs_code').on('change', function(){
         setToCode();
+        setSapVendorCode();
     });
     function setToCode(){
        var t_type =$('#tblinventorytransfer-to_type').val();
@@ -321,6 +326,28 @@ var userType = '$userType';
                     },
                     error:function(data){
 
+                    }
+                });
+        } 
+    
+    }
+
+    function setSapVendorCode(){
+        var dcs = $('#tblinventorytransfer-to_dcs_code').val();
+        $('#tblinventorytransfertxn-sap_vendor_code').val('');
+         if(setData(dcs)){
+             $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['get-sap-vendor-code']) . "',
+                    data: {'dcs':dcs},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            $('#tblinventorytransfertxn-sap_vendor_code').val(obj.sap_vendor_code);
+                        }
+                    },
+                    error:function(data){
                     }
                 });
         } 

@@ -2,6 +2,7 @@
 
 namespace app\modules\product\controllers;
 
+use app\modules\organisation\models\TblDcs;
 use Yii;
 use app\modules\product\models\TblInventoryTransfer;
 use app\modules\product\models\TblInventoryTransferTxn;
@@ -27,7 +28,7 @@ use app\modules\product\models\TblProductReceiptTransaction;
  */
 class TblInventoryTransferController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['list-grid', 'get-unit', 'get-available-stock'];
+    public $freeAccessActions = ['list-grid', 'get-unit', 'get-available-stock', 'get-sap-vendor-code'];
 
     /**
      * Lists all TblInventoryTransfer models.
@@ -409,6 +410,17 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionGetSapVendorCode() {
+        $dcsModel = new TblDcs();
+        $dcsModel->dcs_code = Yii::$app->request->post('dcs');
+        $dcsData = $dcsModel->tblDcs;
+        if (!empty($dcsData->sap_vendor_code)) {
+            return Json::encode(['status' => 'success', 'sap_vendor_code' => $dcsData->sap_vendor_code]);
+        } else {
+            return Json::encode(['status' => 'success', 'sap_vendor_code' => '']);
+        }
     }
 
 }
