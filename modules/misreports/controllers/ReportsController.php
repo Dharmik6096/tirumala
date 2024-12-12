@@ -1885,6 +1885,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'AvgPerVlcMilkQtySlabWiseCategory';
         return $this->actionIndex();
     }
+    
+    public function actionIndentMemberDetail() {
+        $this->report = 'IndentMemberDetail';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -4027,6 +4032,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'AvgPerVlcMilkQtySlabWiseCategory',
                 'title' => 'Qty Slab Report Format 2',
                 'report_type' => [Yii::t('app', 'Member Collection'), Yii::t('app', 'Bmc Collection')],
+            ],
+            'IndentMemberDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_member_indent_report',
+                'scenario' => 'IndentMemberDetail',
+                'title' => 'Indent Member Detail',
             ],
         ];
         return $label[$l];

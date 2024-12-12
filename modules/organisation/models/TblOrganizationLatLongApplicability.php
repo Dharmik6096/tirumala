@@ -15,8 +15,7 @@ use app\modules\organisation\models\TblDcsHistory;
 use app\modules\organisation\models\TblCustomerMasterHistory;
 use app\modules\organisation\models\TblOrganizationLatlong;
 use app\modules\organisation\models\TblUserOrganizationMapping;
-
-
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_route_mapping_sources".
@@ -37,7 +36,7 @@ use app\modules\organisation\models\TblUserOrganizationMapping;
  */
 class TblOrganizationLatLongApplicability extends \app\models\ChildModel {
 
-    public $customer_code;
+    public $customer_code, $bmc_code;
 
     /**
      * @inheritdoc
@@ -51,7 +50,20 @@ class TblOrganizationLatLongApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['organization_latlong_code','user_code','applicable_for','applicable_code','union_code','originating_org_code','originating_org_type','originating_type','updated_at','updated_by','created_at','created_by'], 'safe'],
+            [['organization_latlong_code', 'user_code', 'applicable_for', 'applicable_code', 'union_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'updated_at', 'updated_by', 'created_at', 'created_by', 'bmc_code'], 'safe'],
+            [['applicable_for', 'applicable_code', 'organization_latlong_code', 'user_code'], 'required', 'on' => ['importCsv']],
+            [['applicable_for'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'organization_latlong_type');
+                }],
+            [['applicable_code'], 'setImport', 'on' => ['importCsv']],
+            [['user_code'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_code' => 'id']],
+            ['applicable_code', 'unique', 'targetAttribute' => ['applicable_for', 'applicable_code', 'user_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'The combination of Applicable For, Applicable Code, and User Code must be unique.')],
+            [['bmc_code'], function ($attribute, $params) {
+                    if ($this->applicable_for == 'BULKVEN') {
+                        return Yii::$app->general->validateBMC($this, $attribute);
+                    }
+                    return true;
+                }, 'on' => ['importCsv']],
         ];
     }
 
@@ -72,7 +84,6 @@ class TblOrganizationLatLongApplicability extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-          
         ];
     }
 
@@ -87,13 +98,9 @@ class TblOrganizationLatLongApplicability extends \app\models\ChildModel {
      * @inheritdoc
      * @return TblOrganizationLatLongApplicabilityQuery the active query used by this AR class.
      */
-
-
     public function getDcsCode() {
         return $this->hasMany(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
-
-    
 
     public function getCustomerType() {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type', 'union_code' => 'union_code'])->andOnCondition(['is_active' => 1, 'is_routemapping' => 1]);
@@ -103,7 +110,20 @@ class TblOrganizationLatLongApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->dcs_code_ex]);
     }
 
-
-  
+    public function setImport($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $customerName = strtolower($this->applicable_for);
+            if (in_array($customerName, ['other', 'home', 'office'])) {
+                $customerName = 'user';
+            }
+            $new_code = Yii::$app->general->fetchData($this, $customerName, $this->applicable_code);
+            if (empty($new_code)) {
+                $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'applicable') . ' code is invalid'));
+                return false;
+            }
+            $this->applicable_code = $new_code;
+            return true;
+        }
+    }
 
 }
