@@ -307,17 +307,18 @@ class DcsImportStrategy extends ARImportStrategy {
 
                         if (!empty($model->employee_id)) {
                             $userModel = new User();
-                            $userDetail = $userModel->getUserId($model->employee_id);
-
-                            $orgMapping = new TblUserOrganizationMapping();
-                            $orgMapping->organization_code = $model->dcs_code;
-                            $orgMapping->organization_type = 'DCS';
-                            $existingMappings = $orgMapping->getAllUserOrgMapping();
-                            if (empty($existingMappings)) {
+                            $userDetail = $userModel->getUserId($model->employee_id, 'DCS');
+                            if (!empty($userDetail)) {
+                                $orgMapping = new TblUserOrganizationMapping();
+                                $orgMapping->organization_code = $model->dcs_code;
+                                $orgMapping->organization_type = 'DCS';
                                 $orgMapping->user_id = $userDetail->id;
-                                $orgMapping->is_active = $userDetail->is_active;
-                                Yii::$app->operation->defaults($orgMapping, INSERT);
-                                array_push($modelList, $orgMapping);
+                                $existingMappings = $orgMapping->getAllUserOrgMapping();
+                                if (empty($existingMappings)) {
+                                    $orgMapping->is_active = $userDetail->is_active;
+                                    Yii::$app->operation->defaults($orgMapping, INSERT);
+                                    array_push($modelList, $orgMapping);
+                                }
                             }
                         }
 

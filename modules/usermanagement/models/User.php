@@ -183,11 +183,14 @@ class User extends \webvimark\modules\UserManagement\models\User {
         return $user;
     }
 
-    public function getUserId($id) {
-        $userData = $this->find()
+    public function getUserId($id, $type) {
+        $query = $this->find()
                 ->where(['is_active' => 1])
-                ->andWhere(['or', ['id' => $id], ['user_code' => $id], ['employee_id' => $id]])
-                ->one();
+                ->andWhere(['or', ['id' => $id], ['user_code' => $id], ['employee_id' => $id]]);
+        if ($type == 'DCS') {
+            $query->andWhere(['user_type_id' => 7]);
+        }
+        $userData = $query->one();
         return $userData ?: null;
     }
 
