@@ -343,6 +343,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 $baseUrl = Yii::$app->request->baseUrl;
 $count = count($fileDownloadArr);
 $timeOutForLoader = ($count * 1000) + 2000;
+$sap_data_files = Yii::$app->params['sap_data_files'];
 $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
@@ -354,7 +355,7 @@ $(document).on('click', '.downloadSapFiles', function(e){
     $('#loadercontent').show();
     $('#pageloader').show();
     timeOut = 500;
-    var baseUrl = '" . $baseUrl . "/web/sap_data_files/';
+    var baseUrl = '" . $baseUrl . $sap_data_files."';
     var downloadFilesJson = '" . $downloadSapFiles . "';
     var timeOutForLoader = " . $timeOutForLoader . ";
     var downloadFilesJsonAr = JSON.parse(downloadFilesJson);

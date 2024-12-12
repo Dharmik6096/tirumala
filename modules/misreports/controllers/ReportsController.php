@@ -1839,27 +1839,27 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'IndentSummaryDetail';
         return $this->actionIndex();
     }
-    
+
     public function actionGheeGroupIndentReport() {
         $this->report = 'GheeGroupIndentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionCfGroupIndentReport() {
         $this->report = 'CfGroupIndentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionSapGheeGroupIndentReport() {
         $this->report = 'SapGheeGroupIndentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionSapCfGroupIndentReport() {
         $this->report = 'SapCfGroupIndentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionBillHeadDetail() {
         $this->report = 'BillHeadDetail';
         return $this->actionIndex();
@@ -1869,14 +1869,24 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'ApprovedAttachmentDetails';
         return $this->actionIndex();
     }
-    
+
     public function actionBmcCollectionRouteWise() {
         $this->report = 'BmcCollectionRouteWise';
         return $this->actionIndex();
     }
-    
+
     public function actionPlantWiseMilkCollectionTracking() {
         $this->report = 'PlantWiseMilkCollectionTracking';
+        return $this->actionIndex();
+    }
+
+    public function actionVlcQtySlabWiseCategory() {
+        $this->report = 'VlcQtySlabWiseCategory';
+        return $this->actionIndex();
+    }
+
+    public function actionAvgPerVlcMilkQtySlabWiseCategory() {
+        $this->report = 'AvgPerVlcMilkQtySlabWiseCategory';
         return $this->actionIndex();
     }
 
@@ -4007,6 +4017,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_plant_wise_milk_collection_tracking',
                 'scenario' => 'PlantWiseMilkCollectionTracking',
                 'title' => 'Plant Wise Milk Collection',
+            ],
+            'VlcQtySlabWiseCategory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_vlc_qty_slab_wise_category',
+                'scenario' => 'VlcQtySlabWiseCategory',
+                'title' => 'Qty Slab Report Format 1',
+                'report_type' => [Yii::t('app', 'Member Collection'), Yii::t('app', 'Bmc Collection')],
+            ],
+            'AvgPerVlcMilkQtySlabWiseCategory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_avg_per_vlc_milk_qty_slab_wise_category',
+                'scenario' => 'AvgPerVlcMilkQtySlabWiseCategory',
+                'title' => 'Qty Slab Report Format 2',
+                'report_type' => [Yii::t('app', 'Member Collection'), Yii::t('app', 'Bmc Collection')],
             ],
         ];
         return $label[$l];
