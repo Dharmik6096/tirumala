@@ -62,13 +62,13 @@ $form = ActiveForm::begin([
         'active_column' => false,
         'showPageSummary' => false,
         'actions' => [
-            'ftp-upload' => function ($url, $model) use($eiplCode) {
-                echo Html::hiddenInput('data_type', $model['data_type'], ['id' => 'set_data_type']);
+            'ftp-upload' => function ($url, $model) use($eiplCode,$searchModel) {
+                echo Html::hiddenInput('data_type', $searchModel['data_type_filter'], ['id' => 'set_data_type']);
 //                $class = $eiplCode == 'DODLA' ? 'link-disable' : $model['coll_count'] != $model['summary_count'] ? 'link-disable' : '';
                 $class = ($eiplCode == 'DODLA') ? 'link-disable' : '';
                 $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'ftp-uploads', 'title' => 'FTP Uploads', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-shift_id' => $model['shift_id'], 'data-qty_difference' => $model['qty_difference'], 'class' => 'ftp-uploads ' . $class];
                 if ($eiplCode == 'ANANDA') {
-                    $options['data-type'] = $model['data_type'];
+                    $options['data-type'] = $searchModel['data_type_filter'];
                 }
                 return GhostHtml::a_alert('<i class="fa fa-upload"></i>', ['/collection/tbl-milk-collection/dcs-wise-ftp-upload', 'union_code' => $model['union_code'], 'plant_code' => $model['plant_code'], 'mcc_plant_code' => $model['mcc_plant_code'], 'bmc_code' => $model['bmc_code'], 'dcs_code' => $model['dcs_code'], 'date_time_of_collection' => $model['date_time_of_collection']], $options);
             },

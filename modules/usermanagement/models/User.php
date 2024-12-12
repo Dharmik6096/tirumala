@@ -72,7 +72,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
                 [['role'], 'required', 'on' => ['newUser']],
                 [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
             //			['username', 'unique'],
-            ['user_code', 'unique'],
+            [['user_code', 'employee_id'], 'unique'],
                 ['username', 'trim'],
                 [['status', 'email_confirmed', 'is_active'], 'integer'],
                 ['email', 'email', 'except' => ['DeactiveUser']],
@@ -562,6 +562,17 @@ class User extends \webvimark\modules\UserManagement\models\User {
         $query->andWhere('tuom.organization_code in (' . $org_codes . ')');
         $data = $query->all();
         return ArrayHelper::map($data, 'user_code', 'name');
+    }
+
+    public function getUserId($id, $type) {
+        $query = $this->find()
+                ->where(['is_active' => 1])
+                ->andWhere(['or', ['id' => $id], ['user_code' => $id], ['employee_id' => $id]]);
+        if ($type == 'DCS') {
+            $query->andWhere(['user_type_id' => 7]);
+        }
+        $userData = $query->one();
+        return $userData ?: null;
     }
 
 }
