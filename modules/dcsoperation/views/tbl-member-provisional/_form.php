@@ -66,7 +66,7 @@ if ($model->isNewRecord) {
             <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmemberprovisional-plant_code,tblmemberprovisional-mcc_plant_code,tblmemberprovisional-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
         </div>
         <div class="col-sm-4">
-            <?php $readonly = ($model->provisional_status == 'Pending' && $model->provisional_from != 'mobile_update') ? false : true; ?>
+            <?php $readonly = (empty($model->provisional_status) || ($model->provisional_status == 'Pending' && $model->provisional_from != 'mobile_update')) ? false : true; ?>
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmemberprovisional-bmc_code', 'dcs_code', true, false, '', $readonly); ?>         
         </div>
         <!-- <div class="col-sm-4">
@@ -217,7 +217,6 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                                    ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -292,7 +291,6 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                                    ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2 icon-set">

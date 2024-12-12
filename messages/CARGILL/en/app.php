@@ -158,4 +158,5 @@ return [
     'Aadhar No' => 'NIC Number',
     'Parsing No' => 'Vehicle Number',
     'Select Caste/Category' => 'Select Farmer Type',
+    'Chilling Bill' => 'Service provide Bill',
 ];
