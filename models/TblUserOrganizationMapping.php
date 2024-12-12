@@ -472,6 +472,10 @@ class TblUserOrganizationMapping extends ChildModel
         return $this->find()->where(['user_id' => $this->user_id, 'organization_type' => $this->organization_type])->all();
     }
 
+    public function getAllUserOrgMapping() {
+        return $this->find()->where(['user_id' => $this->user_id, 'organization_type' => $this->organization_type, 'organization_code' => $this->organization_code, 'is_active' => 1])->all();
+    }
+
     private function getRoute($PlantArray, $MCCArray, $BMCArray, $DcsArray)
     {
         $query = TblRouteMapping::find();

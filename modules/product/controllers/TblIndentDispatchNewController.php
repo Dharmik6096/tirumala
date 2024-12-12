@@ -124,7 +124,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         //set from stock
                         $qty = $disp_qty;
                         $batch = '';
-                        $batchQuantities = []; 
+                        $batchQuantities = [];
 
                         if (empty($warehouse)) { //gyandhara plant stock is not available //Sunita 03/03/2023
                             $fstockModel = new TblProductStock();
@@ -372,6 +372,19 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
             $controls['p_report_name'] = 'Milk Chilling Bill Lr No Wise';
             $this->printDocument($controls, 'vsp/MilkChillingBillLrNoWise', 'MilkChillingBillLrNoWise', 'pdf');
         }
+    }
+
+    public function actionCloseIndent($id) {
+        $indent = TblIndentMaster::findOne(['indent_code' => $id]);
+        $history = new TblIndentMasterHistory();
+        Yii::$app->operation->history($indent, $history, UPDATE);
+        $indent->is_close = 1;
+
+        $transaction = $this->generalModel->saveTransaction([$indent, $history], ['Indent Master', 'edit']);
+        $message = $transaction == 'customRedirect' ? ['type' => 'success', 'message' => 'Indent closed successfully.'] : ['type' => 'error', 'message' => 'Failed to close indent. Please try again.'];
+
+        Yii::$app->getSession()->setFlash('success', $message);
+        return $this->redirect(Url::previous());
     }
 
 }
