@@ -759,6 +759,7 @@ echo GhostMenu::widget([
                             ['label' => '508 -' . Yii::t('app', 'Company Total Payment'), 'url' => ['/misreports/reports/total-payment-company-wise-payment-cycle-wise']],
                             ['label' => '509 -' . Yii::t('app', 'DCS Wise Bill Head Applicability'), 'url' => ['/misreports/reports/dcs-wise-bill-head-applicability']],
                             ['label' => '510 -' . Yii::t('app', 'Bill Head Detail'), 'url' => ['/misreports/reports/bill-head-detail']],
+                            ['label' => '511 -' . Yii::t('app', 'Chilling Bill'), 'url' => ['/jasperreports/default/mcc-chilling-bill']],
                     ]
                 ],
                     [
@@ -970,6 +971,8 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'DCS & Member Wise Qty Compare'), 'url' => ['/misreports/reports/dcs-and-member-wise-qty-compare']],]
                         ],
                             ['label' => Yii::t('app', 'Milk Collection Status Detail'), 'url' => ['/misreports/reports/milk-collection-status-detail']],
+                            ['label' => Yii::t('app', 'Qty Slab Report Format 1'), 'url' => ['/misreports/reports/vlc-qty-slab-wise-category']],
+                            ['label' => Yii::t('app', 'Qty Slab Report Format 2'), 'url' => ['/misreports/reports/avg-per-vlc-milk-qty-slab-wise-category']],
                     ]
                 ],
                     [

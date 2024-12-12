@@ -452,6 +452,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VcgMeeting';
         return $this->actionIndex();
     }
+    
+    public function actionMccChillingBill() {
+        $this->report = 'MccChillingBill';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1077,6 +1082,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'VCGMeeting',
                 'scenario' => 'VcgMeeting',
                 'title' => 'VCG Meeting',
+            ],
+            'MccChillingBill' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string',
+                'path' => 'MCCChillingBill',
+                'scenario' => 'MccChillingBill',
+                'title' => 'Chilling Bill',
             ],
         ];
         return $label[$l];
