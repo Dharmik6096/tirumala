@@ -28,7 +28,7 @@ use app\modules\product\models\TblProductReceiptTransaction;
  */
 class TblInventoryTransferController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['list-grid', 'get-unit', 'get-available-stock'];
+    public $freeAccessActions = ['list-grid', 'get-unit', 'get-available-stock', 'get-sap-vendor-code'];
 
     /**
      * Lists all TblInventoryTransfer models.
