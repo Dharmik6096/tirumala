@@ -793,6 +793,14 @@ class V1 extends \yii\base\Module {
                 'main_table' => 'TblBmcCollection',
                 'multi_auto_increment_key' => true
             ],
+            'bmc-collection/siloinfo' => [
+                'param' => 'organization_type#organization_code',
+                'sp' => 'sp_app_eipl_v1_bmc_collection_silo_info',
+            ],
+            'bmc-collection/customerdetail' => [
+                'param' => 'organization_type#organization_code',
+                'sp' => 'sp_app_eipl_v1_bmc_collection_customer_detail',
+            ],
         ];
         return $label;
     }
