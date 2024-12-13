@@ -48,8 +48,24 @@ $this->title = Yii::t('app', $title);
                                 </span>
                             </span>
                         </div>
+                        <div class="btn-group margin-top-10">
+                                <span class="input-group-btn">
+                                <span id="check-all-routes" class="btn btn-default btn-sm" data-checked ="true">
+                                   <i class="fa fa-check-square facheckfalse hide"></i> <i class="fa fa-square-o fachecktrue "></i> Select All
+                                </span>
+                            </span>
+                        </div>
                     </div>
-                    <div class="col-sm-2">
+                    <!-- <div class="col-sm-2  margin-bottom-10">
+                        <div class="btn-group">
+                                <span class="input-group-btn">
+                                <span id="show-only-selected-routes selectallc" class="btn btn-default btn-sm">
+                                   <i class="fa fa-check-square"></i> <i class="fa fa-square-o hide"></i> Select All
+                                </span>
+                            </span>
+                        </div>
+                    </div> -->
+                    <div class="col-sm-2 ">
                     </div>
                     <?php
                     $i = 0;
@@ -146,6 +162,26 @@ routeCheckboxes.on('change', function(){
 	}
 });
 
+$('#check-all-routes').on('click', function(){
+    var checkedAll = $(this).attr('data-checked');
+    if(checkedAll == 'false'){
+        $('.facheckfalse').addClass('hide');
+        $('.fachecktrue').removeClass('hide');
+        $(this).attr('data-checked','true');
+    }else{
+        $('.fachecktrue').addClass('hide');
+        $('.facheckfalse').removeClass('hide');
+        $(this).attr('data-checked','false');
+    }
+   
+	$('.route-checkbox').each(function(){
+        var _t2 = $(this);
+        var isChecked = _t2.is(':checked');
+        _t2.prop('checked', checkedAll == 'true' ? true : false);
+        _t2.closest('label').css('background', checkedAll == 'true' ? 'none' : backgroundColor);
+        
+    });
+})
 
 // Hide on not selected routes
 $('#show-only-selected-routes').on('click', function(){

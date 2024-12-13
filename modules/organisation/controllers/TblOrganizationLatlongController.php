@@ -165,7 +165,6 @@ class TblOrganizationLatlongController extends ChildController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
   
         if (Yii::$app->request->post()) {
-           
             $applicable_code = Yii::$app->request->post('TblOrganizationLatLongApplicability')['applicable_code'];
             $user_code = Yii::$app->request->post('TblOrganizationLatLongApplicability')['user_code'];
             if (empty($applicable_code)) {
@@ -174,21 +173,33 @@ class TblOrganizationLatlongController extends ChildController
                 $postData = array_filter($applicable_code);
                 $mapping = [];
                 $saveModel = [];
+                $error_msg = [];
+                $validatefalse = 0;
                 foreach ($postData as $data) {
                     $modelnew = new TblOrganizationLatLongApplicability();
+                    $model->scenario = 'saveLatlongApplicability';
                     $d = explode('-', $data);
                     $modelnew->applicable_code = $d[0];
                     $modelnew->organization_latlong_code = $d[1];
                     $modelnew->applicable_for = $d[2];
                     $modelnew->user_code = $user_code;
-                    $modelnew->union_code = $modelApplicability -> union_code;
-                    $saveModel[] = $modelnew;
+                    $modelnew->union_code = $modelApplicability->union_code;
+                    if ($modelnew->validate()) {
+                        $saveModel[] = $modelnew;
+                        
+                    }else{
+                        $validatefalse++;
+                    }
+                    
                 }
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['Org Latlong Mapping', 'create']);
-                if ($transaction) {
-                    Yii::$app->display->message(true, 'Org Latlong Mapping', 'create');
-                    return $this->redirect(['index']);
+                if($validatefalse == 0){
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Org Latlong Mapping', 'create']);
+                    if ($transaction) {
+                        Yii::$app->display->message(true, 'Organization Latlong Mapping', 'create');
+                        return $this->redirect(['map-route-source','id' => $id]);
+                    }
                 }
+                
             }
         }
 

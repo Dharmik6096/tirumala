@@ -51,7 +51,7 @@ class TblOrganizationLatLongApplicability extends \app\models\ChildModel {
     public function rules() {
         return [
             [['organization_latlong_code', 'user_code', 'applicable_for', 'applicable_code', 'union_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'updated_at', 'updated_by', 'created_at', 'created_by', 'bmc_code'], 'safe'],
-            [['applicable_for', 'applicable_code', 'user_code'], 'required', 'on' => ['importCsv']],
+            [['applicable_for', 'applicable_code', 'user_code'], 'required', 'on' => ['importCsv','saveLatlongApplicability']],
             [['applicable_for'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'organization_latlong_type');
                 }],
