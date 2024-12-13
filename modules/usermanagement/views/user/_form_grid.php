@@ -151,6 +151,11 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Reset Password', 'class' => $disable];
             return Html::a('<i class="fa fa-user"></i>', ['/user-management/user/password-reset', 'id' => $model->id], $options);
         },
+        'user-latlong-map' => function ($url, $model) {
+            $disable = '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Organization Lat Long Map', 'class' => $disable];
+            return Html::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-organization-latlong/map-route-source', 'id' => $model->id], $options);
+        },
     ]
 ];
 
