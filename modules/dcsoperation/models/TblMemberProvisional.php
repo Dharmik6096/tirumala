@@ -969,7 +969,7 @@ class TblMemberProvisional extends ChildModel {
                         unlink($moveDir . '/' . $file);
                     }
                 } catch (\Throwable $ex) {
-                    var_dump($ex);
+                    
                 }
             }
         }
@@ -984,7 +984,7 @@ class TblMemberProvisional extends ChildModel {
                     unlink($docDir . '/' . $all_doc);
                 }
             } catch (\Throwable $ex) {
-                var_dump($ex);
+                
             }
         }
     }
