@@ -2914,8 +2914,26 @@ class SiteController extends Controller {
     }
 
     public function actionLoadDashboardMilkAnalysis() {
-// var_dump('hello');die;
-        $sp = Yii::$app->request->post('sp');
+        $fromShift = '';
+        $toShift = '';
+        $fromDate = '';
+        $toDate = '';
+        $postData = Yii::$app->request->post();
+        if (!empty($postData['Dashboard']['date'])) {
+            $fromDate = $postData['Dashboard']['date'];
+            $toDate = $postData['Dashboard']['date'];
+        } elseif (!empty($postData['Dashboard']['from_date'])) {
+            $fromDate = $postData['Dashboard']['from_date'];
+            $toDate = $postData['Dashboard']['to_date'];
+        }
+        if (!empty($postData['Dashboard']['shift'])) {
+            $fromShift = $postData['Dashboard']['shift'];
+            $toShift = $postData['Dashboard']['shift'];
+        } elseif (!empty($postData['Dashboard']['mag_from_shift'])) {
+            $fromShift = $postData['Dashboard']['mag_from_shift'];
+            $toShift = $postData['Dashboard']['mag_to_shift'];
+        }
+        $sp = $postData['sp'];
         $results = $this->getSpResult($sp);
         $res = [];
         $array_result = $results;
@@ -2926,7 +2944,7 @@ class SiteController extends Controller {
             $res[$key] = $value;
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        return ['status' => 'success', 'res' => $res];
+        return ['status' => 'success', 'res' => $res, 'fromDate' => $fromDate, 'toDate' => $toDate, 'fromShift' => $fromShift, 'toShift' => $toShift];
     }
 
     public function actionHelpManual() {
