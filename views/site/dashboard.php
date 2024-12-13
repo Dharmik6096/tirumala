@@ -1656,6 +1656,10 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                 $.each(obj1.res, function(key,value) {
                     htmlData = htmlData + '<tr>';
                     htmlData = htmlData + '<td>'+value.bmc_name+' '+value.bmc_code+'</td>';
+                    htmlData += '<td>' + (obj1.fromDate) + '</td>';
+                    htmlData += '<td>' + (obj1.fromShift == 1 ? 'Morning' : (obj1.fromShift == 2 ? 'Evening' : '')) + '</td>';
+                    htmlData += '<td>' + (obj1.toDate) + '</td>';
+                    htmlData += '<td>' + (obj1.toShift == 1 ? 'Morning' : (obj1.toShift == 2 ? 'Evening' : '')) + '</td>';
                     htmlData = htmlData + '<td>'+value.cc_qty+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_avg_fat+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_avg_snf+'</td>';
