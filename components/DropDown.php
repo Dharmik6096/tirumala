@@ -1978,7 +1978,7 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['tbl_milk_collection' => Yii::t('app', 'Milk Collection'), 'tbl_bmc_collection' => Yii::t('app', 'BMC Collection')],
             ],
-            'entry_type' => [
+            'entry_type_collection' => [
                 'name' => 'entry_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['backdate' => Yii::t('app', 'Back Date'), 'realtime' => Yii::t('app', 'Real Time')],
