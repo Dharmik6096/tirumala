@@ -729,7 +729,7 @@ class TblMember extends ChildModel {
     }
     
     public function resetData() {
-        $this->adhar_no = $this->pan_no = $this->mobile_no = $this->bank_code = $this->branch_code = $this->bank_account_no = $this->ifsc = null;
+        $this->adhar_no = $this->pan_no = $this->mobile_no = $this->bank_code = $this->branch_code = $this->bank_account_no = $this->ifsc = $this->beneficiary_name = null;
     }
 
 }
