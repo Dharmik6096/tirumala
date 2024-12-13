@@ -1,12 +1,11 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
 $disable = $readonly ? 'disabled' : '';
-$disp_none = $readonly ? '' : 'disp_none';
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -21,9 +20,13 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('organization_latlong_type', $model, $form, 'form-group', $model->getAttributeLabel('customer_type'), $readonly, 'customer_type'); ?>
     </div>
-    <div class="col-sm-2 <?= $disp_none . ' ' . $disable ?>">
-        <?= $form->field($model, 'name')->textInput(['value' => Yii::$app->general->getField($model, $model->customer_type)]); ?>
-    </div>
+    <?php
+    if ($type != 'create') { ?>
+        <div class="col-sm-2 <?= $disable ?>">
+            <?= $form->field($model, 'name')->textInput(['value' => Yii::$app->general->getField($model, $model->customer_type)]); ?>
+        </div>
+        <?php
+    } ?>
     <div class="col-sm-2 create_fields">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
     </div>
