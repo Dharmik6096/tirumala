@@ -963,15 +963,15 @@ class TblMemberProvisional extends ChildModel {
         $moveDir = $baseDir . $docMoveFolderName;
 
         if (!empty($unlink_files)) {
-            try {
-                foreach ($unlink_files as $file) {
+            foreach ($unlink_files as $file) {
+                try {
                     if (file_exists($moveDir . '/' . $file)) {
                         unlink($moveDir . '/' . $file);
                     }
+                } catch (Exception $e) {
+                    echo 'Caught exception: ', $e->getMessage(), "\n";
+                    return true;
                 }
-            } catch (Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
-                return true;
             }
         }
 
