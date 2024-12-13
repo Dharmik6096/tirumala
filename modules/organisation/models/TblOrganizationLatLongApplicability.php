@@ -51,7 +51,7 @@ class TblOrganizationLatLongApplicability extends \app\models\ChildModel {
     public function rules() {
         return [
             [['organization_latlong_code', 'user_code', 'applicable_for', 'applicable_code', 'union_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'updated_at', 'updated_by', 'created_at', 'created_by', 'bmc_code'], 'safe'],
-            [['applicable_for', 'applicable_code', 'organization_latlong_code', 'user_code'], 'required', 'on' => ['importCsv']],
+            [['applicable_for', 'applicable_code', 'user_code'], 'required', 'on' => ['importCsv']],
             [['applicable_for'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'organization_latlong_type');
                 }],
@@ -117,11 +117,13 @@ class TblOrganizationLatLongApplicability extends \app\models\ChildModel {
                 $customerName = 'user';
             }
             $new_code = Yii::$app->general->fetchData($this, $customerName, $this->applicable_code);
-            if (empty($new_code)) {
+            $exists = TblOrganizationLatlong::find()->from('tbl_organization_latlong')->where(['customer_code' => $new_code, 'customer_type' => $customerName, 'is_active' => 1])->one();
+            if (empty($exists || empty($new_code))) {
                 $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'applicable') . ' code is invalid'));
                 return false;
             }
             $this->applicable_code = $new_code;
+            $this->organization_latlong_code = $exists->organization_latlong_code;
             return true;
         }
     }
