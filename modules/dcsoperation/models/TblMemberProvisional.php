@@ -319,7 +319,7 @@ class TblMemberProvisional extends ChildModel {
             'dcs_ref_code' => Yii::t('app', 'Society Ref Code'),
             'payment_type' => Yii::t('app', 'Mode Of Payment'),
             'route_code' => Yii::t('app', 'Route'),
-            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'), 
+            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'),
             'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
         ];
     }
@@ -963,20 +963,30 @@ class TblMemberProvisional extends ChildModel {
         $moveDir = $baseDir . $docMoveFolderName;
 
         if (!empty($unlink_files)) {
-            foreach ($unlink_files as $file) {
-                if (file_exists($moveDir . '/' . $file)) {
-                    unlink($moveDir . '/' . $file);
+            try {
+                foreach ($unlink_files as $file) {
+                    if (file_exists($moveDir . '/' . $file)) {
+                        unlink($moveDir . '/' . $file);
+                    }
                 }
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
+                return true;
             }
         }
 
         for ($i = 0; $i < count($attachments); $i++) {
-            $all_doc = basename($attachments[$i]);
-            $fileName = basename($masterdoc[$i]);
-            $file = $moveDir . '/' . $fileName;
-            file_put_contents($file, file_get_contents($attachments[$i]));
-            if (file_exists($docDir . '/' . $all_doc)) {
-                unlink($docDir . '/' . $all_doc);
+            try {
+                $all_doc = basename($attachments[$i]);
+                $fileName = basename($masterdoc[$i]);
+                $file = $moveDir . '/' . $fileName;
+                file_put_contents($file, file_get_contents($attachments[$i]));
+                if (file_exists($docDir . '/' . $all_doc)) {
+                    unlink($docDir . '/' . $all_doc);
+                }
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
+                return true;
             }
         }
     }
