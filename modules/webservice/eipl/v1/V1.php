@@ -797,10 +797,6 @@ class V1 extends \yii\base\Module {
                 'param' => 'organization_type#organization_code',
                 'sp' => 'sp_app_eipl_v1_siloinfo_master',
             ],
-            'customer/master' => [
-                'param' => 'organization_type#organization_code',
-                'sp' => 'sp_app_eipl_v1_customer_master',
-            ],
         ];
         return $label;
     }
