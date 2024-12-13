@@ -899,7 +899,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         if ($flag == 'api_create') {
             $login_data = Yii::$app->eiplapp->identity;
             $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
-            $model->originating_org_type = 'HO';
+            $model->originating_org_type = 'MOBILE';
             $model->originating_org_code = $model->union_code;
         }
         $model->qty_mode = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_qty_mode', 'BMC');

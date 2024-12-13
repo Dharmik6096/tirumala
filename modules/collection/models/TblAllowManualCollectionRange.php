@@ -278,7 +278,8 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         if ($this->table_name == 'tbl_milk_collection') {
             $dataCheck->andWhere(['dcs_code' => $this->dcs_code]);
         } else {
-            $dataCheck->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => '']);
+            $dataCheck->andWhere(['bmc_code' => $this->bmc_code]);
+            $dataCheck->andWhere(['or', ['dcs_code' => NULL], ['dcs_code' => '']]);
         }
         $dataExist = $dataCheck->one();
 
