@@ -144,9 +144,7 @@ class TblDcsController extends ChildController {
                         $productSaleRateApplicability->created_at = date('Y-m-d H:i:s');
                         $productSaleRateApplicability->wef_date = date('Y-m-d H:i:s');
                         $productSaleRateApplicability->created_by = Yii::$app->user->identity->id;
-                        if ($productSaleRateApplicability->validate()) {
-                            array_push($mapList, $productSaleRateApplicability);
-                        }
+                        array_push($mapList, $productSaleRateApplicability);
                     }
                 }
             }
