@@ -45,7 +45,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['BmcWisePaymentCycleWise', 'SocietyWiseCda', 'AgentWiseReconciliation', 'SocietyWiseCdaCommon']],
             [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['GprsDataReconciliation', 'MilkCollectionRegister', 'BmcCollectionRegister', 'BmcCollectionRouteWise']],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => ['SapStatusReport', 'SapComparisionReport', 'BonusReport']],
-            [['union_code', 'plant_code'], 'required', 'on' => ['DispatchVsReceipt', 'BmcCollectionSummary']],
+            [['union_code', 'plant_code'], 'required', 'on' => ['DispatchVsReceipt', 'BmcCollectionSummary', 'BmcCollectionRouteWise', 'PlantWiseMilkCollectionTracking']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['MemberPaymentDrafted']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['VendorBankPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['MemberBankPayment']],
@@ -132,7 +132,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['AutoManualMilkCollection']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['SocietyWiseRateDifferenceReport']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['MccBilling', 'CDAReport']],
-            [['from_date', 'to_date'], 'required', 'on' => ['BmcRegister', 'AllReportRequest']],
+            [['from_date', 'to_date'], 'required', 'on' => ['BmcRegister', 'AllReportRequest', 'PlantWiseMilkCollectionTracking']],
             [['union_code', 'plant_register_type', 'from_date', 'to_date'], 'required', 'on' => ['PlantRegister']],
             [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['TankerReceiptNote', 'MemberProvisionalFamilyDetail']],
             [['from_date', 'to_date', 'bmc_code'], 'required', 'on' => ['MccReceiptVsBmcDispatch']],
@@ -148,7 +148,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['LeftPourer']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'required', 'on' => ['MccRecipationSummary', 'MccRecipationDetail']],
             [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcWiseSocietyWiseAutoManual', 'BmcWiseAutoManualSummary', 'PaymentCycleApplicabilityStatus']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberPaymentBankFormat', 'PlantWiseMilkCollectionTracking']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberPaymentBankFormat']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'report_type'], 'required', 'on' => ['BiplData', 'BiplDataAdmin']],
             [['union_code', 'login_user_code', 'from_date', 'to_date'], 'required', 'on' => ['DetailsReport']],
             [['union_code', 'state_code'], 'required', 'on' => ['RegionWiseUserAttendanceReport', 'EiplInstalledUsersDetails']],
@@ -162,7 +162,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['from_value', 'to_value'], 'number'],
             [['from_value'], 'compare', 'compareAttribute' => 'to_value', 'operator' => '<', 'type' => 'number', 'on' => ['MilkCollectionFilterBased']],
             [['region_code', 'area_code'], 'required', 'on' => ['EiplInstalledUsersDetails']],
-            [['union_code', 'plant_code', 'mcc_code', 'customer_type'], 'required', 'on' => ['BmcCollectionRouteWise']],
+            [['union_code', 'from_date', 'to_date', 'report_type'], 'required', 'on' => ['VlcQtySlabWiseCategory', 'AvgPerVlcMilkQtySlabWiseCategory']],
         ];
     }
 
