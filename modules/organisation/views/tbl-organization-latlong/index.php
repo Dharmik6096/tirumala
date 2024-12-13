@@ -3,6 +3,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Organization Latlo
 if (Yii::$app->general->checkAccess('/organisation/tbl-organization-latlong/update')) {
     $this->params['menu'][] = Yii::$app->controls->add('Organization Latlong');
     $this->params['menu'][] = Yii::$app->controls->import('organization-latlong', $this);
+    $this->params['menu'][] = Yii::$app->controls->import('mapping-import', $this, Yii::t('app', 'Mapping Import'), [], 'TblOrganizationLatlongApplicability');
 }
 ?>
 <div class="tbl-plant-index">
