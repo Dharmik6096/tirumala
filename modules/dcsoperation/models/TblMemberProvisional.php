@@ -968,8 +968,8 @@ class TblMemberProvisional extends ChildModel {
                     if (file_exists($moveDir . '/' . $file)) {
                         unlink($moveDir . '/' . $file);
                     }
-                } catch (\Throwable $e) {
-                    
+                } catch (\Throwable $ex) {
+                    var_dump($ex);
                 }
             }
         }
@@ -983,8 +983,8 @@ class TblMemberProvisional extends ChildModel {
                 if (file_exists($docDir . '/' . $all_doc)) {
                     unlink($docDir . '/' . $all_doc);
                 }
-            } catch (\Throwable $e) {
-                
+            } catch (\Throwable $ex) {
+                var_dump($ex);
             }
         }
     }
