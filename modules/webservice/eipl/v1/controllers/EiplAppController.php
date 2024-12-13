@@ -24,9 +24,6 @@ class EiplAppController extends MasterController {
         $model->attributes = Yii::$app->request->getRawBody();
         $model->app_type = 1;
         $detail = $model->MobileNoDetail();
-        echo '<pre>';
-        print_r($detail);
-        die;
         if (!empty($detail)) {
             $temp_model = new TblEiplAppLoginTemp();
             $temp_model->attributes = $model->attributes;
