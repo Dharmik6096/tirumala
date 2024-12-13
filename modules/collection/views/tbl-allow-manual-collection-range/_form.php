@@ -37,7 +37,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblallowmanualcollectionrange-bmc_code', 'dcs_code', Yii::t('app', 'DCS'), false, '', $readonly); ?>         
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('entry_type', $model, $form, 'form-group', $model->getAttributeLabel('entry_type'), false, 'entry_type', false); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('entry_type_collection', $model, $form, 'form-group', $model->getAttributeLabel('entry_type'), false, 'entry_type', false); ?>
     </div>
     <?= Html::activeHiddenInput($model, 'from_date', ['value' => $model->from_date]) ?>
     <?= Html::activeHiddenInput($model, 'to_date', ['value' => $model->to_date]) ?>
