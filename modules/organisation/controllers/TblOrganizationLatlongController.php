@@ -224,14 +224,15 @@ class TblOrganizationLatlongController extends ChildController
             $deleteModel[] = $this->model;
             $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Mapped Orgniation Latlong', 'delete']);
             if ($transaction == 'customRedirect') {
-                $record = ['status' => 'success', 'msg' => 'Record Deleted Successfully.'];
+                $this->redirect(['map-route-source', 'id' => $this->model->user_code]);
+                // $record = ['status' => 'success', 'msg' => 'Record Deleted Successfully.'];
             }
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
         }
-
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($record);
+       
     }
 
     
