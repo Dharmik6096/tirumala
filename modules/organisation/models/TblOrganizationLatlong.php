@@ -5,6 +5,7 @@ namespace app\modules\organisation\models;
 use app\models\ChildModel;
 // use app\models\User;
 use app\modules\usermanagement\models\User;
+use app\modules\organisation\models\TblOrganizationLatLongApplicability;
 use Yii;
 
 /**
@@ -156,5 +157,35 @@ class TblOrganizationLatlong extends ChildModel
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'customer_code']);
+    }
+
+    public function getUserOrgLatLong() {
+        $userData = $this->find()->alias('A')
+            ->innerJoin('tbl_user_organization_mapping B', 'A.customer_type = B.organization_type AND A.customer_code = B.organization_code')
+            ->where(['B.user_id' => $this->user_code])
+            ->where(['A.is_active' => 1])
+            ->all();
+
+        $othersData = $this->find()
+            ->where(['in', 'customer_type', ['HOME', 'OFFICE','OTHER']])
+            ->where(['customer_code' => $this->user_code,'is_active' => 1])
+            ->all();    
+        $userData = array_merge($userData, $othersData);
+            $values = TblOrganizationLatLongApplicability::find()->select(['applicable_code','applicable_for'])->where(['user_code' => $this->user_code])->asArray()->all();
+            $selected = [];
+           
+            //var_dump($results);exit;
+            if (!empty($userData)) {
+                foreach ($userData as $key => $row) {
+                    if (in_array($row->customer_code, array_column($values, 'applicable_code'), true) !== FALSE && in_array($row->customer_type, array_column($values, 'applicable_for'), true) !== FALSE) {
+                        // $selected[] = $row->customer_code . '-'. $row->organization_latlong_code .'-' . $row->customer_type;
+                        unset($userData[$key]);
+                    }
+                }
+            }
+            $userData = array_values($userData);
+
+            return ['userDataOrg' => $userData, 'selected' => $selected];
+        
     }
 }
