@@ -77,6 +77,9 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 create_fields" id="to_dcs">
                 <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblinventorytransfer-to_bmc_code,rls', 'to_dcs_code', $model->getAttributeLabel('to_dcs_code'), FALSE, '', FALSE, TRUE); ?>
             </div>
+            <div class="col-sm-2 create_fields" id="to_dcs_sap_vendor">
+                <?= $form->field($txModel, 'sap_vendor_code')->textInput(['readonly' => TRUE])->label(Yii::t('app', 'DCS ') . 'Vendor Code') ?>
+            </div>
             <?= Html::activeHiddenInput($model, 'to_code', ['id' => 't_code']) ?>
             <div class="col-sm-4 create_fields">
                 <?= $form->field($model, 'remarks')->textInput() ?>

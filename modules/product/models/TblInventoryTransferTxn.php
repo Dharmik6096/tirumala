@@ -33,6 +33,8 @@ use app\modules\globalmaster\models\TblUnits;
  */
 class TblInventoryTransferTxn extends \app\models\ChildModel {
 
+    public $sap_vendor_code;
+
     /**
      * @inheritdoc
      */
@@ -46,7 +48,7 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
     public function rules() {
         return [
             [['product_code', 'unit_code', 'qty', 'available_stock'], 'required'],
-            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no', 'is_stock_posted'], 'safe'],
+            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no', 'is_stock_posted', 'sap_vendor_code'], 'safe'],
             [['available_stock', 'qty'], 'number'],
             [['unit_code', 'originating_type'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],

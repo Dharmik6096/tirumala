@@ -24,7 +24,9 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'converted_amount', 'approved_at', 'approved_by', 'approval_status'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['approvalCollection']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['approvalDispatch']],
-        ];
+                [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalQtyImport']],
+        
+            ];
     }
 
     /**
@@ -98,4 +100,50 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
         return $dataProvider;
     }
 
+
+    public function qtyimportsearch($params) {
+        $query = TblCollectionDataAlias::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+//        $query->joinWith(['mccPlantCode.plantCode']);
+        // grid filtering conditions
+        $query->andWhere([
+            'tbl_collection_data_alias.union_code' => $this->union_code,
+            'tbl_collection_data_alias.plant_code' => $this->plant_code,
+            'tbl_collection_data_alias.action_perform' => $this->action_perform,
+            'tbl_collection_data_alias.table_name' => $this->table_name]);
+
+        if (!empty($this->from_date) || !empty($this->from_shift)) {
+            $from_date = date('Y-m-d', strtotime($this->from_date));
+            $from_shift = \Yii::$app->general->getshift($this->from_shift);
+            $from_date .= ' ' . $from_shift;
+            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+        }
+
+        if (!empty($this->to_date) || !empty($this->to_shift)) {
+            $to_date = date('Y-m-d', strtotime($this->to_date));
+            $to_shift = \Yii::$app->general->getshift($this->to_shift);
+            $to_date .= ' ' . $to_shift;
+            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+        }
+        $query->andFilterWhere([
+            'member_code' => $this->member_code,
+            'tbl_collection_data_alias.mcc_plant_code' => $this->mcc_plant_code,
+            'tbl_collection_data_alias.bmc_code' => $this->bmc_code,
+            'dcs_code' => $this->dcs_code]);
+        return $dataProvider;
+    }
 }
