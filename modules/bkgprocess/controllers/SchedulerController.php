@@ -334,7 +334,7 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'vendor_billing_import') {
                 $flag = 'vendor-billing-bulk';
                 $sp_name = 'DB_JOB_PORTAL_VSP_BILLING';
-            }else if ($row->file_type == 'milk_collection_qty') {
+            } else if ($row->file_type == 'milk_collection_qty') {
                 $flag = 'milk-collection-qty';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection_qty_wise';
             }
@@ -601,29 +601,28 @@ class SchedulerController extends ChildController {
         $model = new TblDcsDeactive();
         $limit = 250;
         $deactiveData = $model->getDeactiveRecords(true, '', $limit);
-        $unionConfigData = !empty($deactiveData) ? Yii::$app->general->getUnionConfiguration($deactiveData[0]->union_code, 'reset_data_on_deactivation', 'PORTAL') : '';
-        $this->setSentBox($model, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3, $unionConfigData);
-
+        $uniqueUnionConfigData = $this->getUniqueUnionConfigurations($deactiveData);
+        $this->setSentBox($model, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3, $uniqueUnionConfigData);
         $activeData = $model->getActiveRecords($limit);
         $this->setSentBox($model, $activeData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 1, 4, 5, 6);
 
         $CustModel = new TblCustomerDeactive();
         $deactiveData = $CustModel->getDeactiveRecords(true, '', $limit);
-        $unionConfigData = !empty($deactiveData) ? Yii::$app->general->getUnionConfiguration($deactiveData[0]->union_code, 'reset_data_on_deactivation', 'PORTAL') : '';
-        $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3, $unionConfigData);
+        $uniqueUnionConfigData = $this->getUniqueUnionConfigurations($deactiveData);
+        $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3, $uniqueUnionConfigData);
         $activeData = $CustModel->getActiveRecords($limit);
         $this->setSentBox($CustModel, $activeData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 1, 4, 5, 6);
 
 
         $MemberModel = new TblMemberDeactive();
         $deactiveData = $MemberModel->getDeactiveRecords(true, '', $limit);
-        $unionConfigData = !empty($deactiveData) ? Yii::$app->general->getUnionConfiguration($deactiveData[0]->union_code, 'reset_data_on_deactivation', 'PORTAL') : '';
-        $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3, $unionConfigData);
+        $uniqueUnionConfigData = $this->getUniqueUnionConfigurations($deactiveData);
+        $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3, $uniqueUnionConfigData);
         $activeData = $MemberModel->getActiveRecords($limit);
         $this->setSentBox($MemberModel, $activeData, 'member_deactive_code', 'TblMember', 'member_code', 1, 4, 5, 6);
     }
 
-    public function setSentBox($model, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error, $unionConfigData = '') {
+    public function setSentBox($model, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error, $uniqueUnionConfigData = []) {
         if (!empty($data)) {
             $ids = array_map(function($e) use ($key) {
                 return $e->{$key};
@@ -658,7 +657,7 @@ class SchedulerController extends ChildController {
                             $row->data_post_status = $success;
                             $row->response_datetime = date('Y-m-d H:i:s');
                             $row->resp_desc = 'Sentbox Generated';
-                            if (!empty($unionConfigData) && $status == '0') {
+                            if (!empty($uniqueUnionConfigData[$row->union_code]) && $status == '0') {
                                 $historyModelName = $model_name . 'History';
                                 $modelHistory = new $historyModelName();
                                 Yii::$app->operation->history($existData, $modelHistory, UPDATE);
@@ -705,6 +704,19 @@ class SchedulerController extends ChildController {
         $sentbox->source_org_id = $union;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    function getUniqueUnionConfigurations($dataList) {
+        $uniqueUnionConfigData = [];
+        if (!empty($dataList)) {
+            foreach ($dataList as $item) {
+                $unionCode = $item->union_code;
+                if (!isset($uniqueUnionConfigData[$unionCode])) {
+                    $uniqueUnionConfigData[$unionCode] = Yii::$app->general->getUnionConfiguration($unionCode, 'reset_data_on_deactivation', 'PORTAL');
+                }
+            }
+        }
+        return $uniqueUnionConfigData;
     }
 
     public function actionShiftCollectionComplete() {
