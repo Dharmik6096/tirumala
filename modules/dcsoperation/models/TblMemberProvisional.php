@@ -968,9 +968,8 @@ class TblMemberProvisional extends ChildModel {
                     if (file_exists($moveDir . '/' . $file)) {
                         unlink($moveDir . '/' . $file);
                     }
-                } catch (Exception $e) {
-                    echo 'Caught exception: ', $e->getMessage(), "\n";
-                    return true;
+                } catch (\Throwable $e) {
+                    
                 }
             }
         }
@@ -984,9 +983,8 @@ class TblMemberProvisional extends ChildModel {
                 if (file_exists($docDir . '/' . $all_doc)) {
                     unlink($docDir . '/' . $all_doc);
                 }
-            } catch (Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
-                return true;
+            } catch (\Throwable $e) {
+                
             }
         }
     }
