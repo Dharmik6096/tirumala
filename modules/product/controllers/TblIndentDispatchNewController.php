@@ -210,10 +210,11 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     $saveModel[] = $receiptTxn;
                                     $j++;
                                     if (isset($batchQuantities[$batch])) {
-                                        $batchQuantities[$batch] = $remaining_quantity;
+                                        $batchQuantities[$batch]['qty'] = $remaining_quantity;
                                     } else {
-                                        $batchQuantities[$batch] = $dispatch_quantity;
+                                        $batchQuantities[$batch]['qty'] = $dispatch_quantity;
                                     }
+                                    $batchQuantities[$batch]['rate'] = $existStock->rate;
                                 }
                             } else {
                                 $productName = Yii::$app->general->getForeignKey($fstockModel->productCode, 'product_name');
@@ -224,6 +225,8 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
 
                         foreach ($batchQuantities as $batch => $totalQty) {
                             //set to stock
+                            $rate = $totalQty['rate'];
+                            $totalQty = $totalQty['qty'];
                             $stockModel = new TblProductStock();
                             $stockModel->setCodes('DCS', $dcs);
 
@@ -251,6 +254,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $stockModel->product_stock_code = $stockModel->getCode($k);
                                 $stockModel->stock = $oldQty + $totalQty;
                                 $stockModel->x_col1 = Yii::$app->general->getUuid();
+                                $stockModel->rate = $rate;
                                 $k++;
                             }
                             $saveModel[] = $stockModel;

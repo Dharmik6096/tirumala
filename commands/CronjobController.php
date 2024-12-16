@@ -92,7 +92,7 @@ class CronjobController extends \yii\console\Controller {
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
-            'writer' => IOFactory::WRITER_XLS,
+            'writer' => IOFactory::WRITER_XLSX,
         ];
         $objPHPExcel = new Spreadsheet();
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
@@ -156,7 +156,6 @@ class CronjobController extends \yii\console\Controller {
                     $columnIndex = 1;
                 }
             });
-            
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');
         //  $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
