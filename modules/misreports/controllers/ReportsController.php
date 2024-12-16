@@ -1889,7 +1889,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'AvgPerVlcMilkQtySlabWiseCategory';
         return $this->actionIndex();
     }
-    
+
     public function actionIndentMemberDetail() {
         $this->report = 'IndentMemberDetail';
         return $this->actionIndex();
@@ -4129,7 +4129,7 @@ class ReportsController extends \app\controllers\ChildController {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
                 'extension' => 'xls',
-                'writer' => IOFactory::WRITER_XLS,
+                'writer' => IOFactory::WRITER_XLSX,
             ];
         }
         $objPHPExcel = new Spreadsheet();
@@ -4204,7 +4204,7 @@ class ReportsController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
+        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLSX);
         ob_start();
         $objWriter->save('php://output');
         exit();
