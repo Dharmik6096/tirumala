@@ -708,19 +708,6 @@ class SchedulerController extends ChildController {
         return $sentbox;
     }
 
-    function getUniqueUnionConfigurations($dataList) {
-        $uniqueUnionConfigData = [];
-        if (!empty($dataList)) {
-            foreach ($dataList as $item) {
-                $unionCode = $item->union_code;
-                if (!isset($uniqueUnionConfigData[$unionCode])) {
-                    $uniqueUnionConfigData[$unionCode] = Yii::$app->general->getUnionConfiguration($unionCode, 'reset_data_on_deactivation', 'PORTAL');
-                }
-            }
-        }
-        return $uniqueUnionConfigData;
-    }
-
     public function actionShiftCollectionComplete() {
         $apiMaster = new TblApiMaster();
         $apiMaster->receiver_type = 'EMAIL';
