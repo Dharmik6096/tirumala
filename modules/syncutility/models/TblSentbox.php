@@ -8,6 +8,8 @@ use yii\helpers\Json;
 use app\modules\installation\models\TblAndroidInstallationDetails;
 use yii\db\Query;
 use yii\data\ArrayDataProvider;
+use app\models\GeneralModel;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tbl_sentbox".
@@ -45,11 +47,11 @@ class TblSentbox extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['uuid'], 'required'],
-                [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'safe'],
-                [['sequence_no'], 'safe'],
-                [['posting_timestamp', 'sync_timestamp', 'error_timestamp', 'data_post_status'], 'safe'],
-                [['data_post_status'], 'default', 'value' => 0]
+            [['uuid'], 'required'],
+            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'safe'],
+            [['sequence_no'], 'safe'],
+            [['posting_timestamp', 'sync_timestamp', 'error_timestamp', 'data_post_status'], 'safe'],
+            [['data_post_status'], 'default', 'value' => 0]
         ];
     }
 
@@ -77,6 +79,72 @@ class TblSentbox extends \yii\db\ActiveRecord {
             'source_device_mac' => Yii::t('app', 'Source Device Mac'),
             'version_no' => Yii::t('app', 'Version No'),
         ];
+    }
+
+    public function setSentboxBatch($model, $operation, $sentboxArray) {
+        $addressBook = $this->isAddressBook(!empty($this->table_name) ? $this->table_name : $model->tableName());
+        if (!empty($addressBook) && $addressBook[0]->destinations == 1) {
+            $sentModel = new TblSentbox();
+            $sentModel->setAttributes($this->attributes);
+            $this->childEntryBatch($model, $operation, $sentModel, $sentboxArray);
+        }
+        return TRUE;
+    }
+
+    private function childEntryBatch($model, $operation, $sentModel, $sentboxArray) {
+        $save_model = [];
+        $destination = '';
+        switch (Yii::$app->session->get('organizations_type')) {
+            case 'NATIONAL':
+                $destination = 'FEDERATION';
+                break;
+            case 'FEDERATION':
+                $destination = 'UNION';
+                break;
+            case 'UNION':
+                $destination = 'DCS';
+                break;
+        }
+        $this->entry($model, $operation, $sentModel);
+
+        $destOrgId = [];
+        $destOrgType = [];
+        foreach ($sentboxArray as $sent) {
+            $destOrgId[] = $sent['code'] ?: '0';
+            $type = $sent['type'] ?: $destination;
+            if (!in_array($type, $destOrgType)) {
+                $destOrgType[] = $type;
+            }
+        }
+
+        $androidInstallationDetailsModel = new TblAndroidInstallationDetails();
+        $deviceData = $androidInstallationDetailsModel->getActiveDeviceDataForOrganizations($destOrgId, $destOrgType, $sentModel->device_id);
+        foreach ($deviceData as $device) {
+            $data = $sentModel->attributes;
+            $sent_box_model = new TblSentbox();
+            $sent_box_model->setAttributes($data);
+            $sent_box_model->device_id = !empty($device['device_id']) ? $device['device_id'] : '';
+            $sent_box_model->dest_org_type = $device['organization_type'];
+            $sent_box_model->dest_org_id = $device['organization_code'];
+            $sent_box_model->originating_org_id = !empty($sent_box_model->originating_org_id) ? $sent_box_model->originating_org_id : '001';
+            $sent_box_model->originating_org_type = !empty($sent_box_model->originating_org_type) ? $sent_box_model->originating_org_type : 'UNION';
+            $sent_box_model->source_org_id = !empty($sent_box_model->source_org_id) ? $sent_box_model->source_org_id : '001';
+            $sent_box_model->source_org_type = !empty($sent_box_model->source_org_type) ? $sent_box_model->source_org_type : 'UNION';
+            $sent_box_model->data_post_status = 0;
+            $save_model[] = $sent_box_model;
+        }
+        if (!empty($save_model)) {
+            $attributes = $save_model[0]->attributes();
+            $chunks = array_chunk($save_model, 1000);
+            foreach ($chunks as $chunk) {
+                $rows = array_map(function($model) {
+                    $model->uuid = new Expression('NEWID()');
+                    return $model->attributes;
+                }, $chunk);
+                Yii::$app->getDb()->createCommand()->batchInsert('tbl_sentbox', $attributes, $rows)->execute();
+            }
+        }
+        return true;
     }
 
     public function setSentbox($model, $operation, $count = 1) {
@@ -150,7 +218,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
                 $destination = 'DCS';
                 break;
         }
-        $this->entry($model, $operation, $sentModel);  
+        $this->entry($model, $operation, $sentModel);
         $sentModel->dest_org_id = !empty($sentModel->dest_org_id) ? $sentModel->dest_org_id : '0';
         $sentModel->dest_org_type = !empty($sentModel->dest_org_type) ? $sentModel->dest_org_type : $destination;
         if ($sentModel->table_name == 'tbl_route_mapping') {
@@ -162,7 +230,6 @@ class TblSentbox extends \yii\db\ActiveRecord {
         $model = new TblAndroidInstallationDetails();
         $model_data = $model->getActiveDeviceData($sentModel->dest_org_id, $sentModel->dest_org_type, $sentModel->device_id);
         $save_model = [];
-        $connection = Yii::$app->getDb();
         if (!empty($model_data)) {
             foreach ($model_data as $device) {
                 $sent_box_model = new TblSentbox();
@@ -172,11 +239,10 @@ class TblSentbox extends \yii\db\ActiveRecord {
                 $sent_box_model->originating_org_type = !empty($sent_box_model->originating_org_type) ? $sent_box_model->originating_org_type : 'UNION';
                 $sent_box_model->source_org_id = !empty($sent_box_model->source_org_id) ? $sent_box_model->source_org_id : '001';
                 $sent_box_model->source_org_type = !empty($sent_box_model->source_org_type) ? $sent_box_model->source_org_type : 'UNION';
-                $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
-                $sent_box_model->uuid = $command['id'];
+                $sent_box_model->uuid = Yii::$app->getDb()->createCommand('SELECT NEWID() as id')->queryScalar();
                 $save_model[] = $sent_box_model;
             }
-            $generalModel = new \app\models\GeneralModel();
+            $generalModel = new GeneralModel();
             $transaction = $generalModel->saveTransaction($save_model, ['Sent Box', 'create']);
             if ($transaction == 'customRedirect') {
                 return true;

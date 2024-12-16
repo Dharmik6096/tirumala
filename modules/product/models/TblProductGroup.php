@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\globalmaster\models\TblUnits;
 use yii\helpers\ArrayHelper;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_product_group".
@@ -96,13 +97,12 @@ class TblProductGroup extends \app\models\ChildModel {
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
-        foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                }
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+            $sentbox = new TblSentbox();
+            $sentbox->source_org_id = $this->union_code;
+            if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
             }
         }
     }
