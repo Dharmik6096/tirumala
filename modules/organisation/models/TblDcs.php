@@ -903,8 +903,8 @@ class TblDcs extends ChildModel {
                 }
             }
         }
-        if(!empty($this->set_master_hierarchy) && $flag == 'INSERT'){
-            foreach($this->set_master_hierarchy as $hierarchy) {
+        if (!empty($this->set_master_hierarchy) && $flag == 'INSERT') {
+            foreach ($this->set_master_hierarchy as $hierarchy) {
                 $hierarchy->save();
             }
         }
@@ -1427,6 +1427,10 @@ class TblDcs extends ChildModel {
                         ->where(['salerate.union_code' => $unionCode, 'salerate.is_member_rate' => 1])
                         ->orderBy(['salerate.wef_date' => SORT_DESC])
                         ->all();
+    }
+
+    public function resetData() {
+        $this->aadhaar_no = $this->pan_no = null;
     }
 
 }
