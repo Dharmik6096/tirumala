@@ -19,8 +19,8 @@ class TransitRecovery extends Model {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'order_on', 'ts_loss_responsibility', 'qty_diff_type', 'qty_diff_responsibility', 'shortage_recovery', 'total_recovery_incharge', 'total_recovery_transporter'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'order_on'], 'required', 'on' => ['transit-shortage']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'order_on', 'ts_loss_responsibility', 'qty_diff_type', 'qty_diff_responsibility', 'shortage_recovery', 'total_recovery_incharge', 'total_recovery_transporter'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'order_on'], 'required', 'on' => ['transit-shortage']],
         ];
     }
 
@@ -39,4 +39,5 @@ class TransitRecovery extends Model {
             'order_on' => \Yii::t('app', 'Order On'),
         ];
     }
+
 }

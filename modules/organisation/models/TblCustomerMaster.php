@@ -599,5 +599,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
     public function getAnimalTypeCode() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'animal_type_code']);
     }
+    
+    public function resetData() {
+        $this->aadhaar_no = null;
+    }
 
 }

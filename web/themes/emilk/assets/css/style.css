@@ -4419,7 +4419,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .dynamic_report_table thead tr th{
-    background-color: #00A3DE;
+    background-color: #00A3DE !important;
     color: #fff;
     border: 1px solid #ddd;
     text-align: center;
