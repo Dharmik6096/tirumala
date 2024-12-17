@@ -225,6 +225,10 @@ class TransitRecoveryController extends \app\controllers\ChildController {
             'MILKYMIST' => [
                 'fileToRender' => 'transit_recovery_mmd',
                 'spName' => 'sp_process_ts_loss_shortage_calculation'
+            ],
+            'ABT' => [
+                'fileToRender' => 'transit_recovery_mmd',
+                'spName' => 'sp_process_ts_loss_shortage_calculation_abt'
             ]
         ];
         return !empty($data[$clientCode]) ? $data[$clientCode] : [];
