@@ -868,6 +868,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         $model->qty_auto = 0;
         $model->dt_date = date('Y-m-d H:i:s');
         $datetime = date('Y-m-d H:i:s');
+        $model->own_bmc_code = $model->bmc_code;
         $model->sample_no = $this->getSampleNo();
         $model->date_time_of_recieve = $datetime;
         $model->type_of_data_receive = 'Manual';
@@ -892,7 +893,6 @@ class TblBmcCollection extends \app\models\ChildModel {
             }
         }
         $model->own_mcc_plant_code = $model->mcc_plant_code;
-        $model->own_bmc_code = $model->bmc_code;
     }
 
     public function postDataSet(&$model, $flag, &$modelSave, &$auto_key_config, $i, &$message = '', &$type = '') {
