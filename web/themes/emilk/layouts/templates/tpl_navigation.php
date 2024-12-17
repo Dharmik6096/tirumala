@@ -627,7 +627,8 @@ echo GhostMenu::widget([
                                     ['label' => '116 -' . Yii::t('app', 'Negative Growth VLCs'), 'url' => ['/misreports/reports/milk-collection-negative-groth']],
                                     ['label' => '117 -' . Yii::t('app', 'MCC comparison summary'), 'url' => ['/misreports/reports/bmc-milk-collection-proc']],
                                     ['label' => '118 -' . Yii::t('app', 'MCC comparison details'), 'url' => ['/misreports/reports/bmc-milk-collection-proc-detail']],
-                                    ['label' => '113 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
+                                    ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
+                                    ['label' => '120 -' . Yii::t('app', 'Company Wise Collection'), 'url' => ['/misreports/reports/company-wise-milk-collection']],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Customer receipt') . '<b class="caret"></b></a>',
