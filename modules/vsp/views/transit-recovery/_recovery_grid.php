@@ -128,15 +128,15 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
         <?php
         if (!empty($output)) {
             if (isset($output[0]['message'])) {
-                echo Html::submitButton(Yii::t('app', 'Unlock'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'unlock']);
+                echo Html::submitButton(Yii::t('app', 'Unlock'), ['class' => 'btn btn-login btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'unlock']);
             } else {
-                echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']);
-                echo Html::submitButton(Yii::t('app', 'Save & Lock'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save_lock']);
+                echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-login btn-primary apply-shortcut me-2', 'name' => 'submitBtn', 'value' => 'save']);
+                echo Html::submitButton(Yii::t('app', 'Save & Lock'), ['class' => 'btn btn-login btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save_lock']);
             }
         }
         ?>
         <div onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')"class="btn-login btn btn-primary apply-shortcut widget_table_search_btnaa downloadDashboardExcel right_30aa mis_custom_report"><i class="far fa-file-excel"></i></div>
-        <?= Yii::$app->controls->custombutton('Cancel', 'transit-loss-shortage',false,'btn-login btn-danger apply-shortcut'); ?> 
+        <?= Yii::$app->controls->custombutton('Cancel', 'transit-loss-shortage', false, 'btn-login btn-danger apply-shortcut'); ?> 
 
     </div>
     <?php ActiveForm::end(); ?>
