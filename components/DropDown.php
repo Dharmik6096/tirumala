@@ -1978,7 +1978,7 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['tbl_milk_collection' => Yii::t('app', 'Milk Collection'), 'tbl_bmc_collection' => Yii::t('app', 'BMC Collection')],
             ],
-            'entry_type' => [
+            'entry_type_collection' => [
                 'name' => 'entry_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['backdate' => Yii::t('app', 'Back Date'), 'realtime' => Yii::t('app', 'Real Time')],
@@ -2131,6 +2131,7 @@ class DropDown extends Component {
             'product_depend_group' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'product_group_code'],
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
             'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
+            'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
         ];
         return $label[$l];
     }

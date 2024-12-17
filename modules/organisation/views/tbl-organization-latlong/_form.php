@@ -27,11 +27,11 @@ $form = ActiveForm::begin([
         </div>
         <?php
     } ?>
-    <div class="col-sm-2 create_fields">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
-    </div>
     <?php
     if ($type == 'create') { ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
+        </div>
         <div class="col-sm-2 create_fields <?= $disable ?>">
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblorganizationlatlong-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
         </div>
@@ -45,10 +45,10 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblorganizationlatlong-bmc_code', 'dcs_code', Yii::t('app', 'DCS'), FALSE); ?>
         </div>
         <div class="col-sm-2 create_fields <?= $disable ?>">
-            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblorganizationlatlong-bmc_code,tblorganizationlatlong-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
+            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblorganizationlatlong-bmc_code,tblorganizationlatlong-customer_type', 'customer_code_other', $model->getAttributeLabel('customer_code'), FALSE); ?>
         </div>
         <div class="col-sm-2 create_fields <?= $disable ?>">
-            <?= Yii::$app->dropdown->dropdown('user', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('user_code'), false, 'user_code'); ?>
+            <?= Yii::$app->dropdown->dropdown('latlong_user', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('user_code'), false, 'user_code'); ?>
         </div>
     <?php
     } ?>
@@ -76,6 +76,7 @@ $script = "
 $(document).ready(function(){
     $('.create_fields').hide();
     hideShowField();
+    $('.field-tblorganizationlatlong-union_code').parent('div').hide();
     setCode();
     $('#tblorganizationlatlong-customer_type').on('change', function(){
         hideShowField();
@@ -83,6 +84,7 @@ $(document).ready(function(){
 
     function hideShowField(){
         var moduleName = $('#tblorganizationlatlong-customer_type').val();
+        $('.field-tblorganizationlatlong-union_code').parent('div').show();
         $('.create_fields').hide();
         if(moduleName == 'PLANT'){
             $('#tblorganizationlatlong-plant_code').closest('.create_fields').show();
@@ -102,9 +104,10 @@ $(document).ready(function(){
             $('#tblorganizationlatlong-plant_code').closest('.create_fields').show();
             $('#tblorganizationlatlong-mcc_plant_code').closest('.create_fields').show();
             $('#tblorganizationlatlong-bmc_code').closest('.create_fields').show();
-            $('#tblorganizationlatlong-customer_code').closest('.create_fields').show();
+            $('#tblorganizationlatlong-customer_code_other').closest('.create_fields').show();
         } else if (moduleName == 'HOME' || moduleName == 'OFFICE' || moduleName == 'OTHER'){
             $('#tblorganizationlatlong-user_code').closest('.create_fields').show();
+            $('.field-tblorganizationlatlong-union_code').parent('div').hide();
         }
     }
 
@@ -118,7 +121,7 @@ $(document).ready(function(){
         var mcc = $('#tblorganizationlatlong-mcc_plant_code').val();
         var bmc = $('#tblorganizationlatlong-bmc_code').val();
         var dcs = $('#tblorganizationlatlong-dcs_code').val();
-        var customer = $('#tblorganizationlatlong-customer_code').val();
+        var customer = $('#tblorganizationlatlong-customer_code_other').val();
         var user = $('#tblorganizationlatlong-user_code').val();
         $('#customer_code').val('');
         if(moduleName == 'PLANT'){

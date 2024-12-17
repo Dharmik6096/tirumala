@@ -92,6 +92,10 @@ $client_code = strtolower($client_code);
                     <tr>
                         <!-- <th rowspan='2'><?php //Yii::t('app', 'MCC')                ?></th> -->
                         <th rowspan='2'><?= Yii::t('app', 'BMC ') ?></th>
+                        <th rowspan='2'><?= Yii::t('app', 'From Date') ?></th>
+                        <th rowspan='2'><?= Yii::t('app', 'From Shift') ?></th>
+                        <th rowspan='2'><?= Yii::t('app', 'To Date') ?></th>
+                        <th rowspan='2'><?= Yii::t('app', 'To Shift') ?></th>
                         <th colspan='7'><?= Yii::t('app', 'CC Collection') ?></th>
                         <th colspan='6'><?= Yii::t('app', 'BMC Receipts') ?></th>
                         <?php if ($client_code != 'gyan') { ?>
