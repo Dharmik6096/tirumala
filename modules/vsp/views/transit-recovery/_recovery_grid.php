@@ -135,7 +135,7 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
             }
         }
         ?>
-        <div onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')"class="btn-login btn btn-primary apply-shortcut widget_table_search_btnaa downloadDashboardExcel right_30aa mis_custom_report"><i class="far fa-file-excel"></i></div>
+        <?= Html::button('<i class="far fa-file-excel"></i>', ['class' => 'btn-login btn btn-primary apply-shortcut', 'onclick' => "exportThisWithParameter('recovery_grid', '{$this->title}')"]); ?>
         <?= Yii::$app->controls->custombutton('Cancel', 'transit-loss-shortage', false, 'btn-login btn-danger apply-shortcut'); ?> 
 
     </div>
