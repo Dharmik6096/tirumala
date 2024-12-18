@@ -51,7 +51,7 @@ class TblContactDetails extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
             // [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['module_name', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
-                [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc'], 'safe'],
+                [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc', 'union_code'], 'safe'],
                 [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
                     Yii::$app->general->validateEmail($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],

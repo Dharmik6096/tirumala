@@ -9,6 +9,9 @@ $mail_info = !empty($mail_info) ? $mail_info : FALSE;
     <? = $form->field($model, 'contact_person')->textInput() ?>
 </div>-->
 <div class="col-sm-2">
+    <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+</div>
+<div class="col-sm-2">
     <?= $form->field($model, 'firstname')->textInput() ?>
 </div>
 <div class="col-sm-2">

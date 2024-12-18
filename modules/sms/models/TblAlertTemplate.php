@@ -57,8 +57,8 @@ class TblAlertTemplate extends \yii\db\ActiveRecord {
         return new TblAlertTemplateQuery(get_called_class());
     }
 
-    public function getTemplateData($module, $receiver = 'SMS', $union = '') {
-        $query = $this->find()->where(['module_type' => $module, 'receiver_type' => $receiver]);
+    public function getTemplateData($module, $receiver = 'SMS', $union) {
+        $query = $this->find()->where(['module_type' => $module, 'receiver_type' => $receiver, 'union_code' => $union]);
         if (!empty($union)) {
             $query->andWhere(['union_code' => $union]);
         }
