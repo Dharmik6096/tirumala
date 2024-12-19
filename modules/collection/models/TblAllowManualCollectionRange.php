@@ -89,7 +89,6 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
                             $type = 'DCS';
                         }
                         Yii::$app->general->paymentCycleLock($this, 'from_date', 'bmc_code', 'BMC', $type, $flag);
-                        Yii::$app->general->paymentCycleLock($this, 'to_date', 'bmc_code', 'BMC', $type, $flag);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'hosync']],
         ];
