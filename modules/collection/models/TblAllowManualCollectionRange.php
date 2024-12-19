@@ -78,6 +78,19 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             ],
                 [['application_type'], 'default', 'value' => 'MOBILE'],
                 [['to_date'], 'checkUniqueDate', 'skipOnError' => true, 'on' => ['create', 'hosync']],
+                [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        if ($this->table_name == 'tbl_milk_collection') {
+                            $flag = ['data_lock_member', 'billing_lock_member', 'sync_lock_member'];
+                            $type = 'DCS';
+                        }
+                        if ($this->table_name == 'tbl_bmc_collection') {
+                            $flag = ['data_lock_bmc', 'billing_lock_bmc', 'sync_lock_bmc'];
+                            $type = 'DCS';
+                        }
+                        Yii::$app->general->paymentCycleLock($this, 'from_date', 'bmc_code', 'BMC', $type, $flag);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'hosync']],
         ];
     }
 

@@ -98,7 +98,7 @@ class TblOrganizationLatlong extends ChildModel {
             'organization_latlong_code' => Yii::t('app', 'Organization Latlong Code'),
             'union_code' => Yii::t('app', 'Union'),
             'customer_type' => Yii::t('app', 'Customer Type'),
-            'customer_code' => Yii::t('app', 'Customer Code'),
+            'customer_code' => Yii::t('app', 'Customer'),
             'lat_long' => Yii::t('app', 'Lat Long'),
             'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -108,7 +108,11 @@ class TblOrganizationLatlong extends ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'customer_code_other' => Yii::t('app', 'Customer Code'),
+            'customer_code_other' => Yii::t('app', 'Customer'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
         ];
     }
 

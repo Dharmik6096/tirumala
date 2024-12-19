@@ -460,7 +460,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('month', 'report_req_status', 'payment_type'))) {
+                                        if (in_array($value, array('month', 'report_req_status', 'payment_type', 'rate_cal_for'))) {
                                             ?>
                                             <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?>
@@ -511,7 +511,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('bill_head_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->bill_head($model, $form, 'reportsmodel-union_code','bill_head_code', 'Bill Head', 'U'); ?>       
+                                                <?= Yii::$app->dropdown->bill_head($model, $form, 'reportsmodel-union_code', 'bill_head_code', 'Bill Head', 'U'); ?>       
                                             </div>
                                             <?php
                                         }
