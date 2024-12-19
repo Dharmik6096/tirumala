@@ -20,7 +20,6 @@ use app\modules\organisation\models\TblDcsMilkTypeHistory;
 use app\modules\organisation\models\TblRouteMappingSources;
 use app\modules\organisation\models\TblRouteMappingSourcesHistory;
 use app\modules\dcsoperation\models\TblMember;
-use yii\base\UserException;
 use app\modules\product\models\TblProductSaleRate;
 use app\modules\product\models\TblProductSaleRateApplicability;
 use app\models\TblUserOrganizationMapping;
