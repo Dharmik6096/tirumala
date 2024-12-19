@@ -65,6 +65,8 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
                             $approvalModel->customer_type = $type;
                             $approvalMap[$approvalKey] = $approvalModel;
                             $saveModel[] = $approvalModel;
+                            $modelStages = new TblApprovalStagesDetail();
+                            $modelStages->setApprovalData($existingTransaction->union_code, 'tbl_payment_transaction_approval', $approvalModel->payment_transaction_approval_code, $saveModel, $approval_stages);
                         } else {
                             $approvalMap[$approvalKey]->total_amount += $existingTransaction->total_amount;
                             $approvalMap[$approvalKey]->total_deduction += $existingTransaction->total_deduction;
@@ -80,9 +82,6 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
                         $approvalMap[$approvalKey]->avg_rate = $approvalMap[$approvalKey]->total_amount/$approvalMap[$approvalKey]->qty;
                         $newTransaction->payment_transaction_approval_code = $approvalMap[$approvalKey]->payment_transaction_approval_code;
                         $newTransaction->is_approved = 0;
-
-                        $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setApprovalData($existingTransaction->union_code, 'tbl_payment_transaction_approval', $newTransaction->payment_transaction_code, $saveModel, $approval_stages);
                     }
                     $saveModel[] = $newTransaction;
                 }
