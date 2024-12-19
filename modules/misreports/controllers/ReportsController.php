@@ -1894,7 +1894,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'IndentMemberDetail';
         return $this->actionIndex();
     }
-    
+
     public function actionCompanyWiseMilkCollection() {
         $this->report = 'CompanyWiseMilkCollection';
         if (Yii::$app->request->queryParams) {
@@ -1905,6 +1905,11 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'DcsWiseMilkCollection';
             }
         }
+        return $this->actionIndex();
+    }
+
+    public function actionRateRecalculationWefDateWise() {
+        $this->report = 'RateRecalculationWefDateWise';
         return $this->actionIndex();
     }
 
@@ -4076,6 +4081,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'CompanyWiseMilkCollection',
                 'title' => 'Company Wise Collection',
                 'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'RateRecalculationWefDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
+                'scenario' => 'RateRecalculationWefDateWise',
+                'title' => 'Rate Recalculation(Custom)',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
