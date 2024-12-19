@@ -12,6 +12,7 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_allow_manual_collection_range".
@@ -78,6 +79,20 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             ],
                 [['application_type'], 'default', 'value' => 'MOBILE'],
                 [['to_date'], 'checkUniqueDate', 'skipOnError' => true, 'on' => ['create', 'hosync']],
+                [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        if ($this->table_name == 'tbl_milk_collection') {
+                            $flag = ['data_lock_member', 'billing_lock_member', 'sync_lock_member'];
+                            $type = 'DCS';
+                        }
+                        if ($this->table_name == 'tbl_bmc_collection') {
+                            $flag = ['data_lock_bmc', 'billing_lock_bmc', 'sync_lock_bmc'];
+                            $type = 'DCS';
+                        }
+                        Yii::$app->general->paymentCycleLock($this, 'from_date', 'bmc_code', 'BMC', $type, $flag);
+                        Yii::$app->general->paymentCycleLock($this, 'to_date', 'bmc_code', 'BMC', $type, $flag);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'hosync']],
         ];
     }
 
