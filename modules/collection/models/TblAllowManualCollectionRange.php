@@ -12,7 +12,6 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
-use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_allow_manual_collection_range".
