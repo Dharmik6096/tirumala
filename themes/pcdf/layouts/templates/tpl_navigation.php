@@ -205,6 +205,7 @@ echo GhostMenu::widget([
                     ['label' => 'Milk Purchase Rate', 'url' => ['/dcsoperation/tbl-purchase-rate/index'], 'active' => ($cntrl == 'tbl-purchase-rate')],
                     ['label' => 'Milk Purchase Rate (' . Yii::t('app', 'BMC') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate/index'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate')],
                     ['label' => 'Rate Recalculation', 'url' => ['/dcsoperation/tbl-rate-recalculation/index'], 'active' => ($cntrl == 'tbl-rate-recalculation')],
+                    ['label' => 'Rate Recalculation (Custom)', 'url' => ['/misreports/reports/rate-recalculation-wef-date-wise'], 'active' => ($cntrl == 'reports' && $action == 'rate-recalculation-wef-date-wise')],
                     ['label' => 'Collection Penalty Rate', 'url' => ['/collection/tbl-collection-penalty-rate/index'], 'active' => ($cntrl == 'tbl-collection-penalty-rate')],
                     ['label' => 'Scheme Rate', 'url' => ['/dcsoperation/tbl-scheme-rate/index'], 'active' => ($cntrl == 'tbl-scheme-rate' && $action == 'index')],
                     ['label' => 'Milk Cost Param', 'url' => ['/collection/tbl-milkcost-param/index'], 'active' => ($cntrl == 'tbl-milkcost-param')],
@@ -562,7 +563,8 @@ echo GhostMenu::widget([
                                     ['label' => '116 -' . Yii::t('app', 'Negative Growth VLCs'), 'url' => ['/misreports/reports/milk-collection-negative-groth']],
                                     ['label' => '117 -' . Yii::t('app', 'MCC comparison summary'), 'url' => ['/misreports/reports/bmc-milk-collection-proc']],
                                     ['label' => '118 -' . Yii::t('app', 'MCC comparison details'), 'url' => ['/misreports/reports/bmc-milk-collection-proc-detail']],
-                                    ['label' => '113 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
+                                    ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
+                                    ['label' => '120 -' . Yii::t('app', 'Company Wise Collection'), 'url' => ['/misreports/reports/company-wise-milk-collection']],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Customer receipt') . '<b class="caret"></b></a>',

@@ -1885,9 +1885,27 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'AvgPerVlcMilkQtySlabWiseCategory';
         return $this->actionIndex();
     }
-    
+
     public function actionIndentMemberDetail() {
         $this->report = 'IndentMemberDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionCompanyWiseMilkCollection() {
+        $this->report = 'CompanyWiseMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'PlantWiseMilkCollection';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'DcsWiseMilkCollection';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionRateRecalculationWefDateWise() {
+        $this->report = 'RateRecalculationWefDateWise';
         return $this->actionIndex();
     }
 
@@ -4038,6 +4056,34 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'proc_member_indent_report',
                 'scenario' => 'IndentMemberDetail',
                 'title' => 'Indent Member Detail',
+            ],
+            'CompanyWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_company_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'PlantWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_plant_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'DcsWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_dcs_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'RateRecalculationWefDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
+                'scenario' => 'RateRecalculationWefDateWise',
+                'title' => 'Rate Recalculation(Custom)',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
