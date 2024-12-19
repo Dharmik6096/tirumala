@@ -105,6 +105,9 @@ $grid_option = [
     'id' => 'milk-collection-special-list',
     'attributes' => $attribute,
     'active_column' => false,
+    'actions' => [
+        'view' => true
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

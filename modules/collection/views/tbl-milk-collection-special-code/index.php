@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Special Milk Collection'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Special'));
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

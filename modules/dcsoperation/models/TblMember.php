@@ -100,7 +100,7 @@ class TblMember extends ChildModel {
     public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern, $bmc_code;
     public $operation, $verifie_for, $file_name, $dcs_ref_code;
     public $check_is_dcs_member = 1;
-    public $import_eipl_code, $import_union_code, $import_union_config;
+    public $import_eipl_code, $import_union_code, $import_union_config, $special_code;
 
     /**
      * @inheritdoc
@@ -203,11 +203,12 @@ class TblMember extends ChildModel {
                     return $this->is_dcs_member;
                 },],
                 [['member_code'], 'setNullValue'],
-                [['dcs_code', 'member_code', 'x_col5'], 'required', 'on' => ['specialCodeImportCsv']],
+                [['dcs_code', 'member_code', 'special_code'], 'required', 'on' => ['specialCodeImportCsv']],
                 [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'on' => ['specialCodeImportCsv']],
                 [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code'], 'on' => ['specialCodeImportCsv']],
-                [['x_col5'], 'exist', 'skipOnError' => true, 'targetClass' => TblMemberSpecialCode::className(), 'targetAttribute' => ['amcs_special_code' => 'x_col5'], 'on' => ['specialCodeImportCsv']],
                 [['dcs_code'], 'validateImport', 'on' => ['specialCodeImportCsv']],
+                [['special_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMemberSpecialCode::className(), 'targetAttribute' => ['special_code' => 'special_code'], 'on' => ['specialCodeImportCsv']],
+                [['special_code'], 'setImport', 'on' => ['specialCodeImportCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -746,6 +747,12 @@ class TblMember extends ChildModel {
             if (empty($existMember)) {
                 $this->addError('dcs_code', Yii::t('app/validation', 'DCS is not Parent dcs of Member'));
             }
+        }
+    }
+
+    public function setImport($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->x_col5 = $this->special_code;
         }
     }
 

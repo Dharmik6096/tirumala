@@ -11,6 +11,7 @@ use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_milk_collection_special_code".
@@ -194,6 +195,10 @@ class TblMilkCollectionSpecialCode extends \app\models\ChildModel {
 
     public function getMccPlantCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
 }
