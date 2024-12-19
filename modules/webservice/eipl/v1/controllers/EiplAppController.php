@@ -36,9 +36,9 @@ class EiplAppController extends MasterController {
             $modelSave[] = $temp_model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['app registration', 'create']);
             if ($transaction == 'customRedirect') {
-                $templateModel = new TblAlertTemplate();
-                $templateData = $templateModel->getTemplateData('eipl_app_otp', 'SMS', $temp_model->union_code);
-                if (!empty($templateData) && !YII_ENV_DEV && !empty($LiveOTPforHOMobileApp)) {
+                if (!YII_ENV_DEV && !empty($LiveOTPforHOMobileApp)) {
+                    $templateModel = new TblAlertTemplate();
+                    $templateData = $templateModel->getTemplateData('eipl_app_otp', 'SMS', $temp_model->union_code);
                     $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
                     $sms_data = [];
                     $sms_data['refecence_code'] = (string) $temp_model->app_login_id;

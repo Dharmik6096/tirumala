@@ -184,7 +184,7 @@ class TblContactDetails extends \app\models\ChildModel {
 
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
-            $this->union_code = Yii::$app->session->has('Unions') ? Yii::$app->session->get('Unions') : '';
+            $this->union_code = Yii::$app->session->get('Unions');
             return true;
         }
         return false;
