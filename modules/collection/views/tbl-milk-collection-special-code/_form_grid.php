@@ -2,11 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use app\modules\globalmaster\models\TblAnimalType;
-use yii\web\View;
 
-$milkType = new TblAnimalType();
-$milk_type = $milkType->getAnimalMilkTypeArray();
 $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 ?>
 
@@ -59,7 +55,7 @@ $attribute = [
         ['attribute' => 'sample_no', 'vAlign' => 'middle'],
         ['attribute' => 'milk_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
-        }, 'filter' => Html::activeDropDownList($searchModel, 'milk_type_code', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],
+        }, 'filter' => false],
         ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkQualityCode, 'milk_quality_type_name');
         }, 'vAlign' => 'middle', 'filter' => false],
@@ -111,14 +107,4 @@ $grid_option = [
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-?>
-<?php
-
-$script = "
-$(document).ready(function(){
-        setInterval(() => {
-            $.pjax.reload({container: '#milk-collection-special-slist'});
-        },30000);
-});";
-$this->registerJs($script, View::POS_END, 'milk-collection-list');
 ?>

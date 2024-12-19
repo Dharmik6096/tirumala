@@ -5,14 +5,12 @@ namespace app\modules\collection\controllers;
 use Yii;
 use app\modules\collection\models\TblMilkCollectionSpecialCode;
 use app\modules\collection\models\TblMilkCollectionSpecialCodeSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TblMilkCollectionSpecialCodeController implements the CRUD actions for TblMilkCollectionSpecialCode model.
  */
-class TblMilkCollectionSpecialCodeController extends Controller {
+class TblMilkCollectionSpecialCodeController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblMilkCollectionSpecialCode models.
