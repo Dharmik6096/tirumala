@@ -29,7 +29,7 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
             $approvalMap = [];
             $count = 1;
             foreach ($selectCodes as $key => $value) {
-                [$paymentTransactionCode, $bmcCode, $type, $paymentDate] = explode('###', $value);
+                [$paymentTransactionCode, $bmcCode, $type, $fromDate, $toDate] = explode('###', $value);
                 $existingTransaction = TblPaymentTransaction::find()->where(['payment_transaction_code' => $paymentTransactionCode, 'bank_status' => ['FAILED']])->one();
                 if (!empty($existingTransaction)) {
                     $historyModel = new TblPaymentTransactionHistory();
@@ -54,7 +54,7 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
                     $saveModel[] = $existingTransaction;
                     $config = Yii::$app->general->getUnionConfiguration($existingTransaction->union_code, 'payment_disburse_with_workflow', 'PORTAL');
                     if ($config == 1) {
-                        $approvalKey  = $bmcCode . '-' . $type . '-' . $paymentDate;
+                        $approvalKey  = $bmcCode . '-' . $type . '-' . $fromDate . '-' . $toDate;
                         if (!isset($approvalMap[$approvalKey])) {
                             $approvalModel = new TblPaymentTransactionApproval();
                             $approvalModel->attributes = $existingTransaction->attributes;

@@ -20,18 +20,9 @@ $this->title = Yii::t('app', 'Reject Reinitiate');
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model, $key, $index) {
-                    $code = $model['payment_transaction_code'].'###'.$model['bmc_code'].'###'.$model['type'].'###'.date('Y-m-d', strtotime($model['payment_date']));
+                    $code = $model['payment_transaction_code'].'###'.$model['bmc_code'].'###'.$model['type'].'###'.date('Y-m-d', strtotime($model['from_date'])).'###'.date('Y-m-d', strtotime($model['to_date']));
                     return ['class' => 'checkbox', 'value' => $code];
                 }],
-                ['attribute' => 'union_code', 'value' => function($model) {
-                    return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-                }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-                ['attribute' => 'plant_code', 'value' => function($model) {
-                    return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-                }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-                ['attribute' => 'mcc_plant_code', 'value' => function($model) {
-                    return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-                }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
                 ['attribute' => 'bmc_code',
                 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
