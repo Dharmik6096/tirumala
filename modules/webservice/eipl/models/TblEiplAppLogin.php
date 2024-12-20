@@ -50,7 +50,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
      */
     public function rules() {
         return [
-                [['app_type', 'otp_code', 'sms_sent', 'is_active', 'is_expired', 'device_detail'], 'safe'],
+                [['app_type', 'otp_code', 'sms_sent', 'is_active', 'is_expired', 'device_detail', 'union_code'], 'safe'],
                 [['eipl_code', 'mobile_no', 'master_type', 'master_code', 'login_type', 'module_type', 'module_code', 'imei_no', 'device_id', 'lat_long', 'access_token', 'auth_key', 'version_no', 'sms_log'], 'safe'],
                 [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at', 'department'], 'safe'],
                 [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at'], 'default', 'value' => date('Y-m-d H:i:s')],
@@ -203,6 +203,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                             . "ELSE module_name END)",
                             'department' => 'department',
                             'module_name' => 'firstname',
+                            'union_code' => 'union_code',
                         ])
                         ->where(['or',
                                 ['mobile_no' => $encryptedmobile],
@@ -224,6 +225,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                             'login_type' => new Expression("'MEMBER'"),
                             'department' => new Expression("'MEMBER'"),
                             'module_name' => 'member_name',
+                            'union_code' => 'union_code',
                         ])
                         ->where(['or',
                                 ['mobile_no' => $encryptedmobile],
