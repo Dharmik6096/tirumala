@@ -24,7 +24,7 @@ $multiple = isset($multiple) ? TRUE : FALSE;
     <div class="col-sm-2 ">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblpaymenttransactionsearch-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
     </div>
-    <div class="col-sm-2 ">
+    <div class="col-sm-1 ">
         <?php
             $where = json_encode(['is_billing' => 1]);
             $notInArr = json_encode([]);
@@ -33,13 +33,12 @@ $multiple = isset($multiple) ? TRUE : FALSE;
             echo Yii::$app->dropdown->customerType($model, $form, 'tblpaymenttransactionsearch-union_code,customer_type_depends,customer_type_depends_not_in', 'type', $model->getAttributeLabel('type'), FALSE, FALSE);
         ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-1">
         <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-1">
         <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
     </div>
-
     <div class="col-sm-2 mt23">
         <?= Yii::$app->controls->search(); ?>
     </div>

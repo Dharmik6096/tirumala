@@ -2,6 +2,10 @@
 
 namespace app\modules\payment\models;
 
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblUnions;
 use Yii;
 use yii\db\Expression;
 
@@ -62,8 +66,8 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                 [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
                 [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
                 [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
-                [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code'], 'safe'],
-                [['plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+                [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code', 'created_by', 'updated_by'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -110,7 +114,9 @@ class TblPaymentTransaction extends \app\models\ChildModel {
             'member_count' => Yii::t('app', 'Member Count'),
             'plant_code' =>  Yii::t('app', 'PLANT'), 
             'mcc_plant_code' => Yii::t('app', 'MCC'),
-            'bmc_code' => Yii::t('app', 'Member BMC')
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'from_date' => Yii::t('app', 'From Date'),
+            'to_date' => Yii::t('app', 'To Date'),
         ];
     }
 
@@ -248,6 +254,21 @@ class TblPaymentTransaction extends \app\models\ChildModel {
             }
         }
         return;
+    }
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

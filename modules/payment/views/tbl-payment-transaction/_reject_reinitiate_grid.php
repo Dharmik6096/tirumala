@@ -4,8 +4,6 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use yii\helpers\Url;
-use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Reject Reinitiate');
 ?>
@@ -17,61 +15,53 @@ $this->title = Yii::t('app', 'Reject Reinitiate');
     ?>
     <div class="">
         <?php
-        // echo Html::activeHiddenInput($searchModel, 'union_code', ['value' => $searchModel->union_code]);
-        // echo Html::activeHiddenInput($searchModel, 'plant_code', ['value' => $searchModel->plant_code]);
-        // echo Html::activeHiddenInput($searchModel, 'mcc_plant_code', ['value' => $searchModel->mcc_plant_code]);
-        // echo Html::activeHiddenInput($searchModel, 'bmc_code', ['value' => $searchModel->bmc_code]);
-        // echo Html::activeHiddenInput($searchModel, 'type', ['value' => $searchModel->type]);
         $attribute = [
                 ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model, $key, $index) {
-                    $code = $model['payment_transaction_code'].'###'.$model['bmc_code'].'###'.$model['type'];
+                    $code = $model['payment_transaction_code'].'###'.$model['bmc_code'].'###'.$model['type'].'###'.date('Y-m-d', strtotime($model['payment_date']));
                     return ['class' => 'checkbox', 'value' => $code];
                 }],
-                ['attribute' => 'union_code', 'filter' => FALSE],
-                ['attribute' => 'plant_code', 'filter' => FALSE],
-                ['attribute' => 'mcc_plant_code', 'filter' => FALSE],
-                ['attribute' => 'bmc_code', 'filter' => FALSE],
-                ['attribute' => 'name', 'filter' => FALSE],
-                ['attribute' => 'type', 'filter' => FALSE],
+                ['attribute' => 'union_code', 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+                }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+                ['attribute' => 'plant_code', 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+                ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+                ['attribute' => 'bmc_code',
+                'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+                },
+                'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
+                ['attribute' => 'bmc_code',
+                    'label' => Yii::t('app', 'BMC Name'),
+                    'value' => function($model) {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    }, 'vAlign' => 'middle', 'filter' => false],
+                ['attribute' => 'payment_cycle', 'value' => function($model) {
+                        return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+                    }, 'filter' => false, 'format' => 'raw'],
+                ['attribute' => 'type'],
                 ['attribute' => 'payment_date', 'label' => Yii::t('app', 'Payment Date'), 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->payment_date);
                 }, 'filter' => FALSE],
-                ['attribute' => 'total_amount', 'filter' => FALSE],
-                ['attribute' => 'total_deduction', 'filter' => FALSE],
                 ['attribute' => 'final_amount', 'filter' => FALSE],
-                // ['attribute' => 'disburse_amount', 'filter' => FALSE],
-                // ['attribute' => 'qty', 'filter' => FALSE],
-                // ['attribute' => 'avg_fat', 'filter' => FALSE],
-                // ['attribute' => 'avg_snf', 'filter' => FALSE],
-                // ['attribute' => 'kg_fat', 'filter' => FALSE],
-                // ['attribute' => 'kg_snf', 'filter' => FALSE],
-                // ['attribute' => 'avg_rate', 'filter' => FALSE],
+                ['attribute' => 'name', 'label' => Yii::t('app', 'name'), 'value' => function($model, $key, $index) use ($form) {
+                    return $form->field($model, '[' . $model->payment_transaction_code . ']name')->textInput(['value' => $model->name, 'class' => 'form-control number-validate', 'data-id' => $key])->label(FALSE);
+                }, 'format' => 'raw', 'filter' => FALSE],
+                ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'Bank Account No'), 'filter' => FALSE,
+                    'format' => 'raw',
+                    'value' => function ($model, $key, $index) use ($form) {
+                        return $form->field($model, '[' . $model->payment_transaction_code . ']bank_account_no')->textInput(['value' => $model->bank_account_no, 'class' => 'form-control number-validate', 'data-id' => $key])->label(FALSE);
+                    },
+                ],
                 ['attribute' => 'bank_name', 'filter' => FALSE],
-                ['attribute' => 'bank_code', 'filter' => FALSE],
-                ['attribute' => 'branch_name', 'filter' => FALSE],
-                ['attribute' => 'branch_code', 'filter' => FALSE,
-                'format' => 'raw',
-                'value' => function ($model, $key, $index) use ($form) {
-                    echo Html::activeHiddenInput($model, '[' . $model->payment_transaction_code . ']payment_transaction_code', ['value' => $model->payment_transaction_code]);
-                    return $form->field($model, '[' . $model->payment_transaction_code . ']branch_code')->textInput(['value' => $model->branch_code, 'class' => 'form-control number-validate', 'data-id' => $key])->label(FALSE);
-                },
-            ],
-                ['attribute' => 'ifsc', 'filter' => FALSE,
-                'format' => 'raw',
-                'value' => function ($model, $key, $index) use ($form) {
-                    return $form->field($model, '[' . $model->payment_transaction_code . ']ifsc')->textInput(['value' => $model->ifsc, 'class' => 'form-control number-validate', 'data-id' => $key])->label(FALSE);
-                },
-            ],
-                ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'bank_account_no'), 'filter' => FALSE,
-                'format' => 'raw',
-                'value' => function ($model, $key, $index) use ($form) {
-                    return $form->field($model, '[' . $model->payment_transaction_code . ']bank_account_no')->textInput(['value' => $model->bank_account_no, 'class' => 'form-control number-validate', 'data-id' => $key])->label(FALSE);
-                },
-            ],
-            ['attribute' => 'status', 'filter' => FALSE],
+                ['attribute' => 'ifsc', 'filter' => FALSE],
+                ['attribute' => 'response_msg', 'label' => Yii::t('app', 'Failed Reson'), 'filter' => FALSE],
         ];
 
         $grid_option = [

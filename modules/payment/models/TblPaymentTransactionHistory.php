@@ -45,7 +45,7 @@ use yii\db\Expression;
  * @property integer $is_verified
  * @property integer $member_count
  */
-class TblPaymentTransactionHistory extends \app\models\ChildModel {
+class TblPaymentTransactionHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
@@ -59,7 +59,7 @@ class TblPaymentTransactionHistory extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['payment_transaction_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code', 'history_created_at', 'history_created_by', 'operation_type'], 'safe'],
+                [['payment_transaction_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code', 'history_created_at', 'history_created_by', 'operation_type', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -69,7 +69,7 @@ class TblPaymentTransactionHistory extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'payment_transaction_code' => Yii::t('app', 'Payment Transaction Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'code' => Yii::t('app', 'Code'),
             'type' => Yii::t('app', 'Type'),
             'dcs_payment_cycle_applicabilty_code' => Yii::t('app', 'Dcs Payment Cycle Applicabilty Code'),
@@ -106,7 +106,7 @@ class TblPaymentTransactionHistory extends \app\models\ChildModel {
             'member_count' => Yii::t('app', 'Member Count'),
             'plant_code' =>  Yii::t('app', 'PLANT'), 
             'mcc_plant_code' => Yii::t('app', 'MCC'),
-            'bmc_code' => Yii::t('app', 'Member BMC')
+            'bmc_code' => Yii::t('app', 'BMC')
         ];
     }
 }

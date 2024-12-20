@@ -8,10 +8,7 @@ use Yii;
 use app\modules\payment\models\TblPaymentTransactionApproval;
 use app\modules\payment\models\TblPaymentTransactionHistory;
 use app\modules\payment\models\TblPaymentTransactionSearch;
-use Faker\Provider\Uuid;
-use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
-use yii\web\NotFoundHttpException;
 
 /**
  * TblPaymentTransactionController implements the CRUD actions for TblPaymentTransaction model.
@@ -22,7 +19,7 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
      * Lists all TblPaymentTransaction models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionRejectReinitiate()
     {
         if (Yii::$app->request->post()) {
             $postData = Yii::$app->request->post()['TblPaymentTransaction'];
@@ -32,7 +29,7 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
             $approvalMap = [];
             $count = 1;
             foreach ($selectCodes as $key => $value) {
-                [$paymentTransactionCode, $bmcCode, $type] = explode('###', $value);
+                [$paymentTransactionCode, $bmcCode, $type, $paymentDate] = explode('###', $value);
                 $existingTransaction = TblPaymentTransaction::find()->where(['payment_transaction_code' => $paymentTransactionCode, 'bank_status' => ['FAILED']])->one();
                 if (!empty($existingTransaction)) {
                     $historyModel = new TblPaymentTransactionHistory();
@@ -52,34 +49,35 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
                     $newTransaction->pick_datetime = NULL;
                     $newTransaction->response_datetime = NULL;
                     $newTransaction->response_msg = NULL;
+                    unset($newTransaction->created_at, $newTransaction->updated_at, $newTransaction->created_by, $newTransaction->updated_by);
                     $existingTransaction->bank_status = 'REINITIATED';
                     $saveModel[] = $existingTransaction;
                     $config = Yii::$app->general->getUnionConfiguration($existingTransaction->union_code, 'payment_disburse_with_workflow', 'PORTAL');
                     if ($config == 1) {
-                        $approvalKey  = $bmcCode . '-' . $type;
+                        $approvalKey  = $bmcCode . '-' . $type . '-' . $paymentDate;
                         if (!isset($approvalMap[$approvalKey])) {
                             $approvalModel = new TblPaymentTransactionApproval();
                             $approvalModel->attributes = $existingTransaction->attributes;
                             $approvalModel->payment_transaction_approval_code = Yii::$app->general->getUuid();
                             $approvalModel->bmc_code = $bmcCode;
                             $approvalModel->customer_type = $type;
+                            unset($approvalModel->created_at, $approvalModel->updated_at, $approvalModel->created_by, $approvalModel->updated_by);
                             $approvalMap[$approvalKey] = $approvalModel;
                             $saveModel[] = $approvalModel;
                             $modelStages = new TblApprovalStagesDetail();
                             $modelStages->setApprovalData($existingTransaction->union_code, 'tbl_payment_transaction_approval', $approvalModel->payment_transaction_approval_code, $saveModel, $approval_stages);
                         } else {
-                            $approvalMap[$approvalKey]->total_amount += $existingTransaction->total_amount;
-                            $approvalMap[$approvalKey]->total_deduction += $existingTransaction->total_deduction;
-                            $approvalMap[$approvalKey]->final_amount += $existingTransaction->final_amount;
-                            $approvalMap[$approvalKey]->qty += $existingTransaction->qty;
-                            $approvalMap[$approvalKey]->avg_fat += $existingTransaction->avg_fat;
-                            $approvalMap[$approvalKey]->avg_snf += $existingTransaction->avg_snf;
-                            $approvalMap[$approvalKey]->kg_fat += $existingTransaction->kg_fat;
-                            $approvalMap[$approvalKey]->kg_snf += $existingTransaction->kg_snf;
+                            $approvalMap[$approvalKey]->total_amount = bcadd($approvalMap[$approvalKey]->total_amount, $existingTransaction->total_amount,2);
+                            $approvalMap[$approvalKey]->total_deduction = bcadd($approvalMap[$approvalKey]->total_deduction, $existingTransaction->total_deduction,2);
+                            $approvalMap[$approvalKey]->final_amount = bcadd($approvalMap[$approvalKey]->final_amount, $existingTransaction->final_amount,2);
+                            $approvalMap[$approvalKey]->qty = bcadd($approvalMap[$approvalKey]->qty, $existingTransaction->qty,2);
+                            $approvalMap[$approvalKey]->kg_fat = bcadd($approvalMap[$approvalKey]->kg_fat, $existingTransaction->kg_fat,2);
+                            $approvalMap[$approvalKey]->kg_snf = bcadd($approvalMap[$approvalKey]->kg_snf, $existingTransaction->kg_snf,2);
                         }
-                        $approvalMap[$approvalKey]->avg_fat = ($approvalMap[$approvalKey]->kg_fat / $approvalMap[$approvalKey]->qty)*100;
-                        $approvalMap[$approvalKey]->avg_snf = ($approvalMap[$approvalKey]->kg_snf / $approvalMap[$approvalKey]->qty)*100;
-                        $approvalMap[$approvalKey]->avg_rate = $approvalMap[$approvalKey]->total_amount/$approvalMap[$approvalKey]->qty;
+
+                        $approvalMap[$approvalKey]->avg_fat = bcmul(bcdiv($approvalMap[$approvalKey]->kg_fat, $approvalMap[$approvalKey]->qty, 4), '100', 2);
+                        $approvalMap[$approvalKey]->avg_snf = bcmul(bcdiv($approvalMap[$approvalKey]->kg_snf, $approvalMap[$approvalKey]->qty, 4), '100', 2);
+                        $approvalMap[$approvalKey]->avg_rate = bcdiv($approvalMap[$approvalKey]->total_amount, $approvalMap[$approvalKey]->qty, 2);
                         $newTransaction->payment_transaction_approval_code = $approvalMap[$approvalKey]->payment_transaction_approval_code;
                         $newTransaction->is_approved = 0;
                     }
@@ -89,7 +87,7 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
             }
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Payment Transaction Reinitiate Successfully', 'info']);
             if ($transaction == 'customRedirect') {
-                return $this->redirect(['index']);
+                return $this->redirect(['reject-reinitiate']);
             }
         }
         $searchModel = new TblPaymentTransactionSearch();
@@ -100,7 +98,7 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
                 'pagination' => FALSE,
             ]);
         }
-        return $this->render('index', [
+        return $this->render('reject_reinitiate', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'type' => 'reinitiate'

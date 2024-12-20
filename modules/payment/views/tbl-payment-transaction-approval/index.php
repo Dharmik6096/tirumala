@@ -1,6 +1,6 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Payment Transaction Approval'));
-$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Reject Reinitiate'), ['/payment/tbl-payment-transaction/index'], true);
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Reject Reinitiate'), ['/payment/tbl-payment-transaction/reject-reinitiate'], true);
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'My Pending Approval'), ['/payment/tbl-payment-transaction-approval/pending-approval'], true);
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'My Pending Reinitiate'), ['/payment/tbl-payment-transaction-approval/pending-reinitiate'], true);
 ?>
