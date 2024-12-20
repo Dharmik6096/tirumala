@@ -81,6 +81,10 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
             [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
             [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
+            [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
+                    $this->source_org_code = $this->originating_org_code;
+                    $this->source_org_type = $this->originating_org_type;
+                }, 'on' => 'androidsync'],
         ];
     }
 
