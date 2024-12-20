@@ -731,7 +731,9 @@ class TblMember extends ChildModel {
 
     public function memberVendorData($sap_farmer_code) {
         return $this->find()->select(['union_code', 'dcs_code', 'member_code'])
-                        ->where(['vendor_code' => $sap_farmer_code, 'is_active' => 1])->one();
+            ->where(['is_active' => 1])
+            ->andWhere(['or', ['sap_farmer_code' => $sap_farmer_code], ['vendor_code' => $sap_farmer_code]])
+            ->one();
     }
 
     public function resetData() {
