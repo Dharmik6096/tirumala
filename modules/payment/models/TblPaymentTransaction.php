@@ -6,6 +6,10 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
+use app\modules\payment\models\TblMemberPayment;
+use app\modules\payment\models\TblVspPayment;
+use app\modules\payment\models\TblMemberPaymentHistory;
+use app\modules\payment\models\TblVspPaymentHistory;
 use Yii;
 use yii\db\Expression;
 
@@ -271,4 +275,24 @@ class TblPaymentTransaction extends \app\models\ChildModel {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
+    public function updatePaymentMasterData($oldTransaction, $newPaymentTransaction, &$saveModel) {
+        if (!empty($oldTransaction)) {
+            $modelClass = strtolower($oldTransaction->type) === 'member' ? TblMemberPayment::class : TblVspPayment::class;
+            $HistoryModelClass = strtolower($oldTransaction->type) === 'member' ? TblMemberPaymentHistory::class : TblVspPaymentHistory::class;
+            $masterModel = $modelClass::find()->where(['payment_transaction_code' => $oldTransaction->payment_transaction_code])->one();
+            if(!empty($masterModel)){ 
+                $historyModel = new $HistoryModelClass();
+                Yii::$app->operation->history($masterModel, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $masterModel->payment_transaction_code = $newPaymentTransaction->payment_transaction_code;
+                $masterModel->beneficiary_name = $newPaymentTransaction->name;
+                $masterModel->bank_account_no = $newPaymentTransaction->bank_account_no;
+                $masterModel->disburse_date = NULL;
+                $masterModel->bank_status = NULL;
+                $masterModel->utr_no = NULL;
+                $saveModel[] = $masterModel;
+            }
+        }
+        return;
+    }
 }
