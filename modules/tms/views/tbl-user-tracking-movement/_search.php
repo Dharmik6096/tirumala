@@ -48,7 +48,7 @@ if ($allUser) {
 <?php
 if ($allUser) {
     $script = "
-    $('#tblusertrackingmovementsearch-user_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#tblusertrackingmovementsearch-user_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#tblusertrackingmovementsearch-user_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->user_code . "' == '0') {
             $('#tblusertrackingmovementsearch-user_code').val(0);      
