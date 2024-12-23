@@ -50,7 +50,7 @@ $this->title = Yii::t('app', $title);
                         </div>
                     </div>
                     <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->UserList($model, $form, 'tblroutemappingsources-route_code', 'user_code', FALSE, FALSE, FALSE, '/organisation/tbl-route-mapping/user-list'); ?>
+                        <?= Yii::$app->dropdown->UserList($model, $form, 'tblroutemappingsources-route_code', 'user_code', FALSE, FALSE, FALSE); ?>
                     </div>
                     <?php
                     $i = 0;

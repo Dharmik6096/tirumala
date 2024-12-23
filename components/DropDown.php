@@ -669,7 +669,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-banner/tap-event-list', Yii::t('app', 'Select Tap Event'), $multiple, '', $readonly);
     }
 
-    public function UserList($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readonly = false, $url) {
+    public function UserList($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readonly = false, $url = '/organisation/tbl-route-mapping/user-list') {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, $url, Yii::t('app', 'Select User'), $multiple, '', $readonly);
     }
