@@ -161,12 +161,12 @@ class TblBmcCollection extends \app\models\ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc']);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv', 'ho_sync_create']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc', 'sync_lock_bmc']);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync_coll']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync_coll', 'ho_sync_create']],
                 [['customer_code'], 'validateUnique', 'on' => ['create', 'create_allow', 'ho_sync_create']],
                 [['milk_type_code'], 'validateUpdate', 'on' => ['update', 'update_allow']],
                 [['date_time_of_collection'], function ($attribute, $params) {
