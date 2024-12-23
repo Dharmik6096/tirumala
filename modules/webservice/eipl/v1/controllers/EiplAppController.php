@@ -30,14 +30,14 @@ class EiplAppController extends MasterController {
             $temp_model->attributes = $model->attributes;
             $temp_model->union_code = $detail[0]['union_code'];
             $temp_model->otp_code = "1234";
-            if (YII_ENV_DEV) {
+            if (!YII_ENV_DEV) {
                 $LiveOTPforHOMobileApp = Yii::$app->general->getUnionConfiguration($temp_model->union_code, 'liveotp_for_ho_mobile_app', 'PORTAL');
                 $temp_model->otp_code = !empty($LiveOTPforHOMobileApp) ? rand(1000, 9999) : "1234";
             }
             $modelSave[] = $temp_model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['app registration', 'create']);
             if ($transaction == 'customRedirect') {
-                if (YII_ENV_DEV && !empty($LiveOTPforHOMobileApp)) {
+                if (!YII_ENV_DEV && !empty($LiveOTPforHOMobileApp)) {
                     $templateModel = new TblAlertTemplate();
                     $templateData = $templateModel->getTemplateData('eipl_app_otp', 'SMS', $temp_model->union_code);
                     $apiMasterRecord = TblApiMaster::find()->select('api_master_id')->where(['receiver_type' => 'SMS', 'union_code' => $temp_model->union_code, 'is_active' => 1])->one();
