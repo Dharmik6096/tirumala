@@ -37,7 +37,7 @@ if ($allUser) {
     <div class="col-sm-2 <?= $disable ?>">
         <?= Yii::$app->controls->date($model, $form, 'tracking_datetime', 'form-group col-sm-2 padding-left-5 padding-right-5', true, false, false); ?>
     </div>
-    <div class="col-sm-2 mt23">
+    <div class="col-sm-2 mt20">
         <?= Yii::$app->controls->search(); ?>
     </div>
 
