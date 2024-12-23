@@ -145,18 +145,18 @@ class TblMilkCollection extends \app\models\ChildModel {
                 ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
                 [['tag_1'], 'default', 'value' => 'X'],
                 [['adt_param', 'adt_value', 'received_timestamp', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
-                [['member_code'], 'validateUnique', 'on' => ['create', 'create_allow', 'ho_sync_create','importApproval']],
+                [['member_code'], 'validateUnique', 'on' => ['create', 'create_allow', 'ho_sync_create', 'importApproval']],
                 [['milk_type_code'], 'validateUpdate', 'on' => ['update', 'update_allow']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv', 'ho_sync_create']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member', 'sync_lock_member']);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync_coll','importApproval']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync_coll', 'importApproval', 'ho_sync_create']],
                 [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
@@ -165,7 +165,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll', 'ho_sync_create','importApproval']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll', 'ho_sync_create', 'importApproval']],
                 [['antibiotic_sms_sent', 'antibiotic', 'is_antibiotic'], 'safe'],
                 [['antibiotic_sms_sent'], 'default', 'value' => 0],
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'other_reading'], 'safe'],
@@ -174,7 +174,6 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'on' => ['ho_sync_create']],
                 [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create']],
-            
         ];
     }
 
@@ -1188,5 +1187,4 @@ class TblMilkCollection extends \app\models\ChildModel {
         }
     }
 
-   
 }
