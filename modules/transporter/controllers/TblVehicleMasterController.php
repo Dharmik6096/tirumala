@@ -20,6 +20,8 @@ use app\modules\document\controllers\TblAttachmentController;
  */
 class TblVehicleMasterController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['depend-vehicles'];
+
     /**
      * Lists all TblVehicleMaster models.
      * @return mixed
