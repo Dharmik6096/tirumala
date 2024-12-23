@@ -9,11 +9,12 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
+use app\controllers\ChildController;
 
 /**
  * TblUserTrackingMovementController implements the CRUD actions for TblUserTrackingMovement model.
  */
-class TblUserTrackingMovementController extends Controller {
+class TblUserTrackingMovementController extends ChildController {
 
     /**
      * Lists all TblUserTrackingMovement models.
