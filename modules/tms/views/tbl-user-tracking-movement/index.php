@@ -49,7 +49,7 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
         <?= $this->title; ?>
     </div>
     <div class="panel-body">
-        <div class="grid-search large-search hidden-print">
+        <div class="large-search hidden-print">
             <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider, 'allUser' => TRUE]); ?>
         </div>
         <div class="clearfix"></div>
