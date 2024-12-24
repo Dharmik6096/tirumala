@@ -42,7 +42,7 @@ $this->title = Yii::t('app', 'Reject Reinitiate');
                 }, 'filter' => FALSE],
                 ['attribute' => 'final_amount', 'filter' => FALSE],
                 ['attribute' => 'name', 'label' => Yii::t('app', 'name'), 'value' => function($model, $key, $index) use ($form) {
-                    return $form->field($model, '[' . $model->payment_transaction_code . ']name')->textInput(['value' => $model->name, 'class' => 'form-control number-validate', 'data-id' => $key])->label(FALSE);
+                    return $form->field($model, '[' . $model->payment_transaction_code . ']name')->textInput(['value' => $model->name, 'class' => 'form-control', 'data-id' => $key])->label(FALSE);
                 }, 'format' => 'raw', 'filter' => FALSE],
                 ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'Bank Account No'), 'filter' => FALSE,
                     'format' => 'raw',

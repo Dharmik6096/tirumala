@@ -52,6 +52,7 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
                     unset($newTransaction->created_at, $newTransaction->updated_at, $newTransaction->created_by, $newTransaction->updated_by);
                     $existingTransaction->bank_status = 'REINITIATED';
                     $saveModel[] = $existingTransaction;
+                    $existingTransaction->updatePaymentMasterData($existingTransaction, $newTransaction, $saveModel);
                     $config = Yii::$app->general->getUnionConfiguration($existingTransaction->union_code, 'payment_disburse_with_workflow', 'PORTAL');
                     if ($config == 1) {
                         $approvalKey  = $bmcCode . '-' . $type . '-' . $fromDate . '-' . $toDate;
