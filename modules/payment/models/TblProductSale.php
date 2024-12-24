@@ -488,9 +488,8 @@ class TblProductSale extends \app\models\ChildModel {
 
     public function setChildTable(&$model, &$modelSave, &$errors) {
         $model->product_sale_code = Yii::$app->general->getUuid();
-        // $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'vendor_product_sale_rate', 'PORTAL');
-        $config = Yii::$app->general->getUnionConfigResult($model->union_code, 'vendor_product_sale_rate', $model);
-        $batchNoWiseProductRate = Yii::$app->general->getUnionConfigResult($model->union_code, 'batch_no_wise_product_rate', $model);
+        $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'vendor_product_sale_rate', 'PORTAL');
+        $batchNoWiseProductRate = Yii::$app->general->getUnionConfiguration($model->union_code, 'batch_no_wise_product_rate', 'PORTAL');
         $detailModel = new TblProductSaleTransaction();
         $detailModel->attributes = $model->attributes;
         $detailModel->sap_batch_no = $model->sap_batch_no;
