@@ -45,6 +45,15 @@ if (empty($display_rmrd)) {
             <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
         </div>
     </a>
+    
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+            <div class="div_dash_block_content">
+                <p class="dash_block_header"><?= Yii::t('app', 'BMC') ?></p>
+                <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="dash_block_value block_value" id="farmer_rmrd_block_bmc">0/0</h4>
+            </div>
+            <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
+        </div>
 
     <?php $url = Url::to([$dcs, 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code, 'shift' => $model->shift]); ?>
     <a href="<?= $url ?>" target="_blank">
@@ -125,9 +134,9 @@ if (empty($display_rmrd)) {
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
-            <p class="dash_block_header"><?= Yii::t('app', 'Amount') ?></p>
+            <p class="dash_block_header"><?= Yii::t('app', 'Amount | Rate') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            <h4 class="dash_block_value block_value" id="farmer_rmrd_block_amount">0/0</h4>
+            <h4 class="dash_block_value block_value" id="farmer_rmrd_block_amount">0 | 0</h4>
         </div>
         <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'rupee.png' ?>"></div>
     </div>

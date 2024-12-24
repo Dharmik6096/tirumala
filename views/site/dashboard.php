@@ -532,16 +532,20 @@ $('.dpu_data_icon').click(function(){
                                         obj1.res[key] = 0;
                                     }
                                 }
+                                var pourerMember = obj1.res.pourerMember;
+                                var totalMember = obj1.res.totalMember;
+                                var percentage = ((pourerMember * 100) / totalMember).toFixed(2);
                                 $('#farmer_rmrd_block_union').text(obj1.res.pourerUnion+'/'+obj1.res.totalUnion);
                                 $('#farmer_rmrd_block_mcc').text(obj1.res.pourerMcc+'/'+obj1.res.totalMcc);
+                                $('#farmer_rmrd_block_bmc').text(obj1.res.pourerBmc+'/'+obj1.res.totalBmc);
                                 $('#farmer_rmrd_block_dcs').text(obj1.res.pourerDcs+'/'+obj1.res.totalDcs);
-                                $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'/'+obj1.res.totalMember);
+                                $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'('+percentage+'%)/'+obj1.res.totalMember);
                                 $('#farmer_rmrd_block_blk_vendor').text(obj1.res.pourerBulkVen+'/'+obj1.res.totalBulkVen);
                                 $('#farmer_rmrd_block_vlcc_vendor').text(obj1.res.pourerVlccVen+'/'+obj1.res.totalVlccVen);
                                 $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty);
                                 $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
                                 $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
-                                $('#farmer_rmrd_block_amount').text(obj1.res.amount);
+                                $('#farmer_rmrd_block_amount').text(obj1.res.amount+' | '+obj1.res.effrtpl);
                                 $('#farmer_rmrd_block_ts_kg_tab').text(obj1.res.ts_kg_tab);
                                 $('#totle_app').text(obj1.res.app);
                                 $('#totle_ws').text(obj1.res.ws);
