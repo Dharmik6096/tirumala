@@ -288,9 +288,8 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                             'container' => ['id' => 'kv-demo'],
                                         ]);
                                     }
-                                    if (!empty($response['data'][0])) {
-
-                                        $responseData = $response['data'][0];
+                                    if (!empty($response)) {
+                                        $responseData = $response;
                                         $responseAttributes = [
                                                 [
                                                 'group' => true,
@@ -301,12 +300,12 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 'columns' => [
                                                         [
                                                         'attribute' => 'reference_id',
-                                                        'value' => $responseData['reference_id'],
+                                                        'value' => $responseData->reference_id,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
                                                         'attribute' => 'name_at_bank',
-                                                        'value' => $responseData['name_at_bank'],
+                                                        'value' => $responseData->name_at_bank,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                 ],
@@ -315,12 +314,12 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 'columns' => [
                                                         [
                                                         'attribute' => 'bank_name',
-                                                        'value' => $responseData['bank_name'],
+                                                        'value' => $responseData->bank_name,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
                                                         'attribute' => 'city',
-                                                        'value' => $responseData['city'],
+                                                        'value' => $responseData->city,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                 ],
@@ -329,12 +328,12 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 'columns' => [
                                                         [
                                                         'attribute' => 'branch',
-                                                        'value' => $responseData['branch'],
+                                                        'value' => $responseData->branch,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
                                                         'attribute' => 'micr',
-                                                        'value' => $responseData['micr'],
+                                                        'value' => $responseData->micr,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                 ],
@@ -343,12 +342,12 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 'columns' => [
                                                         [
                                                         'attribute' => 'name_match_result',
-                                                        'value' => $responseData['name_match_result'],
+                                                        'value' => $responseData->name_match_result,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
                                                         'attribute' => 'name_match_score',
-                                                        'value' => $responseData['name_match_score'],
+                                                        'value' => $responseData->name_match_score,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                 ],
@@ -357,12 +356,12 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 'columns' => [
                                                         [
                                                         'attribute' => 'account_status',
-                                                        'value' => $responseData['account_status'],
+                                                        'value' => $responseData->account_status,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
                                                         'attribute' => 'account_status_code',
-                                                        'value' => $responseData['account_status_code'],
+                                                        'value' => $responseData->account_status_code,
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                 ],
@@ -371,44 +370,11 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 'columns' => [
                                                         [
                                                         'attribute' => 'utr',
-                                                        'value' => $responseData['utr'],
-                                                        'valueColOptions' => ['style' => 'width:30%'],
-                                                    ],
-                                                        [
-                                                        'attribute' => 'ifsc_code',
-                                                        'value' => $responseData['ifsc_code'],
-                                                        'valueColOptions' => ['style' => 'width:30%'],
+                                                        'value' => $responseData->utr,
+                                                        'valueColOptions' => ['style' => 'width:80%'],
                                                     ],
                                                 ],
                                             ],
-                                                [
-                                                'columns' => [
-                                                        [
-                                                        'attribute' => 'has_available_branch_info',
-                                                        'value' => $responseData['has_available_branch_info'] ? 'Yes' : 'No',
-                                                        'valueColOptions' => ['style' => 'width:30%'],
-                                                    ],
-                                                        [
-                                                        'attribute' => 'branch_address',
-                                                        'value' => $responseData['branch_address'],
-                                                        'valueColOptions' => ['style' => 'width:30%'],
-                                                    ],
-                                                ],
-                                            ],
-                                                [
-                                                'columns' => [
-                                                        [
-                                                        'attribute' => 'branch_name',
-                                                        'value' => $responseData['branch_name'],
-                                                        'valueColOptions' => ['style' => 'width:30%'],
-                                                    ],
-                                                        [
-                                                        'attribute' => 'branch_code',
-                                                        'value' => $responseData['branch_code'],
-                                                        'valueColOptions' => ['style' => 'width:30%'],
-                                                    ],
-                                                ],
-                                            ]
                                         ];
 
                                         echo DetailView::widget([
@@ -435,8 +401,10 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                     </br>
                     <div class="panel-footer">
                         <?php
-                        echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submitdata', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
-                        echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-danger submitdata', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
+                        if (!empty($response)) {
+                            echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submitdata', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
+                            echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-danger submitdata', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
+                        }
                         ?>
                         <?= Yii::$app->controls->custombutton('Cancel', 'master-verification'); ?> 
                     </div>

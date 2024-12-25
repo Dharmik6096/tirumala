@@ -2,6 +2,7 @@
 
 namespace app\modules\organisation\controllers;
 
+use app\components\WebApi;
 use Yii;
 use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
@@ -1379,33 +1380,9 @@ class TblDcsController extends ChildController {
     }
 
     public function actionKycVerification() {
-        $response = [
-            "statusCode" => 200,
-            "message" => [],
-            "data" => [
-                    [
-                    "reference_id" => "REF123456",
-                    "name_at_bank" => "John Doe",
-                    "bank_name" => "ABC Bank",
-                    "city" => "New York",
-                    "branch" => "Manhattan",
-                    "micr" => "123456789",
-                    "name_match_result" => "Matched",
-                    "name_match_score" => "95",
-                    "account_status" => "Active",
-                    "account_status_code" => "A1",
-                    "utr" => "UTR1234567890",
-                    "ifsc_code" => "ABCD1234567",
-                    "has_available_branch_info" => true,
-                    "bank_code" => "123ABC",
-                    "branch_address" => "123 Wall Street, New York, NY",
-                    "branch_name" => "Main Branch",
-                    "branch_code" => "1234"
-                ]
-            ]
-        ];
-        $code = !empty(Yii::$app->request->post('code')) ? Yii::$app->request->post('code') : NULL;
-        $type = !empty(Yii::$app->request->post('type')) ? Yii::$app->request->post('type') : NULL;
+        $getData = Yii::$app->request->get();
+        $code = !empty($getData['code']) ? $getData['code'] : NULL;
+        $type = !empty($getData['type']) ? $getData['type'] : NULL;
         if ($type == 'DCS') {
             $model = $this->findModel($code);
         } else if ($type == 'CUSTOMER') {
@@ -1444,10 +1421,37 @@ class TblDcsController extends ChildController {
                 }
             }
         }
+        if(!empty($getData) && !empty($getData['bank_account_no']) && !empty($getData['ifsc'])){
+            $base_url = \Yii::$app->params['bank_verification']['verfication_url'];
+            $body = array(
+                'bank_account' => $getData['bank_account_no'],
+                'ifsc' => $getData['ifsc']
+            );
+            $api = new WebApi();
+            $api->header_info['Content-Type'] = 'application/json';
+            $api->header_info['Content-length'] = strlen(json_encode($body));
+            $api->header_info['x-client-id'] = \Yii::$app->params['bank_verification']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['bank_verification']['header']['x-client-secret'];
+            $api->is_header_merge = false;
+            $api->return_actual = true;
+            $api->serverUrl = $base_url;
+            $api->body = $body;
+            try {
+                $result = $api->GuzzleCURL();
+                $httpCode = $result->getStatusCode();
+                $response = $result->getBody()->getContents();
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                $responseBody = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : '';
+                $decodedResponse = json_decode($responseBody, true);
+                $errorMessage = isset($decodedResponse['message']) ? 'Bank verification API error:'.$decodedResponse['message'] : 'An error occurred during bank verification.';
+                Yii::$app->session->setFlash('error', $errorMessage);
+                return $this->redirect(\yii\helpers\Url::previous());
+            }
+        }
         return $this->renderAjax('kyc_verification_view', [
                     'model' => $model,
                     'type' => $type,
-                    'response' => $response,
+                    'response' => !empty($response) ? json_decode($response) : [],
         ]);
     }
 

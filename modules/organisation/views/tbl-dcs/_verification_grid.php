@@ -78,9 +78,9 @@ $this->title = Yii::t('app', 'Bank Verification');
                     $kycStatus = $model['is_kyc_verified'];
                     $colorClass = ($kycStatus == 1) ? 'green' : (($kycStatus == 0 || $kycStatus == '') ? 'gray' : 'red');
                     $iconClass = 'fa fa-university ' . $colorClass;
-                    $class = '';
+                    $class = ($kycStatus == 0 || $kycStatus == '') ? '' : ' link-disable';
                     $url = ['/organisation/tbl-dcs/kyc-verification'];
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'KYC Verification', 'class' => 'kyc-verification' . $class, 'data-val' => $id, 'data-name' => $type];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'KYC Verification', 'class' => 'kyc-verification' . $class, 'data-val' => $id, 'data-name' => $type, 'data-bank_account_no' => $model['bank_account_no'], 'data-ifsc' => $model['ifsc']];
                     return GhostHtml::a_alert('<i class="' . $iconClass . '"></i>', $url, $options);
                 },
             ]
@@ -165,10 +165,12 @@ $script = '
         $("#loadercontent").show();
         var code= $(this).attr("data-val");
         var type= $(this).attr("data-name");
+        var bankAccountNo = $(this).attr("data-bank_account_no");
+        var ifsc = $(this).attr("data-ifsc");
         $.ajax({
-            type: "post",
+            type: "get",
             url: "' . Url::to(['/organisation/tbl-dcs/kyc-verification']) . '" ,
-            data:{"code":code,"type":type},
+            data:{"code":code,"type":type,"bank_account_no":bankAccountNo,"ifsc":ifsc},
             success: function(data) {     
                 $("#AppInformation").html(data);
                 $("#AppInformationModal").modal("toggle"); 
