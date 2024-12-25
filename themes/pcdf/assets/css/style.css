@@ -5901,3 +5901,15 @@ tr.highlightRow {
     background: #fff;
     margin-bottom: 5px;
 }
+
+.table-hover tbody td.action-cell a i.green {
+    color: green !important;
+}
+
+.table-hover tbody td.action-cell a i.red {
+    color: red !important;
+}
+
+.table-hover tbody td.action-cell a i.gray {
+    color: gray !important;
+}

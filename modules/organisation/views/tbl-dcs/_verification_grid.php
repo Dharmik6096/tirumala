@@ -75,10 +75,13 @@ $this->title = Yii::t('app', 'Bank Verification');
                 'kyc-verification' => function ($url, $model) {
                     $id = $model['code'];
                     $type = $model['verify_for'];
+                    $kycStatus = $model['is_kyc_verified'];
+                    $colorClass = ($kycStatus == 1) ? 'green' : (($kycStatus == 0 || $kycStatus == '') ? 'gray' : 'red');
+                    $iconClass = 'fa fa-university ' . $colorClass;
                     $class = '';
                     $url = ['/organisation/tbl-dcs/kyc-verification'];
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'KYC Verification', 'class' => 'kyc-verification' . $class, 'data-val' => $id, 'data-name' => $type];
-                    return GhostHtml::a_alert('<i class="fa fa-university"></i>', $url, $options);
+                    return GhostHtml::a_alert('<i class="' . $iconClass . '"></i>', $url, $options);
                 },
             ]
         ];
