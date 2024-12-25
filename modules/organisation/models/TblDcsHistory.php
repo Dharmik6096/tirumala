@@ -74,7 +74,7 @@ class TblDcsHistory extends \yii\db\ActiveRecord {
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'ref_code'], 'safe'],
                 [['vendor_code', 'auto_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'ts_code_m', 'ts_code_e'], 'safe'],
                 [['data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'cutoff', 'lower_milk_type', 'cutoff_val'], 'safe'],
-                [['block_code', 'local_contact_person', 'logo_path', 'punch_line', 'mapped_village_no', 'secretory_info', 'gst_no', 'fssi', 'mcc_plant_code', 'plant_code', 'bank_name', 'branch_name', 'is_dispatch_mandate', 'originating_org_code', 'originating_org_type', 'originating_type', 'member_rate_code', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code', 'DPUVersionNo', 'rate_flag', 'is_name_request', 'morning_kms', 'evening_kms', 'ccenter_code', 'center_code', 'sap_center_code', 'rate_chart_code', 'mfile_digit', 'aadhaar_no', 'pincode', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe']
+                [['block_code', 'local_contact_person', 'logo_path', 'punch_line', 'mapped_village_no', 'secretory_info', 'gst_no', 'fssi', 'mcc_plant_code', 'plant_code', 'bank_name', 'branch_name', 'is_dispatch_mandate', 'originating_org_code', 'originating_org_type', 'originating_type', 'member_rate_code', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code', 'DPUVersionNo', 'rate_flag', 'is_name_request', 'morning_kms', 'evening_kms', 'ccenter_code', 'center_code', 'sap_center_code', 'rate_chart_code', 'mfile_digit', 'aadhaar_no', 'pincode', 'emilk_sync_status', 'emilk_sync_timestamp', 'is_kyc_verified'], 'safe']
         ];
     }
 

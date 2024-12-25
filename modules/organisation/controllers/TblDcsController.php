@@ -1204,7 +1204,7 @@ class TblDcsController extends ChildController {
                         $memberModel->attributes = $model->attributes;
                         $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                         $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
-                        if(!empty($memberModel->set_master_hierarchy)){
+                        if (!empty($memberModel->set_master_hierarchy)) {
                             $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
                         }
                         $memberModel->animal_type_code = 1;
@@ -1376,6 +1376,79 @@ class TblDcsController extends ChildController {
         $module_name = 'tbl_dcs';
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('dcs', $id, $model, $module_code, $module_name);
+    }
+
+    public function actionKycVerification() {
+        $response = [
+            "statusCode" => 200,
+            "message" => [],
+            "data" => []
+        ];
+
+        $code = !empty(Yii::$app->request->post('code')) ? Yii::$app->request->post('code') : NULL;
+        $type = !empty(Yii::$app->request->post('type')) ? Yii::$app->request->post('type') : NULL;
+        if ($type == 'DCS') {
+            $model = $this->findModel($code);
+        } else if ($type == 'CUSTOMER') {
+            $model = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
+        } elseif ($type == 'MEMBER') {
+            $model = TblMember::find()->where(['member_code' => $code])->one();
+        }
+        if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
+            $saveModel = [];
+            $hisModel = [];
+            $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'verify' ? 1 : 2) : 0;
+            if (!empty($status)) {
+                $model->scenario = 'kycVerify';
+                $history = $model->className() . 'History';
+                $historyModel = new $history();
+                Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                $hisModel[] = $historyModel;
+                $model->is_kyc_verified = $status;
+                $saveModel[] = $model;
+
+                if ($model->validate()) {
+                    $transaction = $this->generalModel->saveTransaction($saveModel, $hisModel, ['KYC Verified', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        return $this->redirect(['master-verification']);
+                    } else {
+                        return $this->redirect(['master-verification']);
+                    }
+                }
+            }
+        }
+        $response = [
+            "statusCode" => 200,
+            "message" => [],
+            "data" => [
+                    [
+                    "reference_id" => "REF123456",
+                    "name_at_bank" => "John Doe",
+                    "bank_name" => "ABC Bank",
+                    "city" => "New York",
+                    "branch" => "Manhattan",
+                    "micr" => "123456789",
+                    "name_match_result" => "Matched",
+                    "name_match_score" => "95",
+                    "account_status" => "Active",
+                    "account_status_code" => "A1",
+                    "utr" => "UTR1234567890",
+                    "ifsc_code" => "ABCD1234567",
+                    "has_available_branch_info" => true,
+                    "bank_code" => "123ABC",
+                    "branch_address" => "123 Wall Street, New York, NY",
+                    "branch_name" => "Main Branch",
+                    "branch_code" => "1234"
+                ]
+            ]
+        ];
+//        $apiResponseData = Yii::$app->response->data = $response;
+        return $this->renderAjax('kyc_verification_view', [
+                    'model' => $model,
+                    'type' => $type,
+                    'response' => $response,
+        ]);
     }
 
 }
