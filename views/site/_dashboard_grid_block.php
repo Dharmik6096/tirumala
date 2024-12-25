@@ -7,8 +7,12 @@ use yii\helpers\Url;
 
 $class_cols = $class_cols;
 $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
+
+$pourerMember = $blocks_data[1][0]['pourerMember'];
+$totalMember = $blocks_data[1][0]['totalMember'];
+$percentage = round(($pourerMember * 100) / $totalMember, 2);
 ?>
-<?php $url = '';//Url::to(['site/get-unions', 'date' => $date, 'union_code' => $model->union_code]);?>
+<?php $url = ''; //Url::to(['site/get-unions', 'date' => $date, 'union_code' => $model->union_code]);   ?>
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
         <p class="dash_block_header"><?= Yii::t('app', 'Union') ?></p>
@@ -31,6 +35,15 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
     </div>
 </a>
+<div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <div class="div_dash_block_content">
+        <p class="dash_block_header"><?= Yii::t('app', 'BMC') ?></p>
+        <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_mcc"><?= $blocks_data[1][0]['pourerBmc'] ?>/<?= $blocks_data[1][0]['totalBmc'] ?></h4>
+    </div>
+    <div class="div_dash_block_icon"> <img
+            src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
+</div>
 <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'shift' => $shift]); ?>
 <a href="<?= $url; ?>" class='href_link' >
     <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
@@ -50,7 +63,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'Farmer') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            <h4 class="dash_block_value block_value" id="farmer_rmrd_block_farmer"><?= $blocks_data[1][0]['pourerMember'] ?>/<?= $blocks_data[1][0]['totalMember'] ?></h4>
+            <h4 class="dash_block_value block_value" id="farmer_rmrd_block_farmer"><?= $pourerMember ?>(<?= $percentage ?>%)/ <?= $totalMember ?></h4>
         </div>
         <div class="div_dash_block_icon"> <img
                 src="<?= $imageIconPath . 'farmer.png' ?>"> </div>
@@ -59,9 +72,9 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
 
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
-        <p class="dash_block_header"><?= Yii::t('app', 'Quantity') ?></p>
-        <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_quantity"><?= $blocks_data[1][0]['totalQty'] ?></h4>
+        <p class="dash_block_header"><?= Yii::t('app', 'Quantity | LD QTY') ?></p>
+        <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?> | </br>On <?= Yii::$app->controls->view_date(date('Y-m-d', strtotime('-1 day', strtotime($date)))) ?></small></p>
+        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_quantity"><?= $blocks_data[1][0]['totalQty'] ?> | <?= $blocks_data[1][0]['PreviousDatetotalQty'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'scale.png' ?>"> </div>
@@ -69,9 +82,9 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
 
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
-        <p class="dash_block_header"><?= Yii::t('app', 'FATKG') ?></p>
+        <p class="dash_block_header"><?= Yii::t('app', 'FATKG | FAT AVG') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_fatkg"><?= $blocks_data[1][0]['fatKg'] ?></h4>
+        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_fatkg"><?= $blocks_data[1][0]['fatKg'] ?> | <?= $blocks_data[1][0]['fatAvg'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'totalcount.png' ?>"> </div>
@@ -79,9 +92,9 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
 
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
-        <p class="dash_block_header"><?= Yii::t('app', 'SNFKG') ?></p>
+        <p class="dash_block_header"><?= Yii::t('app', 'SNFKG | SNF AVG') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_snfkg"><?= $blocks_data[1][0]['snfKg'] ?></h4>
+        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_snfkg"><?= $blocks_data[1][0]['snfKg'] ?> | <?= $blocks_data[1][0]['snfAvg'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'totalcount.png' ?>"> </div>
@@ -89,9 +102,9 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
 
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
-        <p class="dash_block_header"><?= Yii::t('app', 'Amount') ?></p>
+        <p class="dash_block_header"><?= Yii::t('app', 'Amount | Rate') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_amount"><?= $blocks_data[1][0]['amount'] ?></h4>
+        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_amount"><?= $blocks_data[1][0]['amount'] ?> | <?= $blocks_data[1][0]['effrtpl'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'rupee.png' ?>"> </div>

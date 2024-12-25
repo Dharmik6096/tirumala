@@ -542,9 +542,9 @@ $('.dpu_data_icon').click(function(){
                                 $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'('+percentage+'%)/'+obj1.res.totalMember);
                                 $('#farmer_rmrd_block_blk_vendor').text(obj1.res.pourerBulkVen+'/'+obj1.res.totalBulkVen);
                                 $('#farmer_rmrd_block_vlcc_vendor').text(obj1.res.pourerVlccVen+'/'+obj1.res.totalVlccVen);
-                                $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty);
-                                $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
-                                $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
+                                $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty+' | '+obj1.res.PreviousDatetotalQty);
+                                $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg+' | '+obj1.res.fatAvg);
+                                $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg+' | '+obj1.res.snfAvg);
                                 $('#farmer_rmrd_block_amount').text(obj1.res.amount+' | '+obj1.res.effrtpl);
                                 $('#farmer_rmrd_block_ts_kg_tab').text(obj1.res.ts_kg_tab);
                                 $('#totle_app').text(obj1.res.app);

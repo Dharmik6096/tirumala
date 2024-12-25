@@ -107,8 +107,8 @@ if (empty($display_rmrd)) {
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
-            <p class="dash_block_header"><?= Yii::t('app', 'Quantity') ?></p>
-            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            <p class="dash_block_header"><?= Yii::t('app', 'Quantity | LD QTY') ?></p>
+            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?> | On <?= Yii::$app->controls->view_date(date('Y-m-d', strtotime('-1 day', strtotime($date)))) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_quantity">0/0</h4>
         </div>
         <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'scale.png' ?>"></div>
@@ -116,7 +116,7 @@ if (empty($display_rmrd)) {
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
-            <p class="dash_block_header"><?= Yii::t('app', 'FATKG') ?></p>
+            <p class="dash_block_header"><?= Yii::t('app', 'FATKG | FAT AVG') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_fatkg">0/0</h4>
         </div>
@@ -125,7 +125,7 @@ if (empty($display_rmrd)) {
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
-            <p class="dash_block_header"><?= Yii::t('app', 'SNFKG') ?></p>
+            <p class="dash_block_header"><?= Yii::t('app', 'SNFKG | SNF AVG') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="farmer_rmrd_block_snfkg">0/0</h4>
         </div>
