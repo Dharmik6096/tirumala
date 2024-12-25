@@ -1382,9 +1382,28 @@ class TblDcsController extends ChildController {
         $response = [
             "statusCode" => 200,
             "message" => [],
-            "data" => []
+            "data" => [
+                    [
+                    "reference_id" => "REF123456",
+                    "name_at_bank" => "John Doe",
+                    "bank_name" => "ABC Bank",
+                    "city" => "New York",
+                    "branch" => "Manhattan",
+                    "micr" => "123456789",
+                    "name_match_result" => "Matched",
+                    "name_match_score" => "95",
+                    "account_status" => "Active",
+                    "account_status_code" => "A1",
+                    "utr" => "UTR1234567890",
+                    "ifsc_code" => "ABCD1234567",
+                    "has_available_branch_info" => true,
+                    "bank_code" => "123ABC",
+                    "branch_address" => "123 Wall Street, New York, NY",
+                    "branch_name" => "Main Branch",
+                    "branch_code" => "1234"
+                ]
+            ]
         ];
-
         $code = !empty(Yii::$app->request->post('code')) ? Yii::$app->request->post('code') : NULL;
         $type = !empty(Yii::$app->request->post('type')) ? Yii::$app->request->post('type') : NULL;
         if ($type == 'DCS') {
@@ -1408,42 +1427,23 @@ class TblDcsController extends ChildController {
                 $model->is_kyc_verified = $status;
                 $saveModel[] = $model;
 
-                if ($model->validate()) {
+                if ($model->validate() && empty($model->getErrors())) {
                     $transaction = $this->generalModel->saveTransaction($saveModel, $hisModel, ['KYC Verified', 'create']);
                     if ($transaction == 'customRedirect') {
-                        return $this->redirect(['master-verification']);
+                        return $this->redirect(\yii\helpers\Url::previous());
                     } else {
-                        return $this->redirect(['master-verification']);
+                        return $this->redirect(\yii\helpers\Url::previous());
                     }
+                } else {
+                    $msg = '';
+                    foreach ($model->getErrors() as $errorkey => $value) {
+                        $msg .= $value[0] . '<br/>';
+                    }
+                    Yii::$app->session->setFlash('error', $msg);
+                    return $this->redirect(\yii\helpers\Url::previous());
                 }
             }
         }
-        $response = [
-            "statusCode" => 200,
-            "message" => [],
-            "data" => [
-                    [
-                    "reference_id" => "REF123456",
-                    "name_at_bank" => "John Doe",
-                    "bank_name" => "ABC Bank",
-                    "city" => "New York",
-                    "branch" => "Manhattan",
-                    "micr" => "123456789",
-                    "name_match_result" => "Matched",
-                    "name_match_score" => "95",
-                    "account_status" => "Active",
-                    "account_status_code" => "A1",
-                    "utr" => "UTR1234567890",
-                    "ifsc_code" => "ABCD1234567",
-                    "has_available_branch_info" => true,
-                    "bank_code" => "123ABC",
-                    "branch_address" => "123 Wall Street, New York, NY",
-                    "branch_name" => "Main Branch",
-                    "branch_code" => "1234"
-                ]
-            ]
-        ];
-//        $apiResponseData = Yii::$app->response->data = $response;
         return $this->renderAjax('kyc_verification_view', [
                     'model' => $model,
                     'type' => $type,
