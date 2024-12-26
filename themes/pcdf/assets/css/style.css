@@ -5913,3 +5913,13 @@ tr.highlightRow {
 .table-hover tbody td.action-cell a i.gray {
     color: gray !important;
 }
+
+.text-gray {
+    color: gray !important;
+}
+.text-green {
+    color: green !important;
+}
+.text-red {
+    color: red !important;
+}

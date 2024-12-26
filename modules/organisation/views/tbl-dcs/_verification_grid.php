@@ -73,6 +73,10 @@ $this->title = Yii::t('app', 'Bank Verification');
                     return GhostHtml::a_alert('<i class="fa fa-image"></i>', $url, $options);
                 },
                 'kyc-verification' => function ($url, $model) {
+                    $ekyc_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'ekyc_required', 'PORTAL');
+                    if(empty($ekyc_config)){
+                        return false;
+                    }
                     $id = $model['code'];
                     $type = $model['verify_for'];
                     $kycStatus = $model['is_kyc_verified'];

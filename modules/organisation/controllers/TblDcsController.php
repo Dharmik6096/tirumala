@@ -48,6 +48,8 @@ use app\models\ChildModel;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\document\controllers\TblAttachmentController;
+use app\modules\organisation\models\TblBankVerification;
+use app\modules\organisation\models\TblBankVerificationLog;
 use app\modules\product\models\TblProductSaleRate;
 use app\modules\product\models\TblProductSaleRateApplicability;
 
@@ -1380,14 +1382,17 @@ class TblDcsController extends ChildController {
     }
 
     public function actionKycVerification() {
+        $logModel = New TblBankVerificationLog();
         $getData = Yii::$app->request->get();
         $code = !empty($getData['code']) ? $getData['code'] : NULL;
         $type = !empty($getData['type']) ? $getData['type'] : NULL;
-        if ($type == 'DCS') {
+        $model = [];
+        $responseJson = '';
+        if (strtolower($type) == 'dcs') {
             $model = $this->findModel($code);
-        } else if ($type == 'CUSTOMER') {
+        } else if (strtolower($type) == 'customer') {
             $model = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
-        } elseif ($type == 'MEMBER') {
+        } elseif (strtolower($type) == 'member') {
             $model = TblMember::find()->where(['member_code' => $code])->one();
         }
         if (Yii::$app->request->post()) {
@@ -1405,6 +1410,8 @@ class TblDcsController extends ChildController {
                 $saveModel[] = $model;
 
                 if ($model->validate() && empty($model->getErrors())) {
+                    $logModel = New TblBankVerificationLog();
+                    $logModel->setLogData(Yii::$app->request->post(), $model, $saveModel);
                     $transaction = $this->generalModel->saveTransaction($saveModel, $hisModel, ['KYC Verified', 'create']);
                     if ($transaction == 'customRedirect') {
                         return $this->redirect(\yii\helpers\Url::previous());
@@ -1440,18 +1447,23 @@ class TblDcsController extends ChildController {
                 $result = $api->GuzzleCURL();
                 $httpCode = $result->getStatusCode();
                 $response = $result->getBody()->getContents();
+                $response = !empty($response) ? json_decode($response) : [];
             } catch (\GuzzleHttp\Exception\ClientException $e) {
-                $responseBody = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : '';
-                $decodedResponse = json_decode($responseBody, true);
-                $errorMessage = isset($decodedResponse['message']) ? 'Bank verification API error:'.$decodedResponse['message'] : 'An error occurred during bank verification.';
-                Yii::$app->session->setFlash('error', $errorMessage);
-                return $this->redirect(\yii\helpers\Url::previous());
+                $responseData = $e->getResponse() ? json_decode($e->getResponse()->getBody()->getContents()) : '';
+                $response = $responseData->error;
+                $response->account_status = 'failed at bank.';
+                $response->account_status_code = 'failed_at_bank';
             }
+            $response->bank_account_no = $body['bank_account'];
+            $response->ifsc = $body['ifsc'];
+            $responseJson = json_encode($response);
         }
         return $this->renderAjax('kyc_verification_view', [
-                    'model' => $model,
-                    'type' => $type,
-                    'response' => !empty($response) ? json_decode($response) : [],
+            'logModel' => $logModel,
+            'model' => $model,
+            'type' => $type,
+            'response' => $response,
+            'responseJson' => $responseJson,
         ]);
     }
 

@@ -185,6 +185,7 @@ class TblMemberController extends \app\controllers\ChildController {
                 $pan_no = Yii::$app->general->decryptData($oldAttr['pan_no']) !== FALSE ? Yii::$app->general->decryptData($oldAttr['pan_no']) : $oldAttr['pan_no'];
                 if ($oldAttr['bank_account_no'] != $this->model->bank_account_no || $oldAttr['ifsc'] != $this->model->ifsc || $oldAttr['beneficiary_name'] != $this->model->beneficiary_name || $pan_no != $this->model->pan_no || $adhar_no != $this->model->adhar_no || $oldAttr['voter_id'] != $this->model->voter_id) {
                     $this->model->is_verified = 0;
+                    $this->model->is_kyc_verified = 0;
                 }
                 if ($oldAttr['hamlet_code'] != $this->model->hamlet_code || $oldAttr['address'] != $this->model->address || $oldAttr['local_address'] != $this->model->local_address || $oldAttr['pincode'] != $this->model->pincode || $oldAttr['mobile_no'] != $this->model->mobile_no || $oldAttr['email'] != $this->model->email) {
                     $this->model->is_contact_verified = 0;
