@@ -20,12 +20,12 @@ class TblDcsSearch extends TblDcs {
      */
     public function rules() {
         return [
-            [['dcs_code', 'address', 'upi_no', 'destination_type', 'bank_account_no', 'contact_person', 'created_at', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'milk_type_code', 'destination_code', 'effective_date', 'email', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'pincode', 'registration_code', 'registration_date', 'service_tax', 'tin_no', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'federation_code', 'organisation_type_code', 'scheme_type_code', 'is_registerd', 'valid_from', 'dpu_type', 'customer_type', 'is_chiller', 'machine_owned'], 'safe'],
-            [['allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'machine_owned'], 'integer'],
-            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'required', 'on' => ['dpuPassword']],
-            [['dcs_code_ex', 'ref_code', 'aadhaar_no', 'ts_code_m', 'ts_code_e'], 'safe'],
-            [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'safe'],
-            [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']]
+                [['dcs_code', 'address', 'upi_no', 'destination_type', 'bank_account_no', 'contact_person', 'created_at', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'milk_type_code', 'destination_code', 'effective_date', 'email', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'pincode', 'registration_code', 'registration_date', 'service_tax', 'tin_no', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'federation_code', 'organisation_type_code', 'scheme_type_code', 'is_registerd', 'valid_from', 'dpu_type', 'customer_type', 'is_chiller', 'machine_owned'], 'safe'],
+                [['allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'machine_owned'], 'integer'],
+                [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'required', 'on' => ['dpuPassword']],
+                [['dcs_code_ex', 'ref_code', 'aadhaar_no', 'ts_code_m', 'ts_code_e'], 'safe'],
+                [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code', 'is_kyc_verified'], 'safe'],
+                [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']]
         ];
     }
 

@@ -19,32 +19,32 @@ $this->title = Yii::t('app', 'Bank Verification');
         <?php echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
         <?php
         $attribute = [
-            ['class' => 'kartik\grid\CheckboxColumn',
+                ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model) {
                     return ['class' => 'checkbox', 'value' => $model['code'] . '###' . $model['verify_for']];
                 }],
-            ['attribute' => 'verify_for'],
-            ['attribute' => 'code'],
-            ['attribute' => 'name', 'value' => 'name'],
-            ['attribute' => 'ex_code'],
-            ['attribute' => 'ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
-            ['attribute' => 'bank_name', 'filter' => FALSE],
-            ['attribute' => 'branch_name', 'filter' => FALSE],
-            ['attribute' => 'bank_account_no', 'filter' => FALSE],
-            ['attribute' => 'ifsc', 'filter' => FALSE],
-            ['attribute' => 'beneficiary_name', 'filter' => FALSE],
-            ['attribute' => 'aadhaar_no',
+                ['attribute' => 'verify_for'],
+                ['attribute' => 'code'],
+                ['attribute' => 'name', 'value' => 'name'],
+                ['attribute' => 'ex_code'],
+                ['attribute' => 'ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
+                ['attribute' => 'bank_name', 'filter' => FALSE],
+                ['attribute' => 'branch_name', 'filter' => FALSE],
+                ['attribute' => 'bank_account_no', 'filter' => FALSE],
+                ['attribute' => 'ifsc', 'filter' => FALSE],
+                ['attribute' => 'beneficiary_name', 'filter' => FALSE],
+                ['attribute' => 'aadhaar_no',
                 'value' => function($model) {
                     return Yii::$app->general->decryptData($model['aadhaar_no']) !== FALSE ? Yii::$app->general->decryptData($model['aadhaar_no']) : $model['aadhaar_no'];
                 }
                 , 'filter' => FALSE],
-            ['attribute' => 'remarks',
+                ['attribute' => 'remarks',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form, $searchModel) {
-                    return $form->field($searchModel, '[' . $model['code'] .'@@'. $model['verify_for'] . ']remark')->textInput()->label(FALSE);
+                    return $form->field($searchModel, '[' . $model['code'] . '@@' . $model['verify_for'] . ']remark')->textInput()->label(FALSE);
                 }, 'filter' => false
             ],
         ];
@@ -71,6 +71,21 @@ $this->title = Yii::t('app', 'Bank Verification');
                     $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
                     $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Attachments', 'class' => 'get-attachments' . $class, 'data-val' => $id, 'data-name' => $type];
                     return GhostHtml::a_alert('<i class="fa fa-image"></i>', $url, $options);
+                },
+                'kyc-verification' => function ($url, $model) {
+                    $ekyc_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'ekyc_required', 'PORTAL');
+                    if(empty($ekyc_config)){
+                        return false;
+                    }
+                    $id = $model['code'];
+                    $type = $model['verify_for'];
+                    $kycStatus = $model['is_kyc_verified'];
+                    $colorClass = ($kycStatus == 1) ? 'green' : (($kycStatus == 0 || $kycStatus == '') ? 'gray' : 'red');
+                    $iconClass = 'fa fa-university ' . $colorClass;
+                    $class = ($kycStatus == 0 || $kycStatus == '') ? '' : ' link-disable';
+                    $url = ['/organisation/tbl-dcs/kyc-verification'];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'KYC Verification', 'class' => 'kyc-verification' . $class, 'data-val' => $id, 'data-name' => $type, 'data-bank_account_no' => $model['bank_account_no'], 'data-ifsc' => $model['ifsc']];
+                    return GhostHtml::a_alert('<i class="' . $iconClass . '"></i>', $url, $options);
                 },
             ]
         ];
@@ -139,6 +154,30 @@ $script = '
             success: function(data) {     
                 $("#AttachmentView").html(data);
                 $("#AttachmentViewModal").modal("toggle"); 
+                $("#loadercontent").hide();
+                $("#pageloader").hide();
+            },    
+            error: function(data) {    
+                $("#loadercontent").hide();
+                $("#pageloader").hide();
+            }
+        });
+    });
+    
+    $(document).on("click",".kyc-verification",function(e){
+        $("#pageloader").show();
+        $("#loadercontent").show();
+        var code= $(this).attr("data-val");
+        var type= $(this).attr("data-name");
+        var bankAccountNo = $(this).attr("data-bank_account_no");
+        var ifsc = $(this).attr("data-ifsc");
+        $.ajax({
+            type: "get",
+            url: "' . Url::to(['/organisation/tbl-dcs/kyc-verification']) . '" ,
+            data:{"code":code,"type":type,"bank_account_no":bankAccountNo,"ifsc":ifsc},
+            success: function(data) {     
+                $("#AppInformation").html(data);
+                $("#AppInformationModal").modal("toggle"); 
                 $("#loadercontent").hide();
                 $("#pageloader").hide();
             },    

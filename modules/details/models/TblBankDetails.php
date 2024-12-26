@@ -68,7 +68,8 @@ class TblBankDetails extends \app\models\ChildModel {
                     }
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
             [['branch_code', 'bank_account_no', 'ifsc', 'bank_code'], 'required', 'on' => 'main_create'],
-            [['is_verified'], 'default', 'value' => 0]
+            [['is_verified'], 'default', 'value' => 0],
+            [['is_kyc_verified'], 'default', 'value' => 0]
         ];
 
         $client_rules = Yii::$app->customvalidation->getRules('TblBankDetails', $this->form_validation_type);
@@ -96,6 +97,7 @@ class TblBankDetails extends \app\models\ChildModel {
             'is_active' => Yii::t('app', 'Is Active'),
             'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
             'adhar_no' => Yii::t('app', 'Aadhaar No.'),
+            'is_kyc_verified' => Yii::t('app', 'Is Kyc Verified'),
         ];
     }
 

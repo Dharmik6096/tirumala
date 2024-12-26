@@ -2,6 +2,7 @@
 
 namespace app\modules\organisation\controllers;
 
+use app\components\WebApi;
 use Yii;
 use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
@@ -48,6 +49,8 @@ use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\document\controllers\TblAttachmentController;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use app\modules\organisation\models\TblBankVerification;
+use app\modules\organisation\models\TblBankVerificationLog;
 use app\modules\product\models\TblProductSaleRate;
 use app\modules\product\models\TblProductSaleRateApplicability;
 
@@ -1205,7 +1208,7 @@ class TblDcsController extends ChildController {
                         $memberModel->attributes = $model->attributes;
                         $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                         $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
-                        if(!empty($memberModel->set_master_hierarchy)){
+                        if (!empty($memberModel->set_master_hierarchy)) {
                             $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
                         }
                         $memberModel->animal_type_code = 1;
@@ -1377,6 +1380,92 @@ class TblDcsController extends ChildController {
         $module_name = 'tbl_dcs';
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('dcs', $id, $model, $module_code, $module_name);
+    }
+
+    public function actionKycVerification() {
+        $logModel = New TblBankVerificationLog();
+        $getData = Yii::$app->request->get();
+        $code = !empty($getData['code']) ? $getData['code'] : NULL;
+        $type = !empty($getData['type']) ? $getData['type'] : NULL;
+        $model = [];
+        $responseJson = '';
+        if (strtolower($type) == 'dcs') {
+            $model = $this->findModel($code);
+        } else if (strtolower($type) == 'customer') {
+            $model = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
+        } elseif (strtolower($type) == 'member') {
+            $model = TblMember::find()->where(['member_code' => $code])->one();
+        }
+        if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
+            $saveModel = [];
+            $hisModel = [];
+            $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'verify' ? 1 : 2) : 0;
+            if (!empty($status)) {
+                $model->scenario = 'kycVerify';
+                $history = $model->className() . 'History';
+                $historyModel = new $history();
+                Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                $hisModel[] = $historyModel;
+                $model->is_kyc_verified = $status;
+                $saveModel[] = $model;
+
+                if ($model->validate() && empty($model->getErrors())) {
+                    $logModel = New TblBankVerificationLog();
+                    $logModel->setLogData(Yii::$app->request->post(), $model, $saveModel);
+                    $transaction = $this->generalModel->saveTransaction($saveModel, $hisModel, ['KYC Verified', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        return $this->redirect(\yii\helpers\Url::previous());
+                    } else {
+                        return $this->redirect(\yii\helpers\Url::previous());
+                    }
+                } else {
+                    $msg = '';
+                    foreach ($model->getErrors() as $errorkey => $value) {
+                        $msg .= $value[0] . '<br/>';
+                    }
+                    Yii::$app->session->setFlash('error', $msg);
+                    return $this->redirect(\yii\helpers\Url::previous());
+                }
+            }
+        }
+        if(!empty($getData) && !empty($getData['bank_account_no']) && !empty($getData['ifsc'])){
+            $base_url = \Yii::$app->params['bank_verification']['verfication_url'];
+            $body = array(
+                'bank_account' => $getData['bank_account_no'],
+                'ifsc' => $getData['ifsc']
+            );
+            $api = new WebApi();
+            $api->header_info['Content-Type'] = 'application/json';
+            $api->header_info['Content-length'] = strlen(json_encode($body));
+            $api->header_info['x-client-id'] = \Yii::$app->params['bank_verification']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['bank_verification']['header']['x-client-secret'];
+            $api->is_header_merge = false;
+            $api->return_actual = true;
+            $api->serverUrl = $base_url;
+            $api->body = $body;
+            try {
+                $result = $api->GuzzleCURL();
+                $httpCode = $result->getStatusCode();
+                $response = $result->getBody()->getContents();
+                $response = !empty($response) ? json_decode($response) : [];
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                $responseData = $e->getResponse() ? json_decode($e->getResponse()->getBody()->getContents()) : '';
+                $response = $responseData->error;
+                $response->account_status = 'failed at bank.';
+                $response->account_status_code = 'failed_at_bank';
+            }
+            $response->bank_account_no = $body['bank_account'];
+            $response->ifsc = $body['ifsc'];
+            $responseJson = json_encode($response);
+        }
+        return $this->renderAjax('kyc_verification_view', [
+            'logModel' => $logModel,
+            'model' => $model,
+            'type' => $type,
+            'response' => $response,
+            'responseJson' => $responseJson,
+        ]);
     }
 
 }
