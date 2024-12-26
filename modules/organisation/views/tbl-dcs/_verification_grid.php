@@ -42,9 +42,9 @@ $this->title = Yii::t('app', 'Bank Verification');
                 , 'filter' => FALSE],
                 ['attribute' => 'remarks',
                 'format' => 'raw',
-                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block mb-3-imp'],
                 'value' => function ($model, $key, $index) use ($form, $searchModel) {
-                    return $form->field($searchModel, '[' . $model['code'] . '@@' . $model['verify_for'] . ']remark')->textInput()->label(FALSE);
+                    return $form->field($searchModel, '[' . $model['code'] . '@@' . $model['verify_for'] . ']remark')->textInput(['class' => 'mb-14'])->label(FALSE);
                 }, 'filter' => false
             ],
         ];
@@ -95,8 +95,8 @@ $this->title = Yii::t('app', 'Bank Verification');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Verify'), ['class' => 'btn btn-primary submit', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
-                echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
+                echo Html::button(Yii::t('app', 'Verify'), ['class' => 'btn-login btn btn-primary submit me-2', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
+                echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn-login btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
             <?= Yii::$app->controls->custombutton('Cancel', 'master-verification','','btn-login'); ?> 
