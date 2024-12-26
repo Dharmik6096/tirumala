@@ -72,7 +72,7 @@ $appendId = !empty($appendId) ? $appendId : '';
                         'addRemoveLinks' => true,
                         'autoDiscover' => false,
                         'maxFiles' => 1,
-                        'maxFilesize' => 5,
+                        'maxFilesize' => 20,
                     ],
                     'clientEvents' => [
                         'success' => "function( file, response ){
