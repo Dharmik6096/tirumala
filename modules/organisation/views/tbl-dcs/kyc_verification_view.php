@@ -10,10 +10,10 @@ $code = ($type == 'DCS' ? $model->dcs_code : ($type == 'MEMBER' ? $model->member
 $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member_name : ($type == 'CUSTOMER' ? $model->customer_name : '')));
 ?>
 <div class="modal modal-default fade" id="AppInformationModal" role="dialog">
-    <div class="modal-dialog width_100-200">
+    <div class="modal-dialog width_100-200 modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'Verification Details'); ?> (<?= $code ?>-<?= $name ?>)</h4>
             </div>
             <div class="row">            
@@ -425,11 +425,11 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                     <div class="panel-footer">
                         <?php
                         if (!empty($response) && strtolower($response->account_status) == 'valid') {
-                            echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submitdata', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
+                            echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn-login btn btn-primary submitdata', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
                         }
-                        echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-danger submitdata', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
+                        echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn-login btn btn-danger submitdata', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
                         ?>
-                        <?= Yii::$app->controls->custombutton('Cancel', 'master-verification'); ?> 
+                        <?= Yii::$app->controls->custombutton('Cancel', 'master-verification', '', 'btn-login'); ?> 
                     </div>
                     <?php ActiveForm::end(); ?>
                 </div>
