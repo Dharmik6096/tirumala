@@ -287,6 +287,10 @@ class CustomValidation extends Component {
                     // [['customer_type'], 'required', 'on' => ['remuneration', 'processpayment', 'paymenttypevendor','disbursesearch']],
                         [['customer_type'], 'required', 'except' => ['unreleasepaymentsearch', 'unreleasePaymentUpdate']],
                 ],
+                'TblBulkBillingImport' => [
+                        [['bank_account_no', 'ifsc'], 'required', 'on' => ['member_billing_import']],
+                ],
+
             ],
             'NIFPL' => [
                 'TblDcs' => [
@@ -1070,6 +1074,7 @@ class CustomValidation extends Component {
                             [['amount_deposit'], 'required', 'except' => ['import_receipt_detail']],
                     ],
                 ],
+                'TblBulkBillingImport' => [],
             ],
             'ANANDA' => [
                 'TblMember' => [
