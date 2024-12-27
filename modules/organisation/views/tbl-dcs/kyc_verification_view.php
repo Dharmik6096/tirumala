@@ -425,7 +425,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                     <div class="panel-footer">
                         <?php
                         if (!empty($response) && strtolower($response->account_status) == 'valid') {
-                            echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn-login btn btn-primary submitdata', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
+                            echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn-login btn btn-primary submitdata me-2', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
                         }
                         echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn-login btn btn-danger submitdata', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
                         ?>
