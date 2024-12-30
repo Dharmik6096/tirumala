@@ -42,7 +42,7 @@ $this->title = Yii::t('app', 'Bank Verification');
                 , 'filter' => FALSE],
                 ['attribute' => 'remarks',
                 'format' => 'raw',
-                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block mb-3-imp'],
                 'value' => function ($model, $key, $index) use ($form, $searchModel) {
                     return $form->field($searchModel, '[' . $model['code'] . '@@' . $model['verify_for'] . ']remark')->textInput()->label(FALSE);
                 }, 'filter' => false
