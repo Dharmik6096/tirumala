@@ -10,6 +10,10 @@ $button = Yii::$app->label->button('create');
 $this->title = Yii::t('app', $title);
 ?>
 <div class="panel panel-default panel-main">
+     <?php
+       $model->applicable_code = $model->user_code;
+     ?>
+<div class="panel-heading">User : <?= $model->user_code . '(' . strtoupper($model->userCode->name) . ')' ?> </div>
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin(['options' => [
@@ -178,7 +182,7 @@ $('#check-all-routes').on('click', function(){
         var _t2 = $(this);
         var isChecked = _t2.is(':checked');
         _t2.prop('checked', checkedAll == 'true' ? true : false);
-        _t2.closest('label').css('background', checkedAll == 'true' ? 'none' : backgroundColor);
+        _t2.closest('label').css('background', checkedAll == 'true' ? backgroundColor : 'none' );
         
     });
 })
