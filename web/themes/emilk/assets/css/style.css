@@ -3865,6 +3865,7 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
 }
 .dash_block_header {
     color: #00A3DE !important;
+    margin-bottom: 10px;
 }
 
 .dash_block_description {
@@ -4205,7 +4206,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     /*border-radius: 5px;*/
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     padding: 5px;
-    height: 97px !important;
+    height: 120px !important;
 }
 
 
@@ -5552,7 +5553,6 @@ div#w12 > .card.border-default {
     align-items: center;
     display: flex;
 }
-
 .feedback_image{
     border: 1px solid #cfcfcf;
     padding: 10px;
@@ -5584,4 +5584,7 @@ div#w12 > .card.border-default {
 }
 .text-red {
     color: red !important;
+}
+h4{
+    font-size: 18px;
 }
