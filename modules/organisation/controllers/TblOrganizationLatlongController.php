@@ -157,7 +157,8 @@ class TblOrganizationLatlongController extends ChildController
             $modelApplicability -> union_code = $userOrgData['userDataOrg'][0] -> union_code;
             foreach($userOrgData['userDataOrg'] as $key => $val){             
                 $name =  Yii::$app->general->getField($val, $val->customer_type);
-                $dest[$val->customer_code . '-'. $val->organization_latlong_code .'-' . $val->customer_type] = $val->customer_code . ' - ' . $name . ' - ' . Yii::t('app', $val->customer_type);
+                $reff = Yii::$app->general->getField($val, $val->customer_type,'ref_code');
+                $dest[$val->customer_code . '-'. $val->organization_latlong_code .'-' . $val->customer_type] = $reff . ' - ' . $name . ' - ' . Yii::t('app', $val->customer_type);
         }
         }
         $searchModel = new TblOrganizationLatLongApplicabilitySearch();

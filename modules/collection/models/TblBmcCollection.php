@@ -947,19 +947,16 @@ class TblBmcCollection extends \app\models\ChildModel {
         }
         //calculate clr
         if (in_array('calculate_clr', $flagArray)) {
-            $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, 'BMC', 'MEMBER_COLLECTION');
-            $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, 'BMC', 'MEMBER_COLLECTION');
+            (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, 'BMC', 'MEMBER_COLLECTION');
+            (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, 'BMC', 'MEMBER_COLLECTION');
 
             if ($lr1 == '' or $lr2 == '') {
-                $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
-                $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
+                (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
+                (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
             }
-            (float) $lr1 = empty($lr1) ? 1 : $lr1;
-            (float) $lr2 = empty($lr2) ? 0 : $lr2;
-            $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
-            $response['clr'] = $clr;
-
-
+            $lr1 = empty($lr1) ? 1 : $lr1;
+            $lr2 = empty($lr2) ? 0 : $lr2;
+            $response['clr'] = ((float) $snf - ((float) $fat * $lr1) - $lr2) * 4;
 
             (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, 'BMC', 'RMRD_COLLECTION');
             (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, 'BMC', 'RMRD_COLLECTION');
@@ -973,10 +970,10 @@ class TblBmcCollection extends \app\models\ChildModel {
             } else {
                 $response['clr'] = ($clr / 4) + ($fat * $lr1) + $lr2;
 
-                if ($customer_type != 'DCS' && $customer_type != '') {
+                if ($customer_type != 'DCS' && $customer_type != '' && is_numeric($data)) {
                     $formattedNumber = floor($data * 100) / 100;
                     $response['clr'] = number_format($formattedNumber, 2);
-                } else {
+                } else if (is_numeric($data)) {
                     $response['clr'] = number_format($data, 2);
                 }
             }

@@ -16,7 +16,7 @@ use yii\helpers\Url;
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'visible' => FALSE, 'filter' => false],
+        }, 'visible' => TRUE, 'filter' => false],
     ['attribute' => 'process_name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->processCode, 'process_desc');
         }, 'visible' => TRUE, 'filter' => TRUE],

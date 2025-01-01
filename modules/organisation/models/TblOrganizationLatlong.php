@@ -162,30 +162,69 @@ class TblOrganizationLatlong extends ChildModel {
 
     public function getUserOrgLatLong() {
         $userData = $this->find()->alias('A')
-                ->innerJoin('tbl_user_organization_mapping B', 'A.customer_type = B.organization_type AND A.customer_code = B.organization_code')
-                ->where(['B.user_id' => $this->user_code])
-                ->where(['A.is_active' => 1])
-                ->all();
-
-        $othersData = $this->find()
-                ->where(['in', 'customer_type', ['HOME', 'OFFICE', 'OTHER']])
-                ->where(['customer_code' => $this->user_code, 'is_active' => 1])
-                ->all();
-        $userData = array_merge($userData, $othersData);
+        ->leftJoin('tbl_user_organization_mapping B', 'A.customer_type = B.organization_type AND A.customer_code = B.organization_code')
+        ->andWhere(['B.user_id' => $this->user_code])
+        ->orWhere(['A.customer_code' => $this->user_code,'A.customer_type' => ['HOME', 'OFFICE', 'OTHER']])
+        ->andWhere(['A.is_active' => 1])
+        //->asArray()
+        ->all();
         $values = TblOrganizationLatLongApplicability::find()->select(['applicable_code', 'applicable_for'])->where(['user_code' => $this->user_code])->asArray()->all();
         $selected = [];
-
+        
         //var_dump($results);exit;
         if (!empty($userData)) {
+            $bmc = [];$mcc = [];$plant = [];$dcs = [];
             foreach ($userData as $key => $row) {
+                if($row -> customer_type == 'MCC'){
+                    $data = $row->mccPlantCode;
+                    $plant[] = $data->plant_code;
+                }
+                if($row -> customer_type == 'BMC'){
+                    $data = $row ->bmcCode;
+                    $mcc[] = $data->mcc_plant_code;
+                    $plant[] = $data->plant_code;
+                }
+                if($row -> customer_type == 'DCS'){
+                    $data = $row->dcsCode;
+                    $mcc[] = $data->mcc_plant_code;
+                    $bmc[] = $data->bmc_code;
+                    $plant[] = $data->plant_code;
+                }
                 if (in_array($row->customer_code, array_column($values, 'applicable_code'), true) !== FALSE && in_array($row->customer_type, array_column($values, 'applicable_for'), true) !== FALSE) {
                     // $selected[] = $row->customer_code . '-'. $row->organization_latlong_code .'-' . $row->customer_type;
                     unset($userData[$key]);
                 }
             }
-        }
-        $userData = array_values($userData);
+            $customerTypes = [
+                'BMC' => $bmc,
+                'MCC' => $mcc,
+                'PLANT' => $plant,
+                'DCS' => $dcs
+            ];
+            foreach ($customerTypes as $type => $codes) {
 
+                if (!empty($codes)) {
+                    $codes = array_unique($codes);
+                    $customerData = $this->find()
+                        ->where(['in', 'customer_type', [$type]])
+                        ->andWhere(['customer_code' => $codes, 'is_active' => 1])
+                        ->all();
+                    foreach ($customerData as $row) {
+                        $applicableCodes = array_column($values, 'applicable_code');
+                        $applicableFor = array_column($values, 'applicable_for');
+                        
+                        if (in_array($row->customer_code, $applicableCodes, true) && in_array($row->customer_type, $applicableFor, true)) {
+                            continue;
+                        } else {
+                            $userData[] = $row;
+                        }
+                    }
+                }
+            }        
+        }
+          
+
+        $userData = array_values($userData);
         return ['userDataOrg' => $userData, 'selected' => $selected];
     }
 

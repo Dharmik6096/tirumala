@@ -1390,9 +1390,9 @@ class TblDcsController extends ChildController {
         $model = [];
         $responseJson = '';
         if (strtolower($type) == 'dcs') {
-            $model = $this->findModel($code);
+            $model = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => 'society', 'is_default' => 1, 'is_active' => 1])->one();
         } else if (strtolower($type) == 'customer') {
-            $model = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
+            $model = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => 'customer', 'is_default' => 1, 'is_active' => 1])->one();
         } elseif (strtolower($type) == 'member') {
             $model = TblMember::find()->where(['member_code' => $code])->one();
         }
@@ -1408,10 +1408,21 @@ class TblDcsController extends ChildController {
                 Yii::$app->operation->history($model, $historyModel, 'UPDATE');
                 $hisModel[] = $historyModel;
                 $model->is_kyc_verified = $status;
+                if ($status == 1) {
+                    $model->is_verified = 1;
+                }
                 $saveModel[] = $model;
 
                 if ($model->validate() && empty($model->getErrors())) {
                     $logModel = New TblBankVerificationLog();
+                    if (strtolower($type) == 'dcs') {
+                        $dcsdata = $this->findModel($code);
+                        $this->setLogHierarchy($logModel, $dcsdata, $saveModel);
+                    } else if (strtolower($type) == 'customer') {
+                        $customerdata = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
+                        $this->setLogHierarchy($logModel, $customerdata, $saveModel);
+                    }
+
                     $logModel->setLogData(Yii::$app->request->post(), $model, $saveModel);
                     $transaction = $this->generalModel->saveTransaction($saveModel, $hisModel, ['KYC Verified', 'create']);
                     if ($transaction == 'customRedirect') {
@@ -1429,7 +1440,7 @@ class TblDcsController extends ChildController {
                 }
             }
         }
-        if(!empty($getData) && !empty($getData['bank_account_no']) && !empty($getData['ifsc'])){
+        if (!empty($getData) && !empty($getData['bank_account_no']) && !empty($getData['ifsc'])) {
             $base_url = \Yii::$app->params['bank_verification']['verfication_url'];
             $body = array(
                 'bank_account' => $getData['bank_account_no'],
@@ -1460,12 +1471,23 @@ class TblDcsController extends ChildController {
             $responseJson = json_encode($response);
         }
         return $this->renderAjax('kyc_verification_view', [
-            'logModel' => $logModel,
-            'model' => $model,
-            'type' => $type,
-            'response' => $response,
-            'responseJson' => $responseJson,
+                    'logModel' => $logModel,
+                    'model' => $model,
+                    'type' => $type,
+                    'response' => $response,
+                    'responseJson' => $responseJson,
         ]);
+    }
+
+    public function setLogHierarchy($logModel, $model, &$saveModel) {
+        if (!empty($model)) {
+            $logModel->union_code = $model->union_code;
+            $logModel->plant_code = $model->plant_code;
+            $logModel->mcc_plant_code = $model->mcc_plant_code;
+            $logModel->bmc_code = $model->bmc_code;
+            $logModel->dcs_code = $model->dcs_code;
+            $saveModel[] = $logModel;
+        }
     }
 
 }
