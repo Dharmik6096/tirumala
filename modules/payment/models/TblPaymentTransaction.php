@@ -10,6 +10,9 @@ use app\modules\payment\models\TblMemberPayment;
 use app\modules\payment\models\TblVspPayment;
 use app\modules\payment\models\TblMemberPaymentHistory;
 use app\modules\payment\models\TblVspPaymentHistory;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcs;
 use Yii;
 use yii\db\Expression;
 
@@ -273,6 +276,18 @@ class TblPaymentTransaction extends \app\models\ChildModel {
 
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+    
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'code']);
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'code']);
     }
 
     public function updatePaymentMasterData($oldTransaction, $newPaymentTransaction, &$saveModel) {

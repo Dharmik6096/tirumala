@@ -10,49 +10,70 @@ $this->title = Yii::t('app', 'Reject Reinitiate');
 <div class=" no-effect">
     <?php
     $form = ActiveForm::begin([
-        'id' => 'reject-reinitiate-form',
+                'id' => 'reject-reinitiate-form',
     ]);
     ?>
     <div class="">
         <?php
         $attribute = [
-                ['class' => 'kartik\grid\CheckboxColumn',
+            ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model, $key, $index) {
-                    $code = $model['payment_transaction_code'].'###'.$model['bmc_code'].'###'.$model['type'].'###'.date('Y-m-d', strtotime($model['from_date'])).'###'.date('Y-m-d', strtotime($model['to_date']));
+                    $code = $model['payment_transaction_code'] . '###' . $model['bmc_code'] . '###' . $model['type'] . '###' . date('Y-m-d', strtotime($model['from_date'])) . '###' . date('Y-m-d', strtotime($model['to_date']));
                     return ['class' => 'checkbox', 'value' => $code];
                 }],
-                ['attribute' => 'bmc_code',
+            ['attribute' => 'bmc_code',
                 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
                 },
                 'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
-                ['attribute' => 'bmc_code',
-                    'label' => Yii::t('app', 'BMC Name'),
-                    'value' => function($model) {
-                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-                    }, 'vAlign' => 'middle', 'filter' => false],
-                ['attribute' => 'payment_cycle', 'value' => function($model) {
-                        return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
-                    }, 'filter' => false, 'format' => 'raw'],
-                ['attribute' => 'type'],
-                ['attribute' => 'payment_date', 'label' => Yii::t('app', 'Payment Date'), 'value' => function($model) {
+            ['attribute' => 'bmc_code',
+                'label' => Yii::t('app', 'BMC Name'),
+                'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                }, 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'payment_cycle', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+                }, 'filter' => false, 'format' => 'raw'],
+            ['attribute' => 'type'],
+            ['attribute' => 'payment_date', 'label' => Yii::t('app', 'Payment Date'), 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->payment_date);
                 }, 'filter' => FALSE],
-                ['attribute' => 'final_amount', 'filter' => FALSE],
-                ['attribute' => 'name', 'label' => Yii::t('app', 'name'), 'value' => function($model, $key, $index) use ($form) {
+            ['attribute' => 'final_amount', 'filter' => FALSE],
+            ['attribute' => 'name', 'label' => Yii::t('app', 'name'), 'value' => function($model, $key, $index) use ($form) {
                     return $form->field($model, '[' . $model->payment_transaction_code . ']name')->textInput(['value' => $model->name, 'class' => 'form-control', 'data-id' => $key])->label(FALSE);
                 }, 'format' => 'raw', 'filter' => FALSE],
-                ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'Bank Account No'), 'filter' => FALSE,
-                    'format' => 'raw',
-                    'value' => function ($model, $key, $index) use ($form) {
-                        return $form->field($model, '[' . $model->payment_transaction_code . ']bank_account_no')->textInput(['value' => $model->bank_account_no, 'class' => 'form-control number-validate', 'data-id' => $key])->label(FALSE);
-                    },
-                ],
-                ['attribute' => 'bank_name', 'filter' => FALSE],
-                ['attribute' => 'ifsc', 'filter' => FALSE],
-                ['attribute' => 'response_msg', 'label' => Yii::t('app', 'Failed Reson'), 'filter' => FALSE],
+            ['attribute' => 'code', 'filter' => FALSE],
+            [
+                'attribute' => 'ref_code',
+                'value' => function ($model) {
+                    $type = $model->type;
+                    switch ($type) {
+                        case 'member':
+                            return Yii::$app->general->getforeignkey($model->memberCode, 'ref_code');
+                        case 'DCS':
+                            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                        case 'BULKVEN':
+                            return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
+                        case 'FARM':
+                            return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
+                        case 'VLCCVEN':
+                            return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
+                        default:
+                            return null;
+                    }
+                }, 'filter' => false,
+            ],
+            ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'Bank Account No'), 'filter' => FALSE,
+                'format' => 'raw',
+                'value' => function ($model, $key, $index) use ($form) {
+                    return $form->field($model, '[' . $model->payment_transaction_code . ']bank_account_no')->textInput(['value' => $model->bank_account_no, 'class' => 'form-control number-validate', 'data-id' => $key])->label(FALSE);
+                },
+            ],
+            ['attribute' => 'bank_name', 'filter' => FALSE],
+            ['attribute' => 'ifsc', 'filter' => FALSE],
+            ['attribute' => 'response_msg', 'label' => Yii::t('app', 'Failed Reson'), 'filter' => FALSE],
         ];
 
         $grid_option = [
