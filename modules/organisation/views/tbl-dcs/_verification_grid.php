@@ -74,7 +74,7 @@ $this->title = Yii::t('app', 'Bank Verification');
                 },
                 'kyc-verification' => function ($url, $model) {
                     $ekyc_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'ekyc_required', 'PORTAL');
-                    if(empty($ekyc_config)){
+                    if (empty($ekyc_config)) {
                         return false;
                     }
                     $id = $model['code'];
