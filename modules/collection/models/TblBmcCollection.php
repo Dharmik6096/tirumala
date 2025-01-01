@@ -968,12 +968,11 @@ class TblBmcCollection extends \app\models\ChildModel {
             if ($is_clr_input == 0) {
                 $response['clr'] = ($snf - ($fat * $lr1) - $lr2) * 4;
             } else {
-                $response['clr'] = ($clr / 4) + ($fat * $lr1) + $lr2;
-
-                if ($customer_type != 'DCS' && $customer_type != '' && is_numeric($data)) {
+                $data = ($clr / 4) + ($fat * $lr1) + $lr2;
+                if ($customer_type != 'DCS' && $customer_type != '') {
                     $formattedNumber = floor($data * 100) / 100;
                     $response['clr'] = number_format($formattedNumber, 2);
-                } else if (is_numeric($data)) {
+                } else {
                     $response['clr'] = number_format($data, 2);
                 }
             }
