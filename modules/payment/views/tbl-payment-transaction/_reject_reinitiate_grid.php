@@ -45,26 +45,9 @@ $this->title = Yii::t('app', 'Reject Reinitiate');
                     return $form->field($model, '[' . $model->payment_transaction_code . ']name')->textInput(['value' => $model->name, 'class' => 'form-control', 'data-id' => $key])->label(FALSE);
                 }, 'format' => 'raw', 'filter' => FALSE],
             ['attribute' => 'code', 'filter' => FALSE],
-            [
-                'attribute' => 'ref_code',
-                'value' => function ($model) {
-                    $type = $model->type;
-                    switch ($type) {
-                        case 'member':
-                            return Yii::$app->general->getforeignkey($model->memberCode, 'ref_code');
-                        case 'DCS':
-                            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-                        case 'BULKVEN':
-                            return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
-                        case 'FARM':
-                            return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
-                        case 'VLCCVEN':
-                            return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
-                        default:
-                            return null;
-                    }
-                }, 'filter' => false,
-            ],
+            ['attribute' => 'ref_code', 'value' => function ($model) {
+                return Yii::$app->general->getField($model, $model->type, 'ref_code');
+            }],
             ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'Bank Account No'), 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form) {

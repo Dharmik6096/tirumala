@@ -2773,6 +2773,8 @@ class GeneralFunctions extends Component {
             $fieldname = "{$type}_name";
         } else if ($type == 'bulkven') {
             $fieldname = 'customer_name';
+        } else if ($type == 'member') {
+            $fieldname = 'member_name';
         }
 
         switch ($type) {
@@ -2787,6 +2789,9 @@ class GeneralFunctions extends Component {
                 break;
             case 'dcs':
                 $code = $model->dcsCode;
+                break;
+            case 'member':
+                $code = $model->memberCode;
                 break;
             case 'home':
             case 'office':
