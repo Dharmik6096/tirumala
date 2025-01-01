@@ -18,7 +18,6 @@ use app\modules\details\models\TblBankDetails;
 use app\modules\general\models\TblDepartment;
 use app\modules\organisation\models\TblDcsVendorStatus;
 use app\modules\globalmaster\models\TblAnimalType;
-use app\modules\organisation\models\TblBanks;
 
 /**
  * This is the model class for table "tbl_customer_master".
@@ -56,7 +55,6 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
     public $same_milk_type, $diff_milk_type;
     public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no, $route, $beneficiary_name, $prefix, $file_name;
-    public $reference_id, $name_at_bank, $bank_name, $city, $branch, $micr, $name_match_result, $name_match_score, $account_status, $account_status_code, $utr, $ifsc_code, $has_available_branch_info, $branch_address, $branch_name, $branch_code;
 
     /**
      * @inheritdoc
@@ -72,7 +70,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $main_rules = [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
                 [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc', 'is_kyc_verified', 'reference_id', 'name_at_bank', 'bank_name', 'city', 'branch', 'micr', 'name_match_result', 'name_match_score', 'account_status', 'account_status_code', 'utr', 'ifsc_code', 'has_available_branch_info', 'branch_address', 'branch_name', 'branch_code'], 'safe'],
+                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc'], 'safe'],
                 [['route'], 'required', 'on' => ['importCsv']],
                 [['is_active', 'animal_type_code'], 'integer'],
                 [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix'], 'safe'],
@@ -135,7 +133,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
                     }
                     Yii::$app->general->validateExCodes($this, 'tbl_customer_master', 'customer_code_ex', 'tbl_dcs', 'dcs_code_ex', 'TblDcs', $this->union_code, $update);
                 }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv', 'createFront']],
-                [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping', 'kycVerify']],
+                [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping']],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
                 [['ts_code_m', 'ts_code_e'], 'number']
         ];
@@ -604,10 +602,6 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
     public function resetData() {
         $this->aadhaar_no = null;
-    }
-
-    public function getBankCode() {
-        return $this->hasOne(TblBanks::className(), ['bank_code' => 'bank_code'])->via('defaultBankDetail');
     }
 
 }

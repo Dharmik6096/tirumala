@@ -5,9 +5,8 @@ use yii\helpers\Html;
 use yii\web\View;
 use kartik\form\ActiveForm;
 
-$this->title = Yii::$app->label->title('view', 'Society');
-$code = ($type == 'DCS' ? $model->dcs_code : ($type == 'MEMBER' ? $model->member_code : ($type == 'CUSTOMER' ? $model->customer_code : '')));
-$name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member_name : ($type == 'CUSTOMER' ? $model->customer_name : '')));
+$code = ($type == 'DCS' ? $model->dcsDetail->dcs_code : ($type == 'MEMBER' ? $model->member_code : ($type == 'CUSTOMER' ? $model->customerDetail->customer_code : '')));
+$name = ($type == 'DCS' ? $model->dcsDetail->dcs_name : ($type == 'MEMBER' ? $model->member_name : ($type == 'CUSTOMER' ? $model->customerDetail->customer_name : '')));
 ?>
 <div class="modal modal-default fade" id="AppInformationModal" role="dialog">
     <div class="modal-dialog width_100-200">
@@ -23,11 +22,11 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                 ]);
                 ?>
                 <div class="modal-body">   
-                    <?php 
-                        echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
-                        echo Html::hiddenInput('type', $type);
-                        echo Html::hiddenInput('code', $code);
-                        echo Html::hiddenInput('responseJson', $responseJson);
+                    <?php
+                    echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
+                    echo Html::hiddenInput('type', $type);
+                    echo Html::hiddenInput('code', $code);
+                    echo Html::hiddenInput('responseJson', $responseJson);
                     ?>
 
 
@@ -41,23 +40,15 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'dcs_code',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'DCS Code'),
+                                                        'value' => !empty($model->dcsDetail) ? Yii::$app->general->getforeignkey($model->dcsDetail, 'dcs_code') : '',
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
-                                                        'attribute' => 'dcs_name',
-                                                        'valueColOptions' => ['style' => 'width:30%'],
-                                                    ],
-                                                ],
-                                            ],
-                                                [
-                                                'columns' => [
-                                                        [
-                                                        'attribute' => 'dcs_code_ex',
-                                                        'valueColOptions' => ['style' => 'width:30%'],
-                                                    ],
-                                                        [
-                                                        'attribute' => 'ref_code',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'DCS Name'),
+                                                        'value' => !empty($model->dcsDetail) ? Yii::$app->general->getforeignkey($model->dcsDetail, 'dcs_name') : '',
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                 ],
@@ -65,13 +56,29 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'dcs_code',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'Society Code Ex'),
+                                                        'value' => !empty($model->dcsDetail) ? Yii::$app->general->getforeignkey($model->dcsDetail, 'dcs_code_ex') : '',
+                                                        'valueColOptions' => ['style' => 'width:30%'],
+                                                    ],
+                                                        [
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'Code'),
+                                                        'value' => !empty($model->dcsDetail) ? Yii::$app->general->getforeignkey($model->dcsDetail, 'ref_code') : '',
+                                                        'valueColOptions' => ['style' => 'width:30%'],
+                                                    ],
+                                                ],
+                                            ],
+                                                [
+                                                'columns' => [
+                                                        [
+                                                        'attribute' => 'detail_code',
                                                         'label' => 'Bank Name',
                                                         'value' => !empty($model->bankCode) ? Yii::$app->general->getforeignkey($model->bankCode, 'bank_name') : '',
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
-                                                        'attribute' => 'dcs_code',
+                                                        'attribute' => 'detail_code',
                                                         'label' => 'Branch Name',
                                                         'value' => !empty($model->branchCode) ? Yii::$app->general->getforeignkey($model->branchCode, 'branch_name') : '',
                                                         'valueColOptions' => ['style' => 'width:30%']
@@ -81,15 +88,11 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'dcs_code',
-                                                        'label' => 'Bank Account No.',
-                                                        'value' => !empty($model->mainBankDetails) ? Yii::$app->general->getforeignkey($model->mainBankDetails, 'bank_account_no') : '',
+                                                        'attribute' => 'bank_account_no',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                         [
-                                                        'attribute' => 'dcs_code',
-                                                        'label' => 'Ifsc',
-                                                        'value' => !empty($model->mainBankDetails) ? Yii::$app->general->getforeignkey($model->mainBankDetails, 'ifsc') : '',
+                                                        'attribute' => 'ifsc',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                 ],
@@ -97,13 +100,13 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'dcs_code',
-                                                        'label' => 'Beneficiary Name',
-                                                        'value' => !empty($model->mainBankDetails) ? Yii::$app->general->getforeignkey($model->mainBankDetails, 'beneficiary_name') : '',
+                                                        'attribute' => 'beneficiary_name',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                         [
-                                                        'attribute' => 'aadhaar_no',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => 'Adharcard No.',
+                                                        'value' => !empty($model->dcsDetail) ? Yii::$app->general->getforeignkey($model->dcsDetail, 'aadhaar_no') : '',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                 ],
@@ -209,11 +212,15 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'customer_code',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'Customer Code'),
+                                                        'value' => !empty($model->customerDetail) ? Yii::$app->general->getforeignkey($model->customerDetail, 'customer_code') : '',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                         [
-                                                        'attribute' => 'customer_name',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'Customer Name'),
+                                                        'value' => !empty($model->customerDetail) ? Yii::$app->general->getforeignkey($model->customerDetail, 'customer_name') : '',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                 ],
@@ -221,11 +228,15 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'customer_code_ex',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'Customer Code Ex'),
+                                                        'value' => !empty($model->customerDetail) ? Yii::$app->general->getforeignkey($model->customerDetail, 'customer_code_ex') : '',
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
-                                                        'attribute' => 'ref_code',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'Code'),
+                                                        'value' => !empty($model->customerDetail) ? Yii::$app->general->getforeignkey($model->customerDetail, 'ref_code') : '',
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                 ],
@@ -233,13 +244,13 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'customer_code',
+                                                        'attribute' => 'detail_code',
                                                         'label' => 'Bank Name',
                                                         'value' => !empty($model->bankCode) ? Yii::$app->general->getforeignkey($model->bankCode, 'bank_name') : '',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                         [
-                                                        'attribute' => 'customer_code',
+                                                        'attribute' => 'detail_code',
                                                         'label' => 'Branch Name',
                                                         'value' => !empty($model->ifscDetail) ? Yii::$app->general->getforeignkey($model->ifscDetail, 'branch_name') : '',
                                                         'valueColOptions' => ['style' => 'width:30%']
@@ -249,15 +260,11 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'customer_code',
-                                                        'label' => 'Bank Account No.',
-                                                        'value' => !empty($model->mainBankDetails) ? Yii::$app->general->getforeignkey($model->mainBankDetails, 'bank_account_no') : '',
+                                                        'attribute' => 'bank_account_no',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                         [
-                                                        'attribute' => 'customer_code',
-                                                        'label' => 'Ifsc',
-                                                        'value' => !empty($model->mainBankDetails) ? Yii::$app->general->getforeignkey($model->mainBankDetails, 'ifsc') : '',
+                                                        'attribute' => 'ifsc',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                 ],
@@ -265,13 +272,13 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 [
                                                 'columns' => [
                                                         [
-                                                        'attribute' => 'customer_code',
-                                                        'label' => 'Beneficiary Name',
-                                                        'value' => !empty($model->mainBankDetails) ? Yii::$app->general->getforeignkey($model->mainBankDetails, 'beneficiary_name') : '',
+                                                        'attribute' => 'beneficiary_name',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                         [
-                                                        'attribute' => 'aadhaar_no',
+                                                        'attribute' => 'detail_code',
+                                                        'label' => Yii::t('app', 'Adharcard No.'),
+                                                        'value' => !empty($model->customerDetail) ? Yii::$app->general->getforeignkey($model->customerDetail, 'aadhaar_no') : '',
                                                         'valueColOptions' => ['style' => 'width:30%']
                                                     ],
                                                 ],
@@ -303,7 +310,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                 'columns' => [
                                                         [
                                                         'attribute' => 'reference_id',
-                                                        'value' => $response->reference_id,
+                                                        'value' => !empty($response->reference_id) ? $response->reference_id : 'N/A',
                                                         'valueColOptions' => ['style' => 'width:30%'],
                                                     ],
                                                         [
@@ -341,7 +348,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                     ],
                                                 ],
                                             ],
-                                            [
+                                                [
                                                 'columns' => [
                                                         [
                                                         'attribute' => 'bank_account_no',
@@ -376,16 +383,16 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                         'value' => $response->account_status,
                                                         'valueColOptions' => function ($t) use ($response) {
                                                             $class = empty($response->account_status) ? 'text-grey' : (strtolower($response->account_status) == 'valid' ? 'text-green' : 'text-red');
-                                                            return ['style' => 'width:30%','class' => $class];
-                                                         },
+                                                            return ['style' => 'width:30%', 'class' => $class];
+                                                        },
                                                     ],
                                                         [
                                                         'attribute' => 'account_status_code',
                                                         'value' => $response->account_status_code,
                                                         'valueColOptions' => function ($t) use ($response) {
                                                             $class = empty($response->account_status) ? 'text-grey' : (strtolower($response->account_status) == 'valid' ? 'text-green' : 'text-red');
-                                                            return ['style' => 'width:30%','class' => $class];
-                                                         },
+                                                            return ['style' => 'width:30%', 'class' => $class];
+                                                        },
                                                     ],
                                                 ],
                                             ],

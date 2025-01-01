@@ -24,7 +24,7 @@ class TblDcsSearch extends TblDcs {
                 [['allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'machine_owned'], 'integer'],
                 [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'required', 'on' => ['dpuPassword']],
                 [['dcs_code_ex', 'ref_code', 'aadhaar_no', 'ts_code_m', 'ts_code_e'], 'safe'],
-                [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code', 'is_kyc_verified'], 'safe'],
+                [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'safe'],
                 [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']]
         ];
     }

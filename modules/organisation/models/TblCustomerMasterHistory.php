@@ -59,7 +59,7 @@ class TblCustomerMasterHistory extends \yii\db\ActiveRecord {
                 [['is_active', 'originating_type'], 'safe'],
                 [['created_at', 'updated_at', 'history_created_at', 'route_code'], 'safe'],
                 [['ref_code', 'vendor_code', 'auto_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'aadhaar_no'], 'safe'],
-                [['bmc_code', 'mcc_plant_code', 'plant_code', 'morning_kms', 'evening_kms', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'dcs_code', 'ccenter_code', 'mobile_no', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code', 'is_kyc_verified'], 'safe'],
+                [['bmc_code', 'mcc_plant_code', 'plant_code', 'morning_kms', 'evening_kms', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'dcs_code', 'ccenter_code', 'mobile_no', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code'], 'safe'],
         ];
     }
 
