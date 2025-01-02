@@ -125,7 +125,8 @@ class TblOrgFileLog extends \app\models\ChildModel {
                 $files = [];
                 $rfiles = $model->generateBiplRateFiles($cp_code);
                 if ($rfiles != false) {
-                    $files = $rfiles;
+                    $files = $rfiles[0];
+                    $fileName = $rfiles[1];
                 }
                 $files = array_values($files);
                 foreach ($files as $key => $value) {
@@ -147,7 +148,7 @@ class TblOrgFileLog extends \app\models\ChildModel {
                         }
                         $enc_file = $fileName;
                     } else {
-                        $enc_file = (strstr($ratefile, 'cow')) ? 'v1.RC1' : (strstr($ratefile, 'mix') ? 'v1.RM1' : 'v1.RB1');
+                        $enc_file = $fileName . ((strstr($ratefile, 'cow')) ? '.RC1' : (strstr($ratefile, 'mix') ? '.RM1' : '.RB1'));
                     }
 //                    $enc_file = (strstr($ratefile, 'cow')) ? 'v1.RC1' : (strstr($ratefile, 'mix') ? 'v1.RM1' : 'v1.RB1');
                     $enc_path = $path . '/' . $enc_file;

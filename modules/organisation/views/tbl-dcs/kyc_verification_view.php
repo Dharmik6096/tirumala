@@ -448,6 +448,8 @@ $name = ($type == 'DCS' ? $model->dcsDetail->dcs_name : ($type == 'MEMBER' ? $mo
 $script = '
     $(".submitdata").click(function() {
        var id= $(this).attr("id");
+       $("#loadercontent").show();
+       $("#pageloader").show();
        $(".set_operation").val(id);
         $("#kyc-verify").submit();
     });
