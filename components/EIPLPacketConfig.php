@@ -173,14 +173,14 @@ class EIPLPacketConfig extends Component {
                 '80' => [
                     'vlccid' => 'pckt=3-15',
                     'milktype' => 'pckt=19-1',
+                    'dtdate' => 'pckt=64-6',
                     'fat' => 'pckt=21-5',
                     'snf' => 'pckt=27-5',
                     'qty' => 'pckt=33-7',
-                    'ignore' => 'pckt=41-2',
-                    'cannumber' => 'pckt=44-10',
                     'date' => 'pckt=55-6',
                     'shift' => 'pckt=62-1',
                     'sampletime' => 'pckt=70-2#fix=:#pckt=72-2#fix=:#pckt=74-2',
+                    'farmerid' => 'fix=2096',
                 ],
             ]
         ];
