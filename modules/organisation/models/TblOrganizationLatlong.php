@@ -24,69 +24,67 @@ use Yii;
  * @property string $originating_org_code
  * @property integer $originating_type
  */
-class TblOrganizationLatlong extends ChildModel
-{
-    public $plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $user_code, $name;
+class TblOrganizationLatlong extends ChildModel {
+
+    public $plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $user_code, $name, $customer_code_other;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_organization_latlong';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_code', 'name'], 'safe'],
-            [['union_code','customer_type','customer_code','address','lat_long','is_active','created_at','created_by','updated_at','updated_by','originating_org_type','originating_org_code','originating_type'], 'safe'],
+            [['union_code', 'customer_type', 'customer_code', 'address', 'lat_long', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_type', 'originating_org_code', 'originating_type', 'customer_code_other'], 'safe'],
             [['is_active'], 'default', 'value' => 1],
             [['union_code'], 'required', 'on' => 'create'],
             [['customer_type', 'lat_long', 'customer_code'], 'required'],
             [['customer_type'], function ($attribute, $params) {
-                Yii::$app->general->validateGlobalStatic($this, $attribute, 'organization_latlong_type');
-            }],
-            [['plant_code'], 'required', 'on' => ['create'], 'when' => function($model){
-                return $model->customer_type == 'PLANT';
-            }, 'whenClient' => "function (attribute, value) { 
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'organization_latlong_type');
+                }],
+            [['plant_code'], 'required', 'on' => ['create'], 'when' => function($model) {
+                    return $model->customer_type == 'PLANT';
+                }, 'whenClient' => "function (attribute, value) { 
                 return $('#tblorganizationlatlong-customer_type').val() == 'PLANT'; 
             }"],
-            [['plant_code', 'mcc_plant_code'], 'required', 'on' => ['create'], 'when' => function($model){
-                return $model->customer_type == 'MCC';
-            }, 'whenClient' => "function (attribute, value) { 
+            [['plant_code', 'mcc_plant_code'], 'required', 'on' => ['create'], 'when' => function($model) {
+                    return $model->customer_type == 'MCC';
+                }, 'whenClient' => "function (attribute, value) { 
                 return $('#tblorganizationlatlong-customer_type').val() == 'MCC'; 
             }"],
-            [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['create'], 'when' => function($model){
-                return $model->customer_type == 'BMC';
-            }, 'whenClient' => "function (attribute, value) { 
+            [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['create'], 'when' => function($model) {
+                    return $model->customer_type == 'BMC';
+                }, 'whenClient' => "function (attribute, value) { 
                 return $('#tblorganizationlatlong-customer_type').val() == 'BMC'; 
             }"],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'required', 'on' => ['create'], 'when' => function($model){
-                return $model->customer_type == 'DCS';
-            }, 'whenClient' => "function (attribute, value) { 
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'required', 'on' => ['create'], 'when' => function($model) {
+                    return $model->customer_type == 'DCS';
+                }, 'whenClient' => "function (attribute, value) { 
                 return $('#tblorganizationlatlong-customer_type').val() == 'DCS'; 
             }"],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code'], 'required', 'on' => ['create'], 'when' => function($model){
-                return $model->customer_type == 'BULKVEN';
-            },  'whenClient' => "function (attribute, value) { 
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code_other'], 'required', 'on' => ['create'], 'when' => function($model) {
+                    return $model->customer_type == 'BULKVEN';
+                }, 'whenClient' => "function (attribute, value) { 
                 return $('#tblorganizationlatlong-customer_type').val() == 'BULKVEN'; 
             }"],
-            [['user_code'], 'required', 'on' => ['create'], 'when' => function($model){   
-                return in_array($model->customer_type, ['HOME', 'OFFICE', 'OTHER']);
-            },  'whenClient' => "function (attribute, value) { 
+            [['user_code'], 'required', 'on' => ['create'], 'when' => function($model) {
+                    return in_array($model->customer_type, ['HOME', 'OFFICE', 'OTHER']);
+                }, 'whenClient' => "function (attribute, value) { 
                 const customerName = $('#tblorganizationlatlong-customer_type').val();
                 return customerName === 'HOME' || customerName === 'OFFICE' || customerName === 'OTHER';
             }"],
             [['bmc_code'], function ($attribute, $params) {
-                if ($this->customer_type == 'BULKVEN') {
-                    return Yii::$app->general->validateBMC($this, $attribute);
-                }
-                return true;
-            }, 'on' => ['importCsv']],
-            
+                    if ($this->customer_type == 'BULKVEN') {
+                        return Yii::$app->general->validateBMC($this, $attribute);
+                    }
+                    return true;
+                }, 'on' => ['importCsv']],
             [['customer_code'], 'setImport', 'on' => ['importCsv']],
             ['customer_code', 'unique', 'targetAttribute' => ['customer_type', 'customer_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Combination of Customer Type and Code has already been taken.')],
         ];
@@ -95,13 +93,12 @@ class TblOrganizationLatlong extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'organization_latlong_code' => Yii::t('app', 'Organization Latlong Code'),
             'union_code' => Yii::t('app', 'Union'),
             'customer_type' => Yii::t('app', 'Customer Type'),
-            'customer_code' => Yii::t('app', 'Customer Code'),
+            'customer_code' => Yii::t('app', 'Customer'),
             'lat_long' => Yii::t('app', 'Lat Long'),
             'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -111,17 +108,22 @@ class TblOrganizationLatlong extends ChildModel
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'customer_code_other' => Yii::t('app', 'Customer'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
         ];
     }
 
     public function setImport($attribute, $params) {
-        if(empty($this->getErrors())){
+        if (empty($this->getErrors())) {
             $customerName = strtolower($this->customer_type);
             if (in_array($customerName, ['other', 'home', 'office'])) {
                 $customerName = 'user';
-            }    
+            }
             $new_code = Yii::$app->general->fetchData($this, $customerName, $this->customer_code);
-            if(empty($new_code)){
+            if (empty($new_code)) {
                 $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'customer') . ' code is invalid'));
                 return false;
             }
@@ -129,7 +131,6 @@ class TblOrganizationLatlong extends ChildModel
             return true;
         }
     }
-    
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
@@ -161,31 +162,70 @@ class TblOrganizationLatlong extends ChildModel
 
     public function getUserOrgLatLong() {
         $userData = $this->find()->alias('A')
-            ->innerJoin('tbl_user_organization_mapping B', 'A.customer_type = B.organization_type AND A.customer_code = B.organization_code')
-            ->where(['B.user_id' => $this->user_code])
-            ->where(['A.is_active' => 1])
-            ->all();
-
-        $othersData = $this->find()
-            ->where(['in', 'customer_type', ['HOME', 'OFFICE','OTHER']])
-            ->where(['customer_code' => $this->user_code,'is_active' => 1])
-            ->all();    
-        $userData = array_merge($userData, $othersData);
-            $values = TblOrganizationLatLongApplicability::find()->select(['applicable_code','applicable_for'])->where(['user_code' => $this->user_code])->asArray()->all();
-            $selected = [];
-           
-            //var_dump($results);exit;
-            if (!empty($userData)) {
-                foreach ($userData as $key => $row) {
-                    if (in_array($row->customer_code, array_column($values, 'applicable_code'), true) !== FALSE && in_array($row->customer_type, array_column($values, 'applicable_for'), true) !== FALSE) {
-                        // $selected[] = $row->customer_code . '-'. $row->organization_latlong_code .'-' . $row->customer_type;
-                        unset($userData[$key]);
-                    }
+        ->leftJoin('tbl_user_organization_mapping B', 'A.customer_type = B.organization_type AND A.customer_code = B.organization_code')
+        ->andWhere(['B.user_id' => $this->user_code])
+        ->orWhere(['A.customer_code' => $this->user_code,'A.customer_type' => ['HOME', 'OFFICE', 'OTHER']])
+        ->andWhere(['A.is_active' => 1])
+        //->asArray()
+        ->all();
+        $values = TblOrganizationLatLongApplicability::find()->select(['applicable_code', 'applicable_for'])->where(['user_code' => $this->user_code])->asArray()->all();
+        $selected = [];
+        
+        //var_dump($results);exit;
+        if (!empty($userData)) {
+            $bmc = [];$mcc = [];$plant = [];$dcs = [];
+            foreach ($userData as $key => $row) {
+                if($row -> customer_type == 'MCC'){
+                    $data = $row->mccPlantCode;
+                    $plant[] = $data->plant_code;
+                }
+                if($row -> customer_type == 'BMC'){
+                    $data = $row ->bmcCode;
+                    $mcc[] = $data->mcc_plant_code;
+                    $plant[] = $data->plant_code;
+                }
+                if($row -> customer_type == 'DCS'){
+                    $data = $row->dcsCode;
+                    $mcc[] = $data->mcc_plant_code;
+                    $bmc[] = $data->bmc_code;
+                    $plant[] = $data->plant_code;
+                }
+                if (in_array($row->customer_code, array_column($values, 'applicable_code'), true) !== FALSE && in_array($row->customer_type, array_column($values, 'applicable_for'), true) !== FALSE) {
+                    // $selected[] = $row->customer_code . '-'. $row->organization_latlong_code .'-' . $row->customer_type;
+                    unset($userData[$key]);
                 }
             }
-            $userData = array_values($userData);
+            $customerTypes = [
+                'BMC' => $bmc,
+                'MCC' => $mcc,
+                'PLANT' => $plant,
+                'DCS' => $dcs
+            ];
+            foreach ($customerTypes as $type => $codes) {
 
-            return ['userDataOrg' => $userData, 'selected' => $selected];
-        
+                if (!empty($codes)) {
+                    $codes = array_unique($codes);
+                    $customerData = $this->find()
+                        ->where(['in', 'customer_type', [$type]])
+                        ->andWhere(['customer_code' => $codes, 'is_active' => 1])
+                        ->all();
+                    foreach ($customerData as $row) {
+                        $applicableCodes = array_column($values, 'applicable_code');
+                        $applicableFor = array_column($values, 'applicable_for');
+                        
+                        if (in_array($row->customer_code, $applicableCodes, true) && in_array($row->customer_type, $applicableFor, true)) {
+                            continue;
+                        } else {
+                            $userData[] = $row;
+                        }
+                    }
+                }
+            }        
+        }
+          
+
+        $userData = array_values($userData);
+        return ['userDataOrg' => $userData, 'selected' => $selected];
     }
+
 }

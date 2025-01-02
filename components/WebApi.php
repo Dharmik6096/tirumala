@@ -18,6 +18,7 @@ class WebApi {
     public $vendor_code = 'STELLAPPS';
     public $header_info = [];
     public $return_actual = FALSE;
+    public $is_header_merge = TRUE;
 
     public function POSTDATA() {
         if ($this->authentication) {
@@ -32,7 +33,10 @@ class WebApi {
         $client = new GuzzleHttp\Client();
         $data = json_encode($this->body);
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
-        $header = array_merge($main_header, $this->header_info);
+        $header = $this->header_info;
+        if($this->is_header_merge){
+            $header = array_merge($main_header, $this->header_info);   
+        }
         //var_dump($header);die;
         $postData = [
             RequestOptions::JSON => $this->body,

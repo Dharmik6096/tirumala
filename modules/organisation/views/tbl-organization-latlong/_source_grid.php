@@ -6,15 +6,16 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 <?php
 
-// $attribute = [
-//     ['attribute' => 'from_dest', 'value' => function($model) use($modelRouteSource) {
-//             return $modelRouteSource->getDestinationName($model->from_type, $model->from_dest) . '(' . $modelRouteSource->getDestinationName($model->from_type, $model->from_dest, 'ref_code') . ')' . ' - ' . Yii::t('app', strtoupper($model->from_type));
-//         }, 'visible' => true, 'filter' => false],
-// ];
-
 $attribute = [
-    ['attribute' => 'user_code', 'visible' => true, 'filter' => false],
-    ['attribute' => 'applicable_code', 'visible' => true, 'filter' => false],
+    // ['attribute' => 'user_code', 'visible' => true, 'filter' => false],
+    ['attribute' => 'applicable_code', 'value' => function($model){
+        ($model->applicable_for == 'DCS') ? $model->dcs_code = $model->applicable_code : '';
+       return Yii::$app->general->getField($model, $model->applicable_for,'ref_code');
+    }, 'filter' => false],
+    ['attribute' => 'applicable_code','label' => Yii::t('app', 'Name'),'value' => function($model){
+        ($model->applicable_for == 'DCS') ? $model->dcs_code = $model->applicable_code : '';
+       return Yii::$app->general->getField($model, $model->applicable_for);
+    }, 'filter' => false],
     ['attribute' => 'applicable_for', 'visible' => true, 'filter' => false],
 ];
 
