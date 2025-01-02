@@ -15,11 +15,9 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
     $form = ActiveForm::begin([
                 'id' => 'transit-loss-shortage',
     ]);
-    // va   r_dump($model);die;
     ?>
     <div id="fixed-table-container" class="static_header_grid dynamic_report_table overflow_auto sticky-footer-panel fixed-table-container">
         <?php echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-        <!-- main_table_for_fix - id for set sticky header -->
         <table id="recovery_grid" class="table table-striped table-input" id="table">
             <?php
             if (!empty($output)) {
@@ -33,7 +31,7 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
                             $str = ucwords(str_replace('_', ' ', $att));
                             if (!in_array($att, $show_column)) {
                                 $class = '';
-                                if ($att == 'vsp_transit_recovery_code') {
+                                if ($att == 'vsp_transit_recovery_code' || $att == 'dcs_code' || $att == 'shortage_recovery') {
                                     $class = ' disp_none';
                                 }
                                 ?>
@@ -61,7 +59,7 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
                                 if (!in_array($value_key, $show_column)) {
                                     $class = is_numeric($value) ? 'number_align custom_grid_normal' : 'custom_grid_normal';
                                     $class .= ' ' . $value_key . '-' . $i;
-                                    if ($value_key == 'vsp_transit_recovery_code') {
+                                    if ($value_key == 'vsp_transit_recovery_code' || $value_key == 'dcs_code' || $value_key == 'shortage_recovery') {
                                         $class .= ' disp_none';
                                     }
                                     if ($value_key == 'ts_loss_responsibility' || $value_key == 'qty_diff_responsibility') {
@@ -93,9 +91,19 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
                                             ?>
                                         </td>
                                         <?php
+                                    } else if ($value_key == 'type_of_shortage') {
+                                        ?>
+                                        <td class="<?= $class ?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>">
+                                            <?php
+                                            $c_penalty_model = new TblCollectionPenaltyType();
+                                            $c_penalty_model->penalty_type_code = $value;
+                                            echo Yii::$app->general->getforeignkey($c_penalty_model->penaltyType, 'penalty_type');
+                                            ?>
+                                        </td>
+                                        <?php
                                     } else {
                                         ?>
-                                        <td class="<?= $class ?>"><?= $value ?></td>
+                                        <td class="<?= $class ?>" data-id="<?= $value ?>"><?= $value ?></td>
                                         <?php
                                     }
                                 }
@@ -116,9 +124,6 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
             ?>          
         </table>
     </div>
-
-
-
     <div class="panel-footer">
         <?php
         if (!empty($output)) {
@@ -137,14 +142,8 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
     <?php ActiveForm::end(); ?>
 </div>
 <div id="AppInformation"></div>
-
-<!--<table id="main_table_for_fix_clone"  class="table table-striped table-input"></table>-->
-
 <?php
 $script = '
-
-
-    // $("#recovery_grid").find("tr").click( function(){
     $(".edit_record").click( function(){
         var row_id = $(this).attr("id");
         $("#"+row_id).addClass("disable_div");
@@ -154,20 +153,19 @@ $script = '
         var vsp_transit_recovery_code_value = $(".vsp_transit_recovery_code-"+row_number).html();
         var vsp_code_append = "<input type=\'hidden\' name=\'vsp_transit_recovery_code[]\' value=\'"+vsp_transit_recovery_code_value+"\'> <span>"+vsp_transit_recovery_code_value+"</span>"
         $(".vsp_transit_recovery_code-"+row_number).html(vsp_code_append);
-        
+           
         var ts_deduction_amount_value = $(".ts_deduction_amount-"+row_number).html();
         var ts_deduction_amount_append = "<input type=\'text\' class=\'ts_deduction_amount disp_none\' id=\'ts_deduction_amount_input-"+row_number+"\' name=\'ts_deduction_amount["+vsp_transit_recovery_code_value+"][]\' value=\'"+ts_deduction_amount_value+"\'> <span>"+ts_deduction_amount_value+"</span>"
         $(".ts_deduction_amount-"+row_number).html(ts_deduction_amount_append);    
         $("#ts_deduction_amount_input-"+row_number).val(ts_deduction_amount_value);
 
         var ts_loss_responsibility_value = $(".ts_loss_responsibility-"+row_number+" #dropdown_value").val();
-        var data_append = "<select class=\'dd_ts_loss_responsibility\' id=\'dd_ts_loss_responsibility-"+row_number+"\' name = \'ts_loss_responsibility["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select TS Loss Responsibility</option><option value = \'1\'>Center Incharge</option><option value = \'2\'>Transporter</option><option value = \'3\'>MCC</option></select>"
+        var data_append = "<select class=\'dd_ts_loss_responsibility\' id=\'dd_ts_loss_responsibility-"+row_number+"\' name = \'ts_loss_responsibility["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select TS Loss Responsibility</option><option value = \'1\'>Center Incharge</option><option value = \'2\'>Transporter</option><option value = \'3\'>MCC</option><option value = \'4\'>NONE</option></select>"
         $(".ts_loss_responsibility-"+row_number).html(data_append);
         $("#dd_ts_loss_responsibility-"+row_number).val(ts_loss_responsibility_value);
 
-
-        var qty_diff_type_value = $(".qty_diff_type-"+row_number+" #dropdown_value").val();
-        var data_append_qty_diff = "<select class=\'dd_qty_diff_type\' id=\'dd_qty_diff_type-"+row_number+"\' name = \'qty_diff_type["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select Qty Diff Type</option>"
+        var type_of_shortage_value = $(".type_of_shortage-"+row_number+" #dropdown_value").val();
+        var data_append_type_of_shortage = "<select class=\'dd_type_of_shortage\' id=\'dd_type_of_shortage-"+row_number+"\' name = \'type_of_shortage["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select Type of Shortage Value</option>"
         var union= "' . $model->union_code . '";
         $("#loadercontent").show();
         $("#pageloader").show();
@@ -178,14 +176,15 @@ $script = '
             success: function(data) {
                 var obj1 = data;
                 $.each(obj1.res, function(key,value) {
-                    data_append_qty_diff = data_append_qty_diff +"<option value = \'"+key+"\'>"+value+"</option>"
+                    data_append_type_of_shortage = data_append_type_of_shortage +"<option value = \'"+key+"\'>"+value+"</option>"
                 });
-                data_append_qty_diff = data_append_qty_diff + "</select>";
+                data_append_type_of_shortage = data_append_type_of_shortage + "</select>";
+                console.log(data_append_type_of_shortage);
                 setTimeout(function(){
-                    $(".qty_diff_type-"+row_number).html(data_append_qty_diff);
-                    $("#dd_qty_diff_type-"+row_number).val(qty_diff_type_value);
-                    $("#dd_qty_diff_type-"+row_number).attr("data-val",qty_diff_type_value);
-                    calculateShortageRecovery(qty_diff_type_value,row_number);
+                    $(".type_of_shortage-"+row_number).html(data_append_type_of_shortage);
+                    $("#dd_type_of_shortage-"+row_number).val(type_of_shortage_value);
+                    $("#dd_type_of_shortage-"+row_number).attr("data-val",type_of_shortage_value);
+                    calculateShortageRecovery(type_of_shortage_value,row_number);
                 }, 200);
                 setTimeout(function(){
                     fixTable(document.getElementById("fixed-table-container"));
@@ -207,25 +206,14 @@ $script = '
         $(".qty_diff_responsibility-"+row_number).html(data_append);
         $("#dd_qty_diff_responsibility-"+row_number).val(qty_diff_responsibility_value);
         $("#dd_qty_diff_responsibility-"+row_number).attr("data-val",qty_diff_responsibility_value);
+
+        var remarks_value = $(".remarks-"+row_number).html();
+        var remarks_input = "<input type=\'text\' class=\'remarks_input\' name=\'remarks["+vsp_transit_recovery_code_value+"][]\' value=\'"+remarks_value+"\'>";
+        $(".remarks-"+row_number).html(remarks_input);    
+        $(".remarks_input-"+row_number).val(remarks_value);
     });
 
-    $(document).on("change", ".dd_qty_diff_responsibility", function(){
-        var row_id = $(this).attr("id");
-        var val = row_id.split("-");
-        var row_number = val[1];
-        var dd_value = $("#"+row_id).val();
-        var dd_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
-        var dd2_text =  $("#dd_qty_diff_responsibility-"+row_number+" option:selected").text();
-        if(dd_text == "excess") {
-//            var oldVal = $("#dd_qty_diff_responsibility-"+row_number).attr("data-val");
-            $("#dd_qty_diff_responsibility-"+row_number).val(4);
-        } else {
-            calculateInchargeTransport(dd_value,row_number);
-            checkQtyDiffType(row_number);
-        }
-    });
-
-    $(document).on("change", ".dd_qty_diff_type", function(){
+    $(document).on("change", ".dd_type_of_shortage", function(){
         var row_id = $(this).attr("id");
         var val = row_id.split("-");
         var row_number = val[1];
@@ -233,69 +221,44 @@ $script = '
         calculateShortageRecovery(dd_value,row_number);
         checkDeductionAmount(row_number);
     });
-
+    
     $(document).on("change", ".ts_deduction_amount", function(){
         var row_id = $(this).attr("id");
         var val = row_id.split("-");
         var row_number = val[1];
         var id = "dd_qty_diff_responsibility-"+row_number;
         var dd_value = $("#"+id).val();
-        calculateInchargeTransport(dd_value,row_number);
-        var dd_qty_diff_type = $("#dd_qty_diff_type-"+row_number).val();
+        var dd_type_of_shortage = $("#dd_type_of_shortage-"+row_number).val();
         checkDeductionAmount(row_number);
     });
 
     function calculateShortageRecovery(dd_value,row_number){
         var vsp_transit_recovery_code_value = $(".vsp_transit_recovery_code-"+row_number+" input").val();
         var dcs_code_value = $(".dcs_code-"+row_number).html();
-        var from_date_value = $(".from_date-"+row_number).html();
+        var collection_date_value = $(".collection_date-"+row_number).html();
         var actual_qty_value = parseFloat($(".actual_qty-"+row_number).html());
         var composite_qty_value = parseFloat($(".composite_qty-"+row_number).html());
         var qty_diff_responsibility_value = $("#dd_qty_diff_responsibility-"+row_number).val();
-        if(actual_qty_value - composite_qty_value < 0){
+        var ts_loss_responsibility_value = $("#dd_qty_diff_responsibility-"+row_number).val();
+        if((actual_qty_value - composite_qty_value) < 0){
             $.ajax({
                 type: "post",
                 url: "' . Url::to(['/vsp/transit-recovery/get-penalty-rate']) . '",
-                data: { dcs_code: dcs_code_value, from_date: from_date_value, qty_diff_type : dd_value},
+                data: { dcs_code: dcs_code_value, collection_date: collection_date_value,type_of_shortage : dd_value},
                 success: function(data) {
                     var shortage_recovery_value = ((actual_qty_value - composite_qty_value) * data.res).toFixed(2);
-                    var shortage_recovery_append = "<input type=\'text\' class=\'shortage_recovery_input-"+row_number+"\' name=\'shortage_recovery["+vsp_transit_recovery_code_value+"][]\' value=\'"+shortage_recovery_value+"\'> <span>"+shortage_recovery_value+"</span>"
+                    var shortage_recovery_append = "<input type=\'hidden\' class=\'shortage_recovery_input-"+row_number+"\' name=\'shortage_recovery["+vsp_transit_recovery_code_value+"][]\' value=\'"+shortage_recovery_value+"\'>"
                     $(".shortage_recovery-"+row_number).html(shortage_recovery_append);
+                  //  $(".shortage_recovery-"+row_number+" .shortage_recovery_input-"+row_number).val(shortage_recovery_value);
                     setTimeout(function(){
-                        calculateInchargeTransport(qty_diff_responsibility_value,row_number);
+                        calculateInchargeTransportValue(qty_diff_responsibility_value,ts_loss_responsibility_value,row_number);
                     },200);
                 },
                 error:function(data){
                 }
             });
         }
-
-    }
-    
-    function calculateInchargeTransport(dd_value,row_number){
-        var vsp_transit_recovery_code_value = $(".vsp_transit_recovery_code-"+row_number+" input").val();
-        // var ts_deduction_amount = parseFloat($(".ts_deduction_amount-"+row_number).html());
-        var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
-        var shortage_recovery_value = 0;
-        if(isNaN($(".shortage_recovery_input-"+row_number).val())){
-            var shortage_recovery_value = parseFloat($(".shortage_recovery-"+row_number).html());
-        }else{
-            var shortage_recovery_value = parseFloat($(".shortage_recovery_input-"+row_number).val());
-        }
-        var diffrence_addition = (ts_deduction_amount + shortage_recovery_value).toFixed(2);
-        if(dd_value == 1){
-            var total_recovery_incharge_append = "<input type=\'hidden\' class=\'total_recovery_incharge_input-"+row_number+"\' name=\'total_recovery_incharge["+vsp_transit_recovery_code_value+"][]\' value=\'"+diffrence_addition+"\'> <span>"+diffrence_addition+"</span>"
-            $(".total_recovery_incharge-"+row_number).html(total_recovery_incharge_append);
-
-            var total_recovery_transporter_append = "<input type=\'hidden\' class=\'total_recovery_transporter_input-"+row_number+"\' name=\'total_recovery_transporter["+vsp_transit_recovery_code_value+"][]\' value=\'0\'> <span>0</span>"
-            $(".total_recovery_transporter-"+row_number).html(total_recovery_transporter_append);
-        }else{
-            var total_recovery_transporter_append = "<input type=\'hidden\' class=\'total_recovery_transporter_input-"+row_number+"\' name=\'total_recovery_transporter["+vsp_transit_recovery_code_value+"][]\' value=\'"+diffrence_addition+"\'> <span>"+diffrence_addition+"</span>"
-            $(".total_recovery_transporter-"+row_number).html(total_recovery_transporter_append);
-
-            var total_recovery_incharge_append = "<input type=\'hidden\' class=\'total_recovery_incharge_input-"+row_number+"\' name=\'total_recovery_incharge["+vsp_transit_recovery_code_value+"][]\' value=\'0\'> <span>0</span>"
-            $(".total_recovery_incharge-"+row_number).html(total_recovery_incharge_append);
-        }
+        
     }
         var fixedTable1 = fixTable(document.getElementById("fixed-table-container"));
         setTimeout(function(){
@@ -304,78 +267,101 @@ $script = '
           }); 
         }, 400);
 
-//$(document).ready(function () {
-//    console.log($("#recovery_grid"));
-//    var tableOffset = $("#fixed-table-container").offset().top;
-//    console.log($("#fixed-table-container").position().top)
-//    var $header = $("#recovery_grid > thead").clone();
-//    var $fixedHeader = $("#main_table_for_fix_clone").append($header);
-//
-//    $("#fixed-table-container").scroll(function(){
-//        var offset = $(this).scrollTop();
-//        offset = offset + 133.60;
-//console.log("asdasd"+offset);
-//console.log("qweqwe"+tableOffset);
-//        if (offset >= tableOffset && $fixedHeader.is(":hidden")) {
-//            $fixedHeader.show();
-//            $("#main_table_for_fix_clone").css("margin-top", "113.60")
-//        }
-//        else if (offset < tableOffset) {
-//            $fixedHeader.hide();
-//        }
-//    });
-//});
-
      function checkDeductionAmount(row_number){
-//        var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
-        var dd_value = $("#dd_qty_diff_type-"+row_number).val();
-        var dd_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
-        var oldVal = $("#dd_qty_diff_type-"+row_number).attr("data-val");
+        var dd_value = $("#dd_type_of_shortage-"+row_number).val();
+        var dd_text =  $("#dd_type_of_shortage-"+row_number+" option:selected").text();
+        var oldVal = $("#dd_type_of_shortage-"+row_number).attr("data-val");
         var qty_diff = $(".qty_diff-"+row_number).text();       
+        var qty_recovery_for_transporter_old_val = $(".qty_recovery_for_transporter-"+row_number).attr("data-id");       
+        var qty_recovery_for_incharge_old_val = $(".qty_recovery_for_incharge-"+row_number).attr("data-id");       
         if(dd_text == "excess"){
-            if(qty_diff < 0) {
-                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Qty Diff Type should be not excess</span></div></div>", function(result){
+            if(qty_diff <= 0) {
+                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Type of Shortage should be not excess</span></div></div>", function(result){
                     setTimeout(function(){
-//                        $("#ts_deduction_amount_input-"+row_number).focus();
                     },100);
                 });
-                $("#dd_qty_diff_type-"+row_number).val(oldVal);
-            var oldVal2 = $("#dd_qty_diff_responsibility-"+row_number).attr("data-val");
-            $("#dd_qty_diff_responsibility-"+row_number).val(oldVal2);
+                $("#dd_type_of_shortage-"+row_number).val(oldVal);
+                var oldVal2 = $("#dd_qty_diff_responsibility-"+row_number).attr("data-val");
+                $("#dd_qty_diff_responsibility-"+row_number).val(oldVal2);
+                $(".qty_recovery_for_transporter-"+row_number).val(qty_recovery_for_transporter_old_val);
+                $(".qty_recovery_for_incharge-"+row_number).val(qty_recovery_for_incharge_old_val);
+                var ts_loss_responsibility_value = $("#dd_ts_loss_responsibility-"+row_number).val();
+                calculateInchargeTransportValue(oldVal2,ts_loss_responsibility_value,row_number);
+                calculateShortageRecovery(oldVal,row_number);
             } else {
                 $("#dd_qty_diff_responsibility-"+row_number).val(4);
                 $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
             }
         }else if(dd_text != "excess" && qty_diff > 0){
-            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Qty Diff Type should be excess</span></div></div>", function(result){
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Type of Shortage should be excess</span></div></div>", function(result){
                     setTimeout(function(){
-//                        $("#ts_deduction_amount_input-"+row_number).focus();
                     },100);
                 });
-            $("#dd_qty_diff_responsibility-"+row_number).val(4);
-            $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
+                $("#dd_type_of_shortage-"+row_number).val(oldVal);
+            //$("#dd_qty_diff_responsibility-"+row_number).val(4);
+            //$("#dd_qty_diff_responsibility-"+row_number).trigger("change");
         }
 
     }
-    function checkQtyDiffType(row_number){
-        
-        var selectVal = "";
-        $("#dd_qty_diff_type-"+row_number+" > option").each(function() {
-            var textD = this.text;
-                if(textD == "excess") {
-                    selectVal = this.value;
-                }
-        });
-        var dd_qty_diff_value = $("#dd_qty_diff_type-"+row_number).val();
-        var dd_qty_diff_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
-        var dd_resp_value = $("#dd_qty_diff_responsibility-"+row_number).val();
-       
-        if(dd_qty_diff_text != "excess" && dd_resp_value==4){
-            $("#dd_qty_diff_type-"+row_number).val(selectVal);
-            $("#dd_qty_diff_type-"+row_number).trigger("change");
-            return false;
+    
+  $(document).on("change", ".dd_qty_diff_responsibility, .dd_ts_loss_responsibility", function(){
+        var row_id = $(this).attr("id");
+        var val = row_id.split("-");
+        var row_number = val[1];
+        var qty_diff_responsibility_value = $("#dd_qty_diff_responsibility-"+row_number).val();
+        var ts_loss_responsibility_value = $("#dd_ts_loss_responsibility-"+row_number).val();
+        calculateInchargeTransportValue(qty_diff_responsibility_value,ts_loss_responsibility_value,row_number);
+  });
+  
+    function calculateInchargeTransportValue(qty_diff_responsibility_value,ts_loss_responsibility_value,row_number){
+        var vsp_transit_recovery_code_value = $(".vsp_transit_recovery_code-"+row_number+" input").val();
+        var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
+        var shortage_recovery_value = 0;
+        if(isNaN($(".shortage_recovery_input-"+row_number).val())){
+            var shortage_recovery_value = parseFloat($(".shortage_recovery-"+row_number).html());
+        }else{
+            var shortage_recovery_value = parseFloat($(".shortage_recovery_input-"+row_number).val());
         }
-    }
+        var diffrence_addition_incharge = 0;
+        var diffrence_addition_transporter =0;
+        var ts_ded_for_incharge = 0;
+        var ts_ded_for_transporter =0;
+        var qty_rec_for_incharge = 0;
+        var qty_rec_for_transporter =0;
+
+        if (ts_loss_responsibility_value == 1) {
+            ts_ded_for_incharge=ts_deduction_amount;
+        }else if (ts_loss_responsibility_value == 2) {
+            ts_ded_for_transporter=ts_deduction_amount;
+        }
+
+        if (qty_diff_responsibility_value == 1) {
+            qty_rec_for_incharge= parseFloat(shortage_recovery_value);
+        }else if (qty_diff_responsibility_value == 2) {
+            qty_rec_for_transporter=parseFloat(shortage_recovery_value);
+        }
+
+        diffrence_addition_incharge = parseFloat(ts_ded_for_incharge)+parseFloat(qty_rec_for_incharge);
+        diffrence_addition_transporter = parseFloat(ts_ded_for_transporter)+parseFloat(qty_rec_for_transporter);
+
+        var ts_deduction_for_incharge_append = "<input type=\'hidden\' class=\'ts_deduction_for_incharge_input-"+row_number+"\' name=\'ts_deduction_for_incharge["+vsp_transit_recovery_code_value+"][]\' value=\'"+ts_ded_for_incharge+"\'> <span>"+ts_ded_for_incharge+"</span>"
+        $(".ts_deduction_for_incharge-"+row_number).html(ts_deduction_for_incharge_append);
+        
+        var ts_deduction_for_transporter_append = "<input type=\'hidden\' class=\'ts_deduction_for_transporter_input-"+row_number+"\' name=\'ts_deduction_for_transporter["+vsp_transit_recovery_code_value+"][]\' value=\'"+ts_ded_for_transporter+"\'> <span>"+ts_ded_for_transporter+"</span>"
+        $(".ts_deduction_for_transporter-"+row_number).html(ts_deduction_for_transporter_append);
+         
+        var qty_recovery_for_incharge_append = "<input type=\'hidden\' class=\'qty_recovery_for_incharge_input-"+row_number+"\' name=\'qty_recovery_for_incharge["+vsp_transit_recovery_code_value+"][]\' value=\'"+qty_rec_for_incharge+"\'> <span>"+qty_rec_for_incharge+"</span>"
+        $(".qty_recovery_for_incharge-"+row_number).html(qty_recovery_for_incharge_append);
+
+        var qty_recovery_for_transporter_append = "<input type=\'hidden\' class=\'qty_recovery_for_transporter_input-"+row_number+"\' name=\'qty_recovery_for_transporter["+vsp_transit_recovery_code_value+"][]\' value=\'"+qty_rec_for_transporter+"\'> <span>"+qty_rec_for_transporter+"</span>"
+        $(".qty_recovery_for_transporter-"+row_number).html(qty_recovery_for_transporter_append);
+       
+        var total_recovery_incharge_append = "<input type=\'hidden\' class=\'total_recovery_incharge_input-"+row_number+"\' name=\'total_recovery_incharge["+vsp_transit_recovery_code_value+"][]\' value=\'"+diffrence_addition_incharge+"\'> <span>"+diffrence_addition_incharge+"</span>"
+        $(".total_recovery_incharge-"+row_number).html(total_recovery_incharge_append);
+          
+        var total_recovery_transporter_append = "<input type=\'hidden\' class=\'total_recovery_transporter_input-"+row_number+"\' name=\'total_recovery_transporter["+vsp_transit_recovery_code_value+"][]\' value=\'"+diffrence_addition_transporter+"\'> <span>"+diffrence_addition_transporter+"</span>"
+        $(".total_recovery_transporter-"+row_number).html(total_recovery_transporter_append);
+}
 ';
 $this->registerJs($script, View::POS_END, 'transit-loss-shortage');
 ?>

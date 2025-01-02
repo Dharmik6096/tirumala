@@ -13,7 +13,7 @@ class BackGroundDataImport extends Model {
     public $customer_type, $customer_code, $invoice_date, $payment_mode, $product_code, $quantity, $discount, $no_of_installment, $deduction_start_date;
     public $member_code, $product_sale_rate_code, $product_group_code, $product_name, $tax_code, $is_dpu_product, $dpu_product_code, $is_inhouse, $is_inclusive_tax, $is_saleable, $is_indent;
     public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code, $sap_farmer_code, $product_type, $remarks, $sap_batch_no, $rate_wharehouse;
-    public $shift_applicability, $amount, $allotted_share, $proposed_share, $total_share, $share_amount, $till_date, $folio_no, $member_vendor_code, $from_date, $to_date, $total_qty, $pouring_days, $avg_fat, $avg_snf, $milk_amount, $bonus_criteria, $incentive_amount;
+    public $shift_applicability, $amount, $allotted_share, $proposed_share, $total_share, $share_amount, $till_date, $folio_no, $member_vendor_code, $from_date, $to_date, $total_qty, $pouring_days, $avg_fat, $avg_snf, $milk_amount, $bonus_criteria, $incentive_amount, $special_code;
 
     function __construct() {
         
@@ -66,6 +66,7 @@ class BackGroundDataImport extends Model {
                 [['member_vendor_code', 'from_date', 'to_date', 'total_qty', 'pouring_days', 'avg_fat', 'avg_snf', 'milk_amount', 'bonus_criteria', 'incentive_amount'], 'required', 'on' => ['member_incentive_detail_import']],
                 [['from_date', 'to_date'], 'convertDateDot', 'on' => ['member_incentive_detail_import']],
                 [['from_date', 'to_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['member_incentive_detail_import']],
+                [['dcs_code', 'member_code', 'special_code'], 'required', 'on' => ['member_update_special_code']],
 //            [['sap_batch_no'], 'required', 'on' => ['product_sale_batch', 'product_sale_member_batch']]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('BackGroundDataImport', $this->form_validation_type);

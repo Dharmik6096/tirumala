@@ -785,6 +785,18 @@ class V1 extends \yii\base\Module {
                 'main_table' => 'TblAllowManualCollectionRange',
                 'save_child_other' => true,
             ],
+            'bmc-collection/list' => [
+                'param' => 'collection_date#bmc',
+                'sp' => 'sp_app_eipl_v1_bmc_collection',
+            ],
+            'bmc-collection/save' => [
+                'main_table' => 'TblBmcCollection',
+                'multi_auto_increment_key' => true
+            ],
+            'siloinfo/master' => [
+                'param' => 'organization_type#organization_code',
+                'sp' => 'sp_app_eipl_v1_siloinfo_master',
+            ],
         ];
         return $label;
     }

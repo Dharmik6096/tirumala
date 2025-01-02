@@ -11,6 +11,11 @@ $this->title = Yii::t('app', 'Bank Verification');
 
         </div>
         <div class="clearfix"></div>
+        <?php if (!empty(Yii::$app->session->getFlash('error'))) { ?>   
+            <div class="alert alert-danger">
+                <?= Yii::$app->session->getFlash('error'); ?>
+            </div>
+        <?php } ?>
         <?php
         echo $this->render('_verification_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
         ?>

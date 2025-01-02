@@ -128,5 +128,15 @@ return [
     'avg_fat' => 'Avg.FAT(%)',
     'avg_snf' => 'Avg.SNF(%)',
     'DCS & Member Wise Qty Compare' => 'Society & Member Wise Qty Compare',
-    'DCS/BMC/Member Wise Top Collection' => 'Society/BMC/Member Wise Top Collection'
+    'DCS/BMC/Member Wise Top Collection' => 'Society/BMC/Member Wise Top Collection',
+    'Composite Qty' => 'Composite Qty In Kg',
+    'Actual Qty' => 'Actual Qty In Kg',
+    'Shortage Recovery' => 'Actual Qty In Kg',
+    'Composite Fat' => 'Composite Fat%',
+    'Composite Snf' => 'Composite Snf%',
+    'Actual Fat' => 'Actual Fat%',
+    'Actual Snf' => 'Actual Snf%',
+    'Qty Diff' => 'Qty( ltr) Diff',
+    'Actual Qty' => 'Actual Qty In Ltr',
+    'Composite Qty' => 'Composite Qty In Ltr',
 ];

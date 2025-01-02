@@ -62,10 +62,14 @@ $form = ActiveForm::begin([
         'active_column' => false,
         'showPageSummary' => false,
         'actions' => [
-            'ftp-upload' => function ($url, $model) use($eiplCode) {
+            'ftp-upload' => function ($url, $model) use($eiplCode,$searchModel) {
+                echo Html::hiddenInput('data_type', $searchModel['data_type_filter'], ['id' => 'set_data_type']);
 //                $class = $eiplCode == 'DODLA' ? 'link-disable' : $model['coll_count'] != $model['summary_count'] ? 'link-disable' : '';
                 $class = ($eiplCode == 'DODLA') ? 'link-disable' : '';
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'ftp-uploads', 'data-original-title' => 'FTP Uploads', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-shift_id' => $model['shift_id'], 'data-qty_difference' => $model['qty_difference'], 'class' => '' . $class];
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'ftp-uploads', 'data-original-title' => 'FTP Uploads', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-shift_id' => $model['shift_id'], 'data-qty_difference' => $model['qty_difference'], 'class' => 'ftp-uploads' . $class];
+                if ($eiplCode == 'ANANDA') {
+                    $options['data-type'] = $searchModel['data_type_filter'];
+                }
                 return GhostHtml::a_alert('<i class="fa fa-upload"></i>', ['/collection/tbl-milk-collection/dcs-wise-ftp-upload', 'union_code' => $model['union_code'], 'plant_code' => $model['plant_code'], 'mcc_plant_code' => $model['mcc_plant_code'], 'bmc_code' => $model['bmc_code'], 'dcs_code' => $model['dcs_code'], 'date_time_of_collection' => $model['date_time_of_collection']], $options);
             },
             'member-detail' => function ($url, $model) {
@@ -163,6 +167,7 @@ $(document).on('click','.ftp-uploads',function(e){
     var date_time_of_collection= $(this).attr('data-date_time_of_collection');
     var shift_id= $(this).attr('data-shift_id');
     var qty_difference= $(this).attr('data-qty_difference');
+    var data_type=$('#set_data_type').val();
     var msg='Are you sure you want to Upload File on FTP';
     if(qty_difference != 0){
         msg='here is difference Available in QTY Are you sure you Want to Upload on FTP';
@@ -186,7 +191,7 @@ $(document).on('click','.ftp-uploads',function(e){
                  $.ajax({
                         type: 'get',
                         url: '" . Url::to(['dcs-wise-ftp-upload']) . "',
-                        data:{'union_code':union_code,'mcc_plant_code':mcc_plant_code,'bmc_code':bmc_code,'dcs_code':dcs_code,'date_time_of_collection':date_time_of_collection,'shift_id':shift_id},
+                        data:{'union_code':union_code,'mcc_plant_code':mcc_plant_code,'bmc_code':bmc_code,'dcs_code':dcs_code,'date_time_of_collection':date_time_of_collection,'shift_id':shift_id,'data_type':data_type},
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -247,7 +252,7 @@ if (!empty($downloadSapFiles)) {
         timeOut = timeOut + 1000;
     });
     setTimeout(() => {
-        $('#loaderconte nt').hide();
+        $('#loadercontent').hide();
         $('#pageloader').hide();
     }, timeOutForLoader);
     return false;
