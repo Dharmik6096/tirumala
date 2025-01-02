@@ -251,6 +251,9 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                 fclose($ratefile);
             }
         }
+        if (!empty($files)) {
+            return [$files, (!empty($purchaseRate2) ? 'v1_sh56' : 'v1')];
+        }
         return $files;
     }
 
