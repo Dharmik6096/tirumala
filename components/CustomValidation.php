@@ -1135,6 +1135,9 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
+                            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                                return $model->is_active;
+                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv']],
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
                             }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
