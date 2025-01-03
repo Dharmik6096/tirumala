@@ -1119,7 +1119,11 @@ class CustomValidation extends Component {
                 ],
             ],
             'ABT' => [
-                'TblBankDetails' => [],
+                'TblBankDetails' => [
+                    'default' => [
+                            [['bank_account_no'], 'CheckDuplicate'],
+                    ],
+                ],
                 'TblMember' => [
                     'default' => [
                             [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
