@@ -40,7 +40,7 @@ use app\modules\organisation\models\TblDcs;
  * @property string $qtymode
  * @property string $sampletime
  */
-class TblEiplPacketProcess extends \app\models\ChildModel {
+class TblEiplPacketProcess extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
