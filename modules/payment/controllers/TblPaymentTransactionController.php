@@ -62,6 +62,7 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
                             $approvalModel->payment_transaction_approval_code = Yii::$app->general->getUuid();
                             $approvalModel->bmc_code = $bmcCode;
                             $approvalModel->customer_type = $type;
+                            $approvalModel->approval_status = 'Pending';
                             unset($approvalModel->created_at, $approvalModel->updated_at, $approvalModel->created_by, $approvalModel->updated_by);
                             $approvalMap[$approvalKey] = $approvalModel;
                             $saveModel[] = $approvalModel;
