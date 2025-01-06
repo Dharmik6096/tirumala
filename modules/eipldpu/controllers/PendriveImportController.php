@@ -144,6 +144,8 @@ class PendriveImportController extends \app\controllers\ChildController {
                             $model->is_decrypted = ($dec_text) ? 1 : 0;
                             $model->main_table = 0;
                             $model->source_type = $file->source_type;
+                            $model->created_at = date('Y-m-d H:i:s');
+                            $model->created_by = Yii::$app->user->identity->id;
                             $main_data_model = new TblEiplPacketProcess();
                             $main_data_model->attributes = $model->attributes;
                             if (!empty($packet_config)) {
