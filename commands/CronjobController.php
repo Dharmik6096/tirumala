@@ -97,7 +97,13 @@ class CronjobController extends \yii\console\Controller {
         $objPHPExcel = new Spreadsheet();
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
 
-        $dataToDecrypt = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
+        $decrypt_data = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
+        $dataToDecrypt = [];
+        $dataToText = [];
+        if(!empty($decrypt_data)){
+            $dataToDecrypt = !empty($decrypt_data['to_decrypt']) ? json_decode($decrypt_data['to_decrypt'], TRUE) : [];
+            $dataToText = !empty($decrypt_data['to_text']) ? json_decode($decrypt_data['to_text'], TRUE) : [];
+        }
         $dataToDecryptCheck = false;
         foreach ($this->output[0] as $att => $value) {
             if (!$dataToDecryptCheck && !empty($dataToDecrypt) && in_array($att, $dataToDecrypt)) {
@@ -126,6 +132,17 @@ class CronjobController extends \yii\console\Controller {
         $sheet = $objPHPExcel->getActiveSheet();
         $sheet->setTitle('Sheet1');
         $sheet->fromArray($file_header, NULL, 'A1');
+        if(!empty($dataToText)){
+            foreach ($dataToText as $columnName) {
+                $columnIndex = array_search($columnName, $file_header);
+                if ($columnIndex !== false) {
+                    $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
+                    $sheet->getStyle($accountNoColumn)
+                    ->getNumberFormat()
+                    ->setFormatCode('00000000000');
+                }
+            }
+        }
         //     var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet1');
         foreach ($output_chunk as $output) {
             if ($a == $sheet_change_on_chunk) {
@@ -133,6 +150,17 @@ class CronjobController extends \yii\console\Controller {
                 $sheet = $objPHPExcel->createSheet($sheet_no); // Pass the index as the second argument
                 $sheet->setTitle('Sheet' . $sheet_no);
                 $sheet->fromArray($file_header, NULL, 'A1');
+                if(!empty($dataToText)){
+                    foreach ($dataToText as $columnName) {
+                        $columnIndex = array_search($columnName, $file_header);
+                        if ($columnIndex !== false) {
+                            $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
+                            $sheet->getStyle($accountNoColumn)
+                            ->getNumberFormat()
+                            ->setFormatCode('00000000000');
+                        }
+                    }
+                }
                 //       var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet' . $sheet_no);
                 $sheet_no++;
             }
@@ -140,22 +168,6 @@ class CronjobController extends \yii\console\Controller {
             $sheet->fromArray($output, NULL, $data_cell);
             //        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data Chunk ' . $a);
             $a++;
-
-            $columnIndex = 1;
-            $rowIndex = 2;
-            array_walk_recursive($output, function (&$value, $key) use ($sheet, &$columnIndex, &$rowIndex) {
-                $cell = $sheet->getCellByColumnAndRow($columnIndex, $rowIndex);
-                if (is_numeric($value) && preg_match('/^([0-9]+)$/', $value)) {
-                    $sheet->setCellValueExplicit($cell->getCoordinate(), $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                } else {
-                    $sheet->setCellValue($cell->getCoordinate(), $value);
-                }
-                $columnIndex++;
-                if ($columnIndex > count(array_keys($this->output[0]))) {
-                    $rowIndex++;
-                    $columnIndex = 1;
-                }
-            });
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');
         //  $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
