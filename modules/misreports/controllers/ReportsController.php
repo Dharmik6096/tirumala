@@ -1951,6 +1951,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'to_decrypt' => ['aadhar_no'],
+                'to_text' => ['aadhar_no'],
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
                 'bkg_export' => TRUE
             ],
@@ -2395,6 +2396,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DcsMaster',
                 'title' => 'DCS Register',
                 'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No', 'password', 'password', 'adhar_no', 'aadhaar_no'],
+                'to_text' => ['bank_account_no', 'adhar_no', 'aadhaar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
@@ -2405,6 +2407,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberMaster',
                 'title' => 'Member Register',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
+                'to_text' => ['bank_account_no', 'adhar_no', 'aadhaar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
@@ -2543,6 +2546,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'CustomerMaster',
                 'title' => 'Customer Master Register',
                 'to_decrypt' => ['adhar_no'],
+                'to_text' => ['aadhaar_no', 'adhar_no', 'bank_account_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
             ],
@@ -3834,6 +3838,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'FarmerRegister',
                 'title' => 'Farmer Register Format 2',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
+                'to_text' => ['aadhaar_no', 'adhar_no', 'bank_account_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
@@ -3856,6 +3861,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberProvisionalSapExport',
                 'title' => 'Member Provisional SAP Export',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob##d.m.Y', 'Dob', 'adhar_no', 'aadhaar_no'],
+                'to_text' => ['aadhaar_no', 'adhar_no'],
             ],
             'ExportProvisionalMemberBankReceipt' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
