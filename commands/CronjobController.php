@@ -90,8 +90,8 @@ class CronjobController extends \yii\console\Controller {
         }
         //   var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Start');
         $header = [
-            'mime' => '	application/vnd.ms-excel',
-            'extension' => 'xls',
+            'mime' => 'application/vnd.ms-excel',
+            'extension' => 'xlsx',
             'writer' => IOFactory::WRITER_XLSX,
         ];
         $objPHPExcel = new Spreadsheet();
@@ -100,7 +100,7 @@ class CronjobController extends \yii\console\Controller {
         $decrypt_data = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
         $dataToDecrypt = [];
         $dataToText = [];
-        if(!empty($decrypt_data)){
+        if (!empty($decrypt_data)) {
             $dataToDecrypt = !empty($decrypt_data['to_decrypt']) ? json_decode($decrypt_data['to_decrypt'], TRUE) : [];
             $dataToText = !empty($decrypt_data['to_text']) ? json_decode($decrypt_data['to_text'], TRUE) : [];
         }
@@ -132,14 +132,14 @@ class CronjobController extends \yii\console\Controller {
         $sheet = $objPHPExcel->getActiveSheet();
         $sheet->setTitle('Sheet1');
         $sheet->fromArray($file_header, NULL, 'A1');
-        if(!empty($dataToText)){
+        if (!empty($dataToText)) {
             foreach ($dataToText as $columnName) {
                 $columnIndex = array_search($columnName, $file_header);
                 if ($columnIndex !== false) {
                     $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
                     $sheet->getStyle($accountNoColumn)
-                    ->getNumberFormat()
-                    ->setFormatCode('00000000000');
+                            ->getNumberFormat()
+                            ->setFormatCode('00000000000');
                 }
             }
         }
@@ -150,14 +150,14 @@ class CronjobController extends \yii\console\Controller {
                 $sheet = $objPHPExcel->createSheet($sheet_no); // Pass the index as the second argument
                 $sheet->setTitle('Sheet' . $sheet_no);
                 $sheet->fromArray($file_header, NULL, 'A1');
-                if(!empty($dataToText)){
+                if (!empty($dataToText)) {
                     foreach ($dataToText as $columnName) {
                         $columnIndex = array_search($columnName, $file_header);
                         if ($columnIndex !== false) {
                             $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
                             $sheet->getStyle($accountNoColumn)
-                            ->getNumberFormat()
-                            ->setFormatCode('00000000000');
+                                    ->getNumberFormat()
+                                    ->setFormatCode('00000000000');
                         }
                     }
                 }

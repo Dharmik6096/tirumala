@@ -4175,7 +4175,7 @@ class ReportsController extends \app\controllers\ChildController {
         } else {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
-                'extension' => 'xls',
+                'extension' => 'xlsx',
                 'writer' => IOFactory::WRITER_XLSX,
             ];
         }
@@ -4198,22 +4198,20 @@ class ReportsController extends \app\controllers\ChildController {
 //    we want to set these values (default is A1)
         );
         $dataToText = !empty($this->data['to_text']) ? $this->data['to_text'] : [];
-        if(!empty($dataToText)){
+        if (!empty($dataToText)) {
             foreach ($dataToText as $columnName) {
                 $columnIndex = array_search($columnName, $file_header);
                 if ($columnIndex !== false) {
                     $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
                     $sheet->getStyle($accountNoColumn)
-                    ->getNumberFormat()
-                    ->setFormatCode('00000000000');
+                            ->getNumberFormat()
+                            ->setFormatCode('00000000000');
                 }
             }
         }
         // array_walk_recursive($this->output, function(&$value) {
         //     $value = is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value) ? '="' . $value . '"' : $value;
         // });
-
-
         // $columnIndex = 1;
         // $rowIndex = 2;
         // array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$rowIndex) {
@@ -4229,8 +4227,6 @@ class ReportsController extends \app\controllers\ChildController {
         //         $columnIndex = 1; // Reset column index
         //     }
         // });
-
-
 //         $columnIndex = 1;
 //         $columnKey = '';
 //         array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$columnKey) {
@@ -4263,7 +4259,7 @@ class ReportsController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLSX);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_start();
         $objWriter->save('php://output');
         exit();
