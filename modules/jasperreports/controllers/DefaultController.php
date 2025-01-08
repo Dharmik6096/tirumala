@@ -1085,7 +1085,7 @@ class DefaultController extends \app\controllers\ChildController {
             ],
             'MccChillingBill' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string',
-                'path' => 'MCCChillingBill',
+                'path' => 'vsp/MCCChillingBill',
                 'scenario' => 'MccChillingBill',
                 'title' => 'Chilling Bill',
             ],
