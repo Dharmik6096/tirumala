@@ -158,6 +158,13 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Milk Collection Summary'), 'url' => ['/collection/tbl-milk-collection-summary/index'], 'active' => ($cntrl == 'tbl-milk-collection-summary')],
                     ['label' => Yii::t('app', 'BMC Testing Data'), 'url' => ['/collection/tbl-quality-collection/index'], 'active' => ($cntrl == 'tbl-quality-collection')],
                     ['label' => Yii::t('app', 'BMC Weight Data'), 'url' => ['/collection/tbl-weight-collection/index'], 'active' => ($cntrl == 'tbl-weight-collection')],
+
+                    ['label' => Yii::t('app', 'Weight Scale Calibration'), 'url' => ['/collection/tbl-weight-scale-calibration/index'], 'active' => ($cntrl == 'tbl-weight-scale-calibration')],
+                    ['label' => Yii::t('app', 'Milk Analyzer Calibration'), 'url' => ['/collection/tbl-milk-analyzer-calibration/index'], 'active' => ($cntrl == 'tbl-milk-analyzer-calibration')],
+                    ['label' => Yii::t('app', 'Mcc Shift End Summary'), 'url' => ['/collection/tbl-mcc-shift-end-summary/index'], 'active' => ($cntrl == 'tbl-mcc-shift-end-summary')],
+                    ['label' => Yii::t('app', 'Shift End Summary Adulteration Test'), 'url' => ['/collection/tbl-mcc-shift-end-summary-adulteration-test/index'], 'active' => ($cntrl == 'tbl-mcc-shift-end-summary-adulteration-test')],
+                    ['label' => Yii::t('app', 'Bmc Collection Audit'), 'url' => ['/collection/tbl-bmc-collection-audit/index'], 'active' => ($cntrl == 'tbl-bmc-collection-audit')],
+
                 //['label' => 'Manual Milk Collection', 'url' => ['/collection/tbl-milk-collection-temp/index'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'index')],
                 // ['label' => 'Milk Collection Approve', 'url' => ['/collection/tbl-milk-collection-temp/get-temp-data'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'get-temp-data')],
                 //                ['label' => 'Cleaning', 'url' => ['/collection/tbl-m-a-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
