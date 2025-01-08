@@ -60,7 +60,7 @@ class TblMccShiftEndSummaryHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['mcc_shift_end_summary_code','date_time_of_collection','shift_code','milk_type_code','quantity','fat','snf','p_quantity','p_fat','p_snf','d_quantity','d_fat','d_snf','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','flg_sentbox_entry','sync_status','sync_timestamp','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+            [['mcc_shift_end_summary_code','date_time_of_collection','shift_code','milk_type_code','quantity','fat','snf','p_quantity','p_fat','p_snf','d_quantity','d_fat','d_snf','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','flg_sentbox_entry','sync_status','sync_timestamp','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','x_col1','x_col2','x_col3','x_col4','x_col5','operation_type'], 'safe'],
             [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
@@ -102,6 +102,7 @@ class TblMccShiftEndSummaryHistory extends \yii\db\ActiveRecord
             'originating_type' => Yii::t('app', 'Originating Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'operation_type' => Yii::t('app', 'Operation Type'),
             'x_col1' => Yii::t('app', 'X Col1'),
             'x_col2' => Yii::t('app', 'X Col2'),
             'x_col3' => Yii::t('app', 'X Col3'),

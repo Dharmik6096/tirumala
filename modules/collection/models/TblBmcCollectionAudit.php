@@ -4,10 +4,15 @@ namespace app\modules\collection\models;
 
 use app\models\ChildModel;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\globalmaster\models\TblMilkQualityType;
+use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblRouteMapping;
 use app\modules\organisation\models\TblUnions;
 use Yii;
 
@@ -73,23 +78,21 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblBmcCollectionAudit extends ChildModel
-{
+class TblBmcCollectionAudit extends ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_collection_audit';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['shift_code','sample_no','qty','qty_mode','converted_qty','converted_qty_mode','no_of_can','fat','snf','clr','water','protein','density','lactose','rtpl','amount','qty_auto','qlty_auto','dcs_code','union_code','plant_code','mcc_plant_code','bmc_code','route_code','milk_type_code','milk_quality_type_code','milk_analyser_type_code','ws_code','vehicle_no','route_arrival_time','own_bmc_code','own_mcc_plant_code','purchase_rate_code','customer_type','customer_code','adt_param','adt_value','bmc_silos_info_code','antibiotic','tare_weight','gross_weight','scheme_rate','scheme_rate_code','actual_rate','is_active','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+            [['shift_code', 'sample_no', 'qty', 'qty_mode', 'converted_qty', 'converted_qty_mode', 'no_of_can', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'rtpl', 'amount', 'qty_auto', 'qlty_auto', 'dcs_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'milk_type_code', 'milk_quality_type_code', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'own_bmc_code', 'own_mcc_plant_code', 'purchase_rate_code', 'customer_type', 'customer_code', 'adt_param', 'adt_value', 'bmc_silos_info_code', 'antibiotic', 'tare_weight', 'gross_weight', 'scheme_rate', 'scheme_rate_code', 'actual_rate', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
@@ -97,8 +100,7 @@ class TblBmcCollectionAudit extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bmc_collection_audit_code' => Yii::t('app', 'Bmc Collection Audit Code'),
             'shift_code' => Yii::t('app', 'Shift Code'),
@@ -184,4 +186,25 @@ class TblBmcCollectionAudit extends ChildModel
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code']);
+    }
+
+    public function getMilkQualityType() {
+        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+    public function getSilosCode() {
+        return $this->hasOne(TblBmcSilosInfo::className(), ['bmc_silos_info_code' => 'bmc_silos_info_code'])->andOnCondition(['module_name' => 'BMC']);
+    }
+
 }

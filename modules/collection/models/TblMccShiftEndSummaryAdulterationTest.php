@@ -4,6 +4,7 @@ namespace app\modules\collection\models;
 
 use app\models\ChildModel;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
@@ -64,23 +65,21 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblMccShiftEndSummaryAdulterationTest extends ChildModel
-{
+class TblMccShiftEndSummaryAdulterationTest extends ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_mcc_shift_end_summary_adulteration_test';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['mcc_shift_end_summary_adulteration_test_code','date_time_of_collection','shift_code','milk_type_code','quantity','fat','snf','temperature','taste','alcohol','cob','glucose','salt','sugar','urea','starch','rosolic_acid','h2o2','formalin','detergent','nitrate_comp','ammonium_comp','acidity','mbrt','malto_dextrin','protein_chainna','br_value','rm_value','remarks','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','created_at','created_by','updated_at','updated_by','flg_sentbox_entry','sync_status','sync_timestamp','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+            [['mcc_shift_end_summary_adulteration_test_code', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'quantity', 'fat', 'snf', 'temperature', 'taste', 'alcohol', 'cob', 'glucose', 'salt', 'sugar', 'urea', 'starch', 'rosolic_acid', 'h2o2', 'formalin', 'detergent', 'nitrate_comp', 'ammonium_comp', 'acidity', 'mbrt', 'malto_dextrin', 'protein_chainna', 'br_value', 'rm_value', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
@@ -88,8 +87,7 @@ class TblMccShiftEndSummaryAdulterationTest extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'mcc_shift_end_summary_adulteration_test_code' => Yii::t('app', 'Mcc Shift End Summary Adulteration Test Code'),
             'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
@@ -166,4 +164,9 @@ class TblMccShiftEndSummaryAdulterationTest extends ChildModel
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
 }

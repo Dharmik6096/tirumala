@@ -10,16 +10,17 @@ use app\modules\collection\models\TblWeightScaleCalibration;
 /**
  * TblWeightScaleCalibrationSearch represents the model behind the search form about `app\modules\collection\models\TblWeightScaleCalibration`.
  */
-class TblWeightScaleCalibrationSearch extends TblWeightScaleCalibration
-{
+class TblWeightScaleCalibrationSearch extends TblWeightScaleCalibration {
+
+    public $actual_operator_qty, $manual_operator_qty, $from_date, $to_date, $from_shift, $to_shift, $bmc_ref_code;
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['weight_scale_calibration_id', 'shift_code', 'originating_type'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'ws_code', 'date_time_of_collection', 'reference_measurement', 'remarks', 'sync_status', 'sync_timestamp', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['shift_code'], 'integer'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'ws_code', 'date_time_of_collection', 'shift_code', 'manual_quantity', 'actual_quantity', 'reference_measurement', 'remarks', 'sync_status', 'sync_timestamp', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_date', 'to_date', 'from_shift', 'to_shift', 'bmc_ref_code', 'actual_operator_qty', 'manual_operator_qty'], 'safe'],
             [['manual_quantity', 'actual_quantity'], 'number'],
         ];
     }
@@ -27,8 +28,7 @@ class TblWeightScaleCalibrationSearch extends TblWeightScaleCalibration
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,17 +40,42 @@ class TblWeightScaleCalibrationSearch extends TblWeightScaleCalibration
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblWeightScaleCalibration::find();
-
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $this->load($params);
+
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+        $from_date .= ' ' . $from_shift;
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+        $to_date .= ' ' . $to_shift;
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+
+        $query->joinWith(['dcsCode', 'shiftCode', 'bmcCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_weight_scale_calibration', 'tbl_weight_scale_calibration', 'tbl_weight_scale_calibration');
+
+        if (!empty($this->date_time_of_collection)) {
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_weight_scale_calibration.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
+        }
+
+        if (!empty($this->manual_quantity)) {
+            $query->andFilterWhere([$this->manual_operator_qty, 'tbl_weight_scale_calibration.manual_quantity', $this->manual_quantity]);
+        }
+
+        if (!empty($this->actual_quantity)) {
+            $query->andFilterWhere([$this->actual_operator_qty, 'tbl_weight_scale_calibration.actual_quantity', $this->actual_quantity]);
+        }
+
+        if (!empty($this->date_time_of_collection)) {
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_weight_scale_calibration.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
+        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -58,38 +83,10 @@ class TblWeightScaleCalibrationSearch extends TblWeightScaleCalibration
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'weight_scale_calibration_id' => $this->weight_scale_calibration_id,
-            'date_time_of_collection' => $this->date_time_of_collection,
-            'shift_code' => $this->shift_code,
-            'manual_quantity' => $this->manual_quantity,
-            'actual_quantity' => $this->actual_quantity,
-            'sync_timestamp' => $this->sync_timestamp,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
-        ]);
-
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-            ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-            ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'ws_code', $this->ws_code])
-            ->andFilterWhere(['like', 'reference_measurement', $this->reference_measurement])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'sync_status', $this->sync_status])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
-            ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-            ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-            ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-            ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-            ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+        $query->andFilterWhere(['like', 'ws_code', $this->ws_code])
+                ->andFilterWhere(['like', 'reference_measurement', $this->reference_measurement]);
 
         return $dataProvider;
     }
+
 }

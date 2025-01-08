@@ -1,14 +1,6 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-use yii\helpers\Html;
 use kartik\grid\GridView;
-
-$operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 
 $attribute = [
     ['attribute' => 'union_code', 'value' => function ($model) {
@@ -34,6 +26,10 @@ $attribute = [
     ['attribute' => 'dcs_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'route_code', 'label' => Yii::t('app', 'Route Code'), 'visible' => FALSE, 'filter' => false],
+    ['attribute' => 'route_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+        }, 'filter' => false],
     [
         'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
@@ -54,45 +50,52 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
         }
     ],
+    ['attribute' => 'sample_no', 'vAlign' => 'middle', 'filter' => false],
     [
         'attribute' => 'milk_type_code',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
         }
     ],
-    ['attribute' => 'quantity', 'value' => 'quantity', 'vAlign' => 'middle', 'vAlign' => 'middle', 'filter' => Html::activeTextInput($searchModel, 'quantity', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_quantity', $operator, ['class' => 'form-control'])],
-    ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'vAlign' => 'middle', 'filter' => Html::activeTextInput($searchModel, 'fat', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_fat', $operator, ['class' => 'form-control'])],
-    ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'vAlign' => 'middle', 'filter' => Html::activeTextInput($searchModel, 'snf', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_snf', $operator, ['class' => 'form-control'])],
-    ['attribute' => 'temperature', 'filter' => false],
-    ['attribute' => 'taste', 'filter' => false],
-    ['attribute' => 'alcohol', 'filter' => false],
-    ['attribute' => 'cob', 'filter' => false],
-    ['attribute' => 'glucose', 'filter' => false],
-    ['attribute' => 'salt', 'filter' => false],
-    ['attribute' => 'sugar', 'filter' => false],
-    ['attribute' => 'urea', 'filter' => false],
-    ['attribute' => 'starch', 'filter' => false],
-    ['attribute' => 'rosolic_acid', 'filter' => false],
-    ['attribute' => 'h2o2', 'filter' => false],
-    ['attribute' => 'formalin', 'filter' => false],
-    ['attribute' => 'detergent', 'filter' => false],
-    ['attribute' => 'nitrate_comp', 'filter' => false],
-    ['attribute' => 'ammonium_comp', 'filter' => false],
-    ['attribute' => 'acidity', 'filter' => false],
-    ['attribute' => 'mbrt', 'filter' => false],
-    ['attribute' => 'malto_dextrin', 'filter' => false],
-    ['attribute' => 'protein_chainna', 'filter' => false],
-    ['attribute' => 'br_value', 'filter' => false],
-    ['attribute' => 'rm_value', 'filter' => false],
-    ['attribute' => 'remarks', 'filter' => false],
+    [
+        'attribute' => 'qty_mode',
+        'value' => function ($model) {
+            return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
+        },
+        'filter' => false,
+        'visible' => FALSE
+    ],
+    ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+    [
+        'attribute' => 'converted_qty_mode',
+        'value' => function ($model) {
+            return isset($model->converted_qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->converted_qty_mode] : '';
+        },
+        'filter' => false,
+        'visible' => FALSE
+    ],
+    ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'cans', 'filter' => false],
+    ['attribute' => 'return_type', 'value' => function ($model) {
+            return Yii::$app->dropdown->getRecords('return_type')['data'][$model->return_type];
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'device_id', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'version_no', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'doc_no', 'filter' => false],
+    ['attribute' => 'vehicle_no', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'remarks', 'filter' => false, 'visible' => false],
+    ['attribute' => 'rejection_reason_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->rejectReason, 'rejection_reason');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'rejection_responsibility_code', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'reference_measurement', 'filter' => false, 'visible' => FALSE],
 ];
 
 $grid_option = [
-    'id' => 'tbl-mcc-shift-end-summary-adulteration-test-grid',
+    'id' => 'tbl-weight-rejection-grid',
     'attributes' => $attribute,
     'active_column' => false,
     'default_sorting' => FALSE
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-?>

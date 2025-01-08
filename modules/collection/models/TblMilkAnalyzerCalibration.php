@@ -4,6 +4,7 @@ namespace app\modules\collection\models;
 
 use app\models\ChildModel;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
@@ -42,23 +43,21 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblMilkAnalyzerCalibration extends ChildModel
-{
+class TblMilkAnalyzerCalibration extends ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_milk_analyzer_calibration';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['milk_analyzer_calibration_id','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','milk_analyser_type_code','date_time_of_collection','shift_code','manual_fat','actual_fat','manual_snf','actual_snf','milk_type_code','sync_status','sync_timestamp','remarks','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+            [['milk_analyzer_calibration_id', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'milk_analyser_type_code', 'date_time_of_collection', 'shift_code', 'manual_fat', 'actual_fat', 'manual_snf', 'actual_snf', 'milk_type_code', 'sync_status', 'sync_timestamp', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
@@ -66,8 +65,7 @@ class TblMilkAnalyzerCalibration extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'milk_analyzer_calibration_id' => Yii::t('app', 'Milk Analyzer Calibration ID'),
             'union_code' => Yii::t('app', 'Union'),
@@ -98,7 +96,7 @@ class TblMilkAnalyzerCalibration extends ChildModel
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
-    
+
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
@@ -122,4 +120,9 @@ class TblMilkAnalyzerCalibration extends ChildModel
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
 }

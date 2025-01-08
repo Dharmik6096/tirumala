@@ -85,7 +85,7 @@ class TblBmcCollectionAuditHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['bmc_collection_audit_code','shift_code','sample_no','qty','qty_mode','converted_qty','converted_qty_mode','no_of_can','fat','snf','clr','water','protein','density','lactose','rtpl','amount','qty_auto','qlty_auto','dcs_code','union_code','plant_code','mcc_plant_code','bmc_code','route_code','milk_type_code','milk_quality_type_code','milk_analyser_type_code','ws_code','vehicle_no','route_arrival_time','own_bmc_code','own_mcc_plant_code','purchase_rate_code','customer_type','customer_code','adt_param','adt_value','bmc_silos_info_code','antibiotic','tare_weight','gross_weight','scheme_rate','scheme_rate_code','actual_rate','is_active','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+            [['bmc_collection_audit_code','shift_code','sample_no','qty','qty_mode','converted_qty','converted_qty_mode','no_of_can','fat','snf','clr','water','protein','density','lactose','rtpl','amount','qty_auto','qlty_auto','dcs_code','union_code','plant_code','mcc_plant_code','bmc_code','route_code','milk_type_code','milk_quality_type_code','milk_analyser_type_code','ws_code','vehicle_no','route_arrival_time','own_bmc_code','own_mcc_plant_code','purchase_rate_code','customer_type','customer_code','adt_param','adt_value','bmc_silos_info_code','antibiotic','tare_weight','gross_weight','scheme_rate','scheme_rate_code','actual_rate','is_active','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','x_col1','x_col2','x_col3','x_col4','x_col5','operation_type'], 'safe'],
             [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
@@ -152,6 +152,7 @@ class TblBmcCollectionAuditHistory extends \yii\db\ActiveRecord
             'originating_type' => Yii::t('app', 'Originating Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'operation_type' => Yii::t('app', 'Operation Type'),
             'x_col1' => Yii::t('app', 'X Col1'),
             'x_col2' => Yii::t('app', 'X Col2'),
             'x_col3' => Yii::t('app', 'X Col3'),

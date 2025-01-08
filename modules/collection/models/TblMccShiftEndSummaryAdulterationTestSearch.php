@@ -10,16 +10,17 @@ use app\modules\collection\models\TblMccShiftEndSummaryAdulterationTest;
 /**
  * TblMccShiftEndSummaryAdulterationTestSearch represents the model behind the search form about `app\modules\collection\models\TblMccShiftEndSummaryAdulterationTest`.
  */
-class TblMccShiftEndSummaryAdulterationTestSearch extends TblMccShiftEndSummaryAdulterationTest
-{
+class TblMccShiftEndSummaryAdulterationTestSearch extends TblMccShiftEndSummaryAdulterationTest {
+
+    public $operator_snf, $operator_fat, $operator_quantity, $from_date, $to_date, $from_shift, $to_shift, $ref_code, $bmc_ref_code;
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['mcc_shift_end_summary_adulteration_test_code', 'shift_code', 'milk_type_code', 'taste', 'alcohol', 'cob', 'glucose', 'salt', 'sugar', 'urea', 'starch', 'rosolic_acid', 'h2o2', 'formalin', 'detergent', 'nitrate_comp', 'ammonium_comp', 'originating_type'], 'integer'],
-            [['date_time_of_collection', 'malto_dextrin', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['date_time_of_collection', 'shift_code', 'milk_type_code', 'quantity', 'fat', 'snf', 'temperature', 'taste', 'alcohol', 'cob', 'glucose', 'salt', 'sugar', 'urea', 'starch', 'rosolic_acid', 'h2o2', 'formalin', 'detergent', 'nitrate_comp', 'ammonium_comp', 'acidity', 'mbrt', 'malto_dextrin', 'protein_chainna', 'br_value', 'rm_value', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operator_snf', 'operator_fat', 'operator_quantity', 'from_date', 'to_date', 'from_shift', 'to_shift', 'ref_code', 'bmc_ref_code'], 'safe'],
             [['quantity', 'fat', 'snf', 'temperature', 'acidity', 'mbrt', 'protein_chainna', 'br_value', 'rm_value'], 'number'],
         ];
     }
@@ -27,8 +28,7 @@ class TblMccShiftEndSummaryAdulterationTestSearch extends TblMccShiftEndSummaryA
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +40,7 @@ class TblMccShiftEndSummaryAdulterationTestSearch extends TblMccShiftEndSummaryA
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblMccShiftEndSummaryAdulterationTest::find();
 
         // add conditions that should always apply here
@@ -52,66 +51,43 @@ class TblMccShiftEndSummaryAdulterationTestSearch extends TblMccShiftEndSummaryA
 
         $this->load($params);
 
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+        $from_date .= ' ' . $from_shift;
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+        $to_date .= ' ' . $to_shift;
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith(['dcsCode', 'shiftCode', 'bmcCode', 'milkTypeCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_mcc_shift_end_summary_adulteration_test', 'tbl_mcc_shift_end_summary_adulteration_test', 'tbl_mcc_shift_end_summary_adulteration_test');
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'mcc_shift_end_summary_adulteration_test_code' => $this->mcc_shift_end_summary_adulteration_test_code,
-            'date_time_of_collection' => $this->date_time_of_collection,
-            'shift_code' => $this->shift_code,
-            'milk_type_code' => $this->milk_type_code,
-            'quantity' => $this->quantity,
-            'fat' => $this->fat,
-            'snf' => $this->snf,
-            'temperature' => $this->temperature,
-            'taste' => $this->taste,
-            'alcohol' => $this->alcohol,
-            'cob' => $this->cob,
-            'glucose' => $this->glucose,
-            'salt' => $this->salt,
-            'sugar' => $this->sugar,
-            'urea' => $this->urea,
-            'starch' => $this->starch,
-            'rosolic_acid' => $this->rosolic_acid,
-            'h2o2' => $this->h2o2,
-            'formalin' => $this->formalin,
-            'detergent' => $this->detergent,
-            'nitrate_comp' => $this->nitrate_comp,
-            'ammonium_comp' => $this->ammonium_comp,
-            'acidity' => $this->acidity,
-            'mbrt' => $this->mbrt,
-            'protein_chainna' => $this->protein_chainna,
-            'br_value' => $this->br_value,
-            'rm_value' => $this->rm_value,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'sync_timestamp' => $this->sync_timestamp,
-            'originating_type' => $this->originating_type,
-        ]);
+        if (!empty($this->quantity)) {
+            $query->andFilterWhere([$this->operator_quantity, 'tbl_mcc_shift_end_summary_adulteration_test.quantity', $this->quantity]);
+        }
+        if (!empty($this->fat)) {
+            $query->andFilterWhere([$this->operator_fat, 'tbl_mcc_shift_end_summary_adulteration_test.fat', $this->fat]);
+        }
+        if (!empty($this->snf)) {
+            $query->andFilterWhere([$this->operator_snf, 'tbl_mcc_shift_end_summary_adulteration_test.snf', $this->snf]);
+        }
+
+        if (!empty($this->date_time_of_collection)) {
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_mcc_shift_end_summary_adulteration_test.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
+        }
 
         $query->andFilterWhere(['like', 'malto_dextrin', $this->malto_dextrin])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-            ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-            ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'flg_sentbox_entry', $this->flg_sentbox_entry])
-            ->andFilterWhere(['like', 'sync_status', $this->sync_status])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
-            ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-            ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-            ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-            ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-            ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+                ->andFilterWhere(['like', 'tbl_animal_type.animal_type_name', $this->milk_type_code])
+                ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;
     }
+
 }
