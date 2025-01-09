@@ -28,6 +28,9 @@ class Clienterp extends \yii\base\Module {
             'devmilk' => [
                 'class' => 'app\modules\clienterp\devmilk\Devmilk',
             ],
+            'nddb' => [
+                'class' => 'app\modules\clienterp\nddb\Nddb',
+            ],
         ];
     }
 
