@@ -47,9 +47,11 @@ use app\modules\dcsoperation\models\TblMemberAnimalDetails;
 use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberShareDetails;
 use app\modules\jasperreports\controllers\DefaultController;
+use app\modules\organisation\models\TblFederations;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -987,6 +989,10 @@ class TblMemberProvisional extends ChildModel {
                 
             }
         }
+    }
+
+    public function checkDelete() {
+        return strtolower($this->provisional_status) == 'pending' ? TRUE : FALSE;
     }
 
 }
