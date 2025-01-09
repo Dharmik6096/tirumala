@@ -92,7 +92,7 @@ class TblTransporter extends \app\models\ChildModel {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['activation']],
                 [['registration_no'], 'string', 'max' => 20],
-                [['created_at', 'updated_at', 'security_amount', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'department', 'vendor_code', 'beneficiary_name', 'vendor_name', 'transporter_type', 'agreement_from_date', 'agreement_to_date', 'billing_type_code'], 'safe'],
+                [['created_at', 'updated_at', 'security_amount', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'department', 'vendor_code', 'beneficiary_name', 'vendor_name', 'transporter_type', 'agreement_from_date', 'agreement_to_date', 'billing_type_code', 'ifsc'], 'safe'],
                 ['bank_account_no', 'unique', 'when' => function($model) {
                     $data = $this->find()->where(['ifsc' => $model->ifsc])->one();
                     return ($data) ? true : false;
@@ -128,9 +128,9 @@ class TblTransporter extends \app\models\ChildModel {
                 [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
                 [['hamlet_code'], 'validateHamlet'],
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
-                [['branch_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateBranch($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+//                [['branch_code'], function ($attribute, $params) {
+//                    Yii::$app->general->validateBranch($this, $attribute, $params);
+//                }, 'skipOnEmpty' => false, 'except' => ['activation']],
                 [['hamlet_code'], 'validateHamlet', 'on' => 'importCsv'],
                 [['agreement_to_date'], 'validateAgreeTo', 'except' => ['activation']],
                 [['agreement_from_date', 'agreement_to_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
