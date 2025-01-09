@@ -213,7 +213,8 @@ class DcsImportStrategy extends ARImportStrategy {
                                 $defaultBankDetail->ifsc = $model->ifsc;
                                 $defaultBankDetail->bank_code = $model->bank_code;
                                 $defaultBankDetail->branch_code = $model->branch_code;
-                                if ($defaultBankDetail->isAttributeChanged('ifsc', FALSE) || $defaultBankDetail->isAttributeChanged('bank_code', FALSE) || $defaultBankDetail->isAttributeChanged('branch_code', FALSE)) {
+                                $defaultBankDetail->beneficiary_name = $model->beneficiary_name;
+                                if ($defaultBankDetail->isAttributeChanged('ifsc', FALSE) || $defaultBankDetail->isAttributeChanged('bank_code', FALSE) || $defaultBankDetail->isAttributeChanged('branch_code', FALSE) || $defaultBankDetail->isAttributeChanged('beneficiary_name', FALSE)) {
                                     array_push($modelList, $defaultBankDetail);
                                 }
                             }
