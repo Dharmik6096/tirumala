@@ -161,32 +161,34 @@ class TblDcsProvisionalController extends ChildController {
             $historyModel = new TblDcsProvisionalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
-            $this->setModel();
-            if ($this->model->street1 != '' && $this->model->street2 != '') {
-                $this->model->address = $this->model->fullAddress();
-            } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
-                $this->model->address = $this->model->street2;
-            } else {
-                $this->model->address = $this->model->street1;
-            }
-            if (!empty($this->model->milk_type_auto)) {
-                $this->model->milk_type_code = [1, 2, 3];
-            }
-            if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
-                $val = str_replace('.', '', $this->model->cutoff_val);
-                $val = str_pad($val, 3, '0', STR_PAD_LEFT);
-                $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
-                $cutOffVal = $val . strtoupper($milkType);
-                $this->model->cutoff = substr($cutOffVal, -4);
-            }
-            $this->model->milk_type = !empty($this->model->milk_type_code) ? implode(',', $this->model->milk_type_code) : '';
-            $this->model->vendor_code = $this->model->vendor;
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['society', 'edit']);
-            if ($transaction == 'customRedirect') {
-                if ($this->model->status == 'Pending') {
-                    return $this->redirect(['document-upload', 'id' => $this->model->dcs_provisional_code]);
+            if ($this->model->validate()) {
+                $this->setModel();
+                if ($this->model->street1 != '' && $this->model->street2 != '') {
+                    $this->model->address = $this->model->fullAddress();
+                } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
+                    $this->model->address = $this->model->street2;
                 } else {
-                    return $this->redirect(['pending-approval']);
+                    $this->model->address = $this->model->street1;
+                }
+                if (!empty($this->model->milk_type_auto)) {
+                    $this->model->milk_type_code = [1, 2, 3];
+                }
+                if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
+                    $val = str_replace('.', '', $this->model->cutoff_val);
+                    $val = str_pad($val, 3, '0', STR_PAD_LEFT);
+                    $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
+                    $cutOffVal = $val . strtoupper($milkType);
+                    $this->model->cutoff = substr($cutOffVal, -4);
+                }
+                $this->model->milk_type = !empty($this->model->milk_type_code) ? implode(',', $this->model->milk_type_code) : '';
+                $this->model->vendor_code = $this->model->vendor;
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['society', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    if ($this->model->status == 'Pending') {
+                        return $this->redirect(['document-upload', 'id' => $this->model->dcs_provisional_code]);
+                    } else {
+                        return $this->redirect(['pending-approval']);
+                    }
                 }
             }
         }
@@ -233,6 +235,16 @@ class TblDcsProvisionalController extends ChildController {
 
     public function actionDocumentUpload($id) {
         $model = $this->findModel($id);
+        $model->scenario = 'beforeDocUpload';
+        if (!$model->validate()) {
+            $errors = $model->getErrors();
+            $errorMessage = implode('<br>', array_merge(...array_values($errors)));
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'error',
+                'message' => 'Validation Error: <br>' . $errorMessage
+            ]);
+            return $this->redirect(['update', 'id' => $id]);
+        }
         $model->scenario = 'uploadDoc';
         $module_code = $model->dcs_provisional_code;
         $module_name = 'tbl_dcs_provisional';
@@ -322,7 +334,7 @@ class TblDcsProvisionalController extends ChildController {
                 $dcsdoc = [];
                 $message = '';
                 $dcs_error = '';
-                if ($status == 'Approve'  && $dcsCreationPendingForSapApproval != '1') {
+                if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
                     $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message);
                     if (!empty($message)) {
                         foreach ($message as $msg) {
@@ -332,7 +344,7 @@ class TblDcsProvisionalController extends ChildController {
                 } else {
                     $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
                 }
-                if ($transaction == 'customRedirect' && empty($message)) {
+                if ($transaction == 'customRedirect' && empty($dcs_error)) {
 
                     if ($status == 'Approve') {
                         $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
@@ -352,8 +364,10 @@ class TblDcsProvisionalController extends ChildController {
 
                     return $this->redirect(['pending-approval']);
                 } else {
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => $dcs_error . ' in DCS.']);
+                    if (!empty($dcs_error)) {
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => $dcs_error . ' in DCS.']);
+                    }
                 }
             } else {
                 Yii::$app->getSession()->setFlash('success', [
@@ -525,6 +539,9 @@ class TblDcsProvisionalController extends ChildController {
                         $memberModel->attributes = $model->attributes;
                         $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                         $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
+                        if(!empty($memberModel->set_master_hierarchy)){
+                            $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
+                        }
                         $memberModel->animal_type_code = 1;
                         $memberModel->address = $model->dcs_name;
                         $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
@@ -590,6 +607,22 @@ class TblDcsProvisionalController extends ChildController {
             ]);
             return false;
         }
+    }
+
+    public function actionRfcRePush($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblDcsProvisionalHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->data_post_status = 0;
+        $record = [];
+        if ($this->model->save(true,false)) {
+            $historyModel->save();
+            $record = ['status' => 'success', 'msg' => 'Dcs Provisional re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push Dcs Provisional.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

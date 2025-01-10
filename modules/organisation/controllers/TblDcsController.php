@@ -2,6 +2,7 @@
 
 namespace app\modules\organisation\controllers;
 
+use app\components\WebApi;
 use Yii;
 use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
@@ -47,6 +48,10 @@ use app\models\ChildModel;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\document\controllers\TblAttachmentController;
+use app\modules\organisation\models\TblBankVerification;
+use app\modules\organisation\models\TblBankVerificationLog;
+use app\modules\product\models\TblProductSaleRate;
+use app\modules\product\models\TblProductSaleRateApplicability;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -125,7 +130,27 @@ class TblDcsController extends ChildController {
         $this->model->is_bmc = $is_bmc;
 
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->setModel();
             $this->model->dcs_code = $this->model->getCode();
+            $mapList = [];
+            $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'product_sale_rate_applicability_auto');
+            if (!empty($productSaleRateApplicabilityAuto)) {
+                $productSaleRateApplicability = new TblProductSaleRateApplicability;
+                $productSaleRate = new TblProductSaleRate;
+                $productSaleRate = $this->model->getProductSaleRates($this->model->union_code);
+                if (!empty($productSaleRate)) {
+                    foreach ($productSaleRate as $rate) {
+                        $productSaleRateApplicability = new TblProductSaleRateApplicability();
+                        $productSaleRateApplicability->attributes = $rate->attributes;
+                        $productSaleRateApplicability->applicable_for = 'DCS';
+                        $productSaleRateApplicability->applicable_code = $this->model->dcs_code;
+                        $productSaleRateApplicability->created_at = date('Y-m-d H:i:s');
+                        $productSaleRateApplicability->wef_date = date('Y-m-d H:i:s');
+                        $productSaleRateApplicability->created_by = Yii::$app->user->identity->id;
+                        array_push($mapList, $productSaleRateApplicability);
+                    }
+                }
+            }
 
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
@@ -134,7 +159,6 @@ class TblDcsController extends ChildController {
             } else {
                 $this->model->address = $this->model->street1;
             }
-            $this->setModel();
 
             /* if ($this->model->is_bmc == 3 && $this->model->destination_code == '') {
               $this->model->destination_code = 0;
@@ -143,7 +167,6 @@ class TblDcsController extends ChildController {
 
 
             //set mapping data
-            $mapList = [];
             if (!empty($this->model->village_code)) {
                 $modelMapping = new TblDcsVillageMapping();
                 $this->setMapping($modelMapping);
@@ -1184,6 +1207,9 @@ class TblDcsController extends ChildController {
                         $memberModel->attributes = $model->attributes;
                         $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                         $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
+                        if (!empty($memberModel->set_master_hierarchy)) {
+                            $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
+                        }
                         $memberModel->animal_type_code = 1;
                         $memberModel->address = $model->dcs_name;
                         $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
@@ -1330,9 +1356,16 @@ class TblDcsController extends ChildController {
             if (!empty($parents[0])) {
                 $dcs = new TblDcs();
                 $mccCode = !empty($parents[1]) ? $parents[1] : '';
-                $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode);
-                foreach ($data as $key => $val) {
-                    $out[] = array('id' => $key, 'name' => $val);
+                $bmcCode = !empty($parents[2]) ? $parents[2] : '';
+                $is_call = true;
+                if ($parents[0] == 2 && empty($bmcCode)) {
+                    $is_call = false;
+                }
+                if ($is_call && !empty($mccCode)) {
+                    $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode, $bmcCode);
+                    foreach ($data as $key => $val) {
+                        $out[] = array('id' => $key, 'name' => $val);
+                    }
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
             }
@@ -1346,6 +1379,114 @@ class TblDcsController extends ChildController {
         $module_name = 'tbl_dcs';
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('dcs', $id, $model, $module_code, $module_name);
+    }
+
+    public function actionKycVerification() {
+        $logModel = New TblBankVerificationLog();
+        $getData = Yii::$app->request->get();
+        $code = !empty($getData['code']) ? $getData['code'] : NULL;
+        $type = !empty($getData['type']) ? $getData['type'] : NULL;
+        $model = [];
+        $responseJson = '';
+        if (strtolower($type) == 'dcs') {
+            $model = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => 'society', 'is_default' => 1, 'is_active' => 1])->one();
+        } else if (strtolower($type) == 'customer') {
+            $model = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => 'customer', 'is_default' => 1, 'is_active' => 1])->one();
+        } elseif (strtolower($type) == 'member') {
+            $model = TblMember::find()->where(['member_code' => $code])->one();
+        }
+        if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
+            $saveModel = [];
+            $hisModel = [];
+            $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'verify' ? 1 : 2) : 0;
+            if (!empty($status)) {
+                $model->scenario = 'kycVerify';
+                $history = $model->className() . 'History';
+                $historyModel = new $history();
+                Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                $hisModel[] = $historyModel;
+                $model->is_kyc_verified = $status;
+                if ($status == 1) {
+                    $model->is_verified = 1;
+                }
+                $saveModel[] = $model;
+
+                if ($model->validate() && empty($model->getErrors())) {
+                    $logModel = New TblBankVerificationLog();
+                    if (strtolower($type) == 'dcs') {
+                        $dcsdata = $this->findModel($code);
+                        $this->setLogHierarchy($logModel, $dcsdata, $saveModel);
+                    } else if (strtolower($type) == 'customer') {
+                        $customerdata = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
+                        $this->setLogHierarchy($logModel, $customerdata, $saveModel);
+                    }
+
+                    $logModel->setLogData(Yii::$app->request->post(), $model, $saveModel);
+                    $transaction = $this->generalModel->saveTransaction($saveModel, $hisModel, ['KYC Verified', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        return $this->redirect(\yii\helpers\Url::previous());
+                    } else {
+                        return $this->redirect(\yii\helpers\Url::previous());
+                    }
+                } else {
+                    $msg = '';
+                    foreach ($model->getErrors() as $errorkey => $value) {
+                        $msg .= $value[0] . '<br/>';
+                    }
+                    Yii::$app->session->setFlash('error', $msg);
+                    return $this->redirect(\yii\helpers\Url::previous());
+                }
+            }
+        }
+        if (!empty($getData) && !empty($getData['bank_account_no']) && !empty($getData['ifsc'])) {
+            $base_url = \Yii::$app->params['bank_verification']['verfication_url'];
+            $body = array(
+                'bank_account' => $getData['bank_account_no'],
+                'ifsc' => $getData['ifsc']
+            );
+            $api = new WebApi();
+            $api->header_info['Content-Type'] = 'application/json';
+            $api->header_info['Content-length'] = strlen(json_encode($body));
+            $api->header_info['x-client-id'] = \Yii::$app->params['bank_verification']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['bank_verification']['header']['x-client-secret'];
+            $api->is_header_merge = false;
+            $api->return_actual = true;
+            $api->serverUrl = $base_url;
+            $api->body = $body;
+            try {
+                $result = $api->GuzzleCURL();
+                $httpCode = $result->getStatusCode();
+                $response = $result->getBody()->getContents();
+                $response = !empty($response) ? json_decode($response) : [];
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                $responseData = $e->getResponse() ? json_decode($e->getResponse()->getBody()->getContents()) : '';
+                $response = $responseData->error;
+                $response->account_status = 'failed at bank.';
+                $response->account_status_code = 'failed_at_bank';
+            }
+            $response->bank_account_no = $body['bank_account'];
+            $response->ifsc = $body['ifsc'];
+            $responseJson = json_encode($response);
+        }
+        return $this->renderAjax('kyc_verification_view', [
+                    'logModel' => $logModel,
+                    'model' => $model,
+                    'type' => $type,
+                    'response' => $response,
+                    'responseJson' => $responseJson,
+        ]);
+    }
+
+    public function setLogHierarchy($logModel, $model, &$saveModel) {
+        if (!empty($model)) {
+            $logModel->union_code = $model->union_code;
+            $logModel->plant_code = $model->plant_code;
+            $logModel->mcc_plant_code = $model->mcc_plant_code;
+            $logModel->bmc_code = $model->bmc_code;
+            $logModel->dcs_code = $model->dcs_code;
+            $saveModel[] = $logModel;
+        }
     }
 
 }

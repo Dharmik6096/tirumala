@@ -12,6 +12,7 @@ use yii\helpers\Html;
 use PHPExcel;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\vsp\models\TblBillHead;
 
 /**
  * Default controller for the import module
@@ -298,10 +299,27 @@ class DefaultController extends \app\controllers\ChildController {
         }
         $a = str_replace($this->old_att, $this->change_att, $a);
         $fields = explode(',', $a);
-        $fields = array_map(function($str) {
-            return ucwords(str_replace('_', ' ', $str));
-        }, $fields);
+        $modelName = str_replace('_', ' ', $data['table_name']);
+        $modelName = str_replace(' ', '', ucwords($modelName));
+        $model_name = Yii::$app->path->getModel($modelName);
 
+        if (!empty($data['set_dynamic_label'])) {
+            $resultArray = $model_name->getLabels($data['set_dynamic_label']);
+            $fields = array_map(function($str) use ($model_name, $resultArray) {
+                if (!empty($model_name)) {
+                    if (isset($resultArray[$str])) {
+                        return $resultArray[$str];
+                    } else {
+                        return $model_name->getAttributeLabel($str);
+                    }
+                }
+                return ucwords(str_replace('_', ' ', $str));
+            }, $fields);
+        } else {
+            $fields = array_map(function($str) {
+                return ucwords(str_replace('_', ' ', $str));
+            }, $fields);
+        }
         foreach ($fields as $col) {
             $objPHPExcel->getActiveSheet()->setCellValue($column . $rowCount, $col);
             $column++;

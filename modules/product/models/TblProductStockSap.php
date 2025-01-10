@@ -29,6 +29,7 @@ class TblProductStockSap extends ChildModel {
             [['product_code'], 'validProductCode', 'on' => ['importCsv']],
             [['product_code', 'stock_date', 'bmc_code'], 'setData', 'on' => ['importCsv']],
             [['product_code', 'stock_date'], 'validateUniqueStockEntry', 'on' => ['importCsv']],
+            [['qty'], 'number'],
         ];
     }
 
@@ -84,7 +85,7 @@ class TblProductStockSap extends ChildModel {
 
     public function setData() {
         $bmcData = TblDcsBmc::find()->where(['or', ['ref_code' => $this->bmc_code], ['bmc_code' => $this->bmc_code]])->one();
-        if (!empty($mccData)) {
+        if (!empty($bmcData)) {
             $this->union_code = $bmcData->union_code;
             $this->plant_code = $bmcData->plant_code;
             $this->mcc_plant_code = $bmcData->mcc_plant_code;

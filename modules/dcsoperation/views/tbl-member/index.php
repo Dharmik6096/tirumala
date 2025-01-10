@@ -11,6 +11,7 @@ if (Yii::$app->general->checkAccess('/dcsoperation//tbl-member/update')) {
     } else {
         $this->params['menu'][] = Yii::$app->controls->import('member-bulk', $this);
     }
+    $this->params['menu'][] = Yii::$app->controls->import('member_update_special_code_bulk', $this, Yii::t('app', 'Member Special Code Import'), [], 'member_update_special_code_bulk');
 //    $this->params['menu'][] = Yii::$app->controls->import('member_limited', $this,'Import Limited Data');
     $this->params['menu'][] = GhostHtml::a('<i class="fa fa fa-close"></i>' . Yii::t('app', 'Member Deactivation'), ['/dcsoperation/tbl-member-deactive/index'], ['class' => 'btn btn-danger btn-block']);
 }

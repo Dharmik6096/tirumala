@@ -35,6 +35,7 @@ class TblProductStockPhysical extends ChildModel {
             [['customer_type', 'customer_code', 'product_code', 'qty', 'stock_date'], 'required', 'on' => ['importCsv']],
             [['product_code'], 'setData', 'on' => ['importCsv']],
             [['product_code', 'stock_date'], 'validateUniqueStockEntry', 'on' => ['importCsv']],
+            [['qty'], 'number'],
         ];
     }
 

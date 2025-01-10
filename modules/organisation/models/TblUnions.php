@@ -14,6 +14,8 @@ use app\models\ChildModel;
 use app\models\GeneralModel;
 use app\modules\details\models\TblBankDetails;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_unions".
@@ -497,6 +499,21 @@ class TblUnions extends ChildModel {
 
     public function setPanNumber($attribute, $params) {
         $this->contact_person_pan_no = strtoupper($this->contact_person_pan_no);
+    }
+    
+    public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $sentbox = new TblSentbox();
+        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+            if (!($sentbox->setSentbox($this, $flag))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
+        if(!empty($this->set_master_hierarchy) && $flag == 'INSERT'){
+            foreach($this->set_master_hierarchy as $hierarchy) {
+                $hierarchy->save();
+            }
+        }
     }
 
 }

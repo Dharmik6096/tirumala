@@ -1844,7 +1844,7 @@ class SiteController extends Controller {
                 $ignore_tables = ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'];
                 $version_no = 0;
                 $update_ids = array_column($modelData, 'uuid');
-                $model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
+                //$model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
                         $process_record = TRUE;
@@ -2914,8 +2914,26 @@ class SiteController extends Controller {
     }
 
     public function actionLoadDashboardMilkAnalysis() {
-// var_dump('hello');die;
-        $sp = Yii::$app->request->post('sp');
+        $fromShift = '';
+        $toShift = '';
+        $fromDate = '';
+        $toDate = '';
+        $postData = Yii::$app->request->post();
+        if (!empty($postData['Dashboard']['date'])) {
+            $fromDate = $postData['Dashboard']['date'];
+            $toDate = $postData['Dashboard']['date'];
+        } elseif (!empty($postData['Dashboard']['from_date'])) {
+            $fromDate = $postData['Dashboard']['from_date'];
+            $toDate = $postData['Dashboard']['to_date'];
+        }
+        if (!empty($postData['Dashboard']['shift'])) {
+            $fromShift = $postData['Dashboard']['shift'];
+            $toShift = $postData['Dashboard']['shift'];
+        } elseif (!empty($postData['Dashboard']['mag_from_shift'])) {
+            $fromShift = $postData['Dashboard']['mag_from_shift'];
+            $toShift = $postData['Dashboard']['mag_to_shift'];
+        }
+        $sp = $postData['sp'];
         $results = $this->getSpResult($sp);
         $res = [];
         $array_result = $results;
@@ -2926,7 +2944,7 @@ class SiteController extends Controller {
             $res[$key] = $value;
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        return ['status' => 'success', 'res' => $res];
+        return ['status' => 'success', 'res' => $res, 'fromDate' => $fromDate, 'toDate' => $toDate, 'fromShift' => $fromShift, 'toShift' => $toShift];
     }
 
     public function actionHelpManual() {
@@ -3215,6 +3233,32 @@ class SiteController extends Controller {
         $results = \Yii::$app->general->getSpData('sp_get_iot_temperature_data', [$date]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'results' => $results];
+    }
+
+    public function actionMccWiseIndentSummary() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'mis_mcc_wise_indent_summary';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $mcc = !empty($rlsData['mcc']) ? ',' . $rlsData['mcc'] . ',' : 0;
+        if (!empty(Yii::$app->request->post('mcc'))) {
+            $mcc = Yii::$app->request->post('mcc');
+        }
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = $mcc;
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date;
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $table = $this->renderAjax('_mcc_wise_indent_summary', ['output' => $output]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'mcc_wise_indent_summary' => $table];
     }
 
 }

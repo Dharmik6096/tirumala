@@ -70,7 +70,8 @@ class TblIndentMaster extends \app\models\ChildModel {
             [['indent_code'], 'required', 'except' => ['importCsv', 'importCsvOther']],
             [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close', 'from_date', 'to_date'], 'safe'],
             [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
-            [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required', 'on' => ['create', 'createOther', 'importCsv', 'importCsvOther']],
+            [['product_code', 'indent_date', 'qty'], 'required', 'on' => ['create', 'createOther', 'importCsv', 'importCsvOther']],
+            [['dcs_code'], 'required', 'on' => ['create', 'createOther', 'importCsv']],
             [['indent_type', 'rate', 'amount'], 'required', 'on' => ['createOther']],
             [['warehouse_code'], 'required', 'when' => function ($model) {
                     return $model->indent_type == 2;
@@ -87,6 +88,8 @@ class TblIndentMaster extends \app\models\ChildModel {
             [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importCsvOther']],
             [['indent_date'], 'convertDate', 'on' => ['importCsv', 'importCsvOther']],
             [['indent_date'], 'statusSet', 'skipOnError' => true],
+            [['customer_type', 'customer_code'], 'required', 'on' => ['importCsvOther']],
+            [['customer_type'], 'in', 'range' => ['MEMBER', 'DCS'], 'on' => ['importCsvOther']],
             [['indent_date'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
             [['indent_date'], 'importFieldSetOther', 'skipOnError' => true, 'on' => ['importCsvOther']],
             [['indent_code'], 'validateCancel', 'skipOnError' => true],
@@ -139,6 +142,7 @@ class TblIndentMaster extends \app\models\ChildModel {
             'route_code' => Yii::t('app', 'Route'),
             'warehouse_code' => Yii::t('app', 'Warehouse'),
             'dispatch_qty' => Yii::t('app', 'Dispatch Qty'),
+            'received_qty' => Yii::t('app', 'Acknowledgement Qty'),
         ];
     }
 
@@ -203,6 +207,10 @@ class TblIndentMaster extends \app\models\ChildModel {
         $this->status_by = empty($this->status_by) && !empty(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : $this->status_by;
     }
 
+    public function validateMember() {
+        return TblMember::find()->where(['is_active' => 1])->andWhere(['or', ['member_code' => $this->customer_code], ['ex_member_code' => $this->customer_code], ['ref_code' => $this->customer_code], ['sap_farmer_code' => $this->customer_code], ['vendor_code' => $this->customer_code]])->one();
+    }
+
     public function importFieldSet($attribute, $params) {
         $dcs = new TblDcs();
         $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
@@ -227,40 +235,49 @@ class TblIndentMaster extends \app\models\ChildModel {
     }
 
     public function importFieldSetOther($attribute, $params) {
-        $dcs = new TblDcs();
-        $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
-        if (empty($this->dcs_code)) {
-            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
-        } else {
-            $dcsCodeData = $this->dcsCode;
-            if (!empty($dcsCodeData)) {
-                $this->bmc_code = $dcsCodeData->bmc_code;
-                $this->mcc_plant_code = $dcsCodeData->mcc_plant_code;
-                $this->plant_code = $dcsCodeData->plant_code;
-                $this->union_code = $dcsCodeData->union_code;
+        if (empty($this->getErrors())) {
+            $DcsCode = $this->customer_code;
+            if ($this->customer_type == 'MEMBER') {
+                $memberCodeData = $this->validateMember();
+                $DcsCode = '';
+                if (!empty($memberCodeData)) {
+                    $DcsCode = $memberCodeData->dcs_code;
+                    $this->member_code = $memberCodeData->member_code;
+                }
             }
-            $this->customer_code = $this->dcs_code;
-            $this->customer_type = 'DCS';
-            $this->indent_type = !empty($this->warehouse_code) ? 'warehouse' : 'mcc';
-
-            $product = new TblIndentProduct();
-            $indentProduct = $product->getIndentProductList($this->union_code, $this->indent_type, $this->product_code);
-            if (empty($indentProduct)) {
-                $this->addError('rate', Yii::t('app/validation', ' Product Is not Applicable For Indent'));
-            }
-            $applicable_code = $this->customer_code;
-            $applicable_type = $this->customer_type;
-            $memberRate = 0;
-            $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
-                    ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
-                    ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $this->indent_date])
-                    ->where(['tbl_product_sale_rate.product_code' => $this->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $applicable_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $applicable_code]);
-            $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
-            if (empty($app)) {
-                $this->addError('rate', Yii::t('app/validation', ' Product Sale Rate not Applicable'));
+            $dcs = new TblDcs();
+            $this->dcs_code = $dcs->getValidDcs($DcsCode);
+            if (empty($this->dcs_code)) {
+                $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Customer Code') . ' is invalid'));
             } else {
-                $this->rate = $app['sale_rate'];
-                $this->amount = $this->qty * $this->rate;
+                $dcsCodeData = $this->dcsCode;
+                if (!empty($dcsCodeData)) {
+                    $this->bmc_code = $dcsCodeData->bmc_code;
+                    $this->mcc_plant_code = $dcsCodeData->mcc_plant_code;
+                    $this->plant_code = $dcsCodeData->plant_code;
+                    $this->union_code = $dcsCodeData->union_code;
+                }
+                $this->indent_type = !empty($this->warehouse_code) ? 'warehouse' : 'mcc';
+
+                $product = new TblIndentProduct();
+                $indentProduct = $product->getIndentProductList($this->union_code, $this->indent_type, $this->product_code);
+                if (empty($indentProduct)) {
+                    $this->addError('rate', Yii::t('app/validation', ' Product Is not Applicable For Indent'));
+                }
+                $applicable_code = $this->dcs_code;
+                $applicable_type = 'DCS';
+                $memberRate = $this->customer_type == 'MEMBER' ? 1 : 0;
+                $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
+                        ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
+                        ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $this->indent_date])
+                        ->where(['tbl_product_sale_rate.product_code' => $this->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $applicable_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $applicable_code]);
+                $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
+                if (empty($app)) {
+                    $this->addError('rate', Yii::t('app/validation', ' Product Sale Rate not Applicable'));
+                } else {
+                    $this->rate = $app['sale_rate'];
+                    $this->amount = $this->qty * $this->rate;
+                }
             }
         }
     }

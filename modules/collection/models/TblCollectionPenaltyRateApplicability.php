@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\collection\models\TblCollectionPenaltyType;
 
 /**
  * This is the model class for table "tbl_collection_penalty_rate_applicability".
@@ -137,6 +138,10 @@ class TblCollectionPenaltyRateApplicability extends \app\models\ChildModel {
         } else {
             return Yii::$app->general->getforeignkey($this->mainCustomerCode, 'customer_name');
         }
+    }
+
+    public function getPenaltyType() {
+        return $this->hasOne(TblCollectionPenaltyType::className(), ['penalty_type_code' => 'penalty_type']);
     }
 
 }

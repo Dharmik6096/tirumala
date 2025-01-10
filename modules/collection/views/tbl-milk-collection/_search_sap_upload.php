@@ -7,6 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\modules\collection\models\TblMilkCollectionSearch */
 /* @var $form yii\widgets\ActiveForm */
 $multiple = isset($multiple) ? TRUE : FALSE;
+$eipl_code = Yii::$app->session->get('eiplCode');
 ?>
 
 <div class="search-filter large-search">
@@ -46,6 +47,13 @@ $multiple = isset($multiple) ? TRUE : FALSE;
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('to_shift'), false, 'to_shift'); ?>
     </div>
+    <?php
+    if ($eipl_code == 'ANANDA') {
+        ?>
+        <div class="col-sm-1">
+            <?= Yii::$app->dropdown->dropdownStatic('data_type_filter', $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('data_type_filter'), FALSE, 'data_type_filter') ?> 
+        </div>
+    <?php } ?>
     <div class="col-sm-3 mt23">
         <?= Yii::$app->controls->search(); ?>
     </div>

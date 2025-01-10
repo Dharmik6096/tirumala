@@ -88,12 +88,11 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                 $searchModel->load(Yii::$app->request->post());
                 if (isset($_REQUEST['selection'])) {
                     $saveModel = [];
-                    $status = 5;
                     $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
                     $msg = 'Indent Dispatch';
-                    $where = [];
                     $i = 1;
                     $j = 1;
+                    $k = 1;
                     $setOldVal = [];
                     $productStockCode = [];
                     $existingProducts = [];
@@ -102,7 +101,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
                         $dcs = $existData->dcs_code;
                         $product = $existData->product_code;
-                        //$disp_qty = $data[2];
                         $approve_qty = $existData->approve_qty;
                         $disp_qty = $indentPostData[$code]['dispatch_qty'] == "" ? 0 : $indentPostData[$code]['dispatch_qty'];
                         $warehouse = isset($existData->warehouse_code) ? $existData->warehouse_code : '';
@@ -126,7 +124,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         //set from stock
                         $qty = $disp_qty;
                         $batch = '';
-                        $batchQuantities = []; 
+                        $batchQuantities = [];
 
                         if (empty($warehouse)) { //gyandhara plant stock is not available //Sunita 03/03/2023
                             $fstockModel = new TblProductStock();
@@ -212,10 +210,11 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     $saveModel[] = $receiptTxn;
                                     $j++;
                                     if (isset($batchQuantities[$batch])) {
-                                        $batchQuantities[$batch] = $remaining_quantity;
+                                        $batchQuantities[$batch]['qty'] = $remaining_quantity;
                                     } else {
-                                        $batchQuantities[$batch] = $dispatch_quantity;
+                                        $batchQuantities[$batch]['qty'] = $dispatch_quantity;
                                     }
+                                    $batchQuantities[$batch]['rate'] = $existStock->rate;
                                 }
                             } else {
                                 $productName = Yii::$app->general->getForeignKey($fstockModel->productCode, 'product_name');
@@ -226,6 +225,8 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
 
                         foreach ($batchQuantities as $batch => $totalQty) {
                             //set to stock
+                            $rate = $totalQty['rate'];
+                            $totalQty = $totalQty['qty'];
                             $stockModel = new TblProductStock();
                             $stockModel->setCodes('DCS', $dcs);
 
@@ -241,21 +242,20 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     $setOldVal[$key] = $existtoStock->stock;
                                 }
                                 $oldQty = $setOldVal[$key];
-                                // $setOldVal[$key] = $setOldVal[$key] + $qty;
                                 $setOldVal[$key] = $setOldVal[$key] + $totalQty;
 
                                 $historyModel = new TblProductStockHistory();
                                 Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
                                 $historyModel->stock = $oldQty;
                                 $saveModel[] = $historyModel;
-                                // $existtoStock->stock = $oldQty + $qty;
                                 $existtoStock->stock = $oldQty + $totalQty;
                                 $stockModel = $existtoStock;
                             } else {
-                                $stockModel->product_stock_code = $stockModel->getCode($j);
-                                // $stockModel->stock = $oldQty + $qty;
+                                $stockModel->product_stock_code = $stockModel->getCode($k);
                                 $stockModel->stock = $oldQty + $totalQty;
                                 $stockModel->x_col1 = Yii::$app->general->getUuid();
+                                $stockModel->rate = $rate;
+                                $k++;
                             }
                             $saveModel[] = $stockModel;
 
@@ -265,7 +265,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             unset($stockTxnModel->created_by);
                             $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($j);
                             $stockTxnModel->old_value = $oldQty;
-                            // $stockTxnModel->new_value = $qty;
                             $stockTxnModel->new_value = $totalQty;
                             $stockTxnModel->final_value = $stockModel->stock;
                             $stockTxnModel->transaction_type = !empty($txnType) ? $txnType : 'INVENTORY RECEIVED';
@@ -317,7 +316,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $saveModel[] = $existData;
                         }
                         $i++;
-                        $j++;
                     }
                     $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'create']);
                     if ($transaction == 'customRedirect') {
@@ -355,7 +353,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                 ->select(['tbl_product_stock.product_code', 'tbl_product.product_name', 'SUM(tbl_product_stock.stock) as total_stock'])
                 ->innerJoin('tbl_product', 'tbl_product.product_code = tbl_product_stock.product_code')
                 ->where(['tbl_product_stock.bmc_code' => $bmc_code])
-                ->andWhere(['is','tbl_product_stock.dcs_code', NULL]);
+                ->andWhere(['is', 'tbl_product_stock.dcs_code', NULL]);
         if (!empty($param['product_code'])) {
             $existData = $existData->andWhere(['tbl_product_stock.product_code' => $param['product_code']]);
         }
@@ -378,6 +376,19 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
             $controls['p_report_name'] = 'Milk Chilling Bill Lr No Wise';
             $this->printDocument($controls, 'vsp/MilkChillingBillLrNoWise', 'MilkChillingBillLrNoWise', 'pdf');
         }
+    }
+
+    public function actionCloseIndent($id) {
+        $indent = TblIndentMaster::findOne(['indent_code' => $id]);
+        $history = new TblIndentMasterHistory();
+        Yii::$app->operation->history($indent, $history, UPDATE);
+        $indent->is_close = 1;
+
+        $transaction = $this->generalModel->saveTransaction([$indent, $history], ['Indent Master', 'edit']);
+        $message = $transaction == 'customRedirect' ? ['type' => 'success', 'message' => 'Indent closed successfully.'] : ['type' => 'error', 'message' => 'Failed to close indent. Please try again.'];
+
+        Yii::$app->getSession()->setFlash('success', $message);
+        return $this->redirect(Url::previous());
     }
 
 }

@@ -226,10 +226,23 @@ $attribute = [
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status] : '';
         }],
+        ['attribute' => 'data_post_status',
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status] : 'Pending';
+        }, 'filter' => false, 'visible' => false],
+        ['attribute' => 'picked_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'response_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
 ];
-
+$gridId = 'dcs-list';
 $grid_option = [
-    'id' => 'dcs-list',
+    'id' => $gridId,
     'attributes' => $attribute,
     'active_column' => FALSE,
     'actions' => [
@@ -259,6 +272,9 @@ $grid_option = [
             $disable = ($model->status == 'Pending') ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-dcs-provisional/document-upload', 'id' => $model->dcs_provisional_code], $options);
+        },
+        'repush' => function ($url, $model) use ($gridId) {
+            return Yii::$app->general->createRePushLink($url, $model, $gridId, 'dcs_provisional_code');
         },
     ]
 ];

@@ -79,7 +79,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
                         $historyModel = new TblProductSaleTransactionHistory();
                         Yii::$app->operation->history($existSale, $historyModel, UPDATE);
                         $saveModel[] = $historyModel;
-                        $existSale->scenario = 'locksale';
+                        //$existSale->scenario = 'locksale';
                         $existSale->data_lock = 1;
                         $existSale->lock_date = $model->locking_date;
                         $existSale->reference_code = $model->locking_code;
@@ -95,7 +95,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
                 $this->downloadData($dataProvider->getModels());
             }
         }
-        $dataProvider = $searchModel->locksearch(Yii::$app->request->queryParams);
+        // $dataProvider = $searchModel->locksearch(Yii::$app->request->queryParams);
         return $this->render('create', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
@@ -153,8 +153,8 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
         $controls['ref_code'] = $id;
         $controls['lock_date'] = $model->locking_date;
         $output = \Yii::$app->general->getSpData('Portal_download_product_sale_lock_data', $controls);
-        
-        
+
+
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
@@ -213,10 +213,9 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
           ); */
         if (!empty($downloadDetail)) {
             for ($i = 0; $i < count($downloadDetail); $i++) {
-                if(isset($downloadDetail[$i]['product_sale_transaction_code'])) {
+                if (isset($downloadDetail[$i]['product_sale_transaction_code'])) {
                     unset($downloadDetail[$i]['product_sale_transaction_code']);
                 }
-                
             }
         }
         $file_header = !empty($downloadDetail) ? array_keys($downloadDetail[0]) : [];

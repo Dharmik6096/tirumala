@@ -1,5 +1,6 @@
 <?php
 
+use app\components\CustomDataTable;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use webvimark\modules\UserManagement\components\GhostHtml;
@@ -458,7 +459,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('month', 'report_req_status', 'payment_type'))) {
+                                        if (in_array($value, array('month', 'report_req_status', 'payment_type', 'rate_cal_for'))) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?>
@@ -503,6 +504,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('Login Type'), false, $value, TRUE, TRUE) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('bill_head_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->bill_head($model, $form, 'reportsmodel-union_code', 'bill_head_code', 'Bill Head', 'U'); ?>       
                                             </div>
                                             <?php
                                         }
@@ -654,7 +662,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                 echo '</div>';
                 // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';
                 // var_dump($dataProvider->getModels());
-                echo \nullref\datatable\DataTable::widget([
+                echo CustomDataTable::widget([
                     'id' => 'custom_report',
                     'autoWidth' => true,
 //                    'searching' => true,

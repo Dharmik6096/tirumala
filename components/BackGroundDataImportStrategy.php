@@ -120,7 +120,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                                 $excludes[] = $val;
                             }
                             $model = $existData;
-                            $model->scenario = 'importCsv';
+                            $model->scenario = $this->scenario;
                             $history = !empty($this->details['historyClass']) ? $this->details['historyClass'] : NULL;
                             if (!empty($history)) {
                                 $history = Yii::$app->path->define($history);

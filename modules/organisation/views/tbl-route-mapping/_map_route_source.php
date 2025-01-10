@@ -10,7 +10,7 @@ $button = Yii::$app->label->button('create');
 $this->title = Yii::t('app', $title);
 ?>
 <div class="panel panel-default panel-main">
-    <div class="panel-heading">Destination: <?= $modelRouteSource->getDestinationName($modelRouteSource->to_type, $modelRouteSource->to_dest).'('.strtoupper($modelRouteSource->to_type).')' ?>, Route: <?= $modelRouteSource->route_name ?></div>
+    <div class="panel-heading">Destination: <?= $modelRouteSource->getDestinationName($modelRouteSource->to_type, $modelRouteSource->to_dest) . '(' . strtoupper($modelRouteSource->to_type) . ')' ?>, Route: <?= $modelRouteSource->route_name ?></div>
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin(['options' => [
@@ -34,55 +34,56 @@ $this->title = Yii::t('app', $title);
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                     <h5 class="theme-box-heading"><?php echo Yii::t('app', $title); ?></h5>
                 </div>
-        <?php echo $form->errorSummary($model); ?>
-        <?php echo Html::activeHiddenInput($model, 'route_code', ['value' => $modelRouteSource->route_code]) ?>
-        <div class="col-sm-12 margin-top-10">
-            <div class="col-sm-6  margin-bottom-10">
-                <div class="btn-group">
-                    <span class="input-group-btn">
-                        <span id="show-only-selected-routes" class="btn btn-default btn-sm">
-                            <i class="fa fa-minus"></i> Show only selected
-                        </span>
-                        <span id="show-all-routes" class="btn btn-default hide btn-sm">
-                            <i class="fa fa-plus"></i> Show all
-                        </span>
-                    </span>
-                </div>
-            </div>
-            <?php
-            $i = 0;
+                <?php echo $form->errorSummary($model); ?>
+                <?php echo Html::activeHiddenInput($model, 'route_code', ['value' => $modelRouteSource->route_code]) ?>
+                <div class="col-sm-12 margin-top-10">
+                    <div class="col-sm-2  margin-bottom-10">
+                        <div class="btn-group">
+                            <span class="input-group-btn">
+                                <span id="show-only-selected-routes" class="btn btn-default btn-sm">
+                                    <i class="fa fa-minus"></i> Show only selected
+                                </span>
+                                <span id="show-all-routes" class="btn btn-default hide btn-sm">
+                                    <i class="fa fa-plus"></i> Show all
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->UserList($model, $form, 'tblroutemappingsources-route_code', 'user_code', FALSE, FALSE, FALSE); ?>
+                    </div>
+                    <?php
+                    $i = 0;
 
 //             var_dump($product_groups);
 //                exit;
-            //foreach ($product_groups as $key => $row) {
-            
-                ?>
-                <div class="col-sm-12">
-                    <?php
-                    echo $form->field($model, 'from_dest')->checkboxList(
-                            $destinations, [
-                        'id' => 'routes-list',
-                        'class' => 'row mb15',
-                        'item' =>
-                        function ($index, $label, $name, $checked, $value) use ($selected, $defaultValue, $modelRouteSource) {
-                            $checked = in_array($value, $selected);
-                            $modelRouteSource->route_code = Yii::$app->getRequest()->getQueryParam('id');
-                            $disabled = $checked ? ' disabled' : '';
-                            return "<div class='col-sm-2 checklist dcs-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
-                                        'value' => $value,
-                                        'label' => '<label for=' . $value . '>' . $label . '</label>',
-                                        'labelOptions' => [
-                                            'class' => 'route-text' . $disabled,
-                                        ],
-                                        'class' => 'route-checkbox',
-                                        'id' => $value,
-                                    ]) . "</div></div>";
-                        }, /* ,'template'=>'<div class="item">{input}{label}</div>' */])->label(false);
-                            ?>
-                        </div>
+                    //foreach ($product_groups as $key => $row) {
+                    ?>
+                    <div class="col-sm-12">
                         <?php
-                        $i++;
-                    
+                        echo $form->field($model, 'from_dest')->checkboxList(
+                                $destinations, [
+                            'id' => 'routes-list',
+                            'class' => 'row mb15',
+                            'item' =>
+                            function ($index, $label, $name, $checked, $value) use ($selected, $defaultValue, $modelRouteSource) {
+                                $checked = in_array($value, $selected);
+                                $modelRouteSource->route_code = Yii::$app->getRequest()->getQueryParam('id');
+                                $disabled = $checked ? ' disabled' : '';
+                                return "<div class='col-sm-2 checklist dcs-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
+                                            'value' => $value,
+                                            'label' => '<label for=' . $value . '>' . $label . '</label>',
+                                            'labelOptions' => [
+                                                'class' => 'route-text' . $disabled,
+                                            ],
+                                            'class' => 'route-checkbox',
+                                            'id' => $value,
+                                        ]) . "</div></div>";
+                            }, /* ,'template'=>'<div class="item">{input}{label}</div>' */])->label(false);
+                        ?>
+                    </div>
+                    <?php
+                    $i++;
                     ?>
                     <div class="clearfix"></div>
                     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -94,23 +95,23 @@ $this->title = Yii::t('app', $title);
                     </div>
                 </div>
             </div>
-                <?php ActiveForm::end(); ?>
+            <?php ActiveForm::end(); ?>
             <?=
             $this->render('_source_grid', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
-                'modelRouteSource'=>$modelRouteSource
+                'modelRouteSource' => $modelRouteSource
             ])
             ?>
-            </div>
         </div>
-        <style>
-            .test > label{
-                margin-right: 20px;
-            }
-        </style>
-        <?php
-        $js = <<<JS
+    </div>
+    <style>
+        .test > label{
+            margin-right: 20px;
+        }
+    </style>
+    <?php
+    $js = <<<JS
 
 var routeCheckboxes = $('.route-checkbox');
 var routeText = $('.dcs-checklist');
@@ -174,5 +175,5 @@ $('#show-all-routes').on('click', function(){
 
 JS;
 
-        $this->registerJs($js);
-        ?>
+    $this->registerJs($js);
+    ?>

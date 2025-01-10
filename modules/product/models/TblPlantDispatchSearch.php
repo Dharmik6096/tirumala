@@ -18,7 +18,7 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
      */
     public function rules() {
         return [
-            [['plant_dispatch_code', 'dispatch_date', 'mcc_plant_code', 'plant_code', 'union_code', 'document_date', 'document_no', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['plant_dispatch_code', 'dispatch_date', 'mcc_plant_code', 'plant_code', 'union_code', 'document_date', 'document_no', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'vendor_master_code'], 'safe'],
             [['originating_type'], 'integer'],
         ];
     }
@@ -55,7 +55,7 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['mccPlantCode', 'bmcCode']);
+        $query->joinWith(['vendorCode', 'mccPlantCode', 'bmcCode']);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_plant_dispatch', 'tbl_mcc_plant', 'tbl_bmc');
 
@@ -71,6 +71,7 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
         }
         $query->andFilterWhere(['like', 'plant_dispatch_code', $this->plant_dispatch_code])
                 ->andFilterWhere(['like', 'document_no', $this->document_no])
+                ->andFilterWhere(['like', 'tbl_vendor_master.vendor_name', $this->vendor_master_code])
                 ->andFilterWhere(['like', 'status', $this->status])
                 ->andFilterWhere(['like', 'remarks', $this->remarks]);
 

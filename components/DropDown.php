@@ -669,6 +669,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-banner/tap-event-list', Yii::t('app', 'Select Tap Event'), $multiple, '', $readonly);
     }
 
+    public function UserList($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readonly = false, $url = '/organisation/tbl-route-mapping/user-list') {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, $url, Yii::t('app', 'Select User'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -890,6 +895,14 @@ class DropDown extends Component {
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $data['data'];
 
+        //client wise dropdown option remove
+        $client_code = \Yii::$app->session->get('eiplCode');
+        if (isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])) {
+            foreach ($data['client_wise_rmv'][$client_code] as $value) {
+                unset($records[$value]);
+            }
+        }
+
         if (!in_array($flag, array('p_type', 'payment_release_type'))) {
             asort($records, SORT_NATURAL | SORT_FLAG_CASE);
         }
@@ -902,16 +915,6 @@ class DropDown extends Component {
                 unset($records[$value]);
             }
         }
-
-        //client wise dropdown option remove
-        $client_code = \Yii::$app->session->get('eiplCode');
-        if(isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])){
-            foreach ($data['client_wise_rmv'][$client_code] as $value) {
-                unset($records[$value]);
-            }
-        }
-
-
 
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
@@ -968,7 +971,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1270,7 +1273,7 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
                 'client_wise_rmv' => [
-                    'ABT' => ['AU','Federal','IOB','NEFT'] 
+                    'ABT' => ['AU', 'Federal', 'IOB', 'NEFT']
                 ]
             ],
             'payment_mode_member' => [
@@ -1657,7 +1660,7 @@ class DropDown extends Component {
             'user_login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
+                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'SAHAYAK'), 'az_manager' => Yii::t('app', 'Area Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
                 'remove_key' => ['all']
             ],
             'receiver_type' => [
@@ -1740,7 +1743,7 @@ class DropDown extends Component {
             'complain_status' => [
                 'name' => 'complain_status',
                 'prompt' => Yii::t('app', 'Select Complain Status'),
-                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'INPROGRESS' => Yii::t('app', 'INPROGRESS'), 'CLOSED' => Yii::t('app', 'CLOSED'), 'RESOLVED' => Yii::t('app', 'RESOLVED')],
+                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'INPROGRESS' => Yii::t('app', 'INPROGRESS'), 'CLOSED' => Yii::t('app', 'CLOSED'), 'RESOLVED' => Yii::t('app', 'RESOLVED'), 'ASSIGNED' => Yii::t('app', 'ASSIGNED')],
             ],
             'resolved_status' => [
                 'name' => 'resolved_status',
@@ -1960,6 +1963,31 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Inventory Plant Dispatch'), 2 => Yii::t('app', 'Milk Receipt')],
             ],
+            'data_post_status' => [
+                'name' => 'data_post_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Sent To SAP'), 3 => Yii::t('app', 'ERROR'), 4 => Yii::t('app', 'Ack Initiated'), 5 => Yii::t('app', 'SAP Ack SUCCESS')],
+            ],
+            'organization_latlong_type' => [
+                'name' => 'Type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['DCS' => Yii::t('app', 'DCS'), 'BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'PLANT' => Yii::t('app', 'PLANT'), 'BULKVEN' => Yii::t('app', 'VENDOR'), 'HOME' => Yii::t('app', 'HOME'), 'OFFICE' => Yii::t('app', 'OFFICE'), 'OTHER' => Yii::t('app', 'OTHER')],
+            ],
+            'table_name' => [
+                'name' => 'table_name',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['tbl_milk_collection' => Yii::t('app', 'Milk Collection'), 'tbl_bmc_collection' => Yii::t('app', 'BMC Collection')],
+            ],
+            'entry_type_collection' => [
+                'name' => 'entry_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['backdate' => Yii::t('app', 'Back Date'), 'realtime' => Yii::t('app', 'Real Time')],
+            ],
+            'manual_approve_status' => [
+                'name' => 'approval_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+            ],
         ];
         return $records[$l];
     }
@@ -2102,6 +2130,8 @@ class DropDown extends Component {
             'relation_code' => ['name' => 'relationship_code', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
             'product_depend_group' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'product_group_code'],
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
+            'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
+            'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
         ];
         return $label[$l];
     }
@@ -2188,7 +2218,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

@@ -39,6 +39,8 @@ use yii\helpers\ArrayHelper;
 use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\syncutility\models\TblGenerateSentbox;
 use app\models\TblKeyPattern;
+use app\models\TblKeyPatternChild;
+use app\modules\organisation\models\TblMasterHierarchy;
 use app\modules\bkgprocess\models\TblFtpDetail;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
@@ -56,6 +58,8 @@ use app\modules\tankermovement\models\TblBmcDispatchStock;
 use Exception;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use PHPExcel;
+use yii\helpers\Url;
+use yii\web\View;
 
 class GeneralFunctions extends Component {
 
@@ -447,18 +451,14 @@ class GeneralFunctions extends Component {
         return $value;
     }
 
-    public function getCodeAutoIncrement($model, $auto_inc = 1) {
-
+    public function getCodeAutoIncrement($model, $autoIncrement = 1) {
         $primaryKey = $model->tableSchema->primaryKey[0];
         $tableName = $model->tableName();
-        $val = (new \yii\db\Query)
-                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
-//->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
+        $maxValue = (new \yii\db\Query())
+                ->select(["MAX(CAST(LTRIM(RTRIM([{$primaryKey}])) AS INT)) AS max_value"])
                 ->from($tableName)
-                ->one();
-        $number = (int) $val[$primaryKey] + $auto_inc;
-
-        return $number;
+                ->scalar();
+        return (int) $maxValue + $autoIncrement;
     }
 
     public function getOrganizationName() {
@@ -1377,6 +1377,7 @@ class GeneralFunctions extends Component {
     }
 
     public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false) {
+        $type = !empty($type) ? $type : '';
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -1423,19 +1424,19 @@ class GeneralFunctions extends Component {
         return !empty($data) ? $data->config_result_key : '';
     }
 
-    public function getCheckBmcConfiguration($union, $field, $org_code,$org_type,$process_name) {
+    public function getCheckBmcConfiguration($union, $field, $org_code, $org_type, $process_name) {
         $model = new TblConfig();
         $data = $model->find()->select(['tbl_config_mapping.config_result'])
-        ->join('inner join','tbl_config_mapping', 'tbl_config_mapping.config_code = tbl_config.config_code')
-        ->where([
-            'tbl_config.config_for' => $org_type,
-            'tbl_config.process_name' => $process_name,
-            'tbl_config.is_input_config' => 1,
-            'tbl_config.config_key' =>$field,
-            'tbl_config_mapping.org_type' => $org_type,
-            'tbl_config_mapping.org_code' => $org_code,
-            'tbl_config_mapping.union_code' => $union,
-        ])->asArray()->one();
+                        ->join('inner join', 'tbl_config_mapping', 'tbl_config_mapping.config_code = tbl_config.config_code')
+                        ->where([
+                            'tbl_config.config_for' => $org_type,
+                            'tbl_config.process_name' => $process_name,
+                            'tbl_config.is_input_config' => 1,
+                            'tbl_config.config_key' => $field,
+                            'tbl_config_mapping.org_type' => $org_type,
+                            'tbl_config_mapping.org_code' => $org_code,
+                            'tbl_config_mapping.union_code' => $union,
+                        ])->asArray()->one();
         return !empty($data) ? $data['config_result'] : '';
     }
 
@@ -1629,6 +1630,8 @@ class GeneralFunctions extends Component {
                 $key_config['ref_code_type'] = $data->ref_code_type;
                 $key_config['ref_code_length'] = $data->ref_code_length;
                 $key_config['ref_code_fix_length'] = $data->ref_code_fix_length;
+                $key_config['master_hierarchy_auto_entry'] = $data->master_hierarchy_auto_entry;
+                $key_config['key_pattern_code'] = $data->key_pattern_code;
 //                $key_config['has_prefix'] = $data->has_prefix;
 //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
                 $PatternArray[$data->pattern_for] = $key_config;
@@ -1724,9 +1727,136 @@ class GeneralFunctions extends Component {
             if (strlen($model->ref_code) != $ref_code_fix_length) {
                 $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
             }
+            if ($keyPattern['master_hierarchy_auto_entry'] == 1) {
+                $this->setKeyPatternChild($keyPattern, $model, $table_name, $pk_code);
+            }
             return $pk_code;
         } else {
             $model->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
+            return;
+        }
+    }
+
+    public function setKeyPatternChild($pattern, &$model, $table_name, $pk_code, $master_key = '', $hierarchyData = [], $is_exist = false) {
+        $childPattern = new TblKeyPatternChild();
+        $childKeyPatterns = $childPattern->find()->where(['key_pattern_code' => $pattern['key_pattern_code']])->all();
+        if (!empty($childKeyPatterns)) {
+            if (!empty($hierarchyData)) {
+                $masterHierarchy = $hierarchyData;
+            } else {
+                $masterHierarchy = new TblMasterHierarchy();
+                $pk_name = $model::primaryKey()[0];
+                $masterHierarchy->attributes = $model->attributes;
+                $masterHierarchy->master_key = $pk_name;
+                $masterHierarchy->{$pk_name} = $pk_code;
+            }
+            $masterHierarchy->wef_date = !empty($masterHierarchy->wef_date) ? $masterHierarchy->wef_date : date('Y-m-d');
+            $masterHierarchy->is_active = 1;
+            foreach ($childKeyPatterns as $key => $keyPattern) {
+                $index = $key + 1;
+                $key_name = 'ref_code' . $index;
+                $masterHierarchy->master_type = $keyPattern->pattern_for;
+                $key_length = (int) $keyPattern['key_length'];
+
+                $key_fix_length = (int) $keyPattern['key_fix_length'];
+                $key_reset_on = $keyPattern['key_reset_on'];
+
+                if (!$is_exist && $keyPattern['key_code_type'] == 1) {
+                    $data = $masterHierarchy->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(' . $key_name . ',' . $key_length . ')as bigint)),0)+1'])
+                            ->where(['union_code' => $model->union_code])
+                            ->asArray()
+                            ->one();
+                    $ref_code = ($key_length > 0 ) ? str_pad($data['ref_code'], $key_length, '0', STR_PAD_LEFT) : '';
+                    if (!empty($keyPattern['prefix_field'])) {
+                        $masterHierarchy->{$key_name} = '';
+                        $prefix_seq = explode(',', $keyPattern['prefix_field']);
+                        foreach ($prefix_seq as $pre) {
+                            $pre_info = explode(':', $pre);
+                            if (isset($pre_info[1])) {
+                                $t_info = explode('#', $pre_info[0]);
+                                $table_name = $t_info[0];
+                                $where_key = $t_info[1];
+                                $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                $append_field = $pre_info[1];
+                                $query = new Query();
+                                $res = $query->select($append_field)
+                                                ->from($table_name)
+                                                ->where([$where_key => $model->{$where_val}])->one();
+                                if (!empty($res)) {
+                                    $masterHierarchy->{$key_name} .= $res[$append_field];
+                                } else {
+                                    $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
+                                    $model->addError('ref_code', $message);
+                                    return;
+                                }
+                            } else {
+                                $masterHierarchy->{$key_name} .= $model->{$pre};
+                            }
+                        }
+                    }
+                    $masterHierarchy->{$key_name} .= $ref_code;
+                    if (!empty($keyPattern['suffix_field'])) {
+                        $suffix_seq = explode(',', $keyPattern['suffix_field']);
+                        foreach ($suffix_seq as $pre) {
+                            $pre_info = explode(':', $pre);
+                            if (isset($pre_info[1])) {
+                                $t_info = explode('#', $pre_info[0]);
+                                $table_name = $t_info[0];
+                                $where_key = $t_info[1];
+                                $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                $append_field = $pre_info[1];
+                                $query = new Query();
+                                $res = $query->select($append_field)
+                                                ->from($table_name)
+                                                ->where([$where_key => $model->{$where_val}])->one();
+                                if (!empty($res)) {
+                                    $masterHierarchy->{$key_name} .= $res[$append_field];
+                                } else {
+                                    $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
+                                    $model->addError('ref_code', $message);
+                                    return;
+                                }
+                            } else {
+                                $masterHierarchy->{$key_name} .= $model->{$pre};
+                            }
+                        }
+                    }
+                } else if ($keyPattern['key_code_type'] == 2) {
+                    $masterHierarchy->{$key_name} = !empty($masterHierarchy->{$key_name}) ? $masterHierarchy->{$key_name} : NULL;
+                }
+                if ($keyPattern['key_code_type'] == 1) {
+                    if (empty($masterHierarchy->{$key_name})) {
+                        $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+                    } else {
+                        $cnt = $masterHierarchy->getActiveCount($key_name, $key_reset_on);
+                        if ($cnt > 0) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                        }
+                    }
+                    if (!empty($masterHierarchy->{$key_name})) {
+                        $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);
+                        if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $key_fix_length . '.'));
+                        }
+                    }
+                }
+                if (!empty($hierarchyData)) {
+                    $cnt = $masterHierarchy->getActiveCount($key_name, $key_reset_on);
+                    if ($cnt > 0) {
+                        $model->addError($key_name, Yii::t('app/validation', $model->getAttributeLabel($key_name) . ' has already been taken.'));
+                    }
+                    if (!empty($masterHierarchy->{$key_name})) {
+                        $masterHierarchy->{$key_name} = str_pad(($masterHierarchy->{$key_name}), $key_fix_length, '0', STR_PAD_LEFT);
+                        if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
+                            $model->addError($key_name, Yii::t('app/validation', $model->getAttributeLabel($key_name) . ' length must be ' . $key_fix_length . '.'));
+                        }
+                    }
+                }
+            }
+            $model->set_master_hierarchy[] = $masterHierarchy;
+            return;
+        } else {
+            $model->addError('ref_code', Yii::t('app/validation', 'Child Key pattern config missing.'));
             return;
         }
     }
@@ -2174,32 +2304,35 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getAttachment($module_name, $reference_code, $link = TRUE, $OnlyData = FALSE, $remarks = NULL, $downloadOnly = false) {
+    public function getAttachment($module_name, $reference_code, $link = true, $OnlyData = false, $remarks = null, $downloadOnly = false, $multiple = false) {
         $model = new TblAttachment();
         $model->module_name = $module_name;
         $model->module_code = $reference_code;
         $model->remarks = $remarks;
-        $attachment = $model->getData();
+        $attachments = $model->getData();
         if ($OnlyData) {
-            return $attachment;
+            return $attachments;
         }
-
-        if ($attachment) {
-            if ($downloadOnly && $attachment[0]->attachment_type == 'pdf') {
-                return Html::a('<i class="fa fa-download"></i> ' . $attachment[0]->file_name, $attachment[0]->attachment, [
-                            'title' => 'Download',
-                            'download' => $reference_code . $attachment[0]->attachment_type,
-                            'class' => 'text-white hover-black',
-                ]);
-            } else if ($link) {
-                return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [
-//                            'title' => 'Download',
-                            'class' => 'image-popup-no-margins',
-                            'download' => $attachment[0]->attachment_type,
-                ]);
-            } else {
-                return Html::img($attachment[0]->attachment, ['class' => 'img-responsive disp_image', 'alt' => '']);
+        $attachmentsList = [];
+        if ($attachments) {
+            foreach ($attachments as $attachment) {
+                if ($downloadOnly && $attachment->attachment_type == 'pdf') {
+                    $attachmentsList[] = Html::a('<i class="fa fa-download"></i> ' . $attachment->file_name, $attachment->attachment, [
+                                'title' => 'Download',
+                                'download' => $reference_code . $attachment->attachment_type,
+                                'class' => 'text-white hover-black',
+                    ]);
+                } else if ($link) {
+                    $attachmentsList[] = Html::a(Html::img($attachment->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment->attachment, [
+                                //                            'title' => 'Download',
+                                'class' => 'image-popup-no-margins',
+                                'download' => $attachment->attachment_type,
+                    ]);
+                } else {
+                    $attachmentsList[] = Html::img($attachment->attachment, ['class' => 'disp_image', 'alt' => '']);
+                }
             }
+            return $multiple ? $attachmentsList : $attachmentsList[0];
         }
         return "";
     }
@@ -2355,7 +2488,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getMaxCode($model, $field, $dcs_code, $auto_inc = 1) {
+    public function getMaxCode($model, $field, $dcs_code, $proModel, $auto_inc = 1) {
         $tableName = $model->tableName();
         $val = (new \yii\db\Query)
                 ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
@@ -2363,14 +2496,31 @@ class GeneralFunctions extends Component {
                 ->where(['dcs_code' => $dcs_code])
                 ->andWhere(['<>', 'ISNULL(is_dcs_member, 0)', 1])
                 ->one();
-        $number = (int) $val[$field] + $auto_inc;
+        $maxNumber1 = (int) $val[$field] + $auto_inc;
 
-        $query = (new \yii\db\Query)
+        $proTableName = $proModel->tableName();
+        $proValue = (new \yii\db\Query)
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
+                ->from($proTableName)
+                ->where(['dcs_code' => $dcs_code])
+                ->one();
+        $maxNumber2 = (int) $proValue[$field] + $auto_inc;
+
+        $number = max($maxNumber1, $maxNumber2);
+
+        $existsInModel = (new \yii\db\Query)
                 ->select('ex_member_code')
                 ->from($tableName)
                 ->where(['dcs_code' => $dcs_code, 'ex_member_code' => $number])
-                ->one();
-        if (!empty($query)) {
+                ->exists();
+
+        $existsInProModel = (new \yii\db\Query)
+                ->select('ex_member_code')
+                ->from($proTableName)
+                ->where(['dcs_code' => $dcs_code, 'ex_member_code' => $number])
+                ->exists();
+
+        if (!empty($existsInModel) || !empty($existsInProModel)) {
             $number = (int) $number + $auto_inc;
         }
         $number = str_pad($number, 4, '0', STR_PAD_LEFT);
@@ -2548,6 +2698,182 @@ class GeneralFunctions extends Component {
             'MCC' => 'MCC',
             'DCS' => 'DCS',
         );
+    }
+
+    public function createRePushLink($url, $model, $gridId, $pk, $var = 'data_post_status') {
+        $class = 're-push ' . ((isset($model->is_stock_posted) && $model->is_stock_posted == 1) ? 'disabled' : ($model->$var == '3' ? '' : 'disabled'));
+        $options = [
+            'title' => Yii::t('app', 'Repush'),
+            'data-toggle' => 'tooltip',
+            'data-placement' => 'top',
+            'class' => $class,
+            'data-val' => $model->$pk
+        ];
+
+        $link = GhostHtml::a_alert('<i class="fa fa-share-square-o"></i>', $url, $options);
+
+        $script = "
+        $(document).ready(function(){
+            $(document).on('click','.re-push',function(e){
+                var id= $(this).attr('data-val');
+                bootbox.confirm({
+                    message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to Re-Push Data?</span></div></div>',
+                    buttons: {
+                        'cancel': {
+                            label: 'Cancel',
+                            className: 'btn btn-danger'
+                        },
+                        'confirm': {
+                            label: 'Ok',
+                            className: 'btn btn-primary'
+                        }
+                    },
+                    callback: function(result) {
+                        if (result) {
+                            $('#loader').show();
+                            $.ajax({
+                                type: 'get',
+                                url: '" . Url::to(['rfc-re-push']) . "',
+                                data: {'id':id},
+                                success: function(data) {
+                                    var obj1 = $.parseJSON(data);
+                                    if (obj1.status == 'success'){
+                                         $.pjax.reload({container: '#" . $gridId . "'});
+                                        bootbox.alert(\"<div class='row'><div class='col-sm-12'><div class='bg-info'><i class='fa fa-info'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                                    } else if (obj1.status == 'error'){
+                                        bootbox.alert(\"<div class='row'><div class='col-sm-12'><div class='bg-danger'><i class='fa fa-times'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                                    }
+                                },
+                            });
+                        }
+                    }
+                });
+            });
+        });
+        ";
+        Yii::$app->view->registerJs($script, View::POS_END, 're-push');
+
+        return $link;
+    }
+
+    public function getField($model, $type, $field = '') {
+        $type = strtolower($type);
+        $fieldname = 'name';
+        if (!empty($field)) {
+            if (in_array($type, ['home', 'office', 'other'])) {
+                $fieldname = 'user_code';
+            } else if ($field === 'code_ex') {
+                $fieldname = ($type === 'mcc') ? "{$type}_plant_code_ex" : "{$type}_code_ex";
+            } elseif ($field === 'ref_code') {
+                $fieldname = 'ref_code';
+            }
+        } else if (in_array($type, ['mcc', 'plant'])) {
+            $fieldname = 'name';
+        } else if (in_array($type, ['bmc', 'dcs'], true)) {
+            $fieldname = "{$type}_name";
+        } else if ($type == 'bulkven') {
+            $fieldname = 'customer_name';
+        } else if ($type == 'member') {
+            $fieldname = 'member_name';
+        }
+
+        switch ($type) {
+            case 'plant':
+                $code = $model->plantCode;
+                break;
+            case 'mcc':
+                $code = $model->mccPlantCode;
+                break;
+            case 'bmc':
+                $code = $model->bmcCode;
+                break;
+            case 'dcs':
+                $code = $model->dcsCode;
+                break;
+            case 'member':
+                $code = $model->memberCode;
+                break;
+            case 'home':
+            case 'office':
+            case 'other':
+                $code = $model->userCode;
+                break;
+            default:
+                $code = $model->customerCode;
+        }
+
+        return $this->getforeignkey($code, $fieldname);
+    }
+
+    public function fetchData($mod, $type, $code) {
+        $new_code = '';
+        $data = '';
+        $modelMapping = [
+            'plant' => TblPlant::class,
+            'mcc' => TblMccPlant::class,
+            'bmc' => TblDcsBmc::class,
+            'dcs' => TblDcs::class,
+            'user' => User::class,
+            'customer' => TblCustomerMaster::class,
+        ];
+        if (!isset($modelMapping[$type])) {
+            throw new \Exception("Invalid module: {$type}");
+        }
+        $model = $modelMapping[$type];
+        $query = $model::find();
+        $query->andWhere(['is_active' => 1]);
+
+        switch ($type) {
+            case 'plant':
+                $data = $query->andWhere(['or', ['plant_code' => $code], ['ref_code' => $code], ['plant_code_ex' => $code]])->all();
+                $new_code = (count($data) === 1) ? $data[0]->plant_code : [];
+                break;
+
+            case 'mcc':
+                $data = $query->andWhere(['or', ['mcc_plant_code' => $code], ['ref_code' => $code], ['mcc_plant_code_ex' => $code]])->all();
+                $new_code = (count($data) === 1) ? $data[0]->mcc_plant_code : [];
+                break;
+
+            case 'bmc':
+                $data = $query->andWhere(['or', ['bmc_code' => $code], ['ref_code' => $code], ['bmc_code_ex' => $code]])->all();
+                $new_code = (count($data) === 1) ? $data[0]->bmc_code : [];
+                break;
+
+            case 'dcs':
+                $data = $query
+                                ->andWhere(['bmc_code' => $mod->bmc_code])
+                                ->andWhere(['or',
+                                        ['dcs_code' => $code],
+                                        ['dcs_code_ex' => $code],
+                                        ['ref_code' => $code]
+                                ])->all();
+                $new_code = (!empty($data) && count($data) === 1) ? $data[0]->dcs_code : '';
+                break;
+
+            case 'user':
+                $data = $query->andWhere(['id' => $code])->one();
+                $new_code = (!empty($data)) ? $data->id : '';
+                break;
+
+            case 'customer':
+                $data = $query->andWhere(['bmc_code' => $mod->bmc_code])
+                                ->andWhere(['or', ['customer_code' => $code], ['ref_code' => $code], ['customer_code_ex' => $code]])->all();
+                $new_code = (count($data) === 1) ? $data[0]->customer_code : [];
+                break;
+
+            default:
+                break;
+        }
+        $mod->union_code = (!empty($data) && $type != 'user') ? $data[0]->union_code : '';
+        return $new_code;
+    }
+
+    public function getMonthStartEndDate($date, $monthType = 'current') {
+        $modifier = $monthType === 'previous' ? 'last month' : 'this month';
+        $dateTime = new \DateTime($date);
+        $fromDate = $dateTime->modify("first day of $modifier")->format('Y-m-d');
+        $toDate = (new \DateTime($date))->modify("last day of $modifier")->format('Y-m-d');
+        return [$fromDate, $toDate];
     }
 
 }

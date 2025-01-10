@@ -316,12 +316,13 @@ $script = "
         var clr = $('#tblbmccollection-'+tr_key+'-clr').val();
         var bmcCode = $('#tblbmccollectionsearch-bmc_code').val();
         var is_clr_input = $('#tblbmccollection-'+tr_key+'-is_clr_input').val();
+         var type = $('#tblbmccollection-'+tr_key+'-customer_type').val();
 
             if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode,'customer_type':type},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')                       
@@ -329,7 +330,7 @@ $script = "
                             if(is_clr_input==0){
                                 $('#tblbmccollection-'+tr_key+'-clr').val(obj.data.toFixed(2));
                             }else{
-                                $('#tblbmccollection-'+tr_key+'-snf').val(obj.data.toFixed(2));
+                                $('#tblbmccollection-'+tr_key+'-snf').val(obj.data);
                             }
                             rtpl(tr_key);
                         }

@@ -22,9 +22,9 @@ $attributes = [
                 echo Html::hiddenInput('remarks', null, ['id' => 'remarks']);
             }
             if($type == 'reinitiate'){
-                return ['value' => $model['payment_transaction_approval_code']];
+                return ['value' => $model['payment_transaction_approval_code'], 'class' => 'calculat'];
             } else {
-                return ['value' => $model['process_approval_code']];
+                return ['value' => $model['process_approval_code'], 'class' => 'calculat'];
             }
         }],
     ['attribute' => 'bmc_code',
@@ -54,7 +54,13 @@ $attributes = [
     ['attribute' => 'avg_rate','filter' => false],
     ['attribute' => 'total_amount','filter' => false],
     ['attribute' => 'total_deduction','filter' => false],
-    ['attribute' => 'final_amount','filter' => false],
+    [
+        'attribute' => 'final_amount',
+        'filter' => false,
+        'contentOptions' => function($model, $key, $index, $column) {
+            return ['class' => 'final_amount_' . $index];
+        },
+    ],    
     ['attribute' => 'total_count','filter' => false],
     ['attribute' => 'approval_status','filter' => false],
     ['attribute' => 'remarks','filter' => false],
@@ -97,6 +103,18 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
 <?php ActiveForm::end();
 $script = "
 $('.kv-panel-before').hide();
+$('.calculat').click(function(e){
+    var totalPayableAmount = 0.00;
+    $('.calculat').each(function() {
+        var isChecked = $(this).is(':checked');
+        if (isChecked) {
+            var tr_key = $(this).closest('tr').attr('data-key');
+            var finalAmount = $('.final_amount_'+tr_key).text();
+            totalPayableAmount = parseFloat(totalPayableAmount)+parseFloat(finalAmount);
+            $('.total_payable_amount').text(totalPayableAmount);
+        }
+    });
+});
 $('.submit-btn').click(function(e) {
     e.preventDefault();
     var btnId = $(this).attr('id');

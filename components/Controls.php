@@ -86,7 +86,7 @@ class Controls extends Component {
         echo $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox();
     }
 
-    public function import($flag, $view, $text = '', $fields = [], $appendId = '') {
+    public function import($flag, $view, $text = '', $fields = [], $appendId = '', $urlPermission = '') {
         if ($flag == 'member_limited')
             $model = new TblMember();
         else
@@ -95,7 +95,7 @@ class Controls extends Component {
         $baseurl = Yii::$app->request->baseUrl . '/';
         $checkUrl = str_replace($baseurl, '', Yii::$app->request->url);
         $checkUrl = Yii::$app->general->base64url_decode($checkUrl);
-        $url = str_replace('index', 'create', $checkUrl);
+        $url = !empty($urlPermission) ? $urlPermission : str_replace('index', 'create', $checkUrl);
         $btnText = !empty($text) ? $text : 'Import Data';
         if (User::canRoute($url)) {
             $check = \app\modules\import\importData::getLabels($flag);
@@ -121,7 +121,7 @@ class Controls extends Component {
         echo $form->field($model, $field)->textArea(['maxlength' => true, 'class' => 'form-control local-control']);
     }
 
-    public function date($model, $form, $name = 'date', $class = 'form-group col-sm-2', $maxdate = true, $mindate = false, $disabled = false, $label = true, $id = false, $max_val = '') {
+    public function date($model, $form, $name = 'date', $class = 'form-group col-sm-2', $maxdate = true, $mindate = false, $disabled = false, $label = true, $id = false, $max_val = '', $monthYearOnly = false) {
         $maxdate_value = '';
         $mindate_value = '';
         $options = ['class' => 'form-control'];
@@ -143,7 +143,9 @@ class Controls extends Component {
             'value' => date('Y-m-d'),
 //            'convertFormat'=>TRUE,
             'pluginOptions' => [
-                'format' => 'dd-mm-yyyy',
+                'format' => $monthYearOnly ? 'mm-yyyy' : 'dd-mm-yyyy',
+                'startView' => $monthYearOnly ? 'months' : '',
+                'minViewMode' => $monthYearOnly ? 'months' : '',
                 'todayHighlight' => true,
                 'autoclose' => true,
                 'endDate' => $maxdate_value,
@@ -350,9 +352,9 @@ class Controls extends Component {
                     'item' =>
                     function ($index, $label, $name, $checked, $value) {
                         return Html::checkbox($name, $checked, [
-                            'value' => $value,
-                            'id' => $value,
-                        ]) . '<label for=' . $value . '>' . $label . '</label>';
+                                    'value' => $value,
+                                    'id' => $value,
+                                ]) . '<label for=' . $value . '>' . $label . '</label>';
                     },]);
     }
 

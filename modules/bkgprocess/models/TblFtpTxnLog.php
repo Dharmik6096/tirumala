@@ -119,7 +119,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return new TblFtpTxnLogQuery(get_called_class());
     }
 
-    public function exportData($data_array, $title = '', $output = [], $mccRefCode = '', $email = false, $ftp_upload = TRUE) {
+    public function exportData($data_array, $title = '', $output = [], $mccRefCode = '', $email = false, $ftp_upload = TRUE, $recall = false) {
         $eiplCode = Yii::$app->session->get('eiplCode');
         if (empty($eiplCode)) {
             $mccModelData = TblUnions::find()->where(['union_code' => $data_array['union_code']])->one();
@@ -169,7 +169,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     $data->module_code = $bmc_data->bmc_code;
                     $data->mcc_plant_code = $bmc_data->mcc_plant_code;
                 }
-                $this->generateFiles($download, $FTPProcess, $data, $ftp_upload, $title, $mccRefCode, $email);
+                $this->generateFiles($download, $FTPProcess, $data, $ftp_upload, $title, $mccRefCode, $email, $recall);
             }
         } else {
             $txn->ref_code = $data_array['module_code'];
@@ -179,11 +179,11 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 $data->mcc_plant_code = $bmc_data->mcc_plant_code;
                 $data->union_code = $bmc_data->union_code;
             }
-            return $this->generateFiles($output, $FTPProcess, $data, $ftp_upload, $title, $mccRefCode, $email);
+            return $this->generateFiles($output, $FTPProcess, $data, $ftp_upload, $title, $mccRefCode, $email, $recall);
         }
     }
 
-    public function generateFiles($output, $FTPProcess, $data, $ftp_upload = FALSE, $title = '', $mccRefCode = '', $email = FALSE) {
+    public function generateFiles($output, $FTPProcess, $data, $ftp_upload = FALSE, $title = '', $mccRefCode = '', $email = FALSE, $recall = FALSE) {
         $name_formate = explode('+', $FTPProcess['export_title']);
         $fileName = $title;
         if (empty($fileName)) {
@@ -204,6 +204,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
         $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
         $skip_header = isset($FTPProcess['skip_header']) ? TRUE : FALSE;
+        $append_ftp_collection_code = isset($FTPProcess['append_ftp_collection_code']) ? $FTPProcess['append_ftp_collection_code'] : '';
 
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
@@ -241,7 +242,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 fclose($txt_file);
             }
             //$data->save();
-            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email, $append_ftp_path);
+            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code, $recall);
         }
         return FALSE;
         /** csv generate * */
@@ -286,9 +287,9 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code, $recall) {
         $ftpDetail = new TblFtpDetail();
-        $ftpDetail->ftp_connection_code = $data->union_code;
+        $ftpDetail->ftp_connection_code = !empty($append_ftp_collection_code) ? $data->union_code . '_' . $append_ftp_collection_code : $data->union_code;
         $ftpData = $ftpDetail->getData();
         if (!empty($ftpData)) {
             $ftp_file_path = (empty($ftpPath) ? $ftpData->ftp_path : ($append_ftp_path ? $ftpData->ftp_path . $ftpPath : $ftpPath));
@@ -341,6 +342,9 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     $ftp->CloseConnection();
                 }
                 $ftp_file->save();
+                if (($recall) && ($ftp_file->status == 3)) {
+                    return FALSE;
+                }
                 return $fileName;
             }
 
