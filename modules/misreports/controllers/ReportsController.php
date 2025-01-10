@@ -2,6 +2,7 @@
 
 namespace app\modules\misreports\controllers;
 
+use app\components\Worksheet;
 use yii\web\Controller;
 use yii;
 use Jaspersoft\Client\Client;
@@ -4185,36 +4186,43 @@ class ReportsController extends \app\controllers\ChildController {
                 'writer' => IOFactory::WRITER_XLSX,
             ];
         }
-        $objPHPExcel = new Spreadsheet();
-        $sheet = $objPHPExcel->getActiveSheet();
-        /* $objPHPExcel->getDefaultStyle()
-          ->getNumberFormat()
-          ->setFormatCode(
-          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-          ); */
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        /* $file_header = array_map(function($file_header) {
-          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-          }, array_values($file_header)); */
+        $objPHPExcel = new Spreadsheet();
+        $customWorksheet = new Worksheet($objPHPExcel, 'Custom Sheet');
+        $objPHPExcel->addSheet($customWorksheet);
+        $objPHPExcel->removeSheetByIndex(0);
+        $customWorksheet->fromArray($file_header, NULL, 'A1');
+        $customWorksheet->fromArray($this->output, NULL, 'A2');
+//         $objPHPExcel = new Spreadsheet();
+//         $sheet = $objPHPExcel->getActiveSheet();
+//         /* $objPHPExcel->getDefaultStyle()
+//           ->getNumberFormat()
+//           ->setFormatCode(
+//           \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//           ); */
+//         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+//         /* $file_header = array_map(function($file_header) {
+//           return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+//           }, array_values($file_header)); */
 
-        $sheet->fromArray(
-                $file_header, // The data to set
-                NULL, // Array values with this value will not be set
-                'A1'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
-        );
-        $dataToText = !empty($this->data['to_text']) ? $this->data['to_text'] : [];
-        if (!empty($dataToText)) {
-            foreach ($dataToText as $columnName) {
-                $columnIndex = array_search($columnName, $file_header);
-                if ($columnIndex !== false) {
-                    $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
-                    $sheet->getStyle($accountNoColumn)
-                            ->getNumberFormat()
-                            ->setFormatCode('00000000000');
-                }
-            }
-        }
+//         $sheet->fromArray(
+//                 $file_header, // The data to set
+//                 NULL, // Array values with this value will not be set
+//                 'A1'         // Top left coordinate of the worksheet range where
+// //    we want to set these values (default is A1)
+//         );
+        // $dataToText = !empty($this->data['to_text']) ? $this->data['to_text'] : [];
+        // if (!empty($dataToText)) {
+        //     foreach ($dataToText as $columnName) {
+        //         $columnIndex = array_search($columnName, $file_header);
+        //         if ($columnIndex !== false) {
+        //             $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
+        //             $sheet->getStyle($accountNoColumn)
+        //                     ->getNumberFormat()
+        //                     ->setFormatCode('00000000000');
+        //         }
+        //     }
+        // }
         // array_walk_recursive($this->output, function(&$value) {
         //     $value = is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value) ? '="' . $value . '"' : $value;
         // });
@@ -4228,10 +4236,6 @@ class ReportsController extends \app\controllers\ChildController {
         //         $sheet->setCellValue($cell->getCoordinate(), $value);
         //     }
         //     $columnIndex++;
-        //     if ($columnIndex > count($this->output[$rowIndex - 2])) {
-        //         $rowIndex++;
-        //         $columnIndex = 1; // Reset column index
-        //     }
         // });
 //         $columnIndex = 1;
 //         $columnKey = '';
@@ -4250,12 +4254,12 @@ class ReportsController extends \app\controllers\ChildController {
 //             }
 //             $columnIndex++;
 //         });
-        $sheet->fromArray(
-                $this->output, // The data to set
-                NULL, // Array values with this value will not be set
-                'A2'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
-        );
+//         $sheet->fromArray(
+//                 $this->output, // The data to set
+//                 NULL, // Array values with this value will not be set
+//                 'A2'         // Top left coordinate of the worksheet range where
+// //    we want to set these values (default is A1)
+//         );
 
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');

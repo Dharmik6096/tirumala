@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use app\components\Worksheet;
 use Yii;
 use app\modules\configuration\models\TblReportTxnLog;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -27,7 +28,7 @@ class CronjobController extends \yii\console\Controller {
             sleep(2);
             try {
                 $this->model = new TblReportTxnLog();
-                $this->model = $this->model->find()->where(['status' => 0])->orderBy(['report_txn_log_id' => SORT_ASC])->one();
+                $this->model = $this->model->find()->where(['report_txn_log_id' => '2458'])->orderBy(['report_txn_log_id' => SORT_ASC])->one();
                 if (!empty($this->model)) {
                     $this->report_folder = $this->report_folder_main . $this->model->report_type . '/';
                     $this->report_path = $report_path . $this->model->report_type . '/';
@@ -129,43 +130,52 @@ class CronjobController extends \yii\console\Controller {
         //   var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Sheet Count ' . count($chunk_count));
         //    var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Data Count ' . count($this->output));
 
-        $sheet = $objPHPExcel->getActiveSheet();
-        $sheet->setTitle('Sheet1');
-        $sheet->fromArray($file_header, NULL, 'A1');
-        if (!empty($dataToText)) {
-            foreach ($dataToText as $columnName) {
-                $columnIndex = array_search($columnName, $file_header);
-                if ($columnIndex !== false) {
-                    $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
-                    $sheet->getStyle($accountNoColumn)
-                            ->getNumberFormat()
-                            ->setFormatCode('00000000000');
-                }
-            }
-        }
+        // $sheet = $objPHPExcel->getActiveSheet();
+        // $sheet->setTitle('Sheet1');
+        $customWorksheet = new Worksheet($objPHPExcel, 'Sheet1');
+        $objPHPExcel->addSheet($customWorksheet);
+        $objPHPExcel->removeSheetByIndex(0);
+
+        $customWorksheet->fromArray($file_header, NULL, 'A1');
+        $customWorksheet->fromArray($this->output, NULL, 'A2');
+        // $sheet->fromArray($file_header, NULL, 'A1');
+        // if (!empty($dataToText)) {
+        //     foreach ($dataToText as $columnName) {
+        //         $columnIndex = array_search($columnName, $file_header);
+        //         if ($columnIndex !== false) {
+        //             $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
+        //             $sheet->getStyle($accountNoColumn)
+        //                     ->getNumberFormat()
+        //                     ->setFormatCode('00000000000');
+        //         }
+        //     }
+        // }
         //     var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet1');
         foreach ($output_chunk as $output) {
             if ($a == $sheet_change_on_chunk) {
                 $a = 1;
-                $sheet = $objPHPExcel->createSheet($sheet_no); // Pass the index as the second argument
-                $sheet->setTitle('Sheet' . $sheet_no);
-                $sheet->fromArray($file_header, NULL, 'A1');
-                if (!empty($dataToText)) {
-                    foreach ($dataToText as $columnName) {
-                        $columnIndex = array_search($columnName, $file_header);
-                        if ($columnIndex !== false) {
-                            $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
-                            $sheet->getStyle($accountNoColumn)
-                                    ->getNumberFormat()
-                                    ->setFormatCode('00000000000');
-                        }
-                    }
-                }
+                $customWorksheet = new Worksheet($objPHPExcel, 'Sheet' . $sheet_no);
+                $objPHPExcel->addSheet($customWorksheet);
+                $customWorksheet->fromArray($file_header, null, 'A1');
+                // $sheet = $objPHPExcel->createSheet($sheet_no); // Pass the index as the second argument
+                // $sheet->setTitle('Sheet' . $sheet_no);
+                // $sheet->fromArray($file_header, NULL, 'A1');
+                // if (!empty($dataToText)) {
+                //     foreach ($dataToText as $columnName) {
+                //         $columnIndex = array_search($columnName, $file_header);
+                //         if ($columnIndex !== false) {
+                //             $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
+                //             $sheet->getStyle($accountNoColumn)
+                //                     ->getNumberFormat()
+                //                     ->setFormatCode('00000000000');
+                //         }
+                //     }
+                // }
                 //       var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet' . $sheet_no);
                 $sheet_no++;
             }
             $data_cell = 'A' . ($a == 1 ? '2' : ((($a - 1) * $chunk_size) + 2));
-            $sheet->fromArray($output, NULL, $data_cell);
+            $customWorksheet->fromArray($output, NULL, $data_cell);
             //        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data Chunk ' . $a);
             $a++;
         }
