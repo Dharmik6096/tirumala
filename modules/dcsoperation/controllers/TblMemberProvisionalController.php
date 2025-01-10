@@ -271,7 +271,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
             if (Yii::$app->general->checkDirectory($doc_path)) {
                 $member_error = '';
-                $message = '';
+                $message = [];
                 $error_msg = '';
                 $save_model = [];
                 $save_member_doc = [];
@@ -1151,6 +1151,63 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         } else {
             $record = ['status' => 'error', 'msg' => 'Failed to re-push Member Provisional.'];
         }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionDelete() {
+        $saveModel = [];
+
+        $id = Yii::$app->request->post('id');
+
+        $this->model = $this->findModel($id);
+        $memberProvisionalhistoryModel = new TblMemberProvisionalHistory();
+        Yii::$app->operation->history($this->model, $memberProvisionalhistoryModel, DELETE);
+        $saveModel[] = $this->model;
+        $saveModel[] = $memberProvisionalhistoryModel;
+
+        $memberProvisionalAnimalDetailsModels = TblMemberProvisionalAnimalDetails::findAll(['provisional_member_code' => $id]);
+        if (!empty($memberProvisionalAnimalDetailsModels)) {
+            foreach ($memberProvisionalAnimalDetailsModels as $memberProvisionalAnimalDetailsModel) {
+                $memberProvisionalAnimalDetailshistoryModel = new TblMemberProvisionalAnimalDetailsHistory();
+                Yii::$app->operation->history($memberProvisionalAnimalDetailsModel, $memberProvisionalAnimalDetailshistoryModel, DELETE);
+                $saveModel[] = $memberProvisionalAnimalDetailsModel;
+                $saveModel[] = $memberProvisionalAnimalDetailshistoryModel;
+            }
+        }
+
+        $memberProvisionalShareDetailsModels = TblMemberProvisionalShareDetails::findAll(['provisional_member_code' => $id]);
+        if (!empty($memberProvisionalShareDetailsModels)) {
+            foreach ($memberProvisionalShareDetailsModels as $memberProvisionalShareDetailsModel) {
+                $memberProvisionalShareDetailshistoryModel = new TblMemberProvisionalShareDetailsHistory();
+                Yii::$app->operation->history($memberProvisionalShareDetailsModel, $memberProvisionalShareDetailshistoryModel, DELETE);
+                $saveModel[] = $memberProvisionalShareDetailsModel;
+                $saveModel[] = $memberProvisionalShareDetailshistoryModel;
+            }
+        }
+
+        $memberProvisionalFamilyDetailsModels = TblMemberProvisionalFamilyDetails::findAll(['provisional_member_code' => $id]);
+        if (!empty($memberProvisionalFamilyDetailsModels)) {
+            foreach ($memberProvisionalFamilyDetailsModels as $memberProvisionalFamilyDetailsModel) {
+                $memberProvisionalFamilyDetailshistoryModel = new TblMemberProvisionalShareDetailsHistory();
+                Yii::$app->operation->history($memberProvisionalFamilyDetailsModel, $memberProvisionalFamilyDetailshistoryModel, DELETE);
+                $saveModel[] = $memberProvisionalFamilyDetailsModel;
+                $saveModel[] = $memberProvisionalFamilyDetailshistoryModel;
+            }
+        }
+
+        $deleteAttachments = TblAttachment::findAll(['module_code' => $id, 'module_name' => 'tbl_member_provisional']);
+        if (!empty($deleteAttachments)) {
+            foreach ($deleteAttachments as $deleteAttachment) {
+                $attachHistoryModel = new TblAttachmentHistory();
+                Yii::$app->operation->history($deleteAttachment, $attachHistoryModel, DELETE);
+                $saveModel[] = $deleteAttachment;
+                $saveModel[] = $attachHistoryModel;
+            }
+        }
+
+        $record = $this->generalModel->deleteTransaction($saveModel);
+
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
