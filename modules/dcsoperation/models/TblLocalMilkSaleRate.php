@@ -28,8 +28,6 @@ use app\modules\dcsoperation\models\TblMilkClass;
  */
 class TblLocalMilkSaleRate extends \app\models\ChildModel {
 
-    public $applicable_for, $applicable_code;
-
     /**
      * @inheritdoc
      */
@@ -42,8 +40,7 @@ class TblLocalMilkSaleRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['applicable_for', 'applicable_code', 'local_milk_rate_code'], 'safe'],
-            [['wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code'], 'safe'],
+            [['wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code', 'local_milk_rate_code'], 'safe'],
             [['rate'], 'number'],
             [['wef_date'], 'required'],
             [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
@@ -53,6 +50,7 @@ class TblLocalMilkSaleRate extends \app\models\ChildModel {
             [['wef_date'], 'convertDate', 'on' => ['importCsv']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'on' => ['importCsv']],
             [['dcs_code'], 'validateDCS', 'on' => ['importCsv']],
+            [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
             [['dcs_code'], 'setImport', 'on' => ['importCsv']],
         ];
     }
@@ -154,7 +152,7 @@ class TblLocalMilkSaleRate extends \app\models\ChildModel {
     }
 
     public function getLocalMilkRateCode() {
-        return $this->hasOne(TblProductRate::className(), ['local_milk_rate_code' => 'local_milk_rate_code']);
+        return $this->hasOne(TblLocalMilkRate::className(), ['local_milk_rate_code' => 'local_milk_rate_code']);
     }
 
 }
