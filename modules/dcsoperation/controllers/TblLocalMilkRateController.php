@@ -13,6 +13,7 @@ use app\modules\dcsoperation\models\TblLocalMilkSaleRateHistory;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\dcsoperation\models\TblLocalMilkSaleRateSearch;
+use yii\base\UserException;
 
 /**
  * TblLocalMilkRateController implements the CRUD actions for TblLocalMilkRate model.

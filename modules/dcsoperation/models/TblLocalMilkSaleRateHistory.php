@@ -30,7 +30,7 @@ class TblLocalMilkSaleRateHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['local_milk_sale_rate_code', 'wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code'], 'safe'],
+            [['local_milk_sale_rate_code', 'wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code', 'history_created_at', 'history_created_by', 'operation_type'], 'safe'],
         ];
     }
 
@@ -60,6 +60,9 @@ class TblLocalMilkSaleRateHistory extends \yii\db\ActiveRecord {
             'x_col4' => Yii::t('app', 'Extra Column 4'),
             'x_col5' => Yii::t('app', 'Extra Column 5'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
+            'history_created_at' => Yii::t('app', 'History Created At'),
+            'history_created_by' => Yii::t('app', 'History Created By'),
+            'operation_type' => Yii::t('app', 'Operation Type'),
         ];
     }
 

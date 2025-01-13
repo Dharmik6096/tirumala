@@ -220,7 +220,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'AMCS - Shift Time Exceed'), 'url' => ['/configuration/tbl-shift-time-exceed/index'], 'active' => ($cntrl == 'tbl-shift-time-exceed')],
                     ]
                 ],
-                    ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/collection/tbl-milk-collection-audit/index'], 'active' => ($cntrl == 'tbl-milk-collection-audit')],
+                ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/collection/tbl-milk-collection-audit/index'], 'active' => ($cntrl == 'tbl-milk-collection-audit')],
+                ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
             ],
         ],
             [
@@ -246,7 +247,6 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Milk Purchase Rate'), 'url' => ['/dcsoperation/tbl-purchase-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-purchase-rate-applicability' && $action == 'applicabilty-approve')],
                         ['label' => 'Milk Purchase Rate (' . Yii::t('app', 'BMC') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate-applicabitity-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate-applicability-alias' && $action == 'applicabilty-approve')],
                         ['label' => Yii::t('app', 'Scheme Rate'), 'url' => ['/dcsoperation/tbl-scheme-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-scheme-rate-applicability-alias' && $action == 'applicabilty-approve')],
-                        ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
                         ['label' => 'Local Milk Rate', 'url' => ['/dcsoperation/tbl-local-milk-rate/index'], 'active' => ($cntrl == 'tbl-local-milk-rate')],
                     ]
                 ],
