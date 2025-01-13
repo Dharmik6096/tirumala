@@ -14,141 +14,147 @@ use app\modules\dcsoperation\models\TblMilkClass;
  *
  * @property string $local_sale_rate_code
  * @property string $created_at
- * @property string $deleted_at
- * @property string $flg_sentbox_entry
- * @property integer $is_active
- * @property integer $is_delete
  * @property double $rate
  * @property string $updated_at
  * @property string $wef_date
  * @property string $created_by
  * @property string $dcs_code
- * @property string $deleted_by
- * @property integer $milk_type
- * @property string $sub_center_code
  * @property string $updated_by
  *
  * @property User $createdBy
  * @property TblDcs $dcsCode
- * @property User $deletedBy
- * @property TblAnimalType $milkType
  * @property TblSubCenter $subCenterCode
  * @property User $updatedBy
  */
-class TblLocalMilkSaleRate extends \yii\db\ActiveRecord
-{
+class TblLocalMilkSaleRate extends \app\models\ChildModel {
+
+    public $applicable_for, $applicable_code;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_local_milk_sale_rate';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['local_sale_rate_code', 'milk_type'], 'required'],
-            [['created_at', 'deleted_at', 'updated_at', 'wef_date'], 'safe'],
-            [['is_active', 'is_delete', 'milk_type'], 'integer'],
+            [['applicable_for', 'applicable_code', 'local_milk_rate_code'], 'safe'],
+            [['wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code'], 'safe'],
             [['rate'], 'number'],
-            [['local_sale_rate_code'], 'string', 'max' => 20],
-            [['created_by', 'deleted_by', 'updated_by'], 'string', 'max' => 14],
-            [['dcs_code', 'sub_center_code'], 'string', 'max' => 9],
-            [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
-            [['milk_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type' => 'animal_type_code']],
-            [['sub_center_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubCenter::className(), 'targetAttribute' => ['sub_center_code' => 'sub_center_code']],
+            [['wef_date'], 'required'],
+            [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
+            [['dcs_code', 'local_milk_rate_code'], 'required', 'on' => ['importCsv']],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+            [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'on' => ['importCsv']],
+            [['dcs_code'], 'validateDCS', 'on' => ['importCsv']],
+            [['dcs_code'], 'setImport', 'on' => ['importCsv']],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
-            'local_sale_rate_code' => Yii::t('app', 'Local Sale Rate Code'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'deleted_at' => Yii::t('app', 'Deleted At'),
-            'is_active' => Yii::t('app', 'Is Active'),
-            'is_delete' => Yii::t('app', 'Is Delete'),
-            'rate' => Yii::t('app', 'Rate'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'local_milk_sale_rate_code' => Yii::t('app', 'Local Milk Sale Rate Code'),
             'wef_date' => Yii::t('app', 'Wef Date'),
+            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
+            'milk_class' => Yii::t('app', 'Milk Class'),
+            'rate' => Yii::t('app', 'Rate'),
+            'union_code' => Yii::t('app', 'Union'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'deleted_by' => Yii::t('app', 'Deleted By'),
-            'milk_type' => Yii::t('app', 'Milk Type'),
-            'sub_center_code' => Yii::t('app', 'Sub Center Code'),
+            'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_org_code' => Yii::t('app', 'Originating Organization Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Organization Type'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'x_col1' => Yii::t('app', 'Extra Column 1'),
+            'x_col2' => Yii::t('app', 'Extra Column 2'),
+            'x_col3' => Yii::t('app', 'Extra Column 3'),
+            'x_col4' => Yii::t('app', 'Extra Column 4'),
+            'x_col5' => Yii::t('app', 'Extra Column 5'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
+            'local_milk_rate_code' => Yii::t('app', 'Local Milk Rate Code'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
-    {
-        return $this->hasOne(User::className(), ['id' => 'created_by']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getDcsCode()
-    {
+    public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeletedBy()
-    {
-        return $this->hasOne(User::className(), ['id' => 'deleted_by']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMilkType()
-    {
-        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type']);
-    }
-    
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMilkClass()
-    {
+    public function getMilkClass() {
         return $this->hasOne(TblMilkClass::className(), ['id' => 'milk_class']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSubCenterCode()
-    {
-        return $this->hasOne(TblSubCenter::className(), ['sub_center_code' => 'sub_center_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUpdatedBy()
-    {
-        return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }
 
     /**
      * @inheritdoc
      * @return TblLocalMilkSaleRateQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblLocalMilkSaleRateQuery(get_called_class());
     }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function validateDCS() {
+        $dcsModel = new TblDcs();
+        $records = $dcsModel->find()->select(['dcs_code'])->where(['or', ['dcs_code' => $this->dcs_code], ['ref_code' => $this->dcs_code], ['dcs_code_ex' => $this->dcs_code]])->all();
+        if (!empty($records) && count($records) == 1) {
+            $this->dcs_code = $records[0]->dcs_code;
+        } else {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Invalid.'));
+            return false;
+        }
+    }
+
+    public function setImport($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->union_code = Yii::$app->general->getforeignkey($this->mainDcsCode, 'union_code');
+
+            $this->wef_date = !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : '';
+            if (empty($this->localMilkRateCode)) {
+                $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'local_milk_rate_code') . '  is invalid.'));
+            } else {
+                $this->rate = Yii::$app->general->getforeignkey($this->localMilkRateCode, 'rate');
+                $this->milk_quality_type_code = Yii::$app->general->getforeignkey($this->localMilkRateCode, 'milk_quality_type_code');
+                $this->milk_class = Yii::$app->general->getforeignkey($this->localMilkRateCode, 'milk_class');
+                $this->milk_type_code = Yii::$app->general->getforeignkey($this->localMilkRateCode, 'milk_type_code');
+            }
+        }
+    }
+
+    public function getMainDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getLocalMilkRateCode() {
+        return $this->hasOne(TblProductRate::className(), ['local_milk_rate_code' => 'local_milk_rate_code']);
+    }
+
 }
