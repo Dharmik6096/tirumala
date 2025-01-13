@@ -50,7 +50,7 @@ class TblLocalMilkSaleRate extends \app\models\ChildModel {
             [['wef_date'], 'convertDate', 'on' => ['importCsv']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'on' => ['importCsv']],
             [['dcs_code'], 'validateDCS', 'on' => ['importCsv']],
-            [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
+            [['dcs_code'], 'unique', 'targetAttribute' => ['local_milk_rate_code', 'dcs_code', 'wef_date'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
             [['dcs_code'], 'setImport', 'on' => ['importCsv']],
         ];
     }
