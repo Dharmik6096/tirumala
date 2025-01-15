@@ -314,6 +314,13 @@ class TblPaymentTransaction extends \app\models\ChildModel {
     {
         $transactionGroup = $this->find()->alias('pt')
             ->select([
+                'max(ubp.ftp_type) as ftp_type',
+                'max(ubp.ftp_server) as ftp_host',
+                'max(ubp.ftp_username) as ftp_username',
+                'max(ubp.ftp_password) as ftp_password',
+                'max(ubp.ftp_port) as ftp_port',
+                'max(ubp.reverse_ftp_path) as ftp_path',
+                'max(pt.union_code) as union_code',
                 'FORMAT(GETDATE(), \'yyyy-MM-dd\THH:mm:ss\') AS CrtDt',
                 'pt.file_name as FileID',
                 'max(ubp.corporate_code) as ClientId',
