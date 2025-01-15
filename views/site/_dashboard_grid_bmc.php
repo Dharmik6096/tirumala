@@ -112,7 +112,7 @@ $mcc_url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $union]);
                             <div id="dash_collapse_grid" >
                                 <div class="col-sm-12">
                                     <div class="table-responsive dashboard_collection_grid_tbl">
-                                        <table class="table overflow_hidden table-striped">
+                                        <table id="recovery_grid" class="table overflow_hidden table-striped">
                                             <thead>
                                                 <tr>
                                                     <th class="custom_grid_header">#</th>
@@ -121,9 +121,15 @@ $mcc_url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $union]);
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Farmer') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'LYSD QTY') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'LD QTY') ?></th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Avg. FAT') ?></th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Avg. SNF') ?></th>
+                                                    <th class="custom_grid_header active_div" id="qtyHeader">
+                                                        <?= Yii::t('app', 'Qty') ?> <span id="qtySortIcon"></span>
+                                                    </th>
+                                                    <th class="custom_grid_header active_div" id="avgFatHeader">
+                                                        <?= Yii::t('app', 'Avg. FAT') ?> <span id="avgFatSortIcon"></span>
+                                                    </th>
+                                                    <th class="custom_grid_header active_div" id="avgSnfHeader">
+                                                        <?= Yii::t('app', 'Avg. SNF') ?> <span id="avgSnfSortIcon"></span>
+                                                    </th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Avg. Rate') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Fat Solid') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'SnF Solid') ?></th>
@@ -136,7 +142,7 @@ $mcc_url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $union]);
                                                 if (!empty($output)) {
                                                     $i = 0;
                                                     foreach ($output as $data) {
-                                                         $totalQuantityStyle = ($data['ld_quantity'] > $data['total_quantity']) ? 'style="background-color: #ff000099; color: #fff;"' : 'style="background-color: #008000c4; color: #fff;"';
+                                                        $totalQuantityStyle = ($data['ld_quantity'] > $data['total_quantity']) ? 'style="background-color: #ff000099; color: #fff;"' : 'style="background-color: #008000c4; color: #fff;"';
                                                         ?>
                                                         <tr>
                                                             <td class="custom_grid_normal"><?= ++$i; ?></td>
@@ -194,6 +200,62 @@ $('.gread_header_icon').click(function(){
         $('.gread_header_icon i ').removeClass('fa fa-th-large').addClass('fa fa-list');
         i=0;
     }
+});
+$(document).ready(function() {
+    let sortOrder = 'asc';
+    function resetSortIcons(exclude) {
+        if (exclude !== 'qty') $('#qtySortIcon').text('');
+        if (exclude !== 'avgFat') $('#avgFatSortIcon').text('');
+        if (exclude !== 'avgSnf') $('#avgSnfSortIcon').text('');
+    }
+    $('#qtyHeader').click(function() {
+        sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+        $('#qtySortIcon').text(sortOrder === 'asc' ? '↑' : '↓');
+        resetSortIcons('qty');
+        var rows = $('#recovery_grid tbody tr').get();
+        rows.sort(function(a, b) {
+            var fatA = parseFloat($(a).find('td').eq(6).text()); // Qty column index is 6
+            var fatB = parseFloat($(b).find('td').eq(6).text());
+            if (isNaN(fatA)) fatA = 0;
+            if (isNaN(fatB)) fatB = 0;
+            return (sortOrder === 'asc') ? fatA - fatB : fatB - fatA;
+        });
+        $.each(rows, function(index, row) {
+            $('#recovery_grid tbody').append(row);
+        });
+    });
+    $('#avgFatHeader').click(function() {
+        sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+        $('#avgFatSortIcon').text(sortOrder === 'asc' ? '↑' : '↓');
+        resetSortIcons('avgFat');
+        var rows = $('#recovery_grid tbody tr').get();
+        rows.sort(function(a, b) {
+            var fatA = parseFloat($(a).find('td').eq(7).text()); // Avg. FAT column index is 7
+            var fatB = parseFloat($(b).find('td').eq(7).text());
+            if (isNaN(fatA)) fatA = 0;
+            if (isNaN(fatB)) fatB = 0;
+            return (sortOrder === 'asc') ? fatA - fatB : fatB - fatA;
+        });
+        $.each(rows, function(index, row) {
+            $('#recovery_grid tbody').append(row);
+        });
+    });
+    $('#avgSnfHeader').click(function() {
+        sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+        $('#avgSnfSortIcon').text(sortOrder === 'asc' ? '↑' : '↓');
+        resetSortIcons('avgSnf');
+        var rows = $('#recovery_grid tbody tr').get();
+        rows.sort(function(a, b) {
+            var fatA = parseFloat($(a).find('td').eq(8).text()); // Avg. SNF column index is 8
+            var fatB = parseFloat($(b).find('td').eq(8).text());
+            if (isNaN(fatA)) fatA = 0;
+            if (isNaN(fatB)) fatB = 0;
+            return (sortOrder === 'asc') ? fatA - fatB : fatB - fatA;
+        });
+        $.each(rows, function(index, row) {
+            $('#recovery_grid tbody').append(row);
+        });
+    });
 });
 ";
 $this->registerJs($script, View::POS_READY, 'union-wise-data');
