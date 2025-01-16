@@ -45,13 +45,13 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $class = ($model->is_active === 0) ? 'link-disable' : '';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->chiller_info_code, 'data-name' => $model->chiller_info_code, 'title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/organisation/tbl-dcs-bmc/update-chiller-info'], $options);
+            return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/organisation/tbl-dcs-bmc/update-chiller-info'], $options);
         },
         'deactive' => function ($url, $model) {
             $name = $model->owner_name;
             $class = ($model->is_active === 0) ? 'link-disable' : '';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->chiller_info_code, 'data-name' => $name];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs-bmc/deactivate-bmc-chiller'], $options);
+            return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/organisation/tbl-dcs-bmc/deactivate-bmc-chiller'], $options);
         },
     ]
 ];
