@@ -28,21 +28,21 @@ class WebApi {
         //  return $this->GuzzleCURL();
     }
 
-    public function GuzzleCURL() {
+    public function GuzzleCURL($method = 'POST') {
         $url = $this->serverUrl . $this->apiurl;
         $client = new GuzzleHttp\Client();
         $data = json_encode($this->body);
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
         $header = $this->header_info;
-        if($this->is_header_merge){
-            $header = array_merge($main_header, $this->header_info);   
+        if ($this->is_header_merge) {
+            $header = array_merge($main_header, $this->header_info);
         }
         //var_dump($header);die;
         $postData = [
             RequestOptions::JSON => $this->body,
             RequestOptions::HEADERS => $header
         ];
-        $resp = $client->request('POST', $url, $postData);
+        $resp = $client->request($method, $url, $postData);
         //var_dump(resp);die;
         if ($this->return_actual) {
             return $resp;
