@@ -28,7 +28,7 @@ class CronjobController extends \yii\console\Controller {
             sleep(2);
             try {
                 $this->model = new TblReportTxnLog();
-                $this->model = $this->model->find()->where(['report_txn_log_id' => '2458'])->orderBy(['report_txn_log_id' => SORT_ASC])->one();
+                $this->model = $this->model->find()->where(['status' => 0])->orderBy(['report_txn_log_id' => SORT_ASC])->one();
                 if (!empty($this->model)) {
                     $this->report_folder = $this->report_folder_main . $this->model->report_type . '/';
                     $this->report_path = $report_path . $this->model->report_type . '/';
@@ -98,13 +98,14 @@ class CronjobController extends \yii\console\Controller {
         $objPHPExcel = new Spreadsheet();
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
 
-        $decrypt_data = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
-        $dataToDecrypt = [];
-        $dataToText = [];
-        if (!empty($decrypt_data)) {
-            $dataToDecrypt = !empty($decrypt_data['to_decrypt']) ? json_decode($decrypt_data['to_decrypt'], TRUE) : [];
-            $dataToText = !empty($decrypt_data['to_text']) ? json_decode($decrypt_data['to_text'], TRUE) : [];
-        }
+        $dataToDecrypt = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
+        // $decrypt_data = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
+        // $dataToDecrypt = [];
+        // $dataToText = [];
+        // if (!empty($decrypt_data)) {
+        //     $dataToDecrypt = !empty($decrypt_data['to_decrypt']) ? json_decode($decrypt_data['to_decrypt'], TRUE) : [];
+        //     $dataToText = !empty($decrypt_data['to_text']) ? json_decode($decrypt_data['to_text'], TRUE) : [];
+        // }
         $dataToDecryptCheck = false;
         foreach ($this->output[0] as $att => $value) {
             if (!$dataToDecryptCheck && !empty($dataToDecrypt) && in_array($att, $dataToDecrypt)) {

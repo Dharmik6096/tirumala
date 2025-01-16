@@ -4188,7 +4188,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
         $objPHPExcel = new Spreadsheet();
-        $customWorksheet = new Worksheet($objPHPExcel, 'Custom Sheet');
+        $customWorksheet = new Worksheet($objPHPExcel, 'Sheet1');
         $objPHPExcel->addSheet($customWorksheet);
         $objPHPExcel->removeSheetByIndex(0);
         $customWorksheet->fromArray($file_header, NULL, 'A1');
