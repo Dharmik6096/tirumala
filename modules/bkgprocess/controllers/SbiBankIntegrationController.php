@@ -59,8 +59,8 @@ class SbiBankIntegrationController extends Controller
                             }
                         }
                     }
-                    $bank_integration_xml_config = \Yii::$app->params['bank_integration_xml_config'];
-                    $filePaymentData->appendChild($dom->createElement('Signature', !empty($bank_integration_xml_config) ? $bank_integration_xml_config['signature'] : ''));
+                    $sbi_bank_integration_xml_config = \Yii::$app->params['sbi_bank_integration_xml_config'];
+                    $filePaymentData->appendChild($dom->createElement('Signature', !empty($sbi_bank_integration_xml_config) ? $sbi_bank_integration_xml_config['signature'] : ''));
                     $folderPath = Yii::getAlias('@webroot') . Yii::$app->params['payment_xml_upload'];
                     if (!is_dir($folderPath)) {
                         Yii::$app->general->CreateDirectory($folderPath);

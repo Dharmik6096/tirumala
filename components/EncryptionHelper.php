@@ -15,8 +15,8 @@ class EncryptionHelper
      */
     private static function getEncryptionKey()
     {
-        $bank_integration_xml_config = \Yii::$app->params['bank_integration_xml_config'];
-        $key = $bank_integration_xml_config['encryption_key'];
+        $sbi_bank_integration_xml_config = \Yii::$app->params['sbi_bank_integration_xml_config'];
+        $key = $sbi_bank_integration_xml_config['encryption_key'];
 
         if (!$key || strlen($key) < 16) {
             throw new \Exception('Encryption key is not set or invalid.');
