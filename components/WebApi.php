@@ -39,9 +39,14 @@ class WebApi {
         }
         //var_dump($header);die;
         $postData = [
-            RequestOptions::JSON => $this->body,
             RequestOptions::HEADERS => $header
         ];
+        if($method == 'POST') {
+            $postData = [
+                RequestOptions::JSON => $this->body,
+                RequestOptions::HEADERS => $header
+            ];
+        }
         $resp = $client->request($method, $url, $postData);
 
         try {
