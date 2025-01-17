@@ -106,8 +106,7 @@ class CashfreeBankIntegrationController extends Controller {
                         $result = $api->GuzzleCURL();
                         $httpCode = $result->getStatusCode();
                         $response = $result->getBody()->getContents();
-                       // $response = !empty($response) ? json_decode($response) : [];
-                        var_dump($response);die;
+                        $response = !empty($response) ? json_decode($response) : [];
                         $bank_log->status = 2;
                         $bank_log->file_status = 'success';
                         $bank_log->utr_ref_no = $response->cf_batch_transfer_id;
@@ -130,14 +129,12 @@ class CashfreeBankIntegrationController extends Controller {
                                     'response_datetime' => date('Y-m-d H:i:s'),
                                     'response_msg' => 'API Failure'], 'union_bank_payment_code =\'' . $batch['union_bank_payment_code'] . '\' and file_name =\'' . $batch['file_name'] . '\' and is_file = 1 and union_code= \'' . $batch['union_code'] . '\'')
                                 ->execute();
-                        var_dump($ex);
-                        die;
+                        // var_dump($ex);
                     }
                 }
             }
         } catch (\Throwable $ex) {
-            var_dump($ex);
-            die;
+            // var_dump($ex);
         }
     }
 

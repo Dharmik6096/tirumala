@@ -51,7 +51,7 @@ class WebApi {
             $log_model->url = $url;
             $log_model->request = $data;
             try {
-                $log_model->response = json_encode($resp->getBody()->getContents());
+                // $log_model->response = json_encode($resp->getBody()->getContents());
             } catch (\Throwable $ex) {
                 $log_model->response = substr($ex->getMessage(), 500);
             }
