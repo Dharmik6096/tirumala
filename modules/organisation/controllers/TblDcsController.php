@@ -1436,15 +1436,21 @@ class TblDcsController extends ChildController {
                     $verificationModel = New TblBankVerification();
                     if (strtolower($type) == 'dcs') {
                         $dcsdata = $this->findModel($code);
-                        $this->setLogHierarchy($logModel, $dcsdata, $saveModel);
+                        $this->setLogHierarchy($logModel, $dcsdata, $saveModel, $type);
                         if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
-                            $this->setLogHierarchy($verificationModel, $dcsdata, $saveModel);
+                            $this->setLogHierarchy($verificationModel, $dcsdata, $saveModel, $type);
                         }
                     } else if (strtolower($type) == 'customer') {
                         $customerdata = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
-                        $this->setLogHierarchy($logModel, $customerdata, $saveModel);
+                        $this->setLogHierarchy($logModel, $customerdata, $saveModel, $type);
                         if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
-                            $this->setLogHierarchy($verificationModel, $customerdata, $saveModel);
+                            $this->setLogHierarchy($verificationModel, $customerdata, $saveModel, $type);
+                        }
+                    } else if (strtolower($type) == 'member') {
+                        $memberdata = TblMember::find()->where(['member_code' => $code])->one();
+                        $this->setLogHierarchy($logModel, $memberdata, $saveModel, $type);
+                        if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
+                            $this->setLogHierarchy($verificationModel, $memberdata, $saveModel, $type);
                         }
                     }
 
@@ -1469,7 +1475,7 @@ class TblDcsController extends ChildController {
             }
         }
         if (!empty($getData) && !empty($getData['bank_account_no']) && !empty($getData['ifsc'])) {
-            $base_url = \Yii::$app->params['bank_verification']['verfication_url'];
+            $base_url = \Yii::$app->params['cashfree_bank_integration']['verfication_url'];
             $body = array(
                 'bank_account' => $getData['bank_account_no'],
                 'ifsc' => $getData['ifsc']
@@ -1477,8 +1483,8 @@ class TblDcsController extends ChildController {
             $api = new WebApi();
             $api->header_info['Content-Type'] = 'application/json';
             $api->header_info['Content-length'] = strlen(json_encode($body));
-            $api->header_info['x-client-id'] = \Yii::$app->params['bank_verification']['header']['x-client-id'];
-            $api->header_info['x-client-secret'] = \Yii::$app->params['bank_verification']['header']['x-client-secret'];
+            $api->header_info['x-client-id'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-secret'];
             $api->is_header_merge = false;
             $api->return_actual = true;
             $api->serverUrl = $base_url;
@@ -1507,20 +1513,27 @@ class TblDcsController extends ChildController {
         ]);
     }
 
-    public function setLogHierarchy($logModel, $model, &$saveModel) {
+    public function setLogHierarchy($logModel, $model, &$saveModel, $type) {
         if (!empty($model)) {
             $logModel->union_code = $model->union_code;
-            $logModel->plant_code = $model->plant_code;
-            $logModel->mcc_plant_code = $model->mcc_plant_code;
-            $logModel->bmc_code = $model->bmc_code;
             $logModel->dcs_code = $model->dcs_code;
+            if (strtolower($type) == 'member') {
+                $dcsData = $model->dcsCode;
+                $logModel->plant_code = $dcsData->plant_code;
+                $logModel->mcc_plant_code = $dcsData->mcc_plant_code;
+                $logModel->bmc_code = $dcsData->bmc_code;
+            } else {
+                $logModel->plant_code = $model->plant_code;
+                $logModel->mcc_plant_code = $model->mcc_plant_code;
+                $logModel->bmc_code = $model->bmc_code;
+            }
             $saveModel[] = $logModel;
         }
     }
 
     public function cashFreeRegistrationApi($type, &$model, &$responseApi, $verifymodelData) {
         if (!empty($model) && !empty($model['bank_account_no']) && !empty($model['ifsc']) && !empty($model['beneficiary_name'])) {
-            $base_url = \Yii::$app->params['bank_registration']['registration_url'];
+            $base_url = \Yii::$app->params['cashfree_bank_integration']['registration_url'];
 
             if (!empty($verifymodelData)) {
                 $body = [];
@@ -1549,9 +1562,9 @@ class TblDcsController extends ChildController {
             $api = new WebApi();
             $api->header_info['Content-Type'] = 'application/json';
             $api->header_info['Content-length'] = strlen(json_encode($body));
-            $api->header_info['x-api-version'] = \Yii::$app->params['bank_registration']['header']['x-api-version'];
-            $api->header_info['x-client-id'] = \Yii::$app->params['bank_registration']['header']['x-client-id'];
-            $api->header_info['x-client-secret'] = \Yii::$app->params['bank_registration']['header']['x-client-secret'];
+            $api->header_info['x-api-version'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-api-version'];
+            $api->header_info['x-client-id'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-secret'];
             $api->is_header_merge = false;
             $api->return_actual = true;
             $api->serverUrl = $base_url;
