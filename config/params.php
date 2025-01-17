@@ -49,6 +49,7 @@ $eipl_params = [
     'import_path' => 'import/',
     'feedback_upload' => '/uploads/feedback_upload/',
     'sap_data_files' => '/sap_data_files/',
+    'payment_xml_upload' => '/uploads/payment_xml_upload/',
 ];
 /* Application Server wise custom param file changes - asmita - 15/06/2023 */
 

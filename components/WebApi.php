@@ -15,7 +15,7 @@ class WebApi {
     ];
     public $apiurl = '';
     public $body = [];
-    public $vendor_code = 'STELLAPPS';
+    public $vendor_code = 'EIPL';
     public $header_info = [];
     public $return_actual = FALSE;
     public $is_header_merge = TRUE;
@@ -28,22 +28,38 @@ class WebApi {
         //  return $this->GuzzleCURL();
     }
 
-    public function GuzzleCURL() {
+    public function GuzzleCURL($method = 'POST') {
         $url = $this->serverUrl . $this->apiurl;
         $client = new GuzzleHttp\Client();
         $data = json_encode($this->body);
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
         $header = $this->header_info;
-        if($this->is_header_merge){
-            $header = array_merge($main_header, $this->header_info);   
+        if ($this->is_header_merge) {
+            $header = array_merge($main_header, $this->header_info);
         }
         //var_dump($header);die;
         $postData = [
             RequestOptions::JSON => $this->body,
             RequestOptions::HEADERS => $header
         ];
-        $resp = $client->request('POST', $url, $postData);
-        //var_dump(resp);die;
+        $resp = $client->request($method, $url, $postData);
+
+        try {
+            $log_model = new TblPortalDataPostLog();
+            $log_model->created_at = date('Y-m-d H:i:s');
+            $log_model->vendor_code = $this->vendor_code;
+            $log_model->url = $url;
+            $log_model->request = $data;
+            try {
+                // $log_model->response = json_encode($resp->getBody()->getContents());
+            } catch (\Throwable $ex) {
+                $log_model->response = substr($ex->getMessage(), 500);
+            }
+            $log_model->save();
+        } catch (\Throwable $ex) {
+            
+        }
+
         if ($this->return_actual) {
             return $resp;
         }
@@ -79,6 +95,7 @@ class WebApi {
         curl_close($ch);
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
         $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
         $log_model->vendor_code = $this->vendor_code;
         $log_model->url = $url;
@@ -125,6 +142,7 @@ class WebApi {
 //        die;
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
         $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
         $log_model->vendor_code = $this->vendor_code;
         $log_model->url = $url;

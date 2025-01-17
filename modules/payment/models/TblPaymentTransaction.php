@@ -310,4 +310,67 @@ class TblPaymentTransaction extends \app\models\ChildModel {
         }
         return;
     }
+    public function getTransactionPendingData()
+    {
+        $transactionGroup = $this->find()->alias('pt')
+            ->select([
+                'max(ubp.ftp_type) as ftp_type',
+                'max(ubp.ftp_server) as ftp_host',
+                'max(ubp.ftp_username) as ftp_username',
+                'max(ubp.ftp_password) as ftp_password',
+                'max(ubp.ftp_port) as ftp_port',
+                'max(ubp.reverse_ftp_path) as ftp_path',
+                'max(pt.union_code) as union_code',
+                'FORMAT(GETDATE(), \'yyyy-MM-dd\THH:mm:ss\') AS CrtDt',
+                'pt.file_name as FileID',
+                'max(ubp.corporate_code) as ClientId',
+                'count(payment_transaction_code) as NbOfTxs',
+                'sum(pt.final_amount) as CtrlSum',
+                'max(ubp.org_code) as OrgId'
+            ])
+            ->innerJoin('tbl_bmc as bmc', 'bmc.bmc_code = pt.bmc_code')
+            ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
+            ->innerJoin('tbl_debit_bank_detail AS dbd', 'dbd.union_bank_payment_code = pt.union_bank_payment_code AND dbd.module_code = bmc.mcc_plant_code AND dbd.module_name = \'mcc\'')
+            ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
+            ->innerJoin('tbl_banks as b', 'b.bank_code = pt.bank_code')
+            ->where([
+                'pt.is_file' => 0,
+                'UPPER(ubp.integration_mode)' => 'XML',
+                'ubp.is_active' => 1,
+                'ba.is_active' => 1,
+                'pt.is_approved' => 1
+            ])
+            ->andWhere(['NOT', ['ISNULL(pt.file_name, \'\')' => '']])
+            ->orderBy(['pt.file_name' => SORT_DESC])
+            ->groupBy(['pt.file_name'])
+            ->limit(1)
+            ->asArray()
+            ->all();
+        return $transactionGroup;
+    }
+
+    public function getTransactionData($fileID){
+        return $this->find()
+            ->alias('pt')
+            ->select([
+                'pt.file_name as FileName',
+                'pt.code as ConsumerID',
+                'pt.payment_transaction_code as TransactionNo',
+                'pt.bank_account_no as CdtrAcct',
+                'pt.ifsc as CdtrIFSC',
+                'pt.name as CdtrName',
+                'COALESCE(\'\', \'\') as Remarks',
+                'COALESCE(\'\', \'\') as ActivityHeadCode',
+                'cast(pt.payment_date as date) as PmtDt',
+                'pt.final_amount as GrossAmt',
+                'pt.final_amount as NetAmt',
+            ])
+            ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
+            ->where([
+                'pt.file_name' => $fileID,
+                'ubp.is_active' => 1
+            ])
+            ->asArray()
+            ->all();
+    }
 }

@@ -27,6 +27,7 @@ class TblUnionBankPayment extends \yii\db\ActiveRecord {
 
     public $dcs_code;
     public $otp_code;
+    public $ftp_host, $ftp_path;
 
     /**
      * @inheritdoc
@@ -43,8 +44,8 @@ class TblUnionBankPayment extends \yii\db\ActiveRecord {
             [['union_bank_payment_code'], 'required'],
             [['union_bank_payment_code'], 'integer'],
             [['union_code', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'file_path', 'server_type', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'mobile_no', 'ftp_type', 'ftp_server', 'ftp_username', 'ftp_password', 'ftp_port', 'reverse_ftp_path', 'reverse_server_path', 'compare_file_name', 'bank_email', 'bank_mobile'], 'safe'],
-            [['account_holder_name', 'integration_mode'], 'safe'],
+            [['created_at', 'updated_at', 'mobile_no', 'ftp_type', 'ftp_server', 'ftp_username', 'ftp_password', 'ftp_port', 'reverse_ftp_path', 'reverse_server_path', 'compare_file_name', 'bank_email', 'bank_mobile', 'org_code'], 'safe'],
+            [['account_holder_name', 'integration_mode', 'ftp_host', 'ftp_path'], 'safe'],
         ];
     }
 
