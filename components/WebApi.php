@@ -15,7 +15,7 @@ class WebApi {
     ];
     public $apiurl = '';
     public $body = [];
-    public $vendor_code = 'STELLAPPS';
+    public $vendor_code = 'EIPL';
     public $header_info = [];
     public $return_actual = FALSE;
     public $is_header_merge = TRUE;
@@ -43,7 +43,22 @@ class WebApi {
             RequestOptions::HEADERS => $header
         ];
         $resp = $client->request($method, $url, $postData);
-        //var_dump(resp);die;
+
+        try {
+            $log_model = new TblPortalDataPostLog();
+            $log_model->vendor_code = $this->vendor_code;
+            $log_model->url = $url;
+            $log_model->request = $data;
+            try {
+                $log_model->response = json_encode($resp->getBody()->getContents());
+            } catch (\Throwable $ex) {
+                
+            }
+            $log_model->save();
+        } catch (\Throwable $ex) {
+            
+        }
+
         if ($this->return_actual) {
             return $resp;
         }
