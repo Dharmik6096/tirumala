@@ -1417,7 +1417,7 @@ class TblDcsController extends ChildController {
                 if ($status == 1) {
                     $cashFreeRegistrationConfig = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'is_cash_free_registration', 'PORTAL');
                     if ($cashFreeRegistrationConfig == 1) {
-                        $verifymodelData = TblBankVerification::find()->where(['customer_code' => $code, 'customer_type' => $customer_type, 'bank_account_no' => $model['bank_account_no']])->one();
+                        $verifymodelData = TblBankVerification::find()->where(['customer_code' => $code, 'customer_type' => $customer_type, 'bank_account_no' => $model['bank_account_no'], 'ifsc' => $model['ifsc']])->one();
                         $client_code = Yii::$app->session->get('eiplCode');
                         $model->beneficiary_id = $client_code . $code . $module_name;
                         $this->cashFreeRegistrationApi($type, $model, $responseApi, $verifymodelData);
