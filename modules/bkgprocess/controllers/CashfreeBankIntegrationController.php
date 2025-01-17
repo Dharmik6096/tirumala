@@ -8,25 +8,149 @@ use app\modules\payment\models\TblPaymentTransaction;
 use Yii;
 use yii\base\Controller;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 class CashfreeBankIntegrationController extends Controller {
 
     public $freeAccessActions = ['upload-payment-data-bulk', 'get-transaction-status-bulk'];
 
     public function actionUploadPaymentDataBulk() {
-        
+        try {
+            $transactionGroup = TblPaymentTransaction::find()->alias('pt')
+                    ->select([
+                        'pt.union_code',
+                        'pt.file_name',
+                        'ba.payment_url',
+                        'dbd.bank_account_no',
+                        'pt.union_bank_payment_code',
+                        'pt.type'
+                    ])
+                    ->innerJoin('tbl_bmc as bmc', 'bmc.bmc_code = pt.bmc_code')
+                    ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
+                    ->innerJoin('tbl_debit_bank_detail AS dbd', 'dbd.union_bank_payment_code = pt.union_bank_payment_code AND dbd.module_code = bmc.mcc_plant_code AND dbd.module_name = \'mcc\'')
+                    ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
+                    ->where([
+                        'pt.is_file' => 0,
+                        'UPPER(ubp.integration_mode)' => 'API',
+                        'ubp.is_active' => 1,
+                        'ba.is_active' => 1,
+                        'dbd.is_active' => 1,
+                        'pt.is_approved' => 1
+                    ])
+                    ->andWhere(['NOT', ['ISNULL(pt.file_name, \'\')' => '']])
+                    ->groupBy(['pt.union_code', 'pt.file_name', 'ba.payment_url', 'dbd.bank_account_no', 'pt.union_bank_payment_code', 'pt.type'])
+                    ->limit(1)
+                    ->asArray()
+                    ->all();
+            foreach ($transactionGroup as $batch) {
+                $bank_log = new TblBankPaymentLog();
+                $bank_log->union_code = $batch['union_code'];
+                $bank_log->file_path = $batch['file_name'];
+                $bank_log->file_name = $batch['file_name'];
+                $bank_log->status = 1; //created
+                $bank_log->payment_date = date('Y-m-d');
+                $bank_log->payment_for = $batch['type'];
+                $bank_log->created_by = 'CRON';
+                $bank_log->created_at = date('Y-m-d H:i:s');
+                $bank_log->union_bank_payment_code = $batch['union_bank_payment_code'];
+                $bank_log->save();
+
+                $api = new WebApi();
+                $api->header_info['Content-Type'] = 'application/json';
+                $api->header_info['x-client-id'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-id'];
+                $api->header_info['x-client-secret'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-secret'];
+                $api->header_info['x-api-version'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-api-version'];
+                $api->is_header_merge = false;
+                $api->return_actual = true;
+                $api->serverUrl = $batch['payment_url'];
+                $body = array(
+                    'batch_transfer_id' => $batch['file_name']
+                );
+                $transfers = [];
+                $paymentData = TblPaymentTransaction::find()
+                        ->alias('pt')
+                        ->select([
+                            'bv.beneficiary_id as beneficiary_id',
+                            'pt.payment_transaction_code as payment_transaction_code',
+                            'pt.final_amount as final_amount',
+                        ])
+                        ->innerJoin('tbl_bank_verification as bv', 'bv.customer_code=pt.code and lower(bv.customer_type) = lower(pt.type) and bv.bank_account_no=pt.bank_account_no and bv.ifsc=pt.ifsc and UPPER(bv.res_beneficiary_status)=\'VERIFIED\'')
+                        ->where([
+                            'pt.file_name' => $batch['file_name'],
+                            'pt.union_bank_payment_code' => $batch['union_bank_payment_code'],
+                            'pt.is_file' => 0,
+                            'pt.is_approved' => 1
+                        ])
+                        ->asArray()
+                        ->all();
+                $paymenttransactioncodeList = ArrayHelper::getColumn($paymentData, 'payment_transaction_code');
+                $condition = ['payment_transaction_code' => $paymenttransactioncodeList, 'is_file' => 0];
+                $updateData = ['is_file' => 1, 'pick_datetime' => date('Y-m-d H:i:s')];
+                TblPaymentTransaction::updateAll($updateData, $condition);
+
+                foreach ($paymentData as $payment) {
+                    $trf = [];
+                    $trf['transfer_id'] = $payment['payment_transaction_code'];
+                    $trf['transfer_amount'] = $payment['final_amount'];
+                    $trf['transfer_mode'] = 'banktransfer';
+                    $trf['beneficiary_details']['beneficiary_id'] = $payment['beneficiary_id'];
+                    $trf['fundsource_id'] = $batch['bank_account_no'];
+                    $transfers[] = $trf;
+                }
+
+                if (!empty($transfers)) {
+                    $body['transfers'] = $transfers;
+                    $api->header_info['Content-length'] = strlen(json_encode($body));
+                    $api->body = $body;
+                    try {
+                        $result = $api->GuzzleCURL();
+                        $httpCode = $result->getStatusCode();
+                        $response = $result->getBody()->getContents();
+                       // $response = !empty($response) ? json_decode($response) : [];
+                        var_dump($response);die;
+                        $bank_log->status = 2;
+                        $bank_log->file_status = 'success';
+                        $bank_log->utr_ref_no = $response->cf_batch_transfer_id;
+                        $bank_log->file_status_desc = $response->status;
+                        $bank_log->file_status_code = $httpCode;
+                        $bank_log->no_of_txn = count($transfers);
+                        $bank_log->updated_at = date('Y-m-d H:i:s');
+                        $bank_log->save();
+                    } catch (\Throwable $ex) {
+                        $bank_log->status = 3;
+                        $bank_log->file_status = 'API Failure';
+                        $bank_log->file_status_desc = substr($ex->getMessage(), 0, 250);
+                        $bank_log->no_of_txn = count($transfers);
+                        $bank_log->updated_at = date('Y-m-d H:i:s');
+                        $bank_log->save();
+
+                        Yii::$app->db->createCommand()
+                                ->update('tbl_payment_transaction', [
+                                    'is_file' => '3',
+                                    'response_datetime' => date('Y-m-d H:i:s'),
+                                    'response_msg' => 'API Failure'], 'union_bank_payment_code =\'' . $batch['union_bank_payment_code'] . '\' and file_name =\'' . $batch['file_name'] . '\' and is_file = 1 and union_code= \'' . $batch['union_code'] . '\'')
+                                ->execute();
+                        var_dump($ex);
+                        die;
+                    }
+                }
+            }
+        } catch (\Throwable $ex) {
+            var_dump($ex);
+            die;
+        }
     }
 
     public function actionGetTransactionStatusBulk() {
-        $bankPaymentLogData = TblBankPaymentLog::find()->alias('bl')->select(['bl.union_bank_payment_code','bl.file_path as TransactionID', 'ba.payment_url', 'bl.file_name', 'bl.union_code'])
+        $bankPaymentLogData = TblBankPaymentLog::find()->alias('bl')->select(['bl.union_bank_payment_code', 'bl.file_path as TransactionID', 'ba.payment_url', 'bl.file_name', 'bl.union_code'])
                         ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = bl.union_bank_payment_code')
                         ->innerJoin('tbl_bank_api_detail ba', 'ubp.union_bank_payment_code= ba.union_bank_payment_code')
                         ->where(['bl.status' => 2, 'ba.is_active' => 1, 'ubp.is_active' => 1, 'UPPER(ubp.integration_mode)' => 'API'])
-                        ->andWhere(['NOT', ['bl.statuss' => 4, 'bl.status'=>3]])
-                        ->groupBy(['bl.file_path','bl.file_name', 'bl.union_bank_payment_code', 'bl.union_code', 'ba.payment_url', 'ba.reverse_check_url'])
+                        ->andWhere(['NOT', ['bl.statuss' => 4, 'bl.status' => 3]])
+                        ->groupBy(['bl.file_path', 'bl.file_name', 'bl.union_bank_payment_code', 'bl.union_code', 'ba.payment_url', 'ba.reverse_check_url'])
                         ->limit(5)->asArray()->all();
-       
-        if(!empty($bankPaymentLogData)){
+
+        if (!empty($bankPaymentLogData)) {
             foreach ($bankPaymentLogData as $data) {
                 $base_url = \Yii::$app->params['bank_verification']['payment_url']; // $data['payment_url'];
                 $body = array(

@@ -46,13 +46,14 @@ class WebApi {
 
         try {
             $log_model = new TblPortalDataPostLog();
+            $log_model->created_at = date('Y-m-d H:i:s');
             $log_model->vendor_code = $this->vendor_code;
             $log_model->url = $url;
             $log_model->request = $data;
             try {
                 $log_model->response = json_encode($resp->getBody()->getContents());
             } catch (\Throwable $ex) {
-                
+                $log_model->response = substr($ex->getMessage(), 500);
             }
             $log_model->save();
         } catch (\Throwable $ex) {
@@ -94,6 +95,7 @@ class WebApi {
         curl_close($ch);
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
         $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
         $log_model->vendor_code = $this->vendor_code;
         $log_model->url = $url;
@@ -140,6 +142,7 @@ class WebApi {
 //        die;
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
         $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
         $log_model->vendor_code = $this->vendor_code;
         $log_model->url = $url;
