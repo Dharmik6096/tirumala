@@ -1436,15 +1436,21 @@ class TblDcsController extends ChildController {
                     $verificationModel = New TblBankVerification();
                     if (strtolower($type) == 'dcs') {
                         $dcsdata = $this->findModel($code);
-                        $this->setLogHierarchy($logModel, $dcsdata, $saveModel);
+                        $this->setLogHierarchy($logModel, $dcsdata, $saveModel, $type);
                         if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
-                            $this->setLogHierarchy($verificationModel, $dcsdata, $saveModel);
+                            $this->setLogHierarchy($verificationModel, $dcsdata, $saveModel, $type);
                         }
                     } else if (strtolower($type) == 'customer') {
                         $customerdata = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
-                        $this->setLogHierarchy($logModel, $customerdata, $saveModel);
+                        $this->setLogHierarchy($logModel, $customerdata, $saveModel, $type);
                         if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
-                            $this->setLogHierarchy($verificationModel, $customerdata, $saveModel);
+                            $this->setLogHierarchy($verificationModel, $customerdata, $saveModel, $type);
+                        }
+                    } else if (strtolower($type) == 'member') {
+                        $memberdata = TblMember::find()->where(['member_code' => $code])->one();
+                        $this->setLogHierarchy($logModel, $memberdata, $saveModel, $type);
+                        if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
+                            $this->setLogHierarchy($verificationModel, $memberdata, $saveModel, $type);
                         }
                     }
 
@@ -1507,13 +1513,20 @@ class TblDcsController extends ChildController {
         ]);
     }
 
-    public function setLogHierarchy($logModel, $model, &$saveModel) {
+    public function setLogHierarchy($logModel, $model, &$saveModel, $type) {
         if (!empty($model)) {
             $logModel->union_code = $model->union_code;
-            $logModel->plant_code = $model->plant_code;
-            $logModel->mcc_plant_code = $model->mcc_plant_code;
-            $logModel->bmc_code = $model->bmc_code;
             $logModel->dcs_code = $model->dcs_code;
+            if (strtolower($type) == 'member') {
+                $dcsData = $model->dcsCode;
+                $logModel->plant_code = $dcsData->plant_code;
+                $logModel->mcc_plant_code = $dcsData->mcc_plant_code;
+                $logModel->bmc_code = $dcsData->bmc_code;
+            } else {
+                $logModel->plant_code = $model->plant_code;
+                $logModel->mcc_plant_code = $model->mcc_plant_code;
+                $logModel->bmc_code = $model->bmc_code;
+            }
             $saveModel[] = $logModel;
         }
     }
