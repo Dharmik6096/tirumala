@@ -1475,7 +1475,7 @@ class TblDcsController extends ChildController {
             }
         }
         if (!empty($getData) && !empty($getData['bank_account_no']) && !empty($getData['ifsc'])) {
-            $base_url = \Yii::$app->params['bank_verification']['verfication_url'];
+            $base_url = \Yii::$app->params['cashfree_bank_integration']['verfication_url'];
             $body = array(
                 'bank_account' => $getData['bank_account_no'],
                 'ifsc' => $getData['ifsc']
@@ -1483,8 +1483,8 @@ class TblDcsController extends ChildController {
             $api = new WebApi();
             $api->header_info['Content-Type'] = 'application/json';
             $api->header_info['Content-length'] = strlen(json_encode($body));
-            $api->header_info['x-client-id'] = \Yii::$app->params['bank_verification']['header']['x-client-id'];
-            $api->header_info['x-client-secret'] = \Yii::$app->params['bank_verification']['header']['x-client-secret'];
+            $api->header_info['x-client-id'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-secret'];
             $api->is_header_merge = false;
             $api->return_actual = true;
             $api->serverUrl = $base_url;
@@ -1533,7 +1533,7 @@ class TblDcsController extends ChildController {
 
     public function cashFreeRegistrationApi($type, &$model, &$responseApi, $verifymodelData) {
         if (!empty($model) && !empty($model['bank_account_no']) && !empty($model['ifsc']) && !empty($model['beneficiary_name'])) {
-            $base_url = \Yii::$app->params['bank_registration']['registration_url'];
+            $base_url = \Yii::$app->params['cashfree_bank_integration']['registration_url'];
 
             if (!empty($verifymodelData)) {
                 $body = [];
@@ -1562,9 +1562,9 @@ class TblDcsController extends ChildController {
             $api = new WebApi();
             $api->header_info['Content-Type'] = 'application/json';
             $api->header_info['Content-length'] = strlen(json_encode($body));
-            $api->header_info['x-api-version'] = \Yii::$app->params['bank_registration']['header']['x-api-version'];
-            $api->header_info['x-client-id'] = \Yii::$app->params['bank_registration']['header']['x-client-id'];
-            $api->header_info['x-client-secret'] = \Yii::$app->params['bank_registration']['header']['x-client-secret'];
+            $api->header_info['x-api-version'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-api-version'];
+            $api->header_info['x-client-id'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-secret'];
             $api->is_header_merge = false;
             $api->return_actual = true;
             $api->serverUrl = $base_url;
