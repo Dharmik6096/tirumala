@@ -194,7 +194,7 @@ class CashfreeBankIntegrationController extends Controller {
             }
             foreach($response['transfers'] as $res){
                 $res = (array)$res;
-                $statusCode = ['completed', 'nre_account_fail', 'bene_bank_declined', 'imps_mode_fail', 'npci_unavailable', 'returned_from_beneficiary', 'invalid_bene_account_or_ifsc', 'invalid_bene_vpa', 'bene_not_exist', 'insufficient_balance', 'inside_blackout_window', 'invalid_mode_for_pyid', 'bene_blacklisted', 'invalid_transfer_amount', 'transfer_limit_breach', 'invalid_payment_instrument', 'velocity_check_failed', 'disabled_mode', 'bank_account_invalid', 'bank_ifsc_invalid', 'vpa_invalid', 'phone_invalid', 'bank_account_details_missing'];
+                $statusCode = ['completed', 'nre_account_fail', 'bene_bank_declined', 'imps_mode_fail', 'npci_unavailable', 'returned_from_beneficiary', 'invalid_bene_account_or_ifsc', 'invalid_bene_vpa', 'bene_not_exist', 'insufficient_balance', 'inside_blackout_window', 'invalid_mode_for_pyid', 'bene_blacklisted', 'invalid_transfer_amount', 'transfer_limit_breach', 'invalid_payment_instrument', 'velocity_check_failed', 'disabled_mode', 'bank_account_invalid', 'bank_ifsc_invalid', 'vpa_invalid', 'phone_invalid', 'bank_account_details_missing', 'invalid_ifsc_fail', 'invalid_amount_fail', 'invalid_account_fail', 'invalid_request', 'account_blocked', 'authentication_failure', 'nre_account_fail', 'bad_request'];
                 // $status = ['success', 'reversed', 'rejected', 'queued', 'pending', 'manually_rejected', 'failed', 'approval_pending'];
                 if (in_array(strtolower($res['status']), $statusCode)) {
                     Yii::$app->db->createCommand()
