@@ -1420,7 +1420,7 @@ class TblDcsController extends ChildController {
                     if ($cashFreeRegistrationConfig == 1) {
                         $verifymodelData = TblBankVerification::find()->where(['customer_code' => $code, 'customer_type' => $customer_type, 'bank_account_no' => $model['bank_account_no'], 'ifsc' => $model['ifsc']])->one();
                         $client_code = Yii::$app->session->get('eiplCode');
-                        $model->beneficiary_id = $client_code . $code . $module_name;
+                        $model->beneficiary_id = $client_code . $code . $module_name . rand(1000, 9999);
                         $this->cashFreeRegistrationApi($type, $model, $responseApi, $verifymodelData);
 
                         if (!empty($responseApi) && strtolower($responseApi->beneficiary_status) == 'verified') {
@@ -1561,21 +1561,20 @@ class TblDcsController extends ChildController {
                 );
             }
             $api = new WebApi();
-            $api->header_info['Content-Type'] = 'application/json';
-            $api->header_info['Content-length'] = strlen(json_encode($body));
             $api->header_info['x-api-version'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-api-version'];
             $api->header_info['x-client-id'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-id'];
             $api->header_info['x-client-secret'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-secret'];
-            $api->is_header_merge = false;
             $api->return_actual = true;
             $api->serverUrl = $base_url;
             $api->body = $body;
             try {
                 if (!empty($verifymodelData) && strtolower($verifymodelData->res_beneficiary_status) == 'initiated') {
-                    $api->apiurl = '?beneficiary_id=' . urlencode($model['beneficiary_id']);
+                    $api->apiurl = '?beneficiary_id=' . urlencode($verifymodelData->beneficiary_id);
                     $result = $api->GuzzleCURL('GET');
+                    $api->is_header_merge = false;
                 } else {
                     $result = $api->GuzzleCURL();
+                    $api->is_header_merge = true;
                 }
                 $httpCode = $result->getStatusCode();
                 $responseApi = $result->getBody()->getContents();

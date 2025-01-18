@@ -78,17 +78,16 @@ class TblBankVerification extends \app\models\ChildModel {
             $beneficiaryStatus = !empty($postData->beneficiary_status) ? $postData->beneficiary_status : null;
             $bankAccountNo = !empty($model['bank_account_no']) ? $model['bank_account_no'] : null;
             $ifsc = !empty($model['ifsc']) ? $model['ifsc'] : null;
-            $beneficiaryId = $model['beneficiary_id'];
             if (!empty($verifymodelData) && $model['bank_account_no'] == $verifymodelData->bank_account_no) {
                 $historyModel = new TblBankVerificationHistory();
                 Yii::$app->operation->history($verifymodelData, $historyModel, 'DELETE');
                 $hisModel[] = $historyModel;
                 $this->setAttributes($model->attributes);
-                $this->setModelData($verifymodelData, $beneficiaryId, $code, $type, $bankAccountNo, $ifsc, $beneficiaryStatus);
+                $this->setModelData($verifymodelData, $verifymodelData->beneficiary_id, $code, $type, $bankAccountNo, $ifsc, $beneficiaryStatus);
                 $saveModel[] = $verifymodelData;
             } else {
                 $this->setAttributes($model->attributes);
-                $this->setModelData($this, $beneficiaryId, $code, $type, $bankAccountNo, $ifsc, $beneficiaryStatus);
+                $this->setModelData($this, $model['beneficiary_id'], $code, $type, $bankAccountNo, $ifsc, $beneficiaryStatus);
                 $saveModel[] = $this;
             }
         }
