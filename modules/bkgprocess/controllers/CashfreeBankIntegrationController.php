@@ -194,7 +194,7 @@ class CashfreeBankIntegrationController extends Controller {
             foreach($response['transfers'] as $res){
                 $res = (array)$res;
                 $statusCode = ['completed'];
-                $status = ['success', 'reversed', 'rejected', 'queued', 'pending', 'manually_rejected', 'failed', 'approval_pending'];
+                // $status = ['success', 'reversed', 'rejected', 'queued', 'pending', 'manually_rejected', 'failed', 'approval_pending'];
                 if (in_array(strtolower($res['status']), $statusCode)) {
                     Yii::$app->db->createCommand()
                             ->update('tbl_payment_transaction', [
@@ -249,7 +249,7 @@ class CashfreeBankIntegrationController extends Controller {
                         'disburse_date' => $date,
                         'bank_status' => $response['status_code'],
                         // 'process_date' => $response['added_on'],
-                        'updated_at' => !empty($res['added_on']) ? date('Y-m-d H:i:s', strtotime($res['added_on'])) : '',
+                        'updated_at' => !empty($response['added_on']) ? date('Y-m-d H:i:s', strtotime($response['added_on'])) : '',
                         'utr_no' => $response['transafer_utr'],
                             ], 'payment_transaction_code = \'' . $response['transfer_id'] . '\' and lower(' . $statusColumn . ')=\'sent\'')
                     ->execute();
