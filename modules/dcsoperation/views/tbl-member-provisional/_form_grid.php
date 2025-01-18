@@ -210,6 +210,7 @@ $grid_option = [
         'repush' => function ($url, $model) use ($gridId) {
             return Yii::$app->general->createRePushLink($url, $model, $gridId, 'provisional_member_code');
         },
+        'delete' => ['option' => 'member_name,provisional_member_code,tbl-member-provisional/delete,checkDelete()'],
     ]
 ];
 
