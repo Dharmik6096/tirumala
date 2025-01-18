@@ -207,6 +207,7 @@ class TblMember extends ChildModel {
                 [['dcs_code', 'member_code', 'special_code'], 'required', 'on' => ['specialCodeImportCsv']],
                 [['dcs_code', 'member_code', 'special_code'], 'setImport', 'on' => 'specialCodeImportCsv'],
                 [['x_col5'], 'exist', 'skipOnError' => true, 'targetClass' => TblMemberSpecialCode::className(), 'targetAttribute' => ['x_col5' => 'special_code'], 'on' => ['specialCodeImportCsv']],
+                [['ifsc', 'bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'on' => 'kycVerify'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
