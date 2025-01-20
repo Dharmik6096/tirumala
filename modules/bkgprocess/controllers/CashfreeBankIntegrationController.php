@@ -145,7 +145,6 @@ class CashfreeBankIntegrationController extends Controller {
                         ->innerJoin('tbl_bank_api_detail ba', 'ubp.union_bank_payment_code= ba.union_bank_payment_code')
                         ->where(['bl.status' => 2, 'ba.is_active' => 1, 'ubp.is_active' => 1, 'UPPER(ubp.integration_mode)' => 'API'])
                         ->andWhere(['NOT', ['bl.status' => 4, 'bl.status'=>3]])
-                        ->andWhere(['bl.file_name' => ['MD003327240619122011003', 'VD003327240619140900003']])
                         ->limit(5)->asArray()->all();
         if(!empty($bankPaymentLogData)){
             foreach ($bankPaymentLogData as $data) {
@@ -178,6 +177,16 @@ class CashfreeBankIntegrationController extends Controller {
                         'file_error_desc' => !empty($responseData['message']) ? $responseData['message'] : '',
                         'updated_by' => 'CRON'], ['file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
                     ->execute();
+
+                    Yii::$app->db->createCommand()
+                    ->update('tbl_payment_transaction', [
+                        'is_file' => '2',
+                        'response_datetime' => date('Y-m-d H:i:s'),
+                        'bank_status' => 'FAILED',
+                        'response_msg' => !empty($responseData['message']) ? $responseData['message'] : '',
+                        'updated_at' => date('Y-m-d H:i:s')
+                            ], 'union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
+                    ->execute();
                 }
             }
         }
@@ -194,9 +203,9 @@ class CashfreeBankIntegrationController extends Controller {
             }
             foreach($response['transfers'] as $res){
                 $res = (array)$res;
-                $statusCode = ['completed', 'nre_account_fail', 'bene_bank_declined', 'imps_mode_fail', 'npci_unavailable', 'returned_from_beneficiary', 'invalid_bene_account_or_ifsc', 'invalid_bene_vpa', 'bene_not_exist', 'insufficient_balance', 'inside_blackout_window', 'invalid_mode_for_pyid', 'bene_blacklisted', 'invalid_transfer_amount', 'transfer_limit_breach', 'invalid_payment_instrument', 'velocity_check_failed', 'disabled_mode', 'bank_account_invalid', 'bank_ifsc_invalid', 'vpa_invalid', 'phone_invalid', 'bank_account_details_missing', 'invalid_ifsc_fail', 'invalid_amount_fail', 'invalid_account_fail', 'invalid_request', 'account_blocked', 'authentication_failure', 'nre_account_fail', 'bad_request'];
+                $statusCode = ['completed', 'nre_account_fail', 'bene_bank_declined', 'imps_mode_fail', 'npci_unavailable', 'returned_from_beneficiary', 'invalid_bene_account_or_ifsc', 'invalid_bene_vpa', 'manually_rejected', 'bene_not_exist', 'insufficient_balance', 'inside_blackout_window', 'invalid_mode_for_pyid', 'bene_blacklisted', 'invalid_transfer_amount', 'transfer_limit_breach', 'invalid_payment_instrument', 'velocity_check_failed', 'disabled_mode', 'bank_account_invalid', 'bank_ifsc_invalid', 'vpa_invalid', 'phone_invalid', 'bank_account_details_missing', 'invalid_ifsc_fail', 'invalid_amount_fail', 'invalid_account_fail', 'invalid_request', 'account_blocked', 'authentication_failure', 'nre_account_fail', 'bad_request', 'failed', 'returened_from_beneficiary', 'bene_name_differs'];
                 // $status = ['success', 'reversed', 'rejected', 'queued', 'pending', 'manually_rejected', 'failed', 'approval_pending'];
-                if (in_array(strtolower($res['status']), $statusCode)) {
+                if (in_array(strtolower($res['status_code']), $statusCode)) {
                     Yii::$app->db->createCommand()
                             ->update('tbl_payment_transaction', [
                                 'disburse_amount' => new Expression("CASE WHEN '" . strtolower($res['status']) . "' != lower('success') THEN disburse_amount ELSE final_amount END"),
@@ -204,10 +213,10 @@ class CashfreeBankIntegrationController extends Controller {
                                 'is_file' => '2',
                                 'response_datetime' => date('Y-m-d H:i:s'),
                                 'bank_status' => (strtolower($res['status_code']) == 'completed') ? 'SUCCESSFUL' : 'FAILED',
-                                'response_msg' => $res['status_description'],
+                                'response_msg' => $res['status_code'],
                                 // 'process_date' => $res['added_on'],
                                 'updated_at' => !empty($res['added_on']) ? date('Y-m-d H:i:s', strtotime($res['added_on'])) : '',
-                                'utr_no' => $res['transafer_utr'],
+                                'utr_no' => !empty($res['transafer_utr']) ? $res['transafer_utr'] : '',
                                     ], 'payment_transaction_code = \'' . $res['transfer_id'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $response['batch_transfer_id'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
                             ->execute();
                         if($is_success_all_transaction){
