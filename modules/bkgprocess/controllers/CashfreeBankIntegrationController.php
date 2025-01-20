@@ -173,8 +173,8 @@ class CashfreeBankIntegrationController extends Controller {
                     Yii::$app->db->createCommand()->update('tbl_bank_payment_log', [
                         'status' => 3,
                         'updated_at' => date('Y-m-d H:i:s'),
-                        'file_error_code' => !empty($responseData['code']) ? $responseData['code'] : '',
-                        'file_error_desc' => !empty($responseData['message']) ? $responseData['message'] : '',
+                        'file_error_code' => !empty($responseData->code) ? $responseData->code : '',
+                        'file_error_desc' => !empty($responseData->message) ? $responseData->message : '',
                         'updated_by' => 'CRON'], ['file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
                     ->execute();
 
@@ -183,7 +183,7 @@ class CashfreeBankIntegrationController extends Controller {
                         'is_file' => '2',
                         'response_datetime' => date('Y-m-d H:i:s'),
                         'bank_status' => 'FAILED',
-                        'response_msg' => !empty($responseData['message']) ? $responseData['message'] : '',
+                        'response_msg' => !empty($responseData->message) ? $responseData->message : '',
                         'updated_at' => date('Y-m-d H:i:s')
                             ], 'union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
                     ->execute();
@@ -203,7 +203,7 @@ class CashfreeBankIntegrationController extends Controller {
             }
             foreach($response['transfers'] as $res){
                 $res = (array)$res;
-                $statusCode = ['completed', 'nre_account_fail', 'bene_bank_declined', 'imps_mode_fail', 'npci_unavailable', 'returned_from_beneficiary', 'invalid_bene_account_or_ifsc', 'invalid_bene_vpa', 'manually_rejected', 'bene_not_exist', 'insufficient_balance', 'inside_blackout_window', 'invalid_mode_for_pyid', 'bene_blacklisted', 'invalid_transfer_amount', 'transfer_limit_breach', 'invalid_payment_instrument', 'velocity_check_failed', 'disabled_mode', 'bank_account_invalid', 'bank_ifsc_invalid', 'vpa_invalid', 'phone_invalid', 'bank_account_details_missing', 'invalid_ifsc_fail', 'invalid_amount_fail', 'invalid_account_fail', 'invalid_request', 'account_blocked', 'authentication_failure', 'nre_account_fail', 'bad_request', 'failed', 'returened_from_beneficiary', 'bene_name_differs'];
+                $statusCode = ['completed', 'nre_account_fail', 'bene_bank_declined', 'imps_mode_fail', 'npci_unavailable', 'returned_from_beneficiary', 'invalid_bene_account_or_ifsc', 'invalid_bene_vpa', 'manually_rejected', 'bene_not_exist', 'insufficient_balance', 'inside_blackout_window', 'invalid_mode_for_pyid', 'bene_blacklisted', 'invalid_transfer_amount', 'transfer_limit_breach', 'invalid_payment_instrument', 'velocity_check_failed', 'disabled_mode', 'bank_account_invalid', 'bank_ifsc_invalid', 'vpa_invalid', 'phone_invalid', 'bank_account_details_missing', 'invalid_ifsc_fail', 'invalid_amount_fail', 'invalid_account_fail', 'invalid_request', 'account_blocked', 'authentication_failure', 'nre_account_fail', 'bad_request', 'failed', 'returened_from_beneficiary', 'bene_name_differs', 'approval_pending', 'anomaly_detection'];
                 // $status = ['success', 'reversed', 'rejected', 'queued', 'pending', 'manually_rejected', 'failed', 'approval_pending'];
                 if (in_array(strtolower($res['status_code']), $statusCode)) {
                     Yii::$app->db->createCommand()

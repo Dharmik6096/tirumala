@@ -47,22 +47,29 @@ class WebApi {
                 RequestOptions::HEADERS => $header
             ];
         }
-        $resp = $client->request($method, $url, $postData);
-
+        $resp = null;
+        $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
+        $log_model->vendor_code = $this->vendor_code;
+        $log_model->url = $url;
+        $log_model->request = $data;
         try {
-            $log_model = new TblPortalDataPostLog();
-            $log_model->created_at = date('Y-m-d H:i:s');
-            $log_model->vendor_code = $this->vendor_code;
-            $log_model->url = $url;
-            $log_model->request = $data;
-            try {
-                // $log_model->response = json_encode($resp->getBody()->getContents());
-            } catch (\Throwable $ex) {
-                $log_model->response = substr($ex->getMessage(), 500);
-            }
+            $resp = $client->request($method, $url, $postData);
+            $log_model->response = json_encode($resp->getBody()->getContents());
+            $resp->getBody()->rewind();
             $log_model->save();
+        }  catch (\GuzzleHttp\Exception\ClientException $e) {
+            $responseData = ''; 
+            if(!empty($e->getResponse())){
+                $responseData = json_decode($e->getResponse()->getBody()->getContents()); 
+                $e->getResponse()->getBody()->rewind();
+            }
+            $log_model->response = !empty($responseData->message) ? $responseData->message : '';
+            $log_model->save();
+            throw $e;
         } catch (\Throwable $ex) {
-            
+            $log_model->response = !empty($ex->getMessage()) ? $ex->getMessage() : '';
+            $log_model->save();
         }
 
         if ($this->return_actual) {
