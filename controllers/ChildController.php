@@ -134,6 +134,10 @@ class ChildController extends Controller {
         $model = new TblReportTxnLog();
         $txnLogExistRecord = $model->find()->where(['status' => 0, 'user_code' => \Yii::$app->user->identity->user_code])->one();
         if (empty($txnLogExistRecord)) {
+            // $decrypt_data = json_encode([
+            //     'to_decrypt' => isset($config['to_decrypt']) ? json_encode($config['to_decrypt']) : NULL,
+            //     'to_text' => isset($config['to_text']) ? json_encode($config['to_text']) : NULL,
+            // ]);
             $model->report_type = $report_type;
             $model->report_title = $config['title'];
             $model->sp_name = $report_type == 'mis' ? $config['sp_name'] : $config['path'];
@@ -141,7 +145,8 @@ class ChildController extends Controller {
             $model->search_param = NULL;
             $model->export_file_name = isset($config['export_file_name']) ? $config['export_file_name'] : NULL;
             $model->decrypt_data = isset($config['to_decrypt']) ? json_encode($config['to_decrypt']) : NULL;
-            $model->file_type = $report_type == 'mis' ? 'xls' : 'pdf';
+            // $model->decrypt_data = $decrypt_data;
+            $model->file_type = $report_type == 'mis' ? 'xlsx' : 'pdf';
             $model->user_code = $model->created_by = \Yii::$app->user->identity->user_code;
             $model->created_at = date('Y-m-d H:i:s');
             $model->union_code = isset($controls['union_code']) ? $controls['union_code'] : NULL;

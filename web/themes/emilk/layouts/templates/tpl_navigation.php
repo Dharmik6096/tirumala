@@ -361,7 +361,7 @@ echo GhostMenu::widget([
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">MCC Billing<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-toggle" href="#">MCC Billing <b class="caret"></b></a>',
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'MCC Billing') . '<b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'MCC Formula Master'), 'url' => ['/vsp/tbl-mcc-general-formula/index'], 'active' => ($cntrl == 'tbl-mcc-general-formula')],
                             ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
