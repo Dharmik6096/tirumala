@@ -102,7 +102,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
         <div class="clearfix"></div>
         <div class="col-sm-2 mt10" >
             <?php
-            echo GhostHtml::a(Yii::t('app', 'Save'), ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], ['class' => 'btn btn-primary', 'id' => 'mapping-widget']);
+            echo GhostHtml::a(Yii::t('app', 'Save'), 'javaScript:void(0);', ['class' => 'btn btn-primary', 'id' => 'mapping-widget']);
             ?>
         </div>
     </div>
