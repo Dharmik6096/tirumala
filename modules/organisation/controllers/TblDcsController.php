@@ -1567,7 +1567,7 @@ class TblDcsController extends ChildController {
             $api->serverUrl = $base_url;
             $api->body = $body;
             try {
-                if (!empty($verifymodelData) && strtolower($verifymodelData->res_beneficiary_status) == 'initiated') {
+                if (!empty($verifymodelData) && (strtolower($verifymodelData->res_beneficiary_status) == 'initiated' || strtolower($verifymodelData->res_beneficiary_status) == 'verified')) {
                     $api->apiurl = '?beneficiary_id=' . urlencode($verifymodelData->beneficiary_id);
                     $result = $api->GuzzleCURL('GET');
                     $api->is_header_merge = false;
