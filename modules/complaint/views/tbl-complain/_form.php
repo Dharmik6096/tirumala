@@ -219,7 +219,7 @@ if ($type == 'resolve') {
 ?>
 <div class="clearfix"></div>
 <div class="col-sm-2">
-    <div class="form-group mt10">   
+    <div class="form-group mt-10 margin_bottom_10">   
         <?php
         AjaxSubmitButton::begin([
             'label' => Yii::t('app', $button_type),

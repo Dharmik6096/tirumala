@@ -5588,3 +5588,6 @@ div#w12 > .card.border-default {
 h4{
     font-size: 18px;
 }
+.mt-10{
+    margin-top: 10px !important;
+}
