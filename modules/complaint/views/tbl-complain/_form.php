@@ -218,14 +218,15 @@ if ($type == 'resolve') {
 }
 ?>
 <div class="clearfix"></div>
-<div class="col-sm-12">
-    <?php
-    AjaxSubmitButton::begin([
-        'label' => Yii::t('app', $button_type),
-        'ajaxOptions' => [
-            'type' => 'POST',
-            'url' => Url::to($urls),
-            'beforeSend' => new \yii\web\JsExpression('function(data){
+<div class="col-sm-2">
+    <div class="form-group mt-10 margin_bottom_10">   
+        <?php
+        AjaxSubmitButton::begin([
+            'label' => Yii::t('app', $button_type),
+            'ajaxOptions' => [
+                'type' => 'POST',
+                'url' => Url::to($urls),
+                'beforeSend' => new \yii\web\JsExpression('function(data){
                  if($("#tblcomplain-resolved_status").val() == "replace" && $("#tblcomplain-spare_required").is(":checked") && $("#spare_list tr").length <= 0){
                             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Please add spare at least one</span></div></div>");
                             return false;
@@ -233,7 +234,7 @@ if ($type == 'resolve') {
                         $("#loadercontent").show();
                         $("#pageloader").show();
                     }'),
-            'success' => new \yii\web\JsExpression('function(data){                                   
+                'success' => new \yii\web\JsExpression('function(data){                                   
                                             $("#pageloader").hide();
                                             $("#loadercontent").hide();
                                             var obj1 = $.parseJSON(data);
@@ -261,18 +262,19 @@ if ($type == 'resolve') {
                                                 $(".error-summary").show();
                                                 }
                              }'),
-            'error' => new \yii\web\JsExpression('function(){
+                'error' => new \yii\web\JsExpression('function(){
                                     $("#pageloader").hide();
                                     $("#loadercontent").hide();
                              }'),
-        ],
-        'options' => ['class' => 'btn-login btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
-    ]);
-    AjaxSubmitButton::end();
-    ?>
+            ],
+            'options' => ['class' => 'btn-login btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
+        ]);
+        AjaxSubmitButton::end();
+        ?>
         <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>
+</div>
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
