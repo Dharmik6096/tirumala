@@ -220,6 +220,7 @@ class TblComplainController extends \app\controllers\ChildController {
                             $complain_attachment = new TblAttachment();
                             $complain_attachment->load(Yii::$app->request->post());
                             $complain_attachment->module_name = 'tbl_complain';
+                           
                             $complain_attachment->module_code = $this->model->complain_code;
                             $ext = (explode(".", $atta));
                             $file = Yii::$app->urlManager->createAbsoluteUrl('') . Yii::$app->params['complaint_dir_path'] . $atta;
@@ -246,7 +247,7 @@ class TblComplainController extends \app\controllers\ChildController {
         $complain_attachment = new TblAttachment();
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $complain_attachment->find()->where(['module_code' => $this->model->complain_code]),
+            'query' => $complain_attachment->find()->where(['module_code' => (string)$this->model->complain_code]),
         ]);
 
         return $this->render($this->viewFile, [
