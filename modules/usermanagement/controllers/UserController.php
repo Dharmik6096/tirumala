@@ -470,6 +470,117 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
         return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
     }
+    
+    public function actionOrganizationMapNew($id) {
+        $user = User::findOne($id);
+        $model = new TblUserOrganizationMapping();
+        $model->user_id = $id;
+        $model->scenario = 'organizationMapping';
+        if (Yii::$app->session->get('organizations_type') == 'UNION') {
+            $model->scenario = 'organizationMappingUnion';
+        }
+        $modelData = $model->getUserOrgs($id);
+        $app_organization = [];
+        $app_org_array = false;
+        if ($user->allow_app_login == 1 && !empty($user->mobile_no)) {
+            $contactModel = new TblContactDetails();
+            $contactModel->mobile_no = $user->mobile_no;
+            $values = $contactModel->getContactDetailsOrg();
+            $app_organization = $model->getOrganizationsArray($id, '', $values);
+            $app_org_array = true;
+        }
+        $stickeyOrgArray = [];
+        $stickeyOrgArray['union'] = [];
+        $stickeyOrgArray['plant'] = [];
+        $stickeyOrgArray['mcc'] = [];
+        $stickeyOrgArray['bmc'] = [];
+        $stickeyOrgArray['dcs'] = [];
+        $stickeyOrgArray['route'] = [];
+        if ($app_org_array) {
+            $stickeyOrgArray['union'] = !empty($app_organization['union']['selectedArray']) ? $app_organization['union']['selectedArray'] : [];
+            $stickeyOrgArray['plant'] = !empty($app_organization['plant']['selectedArray']) ? $app_organization['plant']['selectedArray'] : [];
+            $stickeyOrgArray['mcc'] = !empty($app_organization['mcc']['selectedArray']) ? $app_organization['mcc']['selectedArray'] : [];
+            $stickeyOrgArray['bmc'] = !empty($app_organization['bmc']['selectedArray']) ? $app_organization['bmc']['selectedArray'] : [];
+            $stickeyOrgArray['dcs'] = !empty($app_organization['dcs']['selectedArray']) ? $app_organization['dcs']['selectedArray'] : [];
+            $stickeyOrgArray['route'] = !empty($app_organization['route']['selectedArray']) ? $app_organization['route']['selectedArray'] : [];
+        }
+        if (empty($modelData) && !empty($app_organization)) {
+            $organization = $app_organization;
+        } else {
+            $organization = $model->getOrganizationsArray($id, $user->user_type_id);
+        }
+        $federations = $organization['federation'];
+        $unions = $organization['union'];
+        $plant = $organization['plant'];
+        $mcc = $organization['mcc'];
+        $bmc = $organization['bmc'];
+        $dcs = $organization['dcs'];
+        $route = $organization['route'];
+        $model->route = $route['selectedArray'];
+        $model->dcs = $dcs['selectedArray'];
+        $model->bmc = $bmc['selectedArray'];
+        $model->mcc = $mcc['selectedArray'];
+        $model->plant = $plant['selectedArray'];
+        $model->union = $unions['selectedArray'];
+        $model->federation = ['01'];
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $setAppOrgMap = false;
+            $contactModel = new TblContactDetails();
+            if ($user->allow_app_login == 1 && !empty($user->mobile_no)) {
+                $contactModel->mobile_no = $user->mobile_no;
+                $contactModelData = $contactModel->getContactDetailsRecord();
+                if (!empty($contactModelData)) {
+                    $contactModel = $contactModelData;
+                } else {
+                    $contactModel->firstname = $user->name;
+                    $contactModel->setModel('user', $user->id, 0);
+                }
+                $contactModel->department = $user->department;
+                $contactModel->save();
+                TblAppOrganizationMapping::deleteAll(['detail_code' => $contactModel->detail_code]);
+                $setAppOrgMap = true;
+            }
+
+            TblUserOrganizationMapping::deleteAll(['user_id' => $id]);
+            switch ($_POST['user_type']) {
+                case 7 : $this->addUserOrganizationMapping($model->dcs, 'DCS', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->dcs, 'DCS', $contactModel) : '';
+                    $type = 'BMC';
+                    $org_id = $model->bmc;
+                    break;
+                case 6 : $this->addUserOrganizationMapping($model->bmc, 'BMC', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->bmc, 'BMC', $contactModel) : '';
+                    $type = 'BMC';
+                    $org_id = $model->bmc;
+                    break;
+                case 5 : $this->addUserOrganizationMapping($model->mcc, 'MCC', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->mcc, 'MCC', $contactModel) : '';
+                    $type = 'MCC';
+                    $org_id = $model->mcc;
+                    break;
+                case 4 : $this->addUserOrganizationMapping($model->plant, 'PLANT', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->plant, 'PLANT', $contactModel) : '';
+                    $type = 'PLANT';
+                    $org_id = $model->plant;
+                    break;
+                case 3 : $this->addUserOrganizationMapping($model->union, 'UNION', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->union, 'UNION', $contactModel) : '';
+                    break;
+                case 2 : $this->addUserOrganizationMapping($model->federation, 'FEDERATION', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->federation, 'FEDERATION', $contactModel) : '';
+                    break;
+            }
+            $user->user_type_id = $_POST['user_type'];
+            $user->scenario = 'orgMapping';
+            $user->save(false);
+            $sp_param = [];
+            $sp_param[] = $id;
+            \Yii::$app->general->getSpData('proc_insert_user_latlong_applicability', $sp_param);
+            Yii::$app->display->message(true, 'user', 'edit');
+            return $this->redirect(['index']);
+        }
+        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
+    }
 
     public function setHtmlContent($OTP, &$htmlContent, &$message, $username) {
         $message = 'New Reset Password for ' . $username;
