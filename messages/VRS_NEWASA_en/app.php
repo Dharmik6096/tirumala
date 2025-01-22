@@ -276,4 +276,10 @@ return [
     'Delete Member Payment Restrict' => 'Delete Farmer Payment Restrict',
     'Bulk Delete Member Payment Restrict' => 'Bulk Delete Farmer Payment Restrict',
     'Middle Name' => 'Father Name',
+    'MCC Billing' => 'Chiller Billing',
+    'MCC Formula Master' => 'Chiller Formula Master',
+    'MCC Bill Head Master' => 'Chiller Bill Head Master',
+    'MCC Bill Head Transaction' => 'Chiller Bill Head Transaction',
+    'MCC Bill Head Criteria' => 'Chiller Bill Head Criteria',
+    'MCC Payment' => 'Chiller Payment',
 ];

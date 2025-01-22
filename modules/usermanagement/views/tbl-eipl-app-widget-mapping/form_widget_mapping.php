@@ -12,7 +12,7 @@ use app\modules\usermanagement\components\GhostHtml;
     <div class="showHideData">
         <div class=" no-effect" >
             <div class="col-sm-6 ">
-    <!--                <h5 class="modal-title mt10 pb5"><?php // echo Yii::t('app', 'RMRD'); ?></h5>  
+    <!--                <h5 class="modal-title mt10 pb5"><?php // echo Yii::t('app', 'RMRD');  ?></h5>  
                 <hr class="line-color margin_0">  -->
                 <div class="view-subtitle margin_0 theme-box-heading"><h5 class=""><?= Yii::t('app', 'RMRD') ?></h5></div>
                 <?php
@@ -25,14 +25,14 @@ use app\modules\usermanagement\components\GhostHtml;
 
                 <?php
                 $attribute = [
-                    ['class' => 'kartik\grid\CheckboxColumn',
+                        ['class' => 'kartik\grid\CheckboxColumn',
                         'rowSelectedClass' => GridView::TYPE_SUCCESS,
                         'headerOptions' => ['class' => 'skip-export '], 'contentOptions' => ['class' => 'skip-export kv-align-center'],
                         'checkboxOptions' => function($model) use ($selectedArray) {
                             return ['class' => 'checkbox', 'value' => $model['widget_id'], 'checked' => in_array($model['widget_id'], $selectedArray)];
                         }],
-                    ['attribute' => 'widget_name', 'filter' => false],
-                    ['attribute' => 'widget_type', 'filter' => false],
+                        ['attribute' => 'widget_name', 'filter' => false],
+                        ['attribute' => 'widget_type', 'filter' => false],
                 ];
 
                 DynaGrid::begin([
@@ -60,18 +60,18 @@ use app\modules\usermanagement\components\GhostHtml;
                 ?>
             </div>
             <div class="col-sm-6 " >
-                   <!--<h5 class="modal-title mt10"><?php // echo Yii::t('app', 'FARMER'); ?></h5>-->  
+                   <!--<h5 class="modal-title mt10"><?php // echo Yii::t('app', 'FARMER');  ?></h5>-->  
                 <div class="view-subtitle margin_0 theme-box-heading"><h5 class=""><?= Yii::t('app', 'FARMER') ?></h5></div>
                 <?php
                 $attributeOther = [
-                    ['class' => 'kartik\grid\CheckboxColumn',
+                        ['class' => 'kartik\grid\CheckboxColumn',
                         'rowSelectedClass' => GridView::TYPE_SUCCESS,
                         'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                         'checkboxOptions' => function($model) use ($selectedArray) {
                             return ['class' => 'checkbox', 'value' => $model['widget_id'], 'checked' => in_array($model['widget_id'], $selectedArray)];
                         }],
-                    ['attribute' => 'widget_name', 'filter' => false],
-                    ['attribute' => 'widget_type', 'filter' => false],
+                        ['attribute' => 'widget_name', 'filter' => false],
+                        ['attribute' => 'widget_type', 'filter' => false],
                 ];
 
                 DynaGrid::begin([
@@ -102,7 +102,7 @@ use app\modules\usermanagement\components\GhostHtml;
         <div class="clearfix"></div>
         <div class="col-sm-2 mt10" >
             <?php
-            echo GhostHtml::a(Yii::t('app', 'Save'), ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], ['class' => 'btn-login btn btn-primary', 'id' => 'mapping-widget']);
+            echo GhostHtml::a(Yii::t('app', 'Save'), 'javaScript:void(0);', ['class' => 'btn-login btn btn-primary', 'id' => 'mapping-widget']);
             ?>
         </div>
     </div>
