@@ -35,6 +35,7 @@ $attribute = [
             return Yii::$app->controls->view_date($model->agreement_to_date);
         },
     ],
+    ['attribute' => 'chiller_name', 'filter' => FALSE],
 ];
 
 $grid_option = [

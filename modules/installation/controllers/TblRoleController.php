@@ -228,4 +228,144 @@ class TblRoleController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionAppMenuMappingNew($id) {
+        $models = $this->findModel($id);
+        $this->model = new TblAction();
+        $menuArray = $this->model->getActionDetail();
+        $mappingModel = new TblRoleActionMapping();
+        $selectedArray = $mappingModel->getExistMapingMenu($id);
+
+        if (Yii::$app->request->post()) {
+            $postArray = Yii::$app->request->post('child_routes', []);
+            $newAssignments = !empty($postArray) ? $postArray : [];
+            $oldAssignments = !empty($selectedArray) ? array_keys($selectedArray) : [];
+
+            $toAssign = array_diff($newAssignments, $oldAssignments);
+            $toRevoke = array_diff($oldAssignments, $newAssignments);
+
+            $roleActionModels = [];
+            if (!empty($toAssign)) {
+                foreach ($toAssign as $assignKey) {
+                    $roleActionModels[] = [
+                        'action_code' => $assignKey,
+                        'role_code' => $id,
+                    ];
+                }
+            }
+
+            $data = Yii::$app->general->getSpData('portal_role_wise_identity_user', [$id]);
+            $ackIdsToUpdate = [];
+            $saveModels = [];
+            $this->setDownloadAckBatch($data, $saveModels, $ackIdsToUpdate);
+
+            $db = Yii::$app->getDb();
+            $transaction = $db->beginTransaction();
+            try {
+                if (!empty($toRevoke)) {
+                    TblRoleActionMapping::deleteAll(['action_code' => $toRevoke, 'role_code' => $id]);
+                }
+
+                if (!empty($roleActionModels)) {
+                    Yii::$app->getDb()->createCommand()->batchInsert('tbl_role_action_mapping', ['action_code', 'role_code'], $roleActionModels)->execute();
+                }
+
+                if (!empty($ackIdsToUpdate)) {
+                    TblUserDownloadAck::updateAll(['download_pending' => 3], ['ack_id' => $ackIdsToUpdate]);
+                }
+
+                if (!empty($saveModels)) {
+                    $firstAttributesModel = $saveModels[0]->attributes();
+                    unset($firstAttributesModel[0]);
+                    $chunks = array_chunk($saveModels, 1000);
+                    foreach ($chunks as $chunk) {
+                        $rows = array_map(function ($model) {
+                            $attributes = $model->attributes;
+                            unset($attributes['ack_id']);
+                            return $attributes;
+                        }, $chunk);
+                        Yii::$app->getDb()->createCommand()->batchInsert('tbl_user_download_ack', $firstAttributesModel, $rows)->execute();
+                    }
+                }
+
+                $transaction->commit();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Menu and action permissions updated successfully.']);
+            } catch (\yii\db\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Database error occurred while updating menu and action permissions']);
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'An error occurred while updating menu and action permissions']);
+            }
+
+            return $this->render('_action_map', [
+                        'model' => $this->model,
+                        'mappingModel' => $mappingModel,
+                        'selectedArray' => $newAssignments,
+                        'menuArray' => $menuArray,
+                        'id' => $id,
+                        'models' => $models
+            ]);
+        }
+        return $this->render('_action_map', [
+                    'model' => $this->model,
+                    'mappingModel' => $mappingModel,
+                    'selectedArray' => $selectedArray,
+                    'menuArray' => $menuArray,
+                    'id' => $id,
+                    'models' => $models
+        ]);
+    }
+
+    public function setDownloadAckBatch($model, &$saveModel, &$ackIdsToUpdate) {
+        if (!empty($model)) {
+            foreach ($model as $a) {
+                $ackModel = new TblUserDownloadAck();
+                $ackModel->setAttributes($a);
+                $dest_org_type = $this->getOrgType($ackModel);
+                $dest_org_id = $this->getOrgType($ackModel, 'code');
+                $existAck = $ackModel->getExistDataAck($dest_org_type);
+                if (!empty($existAck)) {
+                    foreach ($existAck as $exist) {
+                        $ackIdsToUpdate[] = $exist['ack_id'];
+                    }
+                }
+                $androidInstallationDetail = new TblAndroidInstallationDetails();
+                $activeDevice = $androidInstallationDetail->getActiveDeviceData($dest_org_id, $dest_org_type);
+                if (!empty($activeDevice)) {
+                    foreach ($activeDevice as $value) {
+                        $ackModel->device_id = $value->device_id;
+                        $ackModel->hash_key = NULL;
+                        $ackModel->download_pending = 1;
+                        $ackModel->created_at = date('Y-m-d H:i:s');
+                        $ackModel->created_by = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                        $ackModel->originating_org_code = \Yii::$app->session->get('organizations_code');
+                        $ackModel->originating_org_type = 'PORTAL';
+                        $ackModel->originating_type = 0;
+                        $saveModel[] = $ackModel;
+                    }
+                }
+            }
+        }
+    }
+
+    public function getOrgType($data, $return = 'type') {
+        if ($return == 'type') {
+            if (!empty($data->dcs_code)) {
+                return 'VLC';
+            } elseif (!empty($data->bmc_code)) {
+                return 'BMC';
+            } elseif (!empty($data->mcc_plant_code)) {
+                return 'MCC';
+            }
+        } else {
+            if (!empty($data->dcs_code)) {
+                return $data->dcs_code;
+            } elseif (!empty($data->bmc_code)) {
+                return $data->bmc_code;
+            } elseif (!empty($data->mcc_plant_code)) {
+                return $data->mcc_plant_code;
+            }
+        }
+    }
+
 }

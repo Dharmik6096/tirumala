@@ -5923,3 +5923,7 @@ tr.highlightRow {
 .text-red {
     color: red !important;
 }
+.plus-button{
+    margin: 0 0 -29px 8px;
+    z-index: 1;
+}
