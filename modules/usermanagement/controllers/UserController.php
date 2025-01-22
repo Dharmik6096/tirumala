@@ -471,7 +471,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
     }
     
-    public function actionOrganizationMap($id) {
+    public function actionOrganizationMapNew($id) {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
         $model->user_id = $id;
