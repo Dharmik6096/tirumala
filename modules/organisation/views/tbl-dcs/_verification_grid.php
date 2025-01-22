@@ -8,6 +8,7 @@ use yii\helpers\Url;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Bank Verification');
+$kyc_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'ekyc_required', 'PORTAL');
 ?>
 <div class=" no-effect">
     <?php
@@ -94,7 +95,7 @@ $this->title = Yii::t('app', 'Bank Verification');
         ?>
         <div class="panel-footer">
             <?php
-            if (!empty($dataProvider->getModels())) {
+            if (!empty($dataProvider->getModels()) && $kyc_config == 1) {
                 echo Html::button(Yii::t('app', 'Verify'), ['class' => 'btn btn-primary submit', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
                 echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
