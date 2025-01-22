@@ -10,10 +10,12 @@ $imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? 
 if (empty($display_rmrd)) {
     $union = 'site/get-rmrd-unions';
     $mcc = 'site/get-rmrd-mccs';
+    $bmc = 'site/get-rmrd-bmcs';
     $dcs = 'site/get-rmrd-dcs';
 } else {
     $union = 'site/get-unions';
     $mcc = 'site/get-mccs';
+    $bmc = 'site/get-bmcs';
     $dcs = 'site/get-dcs';
 }
 ?>
@@ -45,8 +47,9 @@ if (empty($display_rmrd)) {
             <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
         </div>
     </a>
-    
-    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <?php $url = Url::to([$bmc, 'date' => $date, 'union_code' => $model->union_code, 'shift' => $model->shift]); ?>
+    <a href="<?= $url ?>" target="_blank">
+        <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">
                 <p class="dash_block_header"><?= Yii::t('app', 'BMC') ?></p>
                 <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -54,7 +57,7 @@ if (empty($display_rmrd)) {
             </div>
             <div class="div_dash_block_icon"> <img src="<?= $imageIconPath . 'mcc.png' ?>"> </div>
         </div>
-
+    </a>
     <?php $url = Url::to([$dcs, 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code, 'shift' => $model->shift]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
