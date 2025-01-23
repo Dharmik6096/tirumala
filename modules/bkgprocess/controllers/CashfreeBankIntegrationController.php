@@ -196,20 +196,33 @@ class CashfreeBankIntegrationController extends Controller {
         $response = (array)$response;
         if(!empty($response['transfers'])){
             $response['transfers'] = (array)$response['transfers'];
-            $is_success_all_transaction = true;
+            $is_status_update = true;
+            $statusCode = [
+                'COMPLETED', 'NRE_ACCOUNT_FAIL', 'BENE_BANK_DECLINED', 'IMPS_MODE_FAIL', 
+                'NPCI_UNAVAILABLE', 'RETURNED_FROM_BENEFICIARY', 'INVALID_BENE_ACCOUNT_OR_IFSC', 
+                'INVALID_BENE_VPA', 'MANUALLY_REJECTED', 'BENE_NOT_EXIST', 'INSUFFICIENT_BALANCE', 
+                'INSIDE_BLACKOUT_WINDOW', 'INVALID_MODE_FOR_PYID', 'BENE_BLACKLISTED', 
+                'INVALID_TRANSFER_AMOUNT', 'TRANSFER_LIMIT_BREACH', 'INVALID_PAYMENT_INSTRUMENT', 
+                'VELOCITY_CHECK_FAILED', 'DISABLED_MODE', 'BANK_ACCOUNT_INVALID', 'BANK_IFSC_INVALID', 
+                'VPA_INVALID', 'PHONE_INVALID', 'BANK_ACCOUNT_DETAILS_MISSING', 'INVALID_IFSC_FAIL', 
+                'INVALID_AMOUNT_FAIL', 'INVALID_ACCOUNT_FAIL', 'INVALID_REQUEST', 'ACCOUNT_BLOCKED', 
+                'AUTHENTICATION_FAILURE', 'NRE_ACCOUNT_FAIL', 'BAD_REQUEST', 'FAILED', 
+                'RETURNED_FROM_BENEFICIARY', 'BENE_NAME_DIFFERS', 'APPROVAL_PENDING', 
+                'ANOMALY_DETECTION'
+            ];
             $statusCodeList = ArrayHelper::getColumn($response['transfers'], 'status_code');
-            if(!in_array('completed', $statusCodeList)){
-                $is_success_all_transaction = false;
+            $result = array_diff($statusCodeList, $statusCode);
+            if(!empty($result)){
+                $is_status_update = false;
             }
             foreach($response['transfers'] as $res){
                 $res = (array)$res;
-                $statusCode = ['completed', 'nre_account_fail', 'bene_bank_declined', 'imps_mode_fail', 'npci_unavailable', 'returned_from_beneficiary', 'invalid_bene_account_or_ifsc', 'invalid_bene_vpa', 'manually_rejected', 'bene_not_exist', 'insufficient_balance', 'inside_blackout_window', 'invalid_mode_for_pyid', 'bene_blacklisted', 'invalid_transfer_amount', 'transfer_limit_breach', 'invalid_payment_instrument', 'velocity_check_failed', 'disabled_mode', 'bank_account_invalid', 'bank_ifsc_invalid', 'vpa_invalid', 'phone_invalid', 'bank_account_details_missing', 'invalid_ifsc_fail', 'invalid_amount_fail', 'invalid_account_fail', 'invalid_request', 'account_blocked', 'authentication_failure', 'nre_account_fail', 'bad_request', 'failed', 'returened_from_beneficiary', 'bene_name_differs', 'approval_pending', 'anomaly_detection'];
                 // $status = ['success', 'reversed', 'rejected', 'queued', 'pending', 'manually_rejected', 'failed', 'approval_pending'];
-                if (in_array(strtolower($res['status_code']), $statusCode)) {
+                if (in_array($res['status_code'], $statusCode)) {
                     Yii::$app->db->createCommand()
                             ->update('tbl_payment_transaction', [
-                                'disburse_amount' => new Expression("CASE WHEN '" . strtolower($res['status']) . "' != lower('success') THEN disburse_amount ELSE final_amount END"),
-                                'status' => new Expression("CASE WHEN '" . strtolower($res['status']) . "' != lower('success') THEN status ELSE 'Disburse' END"),
+                                'disburse_amount' => new Expression("CASE WHEN '" . strtolower($res['status_code']) . "' != lower('completed') THEN disburse_amount ELSE final_amount END"),
+                                'status' => new Expression("CASE WHEN '" . strtolower($res['status_code']) . "' != lower('completed') THEN status ELSE 'Disburse' END"),
                                 'is_file' => '2',
                                 'response_datetime' => date('Y-m-d H:i:s'),
                                 'bank_status' => (strtolower($res['status_code']) == 'completed') ? 'SUCCESSFUL' : 'FAILED',
@@ -219,14 +232,9 @@ class CashfreeBankIntegrationController extends Controller {
                                 'utr_no' => !empty($res['transafer_utr']) ? $res['transafer_utr'] : '',
                                     ], 'payment_transaction_code = \'' . $res['transfer_id'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $response['batch_transfer_id'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
                             ->execute();
-                        if($is_success_all_transaction){
-                            $this->updateReverseStatus($res);
-                            Yii::$app->db->createCommand()->update('tbl_bank_payment_log', [
-                                        'status' => 4,
-                                        'updated_at' => date('Y-m-d H:i:s'),
-                                        'updated_by' => 'CRON'], ['file_path' => $res['transfer_id'], 'file_name' => $response['batch_transfer_id'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
-                                    ->execute();
-                        }
+                    if($is_status_update){
+                        $this->updateReverseStatus($res);
+                    }
                 } else {
                     Yii::$app->db->createCommand()
                         ->update('tbl_payment_transaction', [
@@ -239,6 +247,14 @@ class CashfreeBankIntegrationController extends Controller {
                                 ], 'payment_transaction_code = \'' . $res['transfer_id'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $response['batch_transfer_id'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
                         ->execute();
                 }
+            }
+            if($is_status_update){
+                Yii::$app->db->createCommand()->update('tbl_bank_payment_log', [
+                            'status' => 4,
+                            'updated_at' => date('Y-m-d H:i:s'),
+                            'updated_by' => 'CRON'
+                        ], ['file_name' => $response['batch_transfer_id'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
+                        ->execute();
             }
         }
         return;
@@ -254,13 +270,13 @@ class CashfreeBankIntegrationController extends Controller {
             $summaryUpadte = (strtolower($data->type) == 'member') ? true : false;
             Yii::$app->db->createCommand()
                     ->update($table, [
-                        'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('success') THEN disburse_amount ELSE " . $amountColumnName . " END"),
-                        '' . $statusColumn . '' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('success') THEN " . $statusColumn . " ELSE 'Disburse' END"),
+                        'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status_code']) . "' != lower('completed') THEN disburse_amount ELSE " . $amountColumnName . " END"),
+                        '' . $statusColumn . '' => new Expression("CASE WHEN '" . strtolower($response['status_code']) . "' != lower('completed') THEN " . $statusColumn . " ELSE 'Disburse' END"),
                         'disburse_date' => $date,
-                        'bank_status' => $response['status_code'],
+                        'bank_status' => (strtolower($response['status_code']) == 'completed') ? 'SUCCESSFUL' : 'FAILED',
                         // 'process_date' => $response['added_on'],
                         'updated_at' => !empty($response['added_on']) ? date('Y-m-d H:i:s', strtotime($response['added_on'])) : '',
-                        'utr_no' => $response['transafer_utr'],
+                        'utr_no' => !empty($response['transafer_utr']) ? $response['transafer_utr'] : '',
                             ], 'payment_transaction_code = \'' . $response['transfer_id'] . '\' and lower(' . $statusColumn . ')=\'sent\'')
                     ->execute();
             if ($summaryUpadte) {
