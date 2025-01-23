@@ -74,7 +74,7 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                 [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
                 [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
                 [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code', 'created_by', 'updated_by'], 'safe'],
-                [['plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'file_name'], 'safe'],
         ];
     }
 
