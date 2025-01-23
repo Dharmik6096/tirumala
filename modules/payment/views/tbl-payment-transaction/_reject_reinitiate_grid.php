@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
@@ -72,10 +72,10 @@ $this->title = Yii::t('app', 'Reject Reinitiate');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Reinitiate'), ['class' => 'btn btn-primary submit mt10', 'id' => 'approve', 'value' => 'reinitiate', 'name' => 'reinitiate']);
+                echo Html::button(Yii::t('app', 'Reinitiate'), ['class' => 'btn btn-primary submit mt10 btn-login', 'id' => 'approve', 'value' => 'reinitiate', 'name' => 'reinitiate']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'index-other', false, 'mt10'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index-other', false, 'mt10 btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
