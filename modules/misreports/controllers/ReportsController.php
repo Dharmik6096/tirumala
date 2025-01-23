@@ -2,6 +2,7 @@
 
 namespace app\modules\misreports\controllers;
 
+use app\components\Worksheet;
 use yii\web\Controller;
 use yii;
 use Jaspersoft\Client\Client;
@@ -1951,6 +1952,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'to_decrypt' => ['aadhar_no'],
+                'to_text' => ['aadhar_no'],
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
                 'bkg_export' => TRUE
             ],
@@ -2395,6 +2397,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DcsMaster',
                 'title' => 'DCS Register',
                 'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No', 'password', 'password', 'adhar_no', 'aadhaar_no'],
+                'to_text' => ['bank_account_no', 'adhar_no', 'aadhaar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
@@ -2405,6 +2408,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberMaster',
                 'title' => 'Member Register',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
+                'to_text' => ['bank_account_no', 'adhar_no', 'aadhaar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
@@ -2465,6 +2469,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'VendorPayment',
                 'title' => '602 - Vendor Payment',
                 'bkg_export' => TRUE,
+                'to_text' => ['Account No']
             ],
             'MemberPaymentDcsWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2542,6 +2547,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'CustomerMaster',
                 'title' => 'Customer Master Register',
                 'to_decrypt' => ['adhar_no'],
+                'to_text' => ['aadhaar_no', 'adhar_no', 'bank_account_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
             ],
@@ -3833,6 +3839,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'FarmerRegister',
                 'title' => 'Farmer Register Format 2',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
+                'to_text' => ['aadhaar_no', 'adhar_no', 'bank_account_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
@@ -3855,6 +3862,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberProvisionalSapExport',
                 'title' => 'Member Provisional SAP Export',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob##d.m.Y', 'Dob', 'adhar_no', 'aadhaar_no'],
+                'to_text' => ['aadhaar_no', 'adhar_no'],
             ],
             'ExportProvisionalMemberBankReceipt' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
@@ -4174,50 +4182,61 @@ class ReportsController extends \app\controllers\ChildController {
         } else {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
-                'extension' => 'xls',
+                'extension' => 'xlsx',
                 'writer' => IOFactory::WRITER_XLSX,
             ];
         }
-        $objPHPExcel = new Spreadsheet();
-        $sheet = $objPHPExcel->getActiveSheet();
-        /* $objPHPExcel->getDefaultStyle()
-          ->getNumberFormat()
-          ->setFormatCode(
-          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-          ); */
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        /* $file_header = array_map(function($file_header) {
-          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-          }, array_values($file_header)); */
+        $objPHPExcel = new Spreadsheet();
+        $customWorksheet = new Worksheet($objPHPExcel, 'Sheet1');
+        $objPHPExcel->addSheet($customWorksheet);
+        $objPHPExcel->removeSheetByIndex(0);
+        $customWorksheet->fromArray($file_header, NULL, 'A1');
+        $customWorksheet->fromArray($this->output, NULL, 'A2');
+//         $objPHPExcel = new Spreadsheet();
+//         $sheet = $objPHPExcel->getActiveSheet();
+//         /* $objPHPExcel->getDefaultStyle()
+//           ->getNumberFormat()
+//           ->setFormatCode(
+//           \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//           ); */
+//         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+//         /* $file_header = array_map(function($file_header) {
+//           return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+//           }, array_values($file_header)); */
 
-        $sheet->fromArray(
-                $file_header, // The data to set
-                NULL, // Array values with this value will not be set
-                'A1'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
-        );
+//         $sheet->fromArray(
+//                 $file_header, // The data to set
+//                 NULL, // Array values with this value will not be set
+//                 'A1'         // Top left coordinate of the worksheet range where
+// //    we want to set these values (default is A1)
+//         );
+        // $dataToText = !empty($this->data['to_text']) ? $this->data['to_text'] : [];
+        // if (!empty($dataToText)) {
+        //     foreach ($dataToText as $columnName) {
+        //         $columnIndex = array_search($columnName, $file_header);
+        //         if ($columnIndex !== false) {
+        //             $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
+        //             $sheet->getStyle($accountNoColumn)
+        //                     ->getNumberFormat()
+        //                     ->setFormatCode('00000000000');
+        //         }
+        //     }
+        // }
         // array_walk_recursive($this->output, function(&$value) {
         //     $value = is_numeric($value) && strlen($value) >= 10 && preg_match('/^([0-9]+)$/', $value) ? '="' . $value . '"' : $value;
         // });
-
-
-        $columnIndex = 1;
-        $rowIndex = 2;
-        array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$rowIndex) {
-            $cell = $sheet->getCellByColumnAndRow($columnIndex, $rowIndex);
-            if (is_numeric($value) && preg_match('/^([0-9]+)$/', $value)) {
-                $sheet->setCellValueExplicit($cell->getCoordinate(), $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-            } else {
-                $sheet->setCellValue($cell->getCoordinate(), $value);
-            }
-            $columnIndex++;
-            if ($columnIndex > count($this->output[$rowIndex - 2])) {
-                $rowIndex++;
-                $columnIndex = 1; // Reset column index
-            }
-        });
-
-
+        // $columnIndex = 1;
+        // $rowIndex = 2;
+        // array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$rowIndex) {
+        //     $cell = $sheet->getCellByColumnAndRow($columnIndex, $rowIndex);
+        //     if (is_numeric($value) && preg_match('/^([0-9]+)$/', $value)) {
+        //         $sheet->setCellValueExplicit($cell->getCoordinate(), $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+        //     } else {
+        //         $sheet->setCellValue($cell->getCoordinate(), $value);
+        //     }
+        //     $columnIndex++;
+        // });
 //         $columnIndex = 1;
 //         $columnKey = '';
 //         array_walk_recursive($this->output, function (&$value, $key) use ($sheet, &$columnIndex, &$columnKey) {
@@ -4250,7 +4269,7 @@ class ReportsController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLSX);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_start();
         $objWriter->save('php://output');
         exit();
