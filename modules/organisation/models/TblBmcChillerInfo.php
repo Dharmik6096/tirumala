@@ -53,7 +53,8 @@ class TblBmcChillerInfo extends \app\models\ChildModel
             [['is_active', 'originating_type', 'fix_rent'], 'integer'],
             [['min_qty', 'tds_percentage'], 'number'],
             [['tds_percentage'], 'number','max'=>100],
-            [['is_active', 'fix_rent'], 'default', 'value' => 1], 
+            [['is_active'], 'default', 'value' => 1], 
+            [['fix_rent'], 'default', 'value' => 0], 
             [['pan_no'], function ($attribute, $params) {
                 Yii::$app->general->validatePancard($this, $attribute, $params);
             }, 'skipOnEmpty' => false],
