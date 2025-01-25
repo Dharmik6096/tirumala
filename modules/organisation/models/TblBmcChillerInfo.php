@@ -50,7 +50,7 @@ class TblBmcChillerInfo extends \app\models\ChildModel
             [['chilling_capacity','installation_date', 'agreement_from_date', 'agreement_to_date', 'created_at', 'updated_at', 'is_active', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'chiller_name', 'fix_rent', 'billing_method'], 'safe'],
             [['owner_name', 'rate_type', 'chilling_capacity', 'min_qty', 'pan_no', 'tds_percentage', 'installation_date', 'agreement_no', 'agreement_from_date', 'agreement_to_date', 'chiller_name', 'billing_method'], 'required'],
             [['owner_name', 'pan_no','rate_type','agreement_no','created_by', 'updated_by', 'originating_org_code', 'originating_org_type',], 'string'],
-            [['is_active', 'originating_type', 'fix_rent'], 'integer'],
+            [['is_active', 'originating_type'], 'integer'],
             [['min_qty', 'tds_percentage'], 'number'],
             [['tds_percentage'], 'number','max'=>100],
             [['is_active'], 'default', 'value' => 1], 
