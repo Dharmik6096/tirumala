@@ -1988,7 +1988,7 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Pending' => Yii::t('app', 'Pending'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
             ],
-            'billing_method' => [
+            'billing_method_chiller_info' => [
                 'name' => 'billing_method',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['fix_rent_daily' => Yii::t('app', 'Fix Rent Daily'), 'fix_rent_monthly' => Yii::t('app', 'Fix Rent Monthly')],

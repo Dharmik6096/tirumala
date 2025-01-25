@@ -39,7 +39,7 @@ $attribute = [
     ['attribute' => 'fix_rent', 'filter' => FALSE],
     ['attribute' => 'billing_method',
         'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('billing_method')['data'][$model->billing_method]) ? Yii::$app->dropdown->getRecords('billing_method')['data'][$model->billing_method] : '';
+            return isset(Yii::$app->dropdown->getRecords('billing_method_chiller_info')['data'][$model->billing_method]) ? Yii::$app->dropdown->getRecords('billing_method_chiller_info')['data'][$model->billing_method] : '';
     }],
 ];
 
