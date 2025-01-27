@@ -196,6 +196,7 @@ echo GhostMenu::widget([
                     ]
                 ],
                     ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/collection/tbl-milk-collection-audit/index'], 'active' => ($cntrl == 'tbl-milk-collection-audit')],
+                    ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
                     [
                         'options' => ['class' => 'dropdown-submenu toggle_right'],
                         'visible' => $collectionApproval,
@@ -233,6 +234,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Scheme Rate'), 'url' => ['/dcsoperation/tbl-scheme-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-scheme-rate-applicability-alias' && $action == 'applicabilty-approve')],
                     ]
                 ],
+                ['label' => 'Local Milk Rate', 'url' => ['/dcsoperation/tbl-local-milk-rate/index'], 'active' => ($cntrl == 'tbl-local-milk-rate')],
             ],
         ],
             [

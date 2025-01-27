@@ -189,6 +189,8 @@ class importData extends \yii\base\Module {
             'mapping-import' => ['table_name' => 'tbl_organization_latlong_applicability', 'fields' => 'applicable_for,bmc_code,applicable_code,user_code', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
             'member_update_special_code_bulk' => ['import_class' => 'back_ground_data_import', 'import_main_class' => 'BulkImportStrategy', 'table_name' => 'back_ground_data_import', 'fields' => 'dcs_code,member_code,special_code', 'scenario' => 'member_update_special_code', 'validate_length' => true],
             'member_update_special_code' => ['table_name' => 'tbl_member', 'import_main_class' => 'BackGroundDataImportStrategy', 'fields' => 'dcs_code,member_code,special_code', 'scenario' => 'specialCodeImportCsv', 'update_key' => 'member_code,dcs_code', 'exclude_update' => 'member_code,dcs_code', 'historyClass' => 'TblMemberHistory', 'validate_length' => false],
+            'localmilkrateapplicability-bulk' => ['table_name' => 'tbl_local_milk_sale_rate', 'fields' => 'dcs_code,local_milk_rate_code,wef_date', 'scenario' => 'importCsv'],
+            'local_milk_rate_bulk' => ['table_name' => 'tbl_local_milk_rate', 'fields' => 'union_code,milk_type_code,milk_quality_type_code,milk_class,rate,wef_date', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

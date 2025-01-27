@@ -17,24 +17,15 @@ use kartik\grid\GridView;
 $attribute = [
     [
         'attribute' => 'wef_date',
-        'filterType'=>GridView::FILTER_DATE,
-        'filterWidgetOptions'=>[
-            'pluginOptions'=>['format'=>'dd-mm-yyyy',
-                'autoclose'=>true]
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
-    ['attribute' => 'milk_type','value'=>'milkType.animal_type_name',],
-    ['attribute' => 'milk_class','value'=>'milkClass.class_name',],
-//    [
-//        'attribute' => 'sale_grade',
-//        'filter' => Html::activeDropDownList($searchModel, 'sale_grade', [1=>'Low',0=>'High'],['class'=>'form-control','prompt'=>'Select']),
-//        'value' => function($model) {
-//    
-//    return ($model->sale_grade==1)?'Low':'High';}],
-    ['attribute' => 'rate','value'=>'rate',],
-    
+    ['attribute' => 'rate', 'value' => 'rate',],
 ];
 
 $grid_option = [
