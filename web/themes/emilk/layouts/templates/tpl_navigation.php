@@ -762,6 +762,7 @@ echo GhostMenu::widget([
                             ['label' => '509 -' . Yii::t('app', 'DCS Wise Bill Head Applicability'), 'url' => ['/misreports/reports/dcs-wise-bill-head-applicability']],
                             ['label' => '510 -' . Yii::t('app', 'Bill Head Detail'), 'url' => ['/misreports/reports/bill-head-detail']],
                             ['label' => '511 -' . Yii::t('app', 'Chilling Bill'), 'url' => ['/jasperreports/default/mcc-chilling-bill']],
+                            ['label' => '512 -' . Yii::t('app', 'Chilling Bill Invoice'), 'url' => ['/jasperreports/default/mcc-chilling-bill-invoice']],
                     ]
                 ],
                     [
@@ -780,6 +781,7 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/vendor-milk-bill-glt']],
                                             ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/vendor-milk-bill-summary-glt']],
                                             ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/vsp-payment-vrs']],
+                                            ['label' => Yii::t('app', 'Format 4'), 'url' => ['/jasperreports/default/vsp-payment-nawasa']],
                                     ]
                                 ],
                                     [
@@ -787,13 +789,15 @@ echo GhostMenu::widget([
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Farmer') . '<b class="caret"></b></a>',
                                     'items' => [
                                             ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/member-payment-vrs']],
+                                            ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/member-payment-nawasa']],
                                     ]
                                 ],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', ' VSP Bill') . '<b class="caret"></b></a>',
                                     'items' => [
-                                            ['label' => Yii::t('app', 'Remuneration Bill'), 'url' => ['/jasperreports/default/vsp-payment-online-vrs']],
+                                            ['label' => Yii::t('app', 'Remuneration Bill Format 1'), 'url' => ['/jasperreports/default/vsp-payment-online-vrs']],
+                                            ['label' => Yii::t('app', 'Remuneration Bill Format 2'), 'url' => ['/jasperreports/default/vsp-payment-online-nawasa']],
                                     ]
                                 ],
                                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
