@@ -1660,7 +1660,7 @@ class DropDown extends Component {
             'user_login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'SAHAYAK'), 'az_manager' => Yii::t('app', 'Area Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
+                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'SAHAYAK'), 'az_manager' => Yii::t('app', 'Area Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
                 'remove_key' => ['all']
             ],
             'receiver_type' => [
@@ -1722,7 +1722,7 @@ class DropDown extends Component {
             'login_type_ho_flutter' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
+                'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
                 'remove_key' => ['all']
             ],
             'asset_detail_status' => [
@@ -1956,7 +1956,7 @@ class DropDown extends Component {
             'login_type_report' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['0' => Yii::t('app', 'All'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
+                'data' => ['0' => Yii::t('app', 'All'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
             ],
             'erp_process_name' => [
                 'name' => 'process_name',
@@ -1987,6 +1987,11 @@ class DropDown extends Component {
                 'name' => 'approval_status',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Pending' => Yii::t('app', 'Pending'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+            ],
+            'billing_method_chiller_info' => [
+                'name' => 'billing_method',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['fix_rent_daily' => Yii::t('app', 'Fix Rent Daily'), 'fix_rent_monthly' => Yii::t('app', 'Fix Rent Monthly')],
             ],
         ];
         return $records[$l];
