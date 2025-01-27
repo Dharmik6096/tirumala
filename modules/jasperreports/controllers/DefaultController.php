@@ -458,8 +458,8 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
     
-    public function actionMCCChillingBillInvoice() {
-        $this->report = 'MCCChillingBillInvoice';
+    public function actionMccChillingBillInvoice() {
+        $this->report = 'MccChillingBillInvoice';
         return $this->actionIndex();
     }
 
@@ -468,13 +468,13 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
-    public function actionVSPPaymentNawasa() {
-        $this->report = 'VSPPaymentNawasa';
+    public function actionVspPaymentNawasa() {
+        $this->report = 'VspPaymentNawasa';
         return $this->actionIndex();
     }
 
-    public function actionVSPPaymentOnlineNawasa() {
-        $this->report = 'VSPPaymentOnlineNawasa';
+    public function actionVspPaymentOnlineNawasa() {
+        $this->report = 'VspPaymentOnlineNawasa';
         return $this->actionIndex();
     }
 
@@ -1016,8 +1016,6 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VendorMilkBillGLT',
                 'title' => 'Vendor Milk Bill',
                 'bkg_export' => TRUE,
-                'tcpdf' => true,
-                'titleTcpdf' => 'VSP Payment Nawasa',
             ],
             'VendorMilkBillSummaryGLT' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
@@ -1032,8 +1030,6 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPaymentVrs',
                 'title' => 'Member Payment',
                 'bkg_export' => TRUE,
-                'tcpdf' => true,
-                'titleTcpdf' => 'Member Payment Nawasa',
             ],
             'VspPaymentVrs' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
@@ -1048,8 +1044,6 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VspPaymentOnlineVrs',
                 'title' => 'Vsp Payment Online',
                 'bkg_export' => TRUE,
-                'tcpdf' => true,
-                'titleTcpdf' => 'VSP Payment Online Nawasa',
             ],
             'VendorMilkBillShuddh' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
@@ -1114,40 +1108,30 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/MCCChillingBill',
                 'scenario' => 'MccChillingBill',
                 'title' => 'Chilling Bill',
-                'tcpdf' => true,
-                'titleTcpdf' => 'MCC Chilling Bill Invoice',
             ],
-            'MCCChillingBillInvoice' => [
+            'MccChillingBillInvoice' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string',
                 'path' => 'vsp/MCCChillingBillInvoice',
                 'scenario' => 'MCCChillingBillInvoice',
-                'title' => 'Milktype Wise Bill',
-                'tcpdf' => true,
-                'titleTcpdf' => 'MCC Chilling Bill Invoice',
+                'title' => 'MCC Chilling Bill Invoice',
             ],
             'MemberPaymentNawasa' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs',
                 'path' => 'vsp/MemberPaymentNawasa',
                 'scenario' => 'MemberPaymentNawasa',
-                'title' => 'Milktype Wise Bill',
-                'tcpdf' => true,
-                'titleTcpdf' => 'Member Payment Nawasa',
+                'title' => 'Member Payment',
             ],
-            'VSPPaymentNawasa' => [
+            'VspPaymentNawasa' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
                 'path' => 'vsp/VSPPaymentNawasa',
                 'scenario' => 'VSPPaymentNawasa',
-                'title' => 'Milktype Wise Bill',
-                'tcpdf' => true,
-                'titleTcpdf' => 'VSP Payment Nawasa',
+                'title' => 'Vsp Payment',
             ],
-            'VSPPaymentOnlineNawasa' => [
+            'VspPaymentOnlineNawasa' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
                 'path' => 'vsp/VSPPaymentOnlineNawasa',
                 'scenario' => 'VSPPaymentOnlineNawasa',
-                'title' => 'Milktype Wise Bill',
-                'tcpdf' => true,
-                'titleTcpdf' => 'VSP Payment Online Nawasa',
+                'title' => 'Vsp Payment Online',
             ],
         ];
         return $label[$l];
