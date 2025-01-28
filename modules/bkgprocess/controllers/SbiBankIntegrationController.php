@@ -78,9 +78,9 @@ class SbiBankIntegrationController extends Controller
                             $transValue['union_code'] = $union_code;
                             $saveLog = $ftp->saveLogData($transValue, $filePath, $fileName, 1, true, false, false, true, '', false, $ftpDetails);
                             if($saveLog != false){
-                                $condition = ['file_name' => $transValue['FileID'], 'is_file' => 1];
-                                $updateData = ['is_file' => 2, 'response_datetime' => date('Y-m-d H:i:s')];
-                                $paymentTransaction->updateStatus($condition, $updateData);
+                                // $condition = ['file_name' => $transValue['FileID'], 'is_file' => 1];
+                                // $updateData = ['is_file' => 2, 'response_datetime' => date('Y-m-d H:i:s')];
+                                // $paymentTransaction->updateStatus($condition, $updateData);
                             }
                         }
                     } catch (\Throwable $ex) {

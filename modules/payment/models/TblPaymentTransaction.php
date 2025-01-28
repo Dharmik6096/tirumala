@@ -368,7 +368,10 @@ class TblPaymentTransaction extends \app\models\ChildModel {
             ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
             ->where([
                 'pt.file_name' => $fileID,
-                'ubp.is_active' => 1
+                'pt.is_file' => 0,
+                'UPPER(ubp.integration_mode)' => 'XML',
+                'ubp.is_active' => 1,
+                'pt.is_approved' => 1
             ])
             ->asArray()
             ->all();
