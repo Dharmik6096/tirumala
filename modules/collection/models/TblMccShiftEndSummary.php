@@ -9,57 +9,53 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
-use app\modules\organisation\models\TblRouteMapping;
 use app\modules\organisation\models\TblUnions;
 use Yii;
 
 /**
- * This is the model class for table "tbl_weight_rejection".
+ * This is the model class for table "tbl_mcc_shift_end_summary".
  *
- * @property string $uuid
- * @property integer $sample_no
+ * @property integer $mcc_shift_end_summary_code
  * @property string $date_time_of_collection
- * @property string $shift_code
+ * @property integer $shift_code
  * @property integer $milk_type_code
- * @property integer $qty_mode
- * @property string $qty
- * @property integer $converted_qty_mode
- * @property string $converted_qty
- * @property string $cans
- * @property integer $return_type
- * @property string $device_id
- * @property string $version_no
- * @property integer $doc_no
- * @property string $vehicle_no
- * @property string $remarks
+ * @property string $quantity
+ * @property string $fat
+ * @property string $snf
+ * @property string $p_quantity
+ * @property string $p_fat
+ * @property string $p_snf
+ * @property string $d_quantity
+ * @property string $d_fat
+ * @property string $d_snf
  * @property string $union_code
  * @property string $plant_code
  * @property string $mcc_plant_code
  * @property string $bmc_code
  * @property string $dcs_code
- * @property string $route_code
- * @property integer $rejection_reason_code
- * @property integer $rejection_responsibility_code
+ * @property string $flg_sentbox_entry
+ * @property string $sync_status
+ * @property string $sync_timestamp
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
  * @property string $originating_org_code
  * @property string $originating_org_type
- * @property string $originating_type
+ * @property integer $originating_type
  * @property string $x_col1
  * @property string $x_col2
  * @property string $x_col3
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblWeightRejection extends ChildModel {
+class TblMccShiftEndSummary extends ChildModel {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_weight_rejection';
+        return 'tbl_mcc_shift_end_summary';
     }
 
     /**
@@ -67,8 +63,8 @@ class TblWeightRejection extends ChildModel {
      */
     public function rules() {
         return [
-            [['sample_no', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'qty_mode', 'qty', 'converted_qty_mode', 'converted_qty', 'cans', 'return_type', 'device_id', 'version_no', 'doc_no', 'vehicle_no', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'rejection_reason_code', 'rejection_responsibility_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['uuid'], 'required', 'except' => ['androidsync']],
+            [['mcc_shift_end_summary_code', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'quantity', 'fat', 'snf', 'p_quantity', 'p_fat', 'p_snf', 'd_quantity', 'd_fat', 'd_snf', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
 
@@ -77,30 +73,27 @@ class TblWeightRejection extends ChildModel {
      */
     public function attributeLabels() {
         return [
-            'uuid' => Yii::t('app', 'Uuid'),
-            'sample_no' => Yii::t('app', 'Sample No'),
+            'mcc_shift_end_summary_code' => Yii::t('app', 'Mcc Shift End Summary Code'),
             'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
-            'shift_code' => Yii::t('app', 'Shift Code'),
-            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
-            'qty_mode' => Yii::t('app', 'Qty Mode'),
-            'qty' => Yii::t('app', 'Qty'),
-            'converted_qty_mode' => Yii::t('app', 'Converted Qty Mode'),
-            'converted_qty' => Yii::t('app', 'Converted Qty'),
-            'cans' => Yii::t('app', 'Cans'),
-            'return_type' => Yii::t('app', 'Return Type'),
-            'device_id' => Yii::t('app', 'Device ID'),
-            'version_no' => Yii::t('app', 'Version No'),
-            'doc_no' => Yii::t('app', 'Doc No'),
-            'vehicle_no' => Yii::t('app', 'Vehicle No'),
-            'remarks' => Yii::t('app', 'Remarks'),
+            'shift_code' => Yii::t('app', 'Shift'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'quantity' => Yii::t('app', 'Quantity'),
+            'fat' => Yii::t('app', 'Fat'),
+            'snf' => Yii::t('app', 'Snf'),
+            'p_quantity' => Yii::t('app', 'P Quantity'),
+            'p_fat' => Yii::t('app', 'P Fat'),
+            'p_snf' => Yii::t('app', 'P Snf'),
+            'd_quantity' => Yii::t('app', 'D Quantity'),
+            'd_fat' => Yii::t('app', 'D Fat'),
+            'd_snf' => Yii::t('app', 'D Snf'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant'),
-            'bmc_code' => Yii::t('app', 'Bmc'),
-            'dcs_code' => Yii::t('app', 'Dcs'),
-            'route_code' => Yii::t('app', 'Route'),
-            'rejection_reason_code' => Yii::t('app', 'Rejection Reason Code'),
-            'rejection_responsibility_code' => Yii::t('app', 'Rejection Responsibility Code'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
+            'sync_status' => Yii::t('app', 'Sync Status'),
+            'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -138,10 +131,6 @@ class TblWeightRejection extends ChildModel {
 
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
-    }
-
-    public function getRouteCode() {
-        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
 
     public function getMilkTypeCode() {
