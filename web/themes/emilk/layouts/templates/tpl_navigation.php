@@ -325,6 +325,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'DCS Wise Billing Config'), 'url' => ['/payment/tbl-vsp-payment-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-config' && $action == 'index')],
                     ['label' => Yii::t('app', 'Member Payment'), 'url' => ['/payment/tbl-member-payment/index'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'index')],
                     ['label' => Yii::t('app', 'Vendor Payment'), 'url' => ['/payment/tbl-vsp-payment/index'], 'active' => ($cntrl == 'tbl-vsp-payment' && $action == 'index')],
+                    ['label' => Yii::t('app', 'Reject Reinitiate Payment'), 'url' => ['/payment/tbl-payment-transaction/reject-reinitiate'], 'active' => ($cntrl == 'tbl-payment-transaction' && $action == 'reject-reinitiate')],
                     ['label' => Yii::t('app', 'Payment Disburse Approval'), 'url' => ['/payment/tbl-payment-transaction-approval/index'], 'active' => ($cntrl == 'tbl-payment-transaction-approval' && $action == 'index')],
                     ['label' => Yii::t('app', 'Transporter Payment Process'), 'url' => ['/payment/tbl-transporter-payment/index'], 'active' => ($cntrl == 'tbl-transporter-payment')],
                     ['label' => Yii::t('app', 'Payment Data[Thirumala]'), 'url' => ['/misreports/default/farmer-payment-report'], 'active' => ($cntrl == 'default' && $action == 'farmer-payment-report')],
@@ -374,7 +375,7 @@ echo GhostMenu::widget([
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">MCC Billing<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-toggle" href="#">MCC Billing <b class="caret"></b></a>',
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'MCC Billing') . '<b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'MCC Formula Master'), 'url' => ['/vsp/tbl-mcc-general-formula/index'], 'active' => ($cntrl == 'tbl-mcc-general-formula')],
                             ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
@@ -777,6 +778,7 @@ echo GhostMenu::widget([
                             ['label' => '509 -' . Yii::t('app', 'DCS Wise Bill Head Applicability'), 'url' => ['/misreports/reports/dcs-wise-bill-head-applicability']],
                             ['label' => '510 -' . Yii::t('app', 'Bill Head Detail'), 'url' => ['/misreports/reports/bill-head-detail']],
                             ['label' => '511 -' . Yii::t('app', 'Chilling Bill'), 'url' => ['/jasperreports/default/mcc-chilling-bill']],
+                            ['label' => '512 -' . Yii::t('app', 'Chilling Bill Invoice'), 'url' => ['/jasperreports/default/mcc-chilling-bill-invoice']],
                     ]
                 ],
                     [
@@ -795,6 +797,7 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/vendor-milk-bill-glt']],
                                             ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/vendor-milk-bill-summary-glt']],
                                             ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/vsp-payment-vrs']],
+                                            ['label' => Yii::t('app', 'Format 4'), 'url' => ['/jasperreports/default/vsp-payment-nawasa']],
                                     ]
                                 ],
                                     [
@@ -802,13 +805,15 @@ echo GhostMenu::widget([
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Farmer') . '<b class="caret"></b></a>',
                                     'items' => [
                                             ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/member-payment-vrs']],
+                                            ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/member-payment-nawasa']],
                                     ]
                                 ],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', ' VSP Bill') . '<b class="caret"></b></a>',
                                     'items' => [
-                                            ['label' => Yii::t('app', 'Remuneration Bill'), 'url' => ['/jasperreports/default/vsp-payment-online-vrs']],
+                                            ['label' => Yii::t('app', 'Remuneration Bill Format 1'), 'url' => ['/jasperreports/default/vsp-payment-online-vrs']],
+                                            ['label' => Yii::t('app', 'Remuneration Bill Format 2'), 'url' => ['/jasperreports/default/vsp-payment-online-nawasa']],
                                     ]
                                 ],
                                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],

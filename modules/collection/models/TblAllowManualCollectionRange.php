@@ -284,8 +284,9 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             return false;
         }
 
+        $approvalStatus = ($this->from_date == $this->to_date) ? ['Pending', 'Inprogress', 'Approve'] : ['Pending', 'Inprogress'];
         $dataCheck = $this->find()
-                ->where(['in', 'approval_status', ['Pending', 'Inprogress']])
+                ->where(['in', 'approval_status', $approvalStatus])
                 ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))');
 
         if ($this->table_name == 'tbl_milk_collection') {

@@ -403,9 +403,9 @@ $defaultToggle = true;
                                     <?php
                                     if (isset($data['tcpdf']) && $data['tcpdf']) {
                                         $client_code = \Yii::$app->session->get('eiplCode');
-                                        $titleTcpdf = 'pdf';
-                                        $iconClass = ' fa fa-file-pdf-o ';
-                                        if (strtolower($client_code) == 'mmd') {
+                                        $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] :'pdf';
+                                        $iconClass = ' far fa-file-pdf ';
+                                        if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
                                             $titleTcpdf = 'Milktype Wise Bill';
                                             $iconClass = ' fa fa-file-text-o ';
                                         }
@@ -447,7 +447,7 @@ $defaultToggle = true;
 
             <div class="grid-search search-filter searchBtnReport text-right <?= $class ?>">
                 <?php if (false && $result != '') { ?>
-                    <?= GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                    <?= GhostHtml::submitButton('<i class="text-white far fa-file-pdf"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
                     <?php if (!isset($data['pdf'])) { ?>
                         <?= GhostHtml::submitButton('<i class="fa fa-file-code-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
                         <?= GhostHtml::submitButton('<i class="fa fa-file-excel-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'xls', 'id' => 'xls', 'title' => Yii::t('app', 'xls')]); ?>

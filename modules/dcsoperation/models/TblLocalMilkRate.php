@@ -54,7 +54,6 @@ class TblLocalMilkRate extends \app\models\ChildModel {
             [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['wef_date'], 'convertDate', 'on' => ['importCsv']],
             [['wef_date'], 'validateDate', 'on' => ['importCsv']],
-            [['wef_date'], 'unique', 'targetAttribute' => ['union_code', 'milk_quality_type_code', 'milk_type_code', 'wef_date'], 'message' => 'Rate is already taken on this WEF Date.'],
         ];
     }
 

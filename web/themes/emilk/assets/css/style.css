@@ -5588,3 +5588,14 @@ div#w12 > .card.border-default {
 h4{
     font-size: 18px;
 }
+.right_align_shift {
+    float: right;
+    padding-right: 25px;
+}
+.plus-button {
+    margin: 0 0 -29px 8px;
+    z-index: 1;
+}
+.mt-10 {
+    margin-top: 10px !important;
+}

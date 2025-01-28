@@ -464,6 +464,7 @@ $(document).ready(function() {
                     'dashboard_farmer_rmrd_blocks',
                     'mobile_analysis_dashboard_blocks',
                     'mobile_analysis_dashboard_pie_charts',
+                    'complain_summary_dashboard',
                     'iot_temperature',
                     'mcc_wise_indent_summary',
                     'today_vs_yesterday_collection',
@@ -604,6 +605,30 @@ $(document).ready(function() {
                               $.each(obj1.series, function(index, value) {   
                                 drawPieChart(index,value);
                               });
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+                else if(['complain_summary_dashboard'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'proc_complain_dashboard_list';
+                        
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/complain-summary-dashboard']) . "',
+                        data: blockDataString+'&sp='+id,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success'){
+                                $('#total_complain').text(obj1.res.total_complain);
+                                $('#inprogress_complain').text(obj1.res.inprogress_complain);
+                                $('#close_complain').text(obj1.res.close_complain);
+                                $('#resolved_complain').text(obj1.res.resolved_complain);
+                                $('#today_date').text(obj1.res.today_date);
+                                drowBarChart('complain_summary_bar_chart','Complain Summary',obj1.series);
                             }
                         },
                         error:function(data){
