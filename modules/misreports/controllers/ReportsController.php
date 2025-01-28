@@ -1112,6 +1112,9 @@ class ReportsController extends \app\controllers\ChildController {
                             if (!empty($formateChange)) {
                                 $output[$i][$decKey] = date($formateChange, strtotime($output[$i][$decKey]));
                             }
+                            if (isset($this->data['mask_data']) && in_array($decKey, $this->data['mask_data'])) {
+                                $output[$i][$decKey] = Yii::$app->general->maskAadhar($output[$i][$decKey]);
+                            }
                         }
                     }
                 }
@@ -1906,6 +1909,16 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionRateRecalculationWefDateWise() {
         $this->report = 'RateRecalculationWefDateWise';
+        return $this->actionIndex();
+    }
+
+    public function actionInsuranceDetail() {
+        $this->report = 'InsuranceDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionInsuranceDetailReconciliation() {
+        $this->report = 'InsuranceDetailReconciliation';
         return $this->actionIndex();
     }
 
@@ -4084,6 +4097,22 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'RateRecalculationWefDateWise',
                 'title' => 'Rate Recalculation(Custom)',
                 'bkg_export' => TRUE,
+            ],
+            'InsuranceDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,insurance_master_code',
+                'sp_name' => 'mis_insurance_detail',
+                'to_decrypt' => ['adhar_no', 'dob', 'nominee_adhar_no'],
+                'mask_data' => ['adhar_no', 'nominee_adhar_no'],
+                'scenario' => 'InsuranceDetail',
+                'title' => 'Insurance Detail',
+            ],
+            'InsuranceDetailReconciliation' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,insurance_master_code,operation_type',
+                'sp_name' => 'mis_insurance_detail_reconciliation',
+                'to_decrypt' => ['current_adhar_no', 'current_dob', 'previous_adhar_no', 'previous_dob', 'adhar_no', 'dob', 'nominee_adhar_no'],
+                'mask_data' => ['current_adhar_no', 'previous_adhar_no', 'adhar_no', 'nominee_adhar_no'],
+                'scenario' => 'InsuranceDetailReconciliation',
+                'title' => 'Insurance Detail Change Log',
             ],
         ];
         return $label[$l];

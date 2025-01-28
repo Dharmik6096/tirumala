@@ -253,6 +253,7 @@ $config = [
         'document' => ['class' => 'app\modules\document\Document',],
         'feedback' => ['class' => 'app\modules\feedback\Feedback',],
         'clienterp' => ['class' => 'app\modules\clienterp\Clienterp',],
+        'insurance' => ['class' => 'app\modules\insurance\insurance',],
     ],
     'params' => require(__DIR__ . '/params.php'),
 ];

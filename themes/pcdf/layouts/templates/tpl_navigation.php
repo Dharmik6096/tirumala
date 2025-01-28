@@ -67,6 +67,23 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tax Group'), 'url' => ['/dcsaccounting/tbl-tax-group/index'], 'active' => ($cntrl == 'tbl-tax-group')],
                             ['label' => Yii::t('app', 'Basic Tax'), 'url' => ['/dcsaccounting/tbl-basic-tax/index'], 'active' => ($cntrl == 'tbl-basic-tax')],
                             ['label' => Yii::t('app', 'Tax'), 'url' => ['/dcsaccounting/tbl-tax/index'], 'active' => ($cntrl == 'tbl-tax')],
+                            ['label' => Yii::t('app', 'Ledger Type'), 'url' => ['/dcsaccounting/tbl-ledger-types/index'], 'active' => ($cntrl == 'tbl-ledger-types')],
+                            ['label' => Yii::t('app', 'Voucher Type'), 'url' => ['/dcsaccounting/tbl-voucher-types/index'], 'active' => ($cntrl == 'tbl-voucher-types')],
+                            ['label' => Yii::t('app', 'Ledger Group'), 'url' => ['/dcsaccounting/tbl-ledger-groups/index'], 'active' => ($cntrl == 'tbl-ledger-groups')],
+                            ['label' => Yii::t('app', 'Ledger'), 'url' => ['/dcsaccounting/tbl-ledgers/index'], 'active' => ($cntrl == 'tbl-ledgers')],
+                            ['label' => Yii::t('app', 'Sub Ledger'), 'url' => ['/dcsaccounting/tbl-sub-ledgers/index'], 'active' => ($cntrl == 'tbl-sub-ledgers')],
+                            ['label' => Yii::t('app', 'Member BillHead'), 'url' => ['/dcsaccounting/tbl-member-bill-head/index'], 'active' => ($cntrl == 'tbl-member-bill-head')],
+                            ['label' => Yii::t('app', 'Member Bill Criteria'), 'url' => ['/dcsaccounting/tbl-member-bill-criteria/index'], 'active' => ($cntrl == 'tbl-member-bill-criteria')],
+                            ['label' => Yii::t('app', 'Voucher'), 'url' => ['/dcsaccounting/tbl-voucher/index'], 'active' => ($cntrl == 'tbl-voucher')],
+                            ['label' => Yii::t('app', 'SubLedger Ledger Config'), 'url' => ['/dcsaccounting/tbl-sub-ledger-ledger-config/index'], 'active' => ($cntrl == 'tbl-sub-ledger-ledger-config')],
+                            ['label' => Yii::t('app', 'Voucher Type Ledger Config'), 'url' => ['/dcsaccounting/tbl-voucher-type-ledger-config/index'], 'active' => ($cntrl == 'tbl-voucher-type-ledger-config')],
+                            ['label' => Yii::t('app', 'Ledger Mapping TaxDetail'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-tax-detail/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-tax-detail')],
+                            ['label' => Yii::t('app', 'Ledger Mapping ProductGroup'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-product-group/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-product-group')],
+                            ['label' => Yii::t('app', 'Ledger Mapping Event'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-event/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-event')],
+                            ['label' => Yii::t('app', 'Ledger Mapping BillHead'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-bill-head/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-bill-head')],
+                            ['label' => Yii::t('app', 'Ledger Opening Balance'), 'url' => ['/dcsaccounting/tbl-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-ledger-opening-balance')],
+                            ['label' => Yii::t('app', 'SubLedger Opening Balance'), 'url' => ['/dcsaccounting/tbl-sub-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-sub-ledger-opening-balance')],
+                            ['label' => Yii::t('app', 'Dcs Year Closing'), 'url' => ['/dcsaccounting/tbl-dcs-year-closing/index'], 'active' => ($cntrl == 'tbl-dcs-year-closing')],
                     ]
                 ],
                     ['label' => Yii::t('app', 'Vendor Master'), 'url' => ['/product/tbl-vendor-master/index'], 'active' => ($cntrl == 'tbl-vendor-master')],
@@ -198,18 +215,18 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/collection/tbl-milk-collection-audit/index'], 'active' => ($cntrl == 'tbl-milk-collection-audit')],
                     ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
                     [
-                        'options' => ['class' => 'dropdown-submenu toggle_right'],
-                        'visible' => $collectionApproval,
-                        'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Operations & Quality <b class="caret"></b></a>',
-                        'items' => [
+                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'visible' => $collectionApproval,
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Operations & Quality <b class="caret"></b></a>',
+                    'items' => [
                             ['label' => Yii::t('app', 'Weight Scale Calibration'), 'url' => ['/collection/tbl-weight-scale-calibration/index'], 'active' => ($cntrl == 'tbl-weight-scale-calibration')],
                             ['label' => Yii::t('app', 'Milk Analyzer Calibration'), 'url' => ['/collection/tbl-milk-analyzer-calibration/index'], 'active' => ($cntrl == 'tbl-milk-analyzer-calibration')],
                             ['label' => Yii::t('app', 'Mcc Shift End Summary'), 'url' => ['/collection/tbl-mcc-shift-end-summary/index'], 'active' => ($cntrl == 'tbl-mcc-shift-end-summary')],
                             ['label' => Yii::t('app', 'Shift End Summary Adulteration Test'), 'url' => ['/collection/tbl-mcc-shift-end-summary-adulteration-test/index'], 'active' => ($cntrl == 'tbl-mcc-shift-end-summary-adulteration-test')],
                             ['label' => Yii::t('app', 'Bmc Collection Audit'), 'url' => ['/collection/tbl-bmc-collection-audit/index'], 'active' => ($cntrl == 'tbl-bmc-collection-audit')],
                             ['label' => Yii::t('app', 'Weight Rejections'), 'url' => ['/collection/tbl-weight-rejection/index'], 'active' => ($cntrl == 'tbl-weight-rejection')],
-                        ]
-                    ],
+                    ]
+                ],
             ],
         ],
             [
@@ -234,7 +251,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Scheme Rate'), 'url' => ['/dcsoperation/tbl-scheme-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-scheme-rate-applicability-alias' && $action == 'applicabilty-approve')],
                     ]
                 ],
-                ['label' => 'Local Milk Rate', 'url' => ['/dcsoperation/tbl-local-milk-rate/index'], 'active' => ($cntrl == 'tbl-local-milk-rate')],
+                    ['label' => 'Local Milk Rate', 'url' => ['/dcsoperation/tbl-local-milk-rate/index'], 'active' => ($cntrl == 'tbl-local-milk-rate')],
             ],
         ],
             [
@@ -1218,6 +1235,16 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Member Share Detail Import'), 'url' => ['/dcsoperation/tbl-member-share-deposit/index'], 'active' => ($cntrl == 'tbl-member-share-deposit')],
                             ['label' => Yii::t('app', 'Transit Recovery Import'), 'url' => ['/vsp/tbl-transit-recovery/index'], 'active' => ($cntrl == 'tbl-transit-recovery')],
                             ['label' => Yii::t('app', 'Member Incentive Import'), 'url' => ['/dcsoperation/tbl-member-incentive/index'], 'active' => ($cntrl == 'tbl-member-incentive')],
+                    ],
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Insurance <b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Insurance Master'), 'url' => ['/insurance/tbl-insurance-master/index'], 'active' => ($cntrl == 'tbl-insurance-master')],
+                            ['label' => Yii::t('app', 'Insurance Detail'), 'url' => ['/insurance/tbl-insurance-detail/index'], 'active' => ($cntrl == 'tbl-insurance-detail')],
+                            ['label' => Yii::t('app', 'Insurance Detail Report'), 'url' => ['/misreports/reports/insurance-detail']],
+                            ['label' => Yii::t('app', 'Insurance Detail Change Log'), 'url' => ['/misreports/reports/insurance-detail-reconciliation']],
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],

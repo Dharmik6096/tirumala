@@ -2911,4 +2911,31 @@ class GeneralFunctions extends Component {
         return $product_array;
     }
 
+    public function maskAadhar($aadhar_no) {
+        if (!empty($aadhar_no)) {
+            $maskedAadhar = 'xxxx-xxxx-' . substr($aadhar_no, 8);
+            return $maskedAadhar;
+        } else {
+            return '';
+        }
+    }
+
+    public function getCodeMax($model, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $organizations_code = !empty(Yii::$app->session->get('organizations_code')) ? Yii::$app->session->get('organizations_code') : $model->originating_org_code;
+        $prefix = 'PORTAL-' . $organizations_code . '-';
+        $prefixLen = strlen($prefix);
+
+        $result = $model->find()
+                ->select(["MAX(CAST(SUBSTRING(" . $primaryKey . ", " . ($prefixLen + 1) . ", LEN(" . $primaryKey . ") - " . $prefixLen . ") AS INT)) AS max_code"])
+                ->where(['like', $primaryKey, $prefix])
+                ->asArray()
+                ->one();
+
+        $highestNumber = isset($result['max_code']) ? (int) $result['max_code'] + $autoInc : $autoInc;
+        $value = $prefix . $highestNumber;
+
+        return $value;
+    }
+
 }

@@ -679,6 +679,11 @@ class DropDown extends Component {
         $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-group/product-group-list', Yii::t('app', 'Select'), $multiple, $extra_param, $readonly, $id);
     }
 
+    public function insurance_dcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/insurance/tbl-insurance-detail-summary/dcs-list', Yii::t('app', 'Select Society'), $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -862,7 +867,7 @@ class DropDown extends Component {
                 $whereCondition[$tablename . '.' . $key] = $value;
             }
         }
-        if(isset($labelData['rlsWhereCondition']) && !empty($labelData['applyRls'])){
+        if (isset($labelData['rlsWhereCondition']) && !empty($labelData['applyRls'])) {
             foreach ($labelData['rlsWhereCondition'] as $key => $value) {
                 $whereCondition[$key] = $value;
             }
@@ -888,13 +893,13 @@ class DropDown extends Component {
 
         if (isset($old_model->{$fields[0]}) && $old_model->{$fields[0]} != '') {
             $unionQuery = $model->find()
-                            ->select($select_fields);
+                    ->select($select_fields);
             if (isset($labelData['joinwith'])) {
                 foreach ($labelData['joinwith'] as $val) {
                     $unionQuery->joinWith($val);
                 }
             }
-            $unionQuery->where([$tablename.'.'.$fields[0] => $old_model->{$fields[0]}])
+            $unionQuery->where([$tablename . '.' . $fields[0] => $old_model->{$fields[0]}])
                             ->createCommand()->rawSql;
 
             $tmp_query = $model->find()->select($select_fields);
@@ -1012,7 +1017,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -2049,6 +2054,26 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['DCS' => Yii::t('app', 'DCS')],
             ],
+            'consumer_type' => [
+                'name' => 'consumer_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Member'), 2 => Yii::t('app', 'Non-Member'), 3 => Yii::t('app', 'Vendor'), 4 => Yii::t('app', 'Institute'), 5 => Yii::t('app', 'Retail Sale'), 6 => Yii::t('app', 'Customer'), 7 => Yii::t('app', 'Other')],
+            ],
+            'credit_debit' => [
+                'name' => 'credit_debit',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Credit'), 0 => Yii::t('app', 'Debit')],
+            ],
+            'gender' => [
+                'name' => 'gender',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => 'Male', 2 => 'Female', 3 => 'Transgender'],
+            ],
+            'originating_org_type' => [
+                'name' => 'originating_org_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['PORTAL' => Yii::t('app', 'Portal'), 'VLC' => Yii::t('app', 'DCS')],
+            ],
         ];
         return $records[$l];
     }
@@ -2195,6 +2220,7 @@ class DropDown extends Component {
             'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
             'dispatch_center_type' => ['name' => 'dispatch_center_type_code', 'fields' => 'dispatch_center_type_code,dispatch_center_type', 'prompt' => 'Select Dispatch Center Type', 'model' => 'TblDispatchCenterType', 'joinwith' => ['userDispatchCenterMapping'], 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
             'dispatch_center' => ['name' => 'dispatch_center_code', 'fields' => 'dispatch_center_code,dispatch_center_name', 'prompt' => 'Select Dispatch Center', 'model' => 'TblDispatchCenter', 'joinwith' => ['dispatchCenterTypeCode', 'userDispatchCenterMapping'], 'concatfield' => 'tbl_dispatch_center_type.dispatch_center_type', 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
+            'insurance_master_list' => ['name' => 'insurance_master_code', 'fields' => 'insurance_master_code,insurance_description', 'prompt' => 'Select Insurance', 'model' => 'TblInsuranceMaster'],
         ];
         return $label[$l];
     }
@@ -2281,7 +2307,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

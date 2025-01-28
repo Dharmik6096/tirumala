@@ -20,7 +20,7 @@ use yii\base\InvalidParamException;
 class ChildModel extends \yii\db\ActiveRecord {
 
     public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code, $f_dcs_code, $f_route_code;
-    private $toEncrypt = ['pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'aadhaar_no', 'dob'];
+    private $toEncrypt = ['pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'aadhaar_no', 'dob', 'nominee_adhar_no'];
     public $grid_filter = TRUE;
     public $form_validation_type = 'default';
     public $hasImport = FALSE;

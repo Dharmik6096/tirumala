@@ -5927,3 +5927,7 @@ tr.highlightRow {
     margin: 0 0 -29px 8px;
     z-index: 1;
 }
+.btn-download {
+    font-size: 17px !important;
+    margin-top: -6px;
+}
