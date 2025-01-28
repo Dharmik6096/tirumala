@@ -5,8 +5,8 @@ namespace app\modules\assetmanagement\models;
 use Yii;
 use app\modules\assetmanagement\models\TblAssetMaster;
 use app\modules\assetmanagement\models\TblAssetGroup;
-//use app\modules\organisation\models\TblManufacturer;
 use app\modules\assetmanagement\models\TblStoreLocation;
+use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblCustomerMaster;
 
@@ -50,46 +50,47 @@ class TblAssetDetail extends \app\models\ChildModel {
                 [['asset_group_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'asset_group_code');
                 }, 'on' => 'importCsv'],
-                [['asset_code'], function ($attribute, $params) {
+            [['asset_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'asset_code');
                 }, 'on' => 'importCsv'],
-                [['store_location_code'], function ($attribute, $params) {
+            [['store_location_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'store_location_code');
                 }, 'on' => 'importCsv'],
-                [['manufacturer_code'], function ($attribute, $params) {
+            [['manufacturer_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_code');
                 }, 'on' => 'importCsv'],
-                [['asset_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetMaster::className(), 'targetAttribute' => ['asset_code' => 'asset_code']],
-                [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
-                [['asset_code', 'store_location_code', 'put_to_use_date', 'purchase_date'], 'required'],
-                [['asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'created_by', 'updated_by'], 'string'],
-                [['purchase_date', 'put_to_use_date', 'created_at', 'updated_at', 'is_serial_number', 'store_location_type', 'qty', 'make', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'current_status', 'is_verified', 'verification_date', 'other_info'], 'safe'],
-                [['warranty_period', 'maintanance_duration_in_days', 'capacity', 'qty'], 'number'],
-                [['is_active'], 'default', 'value' => 1],
-                [['put_to_use_date'], 'usedDateValidate'],
-                [['manufacturer_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerMaster::className(), 'targetAttribute' => ['manufacturer_code' => 'customer_code']],
-                [['store_location_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocation::className(), 'targetAttribute' => ['store_location_code' => 'store_location_code']],
-                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-                [['purchase_date', 'put_to_use_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01')],
-                [['serial_number'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+            [['asset_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetMaster::className(), 'targetAttribute' => ['asset_code' => 'asset_code']],
+            [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
+            // [['asset_code', 'store_location_code', 'put_to_use_date', 'purchase_date'], 'required', 'except' => 'assetTransfer'],
+            [['asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'created_by', 'updated_by', 'manufacturer_serial_number'], 'string'],
+            [['purchase_date', 'put_to_use_date', 'created_at', 'updated_at', 'is_serial_number', 'store_location_type', 'qty', 'make', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'current_status', 'is_verified', 'verification_date', 'other_info', 'detail_code', 'manufacturer_serial_number', 'manufacturer_code', 'manufacturer_id'], 'safe'],
+            [['warranty_period', 'maintanance_duration_in_days', 'capacity', 'qty'], 'number'],
+            [['is_active'], 'default', 'value' => 1],
+            [['put_to_use_date'], 'usedDateValidate'],
+            [['manufacturer_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerMaster::className(), 'targetAttribute' => ['manufacturer_code' => 'customer_code']],
+            [['store_location_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocation::className(), 'targetAttribute' => ['store_location_code' => 'store_location_code']],
+            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            [['purchase_date', 'put_to_use_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01')],
+            [['serial_number'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->assetCode, 'is_serial_number') == '1';
                 }, 'whenClient' => "function (attribute, value) { 
-              return $('#is_serial_number').val() == '1'; 
-          }"],
-                [['qty'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                return $('#is_serial_number').val() == '1'; 
+            }"],
+            [['qty'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->assetCode, 'is_serial_number') == '0';
                 }, 'whenClient' => "function (attribute, value) { 
-              return $('#is_serial_number').val() == '0'; 
-          }"],
-                [['asset_code'], 'checkUnique', 'skipOnError' => true],
-            //    ['asset_code', 'unique', 'targetAttribute' => (Yii::$app->general->getforeignkey($this->assetCode, 'is_serial_number') == '1') ? ['serial_number', 'asset_code'] : ['purchase_date', 'asset_code', 'store_location_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Asset/Serial No. has already been taken.')],
+                return $('#is_serial_number').val() == '0'; 
+            }"],
+            [['asset_code'], 'checkUnique', 'skipOnError' => true],
+            [['asset_code'], 'insertDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer']],
             [['qty'], 'default', 'value' => 1],
             [['make', 'other_info'], 'string', 'max' => 100],
             [['verification_date'], 'required', 'when' => function ($model) {
                     return $model->is_verified == '1';
                 }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblassetdetail-is_verified').val() == '1'; 
-          }"],
+            }"],
+            [['detail_code'], 'required', 'on' => 'assetTransfer'],
         ];
     }
 
@@ -123,13 +124,15 @@ class TblAssetDetail extends \app\models\ChildModel {
             'is_verified' => Yii::t('app', 'Is Verified'),
             'verification_date' => Yii::t('app', 'Verification Date'),
             'other_info' => Yii::t('app', 'Other Info'),
+            'detail_code' => Yii::t('app', 'Detail Code'),
+            'manufacturer_serial_number' => Yii::t('app', 'Manufacturer Serial No.'),
+            'manufacturer_id' => Yii::t('app', 'Manufacturer'),
+            'from_mcc' => Yii::t('app', 'From MCC'),
+            'from_plant' => Yii::t('app', 'From Plant'),
+            'from_dcs' => Yii::t('app', 'From DCS'),
         ];
     }
 
-//
-//    public function getManufacturerCode() {
-//        return $this->hasOne(TblManufacturer::className(), ['id' => 'manufacturer_code']);
-//    }
     public function getManufacturerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'manufacturer_code']);
     }
@@ -169,28 +172,39 @@ class TblAssetDetail extends \app\models\ChildModel {
     public function checkUnique($attribute, $params) {
         $data = 0;
         if (Yii::$app->general->getforeignkey($this->assetCode, 'is_serial_number') == '1') {
-            $data = $this->find()->where(['serial_number' => $this->serial_number, 'asset_code' => $this->asset_code])
-                    ->andWhere(['<>', 'asset_detail_code', $this->asset_detail_code])
-                    ->count();
+            $query = $this->find()->where(['serial_number' => $this->serial_number, 'asset_code' => $this->asset_code]);
+            if (!empty($this->asset_detail_code)) {
+                $query->andWhere(['<>', 'asset_detail_code', $this->asset_detail_code]);
+            }
+            $data = $query->count();
         }
-        /* else {
-          $data = $this->find()->where(['qty' => $this->qty, 'purchase_date' => $this->purchase_date, 'asset_code' => $this->asset_code, 'store_location_code' => $this->store_location_code])
-          ->andWhere(['<>', 'asset_detail_code', $this->asset_detail_code])
-          ->count();
-          } */
         if ($data != 0) {
             $this->addError($attribute, Yii::t('app/validation', 'Asset/Serial No. has already been taken.'));
         }
     }
 
-//
-//    public function getNewSrNo($asset_code, $ref_code, $spare_code) {
-//        return $this->find()
-//                        ->select(['DISTINCT(tbl_asset_detail.serial_number) as serial_number'])
-//                        ->innerJoin('tbl_asset_detail_bom', 'tbl_asset_detail_bom.asset_detail_code = tbl_asset_detail.asset_detail_code')
-//                        ->innerJoin('tbl_asset_transaction', 'tbl_asset_transaction.asset_detail_code = tbl_asset_detail.asset_detail_code')
-//                        ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
-//                        ->where(['tbl_asset_detail.asset_code' => $asset_code, 'tbl_asset_transaction.status' => '0', 'tbl_asset_detail_bom.spare_code' => $spare_code])
-//                        ->andWhere(['tbl_store_location.reference_code' => $ref_code])->asArray()->all();
-//    }
+    public function insertDetailCode($attribute, $params) {
+        $storeLocation = TblStoreLocation::find()->select(['store_location_type', 'reference_code'])->where(['store_location_code' => $this->store_location_code,'is_active' => '1'])->one();
+        $moduleMapping = ['1' => ['code' => $storeLocation->reference_code, 'name' => 'plant'],'2' => ['code' => $storeLocation->reference_code, 'name' => 'bmc'],'3' => ['code' => $storeLocation->reference_code, 'name' => 'society']];
+        
+        if (isset($moduleMapping[$this->store_location_type])) {
+            $detailCode = TblContactDetails::find()->select('detail_code')->where(['module_code' => $moduleMapping[$this->store_location_type]['code'], 'module_name' => $moduleMapping[$this->store_location_type]['name'], 'is_active' => '1', 'is_default' => '1'])->scalar();
+            if(!empty($detailCode)){
+                $this->detail_code = $detailCode;
+            }
+        }
+    }
+
+    public function getImportDetailCode() {
+        $storeLocationData = TblStoreLocation::find()->select(['store_location_type', 'reference_code'])->where(['store_location_code' => $this->store_location_code, 'is_active' => '1'])->one();
+        $moduleMapping = ['1' => 'plant', '2' => 'bmc', '3' => 'society'];
+
+        if (!empty($storeLocationData) && isset($moduleMapping[$storeLocationData->store_location_type])) {
+            $detailCode = TblContactDetails::find()->select('detail_code')->where(['module_code' => $storeLocationData->reference_code, 'module_name' => $moduleMapping[$storeLocationData->store_location_type], 'is_active' => '1', 'is_default' => '1'])->scalar();
+            if(!empty($detailCode)){
+                $this->detail_code = $detailCode;
+            }
+        }
+    }
+    
 }

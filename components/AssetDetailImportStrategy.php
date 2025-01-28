@@ -11,6 +11,7 @@ use app\modules\assetmanagement\models\TblAssetTransactionHistory;
 use app\modules\assetmanagement\models\TblAssetTransaction;
 use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\assetmanagement\models\TblAssetSetHistory;
+use yii\base\UserException;
 
 class AssetDetailImportStrategy extends ARImportStrategy {
 
@@ -148,6 +149,8 @@ class AssetDetailImportStrategy extends ARImportStrategy {
                     $error = ActiveForm::validate($model);
                     $detailerror = ActiveForm::validate($detailModel);
                     if (empty($model->getErrors()) && empty($detailModel->getErrors()) && $model->validate() && $detailModel->validate()) {
+                        $detailModel->importDetailCode;
+                        $model->importDetailCode;
                         if ($model->assetCode->is_serial_number == 1) {
                             if ($model->from_type == 'VEN' && $model->getVENEntry() > 0) {
                                 $trans->rollback();

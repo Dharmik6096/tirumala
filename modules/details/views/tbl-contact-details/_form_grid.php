@@ -38,6 +38,26 @@ $attribute = [
     ['attribute' => 'email_to', 'filter' => false],
     ['attribute' => 'email_cc', 'filter' => false],
     ['attribute' => 'email_bcc', 'filter' => false],
+    ['attribute' => 'from_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->from_date);
+        },
+    ],
+    ['attribute' => 'to_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->to_date);
+        },
+    ],
+    ['attribute' => 'primary_parent',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->primaryParent, 'name');
+        },
+    ],
+    ['attribute' => 'secondary_parent',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
+        },
+    ],
 ];
 
 $grid_option = [

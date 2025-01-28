@@ -2,7 +2,11 @@
 
 namespace app\modules\details\models;
 
+use app\modules\assetmanagement\models\TblAssetDetail;
+use app\modules\assetmanagement\models\TblStoreLocation;
+use app\modules\usermanagement\models\User;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_contact_details".
@@ -51,11 +55,13 @@ class TblContactDetails extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
             // [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['module_name', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc', 'union_code'], 'safe'],
+            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc', 'union_code', 'from_date', 'to_date', 'primary_parent', 'secondary_parent'], 'safe'],
             [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
                     Yii::$app->general->validateEmail($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-            [['is_verified', 'is_contact_verified'], 'default', 'value' => 0]
+            [['is_verified', 'is_contact_verified'], 'default', 'value' => 0],
+            [['to_date'], 'validateToDate'],
+            [['secondary_parent'], 'validateUniqueParent'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -91,6 +97,10 @@ class TblContactDetails extends \app\models\ChildModel {
             'email_to' => Yii::t('app', 'Email To'),
             'email_cc' => Yii::t('app', 'Email CC'),
             'email_bcc' => Yii::t('app', 'Email BCC'),
+            'from_date' => Yii::t('app', 'From Date'),
+            'to_date' => Yii::t('app', 'To Date'),
+            'primary_parent' => Yii::t('app', 'Primary Parent'),
+            'secondary_parent' => Yii::t('app', 'Secondary Parent'),
         ];
     }
 
@@ -190,4 +200,36 @@ class TblContactDetails extends \app\models\ChildModel {
         return false;
     }
 
+    public function getPrimaryParent() {
+        return $this->hasOne(User::className(), ['id' => 'primary_parent']);
+    }
+
+    public function getSecondaryParent() {
+        return $this->hasOne(User::className(), ['id' => 'secondary_parent']);
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->to_date) && !empty($this->from_date) && ($this->from_date > $this->to_date)) {
+            $this->addError($attribute, Yii::t('app/validation', 'To Date Must be Greater than From Date.'));
+            return false;
+        }
+    }
+
+    public function validateUniqueParent($attribute, $params) {
+        if (!empty($this->primary_parent) && !empty($this->secondary_parent) && ($this->primary_parent == $this->secondary_parent)) {
+            $this->addError($attribute, Yii::t('app/validation', 'Parent Must Not Same.'));
+            return false;
+        }
+    }
+
+    public function contactDetailList($moduleCode) {
+        $storeLocationCode = TblStoreLocation::find()->select('store_location_code')->where(['reference_code' => $moduleCode])->scalar();
+        $detailCode = TblAssetDetail::find()->select('detail_code')->where(['store_location_code' => $storeLocationCode])->scalar();
+        $query = $this->find()->where(['module_code' => $moduleCode, 'module_name' => 'society']);
+        if (!empty($detailCode)) {
+            $query->andWhere(['not in', 'detail_code', $detailCode]);
+        }
+        return ArrayHelper::map($query->all(), 'detail_code', 'contact_person');
+    }
+    
 }
