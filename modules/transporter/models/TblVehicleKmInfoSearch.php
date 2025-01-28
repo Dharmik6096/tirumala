@@ -40,7 +40,7 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params, $groupBy = true) {
         $query = TblVehicleKmInfo::find();
 
         // add conditions that should always apply here
@@ -89,7 +89,11 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
                 ->andFilterWhere(['like', 'tbl_vehicle_km_info.extra_kms', $this->extra_kms])
                 ->andFilterWhere(['like', 'tbl_vehicle_km_info.total_kms', $this->total_kms]);
 
-
+        if ($groupBy) {
+            $subQuery = TblVehicleKmInfo::find()->select(['vehicle_code', 'MAX(created_at) AS created_at', 'MAX(km_info_code) AS km_info_code',])->groupBy('vehicle_code');
+            $query->innerJoin(['subQuery' => $subQuery], 'tbl_vehicle_km_info.km_info_code = subQuery.km_info_code');
+            $query->orderBy(['created_at' => SORT_DESC]);
+        }
         return $dataProvider;
     }
 
