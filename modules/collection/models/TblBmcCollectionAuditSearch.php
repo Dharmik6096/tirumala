@@ -12,7 +12,7 @@ use app\modules\collection\models\TblBmcCollectionAudit;
  */
 class TblBmcCollectionAuditSearch extends TblBmcCollectionAudit {
 
-    public $ref_code, $bmc_ref_code;
+    public $from_date, $to_date, $from_shift, $to_shift, $ref_code, $bmc_ref_code;
 
     /**
      * @inheritdoc
@@ -21,7 +21,7 @@ class TblBmcCollectionAuditSearch extends TblBmcCollectionAudit {
         return [
             [['shift_code', 'sample_no', 'qty_mode', 'converted_qty_mode', 'no_of_can', 'qty_auto', 'qlty_auto', 'milk_type_code', 'milk_quality_type_code', 'milk_analyser_type_code', 'ws_code', 'bmc_silos_info_code', 'is_active', 'originating_type'], 'integer'],
             [['qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'rtpl', 'amount', 'adt_value', 'tare_weight', 'gross_weight', 'scheme_rate', 'actual_rate'], 'number'],
-            [['dcs_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'vehicle_no', 'route_arrival_time', 'own_bmc_code', 'own_mcc_plant_code', 'purchase_rate_code', 'customer_type', 'customer_code', 'adt_param', 'antibiotic', 'scheme_rate_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code', 'bmc_ref_code', 'date_time_of_collection'], 'safe'],
+            [['dcs_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'vehicle_no', 'route_arrival_time', 'own_bmc_code', 'own_mcc_plant_code', 'purchase_rate_code', 'customer_type', 'customer_code', 'adt_param', 'antibiotic', 'scheme_rate_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code', 'bmc_ref_code', 'date_time_of_collection', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
         ];
     }
 
