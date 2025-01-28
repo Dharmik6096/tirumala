@@ -2,6 +2,7 @@
 
 namespace app\modules\collection\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\collection\models\TblWeightRejection;
 use app\modules\collection\models\TblWeightRejectionSearch;
@@ -11,7 +12,7 @@ use yii\web\NotFoundHttpException;
 /**
  * TblWeightRejectionController implements the CRUD actions for TblWeightRejection model.
  */
-class TblWeightRejectionController extends Controller
+class TblWeightRejectionController extends ChildController
 {
 
     /**
