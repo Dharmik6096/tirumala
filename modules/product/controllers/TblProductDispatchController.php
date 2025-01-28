@@ -37,8 +37,23 @@ class TblProductDispatchController extends \app\controllers\ChildController {
      * Lists all TblProductDispatch models.
      * @return mixed
      */
+    // public function actionIndex() {
+    //     $searchModel = new TblProductDispatchSearch();
+    //     $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+    //     $title = 'Product Dispatch with Requisition';
+    //     if (Yii::$app->getRequest()->getQueryParam('flag') == 0) {
+    //         $title = 'Product Dispatch without Requisition';
+    //     }
+    //     return $this->render('index', [
+    //                 'searchModel' => $searchModel,
+    //                 'dataProvider' => $dataProvider,
+    //                 'title' => $title
+    //     ]);
+    // }
+
     public function actionIndex() {
-        $searchModel = new TblProductDispatchSearch();
+        $searchModel = new TblProductDispatchTransactionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $title = 'Product Dispatch with Requisition';

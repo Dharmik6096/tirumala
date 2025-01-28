@@ -53,6 +53,8 @@ use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\product\models\TblDispatchCenter;
+use app\modules\product\models\TblProduct;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use Exception;
@@ -2874,6 +2876,39 @@ class GeneralFunctions extends Component {
         $fromDate = $dateTime->modify("first day of $modifier")->format('Y-m-d');
         $toDate = (new \DateTime($date))->modify("last day of $modifier")->format('Y-m-d');
         return [$fromDate, $toDate];
+    }
+
+    public function getDispCenterProducts($dispatch_center_code = "") {
+        $product_array = [];
+        $product_array['product_list'] = [];
+        $product_array['pass_where_close'] = 'Yes';
+        $user_dispatch_center_code = User::find()->select('dispatch_center_code')->where(['id' => Yii::$app->session->get('UserCode')])->one();
+
+        $getDataUsingDisCenter = false;
+        $dispCenterCode = '0';
+        if (!empty($user_dispatch_center_code) && !empty($user_dispatch_center_code->dispatch_center_code)) {
+            if (empty($dispatch_center_code) || $user_dispatch_center_code->dispatch_center_code == $dispatch_center_code) {
+                $getDataUsingDisCenter = true;
+                $dispCenterCode = $user_dispatch_center_code['dispatch_center_code'];
+            }
+        } else {
+            if (empty($dispatch_center_code)) {
+                $product_array['pass_where_close'] = 'No';
+            } else {
+                $getDataUsingDisCenter = true;
+                $dispCenterCode = $dispatch_center_code;
+            }
+        }
+        if ($getDataUsingDisCenter) {
+            $dispatch_center_type_code = TblDispatchCenter::find()->select('dispatch_center_type_code')->where(['dispatch_center_code' => $dispCenterCode])->one();
+            if (!empty($dispatch_center_type_code) && !empty($dispatch_center_type_code->dispatch_center_type_code)) {
+                $groupIds = explode(',', $dispatch_center_type_code['dispatch_center_type_code']);
+                $productData = TblProduct::find()->select(['product_code'])->where(['product_group_code' => $groupIds])->all();
+                $product_list = \yii\helpers\ArrayHelper::map($productData, 'product_code', 'product_code');
+                $product_array['product_list'] = $product_list;
+            }
+        }
+        return $product_array;
     }
 
 }

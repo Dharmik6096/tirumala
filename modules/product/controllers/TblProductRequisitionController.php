@@ -25,7 +25,15 @@ class TblProductRequisitionController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new TblProductRequisitionSearch();
+        // $searchModel = new TblProductRequisitionSearch();
+        // $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // return $this->render('index', [
+        //             'searchModel' => $searchModel,
+        //             'dataProvider' => $dataProvider,
+        // ]);
+
+        $searchModel = new TblProductRequisitionTransactionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

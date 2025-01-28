@@ -20,6 +20,7 @@ $button = Yii::$app->label->button($type);
 $this->title = Yii::t('app', $title);
 $readOnly = false;
 $isNewRecord = (isset($type) && $type == 'create') ? TRUE : FALSE;
+$classs = (isset($type) && $type == 'edit') ? 'mt18' : '';
 
 if (!$isNewRecord)
     $readOnly = true;
@@ -67,7 +68,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, '', 'Login Type', FALSE, 'login_type', FALSE, TRUE) ?> 
     </div>
-    <div class="col-sm-2 mt18 user_type_show">
+    <div class="col-sm-2 user_type_show <?= $classs ?>">
         <?= $form->field($model, 'allow_app_login', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
     </div> 
     <div class="col-sm-2 user_type_show">
@@ -82,6 +83,12 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('user', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('secondary_parent'), false, 'secondary_parent'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('dispatch_center_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('dispatch_center_type'), false, 'dispatch_center_type_code'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'user-dispatch_center_type_code', 'dispatch_center_code', $model->getAttributeLabel('dispatch_center'), TRUE); ?>
     </div>
     <?php /* if ($model->checkNotSelf()) { ?>
       <div class="col-sm-2 mt25">

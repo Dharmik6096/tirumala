@@ -80,6 +80,8 @@ class Applicability extends \yii\base\Module {
     public $update_applicability = FALSE;
     public $rateMccCode = [];
     public $with_applicable_code = false;
+    public $save_applicability_child = false;
+    public $check_duplicate_field = 'dcs_code';
 
     /**
      * @inheritdoc

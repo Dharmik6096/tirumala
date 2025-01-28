@@ -1161,6 +1161,13 @@ class CustomValidation extends Component {
                     ],
                 ],
             ],
+            'EMILKPRO' => [
+                'User' => [
+                    'default' => [
+                        [['dispatch_center_type_code'], 'required'],
+                    ]
+                ],
+            ],
         ];
     }
 

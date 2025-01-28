@@ -278,6 +278,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Product Sale'), 'url' => ['/payment/tbl-product-sale/index'], 'active' => ($cntrl == 'tbl-product-sale')],
                     ['label' => Yii::t('app', 'Monthly Credit Limit'), 'url' => ['/payment/tbl-monthly-credit-limit/index'], 'active' => ($cntrl == 'tbl-monthly-credit-limit')],
                     ['label' => Yii::t('app', 'DPU Product Demand'), 'url' => ['/product/tbl-dpu-product-demand/index'], 'active' => ($cntrl == 'tbl-dpu-product-demand')],
+                    ['label' => Yii::t('app', 'Dispatch Center'), 'url' => ['/product/tbl-dispatch-center/index'], 'active' => ($cntrl == 'tbl-dispatch-center')],
                     ['label' => Yii::t('app', 'Product Receipt'), 'url' => ['/product/tbl-product-receipt/index'], 'active' => ($cntrl == 'tbl-product-receipt')],
                     ['label' => Yii::t('app', 'Product Requisition'), 'url' => ['/product/tbl-product-requisition/index'], 'active' => ($cntrl == 'tbl-product-requisition')],
                     ['label' => Yii::t('app', 'Product Dispatch With Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 1], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') != 0),],

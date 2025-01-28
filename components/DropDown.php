@@ -674,6 +674,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, $url, Yii::t('app', 'Select User'), $multiple, '', $readonly);
     }
 
+    public function product_group($model, $form, $depends, $name = 'product_group_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+        $this->setClass($form, $name);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-group/product-group-list', Yii::t('app', 'Select'), $multiple, $extra_param, $readonly, $id);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -843,18 +848,36 @@ class DropDown extends Component {
         $fields = explode(',', $labelData['fields']);
         $model_name = Yii::$app->path->define($labelData['model']);
         $model = new $model_name();
+        $tablename = $model->tablename();
         $where = [];
         if ($model->hasAttribute('is_active')) {
             $where['is_active'] = 1;
         }
+        // if (isset($labelData['whereCondition'])) {
+        //     $where = array_merge($labelData['whereCondition'], $where);
+        // }
+        $whereCondition = [];
         if (isset($labelData['whereCondition'])) {
-//            echo '<pre>';
-//            print_r($labelData['whereCondition']);
-//            die;
-            $where = array_merge($labelData['whereCondition'], $where);
+            foreach ($labelData['whereCondition'] as $key => $value) {
+                $whereCondition[$tablename . '.' . $key] = $value;
+            }
         }
-        $select_fields[] = $fields[0];
-        $select_fields[] = $fields[1];
+        if(isset($labelData['rlsWhereCondition']) && !empty($labelData['applyRls'])){
+            foreach ($labelData['rlsWhereCondition'] as $key => $value) {
+                $whereCondition[$key] = $value;
+            }
+        }
+        $where = array_merge($whereCondition, $where);
+
+        $select_fields[] = $tablename . '.' . $fields[0];
+        if (isset($labelData['concatfield'])) {
+            $select_fields[] = "CONCAT(" . $tablename . "." . $fields[1] . ',\' - \',' . $labelData["concatfield"] . ") AS " . $fields[1];
+        } else {
+            $select_fields[] = $tablename . '.' . $fields[1];
+        }
+
+        // $select_fields[] = $fields[0];
+        // $select_fields[] = $fields[1];
 
         if (!empty($fields[2])) {
             array_push($select_fields, $fields[2]);
@@ -865,14 +888,32 @@ class DropDown extends Component {
 
         if (isset($old_model->{$fields[0]}) && $old_model->{$fields[0]} != '') {
             $unionQuery = $model->find()
-                            ->select($select_fields)
-                            ->where([$fields[0] => $old_model->{$fields[0]}])
+                            ->select($select_fields);
+            if (isset($labelData['joinwith'])) {
+                foreach ($labelData['joinwith'] as $val) {
+                    $unionQuery->joinWith($val);
+                }
+            }
+            $unionQuery->where([$tablename.'.'.$fields[0] => $old_model->{$fields[0]}])
                             ->createCommand()->rawSql;
-            $tmp_query = $model->find()->select($select_fields)->where($where)->union($unionQuery);
+
+            $tmp_query = $model->find()->select($select_fields);
+            if (isset($labelData['joinwith'])) {
+                foreach ($labelData['joinwith'] as $val) {
+                    $tmp_query->joinWith($val);
+                }
+            }
+            $tmp_query->where($where)->union($unionQuery);
             $query = new Query();
             $records = $query->select('*')->from(['u' => $tmp_query])->orderBy($fields[1])->all();
         } else {
-            $records = $model->find()->select($select_fields)->where($where)->orderBy($model->tablename() . '.' . $fields[1])->all();
+            $records = $model->find()->select($select_fields);
+            if (isset($labelData['joinwith'])) {
+                foreach ($labelData['joinwith'] as $val) {
+                    $records = $records->joinWith($val);
+                }
+            }
+            $records = $records->where($where)->orderBy($tablename . '.' . $fields[1])->all();
         }
 
         return ArrayHelper::map($records, $fields[0], function($array, $key) use ($fields) {
@@ -1993,6 +2034,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['fix_rent_daily' => Yii::t('app', 'Fix Rent Daily'), 'fix_rent_monthly' => Yii::t('app', 'Fix Rent Monthly')],
             ],
+            'product_requisition_type' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['DCS' => Yii::t('app', 'DCS')],
+            ],
         ];
         return $records[$l];
     }
@@ -2137,6 +2183,8 @@ class DropDown extends Component {
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
             'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
             'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'dispatch_center_type' => ['name' => 'dispatch_center_type_code', 'fields' => 'dispatch_center_type_code,dispatch_center_type', 'prompt' => 'Select Dispatch Center Type', 'model' => 'TblDispatchCenterType', 'joinwith' => ['userDispatchCenterMapping'], 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
+            'dispatch_center' => ['name' => 'dispatch_center_code', 'fields' => 'dispatch_center_code,dispatch_center_name', 'prompt' => 'Select Dispatch Center', 'model' => 'TblDispatchCenter', 'joinwith' => ['dispatchCenterTypeCode', 'userDispatchCenterMapping'], 'concatfield' => 'tbl_dispatch_center_type.dispatch_center_type', 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
         ];
         return $label[$l];
     }
@@ -2250,6 +2298,15 @@ class DropDown extends Component {
     public function customerType($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/get-customer-type', Yii::t('app', 'Select Customer Type'), $multiple, 'where', $readonly);
+    }
+
+    public function dispatchCenterType($model, $form, $depends, $name = 'dispatch_center_code', $islable = false, $multiple = false, $readonly = false, $extra_param = '', $id = '') {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-dispatch-center-type/get-dispatch-center', Yii::t('app', 'Select Dispatch Center'), $multiple, $extra_param, $readonly, $id);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-dispatch-center-type/get-dispatch-center', Yii::t('app', 'Select Dispatch Center'), $multiple, 'where', $readonly);
+        }
     }
 
     public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name, $sp_param) {

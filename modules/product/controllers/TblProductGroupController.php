@@ -121,4 +121,20 @@ class TblProductGroupController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionProductGroupList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $pgModel = new TblProductGroup();
+                $data = $pgModel->getProdutGroupList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
 }
