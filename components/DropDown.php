@@ -2039,6 +2039,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['DCS' => Yii::t('app', 'DCS')],
             ],
+            'mcc_calc_based_on' => [
+                'name' => 'type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['bmc_collection' => Yii::t('app', 'BMC Collection'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
+            ],
+            'product_requisition_type' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['DCS' => Yii::t('app', 'DCS')],
+            ],
         ];
         return $records[$l];
     }
