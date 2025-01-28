@@ -92,7 +92,7 @@ class TblBmcCollectionAudit extends ChildModel {
      */
     public function rules() {
         return [
-            [['shift_code', 'sample_no', 'qty', 'qty_mode', 'converted_qty', 'converted_qty_mode', 'no_of_can', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'rtpl', 'amount', 'qty_auto', 'qlty_auto', 'dcs_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'milk_type_code', 'milk_quality_type_code', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'own_bmc_code', 'own_mcc_plant_code', 'purchase_rate_code', 'customer_type', 'customer_code', 'adt_param', 'adt_value', 'bmc_silos_info_code', 'antibiotic', 'tare_weight', 'gross_weight', 'scheme_rate', 'scheme_rate_code', 'actual_rate', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['shift_code', 'sample_no', 'qty', 'qty_mode', 'converted_qty', 'converted_qty_mode', 'no_of_can', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'rtpl', 'amount', 'qty_auto', 'qlty_auto', 'dcs_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'milk_type_code', 'milk_quality_type_code', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'own_bmc_code', 'own_mcc_plant_code', 'purchase_rate_code', 'customer_type', 'customer_code', 'adt_param', 'adt_value', 'bmc_silos_info_code', 'antibiotic', 'tare_weight', 'gross_weight', 'scheme_rate', 'scheme_rate_code', 'actual_rate', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'date_time_of_collection'], 'safe'],
             [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
@@ -103,6 +103,7 @@ class TblBmcCollectionAudit extends ChildModel {
     public function attributeLabels() {
         return [
             'bmc_collection_audit_code' => Yii::t('app', 'Bmc Collection Audit Code'),
+            'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
             'shift_code' => Yii::t('app', 'Shift Code'),
             'sample_no' => Yii::t('app', 'Sample No'),
             'qty' => Yii::t('app', 'Qty'),
