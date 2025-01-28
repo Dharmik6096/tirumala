@@ -73,10 +73,6 @@ class TblWeightScaleCalibrationSearch extends TblWeightScaleCalibration {
             $query->andFilterWhere([$this->actual_operator_qty, 'tbl_weight_scale_calibration.actual_quantity', $this->actual_quantity]);
         }
 
-        if (!empty($this->date_time_of_collection)) {
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_weight_scale_calibration.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
-        }
-
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
