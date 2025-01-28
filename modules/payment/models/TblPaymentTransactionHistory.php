@@ -59,7 +59,7 @@ class TblPaymentTransactionHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['payment_transaction_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code', 'history_created_at', 'history_created_by', 'operation_type', 'from_date', 'to_date'], 'safe'],
+                [['payment_transaction_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code', 'history_created_at', 'history_created_by', 'operation_type', 'from_date', 'to_date', 'ref_file_name'], 'safe'],
         ];
     }
 
