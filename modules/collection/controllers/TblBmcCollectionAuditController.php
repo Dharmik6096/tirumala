@@ -2,6 +2,7 @@
 
 namespace app\modules\collection\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\collection\models\TblBmcCollectionAudit;
 use app\modules\collection\models\TblBmcCollectionAuditSearch;
@@ -12,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * TblBmcCollectionAuditController implements the CRUD actions for TblBmcCollectionAudit model.
  */
-class TblBmcCollectionAuditController extends Controller
+class TblBmcCollectionAuditController extends ChildController
 {
 
     /**

@@ -2,6 +2,7 @@
 
 namespace app\modules\collection\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\collection\models\TblMccShiftEndSummary;
 use app\modules\collection\models\TblMccShiftEndSummarySearch;
@@ -12,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * TblMccShiftEndSummaryController implements the CRUD actions for TblMccShiftEndSummary model.
  */
-class TblMccShiftEndSummaryController extends Controller
+class TblMccShiftEndSummaryController extends ChildController
 {
     
     /**

@@ -2,6 +2,7 @@
 
 namespace app\modules\collection\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\collection\models\TblWeightScaleCalibration;
 use app\modules\collection\models\TblWeightScaleCalibrationSearch;
@@ -12,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * TblWeightScaleCalibrationController implements the CRUD actions for TblWeightScaleCalibration model.
  */
-class TblWeightScaleCalibrationController extends Controller
+class TblWeightScaleCalibrationController extends ChildController
 {
     
     /**

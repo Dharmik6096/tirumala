@@ -2,6 +2,7 @@
 
 namespace app\modules\collection\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\collection\models\TblMilkAnalyzerCalibration;
 use app\modules\collection\models\TblMilkAnalyzerCalibrationSearch;
@@ -12,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * TblMilkAnalyzerCalibrationController implements the CRUD actions for TblMilkAnalyzerCalibration model.
  */
-class TblMilkAnalyzerCalibrationController extends Controller
+class TblMilkAnalyzerCalibrationController extends ChildController
 {
     
     /**
