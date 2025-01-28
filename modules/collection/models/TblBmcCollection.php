@@ -1103,7 +1103,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function validateMilkType($attribute, $params) {
-        $resdata = $this->calculateData('check_fat_range', $this->union_code, $this->bmc_code, $this->fat, '', $this->milk_type_code);
+        $resdata = $this->calculateData('check_fat_range', $this->union_code, $this->bmc_code, $this->fat, $this->milk_type_code);
         if (!empty($resdata['msg'])) {
             $this->addError('milk_type_code', $resdata['msg']);
             return FALSE;
