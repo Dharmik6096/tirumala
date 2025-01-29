@@ -335,8 +335,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
                         $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
                         $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
-                        $net_payable = number_format((float)$summaryData->net_payable + (float)$adjustmentSummary[$dcs]['adjustment'], 2, '.', '');
-                        $hold_amount = number_format((float)$adjustmentSummary[$dcs]['hold'] + (float)$adjustmentSummary[$dcs]['adjust_recovery'] - (float)$adjustmentSummary[$dcs]['recovery'], 2, '.', '');
+                        $net_payable = number_format((float)$summaryData->net_payable + (float)$adjustmentSummary[$dcs]['adjustment']+(float)$adjustmentSummary[$dcs]['adjust_recovery'], 2, '.', '');
+                        $hold_amount = number_format((float)$adjustmentSummary[$dcs]['hold'] + (float)$adjustmentSummary[$dcs]['recovery'], 2, '.', '');
                         $final_amount = $net_payable - $hold_amount;
                         $summaryData->final_amount = number_format($final_amount, 2, '.','');
                         // $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
