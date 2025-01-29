@@ -1,5 +1,7 @@
 <?php
 
+use kartik\grid\GridView;
+
 $attribute = [
     ['attribute' => 'union_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -28,6 +30,19 @@ $attribute = [
     ['attribute' => 'dcs_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'vAlign' => 'middle', 'filter' => false],
+    [
+        'attribute' => 'date_time_of_collection',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => [
+                'format' => 'dd-mm-yyyy',
+                'autoclose' => true
+            ]
+        ],
+        'value' => function ($model) {
+            return Yii::$app->controls->view_date($model->date_time_of_collection);
+        }
+    ],
     [
         'attribute' => 'shift_code',
         'filter' => false,
