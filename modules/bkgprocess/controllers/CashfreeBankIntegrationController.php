@@ -95,7 +95,7 @@ class CashfreeBankIntegrationController extends Controller {
                     $trf['transfer_amount'] = $payment['final_amount'];
                     $trf['transfer_mode'] = 'banktransfer';
                     $trf['beneficiary_details']['beneficiary_id'] = $payment['beneficiary_id'];
-                    //  $trf['fundsource_id'] = $batch['bank_account_no'];
+                    $trf['fundsource_id'] = $batch['bank_account_no'];
                     $transfers[] = $trf;
                 }
 
