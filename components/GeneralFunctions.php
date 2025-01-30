@@ -54,6 +54,7 @@ use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\product\models\TblDispatchCenter;
+use app\modules\product\models\TblDispatchCenterApplicability;
 use app\modules\product\models\TblProduct;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
@@ -2936,6 +2937,15 @@ class GeneralFunctions extends Component {
         $value = $prefix . $highestNumber;
 
         return $value;
+    }
+
+    public function getDispatchCenter($applicable_code, $for, $product_code) {
+        return TblDispatchCenterApplicability::find()->select(['tbl_dispatch_center_applicability.dispatch_center_code'])
+                        ->join('INNER JOIN', 'tbl_dispatch_center', 'tbl_dispatch_center.dispatch_center_code=tbl_dispatch_center_applicability.dispatch_center_code')
+                        ->join('INNER JOIN', 'tbl_product', 'tbl_product.product_group_code in (SELECT code from SplitToTable (tbl_dispatch_center.dispatch_center_type_code,\',\'))')
+                        ->where(['tbl_dispatch_center_applicability.applicable_code' => $applicable_code, 'tbl_dispatch_center_applicability.applicable_for' => $for, 'tbl_product.product_code' => $product_code])
+                        ->asArray()
+                        ->one();
     }
 
 }

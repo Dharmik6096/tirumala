@@ -684,6 +684,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/insurance/tbl-insurance-detail-summary/dcs-list', Yii::t('app', 'Select Society'), $multiple, $model->$name, $readonly);
     }
 
+    public function product_master($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readOnly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -2038,11 +2043,6 @@ class DropDown extends Component {
                 'name' => 'billing_method',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['fix_rent_daily' => Yii::t('app', 'Fix Rent Daily'), 'fix_rent_monthly' => Yii::t('app', 'Fix Rent Monthly')],
-            ],
-            'product_requisition_type' => [
-                'name' => 'status',
-                'prompt' => Yii::t('app', 'Select'),
-                'data' => ['DCS' => Yii::t('app', 'DCS')],
             ],
             'mcc_calc_based_on' => [
                 'name' => 'type',

@@ -235,12 +235,12 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
 
     /////old code rename function name only//////
     public function actionAcceptRequisitionOld($id) {
-//        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
+        //        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
         $this->model = new TblProductRequisition();
         $this->model = $this->model->getRecord($id);
         $this->viewFile = 'accept_requisition_old';
         $this->searchModel = new TblProductRequisitionSearch();
-//        $this->dataProvider = $this->searchModel->searchRequisition(Yii::$app->request->queryParams);
+        //        $this->dataProvider = $this->searchModel->searchRequisition(Yii::$app->request->queryParams);
         $schememodal = new TblProductRequisitionTransaction();
         if ((Yii::$app->request->post())) {
             $approvedByUser = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
