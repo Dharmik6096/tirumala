@@ -19,6 +19,7 @@ class BiplModel {
     private $data, $model, $username = "BIPL", $password = "@BiPl!2025", $path = '/BIPLFTP/ErrorLogs';
 
     function __construct() {
+        $this->path = Yii::getAlias('@webroot') . $this->path;
         set_error_handler(array($this, 'handleError'));
     }
 
