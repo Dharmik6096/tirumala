@@ -56,7 +56,7 @@ class BiplDispatch extends \yii\db\ActiveRecord
             [['date', 'time','c_samples','status'], 'safe'],
             [['d_qty', 'd_fat', 'd_snf', 'd_awm'], 'number','min'=>0],
             [['c_samples'], 'integer','min'=>0],
-            ['cp_code', 'string', 'length' => 8, 'skipOnEmpty'=>true],
+            ['cp_code', 'string', 'length' => 7, 'skipOnEmpty'=>true],
             [['census_code'],function ($attribute, $params) {
                     $bipl=new BiplModel();
                     $bipl->findCensus($this, $attribute,$params);

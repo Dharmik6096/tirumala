@@ -207,13 +207,13 @@ class BiplModel {
     protected function checkDirectory($path) {
         if (file_exists($path)) {
             if (!is_dir($path)) { //if file is already present, but it's not a dir
-                if (mkdir($path, '0777', true) == false) {
+                if (mkdir($path, 0777, true) == false) {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
             }
         } else { //no file exists with this name
-            if (mkdir($path, '0777', true) == false) {
+            if (mkdir($path, 0777, true) == false) {
                 die('Failed to create folders...' . $path);
                 return false;
             }
@@ -222,11 +222,11 @@ class BiplModel {
     }
 
     protected function createCpLogFile($path, $text, $cp_code) {
-        $path = $path . '\\' . $cp_code;
+        $path = $path . '/' . $cp_code;
         $dir = $this->checkDirectory($path);
         if ($dir) {
-            $timestamp = date('d-m-Y-H-i-s');
-            $fileName = $path . "\\" . $timestamp . '.txt';
+            $timestamp = date('Ymd-His');
+            $fileName = $path . "/" . $timestamp . '.txt';
             $logfile = fopen($fileName, "w") or die("Unable to open file!");
             fwrite($logfile, $text);
             fclose($logfile);
@@ -235,11 +235,11 @@ class BiplModel {
     }
 
     protected function createGenLogFile($path, $text) {
-        $path = $path . '\general';
+        $path = $path . '/general';
         $dir = $this->checkDirectory($path);
         if ($dir) {
-            $timestamp = date('d-m-Y-H-i-s');
-            $fileName = $path . "\\" . $timestamp . '.txt';
+            $timestamp = date('Ymd-His');
+            $fileName = $path . "/" . $timestamp . '.txt';
             $logfile = fopen($fileName, "w") or die("Unable to open file!");
             fwrite($logfile, $text);
             fclose($logfile);
