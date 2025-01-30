@@ -1436,14 +1436,14 @@ class SchedulerController extends ChildController {
                     $cnt = count($mapData);
                     $data_array = [];
                     $data_array['module_name'] = 'TblMilkCollection_Ananda';
-                    $data_array['module_code'] = NULL;
-                    $data_array['mcc_plant_code'] = NULL;
+                    $data_array['module_code'] = $mapData[0]['MCC'];
+                    $data_array['mcc_plant_code'] = $mapData[0]['MCC'];
                     $data_array['union_code'] = $mapData[0]['union_code'];
                     $data_array['applicable_date'] = Yii::$app->formatter->asDate($mapData[0]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($mapData[0]['shift_code']);
                     $data_array['shift_code'] = $mapData[0]['shift_code'];
                     $data_array['bmc_code'] = NULL;
                     $data_array['from_date'] = $data_array['applicable_date'];
-                    $data_array['to_date'] = Yii::$app->formatter->asDate($mapData[$cnt - 1]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($modelData[$cnt - 1]['shift_code']);
+                    $data_array['to_date'] = $data_array['applicable_date'];
 
                     $modelDataOutput = array_map(function($item) {
                         unset($item['union_code'], $item['data_post_status'], $item['ftp_txn_file_name']);
