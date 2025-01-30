@@ -1422,34 +1422,46 @@ class SchedulerController extends ChildController {
         $data = $modelData;
         if (!empty($modelData)) {
             try {
-                $cnt = count($modelData);
-                $data_array = [];
-                $data_array['module_name'] = 'TblMilkCollection_Ananda';
-                $data_array['module_code'] = NULL;
-                $data_array['mcc_plant_code'] = NULL;
-                $data_array['union_code'] = $modelData[0]['union_code'];
-                $data_array['applicable_date'] = Yii::$app->formatter->asDate($modelData[0]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($modelData[0]['shift_code']);
-                $data_array['shift_code'] = $modelData[0]['shift_code'];
-                $data_array['bmc_code'] = NULL;
-                $data_array['from_date'] = $data_array['applicable_date'];
-                $data_array['to_date'] = Yii::$app->formatter->asDate($modelData[$cnt - 1]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($modelData[$cnt - 1]['shift_code']);
+                $bmcDateShiftData = [];
+                foreach ($modelData as $code) {
+                    $collData = explode('_', $code['ftp_txn_file_name']);
+                    $date = $collData[2];
+                    $shift = $collData[3];
+                    $bmc = $collData[1];
+                    $uniqueKey = $bmc . '_' . $date . '_' . $shift;
+                    $bmcDateShiftData[$uniqueKey][] = $code;
+                }
 
-                $modelData = array_map(function($item) {
-                    unset($item['union_code'], $item['data_post_status'], $item['ftp_txn_file_name']); // Remove specific keys
-                    return $item;
-                }, $modelData);
-                $title = $data[0]['ftp_txn_file_name'];
-                $ftp_model = new TblFtpTxnLog();
-                $result = $ftp_model->exportData($data_array, $title, $modelData, '', false, TRUE, TRUE);
-                if (!empty($result)) {
-                    $model->updateProcessStatus('SUCCESS', '2', 2, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
-                } else {
-                    $model->updateProcessStatus('ERROR', '0', 0, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                foreach ($bmcDateShiftData as $uniqueKey => $mapData) {
+                    $cnt = count($mapData);
+                    $data_array = [];
+                    $data_array['module_name'] = 'TblMilkCollection_Ananda';
+                    $data_array['module_code'] = NULL;
+                    $data_array['mcc_plant_code'] = NULL;
+                    $data_array['union_code'] = $mapData[0]['union_code'];
+                    $data_array['applicable_date'] = Yii::$app->formatter->asDate($mapData[0]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($mapData[0]['shift_code']);
+                    $data_array['shift_code'] = $mapData[0]['shift_code'];
+                    $data_array['bmc_code'] = NULL;
+                    $data_array['from_date'] = $data_array['applicable_date'];
+                    $data_array['to_date'] = Yii::$app->formatter->asDate($mapData[$cnt - 1]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($modelData[$cnt - 1]['shift_code']);
+
+                    $modelDataOutput = array_map(function($item) {
+                        unset($item['union_code'], $item['data_post_status'], $item['ftp_txn_file_name']);
+                        return $item;
+                    }, $mapData);
+                    $title = $mapData[0]['ftp_txn_file_name'];
+                    $ftp_model = new TblFtpTxnLog();
+                    $result = $ftp_model->exportData($data_array, $title, $modelDataOutput, '', false, TRUE, TRUE);
+                    if (!empty($result)) {
+                        $model->updateProcessStatus('SUCCESS', '2', 2, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+                    } else {
+                        $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+                    }
                 }
             } catch (\yii\db\Exception $e) {
-                $model->updateProcessStatus('ERROR', '0', 0, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
             } catch (\Throwable $e) {
-                $model->updateProcessStatus('ERROR', '0', 0, $data[0]['data_post_status'], $data[0]['ftp_txn_file_name']);
+                $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
             }
         }
     }
