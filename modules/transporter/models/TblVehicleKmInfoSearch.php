@@ -90,8 +90,8 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
                 ->andFilterWhere(['like', 'tbl_vehicle_km_info.total_kms', $this->total_kms]);
 
         if ($groupBy) {
-            $subQuery = TblVehicleKmInfo::find()->select(['vehicle_code', 'MAX(created_at) AS created_at', 'MAX(km_info_code) AS km_info_code',])->groupBy('vehicle_code');
-            $query->innerJoin(['subQuery' => $subQuery], 'tbl_vehicle_km_info.km_info_code = subQuery.km_info_code');
+            $subQuery = TblVehicleKmInfo::find()->select(['vehicle_code', 'MAX(wef_date) AS wef_date'])->groupBy('vehicle_code', 'wef_date');
+            $query->innerJoin(['subQuery' => $subQuery], 'tbl_vehicle_km_info.wef_date = subQuery.wef_date AND tbl_vehicle_km_info.vehicle_code = subQuery.vehicle_code');
             $query->orderBy(['created_at' => SORT_DESC]);
         }
         return $dataProvider;

@@ -111,6 +111,9 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
             'evening_grace_time' => Yii::t('app', 'Grace Time(E)(Min)'),
             'parsing_no' => Yii::t('app', 'Parsing No.'),
             'route_ref_code' => Yii::t('app', 'Route Ref Code'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'Mcc'),
+            'bmc_code' => Yii::t('app', 'Bmc'),
         ];
     }
 
