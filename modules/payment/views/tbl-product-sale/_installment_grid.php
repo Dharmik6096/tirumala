@@ -16,19 +16,20 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Sale installments'
             <?php
             $attribute = [
                 //'product_sale_code',
-                    ['attribute' => 'customer_type', 'label' => Yii::t('app', 'Type'), 'value' => function($model) {
+                ['attribute' => 'customer_type', 'label' => Yii::t('app', 'Type'), 'value' => function($model) {
                         return Yii::$app->general->getmultiforeignkey($model->saleCode, ['customerType'], 'customer_desc');
                     }, 'vAlign' => 'middle', 'filter' => false],
-                    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+                ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                         return !empty($model->saleCode) ? Yii::$app->general->getCustomer($model->saleCode, $model->saleCode->customer_type) : 'N/A';
                     }, 'vAlign' => 'middle', 'filter' => false],
-                    ['attribute' => 'payment_cycle_code', 'value' => function($model) {
-                        if (!empty($model->tblPaymentCycleCode)) {
-                            return '<span><div>' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->tblPaymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->tblPaymentCycleCode, 'to_date')) . '</div></span>';
-                        } else {
-                            return 'N/A';
-                        }
-                    }, 'filter' => false, 'format' => 'raw'],
+                ['label' => Yii::t('app', 'Installment Date'), 'attribute' => 'installment_date',
+                    'filterWidgetOptions' => [
+                        'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                            'autoclose' => true]
+                    ],
+                    'value' => function($model) {
+                        return Yii::$app->controls->view_date($model->installment_date);
+                    }],
                 //'sale_code',
                 //'sale_date_time',
                 /* [
@@ -41,9 +42,11 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Sale installments'
                   /*'value' => function($model) {
                   return Yii::$app->controls->view_date($model->sale_date_time);
                   }], */
-                    ['attribute' => 'main_amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
-                    ['attribute' => 'installment_amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
-                    ['attribute' => 'installment_status', 'filter' => false],
+                ['attribute' => 'main_amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+                ['attribute' => 'installment_amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+                ['attribute' => 'installment_status', 'filter' => false, 'value' => function ($model) {
+                        return $model->installment_status == 1 ? 'YES' : 'NO';
+                    },]
             ];
 
             $grid_option = [
