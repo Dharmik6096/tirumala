@@ -43,7 +43,7 @@ class BiplCalibration extends \yii\db\ActiveRecord
             [['svc', 'usr', 'pswd', 'cp', 'imei', 'mcc', 'cp_code', 'census_code', 'vendor_id', 'milk_type'], 'string'],
             [['date', 'time'], 'safe'],
             [['fat_offset', 'snf_offset'], 'number'],
-            ['cp_code', 'string', 'length' => 7, 'skipOnEmpty'=>true],
+            ['cp_code', 'string', 'min' => 7, 'max' => 12, 'skipOnEmpty'=>true],
             [['census_code'],function ($attribute, $params) {
                     $bipl=new BiplModel();
                     $bipl->findCensus($this, $attribute,$params);

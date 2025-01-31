@@ -40,7 +40,7 @@ class BiplCleaning extends \yii\db\ActiveRecord
             [['svc', 'usr', 'pswd', 'census_code','cp_code','date','time','no_of_cycles'],'required'],
             [['svc', 'usr', 'pswd', 'cp', 'imei', 'mcc', 'cp_code', 'census_code', 'vendor_id'], 'string'],
             [['date', 'time'], 'safe'],
-            ['cp_code', 'string', 'length' => 7, 'skipOnEmpty'=>true],
+            ['cp_code', 'string', 'min' => 7, 'max' => 12, 'skipOnEmpty'=>true],
             [['census_code'],function ($attribute, $params) {
                     $bipl=new BiplModel();
                     $bipl->findCensus($this, $attribute,$params);
