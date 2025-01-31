@@ -23,10 +23,6 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Sale installments'
                         return !empty($model->saleCode) ? Yii::$app->general->getCustomer($model->saleCode, $model->saleCode->customer_type) : 'N/A';
                     }, 'vAlign' => 'middle', 'filter' => false],
                 ['label' => Yii::t('app', 'Installment Date'), 'attribute' => 'installment_date',
-                    'filterWidgetOptions' => [
-                        'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                            'autoclose' => true]
-                    ],
                     'value' => function($model) {
                         return Yii::$app->controls->view_date($model->installment_date);
                     }],
