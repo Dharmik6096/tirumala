@@ -42,8 +42,14 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $model = $this->findModel($id);
+        $searchModel = new TblVehicleKmInfoSearch();
+        $searchModel->vehicle_code = $model->vehicle_code;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
