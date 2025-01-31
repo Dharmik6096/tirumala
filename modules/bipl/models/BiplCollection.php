@@ -56,7 +56,7 @@ class BiplCollection extends \yii\db\ActiveRecord
             [['svc', 'usr', 'pswd', 'cp', 'imei', 'mcc', 'cp_code', 'census_code', 'vendor_id', 'milk_type', 'local_code', 'ext_code', 'mobile', 'given_name', 'family_name', 'father_name', 'm_mode', 'qty_mode', 'shift'], 'string'],
             [['date', 'time'], 'safe'],
             [['qty', 'fat', 'snf', 'awm', 'rate', 'amt'], 'number','min'=>0],
-            ['cp_code', 'string', 'length' => 8, 'skipOnEmpty'=>true],
+            ['cp_code', 'string', 'min' => 7, 'max' => 12, 'skipOnEmpty'=>true],
             [['census_code'],function ($attribute, $params) {
                     $bipl=new BiplModel();
                     $bipl->findCensus($this, $attribute,$params);

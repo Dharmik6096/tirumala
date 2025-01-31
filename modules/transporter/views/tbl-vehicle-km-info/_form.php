@@ -26,9 +26,24 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehiclekminfo-transporter_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('vehicle_code')); ?>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('route_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $readonly, 'route_code'); ?>
-    </div>
+    <?php if ($type == 'create') { ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehiclekminfo-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), false, '', $readonly); ?>  
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblvehiclekminfo-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), false, '', $readonly); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvehiclekminfo-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblvehiclekminfo-plant_code,tblvehiclekminfo-mcc_plant_code,tblvehiclekminfo-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+        </div>
+    <?php } else { ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdown('route_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $readonly, 'route_code'); ?>
+        </div>
+    <?php } ?>
     <!--        <div class="col-sm-2 default_hide"> 
         <? Yii::$app->dropdown->depend_dropdown('routemapping', $model, $form, 'tblvehiclekminfo-union_code', 'form-group col-sm-4', $model->getAttributeLabel('route_code'), '', FALSE); ?>
             </div>-->
@@ -38,7 +53,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'morning_kms')->textInput() ?>
     </div>
@@ -50,8 +64,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'total_kms')->textInput(['readOnly' => true]) ?>
-    </div>    
-    <div class="clearfix"></div>
+    </div>
     <div class="col-sm-2">
         <?=
         $form->field($model, 'morning_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
