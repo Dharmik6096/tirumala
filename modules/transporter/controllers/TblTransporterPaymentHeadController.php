@@ -121,10 +121,11 @@ class TblTransporterPaymentHeadController extends \app\controllers\ChildControll
                     $out[] = array('id' => $key, 'name' => $val);
                 }
                 echo Json::encode(['output' => $out, 'selected' => '']);
-                return;
+                die;
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+        die;
     }
 
 }
