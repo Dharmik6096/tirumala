@@ -135,10 +135,11 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
                 echo Json::encode(['output' => $out, 'selected' => '']);
-                return;
+                die;
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+        die;
     }
 
     public function actionRouteVehicleDetail() {
