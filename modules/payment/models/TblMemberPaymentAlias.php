@@ -96,6 +96,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 [['payment_release_type', 'shortage_amount_old','union_bank_payment_code'], 'safe'],
                 // [['bank_name','ifsc','bank_account_no','bank_code','branch_name','branch_code','beneficiary_name'], 'checkBankValidate', 'on' => ['finalize_payment']],
                 [['bmc_code'], 'checkBankValidate', 'on' => ['finalize_payment']],
+                [['hold_type'], 'safe'],
         ];
     }
 
@@ -157,6 +158,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             'net_payable' => Yii::t('app', 'Final Pay'),
             'recovery_dcs' => Yii::t('app', 'DCS'),
             'payment_release_type' => Yii::t('app', 'Disburse Type'),
+            'hold_type' => Yii::t('app', 'Hold Type'),
         ];
     }
 

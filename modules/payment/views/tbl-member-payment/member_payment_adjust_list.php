@@ -19,6 +19,8 @@ $config = (isset(Yii::$app->session->get('unionConfig')[$aliasModel->union_code]
 $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['milk_short_recovery_member']) ? Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['milk_short_recovery_member'] : 0;
 $urlForPost = ['member-payment-adjust', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code];
 
+$member_payment_hold_type = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_payment_hold_type', 'PORTAL') > 0 ? true : false;
+
 $shortage_info = '';
 $shortage_pending_info = '';
 $shortage_amount = 0;
@@ -86,6 +88,9 @@ $tot_amt = array_sum(array_map(function ($array) {
                                 <th><?= Yii::t('app', 'Previous Hold(+)') ?></th>
                                 <th><?= Yii::t('app', 'Previous Due(-)') ?></th>
                                 <th><?= Yii::t('app', 'Final Pay') ?></th>
+                                <?php if ($member_payment_hold_type == '1') { ?>
+                                    <th><?= Yii::t('app', 'Hold Type') ?></th>
+                                <?php } ?>
                                 <th><?= Yii::t('app', 'Hold Amount(-)') ?></th>
                                 <th><?= Yii::t('app', 'Additional Pay(+)') ?></th>
                                 <?php if ($milk_short_recovery_member == '1') { ?>
@@ -136,6 +141,13 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td><?= $m['previous_hold'] ?></td>
                                     <td><?= $m['previous_due'] ?></td>
                                     <td class='final-amount'><?= $m['net_payable'] ?></td>
+                                    <?php
+                                    if($member_payment_hold_type){ ?>
+                                        <td class="no_padding_input hide_help_block">
+                                            <?php echo  Yii::$app->dropdown->dropdownStatic('hold_type', $model, $form, 'grid-dropdown hold-type', '', false, 'hold_type[' . $index . ']', false, false, true, true, false, $m['hold_type']); ?>
+                                        </td>
+                                    <?php
+                                    } ?>
                                     <td class="no_padding_input hide_help_block">
                                         <?php
                                         echo Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $m['member_payment_alias_code']]);
@@ -392,6 +404,18 @@ function SumAmountold()
     total=$tot_amt+total;
     $('#total-payment').html('Total Payable :: '+total.toFixed(2));
 } 
+
+$('select.hold-type').on('change', function(){
+    var parent = $(this).parents('tr');
+    var netAmount = 0;
+    if($(this).val() == 'permanent'){
+        netAmount = parent.find('.net-amount').val();
+    }
+    parent.find('.hold-amount').val(netAmount);
+    parent.find('.cal-amount').trigger('blur');
+    parent.find('.hold-amount').trigger('blur');
+});
+
 // $('.kv-panel-before').hide();
  
 

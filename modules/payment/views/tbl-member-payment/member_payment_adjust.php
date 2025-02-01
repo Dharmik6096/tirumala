@@ -47,11 +47,20 @@ $script = '
     $(document).on("click", "#adjust", function(){
 //    $("#adjust").click(function() {
     $(".process_lock_flag").val("Process");
-     var negativeVal = "No";
+    var negativeVal = "No";
+    var negativeVal = "No";
+    var negativeHoldVal = "No";
     $(".final-amount").each(function() {
         var parent = $(this).parents("tr");
         var final = parseFloat(parent.find(".final-amount").text());
         var netPay = parseFloat(parent.find(".net-amount").val());
+        var holdAmount = parseFloat(parent.find(".hold-amount").val());
+        var holdType = parent.find(".hold-type option:selected").val();
+        if(holdType == "permanent"){
+            if(holdAmount == "" || isNaN(holdAmount) || holdAmount <= 0){
+                negativeHoldVal = "Yes";
+            }
+        }
         if(final == "" ||  isNaN(final)){
             final=0;
         }
@@ -63,8 +72,15 @@ $script = '
     });
     var message = "' . $message . '";
     var negativeCount = ' . $negativeValCount . ';
-    if(negativeCount > 0 || negativeVal == "Yes") {
-        var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+    var dispMessage = "";
+    if(negativeHoldVal == "Yes"){
+        dispMessage = "Hold amount must be greater than 0 for permanent hold.<br>";
+    }
+    if(negativeCount > 0 || negativeVal == "Yes"){
+        dispMessage = dispMessage + "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+    }
+
+    if(dispMessage != "") {
         bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
     } else {
         var totalRec=0;
@@ -95,10 +111,19 @@ $(document).on("click", "#adjust-lock", function(){
     $(".process_lock_flag").val("Lock");
     
     var negativeVal = "No";
+    var negativeHoldVal = "No";
     $(".final-amount").each(function() {
         var parent = $(this).parents("tr");
         var final = parseFloat(parent.find(".final-amount").text());
         var netPay = parseFloat(parent.find(".net-amount").val());
+        var holdAmount = parseFloat(parent.find(".hold-amount").val());
+        var holdType = parent.find(".hold-type option:selected").val();
+        if(holdType == "permanent"){
+            if(holdAmount == "" || isNaN(holdAmount) || holdAmount <= 0){
+                negativeHoldVal = "Yes";
+            }
+        }
+
         if(final == "" ||  isNaN(final)){
             final=0;
         }
@@ -110,8 +135,15 @@ $(document).on("click", "#adjust-lock", function(){
     });
     var message = "' . $message . '";
     var negativeCount = ' . $negativeValCount . ';
-    if(negativeCount > 0 || negativeVal == "Yes") {
-        var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+    var dispMessage = "";
+    if(negativeHoldVal == "Yes"){
+        dispMessage = "Hold amount must be greater than 0 for permanent hold.<br>";
+    }
+    if(negativeCount > 0 || negativeVal == "Yes"){
+        dispMessage = dispMessage + "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+    }
+
+    if(dispMessage != "") {
         bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
     } else {
         bootbox.confirm({
@@ -272,12 +304,12 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
                     $('#'+id).focus().select();
             });
             return false;
-        } else {              
-        if(net != '' &&  !isNaN(net)){
-         parent.find('.net-amount').val(net.toFixed(2));
-          SumAmount();
+        } else {
+            parent.find('.net-amount').val(net.toFixed(2));              
+            if(net != '' &&  !isNaN(net)){
+                SumAmount();
+            }
         }
-       }
     });
 
 

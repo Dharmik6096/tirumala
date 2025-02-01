@@ -57,6 +57,7 @@ use app\modules\vsp\models\TblBillHeadInstallmentHistory;
 use app\modules\payment\models\TblMemberPaymentHeadSummary;
 use app\modules\payment\models\TblPaymentStop;
 use app\modules\payment\models\TblPaymentStopHistory;
+use app\modules\payment\models\TblPermanentHoldAmount;
 use app\modules\vsp\models\TblBillHead;
 use app\modules\payment\models\TblVspPayment;
 
@@ -858,6 +859,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             }
             if (!empty($model->union_code)) {
                 $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
+                $member_payment_hold_type = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_payment_hold_type', 'PORTAL') > 0 ? true : false;
             }
             if ($is_bank_integrated && empty($union_bank)) {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
@@ -1002,6 +1004,23 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                     $outstanding->hold_amount = $Data->hold_amount;
                                     $outstanding->due_amount = $Data->additional_pay;
                                     $outstanding->transaction_date = date('Y-m-d');
+                                    if($member_payment_hold_type && $Data->hold_type == 'permanent'){
+                                        $permanentHoldModel = new TblPermanentHoldAmount();
+            //                            $permanentHoldModel->attributes = $outstanding->attributes;
+                                        $permanentHoldModel->union_code = $outstanding->union_code;
+                                        $permanentHoldModel->plant_code = $outstanding->plant_code;
+                                        $permanentHoldModel->mcc_plant_code = $outstanding->mcc_plant_code;
+                                        $permanentHoldModel->bmc_code = $outstanding->bmc_code;
+                                        $permanentHoldModel->dcs_code = $outstanding->dcs_code;
+                                        $permanentHoldModel->transaction_date = $outstanding->transaction_date;
+                                        $permanentHoldModel->payment_cycle_code = $outstanding->payment_cycle_code;
+                                        $permanentHoldModel->hold_amount = $outstanding->hold_amount;
+                                        $permanentHoldModel->customer_type = 'member';
+                                        $permanentHoldModel->customer_code = $Data->member_code;
+                                        $outstanding->hold_amount = 0;
+                                        $permanentHoldModel->save();
+                                        // $save_model[] = $permanentHoldModel;
+                                    }
                                     $outstanding->save(false);
 //                                $save_model[] = $oshistoryModel;
                                 } else {
@@ -1018,6 +1037,23 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                         }
                                     }
                                     $this->setDefaultFieldsArr($outStandRecord, $outStandFields, $outstanding, $defaultCreateFields);
+                                    if($member_payment_hold_type &&  $Data->hold_type == 'permanent'){
+                                        $permanentHoldModel = new TblPermanentHoldAmount();
+            //                            $permanentHoldModel->attributes = $outstanding->attributes;
+                                        $permanentHoldModel->union_code = $outstanding->union_code;
+                                        $permanentHoldModel->plant_code = $outstanding->plant_code;
+                                        $permanentHoldModel->mcc_plant_code = $outstanding->mcc_plant_code;
+                                        $permanentHoldModel->bmc_code = $outstanding->bmc_code;
+                                        $permanentHoldModel->dcs_code = $outstanding->dcs_code;
+                                        $permanentHoldModel->transaction_date = $outstanding->transaction_date;
+                                        $permanentHoldModel->payment_cycle_code = $outstanding->payment_cycle_code;
+                                        $permanentHoldModel->hold_amount = $outstanding->hold_amount;
+                                        $permanentHoldModel->customer_type = 'member';
+                                        $permanentHoldModel->customer_code = $Data->member_code;
+                                        $outstanding->hold_amount = 0;
+                                        $permanentHoldModel->save();
+                                        // $save_model[] = $permanentHoldModel;
+                                    }
                                     $outStandRecords[] = $outStandRecord;
                                     if (count($outStandRecords) >= 100) {
                                         if (!empty($summaryRecords)) {

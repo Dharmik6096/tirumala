@@ -887,7 +887,7 @@ class DropDown extends Component {
                 });
     }
 
-    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true, $return = false, $multiple = false) {
+    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true, $return = false, $multiple = false, $selectedValue = '') {
         if (in_array($flag, ['organizations_type'])) {
             (Yii::$app->session->get('organizations_type') == 'UNION') ? $flag = 'organizations_type_union' : $flag = 'organizations_type_federation';
         }
@@ -915,23 +915,25 @@ class DropDown extends Component {
                 unset($records[$value]);
             }
         }
-
+        if($selectedValue == '' && isset($model->{$control_name})){
+            $selectedValue = $model->{$control_name};
+        }
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
-                        'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
+                        'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'value' => $selectedValue, 'disabled' => $disable, 'class' => $class]]
                     )->label($label);
         }
         if ($multiple) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
-                        'data' => $records, 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
+                        'data' => $records, 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple], 'options' => ['placeholder' => $data['prompt'], 'value' => $selectedValue, 'disabled' => $disable, 'class' => $class]]
                     )->label($label);
         }
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
-                'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
+                'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'value' => $selectedValue, 'disabled' => $disable, 'class' => $class]]
             )->label($label);
         } else {
-            $options = ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable];
+            $options = ['prompt' => Yii::t('app', $data['prompt']), 'value' => $selectedValue, 'disabled' => $disable];
             if ($data['prompt'] === FALSE) {
                 unset($options['prompt']);
             }
@@ -1997,6 +1999,11 @@ class DropDown extends Component {
                 'name' => 'type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['bmc_collection' => Yii::t('app', 'BMC Collection'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
+            ],
+            'hold_type' => [
+                'name' => 'hold_type',
+                'prompt' => Yii::t('app', 'Hold Type'),
+                'data' => ['next_payment' => Yii::t('app', 'Next Payment'), 'permanent' => Yii::t('app', 'Permanent')],
             ],
         ];
         return $records[$l];

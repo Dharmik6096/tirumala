@@ -71,6 +71,7 @@ class TblMemberPaymentAliasHistory extends \yii\db\ActiveRecord {
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'safe'],
             [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay', 'operation_type', 'history_created_at', 'history_created_by'], 'safe'],
             [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'member_name', 'beneficiary_name', 'dcs_name'], 'safe'],
+            [['hold_type'], 'safe'],
         ];
     }
 
@@ -124,6 +125,7 @@ class TblMemberPaymentAliasHistory extends \yii\db\ActiveRecord {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'hold_type' => Yii::t('app', 'Hold Type'),
         ];
     }
 
