@@ -18,7 +18,7 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
      */
     public function rules() {
         return [
-                [['allow_manual_collection_code', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'remark', 'entry_type', 'table_name', 'application_type', 'approved_at', 'approved_by', 'approval_status', 'complain_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['allow_manual_collection_code', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'remark', 'entry_type', 'table_name', 'application_type', 'approved_at', 'approved_by', 'approval_status', 'complain_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'action_perform'], 'safe'],
         ];
     }
 
@@ -103,7 +103,8 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
                 ->andFilterWhere(['like', 'application_type', $this->application_type])
                 ->andFilterWhere(['like', 'approved_by', $this->approved_by])
                 ->andFilterWhere(['like', 'approval_status', $this->approval_status])
-                ->andFilterWhere(['like', 'complain_type', $this->complain_type]);
+                ->andFilterWhere(['like', 'complain_type', $this->complain_type])
+                ->andFilterWhere(['like', 'action_perform', $this->action_perform]);
 
         return $dataProvider;
     }
