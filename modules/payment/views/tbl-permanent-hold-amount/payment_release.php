@@ -23,10 +23,14 @@ $script = "
 $(document).ready(function() {
     $('#release').click(function() {
         var checkBoxCount = $('.kv-row-checkbox:checked').length;
-        var pay_cycle = $('#payment_cycle_code').val();
         var err = '';
-        if(pay_cycle == ''){
-            err = 'Please select payament cycle<br>';
+        // var pay_cycle = $('#payment_cycle_code').val();
+        // if(pay_cycle == ''){
+        //     err = 'Please select payament cycle<br>';
+        // }
+        var releaseDate = $('#release_date').val();
+        if(releaseDate == ''){
+            err = 'Please select release date<br>';
         }
         if(checkBoxCount <= 0){
             err = err + 'Please Select atleast one Record'
@@ -38,9 +42,13 @@ $(document).ready(function() {
         }
     });
     
-    $('#tblpermanentholdamountsearch-payment_cycle_code').on('change', function(){
-        var payment_cycle_code = $(this).val();
-        $('#payment_cycle_code').val(payment_cycle_code);
+    // $('#tblpermanentholdamountsearch-payment_cycle_code').on('change', function(){
+    //     var payment_cycle_code = $(this).val();
+    //     $('#payment_cycle_code').val(payment_cycle_code);
+    // });
+    $('#tblpermanentholdamountsearch-release_date').on('change', function(){
+        var release_date = $(this).val();
+        $('#release_date').val(release_date);
     });
 });";
 $this->registerJs($script, View::POS_END, 'release-script');

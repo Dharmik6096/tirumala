@@ -46,7 +46,7 @@ class TblPermanentHoldAmountSearch extends TblPermanentHoldAmount
             [['hold_amount','release_date'], 'safe'],
             [['customer_type', 'customer_code'], 'safe'],
             [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code','f_dcs_code'],'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'],'required','on'=>'releasepayment'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'],'required','on'=>'releasepayment'],
             [['bank_code','branch_code','bank_account_no','ifsc','bank_name','branch_name','beneficiary_name','is_verified','from_date','to_date', 'release_amount'], 'safe'],
         ];
     }
@@ -87,6 +87,13 @@ class TblPermanentHoldAmountSearch extends TblPermanentHoldAmount
         if($release){
             $query->where(['tbl_permanent_hold_amount.release_date' => NULL]);
         }
+
+        $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'cast(tbl_permanent_hold_amount.from_date as date)', $this->from_date]);
+
+        $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'cast(tbl_permanent_hold_amount.to_date as date)', $this->to_date]);
+
         $query->andFilterWhere(['tbl_permanent_hold_amount.union_code' => $this->union_code])
                 ->andFilterWhere(['tbl_permanent_hold_amount.plant_code' => $this->plant_code])
                 ->andFilterWhere(['tbl_permanent_hold_amount.mcc_plant_code' => $this->mcc_plant_code])

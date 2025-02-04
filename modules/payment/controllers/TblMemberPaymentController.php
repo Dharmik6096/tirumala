@@ -509,6 +509,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'] : [];
             $shortage_amt = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['shortage_amount']) ? Yii::$app->request->post('TblMemberPaymentAlias')['shortage_amount'] : [];
             $shortage_head = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['shortage_head_code']) ? Yii::$app->request->post('TblMemberPaymentAlias')['shortage_head_code'] : [];
+            $hold_type = Yii::$app->request->post('TblMemberPaymentAlias')['hold_type'];
 
             $save_model = [];
             $cnt = 0;
@@ -569,6 +570,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $data->hold_amount = $holdAmount;
                 $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount + $adjust_recovery - $recovery;
                 $data->payment_status = $processFlag;
+                $data->hold_type = !empty($hold_type[$key]) ? $hold_type[$key] : 'next_payment';
                 $save_model[] = $historyModel;
                 $save_model[] = $data;
                 if ($oldData['final_amount'] != $data->final_amount) {
@@ -906,18 +908,19 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                 if (!empty($payCycleModelData)) {
                                     $historyModel = new TblPaymentCycleApplicabilityHistory();
                                     Yii::$app->operation->history($payCycleModelData, $historyModel, UPDATE);
-//                                $save_model[] = $historyModel;
+                                    //$save_model[] = $historyModel;
                                     $historyModel->save();
                                     $model->from_datetime = $payCycleModelData->from_date;
+                                    $model->to_datetime = $payCycleModelData->to_date;
                                     $payCycleModelData->billing_lock_member = 1;
-//                                $save_model[] = $payCycleModelData;
+                                    //$save_model[] = $payCycleModelData;
                                     $payCycleModelData->save(false);
                                 }
                             }
 
                             foreach ($summaryModelData as $summaryData) {
-//                            $historyModel = new TblMemberPaymentSummaryAliasHistory();
-//                            Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
+                                //$historyModel = new TblMemberPaymentSummaryAliasHistory();
+                                //Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
                                 $mainModel = new TblMemberPaymentSummary();
                                 $mainModel->attributes = $summaryData->attributes;
                                 $mainModel->created_at = NULL;
@@ -938,9 +941,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                     \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment_summary', $summaryFields, $summaryRecords)->execute();
                                     $summaryRecords = [];
                                 }
-//                            $save_model[] = $mainModel;
-//                            $save_model[] = $historyModel;
-//                            $deleteModel[] = $summaryData;
+                                //$save_model[] = $mainModel;
+                                //$save_model[] = $historyModel;
+                                //$deleteModel[] = $summaryData;
                             }
 
                             $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
@@ -948,8 +951,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             $templateModel = new TblAlertTemplate();
                             $templateData = $templateModel->getTemplateData('member_payment', 'SMS', $model->union_code);
                             foreach ($query as $Data) {
-//                            $historyModel = new TblMemberPaymentAliasHistory();
-//                            Yii::$app->operation->history($Data, $historyModel, UPDATE);
+                                //$historyModel = new TblMemberPaymentAliasHistory();
+                                //Yii::$app->operation->history($Data, $historyModel, UPDATE);
                                 $mainModel = new TblMemberPayment();
                                 $mainModel->attributes = $Data->attributes;
                                 $mainModel->created_at = NULL;
@@ -975,9 +978,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                     \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment', $memberFields, $memberRecords)->execute();
                                     $memberRecords = [];
                                 }
-//                            $save_model[] = $mainModel;
-//                            $save_model[] = $historyModel;
-//                            $deleteModel[] = $Data;
+                                //$save_model[] = $mainModel;
+                                //$save_model[] = $historyModel;
+                                //$deleteModel[] = $Data;
 
 
 
@@ -1006,7 +1009,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                     $outstanding->transaction_date = date('Y-m-d');
                                     if($member_payment_hold_type && $Data->hold_type == 'permanent'){
                                         $permanentHoldModel = new TblPermanentHoldAmount();
-            //                            $permanentHoldModel->attributes = $outstanding->attributes;
+                                        //$permanentHoldModel->attributes = $outstanding->attributes;
                                         $permanentHoldModel->union_code = $outstanding->union_code;
                                         $permanentHoldModel->plant_code = $outstanding->plant_code;
                                         $permanentHoldModel->mcc_plant_code = $outstanding->mcc_plant_code;
@@ -1017,12 +1020,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                         $permanentHoldModel->hold_amount = $outstanding->hold_amount;
                                         $permanentHoldModel->customer_type = 'member';
                                         $permanentHoldModel->customer_code = $Data->member_code;
+                                        $permanentHoldModel->from_date = $model->from_datetime;
+                                        $permanentHoldModel->to_date= $model->to_datetime;
                                         $outstanding->hold_amount = 0;
                                         $permanentHoldModel->save();
                                         // $save_model[] = $permanentHoldModel;
                                     }
                                     $outstanding->save(false);
-//                                $save_model[] = $oshistoryModel;
+                                    //$save_model[] = $oshistoryModel;
                                 } else {
                                     $outstanding->payment_cycle_code = $Data->payment_cycle_code;
                                     $outstanding->hold_amount = $Data->hold_amount;
@@ -1039,7 +1044,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                     $this->setDefaultFieldsArr($outStandRecord, $outStandFields, $outstanding, $defaultCreateFields);
                                     if($member_payment_hold_type &&  $Data->hold_type == 'permanent'){
                                         $permanentHoldModel = new TblPermanentHoldAmount();
-            //                            $permanentHoldModel->attributes = $outstanding->attributes;
+                                        //$permanentHoldModel->attributes = $outstanding->attributes;
                                         $permanentHoldModel->union_code = $outstanding->union_code;
                                         $permanentHoldModel->plant_code = $outstanding->plant_code;
                                         $permanentHoldModel->mcc_plant_code = $outstanding->mcc_plant_code;
@@ -1050,6 +1055,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                         $permanentHoldModel->hold_amount = $outstanding->hold_amount;
                                         $permanentHoldModel->customer_type = 'member';
                                         $permanentHoldModel->customer_code = $Data->member_code;
+                                        $permanentHoldModel->from_date = $model->from_datetime;
+                                        $permanentHoldModel->to_date= $model->to_datetime;
                                         $outstanding->hold_amount = 0;
                                         $permanentHoldModel->save();
                                         // $save_model[] = $permanentHoldModel;
@@ -1070,7 +1077,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                         }
                                     }
                                 }
-//                            $save_model[] = $outstanding;
+                                //$save_model[] = $outstanding;
                                 //send sms
 
                                 if (Yii::$app->session->get('eiplCode') == 'MMD') {
@@ -1084,8 +1091,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                     $t_date = Yii::$app->controls->view_date($Data->to_datetime);
                                     $t_date = Yii::$app->controls->view_date($Data->to_datetime);
                                     if (!empty($mobilNo)) {
-//                                    $templateModel = new TblAlertTemplate();
-//                                    $templateData = $templateModel->getTemplateData('member_payment', 'SMS', $Data->union_code);
+                                        //$templateModel = new TblAlertTemplate();
+                                        //$templateData = $templateModel->getTemplateData('member_payment', 'SMS', $Data->union_code);
                                         if (!empty($templateData)) {
                                             $arrFrom = array("{member_name}", "{mcc_code_ex}", "{dcs_code_ex}", "{member_code_ex}", "{from_date}", "{to_date}", "{qty}", "{amt}", "{deduction}", "{net_amount}");
                                             $arrTo = array(substr($name, 0, 10), $mcc_ex, $dcs_ex, $ex_code, $f_date, $t_date, $Data->qty, $Data->total_amount, $Data->total_deduction, $Data->net_payable);
@@ -1135,7 +1142,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                                 \Yii::$app->db->createCommand()->batchInsert('tbl_alert_notification', $alertFields, $alertRecords)->execute();
                                                 $alertRecords = [];
                                             }
-//                                        $save_model[] = $notificationmodel;
+                                            //$save_model[] = $notificationmodel;
                                         }
                                     }
                                 }
@@ -1160,14 +1167,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                 \Yii::$app->db->createCommand()->batchInsert('tbl_alert_notification', $alertFields, $alertRecords)->execute();
                                 $alertRecords = [];
                             }
-//                        $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
-//                                ->all();
-//                        $summaryModelData = $summaryModel->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
-//                                ->all();
+                            //$query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
+                            //        ->all();
+                            //$summaryModelData = $summaryModel->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
+                            //        ->all();
                             $summaryModel->deleteAll(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code]);
                             $model->deleteAll(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code]);
                             $transaction->commit();
-//                    $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Member Payment Disburse', 'create']);
+                            //$transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Member Payment Disburse', 'create']);
                         } catch (\yii\base\UserException $e) {
                             $transaction->rollback();
                             $saveAllData = false;
@@ -1179,7 +1186,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                                 'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
                         }
-//                    if ($transaction == 'customRedirect') {
+                        //if ($transaction == 'customRedirect') {
                         if ($saveAllData) {
                             $msg_content = Yii::t('app', 'Member Payment Successfully Disbursed.');
                             Yii::$app->getSession()->setFlash('success', ['type' => 'success',
@@ -1213,22 +1220,21 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
                         $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
                         $originating_org_code = \Yii::$app->session->get('organizations_code');
-//                        $param = [];
-//                        $param['union_code'] = $model->union_code;
-//                        $param['bmc_code'] = $model->bmc_code;
-//                        $param['payment_cycle_code'] = $model->payment_cycle_code;
-//                        $param['user_code'] = $user;
-//                        $param['org_code'] = $originating_org_code;
-//                        $param['org_type'] = 'PORTAL';
-//                        $param['is_without_release'] = $model->payment_release_type;
-//                        Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
-//
-//                        $param = [];
-//                        $param['from_datetime'] = $model->from_datetime;
-//                        $param['customer_type'] = 'MEMBER';
-//                        $param['bmc_code'] = $model->bmc_code;
-//                        $param['user_code'] = $user;
-//                        Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                        //$param = [];
+                        //$param['union_code'] = $model->union_code;
+                        //$param['bmc_code'] = $model->bmc_code;
+                        //$param['payment_cycle_code'] = $model->payment_cycle_code;
+                        //$param['user_code'] = $user;
+                        //$param['org_code'] = $originating_org_code;
+                        //$param['org_type'] = 'PORTAL';
+                        //$param['is_without_release'] = $model->payment_release_type;
+                        //Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
+                        //$param = [];
+                        //$param['from_datetime'] = $model->from_datetime;
+                        //$param['customer_type'] = 'MEMBER';
+                        //$param['bmc_code'] = $model->bmc_code;
+                        //$param['user_code'] = $user;
+                        //Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
                         $bmc_array = [];
                         if (is_array($model->bmc_code)) {
                             $bmc_array = $model->bmc_code;

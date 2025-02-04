@@ -400,6 +400,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     }
 
     public function checkBankValidate($attribute, $params){
+        return true;
         $isValid = true;
         $pendingBankVerifyCount = $this->find()
                 ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verified' => 0])

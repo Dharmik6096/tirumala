@@ -35,7 +35,12 @@ use yii\widgets\ActiveForm;
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblpermanentholdamountsearch-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>
         </div>
-        
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, true); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, true); ?>
+        </div>        
         <div class=" col-sm-2 form-group mt23">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         </div>
@@ -53,7 +58,8 @@ use yii\widgets\ActiveForm;
                 echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                 echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                 ?>
-                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblpermanentholdamountsearch-union_code,tblpermanentholdamountsearch-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+                <?php // Yii::$app->dropdown->paymentCycle($model, $form, 'tblpermanentholdamountsearch-union_code,tblpermanentholdamountsearch-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+                <?= Yii::$app->controls->date($model, $form, 'release_date'); ?>
             </div>
             <?php
         }

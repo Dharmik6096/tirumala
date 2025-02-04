@@ -16,7 +16,8 @@ $form = ActiveForm::begin([
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
         ]);
-echo Html::hiddenInput('payment_cycle_code', 'payment_cycle_code', ['id' => 'payment_cycle_code']);
+// echo Html::hiddenInput('payment_cycle_code', 'payment_cycle_code', ['id' => 'payment_cycle_code']);
+echo Html::hiddenInput('release_date', '', ['id' => 'release_date']);
 $attribute = [
     ['class' => 'kartik\grid\CheckboxColumn',
         'rowSelectedClass' => GridView::TYPE_SUCCESS,
@@ -54,6 +55,13 @@ $attribute = [
     ['attribute' => 'customer_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'label' => Yii::t('app', 'Member Name'), 'filter' => false],
+    ['attribute' => 'hold_amount', 'filter' => false],
+    ['attribute' => 'release_amount',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return '<span class=\'rtpl_validate\'>' . $form->field($model, '[' . $index . ']release_amount')->textInput(['value' => $model->release_amount, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
+            },
+        ],
     
     // ['attribute' => 'payment_cycle_code', 'value' => function($model) {
     //         return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
@@ -81,8 +89,6 @@ $attribute = [
         'value' => function ($model) {
             return Yii::$app->controls->view_date($model->created_at);
         }, 'label' => Yii::t('app', 'Hold Date'), 'filter' => false],
-    ['attribute' => 'hold_amount', 'filter' => false],
-    ['attribute' => 'release_amount', 'filter' => false],
 ];
 
 $grid_option = [
