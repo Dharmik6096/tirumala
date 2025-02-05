@@ -65,8 +65,8 @@ function drowBarChart(cont,text,w_data) {
     $.each(w_data, function(index, value) {
           keyArr.push(index);
           createdComplain.push(parseInt(value.created_complain));  
-          inprogressComplain.push(parseInt(value.created_complain));  
-          resolvedComplain.push(parseInt(value.created_complain));  
+          inprogressComplain.push(parseInt(value.inprogress_complain));  
+          resolvedComplain.push(parseInt(value.resolved_complain));  
           closeComplain.push(parseInt(value.close_complain));  
     });
     

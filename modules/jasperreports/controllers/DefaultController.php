@@ -457,6 +457,26 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'MccChillingBill';
         return $this->actionIndex();
     }
+    
+    public function actionMccChillingBillInvoice() {
+        $this->report = 'MccChillingBillInvoice';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberPaymentNawasa() {
+        $this->report = 'MemberPaymentNawasa';
+        return $this->actionIndex();
+    }
+
+    public function actionVspPaymentNawasa() {
+        $this->report = 'VspPaymentNawasa';
+        return $this->actionIndex();
+    }
+
+    public function actionVspPaymentOnlineNawasa() {
+        $this->report = 'VspPaymentOnlineNawasa';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1088,6 +1108,30 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/MCCChillingBill',
                 'scenario' => 'MccChillingBill',
                 'title' => 'Chilling Bill',
+            ],
+            'MccChillingBillInvoice' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/MCCChillingBillInvoice',
+                'scenario' => 'MCCChillingBillInvoice',
+                'title' => 'MCC Chilling Bill Invoice',
+            ],
+            'MemberPaymentNawasa' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/MemberPaymentNawasa',
+                'scenario' => 'MemberPaymentNawasa',
+                'title' => 'Member Payment',
+            ],
+            'VspPaymentNawasa' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VSPPaymentNawasa',
+                'scenario' => 'VSPPaymentNawasa',
+                'title' => 'Vsp Payment',
+            ],
+            'VspPaymentOnlineNawasa' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VSPPaymentOnlineNawasa',
+                'scenario' => 'VSPPaymentOnlineNawasa',
+                'title' => 'Vsp Payment Online',
             ],
         ];
         return $label[$l];

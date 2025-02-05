@@ -47,13 +47,14 @@ class TblBmcChillerInfo extends \app\models\ChildModel
     public function rules()
     {
         return [
-            [['chilling_capacity','installation_date', 'agreement_from_date', 'agreement_to_date', 'created_at', 'updated_at', 'is_active', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'chiller_name'], 'safe'],
-            [['owner_name', 'rate_type', 'chilling_capacity', 'min_qty', 'pan_no', 'tds_percentage', 'installation_date', 'agreement_no', 'agreement_from_date', 'agreement_to_date', 'chiller_name'], 'required'],
+            [['chilling_capacity','installation_date', 'agreement_from_date', 'agreement_to_date', 'created_at', 'updated_at', 'is_active', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'chiller_name', 'fix_rent', 'billing_method'], 'safe'],
+            [['owner_name', 'rate_type', 'chilling_capacity', 'min_qty', 'pan_no', 'tds_percentage', 'installation_date', 'agreement_no', 'agreement_from_date', 'agreement_to_date', 'chiller_name', 'billing_method'], 'required'],
             [['owner_name', 'pan_no','rate_type','agreement_no','created_by', 'updated_by', 'originating_org_code', 'originating_org_type',], 'string'],
             [['is_active', 'originating_type'], 'integer'],
             [['min_qty', 'tds_percentage'], 'number'],
             [['tds_percentage'], 'number','max'=>100],
             [['is_active'], 'default', 'value' => 1], 
+            [['fix_rent'], 'default', 'value' => 0], 
             [['pan_no'], function ($attribute, $params) {
                 Yii::$app->general->validatePancard($this, $attribute, $params);
             }, 'skipOnEmpty' => false],
@@ -92,6 +93,8 @@ class TblBmcChillerInfo extends \app\models\ChildModel
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'chiller_name' => Yii::t('app', 'Chiller Name'),
+            'fix_rent' => Yii::t('app', 'Fix Rent'),
+            'billing_method' => Yii::t('app', 'Billing Method'),
         ];
     }
 

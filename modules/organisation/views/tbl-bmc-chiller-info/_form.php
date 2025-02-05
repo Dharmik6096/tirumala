@@ -36,6 +36,12 @@ use yii\web\View;
 <div class="col-sm-2">
     <?= $form->field($model, 'chiller_name')->textInput() ?>
 </div>
+<div class="col-sm-2 number-validate">
+    <?= $form->field($model, 'fix_rent')->textInput() ?>
+</div>
+<div class="col-sm-2">
+    <?= Yii::$app->dropdown->dropdownStatic('billing_method_chiller_info', $model, $form, 'form-group', $model->getAttributeLabel('billing_method'), false, 'billing_method', false); ?>
+</div>
 <?= Html::activeHiddenInput($model, 'chiller_info_code', ['value' => $model->chiller_info_code]) ?>
 
 <?php
