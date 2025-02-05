@@ -74,6 +74,12 @@ class TblVehicleTransporterHeadMappingSearch extends TblVehicleTransporterHeadMa
         }
         // grid filtering conditions
 
+        $query->andFilterWhere([
+            'tbl_vehicle_transporter_head_mapping.transporter_payment_head_code' => $this->transporter_payment_head_code,
+            'tbl_vehicle_transporter_head_mapping.vehicle_code' => $this->vehicle_code,
+            'tbl_vehicle_transporter_head_mapping.transporter_code' => $this->transporter_code,
+        ]);
+        
         $query->andFilterWhere(['like', 'tbl_vehicle_transporter_head_mapping.billing_type', $this->billing_type])
                 ->andFilterWhere(['like', 'tbl_vehicle_transporter_head_mapping.amount', $this->amount])
                 ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_code]);
