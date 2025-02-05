@@ -15,6 +15,15 @@ $attribute = [
     ['attribute' => 'vehicle_code', 'value' => function($model) {
             return isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '';
         }, 'filter' => false],
+    ['attribute' => 'plant_code', 'label' => 'Plant', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->routeCode, ['activePlantCode'], 'name');
+        }, 'filter' => false],
+    ['attribute' => 'mcc_plant_code', 'label' => 'Mcc', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->routeCode, ['activeMccCode'], 'name');
+        }, 'filter' => false],
+    ['attribute' => 'bmc_code', 'label' => 'Bmc', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->routeCode, ['activeBmcCode'], 'bmc_name');
+        }, 'filter' => false],
     ['attribute' => 'route_code', 'value' => function($model) {
             return isset($model->routeCode) ? $model->routeCode->route_name : '';
         }, 'filter' => false],
