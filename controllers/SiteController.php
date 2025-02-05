@@ -3261,4 +3261,27 @@ class SiteController extends Controller {
         return ['status' => 'success', 'output' => $output, 'mcc_wise_indent_summary' => $table];
     }
 
+    public function actionComplainSummaryDashboard() {
+
+        $sp_name = 'proc_complain_dashboard_list';
+        $sp = 'proc_complain_dashboard';
+        $results = \Yii::$app->general->getSpData($sp_name, []);
+        $res = \Yii::$app->general->getSpData($sp, []);
+        $series = [];
+        if (!empty($results)) {
+            $series = [];
+            foreach ($results as $result) {
+                $widgetKey = $result['cdate'];
+
+                if (!isset($series[$widgetKey])) {
+                    $series[$widgetKey] = [];
+                }
+                $series[$widgetKey] = $result;
+            }
+        }
+        $tableHtml = $this->renderAjax('_complain_summary_table.php', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'series' => $series, 'res' => $res[0], 'tableHtml' => $tableHtml];
+    }
+
 }

@@ -4,11 +4,9 @@ namespace app\components;
 
 use yii\base\Component;
 
-class ClientPaymentConfig extends Component
-{
+class ClientPaymentConfig extends Component {
 
-    public function processPayment($process, $data)
-    {
+    public function processPayment($process, $data) {
         $client_code = \Yii::$app->session->get('eiplCode');
         $spdetail = $this->spdetail();
         $config = (isset($spdetail[$client_code]) && isset($spdetail[$client_code][$process])) ? $spdetail[$client_code][$process] : $spdetail['EIPLCOMMON'][$process];
@@ -28,8 +26,7 @@ class ClientPaymentConfig extends Component
         return $command->execute();
     }
 
-    public static function spdetail()
-    {
+    public static function spdetail() {
         return [
             'GYAN' => [
                 'vsp_payment' => [
@@ -235,7 +232,11 @@ class ClientPaymentConfig extends Component
                 'party_payment_disburse' => [
                     'param' => 'payment_type,party_master_code,from_date,to_date',
                     'sp_name' => 'disburse_party_payment',
-                ]
+                ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'sp_name' => 'sp_tpt_primary_payment_vrs_newasa',
+                ],
             ],
             'VRS_GLT' => [
                 'member_payment' => [
@@ -265,7 +266,11 @@ class ClientPaymentConfig extends Component
                 'party_payment_disburse' => [
                     'param' => 'payment_type,party_master_code,from_date,to_date',
                     'sp_name' => 'disburse_party_payment',
-                ]
+                ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'sp_name' => 'sp_tpt_primary_payment_vrs_newasa',
+                ],
             ],
             'VRS_MLP' => [
                 'member_payment' => [
@@ -295,7 +300,11 @@ class ClientPaymentConfig extends Component
                 'party_payment_disburse' => [
                     'param' => 'payment_type,party_master_code,from_date,to_date',
                     'sp_name' => 'disburse_party_payment',
-                ]
+                ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'sp_name' => 'sp_tpt_primary_payment_vrs_newasa',
+                ],
             ],
             'VRS_SBD' => [
                 'member_payment' => [
@@ -325,7 +334,11 @@ class ClientPaymentConfig extends Component
                 'party_payment_disburse' => [
                     'param' => 'payment_type,party_master_code,from_date,to_date',
                     'sp_name' => 'disburse_party_payment',
-                ]
+                ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'sp_name' => 'sp_tpt_primary_payment_vrs_newasa',
+                ],
             ],
             'ANIG' => [
                 'vsp_payment' => [
@@ -353,4 +366,5 @@ class ClientPaymentConfig extends Component
             ],
         ];
     }
+
 }
