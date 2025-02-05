@@ -18,7 +18,6 @@ class TblMccRemunerationSummaryController extends \app\controllers\ChildControll
     public function actionCreate() {
         $model = new TblMccRemunerationSummary();
         if ($model->load(Yii::$app->request->post())) {
-            $model->scenario = 'processpayment';
             $mcc_array = [];
             $bmc_array = [];
             $mcc_array = $model->mcc_plant_code;
