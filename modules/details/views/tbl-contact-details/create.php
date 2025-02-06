@@ -50,6 +50,7 @@ $this->title = Yii::$app->label->title('create', 'Contact Detail');
                 $this->render('_form_grid', [
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
+                    'show_optional_fields' => $show_optional_fields,
                 ])
                 ?>
             </div>

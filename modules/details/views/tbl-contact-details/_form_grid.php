@@ -41,22 +41,22 @@ $attribute = [
     ['attribute' => 'from_date',
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->from_date);
-        },
+        }, 'visible' => $show_optional_fields
     ],
     ['attribute' => 'to_date',
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->to_date);
-        },
+        }, 'visible' => $show_optional_fields
     ],
     ['attribute' => 'primary_parent',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->primaryParent, 'name');
-        },
+        }, 'visible' => $show_optional_fields
     ],
     ['attribute' => 'secondary_parent',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
-        },
+        }, 'visible' => $show_optional_fields
     ],
 ];
 

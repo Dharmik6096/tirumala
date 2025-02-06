@@ -573,7 +573,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             $master[] = $hist->save();
             if (!in_array(FALSE, $master)) {
                 $assetTrans = new TblAssetTransaction();
-                $assetTrans->updateAll(['serial_number' => $model->serial_number, 'current_status' => $model->current_status, 'manufacturer_serial_number' => $model->manufacturer_serial_number], ['serial_number' => $oldSr, 'current_status' => $oldCs, 'manufacturer_serial_number' => $oldMSr]);
+                $assetTrans->updateAll(['serial_number' => $model->serial_number, 'current_status' => $model->current_status, 'manufacturer_serial_number' => $model->manufacturer_serial_number], ['serial_number' => $oldSr, 'current_status' => $oldCs, 'manufacturer_serial_number' => $oldMSr, 'asset_detail_code' => $model->asset_detail_code]);
                 $transaction->commit();
                 Yii::$app->display->message(true, $message[0], $message[1]);
                 return 'customRedirect';
