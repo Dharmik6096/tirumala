@@ -50,6 +50,8 @@ class TblVehicleTransporterHeadMappingSearch extends TblVehicleTransporterHeadMa
             'query' => $query,
         ]);
 
+        $this->from_date = date('Y-m-d', strtotime('-30 days'));
+        $this->to_date = date('Y-m-d');
         $this->load($params);
         $query->joinWith(['routeCode']);
         Yii::$app->general->filterByOrg($query, $this);
@@ -58,6 +60,9 @@ class TblVehicleTransporterHeadMappingSearch extends TblVehicleTransporterHeadMa
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->andFilterWhere([
+            'wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,
+        ]);
         if (!empty($this->from_date)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
             $query->andFilterWhere(['>=', 'cast(wef_date as date)', $from_date]);
@@ -68,16 +73,16 @@ class TblVehicleTransporterHeadMappingSearch extends TblVehicleTransporterHeadMa
             $query->andFilterWhere(['<=', 'cast(wef_date as date)', $to_date]);
         }
         // grid filtering conditions
+
         $query->andFilterWhere([
             'tbl_vehicle_transporter_head_mapping.transporter_payment_head_code' => $this->transporter_payment_head_code,
             'tbl_vehicle_transporter_head_mapping.vehicle_code' => $this->vehicle_code,
             'tbl_vehicle_transporter_head_mapping.transporter_code' => $this->transporter_code,
-            'tbl_vehicle_transporter_head_mapping.wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,
-            'tbl_vehicle_transporter_head_mapping.amount' => $this->amount,
-            'tbl_vehicle_transporter_head_mapping.is_active' => $this->is_active,
-            'tbl_vehicle_transporter_head_mapping.billing_type' => $this->billing_type,
         ]);
-        $query->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_code]);
+        
+        $query->andFilterWhere(['like', 'tbl_vehicle_transporter_head_mapping.billing_type', $this->billing_type])
+                ->andFilterWhere(['like', 'tbl_vehicle_transporter_head_mapping.amount', $this->amount])
+                ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_code]);
         $query->orderBy('wef_date DESC');
 
 

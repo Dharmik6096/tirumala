@@ -223,17 +223,17 @@ echo GhostMenu::widget([
                     ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
                     ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/collection/tbl-milk-collection-audit/index'], 'active' => ($cntrl == 'tbl-milk-collection-audit')],
                     [
-                        'options' => ['class' => 'dropdown-submenu toggle_right'],
-                        'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Operations & Quality <b class="caret"></b></a>',
-                        'items' => [
+                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Operations & Quality <b class="caret"></b></a>',
+                    'items' => [
                             ['label' => Yii::t('app', 'Weight Scale Calibration'), 'url' => ['/collection/tbl-weight-scale-calibration/index'], 'active' => ($cntrl == 'tbl-weight-scale-calibration')],
                             ['label' => Yii::t('app', 'Milk Analyzer Calibration'), 'url' => ['/collection/tbl-milk-analyzer-calibration/index'], 'active' => ($cntrl == 'tbl-milk-analyzer-calibration')],
                             ['label' => Yii::t('app', 'Mcc Shift End Summary'), 'url' => ['/collection/tbl-mcc-shift-end-summary/index'], 'active' => ($cntrl == 'tbl-mcc-shift-end-summary')],
                             ['label' => Yii::t('app', 'Shift End Summary Adulteration Test'), 'url' => ['/collection/tbl-mcc-shift-end-summary-adulteration-test/index'], 'active' => ($cntrl == 'tbl-mcc-shift-end-summary-adulteration-test')],
                             ['label' => Yii::t('app', 'Bmc Collection Audit'), 'url' => ['/collection/tbl-bmc-collection-audit/index'], 'active' => ($cntrl == 'tbl-bmc-collection-audit')],
                             ['label' => Yii::t('app', 'Weight Rejections'), 'url' => ['/collection/tbl-weight-rejection/index'], 'active' => ($cntrl == 'tbl-weight-rejection')],
-                        ]
-                    ],
+                    ]
+                ],
             ],
         ],
             [
@@ -256,12 +256,12 @@ echo GhostMenu::widget([
                     'template' => '<a  class="dropdown-toggle" href="#">Rate Applicability Approval <b class="caret"></b></a>',
                     'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
-                        ['label' => Yii::t('app', 'Milk Purchase Rate'), 'url' => ['/dcsoperation/tbl-purchase-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-purchase-rate-applicability' && $action == 'applicabilty-approve')],
-                        ['label' => 'Milk Purchase Rate (' . Yii::t('app', 'BMC') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate-applicabitity-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate-applicability-alias' && $action == 'applicabilty-approve')],
-                        ['label' => Yii::t('app', 'Scheme Rate'), 'url' => ['/dcsoperation/tbl-scheme-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-scheme-rate-applicability-alias' && $action == 'applicabilty-approve')],
+                            ['label' => Yii::t('app', 'Milk Purchase Rate'), 'url' => ['/dcsoperation/tbl-purchase-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-purchase-rate-applicability' && $action == 'applicabilty-approve')],
+                            ['label' => 'Milk Purchase Rate (' . Yii::t('app', 'BMC') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate-applicabitity-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate-applicability-alias' && $action == 'applicabilty-approve')],
+                            ['label' => Yii::t('app', 'Scheme Rate'), 'url' => ['/dcsoperation/tbl-scheme-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-scheme-rate-applicability-alias' && $action == 'applicabilty-approve')],
                     ]
                 ],
-                ['label' => 'Local Milk Rate', 'url' => ['/dcsoperation/tbl-local-milk-rate/index'], 'active' => ($cntrl == 'tbl-local-milk-rate')],
+                    ['label' => 'Local Milk Rate', 'url' => ['/dcsoperation/tbl-local-milk-rate/index'], 'active' => ($cntrl == 'tbl-local-milk-rate')],
             ],
         ],
             [
@@ -1021,6 +1021,14 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'BMC Wise Stock'), 'url' => ['/misreports/reports/stock-register-bmc-to-sap']],
                             ['label' => Yii::t('app', 'Indent Summary Detail'), 'url' => ['/misreports/reports/indent-summary-detail']],
                             ['label' => Yii::t('app', 'Indent Member Detail'), 'url' => ['/misreports/reports/indent-member-detail']],
+                    ]
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Transport') . ' <b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'TP Cost Detail'), 'url' => ['/misreports/reports/tp-cost-detail']],
+                            ['label' => Yii::t('app', 'TP Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
                     ]
                 ],
                     [

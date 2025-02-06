@@ -50,11 +50,8 @@ $qualityparam = '0';
 
 <?php ActiveForm::end(); ?>
 <hr class="hr10">
-<div class="row">
-
-    <div class="form-grid">
-        <?= $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]) ?>
-    </div>
+<div class="form-grid">
+    <?= $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]) ?>
 </div>
 
 <?php
