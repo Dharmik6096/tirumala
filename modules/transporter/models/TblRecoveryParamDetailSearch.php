@@ -47,6 +47,8 @@ class TblRecoveryParamDetailSearch extends TblRecoveryParamDetail {
             'query' => $query,
         ]);
 
+        $this->from_date = date('Y-m-d', strtotime('-30 days'));
+        $this->to_date = date('Y-m-d');
         $this->load($params);
 
         if (!$this->validate()) {

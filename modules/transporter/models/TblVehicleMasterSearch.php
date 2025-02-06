@@ -77,15 +77,6 @@ class TblVehicleMasterSearch extends TblVehicleMaster {
 //        if (!empty($this->wef_date))
 //            $query->andFilterWhere(['and', ['>=', 'wef_date', date('Y-m-d', strtotime($this->wef_date))], ['<=', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]]);
 
-        if (!empty($this->from_date)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $query->andFilterWhere(['>=', 'cast(wef_date as date)', $from_date]);
-        }
-
-        if (!empty($this->to_date)) {
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $query->andFilterWhere(['<=', 'cast(wef_date as date)', $to_date]);
-        }
         $query->andFilterWhere(['like', 'vehicle_code', $this->vehicle_code])
                 ->andFilterWhere(['like', 'registration_no', $this->registration_no])
                 ->andFilterWhere(['like', 'applicable_rto', $this->applicable_rto])
@@ -98,9 +89,10 @@ class TblVehicleMasterSearch extends TblVehicleMaster {
                 ->andFilterWhere(['like', 'average', $this->average])
                 ->andFilterWhere(['like', 'parsing_no', $this->parsing_no])
                 ->andFilterWhere(['like', 'fuel_type_code', $this->fuel_type_code])
-                ->andFilterWhere(['like', 'tbl_vehicle_type.vehicle_type_name', $this->vehicle_type_code])
+                ->andFilterWhere(['like', 'tbl_vehicle_type.vehicle_type_code', $this->vehicle_type_code])
                 ->andFilterWhere(['like', 'tbl_transporter.vendor_code', $this->vendor_code])
-                ->andFilterWhere(['like', 'vehicle_use_type', $this->vehicle_use_type]);
+                ->andFilterWhere(['like', 'vehicle_use_type', $this->vehicle_use_type])
+                ->andFilterWhere(['like', 'billing_method', $this->billing_method]);
 
         return $dataProvider;
     }

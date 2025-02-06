@@ -70,7 +70,7 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblVehicleMasterSearch' => [
-                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code'],
             ],
             'TblVehicleKmInfoSearch' => [
                 'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'route', 'from_date', 'from_shift', 'to_date', 'to_shift'],
