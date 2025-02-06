@@ -63,9 +63,9 @@ $script = "
        var rateType = $('#tbltankerratebased-rate_type_code :selected').text();     
         var field_before = '<div class=\"col-sm-3\"><div class=\"form-group\">';
         var field_after = '';
-        $('#range').append(field_before + '<label class=\"control-label\">Std FAT*</label><input type=\"text\" name=\"TblTankerRateBased[std_fat]\" id=\"tbltankerratebased-std_fat\" class=\"form-control number-validate\">' + field_after);
-             $('#range').append(field_before + '<label class=\"control-label\">Std SNF*</label><input type=\"text\" name=\"TblTankerRateBased[std_snf]\" id=\"tbltankerratebased-std_snf\" class=\"form-control number-validate\">' + field_after);
-             $('#range').append(field_before + '<label class=\"control-label\">Base Rate*</label><input type=\"text\" name=\"TblTankerRateBased[base_rate]\" id=\"tbltankerratebased-base_rate\" class=\"form-control number-validate\">');
+        $('#range').append(field_before + '<label class=\"control-label\">Std FAT*</label><input type=\"text\" name=\"TblTankerRateBased[std_fat]\" id=\"tbltankerratebased-std_fat\" class=\"form-control number-validate get-fat-rate\">' + field_after);
+             $('#range').append(field_before + '<label class=\"control-label\">Std SNF*</label><input type=\"text\" name=\"TblTankerRateBased[std_snf]\" id=\"tbltankerratebased-std_snf\" class=\"form-control number-validate get-snf-rate\">' + field_after);
+             $('#range').append(field_before + '<label class=\"control-label\">Base Rate*</label><input type=\"text\" name=\"TblTankerRateBased[base_rate]\" id=\"tbltankerratebased-base_rate\" class=\"form-control number-validate get-fat-rate get-snf-rate\">');
              
       if($('#tbltankerratebased-rate_type_code').val()!=''){
        if (rateType== 'FAT+SNF')
@@ -85,7 +85,7 @@ $script = "
             var ratio = $('#tbltankerratebased-fat_ratio').val();
             var std = $('#tbltankerratebased-std_fat').val();
             var base_rate = $('#tbltankerratebased-base_rate').val();
-            var rate = Math.round(ratio *base_rate /std,2);
+            var rate = ratio *base_rate /std;
              if(rate>0 && ratio>0 && base_rate>0 && std>0)
              {
                 $('#tbltankerratebased-fat_rate').val(parseFloat(rate).toFixed(2));
