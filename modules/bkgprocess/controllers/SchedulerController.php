@@ -397,6 +397,13 @@ class SchedulerController extends ChildController {
                         }
                         $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                         $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
+                        if($row->file_type == 'milk_collection_other_data' && !empty($model->qlty_time) && !empty($model->qty_time)){
+                            $date_part = explode(' ', $model->date_time_of_collection)[0];
+                            $model->qlty_time = $date_part . ' ' . $model->qlty_time;
+                            $model->qty_time = $date_part . ' ' . $model->qty_time;
+                        } else {
+                            $model->qlty_time = $model->qty_time = NULL;
+                        }
                     }
                     if ($model->save()) {
                         $success++;
