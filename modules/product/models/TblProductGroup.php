@@ -95,10 +95,9 @@ class TblProductGroup extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
-        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
             $sentbox = new TblSentbox();
             $sentbox->source_org_id = $this->union_code;
             if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
