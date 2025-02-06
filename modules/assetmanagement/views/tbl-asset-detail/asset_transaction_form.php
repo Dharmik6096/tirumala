@@ -537,52 +537,61 @@ $script = "
         $('#tblassettransaction-to_type').val('');
         $('#tblassettransaction-to_type').trigger('change');
     });
-     function setDcsData() {
+    
+    function setDcsData() {
         var selectParam = $('#tblassettransaction-from_type').val();
-         var fromType = $('#tblassettransaction-from_type').val();
-         var fromPlant = $('#tblassettransaction-from_plant').val();
-         var fromMcc = $('#tblassettransaction-from_mcc').val();
-         var fromBmc = $('#tblassettransaction-from_bmc').val();
-         var fromDcs = $('#tblassettransaction-from_dcs').val();
-         $('.disa_drop').removeClass('disabled');
+        var fromType = $('#tblassettransaction-from_type').val();
+        var fromPlant = $('#tblassettransaction-from_plant').val();
+        var fromMcc = $('#tblassettransaction-from_mcc').val();
+        var fromBmc = $('#tblassettransaction-from_bmc').val();
+        var fromDcs = $('#tblassettransaction-from_dcs').val();
+        $('.disa_drop').removeClass('disabled');
         var selectToParams = $('#tblassettransaction-to_type ').val();
         if(selectParam == '3'){
             if(selectToParams == '3' || selectToParams == '2'){
                 $('.disa_drop').addClass('disabled');
-                $('#tblassettransaction-to_plant').val(fromPlant);
-                $('#tblassettransaction-to_plant').trigger('change');
-                $('#tblassettransaction-to_plant').trigger('select2:select');
+                    setTimeout(function() {
+                        $('#tblassettransaction-to_plant').val(fromPlant);
+                        $('#tblassettransaction-to_plant').trigger('change');
+                        $('#tblassettransaction-to_plant').trigger('select2:select');
+                    }, 600);
                 $('#tblassettransaction-to_mcc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                $('#tblassettransaction-to_mcc').val(fromMcc);
-                $('#tblassettransaction-to_mcc').trigger('change');
-                $('#tblassettransaction-to_mcc').trigger('select2:select');
-              });
-              $('#tblassettransaction-to_bmc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                $('#tblassettransaction-to_bmc').val(fromBmc);
-                $('#tblassettransaction-to_bmc').trigger('change');
-                $('#tblassettransaction-to_bmc').trigger('select2:select');
-              });             
- 
+                    setTimeout(function() {
+                        $('#tblassettransaction-to_mcc').val(fromMcc);
+                        $('#tblassettransaction-to_mcc').trigger('change');
+                        $('#tblassettransaction-to_mcc').trigger('select2:select');
+                    }, 600);
+                });
+                $('#tblassettransaction-to_bmc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    setTimeout(function() {
+                        $('#tblassettransaction-to_bmc').val(fromBmc);
+                        $('#tblassettransaction-to_bmc').trigger('change');
+                        $('#tblassettransaction-to_bmc').trigger('select2:select');
+                    }, 600);
+                });             
             }
-        }else if(selectParam == '2'){
+        } else if(selectParam == '2'){
             if(selectToParams == '3'){
                $('#tblassettransaction-to_plant').val(fromPlant);
                $('#tblassettransaction-to_plant').trigger('change');
                $('#tblassettransaction-to_plant').trigger('select2:select');
-                  $('#tblassettransaction-to_mcc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                     $('#tblassettransaction-to_mcc').val(fromMcc);
-                     $('#tblassettransaction-to_mcc').trigger('change');
-                     $('#tblassettransaction-to_mcc').trigger('select2:select');
-                   });
-                    $('#tblassettransaction-to_bmc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                $('#tblassettransaction-to_bmc').val(fromBmc);
-                $('#tblassettransaction-to_bmc').trigger('change');
-                $('#tblassettransaction-to_bmc').trigger('select2:select');
-              });
-                    $('.disa_drop').addClass('disabled');
+                $('#tblassettransaction-to_mcc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    setTimeout(function() {
+                        $('#tblassettransaction-to_mcc').val(fromMcc);
+                        $('#tblassettransaction-to_mcc').trigger('change');
+                        $('#tblassettransaction-to_mcc').trigger('select2:select');
+                    }, 600);
+                });
+                $('#tblassettransaction-to_bmc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    setTimeout(function() {
+                        $('#tblassettransaction-to_bmc').val(fromBmc);
+                        $('#tblassettransaction-to_bmc').trigger('change');
+                        $('#tblassettransaction-to_bmc').trigger('select2:select');
+                    }, 600);
+                });
+                $('.disa_drop').addClass('disabled');
             }
         }
-        
     }
       
 ";

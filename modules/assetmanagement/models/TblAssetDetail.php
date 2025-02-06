@@ -61,7 +61,7 @@ class TblAssetDetail extends \app\models\ChildModel {
                 }, 'on' => 'importCsv'],
             [['asset_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetMaster::className(), 'targetAttribute' => ['asset_code' => 'asset_code']],
             [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
-            // [['asset_code', 'store_location_code', 'put_to_use_date', 'purchase_date'], 'required', 'except' => 'assetTransfer'],
+            [['asset_code', 'store_location_code', 'put_to_use_date', 'purchase_date'], 'required'],
             [['asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'created_by', 'updated_by', 'manufacturer_serial_number'], 'string'],
             [['purchase_date', 'put_to_use_date', 'created_at', 'updated_at', 'is_serial_number', 'store_location_type', 'qty', 'make', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'current_status', 'is_verified', 'verification_date', 'other_info', 'detail_code', 'manufacturer_serial_number', 'manufacturer_code', 'manufacturer_id'], 'safe'],
             [['warranty_period', 'maintanance_duration_in_days', 'capacity', 'qty'], 'number'],
