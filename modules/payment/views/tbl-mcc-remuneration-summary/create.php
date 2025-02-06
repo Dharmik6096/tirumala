@@ -53,7 +53,7 @@ $scriptForAutoSelect = ' let mccChange = true; let bmcChange = true;';
             </div>      
             <div id="multiple-bmc" class="col-sm-2">
                 <?=
-                Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmccremunerationsummary-mcc_plant_code', 'bmc_code', 'BMC', TRUE);
+                Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmccremunerationsummary-mcc_plant_code', 'bmc_code', 'BMC *', TRUE);
                 $scriptForAutoSelect .= "
                                         $('#tblmccremunerationsummary-bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) { 
                                         var bmc = $('#tblmccremunerationsummary-bmc_code').val();
