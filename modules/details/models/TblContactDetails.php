@@ -223,13 +223,12 @@ class TblContactDetails extends \app\models\ChildModel {
     }
 
     public function contactDetailList($moduleCode) {
-        $storeLocationCode = TblStoreLocation::find()->select('store_location_code')->where(['reference_code' => $moduleCode])->scalar();
-        $detailCode = TblAssetDetail::find()->select('detail_code')->where(['store_location_code' => $storeLocationCode])->scalar();
-        $query = $this->find()->where(['module_code' => $moduleCode, 'module_name' => 'society']);
-        if (!empty($detailCode)) {
-            $query->andWhere(['not in', 'detail_code', $detailCode]);
-        }
-        return ArrayHelper::map($query->all(), 'detail_code', 'contact_person');
+        $detailCode = TblAssetDetail::find()->select('detail_code')->joinWith(['storeLocCode'])->where(['reference_code' => $moduleCode])->scalar();
+        $data = $this->find()
+            ->where(['module_code' => $moduleCode, 'module_name' => 'society'])
+            ->andWhere(['not in', 'detail_code', $detailCode])
+            ->all();
+        return ArrayHelper::map($data, 'detail_code', 'contact_person');
     }
     
 }
