@@ -8,6 +8,7 @@ use yii\helpers\Url;
 use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Bank Verification');
+$kyc_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'ekyc_required', 'PORTAL');
 ?>
 <div class=" no-effect">
     <?php
@@ -94,12 +95,12 @@ $this->title = Yii::t('app', 'Bank Verification');
         ?>
         <div class="panel-footer">
             <?php
-            if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Verify'), ['class' => 'btn-login btn btn-primary submit me-2', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
-                echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn-login btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
+            if (!empty($dataProvider->getModels()) && $kyc_config != 1) {
+                echo Html::button(Yii::t('app', 'Verify'), ['class' => 'btn btn-primary submit', 'id' => 'verify', 'value' => 'verify', 'name' => 'verify']);
+                echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'master-verification','','btn-login'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'master-verification', '', 'btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
