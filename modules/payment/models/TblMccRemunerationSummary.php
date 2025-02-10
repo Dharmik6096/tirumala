@@ -2,6 +2,7 @@
 
 namespace app\modules\payment\models;
 
+use app\modules\organisation\models\TblDcsBmc;
 use Yii;
 use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblMccPlant;
@@ -46,8 +47,8 @@ class TblMccRemunerationSummary extends \app\models\ChildModel {
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
             [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'from_datetime', 'to_datetime'], 'required'],
-            [['bmc_code'], 'required', 'on' => 'processpayment'],
+            [['union_code', 'plant_code', 'from_datetime', 'to_datetime'], 'required'],
+            // [['bmc_code'], 'required', 'on' => 'processpayment'],
 //            [['from_datetime'], function ($attribute, $params) {
 //                    return Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_datetime', 'to_datetime', 30, '!=', 'Date Difference must be 30 Days.');
 //                }, 'skipOnError' => true, 'on' => 'processpayment'],
@@ -95,7 +96,23 @@ class TblMccRemunerationSummary extends \app\models\ChildModel {
             return false;
         }
         $query = TblMccRemunerationSummary::find()
-                ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code]);
+                ->where(['union_code' => $this->union_code]);
+        if (!empty($this->bmc_code)) {
+            $query->andWhere(['in', 'bmc_code', $this->bmc_code]);
+        } else {
+            $getMcc = Yii::$app->session->get('MCC') ?? implode(Yii::$app->session->get('MCC'));
+            $getBmc = Yii::$app->session->get('BMC') ?? implode(Yii::$app->session->get('BMC'));
+            if ((empty($this->mcc_plant_code) && empty($this->bmc_code) && empty($getMcc))) {
+                $getMcc = TblMccPlant::find()->select('mcc_plant_code')->where(['plant_code' => $this->plant_code, 'is_active' => 1])->column();
+            }
+            if (!empty($this->mcc_plant_code)) {
+                $getMcc = $this->mcc_plant_code;
+            }
+            if (empty($getBmc)) {
+                $getBmc = TblDcsBmc::find()->select('bmc_code')->where(['mcc_plant_code' => $getMcc, 'is_active' => 1])->column();
+            }
+            $query->andWhere(['bmc_code' => $this->bmc_code]);
+        }
         if ($process_alert) {
             $query->andWhere(['in', 'status', ['processed']]);
         } else {
