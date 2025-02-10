@@ -126,7 +126,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['rtpl', 'amount'], 'default', 'value' => '0', 'except' => ['importCsv']],
                 [['is_approved'], 'default', 'value' => '1'],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code'], 'safe'],
-                [['member_code', 'dcs_code', 'name', 'mobile_no', 'milk_type_code', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'sample_no', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'ack', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'created_at', 'created_by', 'updated_at', 'updated_by', 'route_code', 'bmc_code', 'converted_qty', 'is_approved', 'data_post_id', 'resp_status', 'resp_desc', 'picked_datetime', 'ftp_txn_file_name', 'tag_1', 'tag_2', 'ftp_txn_log_id', 'error_desc', 'originating_type', 'last_edited_type', 'remarks', 'sync_status', 'union_code', 'plant_code', 'mcc_plant_code', 'version_no', 'originating_org_code', 'originating_org_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'converted_qty_mode', 'incentive', 'deduction', 'total_amount', 'is_provisional', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount', 'action_perform'], 'safe'],
+                [['member_code', 'dcs_code', 'name', 'mobile_no', 'milk_type_code', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'sample_no', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'ack', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'created_at', 'created_by', 'updated_at', 'updated_by', 'route_code', 'bmc_code', 'converted_qty', 'is_approved', 'data_post_id', 'resp_status', 'resp_desc', 'picked_datetime', 'ftp_txn_file_name', 'tag_1', 'tag_2', 'ftp_txn_log_id', 'error_desc', 'originating_type', 'last_edited_type', 'remarks', 'sync_status', 'union_code', 'plant_code', 'mcc_plant_code', 'version_no', 'originating_org_code', 'originating_org_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'converted_qty_mode', 'incentive', 'deduction', 'total_amount', 'is_provisional', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount'], 'safe'],
                 [['dcs_code'], 'setUuid', 'on' => ['androidsync']],
                 [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
@@ -991,7 +991,8 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function setChildTableOther(&$model, &$transaction_data, &$childModel, &$auto_key_config) {
         $collectionCode = $transaction_data['content']['milk_collection_code'];
         $i = 0;
-        if ($model->action_perform == 'CREATE') {
+        $opType = strtoupper($transaction_data['operation_type']);
+        if (!empty($opType) && $opType == 'CREATE') {
             $this->setCollectionData($model, 'api_create');
 //        $model->originating_org_type = 'HO';
             $flag = ['calculate_clr', 'rtpl_calculate'];
@@ -1027,7 +1028,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             if (!$collmodel->validate()) {
                 $childModel[0]->addErrors($collmodel->errors);
             }
-        } else if (($model->action_perform == 'UPDATE') && !empty($collectionCode)) {
+        } else if (!empty($opType) && ($opType == 'UPDATE') && !empty($collectionCode)) {
             $existingData = $this->find()->where(['milk_collection_code' => $collectionCode])->one();
             $login_data = Yii::$app->eiplapp->identity;
             $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
@@ -1070,8 +1071,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $amount = $rate * $qty;
                     $model->amount = number_format($amount, 2, '.', '');
                     $collectionData = clone $existingData;
-
-                    $fieldsToUpdate = ['clr', 'qty', 'fat', 'snf', 'action_perform', 'milk_collection_code', 'actual_rate', 'rtpl', 'scheme_rate', 'scheme_rate_code', 'amount', 'converted_qty'];
+                    $fieldsToUpdate = ['clr', 'qty', 'fat', 'snf', 'milk_collection_code', 'actual_rate', 'rtpl', 'scheme_rate', 'scheme_rate_code', 'amount', 'converted_qty'];
                     $updateData = array_intersect_key($model->attributes, array_flip($fieldsToUpdate));
                     $existingData->attributes = array_merge($existingData->attributes, $updateData);
                     $existingData->created_by = $created_by;
@@ -1082,6 +1082,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                         $approvalModel->setOldAttributesValues($approvalModel);
                         $approvalModel->attributes = $existingData->attributes;
                         $approvalModel->table_name = 'tbl_milk_collection';
+                        $approvalModel->action_perform = 'UPDATE';
                         if ($collectionApprovalConfig == 2) {
                             $modelStages = new TblApprovalStagesDetail();
                             $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_milk_collection', $childModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code', $created_by);
@@ -1104,7 +1105,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $childModel[0]->addErrors($collmodel->errors);
                 }
             }
-        } else if (($model->action_perform == 'DELETE') && !empty($collectionCode)) {
+        } else if (!empty($opType) && ($opType == 'DELETE') && !empty($collectionCode)) {
             $existingData = $this->find()->where(['milk_collection_code' => $collectionCode])->one();
             $login_data = Yii::$app->eiplapp->identity;
             $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';

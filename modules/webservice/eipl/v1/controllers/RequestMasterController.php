@@ -115,6 +115,8 @@ class RequestMasterController extends MasterController {
             $model->originating_type = 0;
             $model->created_by = !empty(Yii::$app->eiplapp->identity['module_code']) ? Yii::$app->eiplapp->identity['module_code'] : '';
             if (isset($moduleDetails['multi_auto_increment_key']) && $moduleDetails['multi_auto_increment_key']) {
+                $childModel = [];
+                $deleteModel = [];
                 $model->setChildTable($model, $transaction_data, $childModel, $auto_key_config);
                 $saveModel = true;
             } else if (isset($moduleDetails['save_child']) && $moduleDetails['save_child']) {
@@ -123,6 +125,8 @@ class RequestMasterController extends MasterController {
             }
 
             if (isset($moduleDetails['multi_auto_inc_key_save_other']) && $moduleDetails['multi_auto_inc_key_save_other']) {
+                $childModel = [];
+                $deleteModel = [];
                 $model->setChildTableOther($model, $transaction_data, $childModel, $auto_key_config);
                 $saveModel = true;
             } else if (isset($moduleDetails['save_child_other']) && $moduleDetails['save_child_other']) {

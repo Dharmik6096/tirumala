@@ -32,7 +32,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
                 [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
                 [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
-                [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'action_perform'], 'safe'],
+                [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
         ];
     }
 
