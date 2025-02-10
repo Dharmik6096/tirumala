@@ -29,34 +29,45 @@ class TblPermanentHoldAmountController extends \app\controllers\ChildController 
             if (Yii::$app->request->post()['release_date']) {
                 $saveModel = [];
                 $postData = Yii::$app->request->post()['TblPermanentHoldAmount'];
-                // $payment_cycle = TblPaymentCycle::findOne(Yii::$app->request->post()['payment_cycle_code']);
                 if (Yii::$app->request->post()['selection']) {
-                    foreach (Yii::$app->request->post()['selection'] as $key => $permanent_hold_amount_code) {
+                    foreach (Yii::$app->request->post()['selection'] as $permanent_hold_amount_code) {
                         $holdPaymentModel = TblPermanentHoldAmount::findOne($permanent_hold_amount_code);
                         if (!empty($holdPaymentModel)) {
                             $historyModel = new TblPermanentHoldAmountHistory();
                             Yii::$app->operation->history($holdPaymentModel, $historyModel, UPDATE);
-                            $holdPaymentModel->hold_amount = (float)$holdPaymentModel->hold_amount - (float)$postData[$key]['release_amount'];
-                            $holdPaymentModel->release_amount = (float)$holdPaymentModel->release_amount + (float)$postData[$key]['release_amount'];
                             $holdPaymentModel->release_date = date('Y-m-d',strtotime(Yii::$app->request->post()['release_date']));
                             $holdPaymentModel->release_by = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
                             $transaction = new TblPermanentHoldAmountTransaction();
                             $transaction->attributes = $holdPaymentModel->attributes;
+                            $transaction->release_amount = (float)$postData[$permanent_hold_amount_code]['release_amount'];
+                            $holdPaymentModel->hold_amount = (float)$holdPaymentModel->hold_amount - (float)$postData[$permanent_hold_amount_code]['release_amount'];
+                            $holdPaymentModel->release_amount = (float)$holdPaymentModel->release_amount + (float)$postData[$permanent_hold_amount_code]['release_amount'];
                             $saveModel[] = $historyModel;
                             $saveModel[] = $holdPaymentModel;
                             $saveModel[] = $transaction;
                         }
                     }
-                    // $transaction = $this->generalModel->saveTransaction($saveModel, ['Member payment released.', 'info']);
-                    // if ($transaction == 'customRedirect') {
-                    //     return $this->redirect(['index']);
-                    // }
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Member payment released.', 'info']);
+                    if ($transaction == 'customRedirect') {
+                        return $this->redirect(['index']);
+                    }
                 }
             }
         }
         $searchModel = new TblPermanentHoldAmountSearch();
         $searchModel->scenario = 'releasepayment';
-        $searchModel->load(Yii::$app->request->get());        
+        $searchModel->load(Yii::$app->request->get());
+        if($searchModel->validate()){
+            $param = [];
+            $param[] = $searchModel['union_code'];
+            $param[] = $searchModel['plant_code'];
+            $param[] = $searchModel['mcc_plant_code'];
+            $param[] = $searchModel['bmc_code'];
+            $param[] = $searchModel['dcs_code'];
+            $param[] = date('Y-m-d', strtotime($searchModel['from_date']));
+            $param[] = date('Y-m-d', strtotime($searchModel['to_date']));
+            \Yii::$app->general->getSpData('sp_verify_bank_detail', $param);
+        }        
         $dataProvider = $searchModel->search([], true);
         $searchModel->grid_filter = false;
         $dataProvider->pagination = false;

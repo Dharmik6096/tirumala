@@ -51,7 +51,7 @@ class TblPermanentHoldAmountHistory extends \yii\db\ActiveRecord
             [['permanent_hold_amount_code','union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'release_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['transaction_date', 'release_date', 'created_at', 'updated_at'], 'safe'],
             [['payment_cycle_code', 'originating_type'], 'safe'],
-            [['hold_amount','history_created_by', 'history_created_at'], 'safe'],
+            [['actual_hold_amount','hold_amount','history_created_by', 'history_created_at'], 'safe'],
             [['customer_type', 'customer_code','operation_type'], 'safe'],
             [['bank_code','branch_code','bank_account_no','ifsc','bank_name','branch_name','beneficiary_name','is_verified','from_date','to_date', 'release_amount'], 'safe'],
         ];

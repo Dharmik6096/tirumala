@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
                 'validateOnSubmit' => true,
     ]);
     ?>   
-    <div class="col-sm-12 mt10 padding-left-0">
+    <div class="row">
         <div class="col-sm-3" id="union">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
         </div>
@@ -36,10 +36,10 @@ use yii\widgets\ActiveForm;
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblpermanentholdamountsearch-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, true); ?>
+            <?= Yii::$app->controls->date($model, $form, 'from_date'); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, true); ?>
+            <?= Yii::$app->controls->date($model, $form, 'to_date'); ?>
         </div>        
         <div class=" col-sm-2 form-group mt23">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

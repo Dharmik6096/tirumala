@@ -55,25 +55,26 @@ $attribute = [
     ['attribute' => 'customer_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'label' => Yii::t('app', 'Member Name'), 'filter' => false],
-    ['attribute' => 'hold_amount', 'filter' => false],
+    ['attribute' => 'hold_amount', 'contentOptions' => ['class' => 'hold-amount'], 'filter' => false],
     ['attribute' => 'release_amount',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'rtpl_validate\'>' . $form->field($model, '[' . $index . ']release_amount')->textInput(['value' => $model->release_amount, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
-            },
+                return '<span class=\'rtpl_validate\'>' . $form->field($model, '[' . $model->permanent_hold_amount_code . ']release_amount')->textInput(['value' => 0, 'class' => 'form-control number-validate release-amount',])->label(FALSE) . '</span>';
+            }, 'filter' => false
         ],
+    ['attribute' => 'hold_amount', 'contentOptions' => ['class' => 'pending-hold-amount'], 'filter' => false, 'label' => 'Pending Hold Amount', 'filter' => false],
     
     // ['attribute' => 'payment_cycle_code', 'value' => function($model) {
     //         return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
     //     }, 'filter' => false, 'format' => 'raw'],
-    ['attribute' => 'bank_code', 'label' => Yii::t('app', 'Bank Code')],
-    ['attribute' => 'bank_name', 'label' => Yii::t('app', 'Bank Name')],
-    ['attribute' => 'branch_code', 'label' => Yii::t('app', 'Branch Code')],
-    ['attribute' => 'branch_name', 'label' => Yii::t('app', 'Branch Name')],
-    ['attribute' => 'ifsc', 'label' => Yii::t('app', 'IFSC')],
-    ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'Bank Account No')],
-    ['attribute' => 'beneficiary_name', 'label' => Yii::t('app', 'Beneficiary Name')],
-    ['attribute' => 'is_verified', 'label' => Yii::t('app', 'Is Verified')],
+    ['attribute' => 'bank_code', 'label' => Yii::t('app', 'Bank Code'), 'filter' => false],
+    ['attribute' => 'bank_name', 'label' => Yii::t('app', 'Bank Name'), 'filter' => false],
+    ['attribute' => 'branch_code', 'label' => Yii::t('app', 'Branch Code'), 'filter' => false],
+    ['attribute' => 'branch_name', 'label' => Yii::t('app', 'Branch Name'), 'filter' => false],
+    ['attribute' => 'ifsc', 'label' => Yii::t('app', 'IFSC'), 'filter' => false],
+    ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'Bank Account No'), 'filter' => false],
+    ['attribute' => 'beneficiary_name', 'label' => Yii::t('app', 'Beneficiary Name'), 'filter' => false],
+    ['attribute' => 'is_verified', 'label' => Yii::t('app', 'Is Verified'), 'filter' => false],
     [
         'attribute' => 'from_date',
         'value' => function ($model) {

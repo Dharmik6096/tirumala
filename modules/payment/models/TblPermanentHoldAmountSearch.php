@@ -43,7 +43,7 @@ class TblPermanentHoldAmountSearch extends TblPermanentHoldAmount
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'release_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['transaction_date', 'created_at', 'updated_at'], 'safe'],
             [['payment_cycle_code', 'originating_type'], 'safe'],
-            [['hold_amount','release_date'], 'safe'],
+            [['actual_hold_amount','hold_amount','release_date'], 'safe'],
             [['customer_type', 'customer_code'], 'safe'],
             [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code','f_dcs_code'],'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'],'required','on'=>'releasepayment'],
@@ -68,25 +68,20 @@ class TblPermanentHoldAmountSearch extends TblPermanentHoldAmount
      */
     public function search($params, $release = false) {
         $query = TblPermanentHoldAmount::find();
-//        $request = Yii::$app->request->queryParams;
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
         $this->load($params);
         $query->joinWith(['dcsCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_permanent_hold_amount', 'tbl_permanent_hold_amount', 'tbl_permanent_hold_amount');
         if (!$this->validate()) {
-//            echo 'dd'; die;
-            // uncomment the following line if you do not want to return any records when validation fails
              $query->where('0=1');
             return $dataProvider;
         }
         if($release){
-            $query->where(['tbl_permanent_hold_amount.release_date' => NULL]);
+            $query->where(['tbl_permanent_hold_amount.is_verified' => 1]);
         }
+        $query->andwhere(['>','tbl_permanent_hold_amount.hold_amount', 0]);
 
         $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
         $query->andFilterWhere(['>=', 'cast(tbl_permanent_hold_amount.from_date as date)', $this->from_date]);
@@ -99,7 +94,6 @@ class TblPermanentHoldAmountSearch extends TblPermanentHoldAmount
                 ->andFilterWhere(['tbl_permanent_hold_amount.mcc_plant_code' => $this->mcc_plant_code])
                 ->andFilterWhere(['tbl_permanent_hold_amount.bmc_code' => $this->bmc_code])
                 ->andFilterWhere(['tbl_permanent_hold_amount.dcs_code' => $this->dcs_code]);
-//                ->andWhere(['tbl_member_payment_summary_alias.payment_cycle_code' => $this->payment_cycle_code]);
         
         return $dataProvider;
     }

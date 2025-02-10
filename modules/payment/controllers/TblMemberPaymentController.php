@@ -1018,6 +1018,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                         $permanentHoldModel->transaction_date = $outstanding->transaction_date;
                                         $permanentHoldModel->payment_cycle_code = $outstanding->payment_cycle_code;
                                         $permanentHoldModel->hold_amount = $outstanding->hold_amount;
+                                        $permanentHoldModel->actual_hold_amount = $outstanding->hold_amount;
                                         $permanentHoldModel->customer_type = 'member';
                                         $permanentHoldModel->customer_code = $Data->member_code;
                                         $permanentHoldModel->from_date = $model->from_datetime;
@@ -1053,6 +1054,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                         $permanentHoldModel->transaction_date = $outstanding->transaction_date;
                                         $permanentHoldModel->payment_cycle_code = $outstanding->payment_cycle_code;
                                         $permanentHoldModel->hold_amount = $outstanding->hold_amount;
+                                        $permanentHoldModel->actual_hold_amount = $outstanding->hold_amount;
                                         $permanentHoldModel->customer_type = 'member';
                                         $permanentHoldModel->customer_code = $Data->member_code;
                                         $permanentHoldModel->from_date = $model->from_datetime;
