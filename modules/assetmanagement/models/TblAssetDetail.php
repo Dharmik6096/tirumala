@@ -82,7 +82,7 @@ class TblAssetDetail extends \app\models\ChildModel {
                 return $('#is_serial_number').val() == '0'; 
             }"],
             [['asset_code'], 'checkUnique', 'skipOnError' => true],
-            [['asset_code'], 'getDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer']],
+            [['asset_code'], 'getDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer', 'inwardAsset']],
             [['qty'], 'default', 'value' => 1],
             [['make', 'other_info'], 'string', 'max' => 100],
             [['verification_date'], 'required', 'when' => function ($model) {

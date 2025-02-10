@@ -76,7 +76,7 @@ class TblAssetTransaction extends \app\models\ChildModel {
                 }, 'skipOnError' => true, 'on' => 'importCsv'],
             [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
             [['asset_code'], 'checkUnique', 'skipOnError' => true],
-            [['asset_code'], 'getDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer']],
+            [['asset_code'], 'getDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer', 'create']],
             //   ['serial_number', 'unique', 'targetAttribute' => ['serial_number', 'asset_code', 'from_type', 'from_dest', 'to_type', 'to_dest', 'transaction_date'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Serial No. has already been taken.')],
             [['from_dest'], 'exist', 'skipOnError' => true,
                 'targetClass' => ($this->from_type == 'VEN') ? TblCustomerMaster::className() : TblStoreLocation::className()

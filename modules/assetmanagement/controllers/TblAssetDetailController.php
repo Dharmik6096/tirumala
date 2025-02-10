@@ -72,6 +72,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblAssetDetail();
         $assetTrans = new TblAssetTransaction();
+        $assetTrans->scenario = 'create';
         $this->viewFile = 'create';
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
@@ -94,6 +95,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                 $assetTrans->transaction_date = $this->model->put_to_use_date;
                 $assetTrans->qty = empty($this->model->qty) ? 1 : $this->model->qty;
                 $assetTrans->put_to_use_date = $this->model->put_to_use_date;
+                $assetTrans->detail_code = $this->model->detail_code;
                 $assetTrans->remain_qty = $assetTrans->qty;
                 if ($assetTrans->status == 2) {
                     //                if (empty($assetTrans->inUseSAPCode)) {
@@ -296,6 +298,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                     $saveModel[] = $this->model;
 
                     $assetDetailModel = new TblAssetDetail();
+                    $assetDetailModel->scenario = 'inwardAsset';
                     $assetDetailData = $assetDetailModel->find()->where(['asset_code' => $this->model->asset_code, 'serial_number' => $this->model->serial_number, 'is_active' => '1'])->one();
                     $assetDetailData->store_location_code = $this->model->to_dest;
                     $assetDetailData->detail_code = $this->model->detail_code;

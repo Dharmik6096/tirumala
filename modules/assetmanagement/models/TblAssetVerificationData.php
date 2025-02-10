@@ -44,21 +44,16 @@ class TblAssetVerificationData extends \app\models\ChildModel {
     public function rules()
     {
         return [
-            [['asset_group_code'], function ($attribute, $params) {
-                Yii::$app->general->validateGlobalData($this, $attribute, 'asset_group_code');
-            }, 'on' => 'importCsv'],
-            [['asset_code'], function ($attribute, $params) {
-                Yii::$app->general->validateGlobalData($this, $attribute, 'asset_code');
-            }, 'on' => 'importCsv'],
-            [['asset_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetMaster::className(), 'targetAttribute' => ['asset_code' => 'asset_code']],
             [['asset_code', 'serial_number'], 'required', 'on' => 'importCsv'],
+            [['asset_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetMaster::className(), 'targetAttribute' => ['asset_code' => 'asset_code']],
             [['serial_number'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
             [['is_verified'], 'integer'],
             [['asset_group_code', 'asset_code', 'serial_number', 'manufacturer_serial_number', 'is_verified', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'customer_type', 'customer_code', 'verification_date', 'asset_verification_code'], 'safe'],
             [['asset_group_code', 'asset_code'], 'string', 'max' => 12],
             [['serial_number', 'manufacturer_serial_number'], 'string', 'max' => 50],
             [['is_verified'], 'default', 'value' => 0, 'on' => 'importCsv'],    
-            [['asset_verification_code'], 'unique', 'targetAttribute' => ['asset_code', 'asset_verification_code'], 'message' => 'The combination of asset Code and Asset Verification Code has already been taken.'],
+            [['asset_code'], 'unique', 'targetAttribute' => ['asset_code', 'serial_number'], 'message' => 'The combination of asset Code and Serial Number has already been taken.'],
+            [['asset_verification_code'], 'unique'],
         ];
     }
 
@@ -107,8 +102,9 @@ class TblAssetVerificationData extends \app\models\ChildModel {
 
     public function assignAutoData($attribute, $params) {
         if (empty($this->getErrors())) {
-            $this->asset_group_code = $this->assetCode->asset_group_code;
-            $this->union_code = $this->assetCode->union_code;
+            $assetCode = $this->assetCode;
+            $this->asset_group_code = $assetCode->asset_group_code;
+            $this->union_code = $assetCode->union_code;
 
             $assetTransactionData = TblAssetTransaction::find()->select(['to_type','to_dest'])->where(['serial_number' => $this->serial_number, 'asset_code' => $this->asset_code])->orderBy(['created_at' => SORT_DESC])->one();
         
