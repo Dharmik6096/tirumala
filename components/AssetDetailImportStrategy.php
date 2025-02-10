@@ -149,6 +149,8 @@ class AssetDetailImportStrategy extends ARImportStrategy {
                     $error = ActiveForm::validate($model);
                     $detailerror = ActiveForm::validate($detailModel);
                     if (empty($model->getErrors()) && empty($detailModel->getErrors()) && $model->validate() && $detailModel->validate()) {
+                        $detailModel->detailCode;
+                        $model->detail_code = $detailModel->detail_code;
                         if ($model->assetCode->is_serial_number == 1) {
                             if ($model->from_type == 'VEN' && $model->getVENEntry() > 0) {
                                 $trans->rollback();

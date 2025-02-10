@@ -4,6 +4,7 @@ $this->params['menu'][] = Yii::$app->controls->add('Asset Detail');
 $this->params['menu'][] = Yii::$app->controls->add('Inward Asset', 'in-asset-transation');
 //$this->params['menu'][] = Yii::$app->controls->add('Outward/In-Use Asset', 'out-asset-transation');
 $this->params['menu'][] = Yii::$app->controls->add('Outward/In-Use Asset', 'asset-transaction');
+$this->params['menu'][] = Yii::$app->controls->add('Asset Transfer (' . Yii::t('app', 'VSP') . ' To ' . Yii::t('app', 'VSP') . ')', 'asset-transfer');
 $this->params['menu'][] = Yii::$app->controls->import('asset-detail', $this);
 //$this->params['menu'][] = Yii::$app->controls->import('asset-detail-bom', $this, Yii::t('app', 'Asset Detail Bom Import'));
 $this->params['menu'][] = Yii::$app->controls->import('asset-detail-bom', $this, Yii::t('app', 'Asset Detail Bom Import'), [], 'asset_detail_bom_1');
