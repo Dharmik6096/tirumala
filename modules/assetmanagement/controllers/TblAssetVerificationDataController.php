@@ -2,6 +2,7 @@
 
 namespace app\modules\assetmanagement\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\assetmanagement\models\TblAssetVerificationData;
 use app\modules\assetmanagement\models\TblAssetVerificationDataSearch;
@@ -12,21 +13,19 @@ use yii\filters\VerbFilter;
 /**
  * TblAssetVerificationDataController implements the CRUD actions for TblAssetVerificationData model.
  */
-class TblAssetVerificationDataController extends Controller
-{
+class TblAssetVerificationDataController extends ChildController {
 
     /**
      * Lists all TblAssetVerificationData models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblAssetVerificationDataSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -37,12 +36,12 @@ class TblAssetVerificationDataController extends Controller
      * @return TblAssetVerificationData the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblAssetVerificationData::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

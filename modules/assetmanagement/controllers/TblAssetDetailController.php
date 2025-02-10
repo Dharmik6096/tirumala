@@ -296,7 +296,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                     $saveModel[] = $this->model;
 
                     $assetDetailModel = new TblAssetDetail();
-                    $assetDetailData = $assetDetailModel->find()->where(['asset_code' =>  $this->model->asset_code, 'serial_number' => $this->model->serial_number, 'is_active' => '1'])->one();
+                    $assetDetailData = $assetDetailModel->find()->where(['asset_code' => $this->model->asset_code, 'serial_number' => $this->model->serial_number, 'is_active' => '1'])->one();
                     $assetDetailData->store_location_code = $this->model->to_dest;
                     $assetDetailData->detail_code = $this->model->detail_code;
                     $saveModel[] = $assetDetailData;
@@ -633,8 +633,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         $searchModel = new TblAssetTransactionSearch();
         $searchModel->scenario = 'assetTransfer';
         $dataProvider = $searchModel->assetTranferSearch(Yii::$app->request->queryParams);
-        
-        if (Yii::$app->request->post()) {
+        if ($txnModel->load(Yii::$app->request->post()) && $txnModel->validate()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
                 $data = Yii::$app->request->post('selection');

@@ -76,7 +76,7 @@ class TblAssetTransaction extends \app\models\ChildModel {
                 }, 'skipOnError' => true, 'on' => 'importCsv'],
             [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
             [['asset_code'], 'checkUnique', 'skipOnError' => true],
-            [['asset_code'], 'insertDetailCode', 'skipOnError' => true, 'except' => ['importCsv','assetTransfer']],
+            [['asset_code'], 'getDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer']],
             //   ['serial_number', 'unique', 'targetAttribute' => ['serial_number', 'asset_code', 'from_type', 'from_dest', 'to_type', 'to_dest', 'transaction_date'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Serial No. has already been taken.')],
             [['from_dest'], 'exist', 'skipOnError' => true,
                 'targetClass' => ($this->from_type == 'VEN') ? TblCustomerMaster::className() : TblStoreLocation::className()
@@ -324,29 +324,18 @@ class TblAssetTransaction extends \app\models\ChildModel {
                         ->andWhere(['tbl_store_location.reference_code' => $ref_code])
                         ->asArray()->all();
     }
-    
+
     public function getAttachment() {
-        $this->asset_transaction_code = (string)$this->asset_transaction_code;
+        $this->asset_transaction_code = (string) $this->asset_transaction_code;
         return $this->hasOne(TblAttachment::className(), ['module_code' => 'asset_transaction_code']);
     }
 
-    public function insertDetailCode($attribute, $params) {
-        $storeLocation = TblStoreLocation::find()->select(['store_location_type', 'reference_code'])->where(['store_location_code' => $this->to_dest,'is_active' => '1'])->one();
-        $moduleMapping = ['1' => ['name' => 'plant'],'2' => ['name' => 'bmc'],'3' => ['name' => 'society']];
-        if (!empty($storeLocation) && isset($moduleMapping[$storeLocation->store_location_type])) {
-            $detailCode = TblContactDetails::find()->select('detail_code')->where(['module_name' => $moduleMapping[$storeLocation->store_location_type]['name'],'module_code' => $storeLocation->reference_code,'is_active' => '1','is_default' => '1'])->scalar();
-            if(!empty($detailCode)){
-                $this->detail_code = $detailCode;
-            }
-        }
-    }
-
-    public function getImportDetailCode() {
-        $referenceCode = TblStoreLocation::find()->select(['reference_code'])->where(['store_location_code' => $this->to_dest, 'is_active' => '1'])->scalar();
+    public function getDetailCode() {
+        $storeLocationData = TblStoreLocation::find()->select(['store_location_type', 'reference_code'])->where(['store_location_code' => $this->to_dest, 'is_active' => '1'])->one();
         $moduleMapping = ['1' => 'plant', '2' => 'bmc', '3' => 'society'];
-        if (!empty($referenceCode) && isset($moduleMapping[$this->to_type])) {
-            $detailCode = TblContactDetails::find()->select('detail_code')->where(['module_code' => $referenceCode, 'module_name' => $moduleMapping[$this->to_type], 'is_active' => '1', 'is_default' => '1'])->scalar();
-            if(!empty($detailCode)){
+        if (!empty($storeLocationData) && isset($moduleMapping[$this->to_type])) {
+            $detailCode = TblContactDetails::find()->select('detail_code')->where(['module_code' => $storeLocationData->reference_code, 'module_name' => $moduleMapping[$storeLocationData->store_location_type], 'is_active' => '1', 'is_default' => '1'])->scalar();
+            if (!empty($detailCode)) {
                 $this->detail_code = $detailCode;
             }
         }

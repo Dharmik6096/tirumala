@@ -47,7 +47,7 @@ class TblAssetDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['asset_group_code'], function ($attribute, $params) {
+            [['asset_group_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'asset_group_code');
                 }, 'on' => 'importCsv'],
             [['asset_code'], function ($attribute, $params) {
@@ -61,7 +61,7 @@ class TblAssetDetail extends \app\models\ChildModel {
                 }, 'on' => 'importCsv'],
             [['asset_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetMaster::className(), 'targetAttribute' => ['asset_code' => 'asset_code']],
             [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
-            [['asset_code', 'store_location_code', 'put_to_use_date', 'purchase_date'], 'required'],
+            [['asset_code', 'store_location_code', 'put_to_use_date', 'purchase_date'], 'required', 'except' => ['assetTransfer']],
             [['asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'created_by', 'updated_by', 'manufacturer_serial_number'], 'string'],
             [['purchase_date', 'put_to_use_date', 'created_at', 'updated_at', 'is_serial_number', 'store_location_type', 'qty', 'make', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'current_status', 'is_verified', 'verification_date', 'other_info', 'detail_code', 'manufacturer_serial_number', 'manufacturer_code', 'manufacturer_id'], 'safe'],
             [['warranty_period', 'maintanance_duration_in_days', 'capacity', 'qty'], 'number'],
@@ -82,7 +82,7 @@ class TblAssetDetail extends \app\models\ChildModel {
                 return $('#is_serial_number').val() == '0'; 
             }"],
             [['asset_code'], 'checkUnique', 'skipOnError' => true],
-            [['asset_code'], 'insertDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer']],
+            [['asset_code'], 'getDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer']],
             [['qty'], 'default', 'value' => 1],
             [['make', 'other_info'], 'string', 'max' => 100],
             [['verification_date'], 'required', 'when' => function ($model) {
@@ -183,28 +183,16 @@ class TblAssetDetail extends \app\models\ChildModel {
         }
     }
 
-    public function insertDetailCode($attribute, $params) {
-        $storeLocation = TblStoreLocation::find()->select(['store_location_type', 'reference_code'])->where(['store_location_code' => $this->store_location_code,'is_active' => '1'])->one();
-        $moduleMapping = ['1' => ['code' => $storeLocation->reference_code, 'name' => 'plant'],'2' => ['code' => $storeLocation->reference_code, 'name' => 'bmc'],'3' => ['code' => $storeLocation->reference_code, 'name' => 'society']];
-        
-        if (isset($moduleMapping[$this->store_location_type])) {
-            $detailCode = TblContactDetails::find()->select('detail_code')->where(['module_code' => $moduleMapping[$this->store_location_type]['code'], 'module_name' => $moduleMapping[$this->store_location_type]['name'], 'is_active' => '1', 'is_default' => '1'])->scalar();
-            if(!empty($detailCode)){
-                $this->detail_code = $detailCode;
-            }
-        }
-    }
-
-    public function getImportDetailCode() {
+    public function getDetailCode() {
         $storeLocationData = TblStoreLocation::find()->select(['store_location_type', 'reference_code'])->where(['store_location_code' => $this->store_location_code, 'is_active' => '1'])->one();
         $moduleMapping = ['1' => 'plant', '2' => 'bmc', '3' => 'society'];
 
         if (!empty($storeLocationData) && isset($moduleMapping[$storeLocationData->store_location_type])) {
             $detailCode = TblContactDetails::find()->select('detail_code')->where(['module_code' => $storeLocationData->reference_code, 'module_name' => $moduleMapping[$storeLocationData->store_location_type], 'is_active' => '1', 'is_default' => '1'])->scalar();
-            if(!empty($detailCode)){
+            if (!empty($detailCode)) {
                 $this->detail_code = $detailCode;
             }
         }
     }
-    
+
 }
