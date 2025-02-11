@@ -31,6 +31,7 @@ if ($milk_short_recovery_member == '1') {
     $shortage_pending_info .= '<span id="total-shortage-amount" class="ml-50">Pending Shortage Amount :: ' . $shortage_amount . '</span>';
     echo Html::hiddenInput('pending_shortage_amount', $shortage_amount, ['class' => 'pending_shortage_amount', 'id' => 'pending_shortage_amount']);
 }
+$is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
 ?>
 <?php
 //$array = $dataProvider->getModels();
@@ -77,8 +78,12 @@ $tot_amt = array_sum(array_map(function ($array) {
                                 <th><?= Yii::t('app', 'DCS') ?></th>
                                 <th><?= Yii::t('app', 'Member Code') ?></th>
                                 <th><?= Yii::t('app', 'Member') ?></th>
-                                <th><?= Yii::t('app', 'IFSC') ?></th>
-                                <th><?= Yii::t('app', 'Bank Account No') ?></th>
+                                <?php
+                                if($is_bank_integrated){ ?>
+                                    <th><?= Yii::t('app', 'IFSC') ?></th>
+                                    <th><?= Yii::t('app', 'Bank Account No') ?></th>
+                                <?php
+                                } ?>
                                 <th><?= Yii::t('app', 'KgFAT') ?></th>
                                 <th><?= Yii::t('app', 'KgSNF') ?></th>
                                 <th><?= Yii::t('app', 'Total Qty') ?></th>
@@ -129,8 +134,12 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td><?= $m['dcs_name'] ?></td>
                                     <td><?= substr($m['member_code'], -4) ?></td>
                                     <td><?= $m['member_name'] ?></td>
-                                    <td><?= $m['ifsc'] ?></td>
-                                    <td><?= $m['bank_account_no'] ?></td>
+                                    <?php
+                                    if($is_bank_integrated){ ?>
+                                        <td><?= $m['ifsc'] ?></td>
+                                        <td><?= $m['bank_account_no'] ?></td>
+                                    <?php
+                                    } ?>
                                     <td><?= $m['kg_fat'] ?></td>
                                     <td><?= $m['kg_snf'] ?></td>
                                     <td><?= $m['qty'] ?></td>
