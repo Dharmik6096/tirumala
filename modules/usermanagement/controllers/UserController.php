@@ -20,6 +20,10 @@ use app\modules\usermanagement\models\search\UserSearch;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\usermanagement\models\TblUserDispatchCenterMapping;
+use app\modules\usermanagement\models\TblUserEngineerMapping;
+use app\modules\usermanagement\models\TblUserEngineerMappingSearch;
+use app\modules\usermanagement\models\TblUserEngineerMappingHistory;
+use yii\helpers\ArrayHelper;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -74,11 +78,11 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                 $master[] = $contactModel;
             }
             if (!empty($this->model->dispatch_center_type_code)) {
-                if(empty($this->model->dispatch_center_code)){
+                if (empty($this->model->dispatch_center_code)) {
                     $dispatchCenters = TblDispatchCenter::find()->where(['dispatch_center_type_code' => $this->model->dispatch_center_type_code])->all();
                     $this->model->dispatch_center_code = array_column($dispatchCenters, 'dispatch_center_code');
                 }
-                foreach($this->model->dispatch_center_code as $dispatch_center_code){
+                foreach ($this->model->dispatch_center_code as $dispatch_center_code) {
                     $dispCenterMapping = new TblUserDispatchCenterMapping();
                     $dispCenterMapping->user_code = $this->model->id;
                     $dispCenterMapping->dispatch_center_type_code = $this->model->dispatch_center_type_code;
@@ -312,14 +316,14 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $existDispatchCenterCodes = [];
                     $dispatchMappingDelete = [];
                     $newDispatchCenterCodes = [];
-                    if(!empty($model->dispatch_center_type_code)){
+                    if (!empty($model->dispatch_center_type_code)) {
                         $newDispatchCenterCodes = $model->dispatch_center_code;
-                        if(empty($model->dispatch_center_code)){
+                        if (empty($model->dispatch_center_code)) {
                             $dispatchCenters = TblDispatchCenter::find()->where(['dispatch_center_type_code' => $model->dispatch_center_type_code])->all();
                             $newDispatchCenterCodes = array_column($dispatchCenters, 'dispatch_center_code');
                         }
                         $existDispatchCenters = TblUserDispatchCenterMapping::find()->where(['user_code' => $model->id])->all();
-                        if(!empty($existDispatchCenters)){
+                        if (!empty($existDispatchCenters)) {
                             $delete = array_merge($delete, $existDispatchCenters);
                             $existDispatchCenterCodes = array_column($existDispatchCenters, 'dispatch_center_code');
                         }
@@ -328,7 +332,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         // Step 2: Insert non-matching values from the new array
                         $nonMatchingCodes = array_diff($newDispatchCenterCodes, $existDispatchCenterCodes);
                         $newDispatchCenterCodes = array_merge($existDispatchCenterCodes, $nonMatchingCodes);
-                        foreach($newDispatchCenterCodes as $dispatch_center_code){
+                        foreach ($newDispatchCenterCodes as $dispatch_center_code) {
                             $dispCenterMapping = new TblUserDispatchCenterMapping();
                             $dispCenterMapping->user_code = $model->id;
                             $dispCenterMapping->dispatch_center_type_code = $model->dispatch_center_type_code;
@@ -392,7 +396,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                 'query' => $model::find(),
             ]);
         }
-        if(!empty($model->userDispatchCenterMappingCode)){
+        if (!empty($model->userDispatchCenterMappingCode)) {
             $model->dispatch_center_code = array_column($model->userDispatchCenterMappingCode, 'dispatch_center_code');
         }
         return $this->renderIsAjax('update', compact('model', 'dataProvider', 'searchModel'));
@@ -557,7 +561,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
         return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
     }
-    
+
     public function actionOrganizationMapNew($id) {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
@@ -697,6 +701,53 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         } else {
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
+    }
+
+    public function actionMapEngineer($id) {
+        $DcsBmcModel = new User();
+        $engineer_data = $DcsBmcModel->getEngineerList();
+        unset($engineer_data[$id]);
+        $model = new TblUserEngineerMapping();
+        $searchModel = new TblUserEngineerMappingSearch();
+        $searchModel->user_id = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $exist_data = ArrayHelper::map($dataProvider->getModels(), 'engineer_id', 'engineer_id');
+        $engineer_data = array_diff_key($engineer_data, $exist_data);
+        $master = [];
+        if (Yii::$app->request->post() && isset(Yii::$app->request->post()['TblUserEngineerMapping'])) {
+            $engineer_code = Yii::$app->request->post()['TblUserEngineerMapping']['engineer_id'];
+            $i = 1;
+            if (!empty($engineer_code)) {
+                foreach ($engineer_code as $mapped_engineer_code) {
+                    $engineerModel = new TblUserEngineerMapping();
+                    $engineerModel->user_engineer_mapping_code = Yii::$app->general->getCodeAutoIncrement($engineerModel, $i);
+                    $engineerModel->user_id = $id;
+                    $engineerModel->engineer_id = $mapped_engineer_code;
+                    $i++;
+                    $master[] = $engineerModel;
+                }
+            }
+            $transaction = $this->generalModel->saveTransaction($master, ['Enginner Mapping', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['index']);
+            }
+        }
+
+        return $this->render('_map_engineer', [
+                    'model' => $model, 'engineer_data' => $engineer_data,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionDeleteEngineer() {
+        $model = TblUserEngineerMapping::findOne(Yii::$app->request->post('id'));
+        $record = [];
+        $historyModel = new TblUserEngineerMappingHistory();
+        Yii::$app->operation->history($model, $historyModel, DELETE);
+        $record = $this->generalModel->deleteTransaction([$model, $historyModel]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

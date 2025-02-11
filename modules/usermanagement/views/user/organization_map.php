@@ -53,57 +53,60 @@ $this->title = Yii::t('app', $title);
                                     'filterPlaceHolder' => '',
                                 ],
                     ]);
-
-                    echo $form->field($model, 'plant', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $plant['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'mcc', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $mcc['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'bmc', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $bmc['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'route', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $route['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'dcs', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $dcs['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
+                    ?>
+                    <?php
+                    if ($user->is_engineer != 1) {
+                        echo $form->field($model, 'plant', ['options' => ['class' => 'form-group col-sm-12',]])
+                                ->widget(DualListbox::className(), [
+                                    'items' => $plant['data'],
+                                    'clientOptions' => [
+                                        'moveOnSelect' => FALSE,
+                                        'selectedListLabel' => FALSE,
+                                        'nonSelectedListLabel' => FALSE,
+                                        'filterPlaceHolder' => '',
+                                    ],
+                        ]);
+                        echo $form->field($model, 'mcc', ['options' => ['class' => 'form-group col-sm-12',]])
+                                ->widget(DualListbox::className(), [
+                                    'items' => $mcc['data'],
+                                    'clientOptions' => [
+                                        'moveOnSelect' => FALSE,
+                                        'selectedListLabel' => FALSE,
+                                        'nonSelectedListLabel' => FALSE,
+                                        'filterPlaceHolder' => '',
+                                    ],
+                        ]);
+                        echo $form->field($model, 'bmc', ['options' => ['class' => 'form-group col-sm-12',]])
+                                ->widget(DualListbox::className(), [
+                                    'items' => $bmc['data'],
+                                    'clientOptions' => [
+                                        'moveOnSelect' => FALSE,
+                                        'selectedListLabel' => FALSE,
+                                        'nonSelectedListLabel' => FALSE,
+                                        'filterPlaceHolder' => '',
+                                    ],
+                        ]);
+                        echo $form->field($model, 'route', ['options' => ['class' => 'form-group col-sm-12',]])
+                                ->widget(DualListbox::className(), [
+                                    'items' => $route['data'],
+                                    'clientOptions' => [
+                                        'moveOnSelect' => FALSE,
+                                        'selectedListLabel' => FALSE,
+                                        'nonSelectedListLabel' => FALSE,
+                                        'filterPlaceHolder' => '',
+                                    ],
+                        ]);
+                        echo $form->field($model, 'dcs', ['options' => ['class' => 'form-group col-sm-12',]])
+                                ->widget(DualListbox::className(), [
+                                    'items' => $dcs['data'],
+                                    'clientOptions' => [
+                                        'moveOnSelect' => FALSE,
+                                        'selectedListLabel' => FALSE,
+                                        'nonSelectedListLabel' => FALSE,
+                                        'filterPlaceHolder' => '',
+                                    ],
+                        ]);
+                    }
                     ?>
                     <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
                     <div class="clearfix"></div>

@@ -2074,6 +2074,30 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['PORTAL' => Yii::t('app', 'Portal'), 'VLC' => Yii::t('app', 'DCS')],
             ],
+            'complaint_type' => [
+                'name' => 'complaint_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Onsite'), 2 => Yii::t('app', 'Offsite'), 3 => Yii::t('app', 'Telephonic')
+                ],
+            ],
+            'priority' => [
+                'name' => 'priority',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'High'), 2 => Yii::t('app', 'Medium'), 3 => Yii::t('app', 'Low')
+                ],
+            ],
+            'resolution_type' => [
+                'name' => 'resolution_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Field Visit'), 2 => Yii::t('app', 'Telephonic')
+                ],
+            ],
+            'complaint_status' => [
+                'name' => 'complaint_status',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Create'), 2 => Yii::t('app', 'Assign'), 3 => Yii::t('app', 'Re-Assign'), 4 => Yii::t('app', 'Resolved')
+                ],
+            ],
         ];
         return $records[$l];
     }

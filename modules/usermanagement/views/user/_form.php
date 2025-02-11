@@ -90,6 +90,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'user-dispatch_center_type_code', 'dispatch_center_code', $model->getAttributeLabel('dispatch_center'), TRUE); ?>
     </div>
+    <div class="col-sm-2 mt18">
+        <?= $form->field($model, 'is_engineer', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+    </div>
     <?php /* if ($model->checkNotSelf()) { ?>
       <div class="col-sm-2 mt25">
       <?= Yii::$app->controls->active($model, $form); ?>

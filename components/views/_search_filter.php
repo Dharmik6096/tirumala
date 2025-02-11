@@ -403,6 +403,14 @@ if (!empty($filter_data)) {
                                         </div>
                                         <?php
                                     }
+                                    if (in_array($value, array('f_u_dcs_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, $field_class . '-f_union_code', '', 'Society'); ?>
+                                        </div>
+                                        <?php
+                                    }
                                 }
                                 ?>
 

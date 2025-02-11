@@ -295,6 +295,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('unionKeyPattern', $unionKeyPattern);
         Yii::$app->session->set('financialYear', $finacialYear);
         Yii::$app->session->set('ViewHistory', $ViewHistory);
+        Yii::$app->session->set('isEngineer', $user->is_engineer);
         return true;
     }
 

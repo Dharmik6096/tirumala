@@ -1258,6 +1258,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Shift Time'), 'url' => ['/general/tbl-shift-time/index'], 'active' => ($cntrl == 'tbl-shift-time')],
                             ['label' => Yii::t('app', 'Notification'), 'url' => ['/notification/tbl-notifications/index'], 'active' => ($cntrl == 'tbl-notifications')],
                             ['label' => Yii::t('app', 'Complaint'), 'url' => ['/complaint/tbl-complaint/index'], 'active' => ($cntrl == 'tbl-complaint')],
+                            ['label' => Yii::t('app', 'Software Complaint'), 'url' => ['/complaint/tbl-software-complaint/index'], 'active' => ($cntrl == 'tbl-software-complaint')],
                             ['label' => Yii::t('app', 'General Configuration'), 'url' => ['/setting/tbl-general-config/index'], 'active' => ($cntrl == 'tbl-general-config')],
                         //                        ['label' => Yii::t('app', 'Custom Import (Create)'), 'url' => ['/customimport/default/create-by-import'], 'active' => ($cntrl == 'customimport-create')],
                         //                        ['label' => Yii::t('app', 'Custom Import (Update)'), 'url' => ['/customimport/default/update-by-import'], 'active' => ($cntrl == 'customimport-update')],
