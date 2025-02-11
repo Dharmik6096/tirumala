@@ -219,6 +219,12 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
+                                    <?php
+                                    if($is_bank_integrated){ ?>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                    <?php
+                                    } ?>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
