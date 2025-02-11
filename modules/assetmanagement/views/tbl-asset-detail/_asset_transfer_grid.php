@@ -56,10 +56,10 @@ $form = ActiveForm::begin([
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Transfer'), ['class' => 'btn btn-primary', 'id' => 'transfer']);
+                echo Html::button(Yii::t('app', 'Transfer'), ['class' => 'btn-login btn btn-primary', 'id' => 'transfer']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'update-asset-transfer'); ?>
+            <?= Yii::$app->controls->custombutton('Cancel', 'update-asset-transfer', '', 'btn-login'); ?> 
         </div>
 
 <?php ActiveForm::end(); ?>
