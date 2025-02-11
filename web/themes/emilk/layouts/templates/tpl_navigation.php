@@ -46,7 +46,7 @@ echo GhostMenu::widget([
     'items' => [
             [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Master <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Master <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="masterDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Master <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='masterDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -138,7 +138,7 @@ echo GhostMenu::widget([
         ],
             [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Transporter <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Transporter <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="transporterDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Transporter <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='transporterDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -164,7 +164,7 @@ echo GhostMenu::widget([
         ],
             [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="milkCollDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
             'items' => [
@@ -197,9 +197,9 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'BMC Testing Data'), 'url' => ['/collection/tbl-quality-collection/index'], 'active' => ($cntrl == 'tbl-quality-collection')],
                     ['label' => Yii::t('app', 'BMC Weight Data'), 'url' => ['/collection/tbl-weight-collection/index'], 'active' => ($cntrl == 'tbl-weight-collection')],
                 //['label' => 'Manual Milk Collection', 'url' => ['/collection/tbl-milk-collection-temp/index'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'index')],
-                // ['label' => 'Milk Collection Approve', 'url' => ['/collection/tbl-milk-collection-temp/get-temp-data'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'get-temp-data')],
-                //                ['label' => 'Cleaning', 'url' => ['/collection/tbl-m-a-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
-                //                ['label' => 'Calibration', 'url' => ['/collection/tbl-m-a-c-alibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
+// ['label' => 'Milk Collection Approve', 'url' => ['/collection/tbl-milk-collection-temp/get-temp-data'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'get-temp-data')],
+//                ['label' => 'Cleaning', 'url' => ['/collection/tbl-m-a-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
+//                ['label' => 'Calibration', 'url' => ['/collection/tbl-m-a-c-alibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
                 ['label' => 'Cleaning', 'url' => ['/collection/tbl-analyzer-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
                     ['label' => 'Calibration', 'url' => ['/collection/tbl-analyzer-calibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
                     ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
@@ -256,7 +256,7 @@ echo GhostMenu::widget([
         ],
             [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Rate <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Rate <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="milkRateDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Milk Rate <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='milkRateDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -284,7 +284,7 @@ echo GhostMenu::widget([
         ],
             [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
-            //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Product <b class="caret"></b></a>',
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Product <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="productDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Product <b class="caret"></b></a>',
             'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='productDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
@@ -1039,6 +1039,14 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'BMC Wise Stock'), 'url' => ['/misreports/reports/stock-register-bmc-to-sap']],
                             ['label' => Yii::t('app', 'Indent Summary Detail'), 'url' => ['/misreports/reports/indent-summary-detail']],
                             ['label' => Yii::t('app', 'Indent Member Detail'), 'url' => ['/misreports/reports/indent-member-detail']],
+                    ]
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Transport') . ' <b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'TP Cost Detail'), 'url' => ['/misreports/reports/tp-cost-detail']],
+                            ['label' => Yii::t('app', 'TP Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
                     ]
                 ],
                     [

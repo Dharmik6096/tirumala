@@ -1922,6 +1922,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTpCostDetail() {
+        $this->report = 'TpCostDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionTpCostSummary() {
+        $this->report = 'TpCostSummary';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4113,6 +4123,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'mask_data' => ['current_adhar_no', 'previous_adhar_no', 'adhar_no', 'nominee_adhar_no'],
                 'scenario' => 'InsuranceDetailReconciliation',
                 'title' => 'Insurance Detail Change Log',
+            ],
+            'TpCostDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost',
+                'scenario' => 'TpCostDetail',
+                'title' => 'Tp Cost Detail',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost_summary',
+                'scenario' => 'TpCostSummary',
+                'title' => 'Tp Cost Summary',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
