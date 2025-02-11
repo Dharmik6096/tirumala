@@ -68,12 +68,6 @@ class TblMccBillHeadDetail extends \app\models\ChildModel {
             [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importDetailCsv']],
             [['transaction_date'], 'convertDate', 'on' => ['importCsv', 'importDetailCsv']],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'importDetailCsv']],
-            [['bmc_code'], function ($attribute, $params) {
-                    if (empty($this->getErrors())) {
-                        $flag = ['data_lock_bmc', 'billing_lock_bmc'];
-                        Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', 'BMC', $flag);
-                    }
-                }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv', 'importDetailCsv']],
         ];
     }
 
@@ -160,9 +154,6 @@ class TblMccBillHeadDetail extends \app\models\ChildModel {
             if (!array_key_exists($this->mcc_bill_head_code, $list)) {
                 $this->addError('mcc_bill_head_code', Yii::t('app/validation', $this->getAttributeLabel('mcc_bill_head_code') . ' is invalid'));
             }
-
-            $flag = ['data_lock_bmc', 'billing_lock_bmc'];
-            Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', 'BMC', $flag);
         }
     }
 

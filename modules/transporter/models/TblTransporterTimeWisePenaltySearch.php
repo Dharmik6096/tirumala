@@ -49,6 +49,8 @@ class TblTransporterTimeWisePenaltySearch extends TblTransporterTimeWisePenalty 
             'query' => $query,
         ]);
 
+        $this->from_date = date('Y-m-d', strtotime('-30 days'));
+        $this->to_date = date('Y-m-d');
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this, '', 'tbl_transporter_time_wise_penalty', 'tbl_transporter_time_wise_penalty');
         if (!$this->validate()) {

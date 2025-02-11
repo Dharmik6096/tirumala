@@ -19,11 +19,11 @@ $attribute = [
         'value' => function($model) {
             return isset($model->bill_head_type) ? Yii::$app->dropdown->getRecords('calc_type')['data'][$model->bill_head_type] : 'N/A';
         },],
-//    ['attribute' => 'calculation_based_on',
-//        'filter' => Yii::$app->dropdown->dropdownfilterStatic('calc_based_on', $searchModel, 'calculation_based_on'),
-//        'value' => function($model) {
-//            return !empty($model->calculation_based_on) ? Yii::$app->dropdown->getRecords('calc_based_on')['data'][$model->calculation_based_on] : 'N/A';
-//        },],
+    ['attribute' => 'calculation_based_on',
+    'filter' => Yii::$app->dropdown->dropdownfilterStatic('mcc_calc_based_on', $searchModel, 'calculation_based_on'),
+    'value' => function($model) {
+        return !empty($model->calculation_based_on) ? Yii::$app->dropdown->getRecords('mcc_calc_based_on')['data'][$model->calculation_based_on] : 'N/A';
+    },],
     ['attribute' => 'default_bill_head_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->defaultBillHeadCode, 'default_bill_head_name');
