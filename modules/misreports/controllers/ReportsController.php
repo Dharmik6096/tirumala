@@ -1909,6 +1909,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTpCostDetail() {
+        $this->report = 'TpCostDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionTpCostSummary() {
+        $this->report = 'TpCostSummary';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4083,6 +4093,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
                 'scenario' => 'RateRecalculationWefDateWise',
                 'title' => 'Rate Recalculation(Custom)',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost',
+                'scenario' => 'TpCostDetail',
+                'title' => 'Tp Cost Detail',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost_summary',
+                'scenario' => 'TpCostSummary',
+                'title' => 'Tp Cost Summary',
                 'bkg_export' => TRUE,
             ],
         ];
