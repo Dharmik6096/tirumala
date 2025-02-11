@@ -18,6 +18,7 @@ if ($searchModel->module_name == 'society') {
     $contact_person_lable = 'Contact Person';
     $local_contact_person_lable = Yii::t('app', 'Contact Person Hindi Name');
 }
+$show_optional_fields = !empty($show_optional_fields) ? $show_optional_fields : FALSE;
 $attribute = [
 //    'contact_person',
 //    'local_contact_person',

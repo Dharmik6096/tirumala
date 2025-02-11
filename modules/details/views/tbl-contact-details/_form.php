@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 
 $mail_info = !empty($mail_info) ? $mail_info : FALSE;
+$show_optional_fields = !empty($show_optional_fields) ? $show_optional_fields : FALSE;
 ?>
 
 <!--<div class="col-sm-3">
