@@ -817,45 +817,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $model->transporter_code = '';
                 $model->vehicle_code = '';
             }
-
-            $flag = ['calculate_clr', 'rtpl_calculate'];
-            $data = [];
-            $data['bmc_code'] = $model->bmc_code;
-            $data['dcs_code'] = $model->customer_code;
-            $data['milk_type'] = $model->milk_type_code;
-            $data['milk_quality_type'] = $model->milk_quality_type_code;
-            $data['shift'] = $model->shift_code;
-            $data['dt_date'] = empty($model->date_time_of_collection) ? NULL : Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d') . ' ' . \Yii::$app->general->getshift($data['shift']);
-            $data['fat'] = $model->fat;
-            $data['snf'] = $model->snf;
-            $data['clr'] = !empty($model->clr) ? $model->clr : '';
-            $data['customer_type'] = $model->customer_type;
-            $data['union'] = $model->union_code;
-            $data['qty'] = $model->qty;
-
-//        $customerModel = new TblCustomerType();
-//        $is_clr_input = $customerModel->getClrInput($model->customer_type, $model->union_code);
-            $resdata = $this->calculateData($flag, $model->union_code, $model->bmc_code, $model->fat, $model->milk_type_code, $model->snf, $model->clr, $model->customer_type, 0, $data);
-//        if ($is_clr_input == 0) {
-            $model->clr = isset($resdata['clr']) ? $resdata['clr'] : 0;
-//        } else {
-//            $model->snf = isset($resdata['clr']) ? $resdata['clr'] : 0;
-//        }
-            $responseData = isset($resdata['data']['list']) ? $resdata['data']['list'] : '';
-            $rtpl = isset($responseData['rtpl']) ? $responseData['rtpl'] : '';
-            $model->actual_rate = !empty($rtpl) ? number_format($rtpl, 2) : 0;
-            $model->rate_code = isset($responseData['purchase_rate_code']) ? $responseData['purchase_rate_code'] : '';
-            if (isset($responseData['scheme_rate_rtpl']) && $responseData['scheme_rate_rtpl'] != '' && $responseData['scheme_rate_rtpl'] != null) {
-                $rtpl = $rtpl + $responseData['scheme_rate_rtpl'];
-                $model->scheme_rate_code = $responseData['scheme_rate_code'];
-                $model->scheme_rate = $responseData['scheme_rate_rtpl'];
-            }
-
-            $model->rtpl = $rtpl;
-            $rate = is_numeric($model->rtpl) ? (float) $model->rtpl : 0;
-            $qty = is_numeric($model->qty) ? (float) $model->qty : 0;
-            $amount = $rate * $qty;
-            $model->amount = number_format($amount, 2, '.', '');
+            $this->applyCalculations($model);
 
             $this->postDataSet($model, 'api_create', $childModel, $auto_key_config, $i);
             $collmodel = new TblBmcCollection();
@@ -877,36 +839,8 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $model->own_bmc_code = $model->bmc_code;
                 $model->own_mcc_plant_code = $model->mcc_plant_code;
                 if (!empty($model->attributes) && ($model->fat != $existingData->attributes['fat'] || $model->snf != $existingData->attributes['snf'] || $model->rtpl != $existingData->attributes['rtpl'] || $model->qty != $existingData->attributes['qty'] )) {
-                    $flag = ['calculate_clr', 'rtpl_calculate'];
-                    $data = [];
-                    $data['bmc_code'] = $model->bmc_code;
-                    $data['dcs_code'] = $model->customer_code;
-                    $data['milk_type'] = $model->milk_type_code;
-                    $data['milk_quality_type'] = $model->milk_quality_type_code;
-                    $data['shift'] = $model->shift_code;
-                    $data['dt_date'] = empty($model->date_time_of_collection) ? NULL : Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d') . ' ' . \Yii::$app->general->getshift($data['shift']);
-                    $data['fat'] = $model->fat;
-                    $data['snf'] = $model->snf;
-                    $data['clr'] = !empty($model->clr) ? $model->clr : '';
-                    $data['customer_type'] = $model->customer_type;
-                    $data['union'] = $model->union_code;
-                    $data['qty'] = $model->qty;
-                    $resdata = $this->calculateData($flag, $model->union_code, $model->bmc_code, $model->fat, $model->milk_type_code, $model->snf, $model->clr, $model->customer_type, 0, $data);
-                    $model->clr = isset($resdata['clr']) ? $resdata['clr'] : 0;
-                    $responseData = isset($resdata['data']['list']) ? $resdata['data']['list'] : '';
-                    $rtpl = isset($responseData['rtpl']) ? $responseData['rtpl'] : '';
-                    $model->actual_rate = !empty($rtpl) ? number_format($rtpl, 2) : 0;
-                    $model->rate_code = isset($responseData['purchase_rate_code']) ? $responseData['purchase_rate_code'] : '';
-                    if (isset($responseData['scheme_rate_rtpl']) && $responseData['scheme_rate_rtpl'] != '' && $responseData['scheme_rate_rtpl'] != null) {
-                        $rtpl = $rtpl + $responseData['scheme_rate_rtpl'];
-                        $model->scheme_rate_code = $responseData['scheme_rate_code'];
-                        $model->scheme_rate = $responseData['scheme_rate_rtpl'];
-                    }
-                    $model->rtpl = $rtpl;
-                    $rate = is_numeric($model->rtpl) ? (float) $model->rtpl : 0;
-                    $qty = is_numeric($model->qty) ? (float) $model->qty : 0;
-                    $amount = $rate * $qty;
-                    $model->amount = number_format($amount, 2, '.', '');
+                    $this->applyCalculations($model);
+
                     $collectionData = clone $existingData;
                     $configCanParLtr = Yii::$app->general->getUnionConfiguration($model->union_code, 'can_per_ltr', 'BMC');
                     if (!empty($configCanParLtr)) {
@@ -993,6 +927,39 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }
             }
         }
+    }
+
+    public function applyCalculations(&$model) {
+        $flag = ['calculate_clr', 'rtpl_calculate'];
+        $data = [];
+        $data['bmc_code'] = $model->bmc_code;
+        $data['dcs_code'] = $model->customer_code;
+        $data['milk_type'] = $model->milk_type_code;
+        $data['milk_quality_type'] = $model->milk_quality_type_code;
+        $data['shift'] = $model->shift_code;
+        $data['dt_date'] = empty($model->date_time_of_collection) ? NULL : Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d') . ' ' . \Yii::$app->general->getshift($data['shift']);
+        $data['fat'] = $model->fat;
+        $data['snf'] = $model->snf;
+        $data['clr'] = !empty($model->clr) ? $model->clr : '';
+        $data['customer_type'] = $model->customer_type;
+        $data['union'] = $model->union_code;
+        $data['qty'] = $model->qty;
+        $resdata = $this->calculateData($flag, $model->union_code, $model->bmc_code, $model->fat, $model->milk_type_code, $model->snf, $model->clr, $model->customer_type, 0, $data);
+        $model->clr = isset($resdata['clr']) ? $resdata['clr'] : 0;
+        $responseData = isset($resdata['data']['list']) ? $resdata['data']['list'] : '';
+        $rtpl = isset($responseData['rtpl']) ? $responseData['rtpl'] : '';
+        $model->actual_rate = !empty($rtpl) ? number_format($rtpl, 2) : 0;
+        $model->rate_code = isset($responseData['purchase_rate_code']) ? $responseData['purchase_rate_code'] : '';
+        if (isset($responseData['scheme_rate_rtpl']) && $responseData['scheme_rate_rtpl'] != '' && $responseData['scheme_rate_rtpl'] != null) {
+            $rtpl = $rtpl + $responseData['scheme_rate_rtpl'];
+            $model->scheme_rate_code = $responseData['scheme_rate_code'];
+            $model->scheme_rate = $responseData['scheme_rate_rtpl'];
+        }
+        $model->rtpl = $rtpl;
+        $rate = is_numeric($model->rtpl) ? (float) $model->rtpl : 0;
+        $qty = is_numeric($model->qty) ? (float) $model->qty : 0;
+        $amount = $rate * $qty;
+        $model->amount = number_format($amount, 2, '.', '');
     }
 
     public function setCollectionData(&$model) {
