@@ -23,6 +23,7 @@ class TblBmcMilkDispatchSearch extends TblBmcMilkDispatch {
                 [['is_last_destination', 'transaction_date', 'originating_type'], 'integer'],
                 [['gross_weight', 'tare_weight'], 'number'],
                 [['from_date', 'to_date', 'from_shift', 'to_shift', 'f_plant_code'], 'required', 'on' => 'changeTrip'],
+                [['from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
         ];
     }
 
