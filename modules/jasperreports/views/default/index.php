@@ -399,7 +399,7 @@ $defaultToggle = true;
                                         <?php
                                         if (isset($data['tcpdf']) && $data['tcpdf']) {
                                             $client_code = \Yii::$app->session->get('eiplCode');
-                                            $titleTcpdf = 'pdf';
+                                            $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] :'pdf';
                                             $iconClass = ' fa fa-file-pdf-o ';
                                             if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
                                                 $titleTcpdf = 'Milktype Wise Bill';

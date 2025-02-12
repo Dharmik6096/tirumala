@@ -1660,7 +1660,7 @@ class DropDown extends Component {
             'user_login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'SAHAYAK'), 'az_manager' => Yii::t('app', 'Area Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
+                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'SAHAYAK'), 'az_manager' => Yii::t('app', 'Area Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
                 'remove_key' => ['all']
             ],
             'receiver_type' => [
@@ -1722,7 +1722,7 @@ class DropDown extends Component {
             'login_type_ho_flutter' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
+                'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
                 'remove_key' => ['all']
             ],
             'asset_detail_status' => [
@@ -1956,7 +1956,7 @@ class DropDown extends Component {
             'login_type_report' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['0' => Yii::t('app', 'All'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
+                'data' => ['0' => Yii::t('app', 'All'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
             ],
             'erp_process_name' => [
                 'name' => 'process_name',
@@ -1987,6 +1987,16 @@ class DropDown extends Component {
                 'name' => 'approval_status',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Pending' => Yii::t('app', 'Pending'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+            ],
+            'billing_method_chiller_info' => [
+                'name' => 'billing_method',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['fix_rent_daily' => Yii::t('app', 'Fix Rent Daily'), 'fix_rent_monthly' => Yii::t('app', 'Fix Rent Monthly')],
+            ],
+            'mcc_calc_based_on' => [
+                'name' => 'type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['bmc_collection' => Yii::t('app', 'BMC Collection'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
             ],
         ];
         return $records[$l];
@@ -2043,7 +2053,7 @@ class DropDown extends Component {
             'device_manufacturer' => ['name' => 'device_manufacturer_id', 'fields' => 'id,manufacturer', 'prompt' => 'Select Device Manufacturer', 'model' => 'TblDeviceManufacturer'],
             'organisation_type' => ['name' => 'organisation_type_code', 'fields' => 'organisation_type_code,organisation_type', 'prompt' => 'Select Organisation Type', 'model' => 'TblOrganisationType'],
             'scheme_type' => ['name' => 'scheme_type_code', 'fields' => 'scheme_type_code,scheme_type', 'prompt' => 'Select Scheme Type', 'model' => 'TblSchemeType'],
-            'transporter' => ['name' => 'transporter_code', 'fields' => 'transporter_code,transporter_name,local_name', 'prompt' => 'Select Transporter', 'model' => 'TblTransporter', 'depend' => 'union_code'],
+            'transporter' => ['name' => 'transporter_code', 'fields' => 'transporter_code,transporter_name~vendor_code,local_name', 'prompt' => 'Select Transporter', 'model' => 'TblTransporter', 'depend' => 'union_code'],
             'relation' => ['name' => 'nominee_relation', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
             'rule_id' => ['name' => 'rule_id', 'fields' => 'rule_id,process_name', 'prompt' => 'Select Rule', 'model' => 'TblEmailProcessMaster'],
             'fuel_type_code' => ['name' => 'fuel_type_code', 'fields' => 'fuel_type_code,fuel_type', 'prompt' => 'Select Fuel Type', 'model' => 'TblFuelTypeMaster'],
