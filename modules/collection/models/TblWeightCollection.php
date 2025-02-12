@@ -112,6 +112,7 @@ class TblWeightCollection extends \app\models\ChildModel {
                         }
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync']],
+                [['date_time_of_collection'], 'pastDateValidate', 'on' => ['androidsync']],
         ];
     }
 
@@ -260,4 +261,10 @@ class TblWeightCollection extends \app\models\ChildModel {
         $this->route_code = !empty($routeCode) && $routeCode != 'N/A' ? $routeCode : $this->route_code;
     }
 
+    public function pastDateValidate($attribute, $params) {
+        $date_time_of_collection = !empty($this->date_time_of_collection) ? date('Y-m-d', strtotime($this->date_time_of_collection)) : NULL;
+        if (!empty($date_time_of_collection) && ($date_time_of_collection > date('Y-m-d'))) {
+            $this->addError('date_time_of_collection', Yii::t('app/validation', $this->getAttributeLabel('date_time_of_collection') . ' Must be smaller than ' . date('d.m.Y')));
+        }
+    }
 }

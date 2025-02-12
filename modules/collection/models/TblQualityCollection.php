@@ -87,6 +87,7 @@ class TblQualityCollection extends \app\models\ChildModel {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'fat', 'bmc_lock');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync']],
+                [['date_time_of_collection'], 'pastDateValidate', 'on' => ['androidsync']],
         ];
     }
 
@@ -166,4 +167,10 @@ class TblQualityCollection extends \app\models\ChildModel {
         }
     }
 
+    public function pastDateValidate($attribute, $params) {
+        $date_time_of_collection = !empty($this->date_time_of_collection) ? date('Y-m-d', strtotime($this->date_time_of_collection)) : NULL;
+        if (!empty($date_time_of_collection) && ($date_time_of_collection > date('Y-m-d'))) {
+            $this->addError('date_time_of_collection', Yii::t('app/validation', $this->getAttributeLabel('date_time_of_collection') . ' Must be smaller than ' . date('d.m.Y')));
+        }
+    }
 }
