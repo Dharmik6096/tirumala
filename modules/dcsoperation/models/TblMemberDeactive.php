@@ -182,10 +182,6 @@ class TblMemberDeactive extends \app\models\ChildModel {
     public function setImport($attribute, $params) {
         $date = date('Y-m-d');
         $wefDate = date('Y-m-d', strtotime($this->wef_date));
-        if ($date > $wefDate) {
-            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'WEF Date') . ' Must not past date'));
-            return false;
-        }
 
         if (empty($this->dcs_code)) {
             $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
