@@ -47,9 +47,11 @@ use app\modules\dcsoperation\models\TblMemberAnimalDetails;
 use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberShareDetails;
 use app\modules\jasperreports\controllers\DefaultController;
+use app\modules\organisation\models\TblFederations;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -319,7 +321,7 @@ class TblMemberProvisional extends ChildModel {
             'dcs_ref_code' => Yii::t('app', 'Society Ref Code'),
             'payment_type' => Yii::t('app', 'Mode Of Payment'),
             'route_code' => Yii::t('app', 'Route'),
-            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'), 
+            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'),
             'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
         ];
     }
@@ -964,21 +966,33 @@ class TblMemberProvisional extends ChildModel {
 
         if (!empty($unlink_files)) {
             foreach ($unlink_files as $file) {
-                if (file_exists($moveDir . '/' . $file)) {
-                    unlink($moveDir . '/' . $file);
+                try {
+                    if (file_exists($moveDir . '/' . $file)) {
+                        unlink($moveDir . '/' . $file);
+                    }
+                } catch (\Throwable $ex) {
+                    
                 }
             }
         }
 
         for ($i = 0; $i < count($attachments); $i++) {
-            $all_doc = basename($attachments[$i]);
-            $fileName = basename($masterdoc[$i]);
-            $file = $moveDir . '/' . $fileName;
-            file_put_contents($file, file_get_contents($attachments[$i]));
-            if (file_exists($docDir . '/' . $all_doc)) {
-                unlink($docDir . '/' . $all_doc);
+            try {
+                $all_doc = basename($attachments[$i]);
+                $fileName = basename($masterdoc[$i]);
+                $file = $moveDir . '/' . $fileName;
+                file_put_contents($file, file_get_contents($attachments[$i]));
+                if (file_exists($docDir . '/' . $all_doc)) {
+                    unlink($docDir . '/' . $all_doc);
+                }
+            } catch (\Throwable $ex) {
+                
             }
         }
+    }
+
+    public function checkDelete() {
+        return strtolower($this->provisional_status) == 'pending' ? TRUE : FALSE;
     }
 
 }

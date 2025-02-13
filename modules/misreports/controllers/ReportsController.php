@@ -1835,27 +1835,27 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'IndentSummaryDetail';
         return $this->actionIndex();
     }
-    
+
     public function actionGheeGroupIndentReport() {
         $this->report = 'GheeGroupIndentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionCfGroupIndentReport() {
         $this->report = 'CfGroupIndentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionSapGheeGroupIndentReport() {
         $this->report = 'SapGheeGroupIndentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionSapCfGroupIndentReport() {
         $this->report = 'SapCfGroupIndentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionBillHeadDetail() {
         $this->report = 'BillHeadDetail';
         return $this->actionIndex();
@@ -1865,14 +1865,57 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'ApprovedAttachmentDetails';
         return $this->actionIndex();
     }
-    
+
     public function actionBmcCollectionRouteWise() {
         $this->report = 'BmcCollectionRouteWise';
         return $this->actionIndex();
     }
-    
+
     public function actionPlantWiseMilkCollectionTracking() {
         $this->report = 'PlantWiseMilkCollectionTracking';
+        return $this->actionIndex();
+    }
+
+    public function actionVlcQtySlabWiseCategory() {
+        $this->report = 'VlcQtySlabWiseCategory';
+        return $this->actionIndex();
+    }
+
+    public function actionAvgPerVlcMilkQtySlabWiseCategory() {
+        $this->report = 'AvgPerVlcMilkQtySlabWiseCategory';
+        return $this->actionIndex();
+    }
+
+    public function actionIndentMemberDetail() {
+        $this->report = 'IndentMemberDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionCompanyWiseMilkCollection() {
+        $this->report = 'CompanyWiseMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'PlantWiseMilkCollection';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'DcsWiseMilkCollection';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionRateRecalculationWefDateWise() {
+        $this->report = 'RateRecalculationWefDateWise';
+        return $this->actionIndex();
+    }
+
+    public function actionTpCostDetail() {
+        $this->report = 'TpCostDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionTpCostSummary() {
+        $this->report = 'TpCostSummary';
         return $this->actionIndex();
     }
 
@@ -4003,6 +4046,68 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_plant_wise_milk_collection_tracking',
                 'scenario' => 'PlantWiseMilkCollectionTracking',
                 'title' => 'Plant Wise Milk Collection',
+            ],
+            'VlcQtySlabWiseCategory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_vlc_qty_slab_wise_category',
+                'scenario' => 'VlcQtySlabWiseCategory',
+                'title' => 'Qty Slab Report Format 1',
+                'report_type' => [Yii::t('app', 'Member Collection'), Yii::t('app', 'Bmc Collection')],
+            ],
+            'AvgPerVlcMilkQtySlabWiseCategory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_avg_per_vlc_milk_qty_slab_wise_category',
+                'scenario' => 'AvgPerVlcMilkQtySlabWiseCategory',
+                'title' => 'Qty Slab Report Format 2',
+                'report_type' => [Yii::t('app', 'Member Collection'), Yii::t('app', 'Bmc Collection')],
+            ],
+            'IndentMemberDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_member_indent_report',
+                'scenario' => 'IndentMemberDetail',
+                'title' => 'Indent Member Detail',
+            ],
+            'CompanyWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_company_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'PlantWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_plant_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'DcsWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_dcs_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'RateRecalculationWefDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
+                'scenario' => 'RateRecalculationWefDateWise',
+                'title' => 'Rate Recalculation(Custom)',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost',
+                'scenario' => 'TpCostDetail',
+                'title' => 'Tp Cost Detail',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost_summary',
+                'scenario' => 'TpCostSummary',
+                'title' => 'Tp Cost Summary',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];

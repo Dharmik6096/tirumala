@@ -4600,7 +4600,7 @@ td.dashboardWidgetDetailPortion {
     /*border-radius: 5px;*/
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     padding: 5px;
-    height: 97px !important;
+    height: 120px !important;
 }
 
 
@@ -5900,4 +5900,30 @@ tr.highlightRow {
     padding: 10px;
     background: #fff;
     margin-bottom: 5px;
+}
+
+.table-hover tbody td.action-cell a i.green {
+    color: green !important;
+}
+
+.table-hover tbody td.action-cell a i.red {
+    color: red !important;
+}
+
+.table-hover tbody td.action-cell a i.gray {
+    color: gray !important;
+}
+
+.text-gray {
+    color: gray !important;
+}
+.text-green {
+    color: green !important;
+}
+.text-red {
+    color: red !important;
+}
+.plus-button{
+    margin: 0 0 -29px 8px;
+    z-index: 1;
 }

@@ -3,6 +3,7 @@
 namespace app\modules\organisation\controllers;
 
 use app\controllers\ChildController;
+use app\modules\organisation\models\TblOrganizationLatLongApplicabilityHistory;
 use Yii;
 use app\modules\organisation\models\TblOrganizationLatlong;
 use app\modules\organisation\models\TblOrganizationLatlongHistory;
@@ -12,6 +13,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\web\Response;
+use app\modules\organisation\models\TblOrganizationLatLongApplicability;
+use app\modules\organisation\models\TblOrganizationLatLongApplicabilitySearch;
 
 /**
  * TblOrganizationLatlongController implements the CRUD actions for TblOrganizationLatlong model.
@@ -142,4 +145,96 @@ class TblOrganizationLatlongController extends ChildController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionMapRouteSource($id) {
+        $model = new TblOrganizationLatlong();
+        $model -> user_code = $id;
+        $userOrgData = $model->getUserOrgLatLong();
+        $dest = [];
+        $modelApplicability = new TblOrganizationLatLongApplicability();
+        $modelApplicability -> user_code = $id;
+        if(!empty($userOrgData['userDataOrg'])){
+            $modelApplicability -> union_code = $userOrgData['userDataOrg'][0] -> union_code;
+            foreach($userOrgData['userDataOrg'] as $key => $val){             
+                $name =  Yii::$app->general->getField($val, $val->customer_type);
+                $reff = Yii::$app->general->getField($val, $val->customer_type,'ref_code');
+                $dest[$val->customer_code . '-'. $val->organization_latlong_code .'-' . $val->customer_type] = $reff . ' - ' . $name . ' - ' . Yii::t('app', $val->customer_type);
+        }
+        }
+        $searchModel = new TblOrganizationLatLongApplicabilitySearch();
+        $searchModel->user_code = $modelApplicability -> user_code;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+  
+        if (Yii::$app->request->post()) {
+            $applicable_code = Yii::$app->request->post('TblOrganizationLatLongApplicability')['applicable_code'];
+            $user_code = Yii::$app->request->post('TblOrganizationLatLongApplicability')['user_code'];
+            if (empty($applicable_code)) {
+                $model->addError('applicable_code', 'Please select at least one Source.');
+            } else {
+                $postData = array_filter($applicable_code);
+                $mapping = [];
+                $saveModel = [];
+                $error_msg = [];
+                $validatefalse = 0;
+                foreach ($postData as $data) {
+                    $modelnew = new TblOrganizationLatLongApplicability();
+                    $model->scenario = 'saveLatlongApplicability';
+                    $d = explode('-', $data);
+                    $modelnew->applicable_code = $d[0];
+                    $modelnew->organization_latlong_code = $d[1];
+                    $modelnew->applicable_for = $d[2];
+                    $modelnew->user_code = $user_code;
+                    $modelnew->union_code = $modelApplicability->union_code;
+                    if ($modelnew->validate()) {
+                        $saveModel[] = $modelnew;
+                        
+                    }else{
+                        $validatefalse++;
+                    }
+                    
+                }
+                if($validatefalse == 0){
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Org Latlong Mapping', 'create']);
+                    if ($transaction) {
+                        Yii::$app->display->message(true, 'Organization Latlong Mapping', 'create');
+                        return $this->redirect(['map-route-source','id' => $id]);
+                    }
+                }
+                
+            }
+        }
+
+        return $this->render('_map_route_source', [
+                    'model' => $modelApplicability, 
+                    'destinations' => $dest,
+                   'selected' => $userOrgData['selected'],
+                    'defaultValue' => '', 
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionDeleteSource() {
+        $saveModel = [];
+        $deleteModel = [];
+        $this->model = TblOrganizationLatLongApplicability::findOne(Yii::$app->request->post('id'));
+        if(!empty($this->model)){
+            $historyModel = new TblOrganizationLatLongApplicabilityHistory();
+            Yii::$app->operation->history($this->model, $historyModel, DELETE);
+            $saveModel[] = $historyModel;
+            $deleteModel[] = $this->model;
+            $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Mapped Orgniation Latlong', 'delete']);
+            if ($transaction == 'customRedirect') {
+                $this->redirect(['map-route-source', 'id' => $this->model->user_code]);
+                // $record = ['status' => 'success', 'msg' => 'Record Deleted Successfully.'];
+            }
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+       
+    }
+
+    
 }

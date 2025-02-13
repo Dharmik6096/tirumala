@@ -19,7 +19,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
         <span class="right_align_mcc_shift"><?= '(' . Yii::$app->general->getShiftName($shift) . ')' ?></span>
         <span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
-    <div class="panel-body hide-grid-export">
+    <div class="panel-body hide-grid-export overflow_visible">
         <div id="plant-list" class="grid-content">
             <div id="plant-list">
                 <div id="w12" class="grid-view hide-resize" >
@@ -119,7 +119,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                     ?>
                                 </div>
                             </div>
-                            <div id ="recovery_grid" class="col-sm-6" class="table table-striped">
+                            <div id="recovery_grid" class="col-sm-6" class="table table-striped">
                                 <div id="dash_collapse_grid">
                                     <div class="col-sm-12">
                                         <div class="table-responsive dashboard_collection_grid_tbl">
@@ -131,18 +131,40 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                         <?php if (\Yii::$app->session->get('hasBMC') == 1) { ?><th class="custom_grid_header"><?= Yii::t('app', 'BMC') ?></th><?php } ?>
                                                         <th class="custom_grid_header"><?= Yii::t('app', 'Society') ?></th>
                                                         <th class="custom_grid_header"><?= Yii::t('app', 'Farmer') ?></th>
-                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
-                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Avg. FAT') ?></th>
-                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Avg. SNF') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'LYSD QTY') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'LD QTY') ?></th>
+                                                        <th class="custom_grid_header active_div" id="qtyHeader">
+                                                            <?= Yii::t('app', 'Qty') ?> <span id="qtySortIcon"></span>
+                                                        </th>
+                                                        <th class="custom_grid_header active_div" id="avgFatHeader">
+                                                            <?= Yii::t('app', 'Avg. FAT') ?> <span id="avgFatSortIcon"></span>
+                                                        </th>
+                                                        <th class="custom_grid_header active_div" id="avgSnfHeader">
+                                                            <?= Yii::t('app', 'Avg. SNF') ?> <span id="avgSnfSortIcon"></span>
+                                                        </th>
                                                         <th class="custom_grid_header"><?= Yii::t('app', 'Avg. Rate') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Fat Solid') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'SnF Solid') ?></th>
+                                                        <th class="custom_grid_header"><?= Yii::t('app', 'Eff. RTPL') ?></th>
                                                         <th class="custom_grid_header"><?= Yii::t('app', 'Amount') ?></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php
+                                                    $totalQuantity = 0;
+                                                    $totalFatSolid = 0;
+                                                    $totalSnfSolid = 0;
+                                                    $totalAmount = 0;
+                                                    $totalEffRtpl = 0;
                                                     if (!empty($output)) {
                                                         $i = 0;
                                                         foreach ($output as $data) {
+                                                            $totalQuantityStyle = ($data['ld_quantity'] > $data['total_quantity']) ? 'style="background-color: #ff000099; color: #fff;"' : 'style="background-color: #008000c4; color: #fff;"';
+                                                            $totalQuantity += $data['total_quantity'];
+                                                            $totalFatSolid += $data['fat_solid'];
+                                                            $totalSnfSolid += $data['snf_solid'];
+                                                            $totalAmount += $data['total_amount'];
+                                                            $totalEffRtpl = ($totalAmount / (($totalFatSolid) + (($totalSnfSolid) * 2 / 3))) / 8;
                                                             ?>
                                                             <tr>
                                                                 <td class="custom_grid_normal"><?= ++$i; ?></td>
@@ -161,10 +183,15 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                                 <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
                                                                 <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code'], 'shift' => $shift]); ?>
                                                                 <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_farmers'] ?></a></td>
-                                                                <td class="number_align custom_grid_normal" ><?= $data['total_quantity'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['lysd_quantity'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['ld_quantity'] ?></td>
+                                                                <td class="number_align custom_grid_normal" <?= $totalQuantityStyle ?>><?= $data['total_quantity'] ?></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['avgSNF'] ?></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['avgRate'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['fat_solid'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['snf_solid'] ?></td>
+                                                                <td class="number_align custom_grid_normal" ><?= $data['eff_rtpl'] ?></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['total_amount'] ?></td>
                                                             </tr>
                                                             <?php
@@ -172,14 +199,33 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                     } else {
                                                         ?>
                                                         <tr><td colspan="10">No Data Available.</td></tr>
-                                                    <?php }
-                                                    ?>
+                                                    <?php } if (!empty($output)) { ?>
+                                                        <tr class="summary-row">
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong><?= $totalQuantity ?></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong><?= $totalFatSolid ?></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong><?= $totalSnfSolid ?></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong><?= number_format($totalEffRtpl, 2) ?></strong></td>
+                                                            <td class="number_align custom_grid_normal"><strong><?= $totalAmount ?></strong></td>
+                                                            <td colspan="7"></td>
+                                                        </tr>
+                                                    <?php } ?>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -203,6 +249,66 @@ $('.gread_header_icon').click(function(){
         i=0;
     }
 });
+$(document).ready(function() {
+    let sortOrder = 'asc';
+    function resetSortIcons(exclude) {
+        if (exclude !== 'qty') $('#qtySortIcon').text('');
+        if (exclude !== 'avgFat') $('#avgFatSortIcon').text('');
+        if (exclude !== 'avgSnf') $('#avgSnfSortIcon').text('');
+    }
+    $('#qtyHeader').click(function() {
+        sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+        $('#qtySortIcon').text(sortOrder === 'asc' ? '↑' : '↓');
+        resetSortIcons('qty');
+        var rows = $('#recovery_grid tbody tr').not('.summary-row').get();
+        rows.sort(function(a, b) {
+            var snfA = parseFloat($(a).find('td').eq(7).text()); // Qty column index is 7
+            var snfB = parseFloat($(b).find('td').eq(7).text());
+            if (isNaN(snfA)) snfA = 0;
+            if (isNaN(snfB)) snfB = 0;
+            return (sortOrder === 'asc') ? snfA - snfB : snfB - snfA;
+        });
+        $.each(rows, function(index, row) {
+            $('#recovery_grid tbody').append(row);
+        });
+        $('#recovery_grid tbody tr.summary-row').appendTo('#recovery_grid tbody');
+    });
+    $('#avgFatHeader').click(function() {
+        sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+        $('#avgFatSortIcon').text(sortOrder === 'asc' ? '↑' : '↓');
+        resetSortIcons('avgFat');
+        var rows = $('#recovery_grid tbody tr').not('.summary-row').get();
+        rows.sort(function(a, b) {
+            var fatA = parseFloat($(a).find('td').eq(8).text()); // Avg. FAT column index is 8
+            var fatB = parseFloat($(b).find('td').eq(8).text());
+            if (isNaN(fatA)) fatA = 0;
+            if (isNaN(fatB)) fatB = 0;
+            return (sortOrder === 'asc') ? fatA - fatB : fatB - fatA;
+        });
+        $.each(rows, function(index, row) {
+            $('#recovery_grid tbody').append(row);
+        });
+        $('#recovery_grid tbody tr.summary-row').appendTo('#recovery_grid tbody');
+    });
+    $('#avgSnfHeader').click(function() {
+        sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+        $('#avgSnfSortIcon').text(sortOrder === 'asc' ? '↑' : '↓');
+        resetSortIcons('avgSnf');
+        var rows = $('#recovery_grid tbody tr').not('.summary-row').get();
+        rows.sort(function(a, b) {
+            var snfA = parseFloat($(a).find('td').eq(9).text()); // Avg. SNF column index is 9
+            var snfB = parseFloat($(b).find('td').eq(9).text());
+            if (isNaN(snfA)) snfA = 0;
+            if (isNaN(snfB)) snfB = 0;
+            return (sortOrder === 'asc') ? snfA - snfB : snfB - snfA;
+        });
+        $.each(rows, function(index, row) {
+            $('#recovery_grid tbody').append(row);
+        });
+        $('#recovery_grid tbody tr.summary-row').appendTo('#recovery_grid tbody');
+    });
+});
+
 ";
 $this->registerJs($script, View::POS_READY, 'union-wise-data');
 ?>

@@ -43,10 +43,11 @@ use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
 use app\modules\collection\models\TblBulkBillingImport;
+use app\modules\collection\models\TblMilkCollection;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -333,6 +334,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'vendor_billing_import') {
                 $flag = 'vendor-billing-bulk';
                 $sp_name = 'DB_JOB_PORTAL_VSP_BILLING';
+            } else if ($row->file_type == 'milk_collection_qty') {
+                $flag = 'milk-collection-qty';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection_qty_wise';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -598,13 +602,11 @@ class SchedulerController extends ChildController {
         $limit = 250;
         $deactiveData = $model->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($model, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3);
-
         $activeData = $model->getActiveRecords($limit);
         $this->setSentBox($model, $activeData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 1, 4, 5, 6);
 
         $CustModel = new TblCustomerDeactive();
         $deactiveData = $CustModel->getDeactiveRecords(true, '', $limit);
-
         $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
         $activeData = $CustModel->getActiveRecords($limit);
         $this->setSentBox($CustModel, $activeData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 1, 4, 5, 6);
@@ -613,7 +615,6 @@ class SchedulerController extends ChildController {
         $MemberModel = new TblMemberDeactive();
         $deactiveData = $MemberModel->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
-
         $activeData = $MemberModel->getActiveRecords($limit);
         $this->setSentBox($MemberModel, $activeData, 'member_deactive_code', 'TblMember', 'member_code', 1, 4, 5, 6);
     }
@@ -624,6 +625,7 @@ class SchedulerController extends ChildController {
                 return $e->{$key};
             }, $data);
             $update = $model->updateFileStatus($ids, $u_status);
+            $uniqueUnionConfigData = [];
             foreach ($data as $row) {
                 $model_name = Yii::$app->path->define($masterModel);
                 $modelMaster = new $model_name();
@@ -653,6 +655,19 @@ class SchedulerController extends ChildController {
                             $row->data_post_status = $success;
                             $row->response_datetime = date('Y-m-d H:i:s');
                             $row->resp_desc = 'Sentbox Generated';
+                            $unionCode = $row->union_code;
+                            if (!isset($uniqueUnionConfigData[$unionCode])) {
+                                $uniqueUnionConfigData[$unionCode] = Yii::$app->general->getUnionConfiguration($unionCode, 'reset_data_on_deactivation', 'PORTAL');
+                            }
+                            if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
+                                $historyModelName = $model_name . 'History';
+                                $modelHistory = new $historyModelName();
+                                Yii::$app->operation->history($existData, $modelHistory, UPDATE);
+                                $modelHistory->save();
+                                $existData->resetData();
+                                $existData->save(TRUE, FALSE);
+                                $row->remarks = $row->remarks . ' Deactivation CBPA Removed';
+                            }
                             $row->save(FALSE);
                             $statusModel = new TblDcsVendorStatus();
                             $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);
@@ -1397,6 +1412,56 @@ class SchedulerController extends ChildController {
                     $errorMessage = substr($e->getMessage(), 0, 250);
                     $model->updateErrorApiStatus($errorMessage, $ids);
                 }
+            }
+        }
+    }
+
+    public function actionMilkCollectionFtpUploadAnanda() {
+        $model = new TblMilkCollection();
+        $modelData = \Yii::$app->general->getSpData('rpt_MIS_SDSAPReport_Ananda_Ftp_Auto_Push', []);
+        $data = $modelData;
+        if (!empty($modelData)) {
+            try {
+                $bmcDateShiftData = [];
+                foreach ($modelData as $code) {
+                    $collData = explode('_', $code['ftp_txn_file_name']);
+                    $date = $collData[2];
+                    $shift = $collData[3];
+                    $bmc = $collData[1];
+                    $uniqueKey = $bmc . '_' . $date . '_' . $shift;
+                    $bmcDateShiftData[$uniqueKey][] = $code;
+                }
+
+                foreach ($bmcDateShiftData as $uniqueKey => $mapData) {
+                    $cnt = count($mapData);
+                    $data_array = [];
+                    $data_array['module_name'] = 'TblMilkCollection_Ananda';
+                    $data_array['module_code'] = $mapData[0]['MCC'];
+                    $data_array['mcc_plant_code'] = $mapData[0]['MCC'];
+                    $data_array['union_code'] = $mapData[0]['union_code'];
+                    $data_array['applicable_date'] = Yii::$app->formatter->asDate($mapData[0]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($mapData[0]['shift_code']);
+                    $data_array['shift_code'] = $mapData[0]['shift_code'];
+                    $data_array['bmc_code'] = NULL;
+                    $data_array['from_date'] = $data_array['applicable_date'];
+                    $data_array['to_date'] = $data_array['applicable_date'];
+
+                    $modelDataOutput = array_map(function($item) {
+                        unset($item['union_code'], $item['data_post_status'], $item['ftp_txn_file_name']);
+                        return $item;
+                    }, $mapData);
+                    $title = $mapData[0]['ftp_txn_file_name'];
+                    $ftp_model = new TblFtpTxnLog();
+                    $result = $ftp_model->exportData($data_array, $title, $modelDataOutput, '', false, TRUE, TRUE);
+                    if (!empty($result)) {
+                        $model->updateProcessStatus('SUCCESS', '2', 2, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+                    } else {
+                        $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+                    }
+                }
+            } catch (\yii\db\Exception $e) {
+                $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+            } catch (\Throwable $e) {
+                $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
             }
         }
     }

@@ -8,24 +8,24 @@ use kartik\grid\GridView;
 
     <?php
     $attribute = [
-        ['attribute' => 'level', 'filter' => FALSE],
-        ['attribute' => 'level_priority', 'filter' => FALSE],
-        ['attribute' => 'approval_mode',
+            ['attribute' => 'level', 'filter' => FALSE],
+            ['attribute' => 'level_priority', 'filter' => FALSE],
+            ['attribute' => 'approval_mode',
             'filter' => FALSE,
             'value' => function ($model) {
                 return isset($model->approval_mode) ? Yii::$app->dropdown->getRecords('approval_mode')['data'][$model->approval_mode] : '';
             },],
-        ['attribute' => 'approval_type',
+            ['attribute' => 'approval_type',
             'filter' => FALSE,
             'value' => function ($model) {
                 return isset($model->approval_type) ? Yii::$app->dropdown->getRecords('approval_type')['data'][$model->approval_type] : '';
             },],
-        ['attribute' => 'login_type',
+            ['attribute' => 'login_type',
             'filter' => FALSE,
             'value' => function ($model) {
-                return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '';
+                return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('login_type_ho_flutter')['data'][$model->login_type] : '';
             },],
-        ['attribute' => 'user_code', 'value' => function($model) {
+            ['attribute' => 'user_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->userCode, 'name');
             }, 'filter' => false],
     ];

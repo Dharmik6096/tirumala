@@ -36,11 +36,11 @@ class TblApprovalStages extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['approval_stages_code'], 'required'],
-            [['union_code', 'process_name', 'approval_mode', 'remarks'], 'safe'],
-            [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['approval_stages_code'], 'integer'],
-            [['process_name'], 'validateProcess'],
+                [['approval_stages_code'], 'required'],
+                [['union_code', 'process_name', 'approval_mode', 'remarks'], 'safe'],
+                [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['approval_stages_code'], 'integer'],
+                [['process_name'], 'validateProcess'],
         ];
     }
 
@@ -50,7 +50,7 @@ class TblApprovalStages extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'approval_stages_code' => Yii::t('app', 'Approval Stages Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'process_name' => Yii::t('app', 'Process Name'),
             'approval_mode' => Yii::t('app', 'Approval Mode'),
             'remarks' => Yii::t('app', 'Remarks'),
@@ -73,7 +73,7 @@ class TblApprovalStages extends \app\models\ChildModel {
     }
 
     public function validateProcess($attribute, $params) {
-        $existData = $this->find()->where(['process_name' => $this->process_name])
+        $existData = $this->find()->where(['process_name' => $this->process_name, 'union_code' => $this->union_code])
                 ->andWhere(['!=', 'approval_stages_code', $this->approval_stages_code])
                 ->one();
         if ((!empty($existData))) {
@@ -81,4 +81,4 @@ class TblApprovalStages extends \app\models\ChildModel {
         }
     }
 
-    }
+}

@@ -201,7 +201,7 @@ $grid_option = [
         },
         'report' => function ($url, $model) use ($pending_approval) {
             if (!$pending_approval) {
-                $disable = (strtolower($model->provisional_status) == 'approve') ? '' : 'disabled';
+                $disable = in_array(strtolower($model->provisional_status), ['approve', 'register', 'inprogress', 'pending', 'reject']) ? '' : 'disabled';
                 $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable, 'target' => '_blank'];
                 // return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register'], $options);
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register', 'code' => $model->provisional_member_code], $options);
@@ -210,6 +210,7 @@ $grid_option = [
         'repush' => function ($url, $model) use ($gridId) {
             return Yii::$app->general->createRePushLink($url, $model, $gridId, 'provisional_member_code');
         },
+        'delete' => ['option' => 'member_name,provisional_member_code,tbl-member-provisional/delete,checkDelete()'],
     ]
 ];
 

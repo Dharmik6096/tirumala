@@ -462,6 +462,7 @@ $('.dpu_data_icon').click(function(){
                     'dashboard_farmer_rmrd_blocks',
                     'mobile_analysis_dashboard_blocks',
                     'mobile_analysis_dashboard_pie_charts',
+                    'complain_summary_dashboard',
                     'iot_temperature',
                     'mcc_wise_indent_summary',
                     'today_vs_yesterday_collection',
@@ -532,16 +533,20 @@ $('.dpu_data_icon').click(function(){
                                         obj1.res[key] = 0;
                                     }
                                 }
+                                var pourerMember = obj1.res.pourerMember;
+                                var totalMember = obj1.res.totalMember;
+                                var percentage = ((pourerMember * 100) / totalMember).toFixed(2);
                                 $('#farmer_rmrd_block_union').text(obj1.res.pourerUnion+'/'+obj1.res.totalUnion);
                                 $('#farmer_rmrd_block_mcc').text(obj1.res.pourerMcc+'/'+obj1.res.totalMcc);
+                                $('#farmer_rmrd_block_bmc').text(obj1.res.pourerBmc+'/'+obj1.res.totalBmc);
                                 $('#farmer_rmrd_block_dcs').text(obj1.res.pourerDcs+'/'+obj1.res.totalDcs);
-                                $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'/'+obj1.res.totalMember);
+                                $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'('+percentage+'%)/'+obj1.res.totalMember);
                                 $('#farmer_rmrd_block_blk_vendor').text(obj1.res.pourerBulkVen+'/'+obj1.res.totalBulkVen);
                                 $('#farmer_rmrd_block_vlcc_vendor').text(obj1.res.pourerVlccVen+'/'+obj1.res.totalVlccVen);
-                                $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty);
-                                $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
-                                $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
-                                $('#farmer_rmrd_block_amount').text(obj1.res.amount);
+                                $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty+' | '+obj1.res.PreviousDatetotalQty);
+                                $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg+' | '+obj1.res.fatAvg);
+                                $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg+' | '+obj1.res.snfAvg);
+                                $('#farmer_rmrd_block_amount').text(obj1.res.amount+' | '+obj1.res.effrtpl);
                                 $('#farmer_rmrd_block_ts_kg_tab').text(obj1.res.ts_kg_tab);
                                 $('#totle_app').text(obj1.res.app);
                                 $('#totle_ws').text(obj1.res.ws);
@@ -598,6 +603,30 @@ $('.dpu_data_icon').click(function(){
                               $.each(obj1.series, function(index, value) {   
                                 drawPieChart(index,value);
                               });
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+                else if(['complain_summary_dashboard'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'proc_complain_dashboard_list';
+                        
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/complain-summary-dashboard']) . "',
+                        data: blockDataString+'&sp='+id,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success'){
+                                $('#total_complain').text(obj1.res.total_complain);
+                                $('#inprogress_complain').text(obj1.res.inprogress_complain);
+                                $('#close_complain').text(obj1.res.close_complain);
+                                $('#resolved_complain').text(obj1.res.resolved_complain);
+                                $('#today_date').text(obj1.res.today_date);
+                                drowBarChart('complain_summary_bar_chart','Complain Summary',obj1.series);
                             }
                         },
                         error:function(data){
@@ -1654,6 +1683,10 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                 $.each(obj1.res, function(key,value) {
                     htmlData = htmlData + '<tr>';
                     htmlData = htmlData + '<td>'+value.bmc_name+' '+value.bmc_code+'</td>';
+                    htmlData += '<td>' + (obj1.fromDate) + '</td>';
+                    htmlData += '<td>' + (obj1.fromShift == 1 ? 'Morning' : (obj1.fromShift == 2 ? 'Evening' : '')) + '</td>';
+                    htmlData += '<td>' + (obj1.toDate) + '</td>';
+                    htmlData += '<td>' + (obj1.toShift == 1 ? 'Morning' : (obj1.toShift == 2 ? 'Evening' : '')) + '</td>';
                     htmlData = htmlData + '<td>'+value.cc_qty+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_avg_fat+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_avg_snf+'</td>';

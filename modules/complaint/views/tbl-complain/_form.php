@@ -217,61 +217,59 @@ if ($type == 'resolve') {
 }
 ?>
 <div class="clearfix"></div>
-<div class="col-sm-12">
-    <?php
-    AjaxSubmitButton::begin([
-        'label' => Yii::t('app', $button_type),
-        'ajaxOptions' => [
-            'type' => 'POST',
-            'url' => Url::to($urls),
-            'beforeSend' => new \yii\web\JsExpression('function(data){
-                 if($("#tblcomplain-resolved_status").val() == "replace" && $("#tblcomplain-spare_required").is(":checked") && $("#spare_list tr").length <= 0){
-                            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Please add spare at least one</span></div></div>");
-                            return false;
-                        }
-                        $("#loadercontent").show();
-                        $("#pageloader").show();
-                    }'),
-            'success' => new \yii\web\JsExpression('function(data){                                   
-                                            $("#pageloader").hide();
-                                            $("#loadercontent").hide();
-                                            var obj1 = $.parseJSON(data);
-                                            if (obj1.status == "success"){
-                                                $("#importModal").modal("toggle");
-                                                $("#complain-form")[0].reset();
-                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                            } else {
-                                                $("#loadercontent").hide();
-                                                $("#pageloader").hide();
-                                                $(".help-block").text("");
-                                                $(".form-group").removeClass("has-error");
-                                                $(".error-summary").hide();
-                                                $(".error-summary li").remove();
-                                                $.each(obj1, function(key, val) {
-                                                    $(".error-summary ul").append("<li>"+val+"</li>");
-                                                    if(key != "tblmilkcollection-date_time_of_collection"){
-                                                    var parent_div = $("#"+key).parent("div");
-                                                    parent_div.find(".help-block").remove();
-                                                    $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
-                                                    $("#"+key).closest(".form-group").addClass("has-error");   
-                                               }
-                                                });
-                                                $(".error-summary").show();
-                                                }
-                             }'),
-            'error' => new \yii\web\JsExpression('function(){
-                                    $("#pageloader").hide();
-                                    $("#loadercontent").hide();
-                             }'),
-        ],
-        'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
-    ]);
-    AjaxSubmitButton::end();
-    ?>
-</div>
 <div class="col-sm-2">
-    <div class="form-group">
+    <div class="form-group mt10">
+        <?php
+        AjaxSubmitButton::begin([
+            'label' => Yii::t('app', $button_type),
+            'ajaxOptions' => [
+                'type' => 'POST',
+                'url' => Url::to($urls),
+                'beforeSend' => new \yii\web\JsExpression('function(data){
+                    if($("#tblcomplain-resolved_status").val() == "replace" && $("#tblcomplain-spare_required").is(":checked") && $("#spare_list tr").length <= 0){
+                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Please add spare at least one</span></div></div>");
+                                return false;
+                            }
+                            $("#loadercontent").show();
+                            $("#pageloader").show();
+                        }'),
+                'success' => new \yii\web\JsExpression('function(data){                                   
+                                                $("#pageloader").hide();
+                                                $("#loadercontent").hide();
+                                                var obj1 = $.parseJSON(data);
+                                                if (obj1.status == "success"){
+                                                    $("#importModal").modal("toggle");
+                                                    $("#complain-form")[0].reset();
+                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                                } else {
+                                                    $("#loadercontent").hide();
+                                                    $("#pageloader").hide();
+                                                    $(".help-block").text("");
+                                                    $(".form-group").removeClass("has-error");
+                                                    $(".error-summary").hide();
+                                                    $(".error-summary li").remove();
+                                                    $.each(obj1, function(key, val) {
+                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+                                                        if(key != "tblmilkcollection-date_time_of_collection"){
+                                                        var parent_div = $("#"+key).parent("div");
+                                                        parent_div.find(".help-block").remove();
+                                                        $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
+                                                        $("#"+key).closest(".form-group").addClass("has-error");   
+                                                }
+                                                    });
+                                                    $(".error-summary").show();
+                                                    }
+                                }'),
+                'error' => new \yii\web\JsExpression('function(){
+                                        $("#pageloader").hide();
+                                        $("#loadercontent").hide();
+                                }'),
+            ],
+            'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
+        ]);
+        AjaxSubmitButton::end();
+        ?>
         <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>

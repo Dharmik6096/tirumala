@@ -35,6 +35,12 @@ $attribute = [
             return Yii::$app->controls->view_date($model->agreement_to_date);
         },
     ],
+    ['attribute' => 'chiller_name', 'filter' => FALSE],
+    ['attribute' => 'fix_rent', 'filter' => FALSE],
+    ['attribute' => 'billing_method',
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('billing_method_chiller_info')['data'][$model->billing_method]) ? Yii::$app->dropdown->getRecords('billing_method_chiller_info')['data'][$model->billing_method] : '';
+    }],
 ];
 
 $grid_option = [

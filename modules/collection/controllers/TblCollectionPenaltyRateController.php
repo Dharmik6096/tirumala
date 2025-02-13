@@ -135,7 +135,7 @@ class TblCollectionPenaltyRateController extends \app\controllers\ChildControlle
             'penalty_rate' => $model->penalty_rate,
             'penalty_type' => $model->penalty_type
         ];
-        $appModel->header_title = ' [Type: ' . Yii::$app->dropdown->getRecords('penalty_type')['data'][$model->penalty_type] . ', Rate: ' . $model->penalty_rate . '] ';
+        $appModel->header_title = ' [Type: ' . Yii::$app->general->getforeignkey($model->penaltyType, 'penalty_type') . ', Rate: ' . $model->penalty_rate . '] ';
         $appModel->fields = [
             'bmc_code' => ['view' => ['grid'], 'value' => 'bmc_code', 'filter' => FALSE],
             'bmc_name' => ['view' => ['grid'], 'value' => function($model) {

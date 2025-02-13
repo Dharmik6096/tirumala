@@ -49,6 +49,8 @@ class TblVehicleExtraKmDaywiseSearch extends TblVehicleExtraKmDaywise {
             'query' => $query,
         ]);
 
+        $this->from_date = date('Y-m-d', strtotime('-30 days'));
+        $this->to_date = date('Y-m-d');
         $this->load($params);
 
         if (!$this->validate()) {
@@ -59,11 +61,6 @@ class TblVehicleExtraKmDaywiseSearch extends TblVehicleExtraKmDaywise {
         Yii::$app->general->filterByOrg($query, $this);
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'extra_km_code' => $this->extra_km_code,
-            'extra_kms' => $this->extra_kms,
-            'rate' => $this->rate,
-        ]);
         if (!empty($this->date))
             $query->andFilterWhere(['and', ['>=', 'date', date('Y-m-d', strtotime($this->date))], ['<=', 'date', date('Y-m-d', strtotime($this->date))]]);
 
@@ -78,6 +75,8 @@ class TblVehicleExtraKmDaywiseSearch extends TblVehicleExtraKmDaywise {
         }
         $query->andFilterWhere(['like', 'vehicle_code', $this->vehicle_code])
                 ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
+                ->andFilterWhere(['like', 'extra_kms', $this->extra_kms])
+                ->andFilterWhere(['like', 'rate', $this->rate])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 //                ->andFilterWhere(['like', 'union_code', $this->union_code]);

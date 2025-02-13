@@ -49,6 +49,8 @@ class TblVehicleExtraQtyDaywiseSearch extends TblVehicleExtraQtyDaywise {
             'query' => $query,
         ]);
 
+        $this->from_date = date('Y-m-d', strtotime('-30 days'));
+        $this->to_date = date('Y-m-d');
         $this->load($params);
 
         if (!$this->validate()) {
@@ -59,12 +61,6 @@ class TblVehicleExtraQtyDaywiseSearch extends TblVehicleExtraQtyDaywise {
         Yii::$app->general->filterByOrg($query, $this);
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'extra_qty_code' => $this->extra_qty_code,
-            'additional_qty' => $this->additional_qty,
-            'deduction_qty' => $this->deduction_qty,
-            'rate' => $this->rate,
-        ]);
         if (!empty($this->date))
             $query->andFilterWhere(['and', ['>=', 'date', date('Y-m-d', strtotime($this->date))], ['<=', 'date', date('Y-m-d', strtotime($this->date))]]);
 
@@ -80,6 +76,9 @@ class TblVehicleExtraQtyDaywiseSearch extends TblVehicleExtraQtyDaywise {
         $query->andFilterWhere(['like', 'vehicle_code', $this->vehicle_code])
                 ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
                 ->andFilterWhere(['like', 'remarks', $this->remarks])
+                ->andFilterWhere(['like', 'rate', $this->rate])
+                ->andFilterWhere(['like', 'additional_qty', $this->additional_qty])
+                ->andFilterWhere(['like', 'deduction_qty', $this->deduction_qty])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
