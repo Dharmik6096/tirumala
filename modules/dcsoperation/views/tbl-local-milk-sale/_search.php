@@ -21,9 +21,6 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-2 padding-left-0 padding-right-5">
         <?= Yii::$app->dropdown->depend_dropdown('dcs', $model, $form, 'tbllocalmilksalesearch-union_code'); ?>        
     </div>
-    <div class="col-sm-2 padding-left-0 padding-right-5">
-        <?= Yii::$app->dropdown->depend_dropdown('sub-center', $model, $form, 'tbllocalmilksalesearch-dcs_code'); ?>
-    </div>
     <div class="col-sm-2 padding-left-0">
         <?= Yii::$app->controls->search(); ?>
     </div>
