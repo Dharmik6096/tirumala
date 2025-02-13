@@ -1031,11 +1031,13 @@ $('.dpu_data_icon').click(function(){
     
                     else if(['mcc_wise_indent_summary'].indexOf(value) == 0){
                     var blockDataString = $('#collapse1 form').serialize();
-                    var id= 'mis_mcc_wise_indent_summary';                       
+                    var id= 'mis_mcc_wise_indent_summary'; 
+                    var union= '" . $unionCode . "';
+                    var mcc= '" . $mccCode . "';
                         $.ajax({
                             type: 'post',
                             url: '" . Url::to(['/site/mcc-wise-indent-summary']) . "',
-                            data: blockDataString+'&sp='+id,
+                            data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
                             success: function(data) {
                                 var obj1 = data;
                                 if (obj1.status == 'success') {

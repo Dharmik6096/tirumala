@@ -89,7 +89,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -3220,15 +3220,15 @@ class SiteController extends Controller {
     public function actionMccWiseIndentSummary() {
         $output = [];
         $union = 0;
-        $mcc = 0;
         $sp_param = [];
         $rlsData = $this->setRlsData();
         $sp_name = 'mis_mcc_wise_indent_summary';
-        if (!empty(Yii::$app->request->post('Dashboard')['union_code'])) {
-            $union = Yii::$app->request->post('Dashboard')['union_code'];
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
         }
-        if (!empty(Yii::$app->request->post('Dashboard')['mcc_code'])) {
-            $mcc = Yii::$app->request->post('Dashboard')['mcc_code'];
+        $mcc = !empty($rlsData['mcc']) ? ',' . $rlsData['mcc'] . ',' : 0;
+        if (!empty(Yii::$app->request->post('mcc'))) {
+            $mcc = Yii::$app->request->post('mcc');
         }
         $date = Yii::$app->request->post('Dashboard')['date'];
         $date = date('Y-m-d', strtotime($date));

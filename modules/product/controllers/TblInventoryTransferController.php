@@ -95,76 +95,76 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
             $txModel->inventory_transfer_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->inventory_transfer_code);
             if (empty($this->model->getErrors()) && empty($txModel->getErrors()) && $this->model->validate() && $txModel->validate()) {
                 $modelSave[] = $txModel;
+                //set from stock
+                $fstockModel = new TblProductStock();
+                $fstockModel->setCodes($this->model->from_type, $this->model->from_code);
+                $fstockModel->product_code = $txModel->product_code;
+                $fstockModel->union_code = $txModel->union_code;
+                $batch = !empty($txModel->sap_batch_no) ? $txModel->sap_batch_no : '';
+                $existfromStock = $fstockModel->getExistStock($this->model->from_type, $batch);
+
+                $f_stock = 0;
+                $qty = $txModel->qty;
+                $stock_ai = 1;
+                $rate = 0;
+                if (!empty($existfromStock)) {
+                    $historyModel = new TblProductStockHistory();
+                    Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                    $modelSave[] = $historyModel;
+                    $f_stock = $existfromStock->stock;
+                    $existfromStock->stock = $f_stock - $qty;
+                    $fstockModel = $existfromStock;
+                    $rate = $existfromStock->rate;
+                } else {
+                    $fstockModel->product_stock_code = $fstockModel->getCode($stock_ai);
+                    $fstockModel->stock = $f_stock - $qty;
+                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                    $stock_ai++;
+                }
+                $modelSave[] = $fstockModel;
+
+                $i = 1;
+                $fstockTxnModel = new TblProductStockTransaction();
+                $fstockTxnModel->attributes = $fstockModel->attributes;
+                unset($fstockTxnModel->created_at);
+                unset($fstockTxnModel->created_by);
+                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                $fstockTxnModel->old_value = $f_stock;
+                $fstockTxnModel->new_value = $qty;
+                $fstockTxnModel->final_value = $fstockModel->stock;
+                $fstockTxnModel->transaction_type = 'INVENTORY TRANSFER';
+                $fstockTxnModel->transaction_date = date('Y-m-d');
+                $fstockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
+                $modelSave[] = $fstockTxnModel;
+
+                $receipt = new TblProductReceipt();
+                $receipt->product_receipt_code = Yii::$app->general->getUuid();
+                $receipt->grn_no = '1234';
+                $receipt->grn_date = date('Y-m-d');
+                $receipt->vendor_type = $this->model->from_type;
+                $receipt->vendor_code = $this->model->from_code;
+                $receipt->union_code = $fstockModel->union_code;
+                $receipt->plant_code = $fstockModel->plant_code;
+                $receipt->mcc_plant_code = $fstockModel->mcc_plant_code;
+                $receipt->bmc_code = $fstockModel->bmc_code;
+                $receipt->dcs_code = $fstockModel->dcs_code;
+                $modelSave[] = $receipt;
+
+                $receiptTxn = new TblProductReceiptTransaction();
+                $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
+                $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
+                $receiptTxn->product_code = $fstockModel->product_code;
+                $receiptTxn->received_quantity = '-' . $qty;
+                $receiptTxn->requested_quantity = $receiptTxn->received_quantity;
+                $receiptTxn->dispatched_quantity = $receiptTxn->received_quantity;
+                $receiptTxn->rejected_quantity = 0;
+                $receiptTxn->rate = 0;
+                $receiptTxn->amount = 0;
+                $receiptTxn->remark = 'INVENTORY TRANSFER';
+                $modelSave[] = $receiptTxn;
+
+                $i++;
                 if ($isStockPosted) {
-                    //set from stock
-                    $fstockModel = new TblProductStock();
-                    $fstockModel->setCodes($this->model->from_type, $this->model->from_code);
-                    $fstockModel->product_code = $txModel->product_code;
-                    $fstockModel->union_code = $txModel->union_code;
-                    $batch = !empty($txModel->sap_batch_no) ? $txModel->sap_batch_no : '';
-                    $existfromStock = $fstockModel->getExistStock($this->model->from_type, $batch);
-
-                    $f_stock = 0;
-                    $qty = $txModel->qty;
-                    $stock_ai = 1;
-                    $rate = 0;
-                    if (!empty($existfromStock)) {
-                        $historyModel = new TblProductStockHistory();
-                        Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
-                        $modelSave[] = $historyModel;
-                        $f_stock = $existfromStock->stock;
-                        $existfromStock->stock = $f_stock - $qty;
-                        $fstockModel = $existfromStock;
-                        $rate = $existfromStock->rate;
-                    } else {
-                        $fstockModel->product_stock_code = $fstockModel->getCode($stock_ai);
-                        $fstockModel->stock = $f_stock - $qty;
-                        $fstockModel->x_col1 = Yii::$app->general->getUuid();
-                        $stock_ai++;
-                    }
-                    $modelSave[] = $fstockModel;
-
-                    $i = 1;
-                    $fstockTxnModel = new TblProductStockTransaction();
-                    $fstockTxnModel->attributes = $fstockModel->attributes;
-                    unset($fstockTxnModel->created_at);
-                    unset($fstockTxnModel->created_by);
-                    $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
-                    $fstockTxnModel->old_value = $f_stock;
-                    $fstockTxnModel->new_value = $qty;
-                    $fstockTxnModel->final_value = $fstockModel->stock;
-                    $fstockTxnModel->transaction_type = 'INVENTORY TRANSFER';
-                    $fstockTxnModel->transaction_date = date('Y-m-d');
-                    $fstockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
-                    $modelSave[] = $fstockTxnModel;
-
-                    $receipt = new TblProductReceipt();
-                    $receipt->product_receipt_code = Yii::$app->general->getUuid();
-                    $receipt->grn_no = '1234';
-                    $receipt->grn_date = date('Y-m-d');
-                    $receipt->vendor_type = $this->model->from_type;
-                    $receipt->vendor_code = $this->model->from_code;
-                    $receipt->union_code = $fstockModel->union_code;
-                    $receipt->plant_code = $fstockModel->plant_code;
-                    $receipt->mcc_plant_code = $fstockModel->mcc_plant_code;
-                    $receipt->bmc_code = $fstockModel->bmc_code;
-                    $receipt->dcs_code = $fstockModel->dcs_code;
-                    $modelSave[] = $receipt;
-                    $receiptTxn = new TblProductReceiptTransaction();
-                    $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
-                    $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
-                    $receiptTxn->product_code = $fstockModel->product_code;
-                    $receiptTxn->received_quantity = '-' . $qty;
-                    $receiptTxn->requested_quantity = $receiptTxn->received_quantity;
-                    $receiptTxn->dispatched_quantity = $receiptTxn->received_quantity;
-                    $receiptTxn->rejected_quantity = 0;
-                    $receiptTxn->rate = 0;
-                    $receiptTxn->amount = 0;
-                    $receiptTxn->remark = 'INVENTORY TRANSFER';
-                    $modelSave[] = $receiptTxn;
-
-                    $i++;
-
                     //set to stock
                     $stockModel = new TblProductStock();
                     $stockModel->setCodes($this->model->to_type, $this->model->to_code);
@@ -401,7 +401,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->data_post_status = 0;
         $record = [];
-        if ($this->model->save(true,false)) {
+        if ($this->model->save(true, false)) {
             $historyModel->save();
             $record = ['status' => 'success', 'msg' => 'Inventory Transfer re-pushed successfully.'];
         } else {

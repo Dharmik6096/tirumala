@@ -668,6 +668,11 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-banner/tap-event-list', Yii::t('app', 'Select Tap Event'), $multiple, '', $readonly);
     }
+    
+    public function RouteUserList($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/user-list', Yii::t('app', 'Select User'), $multiple, '', $readonly);
+    }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
@@ -1738,7 +1743,7 @@ class DropDown extends Component {
             'complain_status' => [
                 'name' => 'complain_status',
                 'prompt' => Yii::t('app', 'Select Complain Status'),
-                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'INPROGRESS' => Yii::t('app', 'INPROGRESS'), 'CLOSED' => Yii::t('app', 'CLOSED'), 'RESOLVED' => Yii::t('app', 'RESOLVED')],
+                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'INPROGRESS' => Yii::t('app', 'INPROGRESS'), 'CLOSED' => Yii::t('app', 'CLOSED'), 'RESOLVED' => Yii::t('app', 'RESOLVED'), 'ASSIGNED' => Yii::t('app', 'ASSIGNED')],
             ],
             'resolved_status' => [
                 'name' => 'resolved_status',
@@ -1961,7 +1966,12 @@ class DropDown extends Component {
             'data_post_status' => [
                 'name' => 'data_post_status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'PENDING'), 1 => Yii::t('app', 'PUSHED TO SAP'), 2 => Yii::t('app', 'SUCCESS '), 3 => Yii::t('app', 'ERROR'), 4 => Yii::t('app', 'RBP')],
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Sent To SAP'), 3 => Yii::t('app', 'ERROR'), 4 => Yii::t('app', 'Ack Initiated'), 5 => Yii::t('app', 'SAP Ack SUCCESS')],
+            ],
+            'organization_latlong_type' => [
+                'name' => 'Type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['DCS' => Yii::t('app', 'DCS'), 'BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'PLANT' => Yii::t('app', 'PLANT'), 'BULKVEN' => Yii::t('app', 'VENDOR'), 'HOME' => Yii::t('app', 'HOME'), 'OFFICE' => Yii::t('app', 'OFFICE'), 'OTHER' => Yii::t('app', 'OTHER')],
             ],
         ];
         return $records[$l];
@@ -2237,7 +2247,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dynamicreport/default/get-sp-data-drop-list', 'Select ' . $islable, FALSE, '', FALSE, '', TRUE, $session);
     }
-
+    
     public function poured_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/poured-bmc-list', Yii::t('app', 'Select Poured BMC'), $multiple, $extra_param, $readonly, $id);

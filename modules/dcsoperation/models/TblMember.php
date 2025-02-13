@@ -373,6 +373,9 @@ class TblMember extends ChildModel {
     public function getCode() {
         $keyPattern = !empty($this->import_key_pattern) ? $this->import_key_pattern['tbl_member'] : '';
         Yii::$app->general->setKeyPattern($this, 'tbl_member', 'ex_member_code', 3, $keyPattern);
+        if(!empty($this->set_master_hierarchy)){
+            $this->set_master_hierarchy[0]->member_code = $this->dcs_code . $this->ex_member_code;
+        }
         return $this->dcs_code . $this->ex_member_code;
     }
 
@@ -496,17 +499,22 @@ class TblMember extends ChildModel {
 //        $model->is_download = 1;
 //        $model->upload_datetime = date('Y-m-d H:i:s');
 //        $model->save();
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
             if (in_array(strtolower($sent['type']), ['mcc', 'bmc'])) {
-                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
                 $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
                 if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                     if (!($sentbox->setSentbox($this, $flag))) {
                         throw new UserException("SentBox Entry is not created so transaction is rollback!");
                     }
                 }
+            }
+        }
+        if(!empty($this->set_master_hierarchy) && $flag == 'INSERT'){
+            foreach($this->set_master_hierarchy as $hierarchy) {
+                $hierarchy->save();
             }
         }
     }
@@ -656,6 +664,9 @@ class TblMember extends ChildModel {
                 $model->ref_code = $pk_code;
             }
             $model->ref_code = str_pad(($model->ref_code), $ref_code_fix_length, '0', STR_PAD_LEFT);
+            if($keyPattern['master_hierarchy_auto_entry'] == 1){
+                Yii::$app->general->setKeyPatternChild($keyPattern, $model, $table_name, $pk_code);
+            }
             return $pk_code;
         } else {
             $model->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));

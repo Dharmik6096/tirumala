@@ -91,10 +91,12 @@ if (!empty($rec_data) && $rtype == 'forced') {
                     return Yii::$app->controls->view_date($model['wef_date']) . $shift;
                 }, 'filter' => false],
 //            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code', 'vAlign' => 'middle', 'filter' => false],
-            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => function($model) {
-                    $modelPurchase = new TblPurchaseRate();
-                    $dcsRate = $modelPurchase->find()->where(['purchase_rate_code' => $model['purchase_rate_code']])->one();
-                    return (!empty($dcsRate) && $model['recalc_for'] == 'Member') ? $model['purchase_rate_code'] . ' (' . $dcsRate->dcs_purchase_rate_code . ')' : $model['purchase_rate_code'];
+                ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => function($model) {
+                    $rateId = $model['purchase_rate_code'];
+                    if($model['recalc_for'] == 'Member'){
+                        $rateId = $rateId.' ('.$model['dcs_purchase_rate_code'].')';
+                    }
+                    return $rateId;
                 }, 'visible' => true, 'filter' => false],
                 ['label' => 'Shift Applicability', 'attribute' => 'shift', 'value' => 'shift', 'vAlign' => 'middle', 'filter' => false],
                 ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
