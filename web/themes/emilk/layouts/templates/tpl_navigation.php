@@ -234,6 +234,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Weight Rejections'), 'url' => ['/collection/tbl-weight-rejection/index'], 'active' => ($cntrl == 'tbl-weight-rejection')],
                     ]
                 ],
+                    ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/collection/tbl-milk-collection-audit/index'], 'active' => ($cntrl == 'tbl-milk-collection-audit')],
+                    ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
             ],
         ],
             [
