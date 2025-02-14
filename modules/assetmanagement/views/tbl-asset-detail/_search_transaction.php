@@ -28,10 +28,8 @@ $disableClass = !empty($selectedData) ? TRUE : FALSE;
     <div class="col-sm-2">
         <?= $form->field($model, 'serial_number')->textInput(['placeholder' => 'Serial No.', 'readonly' => FALSE])->label(FALSE) ?>
     </div>
-
-        <div class="col-sm-2">
-            <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-        </div>
-
+    <div class="col-sm-1">
+        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
+    </div>
     <?php ActiveForm::end(); ?>
 </div>

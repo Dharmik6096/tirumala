@@ -238,7 +238,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
     </div>
-
     <?php
     //Yii::$app->dropdown->state($model, $form, 'state_code', 'State');
     ?>
@@ -288,7 +287,8 @@ $form = ActiveForm::begin([
         <?=
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
-            'form' => $form
+            'form' => $form,
+            'show_optional_fields' => TRUE
         ])
         ?>
 
