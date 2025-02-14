@@ -2,7 +2,6 @@
 
 namespace app\modules\payment\models;
 
-use app\modules\organisation\models\TblDcsBmc;
 use Yii;
 use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblMccPlant;
@@ -95,23 +94,7 @@ class TblMccRemunerationSummary extends \app\models\ChildModel {
             return false;
         }
         $query = TblMccRemunerationSummary::find()
-                ->where(['union_code' => $this->union_code]);
-        if (!empty($this->bmc_code)) {
-            $query->andWhere(['in', 'bmc_code', $this->bmc_code]);
-        } else {
-            $getMcc = Yii::$app->session->get('MCC') ?? implode(Yii::$app->session->get('MCC'));
-            $getBmc = Yii::$app->session->get('BMC') ?? implode(Yii::$app->session->get('BMC'));
-            if ((empty($this->mcc_plant_code) && empty($this->bmc_code) && empty($getMcc))) {
-                $getMcc = TblMccPlant::find()->select('mcc_plant_code')->where(['plant_code' => $this->plant_code, 'is_active' => 1])->column();
-            }
-            if (!empty($this->mcc_plant_code)) {
-                $getMcc = $this->mcc_plant_code;
-            }
-            if (empty($getBmc)) {
-                $getBmc = TblDcsBmc::find()->select('bmc_code')->where(['mcc_plant_code' => $getMcc, 'is_active' => 1])->column();
-            }
-            $query->andWhere(['bmc_code' => $this->bmc_code]);
-        }
+                ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code]);
         if ($process_alert) {
             $query->andWhere(['in', 'status', ['processed']]);
         } else {

@@ -18,6 +18,7 @@ class TblMccRemunerationSummaryController extends \app\controllers\ChildControll
     public function actionCreate() {
         $model = new TblMccRemunerationSummary();
         if ($model->load(Yii::$app->request->post())) {
+            $model->scenario = 'processpayment';
             $mcc_array = [];
             $bmc_array = [];
             $mcc_array = $model->mcc_plant_code;
@@ -62,9 +63,9 @@ class TblMccRemunerationSummaryController extends \app\controllers\ChildControll
         $data['from_datetime'] = $model->from_datetime;
         $data['to_datetime'] = $model->to_datetime;
         $data['union_code'] = $model->union_code;
-        $data['bmc_code'] = !empty($model->bmc_code) ? (is_array($model->bmc_code) ? ',' . implode(',', $model->bmc_code) . ',' : $model->bmc_code) : '0';
+        $data['bmc_code'] = is_array($model->bmc_code) ? ',' . implode(',', $model->bmc_code) . ',' : $model->bmc_code;
         $data['plant_code'] = $model->plant_code;
-        $data['mcc_plant_code'] = !empty($model->bmc_code) ? (is_array($model->mcc_plant_code) ? ',' . implode(',', $model->mcc_plant_code) . ',' : $model->mcc_plant_code) : '0';
+        $data['mcc_plant_code'] = is_array($model->mcc_plant_code) ? ',' . implode(',', $model->mcc_plant_code) . ',' : $model->mcc_plant_code;
         $data['calculate_milk_recovey'] = $model->calculate_milk_recovey;
         $data['calculate_other_head'] = $model->calculate_other_head;
         Yii::$app->ClientPaymentConfig->processPayment('mcc_remuneration_payment', $data);
