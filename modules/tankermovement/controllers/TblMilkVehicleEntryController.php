@@ -61,6 +61,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionView($id) {
         $searchModel = new TblMilkVehicleEntryTransactionSearch();
         $searchModel->milk_vehicle_entry_code = $id;
+        $searchModel->scenario = 'view';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $approvalModel = new TblProcessApprovalSearch();
