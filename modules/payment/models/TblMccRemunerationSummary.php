@@ -46,7 +46,7 @@ class TblMccRemunerationSummary extends \app\models\ChildModel {
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
             [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
-            [['union_code', 'plant_code', 'from_datetime', 'to_datetime'], 'required'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'from_datetime', 'to_datetime'], 'required'],
             [['bmc_code'], 'required', 'on' => 'processpayment'],
 //            [['from_datetime'], function ($attribute, $params) {
 //                    return Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_datetime', 'to_datetime', 30, '!=', 'Date Difference must be 30 Days.');
