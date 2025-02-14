@@ -1388,11 +1388,18 @@ class TblDcsController extends ChildController {
         $type = !empty($getData['type']) ? $getData['type'] : NULL;
         $model = [];
         $responseJson = '';
+        $responseApi = '';
         if (strtolower($type) == 'dcs') {
-            $model = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => 'society', 'is_default' => 1, 'is_active' => 1])->one();
+            $module_name = 'DCS';
+            $customer_type = 'society';
+            $model = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => $customer_type, 'is_default' => 1, 'is_active' => 1])->one();
         } else if (strtolower($type) == 'customer') {
+            $module_name = 'CUS';
+            $customer_type = 'customer';
             $model = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => 'customer', 'is_default' => 1, 'is_active' => 1])->one();
         } elseif (strtolower($type) == 'member') {
+            $module_name = 'MEM';
+            $customer_type = 'member';
             $model = TblMember::find()->where(['member_code' => $code])->one();
         }
         if (Yii::$app->request->post()) {
@@ -1408,21 +1415,49 @@ class TblDcsController extends ChildController {
                 $hisModel[] = $historyModel;
                 $model->is_kyc_verified = $status;
                 if ($status == 1) {
-                    $model->is_verified = 1;
+                    $cashFreeRegistrationConfig = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'is_cash_free_registration', 'PORTAL');
+                    if ($cashFreeRegistrationConfig == 1) {
+                        $verifymodelData = TblBankVerification::find()->where(['customer_code' => $code, 'customer_type' => $customer_type, 'bank_account_no' => $model['bank_account_no'], 'ifsc' => $model['ifsc']])->one();
+                        $client_code = Yii::$app->session->get('eiplCode');
+                        $model->beneficiary_id = $client_code . $code . $module_name . rand(1000, 9999);
+                        $this->cashFreeRegistrationApi($type, $model, $responseApi, $verifymodelData);
+
+                        if (!empty($responseApi) && strtolower($responseApi->beneficiary_status) == 'verified') {
+                            $model->is_verified = 1;
+                        }
+                    } else {
+                        $model->is_verified = 1;
+                    }
                 }
                 $saveModel[] = $model;
 
                 if ($model->validate() && empty($model->getErrors())) {
                     $logModel = New TblBankVerificationLog();
+                    $verificationModel = New TblBankVerification();
                     if (strtolower($type) == 'dcs') {
                         $dcsdata = $this->findModel($code);
-                        $this->setLogHierarchy($logModel, $dcsdata, $saveModel);
+                        $this->setLogHierarchy($logModel, $dcsdata, $saveModel, $type);
+                        if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
+                            $this->setLogHierarchy($verificationModel, $dcsdata, $saveModel, $type);
+                        }
                     } else if (strtolower($type) == 'customer') {
                         $customerdata = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
-                        $this->setLogHierarchy($logModel, $customerdata, $saveModel);
+                        $this->setLogHierarchy($logModel, $customerdata, $saveModel, $type);
+                        if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
+                            $this->setLogHierarchy($verificationModel, $customerdata, $saveModel, $type);
+                        }
+                    } else if (strtolower($type) == 'member') {
+                        $memberdata = TblMember::find()->where(['member_code' => $code])->one();
+                        $this->setLogHierarchy($logModel, $memberdata, $saveModel, $type);
+                        if ($status == 1 && $cashFreeRegistrationConfig == 1 && empty($verifymodelData)) {
+                            $this->setLogHierarchy($verificationModel, $memberdata, $saveModel, $type);
+                        }
                     }
 
                     $logModel->setLogData(Yii::$app->request->post(), $model, $saveModel);
+                    if ($status == 1 && $cashFreeRegistrationConfig == 1) {
+                        $verificationModel->setBankregistrationData($responseApi, $model, $saveModel, $verifymodelData, $hisModel, $code, $customer_type);
+                    }
                     $transaction = $this->generalModel->saveTransaction($saveModel, $hisModel, ['KYC Verified', 'create']);
                     if ($transaction == 'customRedirect') {
                         return $this->redirect(\yii\helpers\Url::previous());
@@ -1440,7 +1475,7 @@ class TblDcsController extends ChildController {
             }
         }
         if (!empty($getData) && !empty($getData['bank_account_no']) && !empty($getData['ifsc'])) {
-            $base_url = \Yii::$app->params['bank_verification']['verfication_url'];
+            $base_url = \Yii::$app->params['cashfree_bank_integration']['verfication_url'];
             $body = array(
                 'bank_account' => $getData['bank_account_no'],
                 'ifsc' => $getData['ifsc']
@@ -1448,8 +1483,8 @@ class TblDcsController extends ChildController {
             $api = new WebApi();
             $api->header_info['Content-Type'] = 'application/json';
             $api->header_info['Content-length'] = strlen(json_encode($body));
-            $api->header_info['x-client-id'] = \Yii::$app->params['bank_verification']['header']['x-client-id'];
-            $api->header_info['x-client-secret'] = \Yii::$app->params['bank_verification']['header']['x-client-secret'];
+            $api->header_info['x-client-id'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-secret'];
             $api->is_header_merge = false;
             $api->return_actual = true;
             $api->serverUrl = $base_url;
@@ -1478,14 +1513,79 @@ class TblDcsController extends ChildController {
         ]);
     }
 
-    public function setLogHierarchy($logModel, $model, &$saveModel) {
+    public function setLogHierarchy($logModel, $model, &$saveModel, $type) {
         if (!empty($model)) {
             $logModel->union_code = $model->union_code;
-            $logModel->plant_code = $model->plant_code;
-            $logModel->mcc_plant_code = $model->mcc_plant_code;
-            $logModel->bmc_code = $model->bmc_code;
             $logModel->dcs_code = $model->dcs_code;
+            if (strtolower($type) == 'member') {
+                $dcsData = $model->dcsCode;
+                $logModel->plant_code = $dcsData->plant_code;
+                $logModel->mcc_plant_code = $dcsData->mcc_plant_code;
+                $logModel->bmc_code = $dcsData->bmc_code;
+            } else {
+                $logModel->plant_code = $model->plant_code;
+                $logModel->mcc_plant_code = $model->mcc_plant_code;
+                $logModel->bmc_code = $model->bmc_code;
+            }
             $saveModel[] = $logModel;
+        }
+    }
+
+    public function cashFreeRegistrationApi($type, &$model, &$responseApi, $verifymodelData) {
+        if (!empty($model) && !empty($model['bank_account_no']) && !empty($model['ifsc']) && !empty($model['beneficiary_name'])) {
+            $base_url = \Yii::$app->params['cashfree_bank_integration']['registration_url'];
+
+            if (!empty($verifymodelData)) {
+                $body = [];
+            } else {
+                if (strtolower($type) == 'dcs' || strtolower($type) == 'customer') {
+                    $contactDetailData = TblContactDetails::find()->where(['module_code' => $model['module_code'], 'module_name' => $model['module_name'], 'is_default' => 1, 'is_active' => 1])->one();
+                    $phone_no = !empty($contactDetailData) ? $contactDetailData->mobile_no : '';
+                } elseif (strtolower($type) == 'member') {
+                    $phone_no = $model->mobile_no;
+                }
+
+                $body = array(
+                    'beneficiary_id' => $model['beneficiary_id'],
+                    'beneficiary_name' => $model['beneficiary_name'],
+                    'beneficiary_instrument_details' => array(
+                        'bank_account_number' => $model['bank_account_no'],
+                        'bank_ifsc' => !empty($model['ifsc']) ? $model['ifsc'] : '',
+                    ),
+                    'beneficiary_contact_details' => array(
+                        'beneficiary_phone' => $phone_no,
+                    ),
+                    'beneficiary_status' => '',
+                    'added_on' => ''
+                );
+            }
+            $api = new WebApi();
+            $api->header_info['x-api-version'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-api-version'];
+            $api->header_info['x-client-id'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-id'];
+            $api->header_info['x-client-secret'] = \Yii::$app->params['cashfree_bank_integration']['header']['x-client-secret'];
+            $api->return_actual = true;
+            $api->serverUrl = $base_url;
+            $api->body = $body;
+            try {
+                if (!empty($verifymodelData) && (strtolower($verifymodelData->res_beneficiary_status) == 'initiated' || strtolower($verifymodelData->res_beneficiary_status) == 'verified')) {
+                    $api->apiurl = '?beneficiary_id=' . urlencode($verifymodelData->beneficiary_id);
+                    $result = $api->GuzzleCURL('GET');
+                    $api->is_header_merge = false;
+                } else {
+                    $result = $api->GuzzleCURL();
+                    $api->is_header_merge = true;
+                }
+                $httpCode = $result->getStatusCode();
+                $responseApi = $result->getBody()->getContents();
+                $responseApi = !empty($responseApi) ? json_decode($responseApi) : [];
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                $responseData = $e->getResponse() ? json_decode($e->getResponse()->getBody()->getContents()) : '';
+                $responseApi = new \stdClass();
+                $responseApi->beneficiary_status = 'failed at bank.';
+                $responseApi->bank_account_number = $model['bank_account_no'];
+                $responseApi->bank_ifsc = $model['ifsc'];
+            }
+            $jsonResponse = json_encode($responseApi);
         }
     }
 
