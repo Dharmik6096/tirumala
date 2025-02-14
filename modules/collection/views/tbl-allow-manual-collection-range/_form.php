@@ -60,6 +60,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift', true, FALSE, 'to_shift'); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('operation_perform', $model, $form, 'form-group', $model->getAttributeLabel('action_perform'), false, 'action_perform', false); ?>
+    </div>
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_weight_manual'); ?>
     </div>
@@ -69,6 +72,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'remark')->textarea() ?>
     </div>
+    <div class="clearfix"></div>
     <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
@@ -136,6 +140,7 @@ $script = "
         $('#tblallowmanualcollectionrange-from_date').val(fromDate);
         if(type=='realtime'){
             $('#tblallowmanualcollectionrange-to_date_real').val(fromDate);
+            $('#tblallowmanualcollectionrange-to_date').val(fromDate);
             $('.field-tblallowmanualcollectionrange-to_date_real').addClass('disabled no_pointer');
         }else{
             $('#tblallowmanualcollectionrange-to_date_real').val('');

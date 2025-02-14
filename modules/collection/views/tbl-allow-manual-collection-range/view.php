@@ -137,6 +137,15 @@ $approval_detail = $model->collectionApproval;
                         ],
                     ],
                 ],
+                    [
+                    'columns' => [
+                            [
+                                ['attribute' => 'action_perform',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                ],
             ];
             echo DetailView::widget([
                 'model' => $model,
