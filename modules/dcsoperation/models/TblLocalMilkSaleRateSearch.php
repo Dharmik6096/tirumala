@@ -10,29 +10,21 @@ use app\modules\dcsoperation\models\TblLocalMilkSaleRate;
 /**
  * TblLocalMilkSaleRateSearch represents the model behind the search form about `app\modules\dcsoperation\models\TblLocalMilkSaleRate`.
  */
-class TblLocalMilkSaleRateSearch extends TblLocalMilkSaleRate
-{
-    
-    public $federation_code;
-    public $union_code;
-    
+class TblLocalMilkSaleRateSearch extends TblLocalMilkSaleRate {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['local_sale_rate_code','milk_type','milk_class','rate', 'created_at', 'deleted_at', 'federation_code', 'union_code','updated_at', 'wef_date', 'created_by', 'dcs_code', 'deleted_by', 'sub_center_code', 'updated_by'], 'safe'],
-            [['is_active', 'is_delete'], 'integer'],
-            
+            [['local_milk_sale_rate_code', 'wef_date', 'milk_type_code', 'milk_class', 'rate', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'milk_quality_type_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -44,10 +36,10 @@ class TblLocalMilkSaleRateSearch extends TblLocalMilkSaleRate
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblLocalMilkSaleRate::find();
-
+        $query->where(['local_milk_rate_code' => $this->local_milk_rate_code]);
+        $query->orderBy(['wef_date' => SORT_DESC]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -56,20 +48,18 @@ class TblLocalMilkSaleRateSearch extends TblLocalMilkSaleRate
 
         $this->load($params);
 
-        $query->joinWith(['dcsCode','dcsCode.unionCode','dcsCode.unionCode.federationCode','milkClass','milkType']);
-        
-        $query->andwhere(['tbl_federations.federation_code' => $this->federation_code]);
-        
-        if(Yii::$app->session->get('Unions')!==''){
-            $query->andFilterWhere([ 'tbl_unions.union_code'=>explode(',',Yii::$app->session->get('Unions'))]);
-        }else
-            $query->andFilterWhere([ 'tbl_unions.union_code'=>$this->union_code]);
-        
-        if(Yii::$app->session->get('Dcs')!==''){
-            $query->andFilterWhere([ 'tbl_local_milk_sale_rate.dcs_code'=>explode(',',Yii::$app->session->get('Dcs'))]);
-        }else
-            $query->andFilterWhere([ 'tbl_local_milk_sale_rate.dcs_code'=>$this->dcs_code]);
-        
+        $query->joinWith(['dcsCode', 'dcsCode.unionCode', 'milkClass']);
+
+        if (Yii::$app->session->get('Unions') !== '') {
+            $query->andFilterWhere(['tbl_unions.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        } else
+            $query->andFilterWhere(['tbl_unions.union_code' => $this->union_code]);
+
+        if (Yii::$app->session->get('Dcs') !== '') {
+            $query->andFilterWhere(['tbl_local_milk_sale_rate.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        } else
+            $query->andFilterWhere(['tbl_local_milk_sale_rate.dcs_code' => $this->dcs_code]);
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -78,17 +68,17 @@ class TblLocalMilkSaleRateSearch extends TblLocalMilkSaleRate
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'tbl_local_milk_sale_rate.is_active' => $this->is_active,
-            'tbl_local_milk_sale_rate.is_delete' => 0,
             'rate' => $this->rate,
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_local_milk_sale_rate.local_sale_rate_code', $this->local_sale_rate_code])
-            ->andFilterWhere(['like', 'tbl_animal_type.animal_type_name', $this->milk_type])
-            ->andFilterWhere(['like', 'tbl_milk_class.class_name', $this->milk_class])
-            ->andFilterWhere(['like', 'wef_date',(!empty($this->wef_date))?date('Y-m-d', strtotime ($this->wef_date)):''])
-           ->andFilterWhere(['like', 'sub_center_code', $this->sub_center_code]);
+        if ((!empty($this->wef_date))) {
+            $wef_date = date('Y-m-d', strtotime($this->wef_date));
+            $query->andFilterWhere(['like', 'CAST(wef_date AS DATE)', $wef_date]);
+        }
+
+        $query->andFilterWhere(['like', 'tbl_local_milk_sale_rate.local_milk_sale_rate_code', $this->local_milk_sale_rate_code]);
 
         return $dataProvider;
     }
+
 }

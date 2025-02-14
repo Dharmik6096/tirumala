@@ -18,7 +18,7 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblPortalDataPostLog extends ChildModel {
+class TblPortalDataPostLog extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
