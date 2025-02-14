@@ -2,6 +2,15 @@
 
 namespace app\modules\collection\models;
 
+use app\models\ChildModel;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblRouteMapping;
+use app\modules\organisation\models\TblUnions;
 use Yii;
 
 /**
@@ -44,7 +53,7 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblWeightRejection extends \app\models\ChildModel {
+class TblWeightRejection extends ChildModel {
 
     /**
      * @inheritdoc
@@ -58,8 +67,7 @@ class TblWeightRejection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['uuid', 'sample_no', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'qty_mode', 'qty', 'converted_qty_mode', 'converted_qty', 'cans', 'return_type', 'device_id', 'version_no', 'doc_no', 'vehicle_no', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'rejection_reason_code', 'rejection_responsibility_code'], 'safe'],
-            [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['sample_no', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'qty_mode', 'qty', 'converted_qty_mode', 'converted_qty', 'cans', 'return_type', 'device_id', 'version_no', 'doc_no', 'vehicle_no', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'rejection_reason_code', 'rejection_responsibility_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['uuid'], 'required', 'except' => ['androidsync']],
         ];
     }
@@ -85,12 +93,12 @@ class TblWeightRejection extends \app\models\ChildModel {
             'doc_no' => Yii::t('app', 'Doc No'),
             'vehicle_no' => Yii::t('app', 'Vehicle No'),
             'remarks' => Yii::t('app', 'Remarks'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'Mcc Plant'),
+            'bmc_code' => Yii::t('app', 'Bmc'),
+            'dcs_code' => Yii::t('app', 'Dcs'),
+            'route_code' => Yii::t('app', 'Route'),
             'rejection_reason_code' => Yii::t('app', 'Rejection Reason Code'),
             'rejection_responsibility_code' => Yii::t('app', 'Rejection Responsibility Code'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -106,6 +114,38 @@ class TblWeightRejection extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
 }
