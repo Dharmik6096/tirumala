@@ -16,6 +16,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\payment\models\TblPaymentCycleApplicability;
 
 /**
  * Default controller for the `applicability` module
@@ -205,4 +206,22 @@ class DefaultController extends Controller {
         return Json::encode(['status' => 'success', 'data' => $routeList]);
     }
 
+    public function actionLoadBmc() {
+        $post = Yii::$app->request->post();
+        $className = Yii::$app->path->getModel($post['class_name']);
+        $query = $className::find()->where([$post['field_name'] => $post['field_code']]);
+    
+        if (!empty($post['selected_apply_to'])) {
+            $selectedApplyTo = json_decode($post['selected_apply_to']);
+            foreach ($selectedApplyTo as $type) {
+                $query->andWhere(['applicable_type' => $type]);
+            }
+        }
+    
+        $bmcCodes = array_column($query->all(), 'applicable_code');
+        $unionCode = $post['union_code'] ? $post['union_code'] : '';
+        $bmcList = (new TblDcsBmc())->getBmcs($unionCode, $bmcCodes, TRUE, 'TRUE');
+    
+        return Json::encode(['status' => 'success', 'data' => $bmcList]);
+    }
 }
