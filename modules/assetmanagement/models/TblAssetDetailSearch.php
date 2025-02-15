@@ -18,7 +18,7 @@ class TblAssetDetailSearch extends TblAssetDetail {
     public function rules() {
         return [
             [['asset_detail_code', 'is_active'], 'integer'],
-            [['asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'manufacturer_code', 'capacity', 'purchase_date', 'put_to_use_date', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+            [['asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'manufacturer_code', 'capacity', 'purchase_date', 'put_to_use_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'detail_code', 'manufacturer_serial_number', 'manufacturer_id'], 'safe'],
             [['warranty_period', 'maintanance_duration_in_days'], 'number'],
         ];
     }
