@@ -622,6 +622,9 @@ class SearchFilter {
             'TblSoftwareComplaintSearch' => [
                 'filter' => ['f_union_code', 'f_u_dcs_code'],
             ],
+            'TblForceSyncRequestSearch' => [
+                'filter' => ['from_date', 'from_shift', 'to_date', 'to_shift', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

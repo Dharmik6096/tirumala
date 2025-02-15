@@ -2249,6 +2249,7 @@ class DropDown extends Component {
             'dispatch_center_type' => ['name' => 'dispatch_center_type_code', 'fields' => 'dispatch_center_type_code,dispatch_center_type', 'prompt' => 'Select Dispatch Center Type', 'model' => 'TblDispatchCenterType', 'joinwith' => ['userDispatchCenterMapping'], 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
             'dispatch_center' => ['name' => 'dispatch_center_code', 'fields' => 'dispatch_center_code,dispatch_center_name', 'prompt' => 'Select Dispatch Center', 'model' => 'TblDispatchCenter', 'joinwith' => ['dispatchCenterTypeCode', 'userDispatchCenterMapping'], 'concatfield' => 'tbl_dispatch_center_type.dispatch_center_type', 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
             'insurance_master_list' => ['name' => 'insurance_master_code', 'fields' => 'insurance_master_code,insurance_description', 'prompt' => 'Select Insurance', 'model' => 'TblInsuranceMaster'],
+            'forceSyncTables' => ['name' => 'table_name', 'fields' => 'table_name,table_desc', 'prompt' => 'Select Process', 'model' => 'TblForceSyncTableList'],
         ];
         return $label[$l];
     }
