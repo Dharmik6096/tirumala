@@ -110,8 +110,8 @@ class CashfreeBankIntegrationController extends Controller {
                         $response = !empty($response) ? json_decode($response) : [];
                         $bank_log->status = 2;
                         $bank_log->file_status = 'success';
-                        $bank_log->utr_ref_no = $response->cf_batch_transfer_id;
-                        $bank_log->file_status_desc = $response->status;
+                        $bank_log->utr_ref_no = isset($response->cf_batch_transfer_id) ? $response->cf_batch_transfer_id : NULL;
+                        $bank_log->file_status_desc = isset($response->status) ? $response->status : NULL;
                         $bank_log->file_status_code = $httpCode;
                         $bank_log->no_of_txn = count($transfers);
                         $bank_log->updated_at = date('Y-m-d H:i:s');
@@ -144,9 +144,9 @@ class CashfreeBankIntegrationController extends Controller {
                         ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = bl.union_bank_payment_code')
                         ->innerJoin('tbl_bank_api_detail ba', 'ubp.union_bank_payment_code= ba.union_bank_payment_code')
                         ->where(['bl.status' => 2, 'ba.is_active' => 1, 'ubp.is_active' => 1, 'UPPER(ubp.integration_mode)' => 'API'])
-                        ->andWhere(['NOT', ['bl.status' => 4, 'bl.status'=>3]])
+                        ->andWhere(['NOT', ['bl.status' => 4, 'bl.status' => 3]])
                         ->limit(5)->asArray()->all();
-        if(!empty($bankPaymentLogData)){
+        if (!empty($bankPaymentLogData)) {
             foreach ($bankPaymentLogData as $data) {
                 $base_url = $data['payment_url'];
                 $body = array();
@@ -161,7 +161,7 @@ class CashfreeBankIntegrationController extends Controller {
                 $queryParams = http_build_query([
                     'batch_transfer_id' => $data['file_name'],
                 ]);
-                $api->apiurl = '?'.$queryParams;
+                $api->apiurl = '?' . $queryParams;
                 try {
                     $result = $api->GuzzleCURL('GET');
                     $httpCode = $result->getStatusCode();
@@ -171,89 +171,73 @@ class CashfreeBankIntegrationController extends Controller {
                 } catch (\GuzzleHttp\Exception\ClientException $e) {
                     $responseData = $e->getResponse() ? json_decode($e->getResponse()->getBody()->getContents()) : '';
                     Yii::$app->db->createCommand()->update('tbl_bank_payment_log', [
-                        'status' => 3,
-                        'updated_at' => date('Y-m-d H:i:s'),
-                        'file_error_code' => !empty($responseData->code) ? $responseData->code : '',
-                        'file_error_desc' => !empty($responseData->message) ? $responseData->message : '',
-                        'updated_by' => 'CRON'], ['file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
-                    ->execute();
+                                'status' => 3,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'file_error_code' => !empty($responseData->code) ? $responseData->code : '',
+                                'file_error_desc' => !empty($responseData->message) ? $responseData->message : '',
+                                'updated_by' => 'CRON'], ['file_name' => $data['file_name'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
+                            ->execute();
 
                     Yii::$app->db->createCommand()
-                    ->update('tbl_payment_transaction', [
-                        'is_file' => '2',
-                        'response_datetime' => date('Y-m-d H:i:s'),
-                        'bank_status' => 'FAILED',
-                        'response_msg' => !empty($responseData->message) ? $responseData->message : '',
-                        'updated_at' => date('Y-m-d H:i:s')
-                            ], 'union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
-                    ->execute();
+                            ->update('tbl_payment_transaction', [
+                                'is_file' => '2',
+                                'response_datetime' => date('Y-m-d H:i:s'),
+                                'bank_status' => 'FAILED',
+                                'response_msg' => !empty($responseData->message) ? $responseData->message : '',
+                                'updated_at' => date('Y-m-d H:i:s')
+                                    ], 'union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $data['file_name'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
+                            ->execute();
                 }
             }
         }
     }
 
     public function ReverseUpdate($response, $data) {
-        $response = (array)$response;
-        if(!empty($response['transfers'])){
-            $response['transfers'] = (array)$response['transfers'];
+        $response = (array) $response;
+        if (!empty($response['transfers'])) {
+            $response['transfers'] = (array) $response['transfers'];
             $is_status_update = true;
             $statusCode = [
-                'COMPLETED', 'NRE_ACCOUNT_FAIL', 'BENE_BANK_DECLINED', 'IMPS_MODE_FAIL', 
-                'NPCI_UNAVAILABLE', 'RETURNED_FROM_BENEFICIARY', 'INVALID_BENE_ACCOUNT_OR_IFSC', 
-                'INVALID_BENE_VPA', 'MANUALLY_REJECTED', 'BENE_NOT_EXIST', 'INSUFFICIENT_BALANCE', 
-                'INSIDE_BLACKOUT_WINDOW', 'INVALID_MODE_FOR_PYID', 'BENE_BLACKLISTED', 
-                'INVALID_TRANSFER_AMOUNT', 'TRANSFER_LIMIT_BREACH', 'INVALID_PAYMENT_INSTRUMENT', 
-                'VELOCITY_CHECK_FAILED', 'DISABLED_MODE', 'BANK_ACCOUNT_INVALID', 'BANK_IFSC_INVALID', 
-                'VPA_INVALID', 'PHONE_INVALID', 'BANK_ACCOUNT_DETAILS_MISSING', 'INVALID_IFSC_FAIL', 
-                'INVALID_AMOUNT_FAIL', 'INVALID_ACCOUNT_FAIL', 'INVALID_REQUEST', 'ACCOUNT_BLOCKED', 
-                'AUTHENTICATION_FAILURE', 'NRE_ACCOUNT_FAIL', 'BAD_REQUEST', 'FAILED', 
-                'RETURNED_FROM_BENEFICIARY', 'BENE_NAME_DIFFERS', 'APPROVAL_PENDING', 
-                'ANOMALY_DETECTION'
+                'FAILED', 'MANUALLY_REJECTED', 'REJECTED', 'REVERSED', 'SUCCESS'
             ];
-            $statusCodeList = ArrayHelper::getColumn($response['transfers'], 'status_code');
+            $statusCodeList = ArrayHelper::getColumn($response['transfers'], 'status');
             $result = array_diff($statusCodeList, $statusCode);
-            if(!empty($result)){
+            if (!empty($result)) {
                 $is_status_update = false;
             }
-            foreach($response['transfers'] as $res){
-                $res = (array)$res;
-                // $status = ['success', 'reversed', 'rejected', 'queued', 'pending', 'manually_rejected', 'failed', 'approval_pending'];
-                if (in_array($res['status_code'], $statusCode)) {
+            foreach ($response['transfers'] as $res) {
+                $res = (array) $res;
+                if (in_array($res['status'], $statusCode)) {
                     Yii::$app->db->createCommand()
                             ->update('tbl_payment_transaction', [
-                                'disburse_amount' => new Expression("CASE WHEN '" . strtolower($res['status_code']) . "' != lower('completed') THEN disburse_amount ELSE final_amount END"),
-                                'status' => new Expression("CASE WHEN '" . strtolower($res['status_code']) . "' != lower('completed') THEN status ELSE 'Disburse' END"),
+                                'disburse_amount' => new Expression("CASE WHEN '" . strtolower($res['status']) . "' != lower('success') THEN disburse_amount ELSE final_amount END"),
+                                'status' => new Expression("CASE WHEN '" . strtolower($res['status']) . "' != lower('success') THEN status ELSE 'Disburse' END"),
                                 'is_file' => '2',
                                 'response_datetime' => date('Y-m-d H:i:s'),
-                                'bank_status' => (strtolower($res['status_code']) == 'completed') ? 'SUCCESSFUL' : 'FAILED',
+                                'bank_status' => (strtolower($res['status']) == 'success') ? 'SUCCESSFUL' : 'FAILED',
                                 'response_msg' => $res['status_code'],
-                                // 'process_date' => $res['added_on'],
-                                'updated_at' => !empty($res['added_on']) ? date('Y-m-d H:i:s', strtotime($res['added_on'])) : '',
+                                'updated_at' => date('Y-m-d H:i:s'),
                                 'utr_no' => !empty($res['transafer_utr']) ? $res['transafer_utr'] : '',
                                     ], 'payment_transaction_code = \'' . $res['transfer_id'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $response['batch_transfer_id'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
                             ->execute();
-                    if($is_status_update){
-                        $this->updateReverseStatus($res);
-                    }
+                    $this->updateReverseStatus($res);
                 } else {
                     Yii::$app->db->createCommand()
-                        ->update('tbl_payment_transaction', [
-                            'response_datetime' => date('Y-m-d H:i:s'),
-                            'bank_status' => (strtolower($res['status_code']) == 'completed') ? 'SUCCESSFUL' : 'FAILED',
-                            'response_msg' => $res['status_code'],
-                            // 'process_date' => !empty($res['added_on']) ? date('Y-m-d H:i:s', strtotime($res['added_on'])) : '',
-                            'updated_at' => !empty($res['added_on']) ? date('Y-m-d H:i:s', strtotime($res['added_on'])) : '',
-                            'utr_no' => !empty($res['transafer_utr']) ? $res['transafer_utr'] : '',
-                                ], 'payment_transaction_code = \'' . $res['transfer_id'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $response['batch_transfer_id'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
-                        ->execute();
+                            ->update('tbl_payment_transaction', [
+                                'response_datetime' => date('Y-m-d H:i:s'),
+                                'response_msg' => $res['status_code'],
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'utr_no' => !empty($res['transafer_utr']) ? $res['transafer_utr'] : '',
+                                    ], 'payment_transaction_code = \'' . $res['transfer_id'] . '\' and  union_bank_payment_code =\'' . $data['union_bank_payment_code'] . '\' and file_name =\'' . $response['batch_transfer_id'] . '\' and is_file = 1 and union_code= \'' . $data['union_code'] . '\'')
+                            ->execute();
                 }
             }
-            if($is_status_update){
+            if ($is_status_update) {
                 Yii::$app->db->createCommand()->update('tbl_bank_payment_log', [
                             'status' => 4,
                             'updated_at' => date('Y-m-d H:i:s'),
                             'updated_by' => 'CRON'
-                        ], ['file_name' => $response['batch_transfer_id'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
+                                ], ['file_name' => $response['batch_transfer_id'], 'status' => 2, 'union_bank_payment_code' => $data['union_bank_payment_code']])
                         ->execute();
             }
         }
@@ -270,12 +254,11 @@ class CashfreeBankIntegrationController extends Controller {
             $summaryUpadte = (strtolower($data->type) == 'member') ? true : false;
             Yii::$app->db->createCommand()
                     ->update($table, [
-                        'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status_code']) . "' != lower('completed') THEN disburse_amount ELSE " . $amountColumnName . " END"),
-                        '' . $statusColumn . '' => new Expression("CASE WHEN '" . strtolower($response['status_code']) . "' != lower('completed') THEN " . $statusColumn . " ELSE 'Disburse' END"),
+                        'disburse_amount' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('success') THEN disburse_amount ELSE " . $amountColumnName . " END"),
+                        '' . $statusColumn . '' => new Expression("CASE WHEN '" . strtolower($response['status']) . "' != lower('success') THEN " . $statusColumn . " ELSE 'Disburse' END"),
                         'disburse_date' => $date,
-                        'bank_status' => (strtolower($response['status_code']) == 'completed') ? 'SUCCESSFUL' : 'FAILED',
-                        // 'process_date' => $response['added_on'],
-                        'updated_at' => !empty($response['added_on']) ? date('Y-m-d H:i:s', strtotime($response['added_on'])) : '',
+                        'bank_status' => (strtolower($response['status']) == 'success') ? 'SUCCESSFUL' : 'FAILED',
+                        'updated_at' => date('Y-m-d H:i:s'),
                         'utr_no' => !empty($response['transafer_utr']) ? $response['transafer_utr'] : '',
                             ], 'payment_transaction_code = \'' . $response['transfer_id'] . '\' and lower(' . $statusColumn . ')=\'sent\'')
                     ->execute();
@@ -291,11 +274,12 @@ class CashfreeBankIntegrationController extends Controller {
                                 'disburse_amount' => new Expression('final_amount'),
                                 'disburse_date' => $date,
                                 'payment_status' => 'Disburse',
-                                    ], ['union_code' => $data->union_code, 'payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code,'LOWER(payment_status)'  => "sent"])
+                                    ], ['union_code' => $data->union_code, 'payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code, 'LOWER(payment_status)' => "sent"])
                             ->execute();
                 }
             }
         }
         return;
     }
+
 }

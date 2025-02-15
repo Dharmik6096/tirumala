@@ -62,10 +62,10 @@ class TblProcessApprovalSearch extends TblProcessApproval {
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'originating_type' => $this->originating_type,
+            'process_code' => $this->process_code,
         ]);
 
-        $query->andFilterWhere(['like', 'process_code', $this->process_code])
-                ->andFilterWhere(['like', 'process_name', $this->process_name])
+        $query->andFilterWhere(['like', 'process_name', $this->process_name])
                 ->andFilterWhere(['like', 'approval_mode', $this->approval_mode])
                 ->andFilterWhere(['like', 'level_priority', $this->level_priority])
                 ->andFilterWhere(['like', 'login_type', $this->login_type])

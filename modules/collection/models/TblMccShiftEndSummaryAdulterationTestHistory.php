@@ -77,7 +77,6 @@ class TblMccShiftEndSummaryAdulterationTestHistory extends \yii\db\ActiveRecord
     {
         return [
             [['mcc_shift_end_summary_adulteration_test_code','date_time_of_collection','shift_code','milk_type_code','quantity','fat','snf','temperature','taste','alcohol','cob','glucose','salt','sugar','urea','starch','rosolic_acid','h2o2','formalin','detergent','nitrate_comp','ammonium_comp','acidity','mbrt','malto_dextrin','protein_chainna','br_value','rm_value','remarks','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','created_at','created_by','updated_at','updated_by','flg_sentbox_entry','sync_status','sync_timestamp','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','x_col1','x_col2','x_col3','x_col4','x_col5','operation_type'], 'safe'],
-            [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
 

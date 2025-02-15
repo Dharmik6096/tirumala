@@ -15,6 +15,8 @@ $attribute = [
     ['attribute' => 'in_desc', 'filter' => false],
     ['attribute' => 'out_desc', 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],
+    ['attribute' => 'km_start_reading', 'filter' => false],
+    ['attribute' => 'km_end_reading', 'filter' => false],
 ];
 
 $grid_option = [

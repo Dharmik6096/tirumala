@@ -44,7 +44,7 @@ class TblUserAttendanceDetail extends \app\models\ChildModel {
     public function rules() {
         return [
             [['attendance_detail_code', 'union_code', 'user_code', 'attendance_date', 'reference_type', 'reference_code', 'in_time', 'out_time', 'in_lat_long', 'out_lat_long', 'in_desc', 'out_desc', 'remarks'], 'safe'],
-            [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'km_start_reading', 'km_end_reading'], 'safe'],
         ];
     }
 
@@ -73,6 +73,8 @@ class TblUserAttendanceDetail extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'km_start_reading' => Yii::t('app', 'KM Start Reading'),
+            'km_end_reading' => Yii::t('app', 'KM End Reading'),
         ];
     }
 

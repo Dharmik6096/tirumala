@@ -21,7 +21,7 @@ class TblMilkVehicleEntryTransactionSearch extends TblMilkVehicleEntryTransactio
             [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'vehicle_entry_chamber_date', 'grn_no', 'chamber_no', 'challan_no', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'safe'],
             [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'safe'],
-            [['erp_process_name'],'required', 'message' => 'Process Name cannot be blank.'],
+            [['erp_process_name'],'required',  'except' => ['view'], 'message' => 'Process Name cannot be blank.'],
             [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],'safe'],
             [['operator_fat', 'operator_snf', 'operator_chamber_quantity'], 'safe'],
         ];
@@ -56,7 +56,7 @@ class TblMilkVehicleEntryTransactionSearch extends TblMilkVehicleEntryTransactio
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
 

@@ -66,7 +66,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             [['customer_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection']],
             [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code', 'can_no', 'route_code', 'antibiotic', 'doc_no', 'qlty_auto', 'qty_auto', 'calibration_value_fat', 'calibration_value_snf'], 'safe'],
             [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
-            [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime', 'clr'], 'safe'],
+            [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime', 'clr', 'qlty_time', 'qty_time'], 'safe'],
             [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no', 'clr'], 'number'],
             ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_quality_test', 'bmc_weight_collection','milk_collection_qty']],
             ['milk_type_code', 'in', 'range' => ['C', 'B', 'M', 'c', 'b', 'm'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic','milk_collection_qty']],
@@ -94,6 +94,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             [['antibiotic'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'antibiotic');
                 }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty']],
+            [['qlty_time', 'qty_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]:[0-5][0-9]$/', 'on' => ['milk_collection_other_data']]
         ];
     }
 

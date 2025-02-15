@@ -54,7 +54,6 @@ class TblWeightScaleCalibrationHistory extends \yii\db\ActiveRecord
     {
         return [
             [['weight_scale_calibration_id','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','ws_code','date_time_of_collection','shift_code','manual_quantity','actual_quantity','reference_measurement','sync_status','sync_timestamp','remarks','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','operation_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
-            [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
 

@@ -8,6 +8,7 @@ use Yii;
 use app\modules\payment\models\TblPaymentTransactionApproval;
 use app\modules\payment\models\TblPaymentTransactionHistory;
 use app\modules\payment\models\TblPaymentTransactionSearch;
+use DateTime;
 use yii\data\ArrayDataProvider;
 
 /**
@@ -28,10 +29,22 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
             $saveModel = [];
             $approvalMap = [];
             $count = 1;
+            $dateTimeArray = [];
             foreach ($selectCodes as $key => $value) {
                 [$paymentTransactionCode, $bmcCode, $type, $fromDate, $toDate] = explode('###', $value);
                 $existingTransaction = TblPaymentTransaction::find()->where(['payment_transaction_code' => $paymentTransactionCode, 'bank_status' => ['FAILED']])->one();
                 if (!empty($existingTransaction)) {
+                    if (!array_key_exists($existingTransaction->file_name, $dateTimeArray)) {
+                        $currentDateTime = date('ymdHis');                        
+                        if(in_array($currentDateTime, $dateTimeArray)){
+                            $dateTimeObject = DateTime::createFromFormat('ymdHis', $currentDateTime);
+                            $dateTimeObject->modify('+1 second');
+                            $currentDateTime = $dateTimeObject->format('ymdHis');
+                            $dateTimeArray[$existingTransaction->file_name] = $currentDateTime;
+                        } else {
+                            $dateTimeArray[$existingTransaction->file_name] = $currentDateTime;
+                        }
+                    }
                     $historyModel = new TblPaymentTransactionHistory();
                     Yii::$app->operation->history($existingTransaction, $historyModel, UPDATE);
                     $saveModel[] = $historyModel;
@@ -49,6 +62,12 @@ class TblPaymentTransactionController extends \app\controllers\ChildController {
                     $newTransaction->pick_datetime = NULL;
                     $newTransaction->response_datetime = NULL;
                     $newTransaction->response_msg = NULL;
+                    $newTransaction->ref_file_name = $existingTransaction->file_name;
+                    $file_name = 'VD';
+                    if (strpos($existingTransaction->file_name, 'MD') !== false) {
+                        $file_name = 'MD';
+                    }
+                    $newTransaction->file_name =  $file_name.$bmcCode.$dateTimeArray[$existingTransaction->file_name].'0';
                     unset($newTransaction->created_at, $newTransaction->updated_at, $newTransaction->created_by, $newTransaction->updated_by);
                     $existingTransaction->bank_status = 'REINITIATED';
                     $saveModel[] = $existingTransaction;

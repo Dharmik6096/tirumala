@@ -61,7 +61,6 @@ class TblMccShiftEndSummaryHistory extends \yii\db\ActiveRecord
     {
         return [
             [['mcc_shift_end_summary_code','date_time_of_collection','shift_code','milk_type_code','quantity','fat','snf','p_quantity','p_fat','p_snf','d_quantity','d_fat','d_snf','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','flg_sentbox_entry','sync_status','sync_timestamp','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','x_col1','x_col2','x_col3','x_col4','x_col5','operation_type'], 'safe'],
-            [['union_code'], 'required', 'on' => ['androidsync']]
         ];
     }
 
