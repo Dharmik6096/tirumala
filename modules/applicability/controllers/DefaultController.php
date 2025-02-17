@@ -209,19 +209,33 @@ class DefaultController extends Controller {
     public function actionLoadBmc() {
         $post = Yii::$app->request->post();
         $className = Yii::$app->path->getModel($post['class_name']);
-        $query = $className::find()->where([$post['field_name'] => $post['field_code']]);
-    
+        $tableName = $className::tableName();
+        $unionCode = $post['union_code'] ? $post['union_code'] : '';
+        $bmcList = [];
         if (!empty($post['selected_apply_to'])) {
             $selectedApplyTo = json_decode($post['selected_apply_to']);
             foreach ($selectedApplyTo as $type) {
-                $query->andWhere(['applicable_type' => $type]);
+                $query = TblDcsBmc::find()
+                        ->alias('B')
+                        ->select('B.*')
+                        ->leftJoin("$tableName A", 
+                            "A.applicable_code = B.bmc_code  AND A.applicable_type = '" . addslashes($type) . "'  AND A." . $post['field_name'] . " = '" . addslashes($post['field_code']) . "'"
+                        )
+                        ->where(['B.union_code' => $unionCode]);
+                        foreach (['Plant' => 'plant_code', 'MCC' => 'mcc_plant_code', 'BMC' => 'bmc_code'] as $sessionKey => $column) {
+                            if ($value = Yii::$app->session->get($sessionKey)) {
+                                $query->andWhere(["B.$column" => explode(',', $value)]);
+                            }
+                        }
+                $result = $query->andWhere(['A.applicable_code' => null])->asArray()->all();
+                if(!empty($result)){
+                    $result = ArrayHelper::map($result, 'bmc_code', function($result) {
+                        return ($result['ref_code'] . ' - ') . $result['bmc_name'];
+                    });
+                    $bmcList = array_merge($bmcList, $result);
+                }
             }
         }
-    
-        $bmcCodes = array_column($query->all(), 'applicable_code');
-        $unionCode = $post['union_code'] ? $post['union_code'] : '';
-        $bmcList = (new TblDcsBmc())->getBmcs($unionCode, $bmcCodes, TRUE, 'TRUE');
-    
         return Json::encode(['status' => 'success', 'data' => $bmcList]);
     }
 }
