@@ -1980,11 +1980,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         
     }
 
-    public function actionAdjustDcsData() {
+    public function actionDraftPayment() {
         
     }
 
-    public function actionAdjustLockDcsData() {
+    public function actionFinalizePayment() {
         
     }
 

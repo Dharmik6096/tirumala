@@ -162,8 +162,8 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                             <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
                         <?php } ?>
                         <?php //Yii::$app->controls->save('Confirm', $model);                ?>
-                        <?= GhostHtml::a_alert(Yii::t('app', 'Save as Draft'), ['/payment/tbl-member-payment/adjust-dcs-data'], ['class' => 'btn btn-primary', 'id' => 'adjustDcsData']); ?>
-                        <?= GhostHtml::a_alert(Yii::t('app', 'Finalize'), ['/payment/tbl-member-payment/adjust-lock-dcs-data'], ['class' => 'btn btn-primary', 'id' => 'adjust-lock-dcs-data']); ?>
+                        <?= GhostHtml::a_alert(Yii::t('app', 'Save as Draft'), ['/payment/tbl-member-payment/draft-payment'], ['class' => 'btn btn-primary', 'id' => 'adjustDcsData']); ?>
+                        <?= GhostHtml::a_alert(Yii::t('app', 'Finalize'), ['/payment/tbl-member-payment/finalize-payment'], ['class' => 'btn btn-primary', 'id' => 'adjust-lock-dcs-data']); ?>
                         <?php // Html::button(Yii::t('app', 'Save as Draft'), ['class' => 'btn btn-primary ', 'id' => 'adjustDcsData']); ?>
                         <?php // Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock-dcs-data']); ?>
 
