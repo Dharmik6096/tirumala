@@ -17,6 +17,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\payment\models\TblPaymentCycleApplicability;
+use yii\db\Query;
 
 /**
  * Default controller for the `applicability` module
@@ -214,27 +215,33 @@ class DefaultController extends Controller {
         $bmcList = [];
         if (!empty($post['selected_apply_to'])) {
             $selectedApplyTo = json_decode($post['selected_apply_to']);
-            foreach ($selectedApplyTo as $type) {
-                $query = TblDcsBmc::find()
-                        ->alias('B')
-                        ->select('B.*')
-                        ->leftJoin("$tableName A", 
-                            "A.applicable_code = B.bmc_code  AND A.applicable_type = '" . addslashes($type) . "'  AND A." . $post['field_name'] . " = '" . addslashes($post['field_code']) . "'"
-                        )
-                        ->where(['B.union_code' => $unionCode]);
-                        foreach (['Plant' => 'plant_code', 'MCC' => 'mcc_plant_code', 'BMC' => 'bmc_code'] as $sessionKey => $column) {
-                            if ($value = Yii::$app->session->get($sessionKey)) {
-                                $query->andWhere(["B.$column" => explode(',', $value)]);
-                            }
+                $query = (new Query())
+                    ->select('B.*')
+                    ->from(['B' => 'tbl_bmc'])
+                    ->innerJoin(
+                        ['ct' => (new Query())
+                            ->select(['customer_type', 'union_code'])
+                            ->from('tbl_customer_type')
+                            ->where(['is_applicability' => 1])
+                            ->andWhere(['union_code' => $unionCode])
+                            ->andWhere(['in', 'customer_type', $selectedApplyTo])
+                        ],
+                        'ct.union_code = B.union_code'
+                    )
+                    ->leftJoin(
+                        ['A' => $tableName],
+                        'B.bmc_code = A.applicable_code AND A.' . $post['field_name'] . ' = \'' . addslashes($post['field_code']) . '\' AND A.applicable_type = ct.customer_type'
+                    )
+                    ->where(['A.applicable_code' => null]);
+                    foreach (['Plant' => 'plant_code', 'MCC' => 'mcc_plant_code', 'BMC' => 'bmc_code'] as $sessionKey => $column) {
+                        if ($value = Yii::$app->session->get($sessionKey)) {
+                            $query->andWhere(["B.$column" => explode(',', $value)]);
                         }
-                $result = $query->andWhere(['A.applicable_code' => null])->asArray()->all();
-                if(!empty($result)){
-                    $result = ArrayHelper::map($result, 'bmc_code', function($result) {
-                        return ($result['ref_code'] . ' - ') . $result['bmc_name'];
+                    }
+                    $bmcList = $query->all();
+                    $bmcList = ArrayHelper::map($bmcList, 'bmc_code', function($bmcList) {
+                        return ($bmcList['ref_code'] . ' - ') . $bmcList['bmc_name'];
                     });
-                    $bmcList = array_merge($bmcList, $result);
-                }
-            }
         }
         return Json::encode(['status' => 'success', 'data' => $bmcList]);
     }
