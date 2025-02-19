@@ -835,8 +835,21 @@ echo GhostMenu::widget([
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
                                     'items' => [
+                                            ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/are-bmc-collection-shift-report']],
+                                            ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/are-bmc-coll-date-shift-wise-summary']],
+                                            ['label' => '207 -' . Yii::t('app', 'Society Wise CDA Format 1'), 'url' => ['/misreports/reports/are-society-wise-cda']],
                                             ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report-region']],
                                             ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation-region']],
+                                    ]
+                                ],
+                                    [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                            ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/reports/are-vendor-payment']],
+                                            ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/reports/are-member-payment']],
+                                            ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/reports/are-vendor-bank-payment']],
+                                            ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/reports/are-member-bank-payment']],
                                     ]
                                 ],
                                     ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
@@ -877,6 +890,7 @@ echo GhostMenu::widget([
                             ['label' => '918-' . Yii::t('app', 'Asset Details Report'), 'url' => ['/misreports/reports/asset-details-report']],
                             ['label' => '919-' . Yii::t('app', 'User Organization Mapping Report'), 'url' => ['/misreports/reports/user-organization-mapping-report']],
                             ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
+                            ['label' => '921-' . Yii::t('app', 'TS Recovery Report'), 'url' => ['/misreports/reports/vsp-transit-recovery']],
                     ]
                 ],
                     [
