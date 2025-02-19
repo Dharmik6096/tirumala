@@ -1977,6 +1977,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'AreMemberBankPayment';
         return $this->actionIndex();
     }
+    
+    public function actionVspTransitRecovery() {
+        $this->report = 'VspTransitRecovery';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -4265,6 +4270,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_are_member_bank_payment',
                 'scenario' => 'AreMemberBankPayment',
                 'title' => '607 - Member Bank Payment',
+                'bkg_export' => TRUE,
+            ],
+            'VspTransitRecovery' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_vsp_transit_recovery',
+                'scenario' => 'VspTransitRecovery',
+                'title' => '921 - TS Recovery Report',
                 'bkg_export' => TRUE,
             ],
         ];

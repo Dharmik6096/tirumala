@@ -961,6 +961,7 @@ echo GhostMenu::widget([
                             ['label' => '918-' . Yii::t('app', 'Asset Details Report'), 'url' => ['/misreports/reports/asset-details-report']],
                             ['label' => '919-' . Yii::t('app', 'User Organization Mapping Report'), 'url' => ['/misreports/reports/user-organization-mapping-report']],
                             ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
+                            ['label' => '921-' . Yii::t('app', 'TS Recovery Report'), 'url' => ['/misreports/reports/vsp-transit-recovery']],
                     ]
                 ],
                     [
