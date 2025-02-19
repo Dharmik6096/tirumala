@@ -8,7 +8,7 @@ use yii\helpers\Url;
 //Url::remember();
 $form_validation_type = !empty($form_validation_type) ? $form_validation_type : 'default';
 $mail_info = !empty($mail_info) ? $mail_info : ($module == 'mccPlant' ? TRUE : FALSE);
-
+$show_optional_fields = in_array($module, ['mccPlant', 'bmc', 'society', 'routeMapping']);
 $url = Url::to(['/details/tbl-contact-details/create', 'module' => $module, 'id' => $id, 'form_validation_type' => $form_validation_type]);
 $this->title = Yii::$app->label->title('create', 'Contact Detail');
 ?>
@@ -32,6 +32,7 @@ $this->title = Yii::$app->label->title('create', 'Contact Detail');
                 'model' => $model,
                 'form' => $form,
                 'mail_info' => $mail_info,
+                'show_optional_fields' => $show_optional_fields,
             ])
             ?>
             <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -49,6 +50,7 @@ $this->title = Yii::$app->label->title('create', 'Contact Detail');
                 $this->render('_form_grid', [
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
+                    'show_optional_fields' => $show_optional_fields,
                 ])
                 ?>
             </div>
