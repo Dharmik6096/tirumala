@@ -1122,6 +1122,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 ])
                 ->where(['member_code' => $model->member_code, 'dcs_code' => $model->dcs_code])
                 ->andWhere(['between', 'date_time_of_collection', $startDate, $endDate])
+                ->andWhere(['shift_code' => $model->shift_code])
                 ->groupBy('member_code')
                 ->asArray()
                 ->one();
@@ -1321,7 +1322,7 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function validateRtpl($attribute, $params) {
         $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($this->union_code, 'qty_wise_collection', 'VLC');
-        if ($qtyWiseCollConfig != 1) {
+        if ($qtyWiseCollConfig != 1 && empty($this->rtpl)) {
             $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' can not blank.'));
         }
     }
