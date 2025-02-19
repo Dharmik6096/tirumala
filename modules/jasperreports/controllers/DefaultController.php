@@ -1137,7 +1137,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'Member Payment',
             ],
             'VspPaymentNawasa' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
                 'path' => 'vsp/VSPPaymentNawasa',
                 'scenario' => 'VSPPaymentNawasa',
                 'title' => 'Vsp Payment',
