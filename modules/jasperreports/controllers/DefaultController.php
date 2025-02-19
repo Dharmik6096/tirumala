@@ -477,6 +477,21 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VspPaymentOnlineNawasa';
         return $this->actionIndex();
     }
+    
+    public function actionBankAdvice() {
+        $this->report = 'BankAdvice';
+        return $this->actionIndex();
+    }
+    
+    public function actionMpgBillStatement() {
+        $this->report = 'MpgBillStatement';
+        return $this->actionIndex();
+    }
+    
+    public function actionProductSaleInvoice() {
+        $this->report = 'ProductSaleInvoice';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1132,6 +1147,27 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VSPPaymentOnlineNawasa',
                 'scenario' => 'VSPPaymentOnlineNawasa',
                 'title' => 'Vsp Payment Online',
+            ],
+            'BankAdvice' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/BankAdvice',
+                'scenario' => 'BankAdvice',
+                'title' => '634 - Bank Advice',
+                'bkg_export' => TRUE,
+            ],
+            'MpgBillStatement' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/MPGBillStatement',
+                'scenario' => 'MpgBillStatement',
+                'title' => 'MPG Bill Statement',
+                'bkg_export' => TRUE,
+            ],
+            'ProductSaleInvoice' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/ProductSaleInvoice',
+                'scenario' => 'ProductSaleInvoice',
+                'title' => 'Total Sale Invoice',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
