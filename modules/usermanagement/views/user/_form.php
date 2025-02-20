@@ -45,11 +45,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'autocomplete' => 'off', 'readOnly' => $readOnly]) ?>
     </div>
-    <?php if (User::hasPermission('editUserEmail')): ?>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
-        </div>
-    <?php endif; ?>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
+    </div>
 
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
@@ -113,6 +111,7 @@ $form = ActiveForm::begin([
           ]
           ])->label(true); */
         ?>
+        <div class="clearfix"></div>
         <div class="col-sm-2 multiple">
             <?php
             echo $form->field($model, 'role')
