@@ -107,7 +107,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['rtpl', 'amount'], 'trim'],
                 [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag'], 'string', 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
                 [['milk_type_code', 'shift_code', 'dcs_code', 'milk_type_code', 'qty'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms', 'androidsync', 'androidsync_coll']],
-                [['milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'except' => ['importCsv', 'portal_data_post', 'post_sap_data', 'sendsms', 'androidsync', 'androidsync_coll']],
+                [['milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'except' => ['importCsv', 'portal_data_post', 'post_sap_data', 'sendsms', 'androidsync', 'androidsync_coll', 'ho_sync_create', 'ho_sync_update']],
                 [['member', 'sample_no'], 'required', 'on' => ['importCsv']],
                 [['sample_no'], 'number', 'min' => 0, 'on' => ['importCsv']],
                 [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
@@ -170,10 +170,11 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['antibiotic_sms_sent'], 'default', 'value' => 0],
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'other_reading'], 'safe'],
                 [['qty'], 'qtyValidate', 'on' => ['create', 'update', 'ho_sync_create', 'ho_sync_update']],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'date_time_of_collection', 'milk_type_code', 'shift_code', 'dcs_code', 'fat', 'snf', 'bmc_code', 'qty', 'milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'on' => ['ho_sync_create']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'date_time_of_collection', 'milk_type_code', 'shift_code', 'dcs_code', 'fat', 'snf', 'bmc_code', 'qty', 'milk_quality_type_code', 'amount', 'member_code'], 'required', 'on' => ['ho_sync_create']],
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'on' => ['ho_sync_create']],
                 [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create', 'ho_sync_update']],
+                [['rtpl'], 'validateRtpl', 'on' => ['ho_sync_create', 'ho_sync_update']],
         ];
     }
 
@@ -505,6 +506,8 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function validateUnique($attribute, $params) {
         $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($this->union_code, 'qty_wise_collection', 'VLC');
+
         $model = new TblMember();
         $data = $model->validMember($this->member_code);
         if (empty($data)) {
@@ -512,8 +515,9 @@ class TblMilkCollection extends \app\models\ChildModel {
         }
 
         Yii::$app->general->validateDeactivateDcs($this, $this->date_time_of_collection, '', TRUE);
-        Yii::$app->general->validateRateRange($this);
-
+        if ($qtyWiseCollConfig != 1) {
+            Yii::$app->general->validateRateRange($this);
+        }
         $ApprovalModel = new TblCollectionDataAlias();
         $this->milkTypeWiseUnique($ApprovalModel, $this, TRUE);
         $this->milkTypeWiseUnique($this, $this);
@@ -993,6 +997,10 @@ class TblMilkCollection extends \app\models\ChildModel {
         $i = 0;
         $opType = strtoupper($transaction_data['operation_type']);
         if (!empty($opType) && $opType == 'CREATE') {
+            $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'qty_wise_collection', 'VLC');
+            if ($qtyWiseCollConfig == 1) {
+                $this->claculateFatSnf($model, -7, -1);
+            }
             $this->setCollectionData($model, 'api_create');
             $this->applyCalculations($model);
             $this->postDataSet($model, 'api_create', $childModel, $auto_key_config);
@@ -1010,6 +1018,10 @@ class TblMilkCollection extends \app\models\ChildModel {
             $model->originating_org_code = $model->union_code;
             if ($existingData) {
                 $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
+                $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'qty_wise_collection', 'VLC');
+                if ($qtyWiseCollConfig == 1) {
+                    $this->claculateFatSnf($model, -7, -1);
+                }
                 $model->own_mcc_plant_code = $model->mcc_plant_code;
                 $model->own_bmc_code = $model->bmc_code;
                 $model->date_time_of_recieve = date('Y-m-d H:i:s');
@@ -1099,6 +1111,26 @@ class TblMilkCollection extends \app\models\ChildModel {
         }
     }
 
+    public function claculateFatSnf(&$model, $startDay, $endDay) {
+        $startDate = date('Y-m-d', strtotime("$startDay days", strtotime($model->date_time_of_collection)));
+        $endDate = date('Y-m-d', strtotime("$endDay days", strtotime($model->date_time_of_collection)));
+
+        $result = $this->find()->select([
+                    'CAST(ROUND(SUM(qty * fat/100)/SUM(qty) * 100,1) AS DECIMAL(18,2)) AS avg_fat',
+                    'CAST(ROUND(SUM(qty * snf/100)/SUM(qty) * 100,1) AS DECIMAL(18,2)) AS avg_snf',
+                    'member_code'
+                ])
+                ->where(['member_code' => $model->member_code, 'dcs_code' => $model->dcs_code])
+                ->andWhere(['between', 'date_time_of_collection', $startDate, $endDate])
+                ->andWhere(['shift_code' => $model->shift_code])
+                ->groupBy('member_code')
+                ->asArray()
+                ->one();
+
+        $model->fat = !empty($result['avg_fat']) ? $result['avg_fat'] : '0.00';
+        $model->snf = !empty($result['avg_snf']) ? $result['avg_snf'] : '0.00';
+    }
+
     public function applyCalculations(&$model) {
         $flag = ['calculate_clr', 'rtpl_calculate'];
         $data = [];
@@ -1112,7 +1144,7 @@ class TblMilkCollection extends \app\models\ChildModel {
         $resdata = $this->calculateData($flag, $model->union_code, $model->bmc_code, $model->fat, $model->snf, $model->milk_type_code, $data, $model->member_code);
         $model->clr = isset($resdata['clr']) ? $resdata['clr'] : 0;
         $responseData = isset($resdata['data']['list']) ? $resdata['data']['list'] : '';
-        $rtpl = isset($responseData['rtpl']) ? $responseData['rtpl'] : '';
+        $rtpl = isset($responseData['rtpl']) ? $responseData['rtpl'] : '0';
         $model->actual_rate = !empty($rtpl) ? number_format($rtpl, 2) : 0;
         $model->purchase_rate_code = isset($responseData['purchase_rate_code']) ? $responseData['purchase_rate_code'] : '';
         if (isset($responseData['scheme_rate_rtpl']) && $responseData['scheme_rate_rtpl'] != '' && $responseData['scheme_rate_rtpl'] != null) {
@@ -1285,6 +1317,13 @@ class TblMilkCollection extends \app\models\ChildModel {
         if (!empty($resdata['msg'])) {
             $this->addError('milk_type_code', $resdata['msg']);
             return FALSE;
+        }
+    }
+
+    public function validateRtpl($attribute, $params) {
+        $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($this->union_code, 'qty_wise_collection', 'VLC');
+        if ($qtyWiseCollConfig != 1 && empty($this->rtpl)) {
+            $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' can not blank.'));
         }
     }
 
