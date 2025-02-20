@@ -56,7 +56,7 @@ $attribute = [
     [
         'attribute' => 'email',
         'format' => 'raw',
-        'visible' => false,
+        'visible' => true,
     ],
         [
         'attribute' => 'mobile_no',
