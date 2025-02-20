@@ -121,13 +121,13 @@ class TblMemberDeactiveController extends \app\controllers\ChildController {
         $model = new TblMemberDeactive();
         $model->scenario = 'activeMember';
         $model->member_deactive_code = $member_deactive_code;
+        $ActiveModel = $this->findModel($model->member_deactive_code);
         if (Yii::$app->request->post()) {
             $model->load(Yii::$app->request->post());
-            $ActiveModel = $this->findModel($model->member_deactive_code);
 //            $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d H:i:s', strtotime($model->to_date)) : NULL;
             $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime('-1 day', strtotime($model->to_date))) : NULL;
             $ActiveModel->scenario = 'activeMember';
-            if ($ActiveModel->validate()) {
+            if ($ActiveModel->validate() && $ActiveModel->memberCode->validate()) {
                 $transaction = $this->generalModel->saveTransaction([$ActiveModel], ['Member Activated', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
@@ -138,12 +138,23 @@ class TblMemberDeactiveController extends \app\controllers\ChildController {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode($record);
             } else {
+                if (!empty($ActiveModel->getErrors())) {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return Json::encode(ActiveForm::validate($ActiveModel));
+                }
+                $msg = '';
+                foreach ($ActiveModel->memberCode->getErrors() as $value) {
+                    $msg = $msg . $value[0] . '<br>';
+                }
+                $record = ['msg' => $msg];
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return Json::encode(ActiveForm::validate($ActiveModel));
+                return Json::encode($record);
             }
         }
         return $this->renderAjax('_search', [
                     'model' => $model,
+                    'ActiveModel' => $ActiveModel,
+                    'member_deactive_code' => $member_deactive_code
         ]);
     }
 
