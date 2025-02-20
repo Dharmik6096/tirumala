@@ -1120,9 +1120,9 @@ class TblMilkCollection extends \app\models\ChildModel {
                     'CAST(ROUND(SUM(qty * snf/100)/SUM(qty) * 100,1) AS DECIMAL(18,2)) AS avg_snf',
                     'member_code'
                 ])
-                ->where(['member_code' => $model->member_code, 'dcs_code' => $model->dcs_code])
-                ->andWhere(['between', 'date_time_of_collection', $startDate, $endDate])
+                ->where(['between', 'date_time_of_collection', $startDate, $endDate])
                 ->andWhere(['shift_code' => $model->shift_code])
+                ->andWhere(['member_code' => $model->member_code, 'dcs_code' => $model->dcs_code])
                 ->groupBy('member_code')
                 ->asArray()
                 ->one();
