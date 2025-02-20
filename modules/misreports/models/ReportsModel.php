@@ -165,7 +165,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['region_code', 'area_code'], 'required', 'on' => ['EiplInstalledUsersDetails']],
                 [['union_code', 'from_date', 'to_date', 'report_type'], 'required', 'on' => ['VlcQtySlabWiseCategory', 'AvgPerVlcMilkQtySlabWiseCategory']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'rate_cal_for', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['RateRecalculationWefDateWise']],
-                [['bank_type'], 'required', 'on' => ['AreVendorBankPayment', 'AreMemberBankPayment']],
+                [['state_code', 'region_code', 'area_code', 'bmc_code', 'payment_cycle_code', 'bank_type'], 'required', 'on' => ['AreVendorBankPayment', 'AreMemberBankPayment']],
         ];
     }
 
