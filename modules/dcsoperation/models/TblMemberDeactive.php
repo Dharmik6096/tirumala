@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\feedback\models\TblVCGMRGMember;
 
 /**
  * This is the model class for table "tbl_member_deactive".
