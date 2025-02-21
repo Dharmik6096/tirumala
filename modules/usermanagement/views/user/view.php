@@ -5,7 +5,7 @@ use webvimark\modules\UserManagement\models\rbacDB\Role;
 use app\modules\usermanagement\models\User;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use kartik\detail\DetailView;
 use yii\web\View;
 
 /**
@@ -19,77 +19,197 @@ $this->title = Yii::$app->label->title('view', Yii::$app->general->getUserName($
     <div class="panel-heading"><?= Yii::$app->controls->cancel($model); ?><?= $this->title ?></div>
     <div class="panel-body">
         <div class="table-responsive">
-            <?=
-            DetailView::widget([
-                'model' => $model,
-                'options' => ['class' => 'table table-bordered detail-view'],
-                'attributes' => [
-//                        'id',
-                    [
-                        'attribute' => 'status',
-                        'value' => User::getStatusValue($model->status),
+            <?php
+            $attributes = [
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'user_code',
+                            'label' => 'User Code',
+                            'value' => $model->user_code,
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'status',
+                            'value' => User::getStatusValue($model->status),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+
                     ],
-                    [
-                        'attribute' => 'user_code',
-                        'label' => 'User Code',
-                        'value' => $model->user_code,
-                    ],
-                    'name',
-                    [
-                        'attribute' => 'username',
-                        'label' => 'Username',
-                        'value' => Yii::$app->general->getUserName($model->username),
-                    ],
-                    [
-                        'attribute' => 'email',
-                        'value' => $model->email,
-                        'format' => 'email',
-                        'visible' => User::hasPermission('viewUserEmail'),
-                    ],
-                    [
-                        'label' => yii::t('app', 'Roles'),
-                        'value' => implode('<br/>', (array) ArrayHelper::map(Role::getUserRoles($model->id), 'name', 'description')),
-                        'visible' => User::hasPermission('viewUserRoles'),
-                        'format' => 'raw',
-                    ],
-                    [
-                        'label' => 'Organazations',
-                        'value' => call_user_func(function ($data) {
-                                    $org = User::getUserOrganizations($data->user_code);
-                                    if (!empty($org))
-                                        return implode('<br/>', (array) User::getUserOrganizations($data->user_code));
-                                    else
-                                        return '';
-                                }, $model),
-                        'format' => 'raw',
-                    ],
-//                        [
-//                            'attribute' => 'bind_to_ip',
-//                            'visible' => User::hasPermission('bindUserToIp'),
-//                        ],
-//                        array(
-//                            'attribute' => 'registration_ip',
-//                            'value' => Html::a($model->registration_ip, "http://ipinfo.io/" . $model->registration_ip, ["target" => "_blank"]),
-//                            'format' => 'raw',
-//                            'visible' => User::hasPermission('viewRegistrationIp'),
-//                        ),
-                    [
-                        'attribute' => 'created_at',
-                        'value' => !empty($model->created_at) ? date('M d, Y H:i:s a', strtotime($model->created_at)) : '',
-                    ],
-                    [
-                        'attribute' => 'updated_at',
-                        'value' => !empty($model->updated_at) ? date('M d, Y H:i:s a', strtotime($model->updated_at)) : '',
-                    ],
-//                    'created_at:datetime',
-//                    'updated_at:datetime',
                 ],
-            ])
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'username',
+                            'label' => 'Username',
+                            'value' => Yii::$app->general->getUserName($model->username),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'name',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ]
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'mobile_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'email',
+                            'value' => $model->email,
+                            'format' => 'email',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ]
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'allow_app_login',
+                            'value' => isset($model->allow_app_login) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->allow_app_login] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'login_type',
+                            'value' => isset($model->login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '') : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ]
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'department',
+                            'value' => Yii::$app->general->getforeignkey($model->departmentCode, 'department'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'wef_date',
+                            'value' => Yii::$app->controls->view_date($model->wef_date),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ]
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'designation_code',
+                            'value' => Yii::$app->general->getforeignkey($model->designationCode, 'designation_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'employee_id',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ]
+                        
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'primary_parent',
+                            'value' => Yii::$app->general->getforeignkey($model->primaryParent, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'secondary_parent',
+                            'value' => Yii::$app->general->getforeignkey($model->secondaryParent, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'created_at',
+                            'value' => Yii::$app->controls->view_datetime($model->created_at, 'php:d-m-Y H:i'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'updated_at',
+                            'value' => Yii::$app->controls->view_datetime($model->updated_at, 'php:d-m-Y H:i'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ]
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'user_type_id',
+                            'label' => 'User Type',
+                            'value' => isset($model->userType) ? $model->userType->user_type : '',
+                            'format' => 'raw',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                // [
+                //     'columns' => [
+                //         [
+                //             'attribute' => 'bind_to_ip',
+                //             'visible' => User::hasPermission('bindUserToIp'),
+                //             'valueColOptions' => ['style' => 'width:30%']
+                //         ],
+                //         [
+                //             'attribute' => 'registration_ip',
+                //             'value' => Html::a($model->registration_ip, "http://ipinfo.io/" . $model->registration_ip, ["target" => "_blank"]),
+                //             'format' => 'raw',
+                //             'visible' => User::hasPermission('viewRegistrationIp'),
+                //             'valueColOptions' => ['style' => 'width:30%']
+                //         ]
+                //     ],
+                // ],
+                [
+                    'columns' => [
+                        [
+                            'label' => yii::t('app', 'Roles'),
+                            'value' => implode('<br/>', (array) ArrayHelper::map(Role::getUserRoles($model->id), 'name', 'description')),
+                            'visible' => User::hasPermission('viewUserRoles'),
+                            'format' => 'raw',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'label' => 'Organazations',
+                            'value' => call_user_func(function ($data) {
+                                $org = User::getUserOrganizations($data->user_code);
+                                if (!empty($org))
+                                    return implode('<br/>', (array) User::getUserOrganizations($data->user_code));
+                                else
+                                    return '';
+                            }, $model),
+                            'format' => 'raw',
+                            'valueColOptions' => [
+                                'style' => User::hasPermission('viewUserRoles') ? 'width:30%' : 'width:80%'
+                            ],
+                        ]
+                    ],
+                ],
+            ];
+
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+                'deleteOptions' => [ // your ajax delete parameters
+                    'params' => ['id' => 1000, 'kvdelete' => true],
+                ],
+                'container' => ['id' => 'kv-demo'],
+            ]);
             ?>
         </div>
         <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="true">
             <div class="form-group">
-                <?= GhostHtml::a(yii::t('app', 'edit'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']) ?>
+                <?= GhostHtml::a(yii::t('app', 'edit'), ['update', 'id' => $model->id], ['class' => 'btn-login btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']) ?>
                 <?php
                 /* echo GhostHtml::a(UserManagementModule::t('back', 'delete'), 'javascript:void(0)', [
                   'class' => 'btn btn-default user-record apply-shortcut',
