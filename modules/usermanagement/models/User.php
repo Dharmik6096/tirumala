@@ -372,7 +372,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
      */
     public static function getUserOrganizations($userID) {
         $org = \app\models\TblUserOrganizationMapping::find()->where(['user_id' => $userID])->all();
-        $values = '';
+        $values = [];
         foreach ($org as $val) {
             switch ($val->organization_type) {
                 case 'UNION':
