@@ -6,23 +6,20 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use yii\web\Controller;
 
-/**
- * PrivacyPolicyController implements the CRUD actions for TblUsers model.
- */
 class PrivacyPolicyController extends Controller
 {
 
-    public function actionIosPrivacyPolicy()
+    public function actionIosEc()
     {
         $eiplCode = TblUnions::find()->select('eipl_code')->where(['is_active' => 1])->scalar();
         $eiplCode = !empty($eiplCode) ? ($eiplCode) : '';
-        $loginFile = 'ios_privacy_policy';
-        $fileName = 'ios_privacy_policy_' . strtolower($eiplCode);
-        $path = Yii::$app->basePath . '/views/privacy-policy/' . $fileName . '.php';
+        $privacyPolicyFile  = 'ios_privacy_policy';
+        $customFileName  = 'ios_privacy_policy_' . strtolower($eiplCode);
+        $path = Yii::$app->basePath . '/views/privacy-policy/' . $customFileName . '.php';
         if (file_exists($path)) {
-            $loginFile = $fileName;
+            $privacyPolicyFile = $customFileName;
         }
         $this->layout = false;
-        return $this->render($loginFile);
+        return $this->render($privacyPolicyFile);
     }
 }
