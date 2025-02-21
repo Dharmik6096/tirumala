@@ -9,12 +9,12 @@ use yii\web\Controller;
 class PrivacyPolicyController extends Controller
 {
 
-    public function actionIosEc()
+    public function actionIosEverestConnect()
     {
         $eiplCode = TblUnions::find()->select('eipl_code')->where(['is_active' => 1])->scalar();
         $eiplCode = !empty($eiplCode) ? ($eiplCode) : '';
-        $privacyPolicyFile  = 'ios_privacy_policy';
-        $customFileName  = 'ios_privacy_policy_' . strtolower($eiplCode);
+        $privacyPolicyFile  = 'ios_everest_connect';
+        $customFileName  = 'ios_everest_connect_' . strtolower($eiplCode);
         $path = Yii::$app->basePath . '/views/privacy-policy/' . $customFileName . '.php';
         if (file_exists($path)) {
             $privacyPolicyFile = $customFileName;
