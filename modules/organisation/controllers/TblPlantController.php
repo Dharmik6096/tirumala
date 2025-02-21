@@ -16,6 +16,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\document\controllers\TblAttachmentController;
+use app\modules\organisation\models\TblPlantDockMapping;
+use app\modules\organisation\models\TblPlantDockMappingSearch;
+use yii\helpers\Url;
 
 /**
  * TblPlantController implements the CRUD actions for TblPlant model.
@@ -60,10 +63,15 @@ class TblPlantController extends \app\controllers\ChildController {
         $mccsearchModel = new TblMccPlantSearch();
         $mccsearchModel->plant_code = $id;
         $mccdataProvider = $mccsearchModel->mccSearch(Yii::$app->request->queryParams);
+
+        $docksearchModel = new TblPlantDockMappingSearch();
+        $docksearchModel->plant_code = $id;
+        $dockdataProvider = $docksearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
-                    'mccdataProvider' => $mccdataProvider, 'mccsearchModel' => $mccsearchModel
+                    'mccdataProvider' => $mccdataProvider, 'mccsearchModel' => $mccsearchModel,
+                    'dockdataProvider' => $dockdataProvider, 'docksearchModel' => $docksearchModel
         ]);
     }
 
@@ -307,6 +315,30 @@ class TblPlantController extends \app\controllers\ChildController {
         $module_name = 'tbl_plant';
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('plant', $id, $model, $module_code, $module_name);
+    }
+
+    public function actionPlantDockMapping($id) {
+        $model = $this->findModel($id);
+        $doc_mapp_model = new TblPlantDockMapping();
+        if (Yii::$app->request->post()) {
+            $doc_mapp_model->load(Yii::$app->request->post());
+            $doc_mapp_model->plant_code = $model->plant_code;
+            if ($doc_mapp_model->validate() && empty($doc_mapp_model->getErrors())) {
+                $transaction = $this->generalModel->saveTransaction([$doc_mapp_model], ['Plant Dock Mapping', 'create']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(Url::previous());
+                }
+            }
+        }
+        $docksearchModel = new TblPlantDockMappingSearch();
+        $docksearchModel->plant_code = $id;
+        $dockdataProvider = $docksearchModel->search(Yii::$app->request->queryParams);
+        return Yii::$app->controller->render('dock_mapping', [
+                    'model' => $model,
+                    'doc_mapp_model' => $doc_mapp_model,
+                    'docksearchModel' => $docksearchModel,
+                    'dockdataProvider' => $dockdataProvider,
+        ]);
     }
 
 }

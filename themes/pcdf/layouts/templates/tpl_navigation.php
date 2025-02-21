@@ -184,6 +184,7 @@ echo GhostMenu::widget([
                             ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
                             ['label' => 'Payment Head', 'url' => ['/tankermovement/tbl-payment-head/index'], 'active' => ($cntrl == 'tbl-payment-head')],
                             ['label' => 'Payment Head Transaction', 'url' => ['/tankermovement/tbl-payment-head-transaction/index'], 'active' => ($cntrl == 'tbl-payment-head-transaction')],
+                            ['label' => 'Material Master', 'url' => ['/tankermovement/tbl-material-master/index'], 'active' => ($cntrl == 'tbl-material-master')],
                     ]
                 ],
                     ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],
