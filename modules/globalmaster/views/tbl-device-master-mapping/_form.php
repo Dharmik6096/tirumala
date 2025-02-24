@@ -34,12 +34,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 plant">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tbldevicemastermapping-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
     </div>
-    <div class="col-sm-2 plant_dock">
-        <?= Yii::$app->dropdown->depend_dropdown('dock_no', $model, $form, 'tbldevicemastermapping-plant_code', 'form-group col-sm-2', $model->getAttributeLabel('dock_no')); ?>
-    </div> 
     <div class="col-sm-2 mcc">
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbldevicemastermapping-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
     </div>  
@@ -47,8 +44,11 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbldevicemastermapping-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
     </div>    
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->merge_bmc_dcs($model, $form, 'tbldevicemastermapping-applicability_type,tbldevicemastermapping-mcc_plant_code,tbldevicemastermapping-bmc_code,tbldevicemastermapping-plant_code', 'applicability_code', 'Applicable Name'); ?>
+        <?= Yii::$app->dropdown->merge_bmc_dcs($model, $form, 'tbldevicemastermapping-applicability_type,tbldevicemastermapping-mcc_plant_code,tbldevicemastermapping-bmc_code', 'applicability_code', 'Applicable Name'); ?>
     </div>
+    <div class="col-sm-2 plant_dock">
+        <?= Yii::$app->dropdown->depend_dropdown('dock_no', $model, $form, 'tbldevicemastermapping-applicability_code', 'form-group col-sm-2', $model->getAttributeLabel('dock_no')); ?>
+    </div> 
     <div class="col-sm-2"> 
         <?= Yii::$app->controls->date($model, $form, 'wef_date', 'form-group col-sm-3', false, false, false); ?>
     </div>
@@ -67,22 +67,30 @@ $form = ActiveForm::begin([
 $script = "
 $('.default_hide').hide();
 $('.mcc').hide();
+$('.plant_dock').hide();
+$('.plant').hide();
 $('#tbldevicemastermapping-applicability_type').on('change', function() {
     $('.default_hide').hide();
     $('.mcc').hide();
+    $('.plant').hide();
+    $('.plant_dock').hide();
     if($(this).val() == '2'){
         $('.default_hide').show();
         $('.mcc').show();
         $('#tbldevicemastermapping-dock_no').val('').trigger('change');
         $('.plant_dock').hide();
+        $('.plant').show();
+
     }else if($(this).val() == '3'){
         $('.mcc').hide();
         $('.dcs').hide();
         $('.plant_dock').show();
+        $('.plant').hide();
     }else if($(this).val() == '1'){
         $('.mcc').show();
         $('#tbldevicemastermapping-dock_no').val('').trigger('change');
         $('.plant_dock').hide();
+        $('.plant').show();
     }
 });
 ";

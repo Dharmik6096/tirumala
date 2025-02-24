@@ -565,6 +565,9 @@ class SearchFilter {
             'TblMaterialMasterSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblRawFgMaterialReceiptSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

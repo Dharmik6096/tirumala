@@ -44,6 +44,9 @@ use kartik\grid\GridView;
             ['attribute' => 'wef_date', 'value' => function($model) {
                 return Yii::$app->controls->view_date($model->wef_date);
             }, 'filter' => FALSE],
+            ['attribute' => 'dock_no', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->dockNo, 'dock_name');
+            }, 'filter' => FALSE],
     ];
 
     $grid_option = [
