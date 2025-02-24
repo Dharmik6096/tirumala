@@ -16,6 +16,8 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\usermanagement\models\User;
+use app\modules\payment\models\TblPaymentCycleApplicability;
+use yii\db\Query;
 
 /**
  * Default controller for the `applicability` module
@@ -203,6 +205,43 @@ class DefaultController extends Controller {
         $routeModel = new TblRouteMapping();
         $routeList = $routeModel->routeFromDestination([], json_decode($mccCodes), json_decode($bmcCodes), false);
         return Json::encode(['status' => 'success', 'data' => $routeList]);
+    }
+
+    public function actionLoadBmc() {
+        $post = Yii::$app->request->post();
+        $className = Yii::$app->path->getModel($post['class_name']);
+        $tableName = $className::tableName();
+        $unionCode = $post['union_code'] ? $post['union_code'] : '';
+        $bmcList = [];
+        if (!empty($post['selected_apply_to'])) {
+            $selectedApplyTo = json_decode($post['selected_apply_to']);
+            $query = (new Query())
+                    ->select('B.*')
+                    ->from(['B' => 'tbl_bmc'])
+                    ->innerJoin(
+                            ['ct' => (new Query())
+                        ->select(['customer_type', 'union_code'])
+                        ->from('tbl_customer_type')
+                        ->where(['is_applicability' => 1])
+                        ->andWhere(['union_code' => $unionCode])
+                        ->andWhere(['in', 'customer_type', $selectedApplyTo])
+                            ], 'ct.union_code = B.union_code'
+                    )
+                    ->leftJoin(
+                            ['A' => $tableName], 'B.bmc_code = A.applicable_code AND A.' . $post['field_name'] . ' = \'' . addslashes($post['field_code']) . '\' AND A.applicable_type = ct.customer_type'
+                    )
+                    ->where(['A.applicable_code' => null]);
+            foreach (['Plant' => 'plant_code', 'MCC' => 'mcc_plant_code', 'BMC' => 'bmc_code'] as $sessionKey => $column) {
+                if ($value = Yii::$app->session->get($sessionKey)) {
+                    $query->andWhere(["B.$column" => explode(',', $value)]);
+                }
+            }
+            $bmcList = $query->all();
+            $bmcList = ArrayHelper::map($bmcList, 'bmc_code', function($bmcList) {
+                        return ($bmcList['ref_code'] . ' - ') . $bmcList['bmc_name'];
+                    });
+        }
+        return Json::encode(['status' => 'success', 'data' => $bmcList]);
     }
 
 }
