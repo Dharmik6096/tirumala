@@ -266,13 +266,14 @@ endif;
 ?>
 
 <?php
+$tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL') == 1 ? TRUE : FALSE;
 $script = "
     $('#dispatch-detail').css('display', 'none');
     $('.tanker_no_hide').css('display', 'none');
     $('#tblmilkvehicleentry-vehicle_code, #tblmilkvehicleentry-receipt_datetime').on('change', function() {
         var vehicleCode = $('#tblmilkvehicleentry-vehicle_code').val();
         var ReceiptDatetime = $('#tblmilkvehicleentry-receipt_datetime').val();
-        if (vehicleCode !== '' && ReceiptDatetime !== '') {
+        if (setData(vehicleCode) && setData(ReceiptDatetime)) {
             setTimeout(function() {
                 var tripCodeDropdownLength = $('#tblmilkvehicleentry-trip_code option').length - 1;
                 if (tripCodeDropdownLength > 0) {
@@ -291,11 +292,13 @@ $script = "
     $(document).on('change', '#tblmilkvehicleentry-receipt_at, #tblmilkvehicleentry-dispatch_from', function() {
         var receipt_at = $('#tblmilkvehicleentry-receipt_at').val();
         var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
+        
         var entryTypeField = $('#tblmilkvehicleentrytransaction-entry_type');
         var EntryType = document.querySelector('.col-sm-1.entry_type');
-
-        if (receipt_at !== '' && dispatch_from !== '') {
-            if (dispatch_from == 'PARTY') {
+        var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
+        if (setData(receipt_at) && setData(dispatch_from)) {
+            if (dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
+            console.log(dispatch_from);
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
                $('#dispatch-detail').css('display', 'none');
@@ -324,9 +327,9 @@ $script = "
     $('.type_hide').hide();
     $(document).on('change','#tblmilkvehicleentrytransaction-entry_type', function() {
     var entry_type=$('#tblmilkvehicleentrytransaction-entry_type').val();
-        if(entry_type !='' && entry_type=='INDIVIDUAL'){
+        if(setData(entry_type) && entry_type=='INDIVIDUAL'){
          $('.type_hide').show();
-        } else if(entry_type !='' && entry_type=='CONSOLIDATED'){
+        } else if(setData(entry_type) && entry_type=='CONSOLIDATED'){
             $('.type_hide').hide();
             $('#tblmilkvehicleentrytransaction-source_org_code').val('');
             $('#tblmilkvehicleentrytransaction-source_org_type').val('');
@@ -342,7 +345,7 @@ $script = "
     $(document).on('change','#tblmilkvehicleentrytransaction-challan_no', function() {
     var challan_no=$('#tblmilkvehicleentrytransaction-challan_no').val();
     var trip_code=$('#tblmilkvehicleentry-trip_code').val();
-        if(challan_no !='' && trip_code!=''){
+        if(setData(challan_no) && setData(trip_code)){
             setSourseDest(challan_no,trip_code);
         } 
     });
@@ -350,7 +353,7 @@ $script = "
     
      $(document).on('change','.filldata', function() {
         var trip_code = $('#tblmilkvehicleentry-trip_code').val();
-       if(trip_code != ''){
+       if(setData(trip_code)){
             $('#loadercontent').show();
             $('#pageloader').show();
             $('#dispatch-detail').html('');
@@ -359,8 +362,15 @@ $script = "
          //   GetVehicle(trip_code);
         }      
     });
-    
 
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    
  function BindData(trip_code){
          $.ajax({
                 type: 'get',
@@ -453,7 +463,7 @@ $script = "
     });
     
     function editTransaction(milk_vehicle_entry_transaction_code){
-            if(milk_vehicle_entry_transaction_code != ''){         
+            if(setData(milk_vehicle_entry_transaction_code)){         
             $.ajax({
                     type: 'post',
                     url: '" . Url::to(['update-transaction']) . "',
@@ -515,7 +525,7 @@ $script = "$(document).ready(function(){
   ViewConfig(id);
     });
     function ViewConfig(code){
-        if(code != ''){         
+        if(setData(code)){         
         $.ajax({
                 type: 'get',
                 url: '" . Url::to(['/tankermovement/tbl-milk-vehicle-entry/view-config']) . "',

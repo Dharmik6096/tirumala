@@ -73,11 +73,13 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
                 [['tare_weight_time'], 'validateTime', 'except' => ['androidsync', 'importCsv']],
                 [['plant_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
                 [['trip_code'], 'required', 'when' => function ($model) {
-                    return !($model->dispatch_from == 'PARTY');
+                    $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL');
+                    return !($model->dispatch_from == 'PARTY') || $tripMandateOnReceipt == '1';
                 }],
                 [['receipt_at'], 'AddBmcCode'],
                 [['tanker_no'], 'required', 'when' => function ($model) {
-                    return $model->dispatch_from == 'PARTY';
+                    $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL');
+                    return $model->dispatch_from == 'PARTY' && $tripMandateOnReceipt != '1';
                 }],
                 [['vehicle_code'], 'required', 'when' => function ($model) {
                     return !($model->dispatch_from == 'PARTY');
