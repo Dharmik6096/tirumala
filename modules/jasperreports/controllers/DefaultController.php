@@ -492,6 +492,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'ProductSaleInvoice';
         return $this->actionIndex();
     }
+    
+    public function actionPrimaryTransporterMonthlyBill() {
+        $this->report = 'PrimaryTransporterMonthlyBill';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1167,6 +1172,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/ProductSaleInvoice',
                 'scenario' => 'ProductSaleInvoice',
                 'title' => 'Total Sale Invoice',
+                'bkg_export' => TRUE,
+            ],
+            'PrimaryTransporterMonthlyBill' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_transporter_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/PrimaryTransporterMonthlyBill',
+                'scenario' => 'PrimaryTransporterMonthlyBill',
+                'title' => 'TPT Bill',
                 'bkg_export' => TRUE,
             ],
         ];
