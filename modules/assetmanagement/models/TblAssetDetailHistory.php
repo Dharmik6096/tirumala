@@ -42,10 +42,7 @@ class TblAssetDetailHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['asset_detail_code', 'asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'manufacturer_code', 'capacity', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
-            [['purchase_date', 'put_to_use_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['warranty_period', 'maintanance_duration_in_days', 'union_code'], 'safe'],
-            [['is_active', 'qty', 'make', 'other_info'], 'safe'],
+            [['asset_detail_code', 'asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'manufacturer_code', 'capacity', 'purchase_date', 'put_to_use_date', 'warranty_period', 'maintanance_duration_in_days', 'is_active', 'union_code', 'qty', 'make', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_at', 'history_created_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'current_status', 'is_verified', 'verification_date', 'other_info', 'detail_code', 'manufacturer_serial_number', 'manufacturer_id'], 'safe'],
         ];
     }
 
@@ -74,6 +71,9 @@ class TblAssetDetailHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'detail_code' => Yii::t('app', 'Detail Code'),
+            'manufacturer_serial_number' => Yii::t('app', 'Manufacturer Serial No.'),
+            'manufacturer_id' => Yii::t('app', 'Manufacturer'),
         ];
     }
 

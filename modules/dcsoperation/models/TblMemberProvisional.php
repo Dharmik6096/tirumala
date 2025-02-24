@@ -810,6 +810,7 @@ class TblMemberProvisional extends ChildModel {
         }
         $tblMember->scenario = 'ApprovalMember';
         $tblMember->attributes = $memberModel->attributes;
+        $tblMember->is_verified = $memberModel->is_verify;
         $tblMember->member_code = ($memberModel->provisional_from == 'mobile_update') ? $memberCode : $tblMember->getCode();
         if ($tblMember->validate()) {
             $model_save[] = $tblMember;

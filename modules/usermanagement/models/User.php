@@ -6,6 +6,8 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use webvimark\modules\UserManagement\UserManagementModule;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblFederations;
 
 class User extends \webvimark\modules\UserManagement\models\User {
 
@@ -192,6 +194,32 @@ class User extends \webvimark\modules\UserManagement\models\User {
         }
         $userData = $query->one();
         return $userData ?: null;
+    }
+
+    public static function getUserOrganizations($userID) {
+        $org = \app\models\TblUserOrganizationMapping::find()->where(['user_id' => $userID])->all();
+        $values = [];
+        foreach ($org as $val) {
+            switch ($val->organization_type) {
+                case 'UNION' :
+                    $union = TblUnions::find()->where(['union_code' => $val->organization_code])->select('union_name')->one();
+                    $values[$val->organization_code] = $union->union_name;
+                    break;
+                case 'DCS' :
+                    $dcs = TblDcs::find()->where(['dcs_code' => $val->organization_code])->select('dcs_name')->one();
+                    $values[$val->organization_code] = $dcs->dcs_name;
+                    break;
+                case 'FEDERATION' :
+                    $fed = TblFederations::find()->where(['federation_code' => $val->organization_code])->select('federation_name')->one();
+                    $values[$val->organization_code] = $fed->federation_name;
+                    break;
+                default:
+                    //$national = \app\models\TblNational::find()->where(['national_code'=>$val->organization_code])->select('national_name')->one();
+                    $values[$val->organization_code] = 'PCDF';
+                    break;
+            }
+        }
+        return $values;
     }
 
 }

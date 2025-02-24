@@ -18,6 +18,7 @@ if ($searchModel->module_name == 'society') {
     $contact_person_lable = 'Contact Person';
     $local_contact_person_lable = Yii::t('app', 'Contact Person Hindi Name');
 }
+$show_optional_fields = !empty($show_optional_fields) ? $show_optional_fields : FALSE;
 $attribute = [
 //    'contact_person',
 //    'local_contact_person',
@@ -38,6 +39,26 @@ $attribute = [
     ['attribute' => 'email_to', 'filter' => false],
     ['attribute' => 'email_cc', 'filter' => false],
     ['attribute' => 'email_bcc', 'filter' => false],
+    ['attribute' => 'from_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->from_date);
+        }, 'visible' => $show_optional_fields
+    ],
+    ['attribute' => 'to_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->to_date);
+        }, 'visible' => $show_optional_fields
+    ],
+    ['attribute' => 'primary_parent',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->primaryParent, 'name');
+        }, 'visible' => $show_optional_fields
+    ],
+    ['attribute' => 'secondary_parent',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
+        }, 'visible' => $show_optional_fields
+    ],
 ];
 
 $grid_option = [
