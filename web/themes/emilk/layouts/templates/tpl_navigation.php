@@ -1043,8 +1043,9 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Transport') . ' <b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'TP Cost Detail'), 'url' => ['/misreports/reports/tp-cost-detail']],
-                            ['label' => Yii::t('app', 'TP Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
+                            ['label' => Yii::t('app', 'TPT Cost Detail'), 'url' => ['/misreports/reports/tp-cost-detail']],
+                            ['label' => Yii::t('app', 'TPT Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
+                            ['label' => Yii::t('app', 'TPT Bill'), 'url' => ['/jasperreports/default/primary-transporter-monthly-bill']],
                     ]
                 ],
                     [

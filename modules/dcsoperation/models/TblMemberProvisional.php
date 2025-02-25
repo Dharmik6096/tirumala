@@ -455,6 +455,10 @@ class TblMemberProvisional extends ChildModel {
     public function getRelationship() {
         return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'nominee_relation']);
     }
+    
+    public function getApplicantRelationship() {
+        return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'applicant_relation']);
+    }
 
     public function getTblDcsBmc() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
