@@ -249,7 +249,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                         ],
                             [
                             'attribute' => 'applicant_relation',
-                            'value' => !empty($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'value' => Yii::$app->general->getforeignkey($model->applicantRelationship, 'relationship'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
