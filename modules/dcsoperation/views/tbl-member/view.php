@@ -248,7 +248,7 @@ if ($model->is_active == 1) {
                         ],
                             [
                             'attribute' => 'applicant_relation',
-                            'value' => !empty(($model->applicant_relation)) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'value' => Yii::$app->general->getforeignkey($model->applicantRelationship, 'relationship'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],

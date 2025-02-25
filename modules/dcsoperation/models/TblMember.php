@@ -416,6 +416,10 @@ class TblMember extends ChildModel {
     public function getRelationship() {
         return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'nominee_relation']);
     }
+    
+    public function getApplicantRelationship() {
+        return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'applicant_relation']);
+    }
 
     public function getMembers($dcs_code, $as_array = false) {
         if (!empty($dcs_code)) {

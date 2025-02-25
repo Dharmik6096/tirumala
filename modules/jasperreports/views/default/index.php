@@ -366,57 +366,87 @@ $defaultToggle = true;
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('p_billing_for'))) {
-                                            echo Yii::$app->dropdown->dropdownStatic('billing_for', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value), false, $value, false);
-                                        }
-                                    }
-                                    if (isset($data['report_type'])) {
-                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
-                                    }
+                                        if (in_array($value, array('p_month'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?=
+                                                $form->field($model, 'p_month')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control '],
+                                                    'mask' => '99-9999',])
+                                                ?>                                               
+                                                <?php
+                                            }
 
-                                    echo Html::activeHiddenInput($model, 'p_union_code');
-                                    echo Html::activeHiddenInput($model, 'p_union_name');
-                                    echo Html::activeHiddenInput($model, 'p_dcs_name');
-                                    echo Html::activeHiddenInput($model, 'p_route_name');
-                                    $model->p_report_name = Html::encode($this->title);
-                                    echo Html::activeHiddenInput($model, 'p_report_name');
-                                    echo Html::activeHiddenInput($model, 'locale');
-                                    echo Html::activeHiddenInput($model, 'digit_config');
-                                    ?>
-
-                                    <!--            <div class="clearfix"></div>-->
-                                    <!--<div class="col-sm-3 mt25">-->
-                                    <?php
-                                    if ($param) {
-                                        //                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
-                                    }
-                                    ?>
-                                    <!--</div>-->
-                                </div>
-                                <div class="modal-footer mt10 col-sm-12">
-                                    <?php
-                                    if ($param) {
-                                        echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
-                                    }
-                                    ?>
-                                    <?= GhostHtml::submitButton('<i class="text-white far fa-file"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
-                                    <?php
-                                    if (isset($data['tcpdf']) && $data['tcpdf']) {
-                                        $client_code = \Yii::$app->session->get('eiplCode');
-                                        $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] :'pdf';
-                                        $iconClass = ' far fa-file-pdf ';
-                                        if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
-                                            $titleTcpdf = 'Milktype Wise Bill';
-                                            $iconClass = ' fa fa-file-text-o ';
+                                            if (in_array($value, array('p_dcsc_code'))) {
+                                                $depend = 'reportsmodel-p_bmc_code';
+                                                if (isset($value_array[1])) {
+                                                    $depend = 'reportsmodel-p_bmc_code,reportsmodel-p_billing_for,reportsmodel-route_code';
+                                                }
+                                                ?>
+                                                <div class="col-sm-3 val_dcs_code">
+                                                    <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, $depend, 'p_dcsc_code', Yii::t('app', 'Name')); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                            if (in_array($value, array('p_billing_for'))) {
+                                                echo Yii::$app->dropdown->dropdownStatic('billing_for', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value), false, $value, false);
+                                            }
+                                            if (in_array($value, array('p_transporter_code'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->all_route_transporter($model, $form, 'reportsmodel-p_plant_code,reportsmodel-p_mcc_code,reportsmodel-p_bmc_code', 'p_transporter_code', $model->getAttributeLabel('Transporter'), FALSE, '', FALSE, TRUE); ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
-                                        echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', $titleTcpdf)]);
-
-                                        if (strtolower($client_code) == 'mmd') {
-                                            echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf_two', 'id' => 'tcpdf_two', 'title' => Yii::t('app', 'Shift Wise Bill')]);
+                                        if (isset($data['report_type'])) {
+                                            echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
                                         }
-                                    }
-                                    ?>
-                                    <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+
+                                        echo Html::activeHiddenInput($model, 'p_union_code');
+                                        echo Html::activeHiddenInput($model, 'p_union_name');
+                                        echo Html::activeHiddenInput($model, 'p_dcs_name');
+                                        echo Html::activeHiddenInput($model, 'p_route_name');
+                                        $model->p_report_name = Html::encode($this->title);
+                                        echo Html::activeHiddenInput($model, 'p_report_name');
+
+                                        echo Html::activeHiddenInput($model, 'locale');
+                                        echo Html::activeHiddenInput($model, 'digit_config');
+                                        ?>
+
+                                        <!--            <div class="clearfix"></div>-->
+                                        <!--<div class="col-sm-3 mt25">-->
+                                        <?php
+                                        if ($param) {
+//                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
+                                        }
+                                        ?>
+                                        <!--</div>-->
+                                    </div>
+                                    <div class="modal-footer mt10 col-sm-12">
+                                        <?php
+                                        if ($param) {
+                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
+                                        }
+                                        ?>
+                                        <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                                        <?php
+                                        if (isset($data['tcpdf']) && $data['tcpdf']) {
+                                            $client_code = \Yii::$app->session->get('eiplCode');
+                                            $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] : 'pdf';
+                                            $iconClass = ' fa fa-file-pdf-o ';
+                                            if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
+                                                $titleTcpdf = 'Milktype Wise Bill';
+                                                $iconClass = ' fa fa-file-text-o ';
+                                            }
+                                            echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', $titleTcpdf)]);
+
+                                            if (strtolower($client_code) == 'mmd') {
+                                                echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf_two', 'id' => 'tcpdf_two', 'title' => Yii::t('app', 'Shift Wise Bill')]);
+                                            }
+                                        }
+                                        ?>
+                                        <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
