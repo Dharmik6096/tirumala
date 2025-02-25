@@ -2568,7 +2568,7 @@ class GeneralFunctions extends Component {
         $AttachmentIcon = '';
         if ($attachment) {
             $AttachmentIcon = Html::a(
-                            '<span class="glyphicon glyphicon-picture"></span>', $attachment, [
+                            '<span class="fas fa-image"></span>', $attachment, [
                         'title' => Yii::t('yii', 'Attachment'),
                         'target' => '_blank',
                             ]

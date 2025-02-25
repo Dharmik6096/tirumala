@@ -369,6 +369,13 @@ $defaultToggle = true;
                                         if (in_array($value, array('p_billing_for'))) {
                                             echo Yii::$app->dropdown->dropdownStatic('billing_for', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value), false, $value, false);
                                         }
+                                        if (in_array($value, array('p_transporter_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->all_route_transporter($model, $form, 'reportsmodel-p_plant_code,reportsmodel-p_mcc_code,reportsmodel-p_bmc_code', 'p_transporter_code', $model->getAttributeLabel('Transporter'), FALSE, '', FALSE, TRUE); ?>
+                                            </div>
+                                            <?php
+                                        }
                                     }
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);

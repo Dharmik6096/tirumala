@@ -21,7 +21,7 @@ class ReportsModel extends Model {
     public $state_code, $p_district_code, $p_sub_district_code, $p_block_name;
     public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty;
     public $p_plant_code, $p_mcc_code, $p_bmc_code, $p_ltr_kg, $p_customer_code, $p_customer_type, $p_payment_cycle_code, $p_staff_member_code, $p_month, $p_dcsc_code, $p_billing_for;
-    public $region_code, $area_code;
+    public $region_code, $area_code, $p_transporter_code;
     public $locale, $digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no, $p_mpp_survey_id, $p_VCG_M_Id;
 
     function __construct() {
@@ -77,13 +77,13 @@ class ReportsModel extends Model {
             [['p_to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'p_from_date', 'p_to_date');
                 }, 'skipOnEmpty' => false],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['BMCPayment', 'MilkReceiptForMember', 'ProductSaleInvoiceForMember']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['BMCPayment', 'MilkReceiptForMember', 'ProductSaleInvoiceForMember', 'PrimaryTransporterMonthlyBill']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment', 'VendorMilkBillGLT', 'VendorMilkBillSummaryGLT', 'VspPaymentVrs', 'VspPaymentOnlineVrs', 'VSPPaymentNawasa', 'VSPPaymentOnlineNawasa']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill', 'VendorMilkBillVardaan', 'VendorMilkBillSnmilk', 'VendorMilkBillJgf', 'VendorMilkBillAnig', 'VendorMilkBillShivPrasad', 'PaymentSummary']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment', 'BankAdvice', 'MpgBillStatement']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkBill', 'MemberMilkBillShivPrasad']],
             [['union_code'], 'required', 'on' => ['StaffSalary']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBill']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBill', 'BankAdvice', 'MpgBillStatement']],
             [['union_code', 'p_plant_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['InchargeRemuneration', 'MccChillingBill', 'ProductSaleInvoice']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd', 'MemberPaymentVrs', 'VendorBillElanad', 'MemberPaymentNawasa']],
