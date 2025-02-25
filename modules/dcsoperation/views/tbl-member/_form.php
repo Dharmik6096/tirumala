@@ -138,7 +138,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
                 <?= Yii::$app->dropdown->dropdownStatic('member_class', $model, $form, 'form-group', $model->getAttributeLabel('member_class'), false, 'member_class', false); ?>
             </div>
             <div class="col-sm-4">
-                <?= Yii::$app->dropdown->dropdownStatic('applicant_relation', $model, $form, 'form-group', $model->getAttributeLabel('applicant_relation'), false, 'applicant_relation', false); ?>
+                <?= Yii::$app->dropdown->dropdown('relation', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('applicant_relation'), false, 'applicant_relation'); ?>
             </div>
             <!--    <div class="col-sm-4">
                     <? //$form->field($model, 'land_class')->textInput() ?>
