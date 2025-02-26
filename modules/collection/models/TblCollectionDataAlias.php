@@ -132,17 +132,17 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                         }
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $type, $flag);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection', 'MilkDispatch']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection', 'MilkDispatch', 'ho_milk_coll_delete', 'ho_bmc_coll_delete']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', '', 'member_lock');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'ho_milk_coll_delete']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', '', 'bmc_lock');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['BmcCollection']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['BmcCollection', 'ho_bmc_coll_delete']],
                 [['bmc_code'], 'setNoOfCan'],
                 [['is_antibiotic', 'scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
                 [['bmc_code'], 'convertedAmount'],

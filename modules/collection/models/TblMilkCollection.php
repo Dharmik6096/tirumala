@@ -1069,43 +1069,59 @@ class TblMilkCollection extends \app\models\ChildModel {
                 }
             }
         } else if (!empty($opType) && ($opType == 'DELETE') && !empty($collectionCode)) {
-            $existingData = $this->find()->where(['milk_collection_code' => $collectionCode])->one();
-            $login_data = Yii::$app->eiplapp->identity;
-            $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
-            if ($existingData) {
-                $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
-                if (in_array($collectionApprovalConfig, [1, 2])) {
-                    $ApprovalModel = new TblCollectionDataAlias();
-                    $ApprovalModel->attributes = $existingData->attributes;
-                    $ApprovalModel->setOldAttributesValues($ApprovalModel);
-                    $ApprovalModel->table_name = 'tbl_milk_collection';
-                    $ApprovalModel->action_perform = 'DELETE';
-                    if ($collectionApprovalConfig == 2) {
-                        $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setProcessWiseApprovalData($ApprovalModel, $model->union_code, 'tbl_milk_collection', $childModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code', $created_by);
-                        $i++;
+            $requestData = $transaction_data['content'];
+            $approval_status = $requestData['approval_status'];
+            $collection_type_status = $requestData['collection_type_status'];
+            if (strtolower($approval_status) == 'approve' && (strtolower($collection_type_status) == 'collection')) {
+                $existingData = $this->find()->where(['milk_collection_code' => $collectionCode])->one();
+                $login_data = Yii::$app->eiplapp->identity;
+                $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
+                if ($existingData) {
+                    $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
+                    if (in_array($collectionApprovalConfig, [1, 2])) {
+                        $ApprovalModel = new TblCollectionDataAlias();
+                        $ApprovalModel->attributes = $existingData->attributes;
+                        $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                        $ApprovalModel->table_name = 'tbl_milk_collection';
+                        $ApprovalModel->action_perform = 'DELETE';
+                        if ($collectionApprovalConfig == 2) {
+                            $modelStages = new TblApprovalStagesDetail();
+                            $modelStages->setProcessWiseApprovalData($ApprovalModel, $model->union_code, 'tbl_milk_collection', $childModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code', $created_by);
+                            $i++;
+                        } else {
+                            $childModel[] = $ApprovalModel;
+                        }
+                        $collmodel = new TblMilkCollection();
+                        $collmodel->attributes = $existingData->attributes;
+                        $collmodel->scenario = 'ho_sync_delete';
+                        if (!$collmodel->validate()) {
+                            $childModel[0]->addErrors($collmodel->errors);
+                        }
                     } else {
-                        $childModel[] = $ApprovalModel;
-                    }
-                    $collmodel = new TblMilkCollection();
-                    $collmodel->attributes = $existingData->attributes;
-                    $collmodel->scenario = 'ho_sync_delete';
-                    if (!$collmodel->validate()) {
-                        $childModel[0]->addErrors($collmodel->errors);
-                    }
-                } else {
-                    $historyModel = new TblMilkCollectionHistory();
-                    Yii::$app->operation->history($existingData, $historyModel, 'DELETE');
-                    $childModel[] = $historyModel;
+                        $historyModel = new TblMilkCollectionHistory();
+                        Yii::$app->operation->history($existingData, $historyModel, 'DELETE');
+                        $childModel[] = $historyModel;
 //                    $deleteModel[] = $existingData;
-                    $collmodel = new TblMilkCollection();
-                    $collmodel->attributes = $existingData->attributes;
-                    $collmodel->scenario = 'ho_sync_delete';
-                    if (!$collmodel->validate()) {
-                        $childModel[0]->addErrors($collmodel->errors);
-                    } else {
-                        $existingData->delete();
+                        $collmodel = new TblMilkCollection();
+                        $collmodel->attributes = $existingData->attributes;
+                        $collmodel->scenario = 'ho_sync_delete';
+                        if (!$collmodel->validate()) {
+                            $childModel[0]->addErrors($collmodel->errors);
+                        } else {
+                            $existingData->delete();
+                        }
                     }
+                }
+            } else if (strtolower($approval_status) != 'approve' && (strtolower($collection_type_status) == 'alias')) {
+                $aliasData = TblCollectionDataAlias::find()->where(['collection_data_alias_code' => $collectionCode])->one();
+                $historyModel = new TblCollectionDataAliasHistory();
+                Yii::$app->operation->history($aliasData, $historyModel, 'DELETE');
+                $childModel[] = $historyModel;
+                $aliasData->scenario = 'ho_milk_coll_delete';
+                if (!$aliasData->validate()) {
+                    $childModel[0]->addErrors($aliasData->errors);
+                } else {
+                    $aliasData->delete();
                 }
             }
         }
