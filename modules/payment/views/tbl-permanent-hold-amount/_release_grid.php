@@ -55,6 +55,7 @@ $attribute = [
     ['attribute' => 'customer_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'label' => Yii::t('app', 'Member Name'), 'filter' => false],
+    ['attribute' => 'actual_hold_amount', 'filter' => false],
     ['attribute' => 'hold_amount', 'contentOptions' => ['class' => 'hold-amount'], 'filter' => false],
     ['attribute' => 'release_amount',
             'format' => 'raw',

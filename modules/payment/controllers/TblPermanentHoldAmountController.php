@@ -49,7 +49,7 @@ class TblPermanentHoldAmountController extends \app\controllers\ChildController 
                     }
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Member payment released.', 'info']);
                     if ($transaction == 'customRedirect') {
-                        return $this->redirect(['index']);
+                        return $this->redirect(['release-payment']);
                     }
                 }
             }
@@ -66,7 +66,7 @@ class TblPermanentHoldAmountController extends \app\controllers\ChildController 
             $param[] = $searchModel['dcs_code'];
             $param[] = date('Y-m-d', strtotime($searchModel['from_date']));
             $param[] = date('Y-m-d', strtotime($searchModel['to_date']));
-            \Yii::$app->general->getSpData('sp_verify_bank_detail', $param);
+            \Yii::$app->general->getSpData('sp_verify_bank_detail_for_release_member_payment', $param);
         }        
         $dataProvider = $searchModel->search([], true);
         $searchModel->grid_filter = false;

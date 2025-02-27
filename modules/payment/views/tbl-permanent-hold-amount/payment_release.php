@@ -43,7 +43,7 @@ $(document).ready(function() {
         $('#release_date').val(release_date);
     });
 
-    $('.release-amount').on('change', function(){
+    $('.release-amount').on('keyup', function(){
         var amount = 0;
         var parent = $(this).parents('tr');
         var releaseAmount = parseFloat(parent.find('.release-amount').val());

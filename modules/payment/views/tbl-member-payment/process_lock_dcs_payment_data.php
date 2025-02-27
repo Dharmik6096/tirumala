@@ -387,8 +387,11 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
 
     
     $(document).on('keyup','.cal-amount',function(e){
-//    $('.cal-amount').on('blur',function(){
         var id = $(this).attr('id');
+        var refreshValue = true;
+        if ($(this).hasClass('adjust-amount')) {
+            refreshValue = false;
+        }
         var parent = $(this).parents('tr');
         var adjust = parseFloat(parent.find('.adjust-amount').val());
         var final = parseFloat(parent.find('.final-amount').text());
@@ -398,6 +401,9 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
         var adjustRec = parseFloat(parent.find('.adjust-recovery').val());
         var rec = parseFloat(parent.find('.recovery').val());
         var shortage_old = parseFloat(parent.find('.shortage-amount-old').val());
+        if(shortage_old == '' ||  isNaN(shortage_old)){
+            shortage_old=0;
+        }
         var shortage = shortage_old - parseFloat(parent.find('.shortage-amount').val());
         parent.find('.net-amount').val('');
         if(adjust == '' ||  isNaN(adjust)){
@@ -415,49 +421,48 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
         if(shortage == '' ||  isNaN(shortage)){
             shortage=0;
         }
-        if(shortage_old == '' ||  isNaN(shortage_old)){
-            shortage_old=0;
-        }
-        var net = final + adjust - hold + adjustRec - rec + shortage; 
+        var net_amount = parseFloat(final + adjust - hold + adjustRec - rec + shortage);
+        net_amount = parseFloat(net_amount.toFixed(2))
+        net = net_amount.toFixed(2)
         if((adjust !=0  || hold !=0 || shortage !=0 || shortage_old !=0) && net != '' && net < 0){
             bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
                 bootbox.hideAll();
-                $('#'+id).focus().val(.00);
+                if(refreshValue){
+                    $('#'+id).focus().val(.00);
+                }
                 $('#'+id).focus().select();
             });
             return false;
         } else {              
             if(net != '' &&  !isNaN(net)){
-                parent.find('.net-amount').val(net.toFixed(2));
+                parent.find('.net-amount').val(net);
                 SumAmount();
             }
         }
     });
 
 
-
-
-    $(document).on('blur','.adjust-amount',function(e){
-//$('.adjust-amount').on('blur',function(){     
-        var adjust = parseFloat($(this).val());
-        var id = $(this).attr('id');
-        var parent = $(this).parents('tr');
-        var final = parseFloat(parent.find('.final-amount').text());
-         parent.find('.net-amount').val('');
-        var net = final + adjust ;  
-        if(net != '' && net < 0){
-         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Adjust Amount should not be less than final amount.</span>',function(){
-                bootbox.hideAll();
-                    $('#'+id).focus().select();
-            });
-            return false;
-        } else {              
-        if(net != '' &&  !isNaN(net)){
-         parent.find('.net-amount').val(net.toFixed(2));
-          SumAmount();
-        }
-       }
-    });
+    // $(document).on('blur','.adjust-amount',function(e){
+    //     //$('.adjust-amount').on('blur',function(){     
+    //     var adjust = parseFloat($(this).val());
+    //     var id = $(this).attr('id');
+    //     var parent = $(this).parents('tr');
+    //     var final = parseFloat(parent.find('.final-amount').text());
+    //     parent.find('.net-amount').val('');
+    //     var net = final + adjust ;  
+    //     if(net != '' && net < 0){
+    //      bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Adjust Amount should not be less than final amount.</span>',function(){
+    //             bootbox.hideAll();
+    //                 $('#'+id).focus().select();
+    //         });
+    //         return false;
+    //     } else {              
+    //     if(net != '' &&  !isNaN(net)){
+    //      parent.find('.net-amount').val(net.toFixed(2));
+    //       SumAmount();
+    //     }
+    //    }
+    // });
     
     $(document).on('blur','.adjust-recovery',function(e){
 //    $('.adjust-recovery').on('blur',function(){     

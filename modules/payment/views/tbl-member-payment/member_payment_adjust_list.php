@@ -355,24 +355,17 @@ $tot_amt = array_sum(array_map(function ($array) {
 $script = "
 var milk_short_recovery_member = $milk_short_recovery_member;
 function SumAmount()
- {
+{
     var total = parseFloat(0.00);
-    $('.adjust-amount').each(function() {
-        var adjust =  parseFloat($(this).val());
-        if(adjust != '' &&  !isNaN(adjust)){
-            total = total + adjust;  
+    $('.net-amount').each(function() {
+        var netAmount =  parseFloat($(this).val());
+        if(netAmount != '' &&  !isNaN(netAmount)){
+            total = total + netAmount;  
         }
-    }).get();
-    $('.hold-amount').each(function() {
-        var hold =  parseFloat($(this).val());
-        if(hold != '' &&  !isNaN(hold)){
-            total = total - hold;  
-        }
-    }).get();
+    });
     if(milk_short_recovery_member == 1){
         shortageRecovery();
     }
-    total=$tot_amt+total;
     $('#total-payment').html('Total Payable :: '+total.toFixed(2));
 }
 
@@ -403,18 +396,7 @@ function SumAmountold()
     }).get();
     total=$tot_amt+total;
     $('#total-payment').html('Total Payable :: '+total.toFixed(2));
-} 
-
-$('select.hold-type').on('change', function(){
-    var parent = $(this).parents('tr');
-    var netAmount = 0;
-    if($(this).val() == 'permanent'){
-        netAmount = parent.find('.net-amount').val();
-    }
-    parent.find('.hold-amount').val(netAmount);
-    parent.find('.cal-amount').trigger('blur');
-    parent.find('.hold-amount').trigger('blur');
-});
+}
 
 // $('.kv-panel-before').hide();
  

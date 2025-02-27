@@ -57,7 +57,6 @@ use app\modules\vsp\models\TblBillHeadInstallmentHistory;
 use app\modules\payment\models\TblMemberPaymentHeadSummary;
 use app\modules\payment\models\TblPaymentStop;
 use app\modules\payment\models\TblPaymentStopHistory;
-use app\modules\payment\models\TblPermanentHoldAmount;
 use app\modules\vsp\models\TblBillHead;
 use app\modules\payment\models\TblVspPayment;
 
@@ -562,13 +561,13 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         $shortage_model->is_hold = $shortage_model->is_skippable = $shortage_model->is_editable = 0;
                         $save_model[] = $shortage_model;
                     }
-                    $data->total_deduction = $data->total_deduction + $shortage - $old_shortage;
-                    $data->net_payable = $data->net_payable - $shortage + $old_shortage;
+                    $data->total_deduction = number_format((float) $data->total_deduction + (float) $shortage - (float) $old_shortage, 2, '.', '');
+                    $data->net_payable = number_format((float) $data->net_payable - (float) $shortage + (float) $old_shortage, 2, '.', '');
                 }
                 $data->additional_pay = $adjustAmount;
                 $data->adjust_remark = $adjust_remark[$key]; //!empty($adjust_remark[$key]) ? $adjust_remark[$key] : '';
                 $data->hold_amount = $holdAmount;
-                $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount + $adjust_recovery - $recovery;
+                $data->final_amount = number_format((float) $data->net_payable + (float) $adjustAmount - (float) $holdAmount + (float) $adjust_recovery - (float) $recovery, 2, '.', '');
                 $data->payment_status = $processFlag;
                 $data->hold_type = !empty($hold_type[$key]) ? $hold_type[$key] : 'next_payment';
                 $save_model[] = $historyModel;
@@ -641,14 +640,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             $shortage_summary_model->is_hold = 0;
                             $save_model[] = $shortage_summary_model;
                         }
-                        $summaryData->total_deduction = $summaryData->total_deduction + $adjustmentSummary[$dcs]['shortage'] - $old_shortage;
-                        $summaryData->net_payable = $summaryData->net_payable - $adjustmentSummary[$dcs]['shortage'] + $old_shortage;
+                        $summaryData->total_deduction = number_format((float) $summaryData->total_deduction + (float) $adjustmentSummary[$dcs]['shortage'] - (float) $old_shortage, 2, '.', '');
+                        $summaryData->net_payable = number_format((float) $summaryData->net_payable - (float) $adjustmentSummary[$dcs]['shortage'] + (float) $old_shortage, 2, '.', '');
                     }
                     $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
                     $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
                     $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
                     $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
-                    $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
+                    $summaryData->final_amount = number_format((float) $summaryData->net_payable + (float) $adjustmentSummary[$dcs]['adjustment'] - (float) $adjustmentSummary[$dcs]['hold'] + (float) $adjustmentSummary[$dcs]['adjust_recovery'] - (float) $adjustmentSummary[$dcs]['recovery'], 2, '.', '');
                 }
                 $save_model[] = $historyModel;
                 $save_model[] = $summaryData;
@@ -1007,26 +1006,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                     $outstanding->hold_amount = $Data->hold_amount;
                                     $outstanding->due_amount = $Data->additional_pay;
                                     $outstanding->transaction_date = date('Y-m-d');
-                                    if($member_payment_hold_type && $Data->hold_type == 'permanent'){
-                                        $permanentHoldModel = new TblPermanentHoldAmount();
-                                        //$permanentHoldModel->attributes = $outstanding->attributes;
-                                        $permanentHoldModel->union_code = $outstanding->union_code;
-                                        $permanentHoldModel->plant_code = $outstanding->plant_code;
-                                        $permanentHoldModel->mcc_plant_code = $outstanding->mcc_plant_code;
-                                        $permanentHoldModel->bmc_code = $outstanding->bmc_code;
-                                        $permanentHoldModel->dcs_code = $outstanding->dcs_code;
-                                        $permanentHoldModel->transaction_date = $outstanding->transaction_date;
-                                        $permanentHoldModel->payment_cycle_code = $outstanding->payment_cycle_code;
-                                        $permanentHoldModel->hold_amount = $outstanding->hold_amount;
-                                        $permanentHoldModel->actual_hold_amount = $outstanding->hold_amount;
-                                        $permanentHoldModel->customer_type = 'member';
-                                        $permanentHoldModel->customer_code = $Data->member_code;
-                                        $permanentHoldModel->from_date = $model->from_datetime;
-                                        $permanentHoldModel->to_date= $model->to_datetime;
-                                        $outstanding->hold_amount = 0;
-                                        $permanentHoldModel->save();
-                                        // $save_model[] = $permanentHoldModel;
-                                    }
                                     $outstanding->save(false);
                                     //$save_model[] = $oshistoryModel;
                                 } else {
@@ -1043,26 +1022,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                         }
                                     }
                                     $this->setDefaultFieldsArr($outStandRecord, $outStandFields, $outstanding, $defaultCreateFields);
-                                    if($member_payment_hold_type &&  $Data->hold_type == 'permanent'){
-                                        $permanentHoldModel = new TblPermanentHoldAmount();
-                                        //$permanentHoldModel->attributes = $outstanding->attributes;
-                                        $permanentHoldModel->union_code = $outstanding->union_code;
-                                        $permanentHoldModel->plant_code = $outstanding->plant_code;
-                                        $permanentHoldModel->mcc_plant_code = $outstanding->mcc_plant_code;
-                                        $permanentHoldModel->bmc_code = $outstanding->bmc_code;
-                                        $permanentHoldModel->dcs_code = $outstanding->dcs_code;
-                                        $permanentHoldModel->transaction_date = $outstanding->transaction_date;
-                                        $permanentHoldModel->payment_cycle_code = $outstanding->payment_cycle_code;
-                                        $permanentHoldModel->hold_amount = $outstanding->hold_amount;
-                                        $permanentHoldModel->actual_hold_amount = $outstanding->hold_amount;
-                                        $permanentHoldModel->customer_type = 'member';
-                                        $permanentHoldModel->customer_code = $Data->member_code;
-                                        $permanentHoldModel->from_date = $model->from_datetime;
-                                        $permanentHoldModel->to_date= $model->to_datetime;
-                                        $outstanding->hold_amount = 0;
-                                        $permanentHoldModel->save();
-                                        // $save_model[] = $permanentHoldModel;
-                                    }
                                     $outStandRecords[] = $outStandRecord;
                                     if (count($outStandRecords) >= 100) {
                                         if (!empty($summaryRecords)) {
