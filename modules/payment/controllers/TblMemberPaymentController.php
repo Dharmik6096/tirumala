@@ -508,7 +508,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'] : [];
             $shortage_amt = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['shortage_amount']) ? Yii::$app->request->post('TblMemberPaymentAlias')['shortage_amount'] : [];
             $shortage_head = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['shortage_head_code']) ? Yii::$app->request->post('TblMemberPaymentAlias')['shortage_head_code'] : [];
-            $hold_type = Yii::$app->request->post('TblMemberPaymentAlias')['hold_type'];
+            $hold_type = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['hold_type']) ? Yii::$app->request->post('TblMemberPaymentAlias')['hold_type'] : [];
 
             $save_model = [];
             $cnt = 0;
@@ -860,7 +860,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             }
             if (!empty($model->union_code)) {
                 $is_bank_integrated = Yii::$app->general->getUnionConfiguration($model->union_code, 'is_bank_integrated', 'PORTAL') == 1 ? true : false;
-                $member_payment_hold_type = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_payment_hold_type', 'PORTAL') > 0 ? true : false;
             }
             if ($is_bank_integrated && empty($union_bank)) {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',

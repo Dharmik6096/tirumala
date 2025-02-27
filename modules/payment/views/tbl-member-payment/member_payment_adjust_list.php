@@ -95,7 +95,7 @@ $tot_amt = array_sum(array_map(function ($array) {
                                 <th><?= Yii::t('app', 'Previous Hold(+)') ?></th>
                                 <th><?= Yii::t('app', 'Previous Due(-)') ?></th>
                                 <th><?= Yii::t('app', 'Final Pay') ?></th>
-                                <?php if ($member_payment_hold_type == '1') { ?>
+                                <?php if ($member_payment_hold_type) { ?>
                                     <th><?= Yii::t('app', 'Hold Type') ?></th>
                                 <?php } ?>
                                 <th><?= Yii::t('app', 'Hold Amount(-)') ?></th>

@@ -30,7 +30,7 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblPermanentHoldAmountTransaction extends \yii\db\ActiveRecord
+class TblPermanentHoldAmountTransaction extends \app\models\ChildModel
 {
     /**
      * @inheritdoc
