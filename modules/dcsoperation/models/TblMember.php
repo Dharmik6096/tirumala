@@ -190,8 +190,8 @@ class TblMember extends ChildModel {
                 [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync', 'verification', 'specialCodeImportCsv']],
-                [['x_col3'], 'default', 'value' => 15],
-                [['dcs_code'], 'setXcol3'],
+//                [['x_col3'], 'default', 'value' => 15],
+            [['dcs_code'], 'setXcol3'],
                 [['member_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
@@ -416,7 +416,7 @@ class TblMember extends ChildModel {
     public function getRelationship() {
         return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'nominee_relation']);
     }
-    
+
     public function getApplicantRelationship() {
         return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'applicant_relation']);
     }
@@ -609,7 +609,11 @@ class TblMember extends ChildModel {
     }
 
     public function setXcol3($attribute, $params) {
-        $this->x_col3 = !empty($this->max_allowed_qty) ? $this->max_allowed_qty : (\Yii::$app->session->get('eiplCode') == 'HATSUN' ? 0 : 15);
+        $max_qty_config_val = Yii::$app->general->getUnionConfiguration($this->union_code, 'max_qty_limit_member', 'PORTAL');
+        $this->x_col3 = !empty($this->max_allowed_qty) ? $this->max_allowed_qty : $this->x_col3;
+        if (empty($this->x_col3)) {
+            $this->x_col3 = !empty($max_qty_config_val) && $max_qty_config_val > 0 ? $max_qty_config_val : 15;
+        }
     }
 
     public function getUniqueBankDetails() {
