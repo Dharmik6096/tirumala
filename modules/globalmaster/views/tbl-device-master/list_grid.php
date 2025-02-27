@@ -45,7 +45,8 @@ use kartik\grid\GridView;
                 return Yii::$app->controls->view_date($model->wef_date);
             }, 'filter' => FALSE],
             ['attribute' => 'dock_no', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->dockNo, 'dock_name');
+                $dock_name = Yii::$app->general->getforeignkey($model->dockNo, 'dock_name');
+                return !empty($dock_name) ? $dock_name . '(' . $model->dock_no . ')' : '';
             }, 'filter' => FALSE],
     ];
 

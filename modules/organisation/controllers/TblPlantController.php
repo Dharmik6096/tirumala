@@ -19,6 +19,7 @@ use app\modules\document\controllers\TblAttachmentController;
 use app\modules\organisation\models\TblPlantDockMapping;
 use app\modules\organisation\models\TblPlantDockMappingSearch;
 use yii\helpers\Url;
+use app\modules\organisation\models\TblPlantDockMappingHistory;
 
 /**
  * TblPlantController implements the CRUD actions for TblPlant model.
@@ -322,6 +323,7 @@ class TblPlantController extends \app\controllers\ChildController {
         $doc_mapp_model = new TblPlantDockMapping();
         if (Yii::$app->request->post()) {
             $doc_mapp_model->load(Yii::$app->request->post());
+            $doc_mapp_model->union_code = $model->union_code;
             $doc_mapp_model->plant_code = $model->plant_code;
             if ($doc_mapp_model->validate() && empty($doc_mapp_model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction([$doc_mapp_model], ['Plant Dock Mapping', 'create']);
@@ -339,6 +341,20 @@ class TblPlantController extends \app\controllers\ChildController {
                     'docksearchModel' => $docksearchModel,
                     'dockdataProvider' => $dockdataProvider,
         ]);
+    }
+
+    public function actionDeleteDockMapping($id) {
+        $mappingModel = TblPlantDockMapping::find()->where(['plant_dock_mapping_code' => $id])->one();
+        $deleteModel = [];
+        $saveModel = [];
+        $historyModel = new TblPlantDockMappingHistory();
+        Yii::$app->operation->history($mappingModel, $historyModel, DELETE);
+        $deleteModel[] = $mappingModel;
+        $saveModel[] = $historyModel;
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Plant Dock Mapping', 'delete']);
+        if ($transaction == 'customRedirect') {
+            return $this->redirect(['index']);
+        }
     }
 
 }

@@ -17,7 +17,7 @@ class TblMaterialMasterSearch extends TblMaterialMaster {
      */
     public function rules() {
         return [
-                [['material_code', 'is_active', 'originating_type', 'material_name', 'local_name', 'union_code', 'ref_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['material_code', 'is_active', 'originating_type', 'material_name', 'local_name', 'union_code', 'ref_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

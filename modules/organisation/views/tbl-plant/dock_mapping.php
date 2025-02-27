@@ -2,9 +2,6 @@
 
 use yii\helpers\Html;
 use app\components\ActiveForm;
-use demogorgorn\ajax\AjaxSubmitButton;
-use yii\helpers\Url;
-use yii\web\JsExpression;
 
 $button = Yii::$app->label->button('create');
 
@@ -35,9 +32,6 @@ $this->title = Yii::t('app', Yii::$app->label->title('create', 'Dock Mapping'));
                     <?php echo $form->errorSummary($doc_mapp_model); ?>
                     <div class="row">
                         <div class="col-sm-2">
-                            <?= Yii::$app->dropdown->federation_union($doc_mapp_model, $form, 'union_code', 'Union'); ?>    
-                        </div>
-                        <div class="col-sm-2">
                             <?= $form->field($doc_mapp_model, 'dock_no')->textInput() ?>
                         </div>
                         <div class="col-sm-2">
@@ -63,6 +57,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('create', 'Dock Mapping'));
                     $this->render('_plant_dock_grid', [
                         'dockdataProvider' => $dockdataProvider,
                         'docksearchModel' => $docksearchModel,
+                        'mapping_flag' => 'mapping',
                     ])
                     ?>
                 </div>

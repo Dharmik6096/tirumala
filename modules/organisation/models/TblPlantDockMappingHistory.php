@@ -1,19 +1,18 @@
 <?php
 
-namespace app\modules\tankermovement\models;
+namespace app\modules\organisation\models;
 
 use Yii;
 
 /**
- * This is the model class for table "tbl_material_master_history".
+ * This is the model class for table "tbl_plant_dock_mapping_history".
  *
  * @property integer $id
- * @property integer $material_code
- * @property string $material_name
- * @property string $local_name
+ * @property integer $plant_dock_mapping_code
  * @property string $union_code
- * @property string $ref_code
- * @property integer $is_active
+ * @property string $plant_code
+ * @property integer $dock_no
+ * @property string $dock_name
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -25,13 +24,13 @@ use Yii;
  * @property string $history_created_at
  * @property string $history_created_by
  */
-class TblMaterialMasterHistory extends \yii\db\ActiveRecord {
+class TblPlantDockMappingHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_material_master_history';
+        return 'tbl_plant_dock_mapping_history';
     }
 
     /**
@@ -39,7 +38,7 @@ class TblMaterialMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['union_code', 'ref_code', 'created_at', 'updated_at', 'history_created_at', 'material_name', 'local_name', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'material_code', 'is_active', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['union_code', 'plant_code', 'dock_name', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'plant_dock_mapping_code', 'dock_no', 'originating_type', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
         ];
     }
 
@@ -49,12 +48,11 @@ class TblMaterialMasterHistory extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'material_code' => Yii::t('app', 'Material Code'),
-            'material_name' => Yii::t('app', 'Material Name'),
-            'local_name' => Yii::t('app', 'Local Name'),
+            'plant_dock_mapping_code' => Yii::t('app', 'Plant Dock Mapping Code'),
             'union_code' => Yii::t('app', 'Union Code'),
-            'ref_code' => Yii::t('app', 'Ref Code'),
-            'is_active' => Yii::t('app', 'Is Active'),
+            'plant_code' => Yii::t('app', 'Plant Code'),
+            'dock_no' => Yii::t('app', 'Dock No'),
+            'dock_name' => Yii::t('app', 'Dock Name'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),

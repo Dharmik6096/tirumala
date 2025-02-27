@@ -60,14 +60,14 @@ class TblDeviceMasterMapping extends \app\models\ChildModel {
                 ['device_master_code', 'unique', 'skipOnError' => true, 'targetAttribute' => ['device_master_code', 'wef_date'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                     return empty($model->getErrors());
                 }],
-                ['applicability_code', 'unique', 'skipOnError' => true, 'targetAttribute' => ['applicability_code', 'wef_date'], 'message' => Yii::t('app/validation', 'Collection Center Code has already been taken.'), 'when' => function ($model) {
+                ['applicability_code', 'unique', 'skipOnError' => true, 'targetAttribute' => ['applicability_code', 'wef_date'], 'message' => Yii::t('app/validation', 'Center Code has already been taken.'), 'when' => function ($model) {
                     return empty($model->getErrors());
-                }],
-                [['dock_no', 'applicability_code', 'device_master_code'], 'unique', 'skipOnError' => true, 'targetAttribute' => ['dock_no', 'applicability_code', 'device_master_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
-                    return empty($model->getErrors()) && $model->applicability_type == 3;
                 }],
                 [['dock_no'], 'required', 'when' => function($model) {
                     return $model->applicability_type == 3;
+                }],
+                [['applicability_code'], 'unique', 'skipOnError' => true, 'targetAttribute' => ['dock_no', 'applicability_code', 'device_master_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                    return empty($model->getErrors()) && $model->applicability_type == 3;
                 }],
         ];
     }
@@ -146,7 +146,7 @@ class TblDeviceMasterMapping extends \app\models\ChildModel {
         $this->applicability_type = $this->center_type;
         $this->applicability_code = $this->center_code;
         if ($this->applicability_type != '3') {
-            $this->dock_no = '';
+            $this->dock_no = NULL;
         }
     }
 

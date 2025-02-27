@@ -220,6 +220,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     $this->render('_plant_dock_grid', [
                         'dockdataProvider' => $dockdataProvider,
                         'docksearchModel' => $docksearchModel,
+                        'mapping_flag' => 'view',
                     ])
                     ?>
                 </div>

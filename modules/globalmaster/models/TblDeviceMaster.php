@@ -44,7 +44,7 @@ class TblDeviceMaster extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'tab_type');
                 }, 'on' => 'importCsv'],
                 [['tab_type'], 'integer', 'on' => 'importCsv'],
-                [['created_at', 'updated_at', 'device_master_code', 'center_type', 'center_code', 'wef_date', 'sr_no'], 'safe'],
+                [['created_at', 'updated_at', 'device_master_code', 'sr_no'], 'safe'],
                 [['originating_type'], 'integer'],
                 [['originating_org_type', 'originating_org_code'], 'string', 'max' => 25],
                 [['sr_no', 'created_by', 'updated_by'], 'string', 'max' => 20],

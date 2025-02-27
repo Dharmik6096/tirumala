@@ -37,14 +37,14 @@ class TblMaterialMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['material_name', 'created_at', 'updated_at', 'is_active', 'originating_type', 'local_name', 'union_code', 'ref_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['material_name', 'created_at', 'updated_at', 'is_active', 'originating_type', 'local_name', 'union_code', 'ref_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['material_name', 'ref_code', 'union_code'], 'required', 'except' => ['androidsync']],
                 [['material_name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
                 [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['material_name', 'ref_code', 'union_code'], 'required'],
         ];
     }
 

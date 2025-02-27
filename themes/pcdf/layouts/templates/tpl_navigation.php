@@ -174,6 +174,14 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
                     'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu toggle_right'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Weight Bridge') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'Material Master', 'url' => ['/tankermovement/tbl-material-master/index'], 'active' => ($cntrl == 'tbl-material-master')],
+                                    ['label' => 'Raw Material Receipt', 'url' => ['/tankermovement/tbl-raw-fg-material-receipt/index'], 'active' => ($cntrl == 'tbl-raw-fg-material-receipt')],
+                            ]
+                        ],
                             ['label' => 'Tanker Rate', 'url' => ['/tankermovement/tbl-tanker-rate/index'], 'active' => ($cntrl == 'tbl-tanker-rate')],
                             ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
                             ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
@@ -184,8 +192,6 @@ echo GhostMenu::widget([
                             ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
                             ['label' => 'Payment Head', 'url' => ['/tankermovement/tbl-payment-head/index'], 'active' => ($cntrl == 'tbl-payment-head')],
                             ['label' => 'Payment Head Transaction', 'url' => ['/tankermovement/tbl-payment-head-transaction/index'], 'active' => ($cntrl == 'tbl-payment-head-transaction')],
-                            ['label' => 'Material Master', 'url' => ['/tankermovement/tbl-material-master/index'], 'active' => ($cntrl == 'tbl-material-master')],
-                            ['label' => 'Raw Material Receipt', 'url' => ['/tankermovement/tbl-raw-fg-material-receipt/index'], 'active' => ($cntrl == 'tbl-raw-fg-material-receipt')],
                     ]
                 ],
                     ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],

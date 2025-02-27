@@ -36,6 +36,7 @@ class TblMaterialMasterController extends \app\controllers\ChildController {
         $this->model = new TblMaterialMaster();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->x_col1 = Yii::$app->general->getUuid();
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Material Master', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
