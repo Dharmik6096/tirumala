@@ -22,8 +22,7 @@ use yii\web\Response;
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
  */
-class TblVehicleTripController extends \app\controllers\ChildController
-{
+class TblVehicleTripController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['open-trip-list'];
 
@@ -31,14 +30,13 @@ class TblVehicleTripController extends \app\controllers\ChildController
      * Lists all TblVehicleTrip models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblVehicleTripSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -47,14 +45,13 @@ class TblVehicleTripController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         $searchModel = new TblVehicleTripDetailSearch();
         $searchModel->vehicle_trip_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
-            'model' => $this->findModel($id),
-            'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+                    'model' => $this->findModel($id),
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -63,8 +60,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->model = new TblVehicleTrip();
         $this->model->scenario = 'createTrip';
         $this->model->transaction_date = date('Y-m-d');
@@ -129,7 +125,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
                     $validate = TRUE;
                     $save_model = $result[1];
                     if (!empty($save_model) && $this->model->fl_type == 'plant') {
-                        $save_model[0]->plant_code =  $this->model->fl_code;
+                        $save_model[0]->plant_code = $this->model->fl_code;
                     }
                     $lastIndex = count($bmc_array) - 2;
                     foreach ($bmc_array as $key => $bmc) {
@@ -173,9 +169,9 @@ class TblVehicleTripController extends \app\controllers\ChildController
                         if ($transaction == 'customRedirect') {
                             if ($result[2]['inspection_require']) {
                                 return $this->redirect([
-                                    '/tankermovement/tbl-bmc-dispatch-inspection/create',
-                                    'trip_code' => $result[2]['trip_code'],
-                                    'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
+                                            '/tankermovement/tbl-bmc-dispatch-inspection/create',
+                                            'trip_code' => $result[2]['trip_code'],
+                                            'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
                                 ]);
                             } else {
                                 return $this->{$transaction}();
@@ -202,8 +198,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
     //     return $this->customRender();
     // }
 
-    public function actionGenerateChallan($id)
-    {
+    public function actionGenerateChallan($id) {
         $model = new TblVehicleTrip();
         $model->vehicle_trip_code = $id;
         $model = $model->dispatchConsolidatedSummary();
@@ -243,9 +238,9 @@ class TblVehicleTripController extends \app\controllers\ChildController
                     }
                 }
                 return $this->render('generate_challan', [
-                    'model' => $model,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+                            'model' => $model,
+                            'searchModel' => $searchModel,
+                            'dataProvider' => $dataProvider,
                 ]);
             } else {
                 Yii::$app->getSession()->setFlash('success', [
@@ -257,8 +252,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
         return $this->redirect(['index']);
     }
 
-    public function actionPrintChallan($id)
-    {
+    public function actionPrintChallan($id) {
         $controls = [];
         $controls['p_trip_code'] = $id;
         $controls['p_report_name'] = 'Consolidate Challan';
@@ -272,8 +266,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
      * @return TblVehicleTrip the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblVehicleTrip::findOne($id)) !== null) {
             return $model;
         } else {
@@ -281,8 +274,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
         }
     }
 
-    public function actionCloseTrip($id)
-    {
+    public function actionCloseTrip($id) {
         $tripModel = $this->findModel($id);
         $historyModel = new TblVehicleTripHistory();
         Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
@@ -299,8 +291,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
         return Json::encode($record);
     }
 
-    public function actionInactiveTrip($id)
-    {
+    public function actionInactiveTrip($id) {
         $saveModel = [];
         $tripModel = $this->findModel($id);
         $historyModel = new TblVehicleTripHistory();
@@ -326,8 +317,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
         return Json::encode($record);
     }
 
-    public function actionOpenTripList()
-    {
+    public function actionOpenTripList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -358,4 +348,42 @@ class TblVehicleTripController extends \app\controllers\ChildController
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
+    public function actionGateProcess($vehicle_trip_detail_code = '', $actionType = '') {
+        if (Yii::$app->request->isPost) {
+            $postData = Yii::$app->request->post('TblVehicleTripDetail');
+            $vehicle_trip_detail_code = $postData['vehicle_trip_detail_code'];
+        }
+        $tripDetail = TblVehicleTripDetail::findOne(['vehicle_trip_detail_code' => $vehicle_trip_detail_code]);
+        $trip = TblVehicleTrip::findOne(['vehicle_trip_code' => $tripDetail->vehicle_trip_code]);
+        if (Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $actionType = Yii::$app->request->post('actionType');
+            $tripDetail->load(Yii::$app->request->post());
+            $tripDetail->scenario = $actionType;
+            if (!empty($postData['arrival_time']) && $actionType == 'gate-in') {
+                $tripDetail->arrival_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['arrival_time']));
+                $trip->trip_sub_status = 'Get_in';
+            } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
+                $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
+                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'Get_out';
+            }
+            if ($tripDetail->validate()) {
+                $models = [$tripDetail, $trip];
+                $transaction = $this->generalModel->saveTransaction($models, ['Trip Detail', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return ['status' => 'success', 'msg' => 'Trip processed successfully.'];
+                } else {
+                    return ['status' => 'error', 'msg' => Yii::$app->getSession()->getFlash('success')['message']];
+                }
+            } else {
+                return ['status' => 'error', 'errors' => $tripDetail->getErrors()];
+            }
+        }
+        return $this->renderAjax('_trip_detail', [
+                    'trip' => $trip,
+                    'tripDetail' => $tripDetail,
+                    'actionType' => $actionType
+        ]);
+    }
+
 }
