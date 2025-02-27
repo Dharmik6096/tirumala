@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_user_download_ack".
@@ -93,10 +94,12 @@ class TblUserDownloadAck extends \app\models\ChildModel {
 
     public function getExistData($org_type) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'download_pending' => 1]);
-        if (strtoupper($org_type == 'MCC')) {
-            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code]);
+        if (strtoupper($org_type == 'PLANT')) {
+            $query->andWhere(['plant_code' => $this->plant_code])->andWhere(['=', 'ISNULL(mcc_plant_code,\'\')', '']);
+        } elseif (strtoupper($org_type == 'MCC')) {
+            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
         } elseif ($org_type == 'BMC') {
-            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code]);
+            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
         } elseif ($org_type == 'VLC') {
             $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
         }
@@ -105,7 +108,10 @@ class TblUserDownloadAck extends \app\models\ChildModel {
     }
 
     public function getOrgDetail($org_type, $org_code) {
-        if (strtoupper($org_type == 'MCC')) {
+        if (strtoupper($org_type == 'PLANT')) {
+            $this->plant_code = $org_code;
+            $this->union_code = Yii::$app->general->getforeignkey($this->plantCode, 'union_code');
+        } else if (strtoupper($org_type == 'MCC')) {
             $this->mcc_plant_code = $org_code;
             $this->plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
             $this->union_code = Yii::$app->general->getforeignkey($this->mccCode, 'union_code');
@@ -135,10 +141,14 @@ class TblUserDownloadAck extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
     public function getExistDataAck($org_type, $check_device_id = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'download_pending' => 1]);
-        if($check_device_id){
-              $query->andWhere(['device_id' => $this->device_id]);
+        if ($check_device_id) {
+            $query->andWhere(['device_id' => $this->device_id]);
         }
         if (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);

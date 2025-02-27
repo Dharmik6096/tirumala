@@ -5,6 +5,7 @@ namespace app\modules\installation\models;
 use Yii;
 use app\models\ChildModel;
 use yii\helpers\ArrayHelper;
+
 /**
  * This is the model class for table "tbl_role".
  *
@@ -26,9 +27,9 @@ class TblRole extends ChildModel {
      */
     public function rules() {
         return [
-            [['role_name', 'description'], 'string', 'max' => 255],
-            [['role_name'], 'unique'],
-            [['role_name','description'], 'required']
+                [['role_name', 'description'], 'string', 'max' => 255],
+                [['role_name'], 'unique'],
+                [['role_name', 'description'], 'required']
         ];
     }
 
@@ -45,7 +46,9 @@ class TblRole extends ChildModel {
 
     public function getRoleDetails($org_type, $role_for) {
         $query = $this->find();
-        if (strtoupper($org_type == 'MCC')) {
+        if (strtoupper($org_type == 'PLANT')) {
+            $query->andWhere(['role_name' => 'PLANT_' . $role_for]);
+        } elseif (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['role_name' => 'BMC_' . $role_for]);
         } elseif ($org_type == 'BMC') {
             $query->andWhere(['role_name' => 'BMC_' . $role_for]);

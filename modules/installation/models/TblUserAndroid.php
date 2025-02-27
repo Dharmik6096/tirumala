@@ -124,7 +124,9 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
 
     public function getExistData($org_type, $data, $notIn = '') {
         $query = $this->find()->where(['union_code' => $data->union_code, 'is_active' => 1]);
-        if (strtoupper($org_type == 'MCC')) {
+        if (strtoupper($org_type == 'PLANT')) {
+            $query->andWhere(['plant_code' => $data->plant_code])->andWhere(['=', 'ISNULL(mcc_plant_code,\'\')', '']);
+        } elseif (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
         } elseif ($org_type == 'BMC') {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
@@ -169,7 +171,9 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
     public function getContactDetails($org_type, $data) {
         $contactModel = new TblContactDetails();
         $query = $contactModel->find()->where(['is_active' => 1, 'is_default' => 1]);
-        if (strtoupper($org_type == 'MCC')) {
+        if (strtoupper($org_type == 'PLANT')) {
+            $query->andWhere(['module_code' => $data->plant_code, 'module_name' => 'plant']);
+        } elseif (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['module_code' => $data->mcc_plant_code, 'module_name' => 'mccPlant']);
         } elseif ($org_type == 'BMC') {
             $query->andWhere(['module_code' => $data->bmc_code, 'module_name' => 'bmc']);
@@ -282,10 +286,12 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
 
     public function getMainExistData($org_type, $data, $username) {
         $query = $this->find()->where(['union_code' => $data->union_code, 'username' => $username]);
-        if (strtoupper($org_type == 'MCC')) {
-            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code]);
+        if (strtoupper($org_type == 'PLANT')) {
+            $query->andWhere(['plant_code' => $data->plant_code])->andWhere(['=', 'ISNULL(mcc_plant_code,\'\')', '']);
+        } elseif (strtoupper($org_type == 'MCC')) {
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
         } elseif ($org_type == 'BMC') {
-            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code]);
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
         } elseif ($org_type == 'VLC') {
             $query->andWhere(['dcs_code' => $data->dcs_code]);
         }
