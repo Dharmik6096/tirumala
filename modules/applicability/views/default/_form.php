@@ -9,6 +9,7 @@ $url = Url::to(['/applicability/default/load-society']);
 $furl = Url::to(['/applicability/default/load-filter-data']);
 $bmcUrl = Url::to(['/applicability/default/load-bmc-data']);
 $routeUrl = Url::to(['/applicability/default/load-route-data']);
+$loadBmcUrl = Url::to(['/applicability/default/load-bmc']);
 $model_name = str_replace('\\', '_', $model_name);
 $cname = explode('_', $model_name);
 $cname = end($cname);
@@ -165,7 +166,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <?=
                 $this->render('_checkbox_list', [
                     'model' => $model, 'form' => $form, 'field_name' => $customer_type_field_name,
-                    'list' => $customer_type_list, 'selected' => $selected_customer_type, 'selectedData' => $selectedTypes, 'checkboxClass' => 'col-sm-2',
+                    'list' => $customer_type_list, 'selected' => $selected_customer_type, 'selectedData' => $selectedTypes, 'checkboxClass' => 'col-sm-2 apply_to_checkbox',
                 ])
                 ?>
             </div>
@@ -292,6 +293,7 @@ $script = "
     $('.kv-panel-before').hide();
     var periodic_applicability = '{$periodic_applicability}';
     var is_bulk_notification = '{$is_bulk_notification}';
+    var load_data_on_apply_to_checkbox = '{$load_data_on_apply_to_checkbox}';
     function checkBoxFilter(val){
         var id = $(val).attr('id');
         var value = $(val).val();
@@ -734,7 +736,41 @@ $script = "
                 }
         }); 
     }
-
+    if(load_data_on_apply_to_checkbox){
+        loadData();
+        $(document).on('change', 'input.apply_to_checkbox:checkbox', function() {
+            loadData();
+        })
+        function loadData() {
+            var checkedCheckboxes = $('input.apply_to_checkbox:checkbox:checked');
+            var selectedValues = [];
+            var unionCode = $('#{$nameforid}-union_code').val();
+            $('#applicable_code-list').html('');
+            if (checkedCheckboxes.length > 0) {
+                checkedCheckboxes.each((index, checkboxElement) => {
+                    selectedValues.push($(checkboxElement).val());
+                });
+                var csrfToken = $('meta[name=\"csrf-token\"]').attr('content');
+                $.ajax({
+                    type: 'post',
+                    url: '{$loadBmcUrl}',
+                    data: {'_csrf': csrfToken,'selected_apply_to':JSON.stringify(selectedValues),'union_code':unionCode, 'field_code': '{$field_code}', 'class_name':'{$cname}', 'field_name':'{$field_name}'},
+                    success: function(data) {
+                        var obj1 = $.parseJSON(data);
+                        if (obj1.status == 'success') {
+                            var html = '';
+                            $.each(obj1.data, function(index, value) {
+                                html = html+'<div class=\"col-sm-2 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><label class=\"route-text\"><input type=\"checkbox\" class=\"route-checkbox flt-checkboxa dcsCheckboxes\" name=\"{$cname}[applicable_code][]\" value=\"'+index+'\" id=\"nd-input-'+index+'\"><label for=\"nd-input-'+index+'\">'+value+'</label></label></div></div>';
+                            });
+                            $('#applicable_code-list').html(html);
+                        }
+                    },
+                    error:function(data) {
+                    }
+                }); 
+            }
+        }
+    }
 
 ";
 //if ($customer_type_wise_entry) {
