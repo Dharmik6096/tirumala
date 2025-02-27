@@ -40,7 +40,7 @@ use yii\helpers\ArrayHelper;
  * @property string $x_col5
  */
 class TblVehicleTripDetail extends \app\models\ChildModel {
-
+    
     /**
      * @inheritdoc
      */
@@ -59,6 +59,8 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             [['travel_km', 'originating_type', 'is_active'], 'safe'],
             [['is_last_destination'], 'default', 'value' => 0],
             [['is_active'], 'default', 'value' => 1],
+            [['arrival_time'], 'required', 'on' => ['gate-in']],
+            [['departure_time'], 'required', 'on' => ['gate-out']],
                 //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }

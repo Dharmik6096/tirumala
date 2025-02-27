@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
+use yii\helpers\Url;
+use yii\web\View;
 
 $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
 ?>
@@ -18,10 +20,10 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                 $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
                 $rel = Yii::$app->general->getDestRelation($sourceType);
                 $att = strtolower($sourceType) == 'bmc' ? 'bmc_name' : (
-                    strtolower($sourceType) == 'vendor' ? 'customer_name' : (
+                        strtolower($sourceType) == 'vendor' ? 'customer_name' : (
                         strtolower($sourceType) == 'party' ? 'party_name' : 'name'
-                    )
-                );
+                        )
+                        );
                 $attributes = [
                     [
                         'columns' => [
@@ -162,7 +164,7 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [ // your ajax delete parameters
+                    'deleteOptions' => [// your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],
@@ -188,11 +190,11 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     ],
                     ['attribute' => 'source_org_code',],
                     ['attribute' => 'source_org_type', 'value' => function ($model) {
-                        $rel = Yii::$app->general->getDestRelation($model->source_org_type);
-                        $att = strtolower($model->source_org_type) == 'bmc' ? 'bmc_name' : (strtolower($model->source_org_type) == 'vendor' ? 'customer_name' : 'name');
-                        if (!empty($rel))
-                            return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->source_org_type);
-                    }, 'filter' => false],
+                            $rel = Yii::$app->general->getDestRelation($model->source_org_type);
+                            $att = strtolower($model->source_org_type) == 'bmc' ? 'bmc_name' : (strtolower($model->source_org_type) == 'vendor' ? 'customer_name' : 'name');
+                            if (!empty($rel))
+                                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->source_org_type);
+                        }, 'filter' => false],
                     [
                         'attribute' => 'source_org_code',
                         'label' => (Yii::t('app', 'Source Ref.Code')),
@@ -204,11 +206,11 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     ],
                     ['attribute' => 'destination_code',],
                     ['attribute' => 'destination_type', 'value' => function ($model) {
-                        $rel = Yii::$app->general->getDestRelation($model->destination_type);
-                        $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
-                        if (!empty($rel))
-                            return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
-                    }, 'filter' => false],
+                            $rel = Yii::$app->general->getDestRelation($model->destination_type);
+                            $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
+                            if (!empty($rel))
+                                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
+                        }, 'filter' => false],
                     [
                         'attribute' => 'destination_code',
                         'label' => (Yii::t('app', 'Dest. Ref.Code')),
@@ -223,10 +225,54 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     'id' => 'trip-detail-list',
                     'attributes' => $attribute,
                     'active_column' => FALSE,
-                    'default_sorting' => FALSE
+                    'default_sorting' => FALSE,
+                    'actions' => [
+                        'gate-in' => function ($url, $model) {
+                            $class = (!empty($model->arrival_time) && !empty($model->departure_time) || !empty($model->arrival_time) && empty($model->departure_time)) ? 'link-disable' : '';
+                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate In', 'class' => 'gate-in-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-in',];
+                            return Html::a('<i class="fa fa-sign-in"></i>', '#', $options);
+                        },
+                        'gate-out' => function ($url, $model) {
+                            $class = empty($model->arrival_time) || !empty($model->departure_time) ? 'link-disable' : '';
+                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate Out', 'class' => 'gate-out-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-out',];
+                            return Html::a('<i class="fa fa-sign-out"></i>', '#', $options);
+                        },
+                    ],
                 ];
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], FALSE);
                 ?>
             </div>
         </div>
     </div>
+
+    <div id="TripDetail"></div>
+    <?php
+    $script = "
+    $(document).ready(function(){
+        $(document).on('click', '.gate-in-btn, .gate-out-btn', function(e){
+            e.preventDefault();
+
+            var vehicle_trip_detail_code = $(this).data('vehicle_trip_detail_code');
+            var actionType = $(this).hasClass('gate-in-btn') ? 'gate-in' : 'gate-out';
+            var actionUrl = '" . Url::to(['/tankermovement/tbl-vehicle-trip/gate-process']) . "';
+
+            $.ajax({
+                type: 'get',
+                url: actionUrl,
+                data: { 
+                    'vehicle_trip_detail_code': vehicle_trip_detail_code,
+                    'actionType': actionType 
+                },
+                success: function(data) {  
+                    $('#TripDetail').html(data);
+                    $('#TripDetailModal').modal('toggle');  
+                },    
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                }
+            });
+        });
+    });
+";
+    $this->registerJs($script, View::POS_END, 'vehicle-trip-detail');
+    ?>
