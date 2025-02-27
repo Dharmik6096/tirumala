@@ -98,6 +98,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('billing_qty_flag', $model, $form, 'form-group', $model->getAttributeLabel('billing_qty_flag')); ?>
         </div>
+        <div class="col-sm-1"> 
+            <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $model, $form, 'form-group', $model->getAttributeLabel('no_of_compartment'), false, 'no_of_compartment', false); ?>
+        </div>
         <div class="col-md-12 padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                 <h4 class="theme-box-heading">Driver Detail</h4>

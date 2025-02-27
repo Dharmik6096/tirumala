@@ -60,6 +60,10 @@ $attribute = [
             return Yii::$app->general->getStaticDropdownVal('billing_method', $model, 'billing_method');
         },
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('billing_method', $searchModel, 'billing_method')],
+        ['attribute' => 'no_of_compartment',
+            'value' => function($model) {
+                return Yii::$app->general->getStaticDropdownVal('chamber_no', $model, 'no_of_compartment');
+            }],
 ];
 
 $grid_option = [

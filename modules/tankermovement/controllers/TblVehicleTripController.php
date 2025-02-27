@@ -11,8 +11,11 @@ use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
+use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
 use app\modules\tankermovement\models\TblVehicleTripHistory;
+use app\modules\transporter\models\TblVehicleMaster;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\Response;
 
@@ -66,6 +69,8 @@ class TblVehicleTripController extends \app\controllers\ChildController
         $this->model->scenario = 'createTrip';
         $this->model->transaction_date = date('Y-m-d');
         $this->viewFile = 'create';
+        $type = Yii::$app->request->get('type');
+        $this->model->type = !empty($type) ? $type : 'normal';
         $bmc_array = [];
         if ($this->model->load(Yii::$app->request->post())) {
             if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
@@ -126,10 +131,14 @@ class TblVehicleTripController extends \app\controllers\ChildController
                     if (!empty($save_model) && $this->model->fl_type == 'plant') {
                         $save_model[0]->plant_code =  $this->model->fl_code;
                     }
+                    $lastIndex = count($bmc_array) - 2;
                     foreach ($bmc_array as $key => $bmc) {
                         $trip_detai = new TblVehicleTripDetail();
                         if ($key == 0 || $key == count($bmc_array) - 1) {
                             continue;
+                        }
+                        if($lastIndex == $key){
+                            $trip_detai->is_last_destination = 1;
                         }
                         $sloc_detail = explode('-', $bmc);
                         $dloc_detail = explode('-', $bmc_array[$key + 1]);
@@ -144,7 +153,7 @@ class TblVehicleTripController extends \app\controllers\ChildController
                         $trip_detai->vehicle_code = $this->model->vehicle_code;
                         $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
                         $trip_detai->trip_code = $this->model->trip_code;
-                        $trip_detai->arrival_time = date('Y-m-d H:i:s');
+                        // $trip_detai->arrival_time = date('Y-m-d H:i:s');
                         $trip_detai->vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . ($key + 2);
                         if (!$trip_detai->validate()) {
                             $validate = FALSE;
@@ -156,6 +165,10 @@ class TblVehicleTripController extends \app\controllers\ChildController
                         $save_model[] = $trip_detai;
                     }
                     if ($validate) {
+                        echo '<pre>';
+                        print_r($save_model);
+                        echo '</pre>';
+                        die;
                         $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
                         if ($transaction == 'customRedirect') {
                             if ($result[2]['inspection_require']) {
@@ -173,8 +186,21 @@ class TblVehicleTripController extends \app\controllers\ChildController
             }
         }
         $this->model->bmc_code = $bmc_array;
+        if($this->model->type == 'party'){
+            $party = TblPartyMaster::find()->select(["CONCAT(party_master_code, '-party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])->where(['is_active' => 1])->asArray()->all();
+            $this->model->party = !empty($party) ? Json::encode($party) : '';
+        }
         return $this->customRender();
     }
+
+    // public function actionCreateWithParty()
+    // {
+    //     $this->model = new TblVehicleTrip();
+    //     $this->model->scenario = 'createTrip';
+    //     $this->model->transaction_date = date('Y-m-d');
+    //     $this->viewFile = 'create_with_party';
+    //     return $this->customRender();
+    // }
 
     public function actionGenerateChallan($id)
     {
@@ -317,5 +343,19 @@ class TblVehicleTripController extends \app\controllers\ChildController
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionGetVehicleDetail()
+    {
+        $status = 'error';
+        $vehicleData = [];
+        $postData = Yii::$app->request->post();
+        if(!empty($postData['vehicle_code'])){
+            $vehicleData = TblVehicleMaster::find()->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $status = 'success';
+        }
+        $record = ['status' => $status, 'data' => $vehicleData];
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 }

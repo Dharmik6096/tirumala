@@ -33,6 +33,12 @@ $form = ActiveForm::begin([
     <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'driver_name')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'mobile_no')->textInput() ?>
+    </div>
     <div class="col-sm-6">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true); ?>
     </div>
@@ -71,6 +77,9 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
+var party =`{$model->party}`;
+party = $.parseJSON(party);
+console.log(party);
 $('#tblvehicletrip-plant_code').on('change',function(){
     var plant_code = $('#tblvehicletrip-plant_code').val(); 
     $.ajax({
@@ -112,7 +121,10 @@ $('#tblvehicletrip-plant_code').on('change',function(){
                     var valtxt=value.split('~~~')
                     options += '<option value=\"'+valtxt[0]+'\"  data-sortindex=\"'+index+'\" selected>'+valtxt[1]+'</option>';
                 }
-            });          
+            });
+            $.each(party, function(index, value) {
+                options += '<option value=\"'+value.party_master_code+'\">'+value.party_name+'</option>'; 
+            });
             $('#tblvehicletrip-bmc_code').html(options);
             $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true); 
             }
@@ -126,6 +138,26 @@ $('#vehicle-trip-form').submit(function(e) {
         bmcarray += $(this).attr('data-sortindex')+'~~~'+$(this).attr('value')+':::';
     });
     $('#selected_bmc_seq').val(bmcarray);      
+});
+$('#tblvehicletrip-vehicle_code').on('change', function(){
+    var vehicle_code = $(this).val();
+    if(vehicle_code != ''){
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['get-vehicle-detail']) . "',    
+            data: 'vehicle_code='+vehicle_code,
+            success: function(data) {
+                var obj1 = $.parseJSON(data);
+                if(obj1.status == 'success'){
+                    var response = obj1.data;
+                    if(response != '' && response != null){
+                        $('#tblvehicletrip-driver_name').val(response.driver_name);
+                        $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);
+                    }
+                }
+            }
+        });
+    }
 });
 ";
 $script .= "$('#tblvehicletrip-bmc_code').change(function () {

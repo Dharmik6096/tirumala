@@ -80,6 +80,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
     </div>
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'is_sales_office', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">
         <div class="form-group">

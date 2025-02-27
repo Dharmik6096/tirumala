@@ -41,7 +41,7 @@ use app\modules\syncutility\models\TblSentbox;
 class TblVehicleTrip extends \app\models\ChildModel {
 
     public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $filter_plant_code;
-    public $fl_type, $fl_code;
+    public $fl_type, $fl_code, $type, $party;
 
     /**
      * @inheritdoc
@@ -57,7 +57,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return [
                 [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
                 [['trip_for'], 'default', 'value' => 'bmcdispatch'],
                 [['trip_mode'], 'default', 'value' => 'online'],
@@ -104,6 +104,10 @@ class TblVehicleTrip extends \app\models\ChildModel {
             'kg_snf' => Yii::t('app', 'SNFKg'),
             'total_qty' => Yii::t('app', 'Total Qty'),
             'rejected_count' => Yii::t('app', 'Rejected Sample'),
+            'trip_sub_status' => Yii::t('app', 'Trip Sub Status'),
+            'sub_status_time' => Yii::t('app', 'Sub Status Time'),
+            'driver_name' => Yii::t('app', 'Driver Name'),
+            'mobile_no' => Yii::t('app', 'Mobile No'),
         ];
     }
 
