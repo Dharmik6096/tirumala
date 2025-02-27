@@ -125,7 +125,8 @@ $form = ActiveForm::begin([
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
             'form' => $form,
-            'mail_info' => TRUE
+            'mail_info' => TRUE,
+            'show_optional_fields' => TRUE,
         ])
         ?>
 

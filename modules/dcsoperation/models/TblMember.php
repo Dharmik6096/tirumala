@@ -101,7 +101,7 @@ class TblMember extends ChildModel {
     public $operation, $verifie_for, $file_name, $dcs_ref_code;
     public $check_is_dcs_member = 1;
     public $import_eipl_code, $import_union_code, $special_code;
-    public $reference_id, $name_at_bank, $city, $branch, $micr, $name_match_result, $name_match_score, $account_status, $account_status_code, $utr, $ifsc_code, $has_available_branch_info, $branch_address;
+    public $reference_id, $name_at_bank, $city, $branch, $micr, $name_match_result, $name_match_score, $account_status, $account_status_code, $utr, $ifsc_code, $has_available_branch_info, $branch_address, $beneficiary_id;
 
     /**
      * @inheritdoc
@@ -132,7 +132,7 @@ class TblMember extends ChildModel {
                 [['email'], 'email', 'except' => ['androidsync', 'specialCodeImportCsv']],
                 [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'string', 'except' => ['androidsync', 'verification', 'specialCodeImportCsv']],
                 [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
-                [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'ex_member_code', 'ref_code', 'beneficiary_name', 'max_allowed_qty', 'response_datetime', 'rate_class', 'operation', 'is_verified', 'is_contact_verified', 'file_name', 'vendor_code', 'bank_remarks', 'contact_remarks', 'sap_farmer_code', 'latitude', 'longitude', 'aadhaar_card_address', 'is_email_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'application_no', 'emilk_sync_status', 'emilk_sync_timestamp', 'is_kyc_verified', 'reference_id', 'name_at_bank', 'city', 'branch', 'micr', 'name_match_result', 'name_match_score', 'account_status', 'account_status_code', 'utr', 'ifsc_code', 'has_available_branch_info', 'branch_address'], 'safe'],
+                [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'ex_member_code', 'ref_code', 'beneficiary_name', 'max_allowed_qty', 'response_datetime', 'rate_class', 'operation', 'is_verified', 'is_contact_verified', 'file_name', 'vendor_code', 'bank_remarks', 'contact_remarks', 'sap_farmer_code', 'latitude', 'longitude', 'aadhaar_card_address', 'is_email_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'application_no', 'emilk_sync_status', 'emilk_sync_timestamp', 'is_kyc_verified', 'reference_id', 'name_at_bank', 'city', 'branch', 'micr', 'name_match_result', 'name_match_score', 'account_status', 'account_status_code', 'utr', 'ifsc_code', 'has_available_branch_info', 'branch_address', 'beneficiary_id'], 'safe'],
                 [['sap_farmer_code'], 'unique', 'targetAttribute' => ['sap_farmer_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync', 'specialCodeImportCsv', 'kycVerify']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
@@ -185,13 +185,13 @@ class TblMember extends ChildModel {
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'witness_name', 'place', 'dcs_ref_code'], 'safe'],
                 [['member_code', 'federation_code', 'dcs_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'mobile_no', 'received_timestamp', 'employee_code', 'employee_name', 'region_code', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour'], 'safe'],
             //  [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
-            //  [['ex_member_code'], 'setExMember'],
-            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['specialCodeImportCsv']],
+            [['ex_member_code'], 'setExMember', 'on' => ['androidsync']],
+                ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['specialCodeImportCsv']],
                 [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync', 'verification', 'specialCodeImportCsv']],
-                [['x_col3'], 'default', 'value' => 15],
-                [['dcs_code'], 'setXcol3'],
+//                [['x_col3'], 'default', 'value' => 15],
+            [['dcs_code'], 'setXcol3'],
                 [['member_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
@@ -207,6 +207,9 @@ class TblMember extends ChildModel {
                 [['dcs_code', 'member_code', 'special_code'], 'required', 'on' => ['specialCodeImportCsv']],
                 [['dcs_code', 'member_code', 'special_code'], 'setImport', 'on' => 'specialCodeImportCsv'],
                 [['x_col5'], 'exist', 'skipOnError' => true, 'targetClass' => TblMemberSpecialCode::className(), 'targetAttribute' => ['x_col5' => 'special_code'], 'on' => ['specialCodeImportCsv']],
+                [['ifsc', 'bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'on' => 'kycVerify'],
+                [['rate_class'], 'validateRateClass', 'on' => ['androidsync']],
+                [['member_code'], 'refCodeValidate', 'on' => ['androidsync']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -414,6 +417,10 @@ class TblMember extends ChildModel {
         return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'nominee_relation']);
     }
 
+    public function getApplicantRelationship() {
+        return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'applicant_relation']);
+    }
+
     public function getMembers($dcs_code, $as_array = false) {
         if (!empty($dcs_code)) {
             $query = $this->find()->where(['dcs_code' => $dcs_code, 'is_active' => 1]);
@@ -602,7 +609,11 @@ class TblMember extends ChildModel {
     }
 
     public function setXcol3($attribute, $params) {
-        $this->x_col3 = !empty($this->max_allowed_qty) ? $this->max_allowed_qty : (\Yii::$app->session->get('eiplCode') == 'HATSUN' ? 0 : 15);
+        $max_qty_config_val = Yii::$app->general->getUnionConfiguration($this->union_code, 'max_qty_limit_member', 'PORTAL');
+        $this->x_col3 = !empty($this->max_allowed_qty) ? $this->max_allowed_qty : $this->x_col3;
+        if (empty($this->x_col3)) {
+            $this->x_col3 = !empty($max_qty_config_val) && $max_qty_config_val > 0 ? $max_qty_config_val : 15;
+        }
     }
 
     public function getUniqueBankDetails() {
@@ -757,6 +768,25 @@ class TblMember extends ChildModel {
                 return false;
             }
             $this->x_col5 = $this->special_code;
+        }
+    }
+
+    public function validateRateClass($attribute, $params) {
+        $rateMapping = ['A' => 1, 'B' => 2, 'C' => 3];
+        if (!is_numeric($this->$attribute)) {
+            $value = strtoupper((string) $this->$attribute);
+            if (ctype_alpha($value) && isset($rateMapping[$value])) {
+                $this->$attribute = $rateMapping[$value];
+            } elseif (!in_array($this->$attribute, [1, 2, 3], true)) {
+                $this->$attribute = 0;
+            }
+        }
+    }
+
+    public function refCodeValidate($attribute, $params) {
+        if ($this->isNewRecord) {
+            $dcs_ref_code = Yii::$app->general->getforeignkey($this->dcsCode, 'ref_code');
+            $this->ref_code = $dcs_ref_code . $this->ex_member_code;
         }
     }
 

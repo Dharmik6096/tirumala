@@ -674,6 +674,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, $url, Yii::t('app', 'Select User'), $multiple, '', $readonly);
     }
 
+    public function contactDetails($model, $form, $depends, $name = 'detail_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/details/tbl-contact-details/contact-details-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1881,11 +1886,6 @@ class DropDown extends Component {
                 'name' => 'mode_of_payment',
                 'prompt' => Yii::t('app', 'Select Payment Mode'),
                 'data' => ['1' => Yii::t('app', 'Cash'), '2' => Yii::t('app', 'DD'), '3' => Yii::t('app', 'Check'), '4' => Yii::t('app', 'Other')],
-            ],
-            'applicant_relation' => [
-                'name' => 'applicant_relation',
-                'prompt' => Yii::t('app', 'Select Applicant Relation'),
-                'data' => [1 => Yii::t('app', 'Father'), 2 => Yii::t('app', 'Husband'), 3 => Yii::t('app', 'Mother')],
             ],
             'machine_owned_type' => [
                 'name' => 'machine_owned_type',

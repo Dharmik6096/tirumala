@@ -1,180 +1,134 @@
 <?php
 
 use yii\helpers\Html;
+use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\dcsoperation\models\TblLocalMilkSale */
 
 $this->title = Yii::t('app', Yii::$app->label->title('view', 'Local Milk Sale'));
 ?>
-<div class="tbl-local-milk-sale-view">
-
-    <div class="panel panel-main">
-        <div class="panel-heading"><?= Html::encode($this->title) ?></div>
-        <div class="panel-body">
-            <div class="panel-subheading padding-0">
-                <div class="table-responsive">
-
-                    <?php $attributes = [
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $attributes = [
+                [
+                    'columns' => [
                         [
-                            'columns' => [
-                                [
-                                    'attribute'=>'local_milk_sale_code',
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'account_effect',
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
+                            'attribute' => 'local_milk_sale_code',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'columns' => [
-                                [
-                                    'attribute'=>'amount',
-                                    'format' => Yii::$app->general->CurrencyFormat(),
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'date',
-                                    'value' => Yii::$app->controls->view_date($model->date),
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
+                            'attribute' => 'amount',
+                            'format' => Yii::$app->general->CurrencyFormat(),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'datetime_of_sale',
+                            'value' => Yii::$app->controls->view_date($model->datetime_of_sale),
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
-                            'columns' => [
-                                [
-                                    'attribute'=>'discount',
-                                    'format' => Yii::$app->general->CurrencyFormat(),
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'cash',
-                                    'format' => Yii::$app->general->CurrencyFormat(),
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
+                            'attribute' => 'discount',
+                            'format' => Yii::$app->general->CurrencyFormat(),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'cash',
+                            'format' => Yii::$app->general->CurrencyFormat(),
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
-                            'columns' => [
-                                [
-                                    'attribute'=>'credit',
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'coupon',
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
+                            'attribute' => 'credit',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'coupon',
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
-                            'columns' => [
-                                [
-                                    'attribute'=>'entry_type',
-                                    'value'=>$model->entryType()[$model->entry_type],
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'payment_mode',
-                                    'value'=>($model->payment_mode==1)?'Bank':'Cash',
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
+                            'attribute' => 'payment_mode',
+                            'value' => ($model->payment_mode == 1) ? 'Bank' : 'Cash',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'qty',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'columns' => [
-                                [
-                                    'attribute'=>'quantity',
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'rate',
-                                    'format' => Yii::$app->general->CurrencyFormat(),
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
+                            'attribute' => 'rate',
+                            'format' => Yii::$app->general->CurrencyFormat(),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'shift_code',
+                            'value' => Yii::$app->general->getforeignkey($model->shiftCode, 'shift'),
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'columns' => [
-                                [
-                                    'attribute'=>'shift_id',
-                                    'value'=>$model->shift->shift,
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'collection_point_code',
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
+                            'attribute' => 'dcs_code',
+                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'member_code',
+                            'value' => Yii::$app->general->getforeignkey($model->memberCode, 'member_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
-                            'columns' => [
-                                [
-                                    'attribute'=>'dcs_code',
-                                    'value'=>$model->dcsCode->dcs_name,
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'member_code',
-                                     'value'=>$model->memberCode->member_name,
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
+                            'attribute' => 'milk_type_code',
+                            'value' => Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                        [
-                            'columns' => [
-                                [
-                                    'attribute'=>'milk_class',
-                                    'value'=>$model->milkClass->class_name,
-                                    'valueColOptions'=>['style'=>'width:30%']
-                                ],
-                                 [
-                                    'attribute'=>'milk_type',
-                                     'value'=>$model->milkType->animal_type_name,
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
+                    ],
+                ],
+            ];
 
-                            ],
-                        ],
-                        [
-                            'columns' => [
-                                 [
-                                    'attribute'=>'sub_center_code',
-                                     'value'=>$model->subCenterCode->sub_center_name,
-                                    'valueColOptions'=>['style'=>'width:30%'],
-                                ],
-
-                            ],
-                        ],
-                    ];
-                    
-                    echo DetailView::widget([
+            // View file rendering the widget
+            echo DetailView::widget([
                 'model' => $model,
                 'attributes' => $attributes,
                 'mode' => 'view',
-                'deleteOptions'=>[ // your ajax delete parameters
-                    'params' => ['id' => 1000, 'kvdelete'=>true],
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+                'deleteOptions' => [// your ajax delete parameters
+                    'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
-                'container' => ['id'=>'kv-demo'],
+                'container' => ['id' => 'kv-demo'],
             ]);
-                    
-                    ?> 
-                    
-                </div>
-            </div>
+            ?>
         </div>
-        <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-<?= Yii::$app->controls->cancel($model); ?>
-        </div>
-    </div>              
+    </div>
 </div>
+
+

@@ -404,14 +404,15 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
         $isValid = true;
         $pendingBankVerifyCount = $this->find()
                 ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verified' => 0])
-                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
+                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', ''], ['>', 'final_amount', 0]])
                 ->count();
         $rejectBankVerifyCount = $this->find()
                 ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verified' => 2])
-                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', '']])
+                ->andWhere(['and', ['is not', 'ifsc', null], ['is not', 'bank_account_no', null], ['is not', 'bank_name', null], ['is not', 'bank_code', null], ['is not', 'branch_name', null], ['is not', 'branch_code', null], ['is not', 'beneficiary_name', null], ['<>', 'ifsc', ''], ['<>', 'bank_account_no', ''], ['<>', 'bank_name', ''], ['<>', 'bank_code', ''], ['<>', 'branch_name', ''], ['<>', 'branch_code', ''], ['<>', 'beneficiary_name', ''], ['>', 'final_amount', 0]])
                 ->count();
         $pendingBankCount = $this->find()
                 ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code])
+                ->andWhere(['>', 'final_amount', 0])
                 ->andWhere(['or', ['ifsc' => null], ['bank_account_no' => null], ['bank_name' => null], ['bank_code' => null], ['branch_name' => null], ['branch_code' => null], ['beneficiary_name' => null], ['ifsc' => ''], ['bank_account_no' => ''], ['bank_name' => ''], ['bank_code' => ''], ['branch_name' => ''], ['branch_code' => ''], ['beneficiary_name' => '']])
                 ->count();
 
