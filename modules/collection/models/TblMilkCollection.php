@@ -1117,12 +1117,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 $historyModel = new TblCollectionDataAliasHistory();
                 Yii::$app->operation->history($aliasData, $historyModel, 'DELETE');
                 $childModel[] = $historyModel;
-                $aliasData->scenario = 'ho_milk_coll_delete';
-                if (!$aliasData->validate()) {
-                    $childModel[0]->addErrors($aliasData->errors);
-                } else {
-                    $aliasData->delete();
-                }
+                $aliasData->delete();
             }
         }
     }
