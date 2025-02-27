@@ -67,7 +67,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back', 'approve_remarks'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back', 'approve_remarks', 'action_perform'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'entry_type', 'from_shift', 'to_shift', 'from_date', 'to_date', 'table_name'], 'required', 'on' => ['create', 'hosync']],
                 [['from_date'], 'checkUnique', 'skipOnError' => true, 'on' => ['create', 'hosync']],
                 [['dcs_code'], 'required', 'when' => function ($model) {
@@ -77,6 +77,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
                     }", 'on' => ['create', 'hosync']
             ],
                 [['application_type'], 'default', 'value' => 'MOBILE'],
+                [['action_perform'], 'default', 'value' => 'CREATE'],
                 [['to_date'], 'checkUniqueDate', 'skipOnError' => true, 'on' => ['create', 'hosync']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
@@ -295,12 +296,15 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             $dataCheck->andWhere(['bmc_code' => $this->bmc_code]);
             $dataCheck->andWhere(['or', ['dcs_code' => NULL], ['dcs_code' => '']]);
         }
-        $dataExist = $dataCheck->one();
-
-        if ($dataExist) {
-            $this->addError($attribute, Yii::t('app/validation', 'This date range data already in pending request'));
-            return false;
+        if ($this->action_perform == 'CREATE' || $this->action_perform == 'MODIFY') {
+            $dataCheck->andWhere(['action_perform' => $this->action_perform]);
+            $dataCount = $dataCheck->count();
+            if ($dataCount >= 1) {
+                $this->addError($attribute, Yii::t('app/validation', 'This date range data already in pending request'));
+                return false;
+            }
         }
+        return true;
     }
 
 }
