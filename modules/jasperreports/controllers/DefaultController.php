@@ -497,6 +497,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'PrimaryTransporterMonthlyBill';
         return $this->actionIndex();
     }
+    
+    public function actionPartyPaymentBill() {
+        $this->report = 'PartyPaymentBill';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1179,6 +1184,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/PrimaryTransporterMonthlyBill',
                 'scenario' => 'PrimaryTransporterMonthlyBill',
                 'title' => 'TPT Bill',
+                'bkg_export' => TRUE,
+            ],
+            'PartyPaymentBill' => [
+                'param' => 'p_union_code,p_party_master_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/PartyPaymentBill',
+                'scenario' => 'PartyPaymentBill',
+                'title' => 'TP Bill',
                 'bkg_export' => TRUE,
             ],
         ];
