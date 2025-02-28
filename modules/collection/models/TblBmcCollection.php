@@ -152,7 +152,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
                 [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
-                [['bmc_code'], 'pastDateValidate', 'on' => 'importCsv'],
+                [['bmc_code'], 'pastDateValidate', 'on' => ['importCsv', 'create', 'androidsync_coll']],
                 [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
                 [['tag_1'], 'default', 'value' => 'X'],
                 [['adt_param', 'adt_value', 'received_timestamp', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
@@ -761,8 +761,8 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function pastDateValidate($attribute, $params) {
-        $this->date_time_of_collection = ($this->date_time_of_collection == '') ? null : date('Y-m-d', strtotime($this->date_time_of_collection));
-        if (!empty($this->date_time_of_collection) && ($this->date_time_of_collection > date('Y-m-d'))) {
+        $date_time_of_collection = !empty($this->date_time_of_collection) ? date('Y-m-d', strtotime($this->date_time_of_collection)) : NULL;
+        if (!empty($date_time_of_collection) && ($date_time_of_collection > date('Y-m-d'))) {
             $this->addError('date_time_of_collection', Yii::t('app/validation', $this->getAttributeLabel('date_time_of_collection') . ' Must be smaller than ' . date('d.m.Y')));
         }
     }

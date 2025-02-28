@@ -182,6 +182,7 @@ class EIPLPacketConfig extends Component {
                     'sampletime' => 'pckt=70-2#fix=:#pckt=72-2#fix=:#pckt=74-2',
                     'farmerid' => 'fix=2096',
                     'sampleno' => 'fix=2096',
+                    'amt' => 'fix=0',
                 ],
                 '96' => [
                     'vlccid' => 'pckt=3-15',

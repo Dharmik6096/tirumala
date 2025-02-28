@@ -47,7 +47,7 @@ $script = '
     $(document).on("click", "#adjust", function(){
 //    $("#adjust").click(function() {
     $(".process_lock_flag").val("Process");
-     var negativeVal = "No";
+    var negativeVal = "No";
     $(".final-amount").each(function() {
         var parent = $(this).parents("tr");
         var final = parseFloat(parent.find(".final-amount").text());
@@ -63,6 +63,7 @@ $script = '
     });
     var message = "' . $message . '";
     var negativeCount = ' . $negativeValCount . ';
+
     if(negativeCount > 0 || negativeVal == "Yes") {
         var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
         bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
@@ -99,6 +100,7 @@ $(document).on("click", "#adjust-lock", function(){
         var parent = $(this).parents("tr");
         var final = parseFloat(parent.find(".final-amount").text());
         var netPay = parseFloat(parent.find(".net-amount").val());
+
         if(final == "" ||  isNaN(final)){
             final=0;
         }
@@ -272,12 +274,12 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
                     $('#'+id).focus().select();
             });
             return false;
-        } else {              
-        if(net != '' &&  !isNaN(net)){
-         parent.find('.net-amount').val(net.toFixed(2));
-          SumAmount();
+        } else {
+            if(net != '' &&  !isNaN(net)){
+                parent.find('.net-amount').val(net.toFixed(2));
+                SumAmount();
+            }
         }
-       }
     });
 
 

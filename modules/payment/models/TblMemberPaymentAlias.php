@@ -71,7 +71,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     public $payment_cycle;
     public $otp_code;
     public $net_amount, $old_recovery, $recovery_dcs, $shortage_amount, $shortage_head_code;
-    public $payment_release_type, $shortage_amount_old,$union_bank_payment_code;
+    public $payment_release_type, $shortage_amount_old, $union_bank_payment_code;
 
     /**
      * @inheritdoc
@@ -93,9 +93,10 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
                 [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
 //            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
-                [['payment_release_type', 'shortage_amount_old','union_bank_payment_code'], 'safe'],
-                // [['bank_name','ifsc','bank_account_no','bank_code','branch_name','branch_code','beneficiary_name'], 'checkBankValidate', 'on' => ['finalize_payment']],
-                [['bmc_code'], 'checkBankValidate', 'on' => ['finalize_payment']],
+            [['payment_release_type', 'shortage_amount_old', 'union_bank_payment_code'], 'safe'],
+            // [['bank_name','ifsc','bank_account_no','bank_code','branch_name','branch_code','beneficiary_name'], 'checkBankValidate', 'on' => ['finalize_payment']],
+            [['bmc_code'], 'checkBankValidate', 'on' => ['finalize_payment']],
+                [['hold_type'], 'safe'],
         ];
     }
 
@@ -157,6 +158,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             'net_payable' => Yii::t('app', 'Final Pay'),
             'recovery_dcs' => Yii::t('app', 'DCS'),
             'payment_release_type' => Yii::t('app', 'Disburse Type'),
+            'hold_type' => Yii::t('app', 'Hold Type'),
         ];
     }
 
@@ -387,7 +389,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     public function getShortageRecoveryMpgMember() {
         return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
     }
-   
+
     public function getBmcWiseData() {
         $query = $this->find()
                 ->where(['payment_cycle_code' => $this->payment_cycle_code, 'bmc_code' => $this->bmc_code]);
@@ -397,7 +399,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
         return $query->all();
     }
 
-    public function checkBankValidate($attribute, $params){
+    public function checkBankValidate($attribute, $params) {
         $isValid = true;
         $pendingBankVerifyCount = $this->find()
                 ->where(['bmc_code' => $this->bmc_code, 'payment_cycle_code' => $this->payment_cycle_code, 'is_verified' => 0])
@@ -413,7 +415,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 ->andWhere(['or', ['ifsc' => null], ['bank_account_no' => null], ['bank_name' => null], ['bank_code' => null], ['branch_name' => null], ['branch_code' => null], ['beneficiary_name' => null], ['ifsc' => ''], ['bank_account_no' => ''], ['bank_name' => ''], ['bank_code' => ''], ['branch_name' => ''], ['branch_code' => ''], ['beneficiary_name' => '']])
                 ->count();
 
-        if($pendingBankVerifyCount > 0 || $pendingBankCount > 0 || $rejectBankVerifyCount > 0){
+        if ($pendingBankVerifyCount > 0 || $pendingBankCount > 0 || $rejectBankVerifyCount > 0) {
             $isValid = false;
             $message = "";
             if ($pendingBankVerifyCount > 0) {
@@ -429,4 +431,5 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
         }
         return $isValid;
     }
+
 }
