@@ -46,7 +46,7 @@ class TblPermanentHoldAmountTransaction extends \app\models\ChildModel
     public function rules()
     {
         return [
-            [['permanent_hold_amount_transaction_code','permanent_hold_amount_code','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','customer_type','customer_code','transaction_date','payment_cycle_code','hold_amount','release_amount','release_date','release_by','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type'], 'safe'],
+            [['permanent_hold_amount_code','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','customer_type','customer_code','transaction_date','payment_cycle_code','hold_amount','release_amount','release_date','release_by','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type'], 'safe'],
         ];
     }
 
