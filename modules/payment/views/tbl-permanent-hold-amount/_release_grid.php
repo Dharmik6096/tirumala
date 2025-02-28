@@ -16,7 +16,6 @@ $form = ActiveForm::begin([
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
         ]);
-// echo Html::hiddenInput('payment_cycle_code', 'payment_cycle_code', ['id' => 'payment_cycle_code']);
 echo Html::hiddenInput('release_date', '', ['id' => 'release_date']);
 $attribute = [
     ['class' => 'kartik\grid\CheckboxColumn',
@@ -25,23 +24,6 @@ $attribute = [
         'checkboxOptions' => function ($model) {
             return ['value' => $model['permanent_hold_amount_code']];
         }],
-    ['attribute' => 'union_code', 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'plant_code', 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'bmc_code',
-        'label' => Yii::t('app', 'BMC Code'),
-        'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false, 'visible' => false],
-    ['attribute' => 'bmc_code',
-        'label' => Yii::t('app', 'BMC Name'),
-        'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
     ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => false],
     ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -55,7 +37,13 @@ $attribute = [
     ['attribute' => 'customer_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'label' => Yii::t('app', 'Member Name'), 'filter' => false],
+    [
+        'attribute' => 'from_date',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+        }, 'label' => Yii::t('app', 'Period'), 'filter' => false],
     ['attribute' => 'actual_hold_amount', 'filter' => false],
+    ['attribute' => 'release_amount', 'filter' => false],
     ['attribute' => 'hold_amount', 'contentOptions' => ['class' => 'hold-amount'], 'filter' => false],
     ['attribute' => 'release_amount',
             'format' => 'raw',
@@ -64,10 +52,21 @@ $attribute = [
             }, 'filter' => false
         ],
     ['attribute' => 'hold_amount', 'contentOptions' => ['class' => 'pending-hold-amount'], 'filter' => false, 'label' => 'Pending Hold Amount', 'filter' => false],
-    
-    // ['attribute' => 'payment_cycle_code', 'value' => function($model) {
-    //         return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
-    //     }, 'filter' => false, 'format' => 'raw'],
+    [
+        'attribute' => 'created_at',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_date($model->created_at);
+        }, 'label' => Yii::t('app', 'Hold Date'), 'filter' => false],
+    [
+        'attribute' => 'release_date',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_date($model->release_date);
+        }, 'label' => Yii::t('app', 'Release Date'), 'filter' => false],
+    [
+        'attribute' => 'release_by',
+        'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->releaseBy, 'name');
+        }, 'label' => Yii::t('app', 'Release By'), 'filter' => false],
     ['attribute' => 'bank_code', 'label' => Yii::t('app', 'Bank Code'), 'filter' => false],
     ['attribute' => 'bank_name', 'label' => Yii::t('app', 'Bank Name'), 'filter' => false],
     ['attribute' => 'branch_code', 'label' => Yii::t('app', 'Branch Code'), 'filter' => false],
@@ -75,22 +74,12 @@ $attribute = [
     ['attribute' => 'ifsc', 'label' => Yii::t('app', 'IFSC'), 'filter' => false],
     ['attribute' => 'bank_account_no', 'label' => Yii::t('app', 'Bank Account No'), 'filter' => false],
     ['attribute' => 'beneficiary_name', 'label' => Yii::t('app', 'Beneficiary Name'), 'filter' => false],
-    ['attribute' => 'is_verified', 'label' => Yii::t('app', 'Is Verified'), 'filter' => false],
     [
-        'attribute' => 'from_date',
+        'attribute' => 'is_verified', 'label' => Yii::t('app', 'Is Verified'),
         'value' => function ($model) {
-            return Yii::$app->controls->view_date($model->from_date);
-        }, 'label' => Yii::t('app', 'From Date'), 'filter' => false],
-    [
-        'attribute' => 'to_date',
-        'value' => function ($model) {
-            return Yii::$app->controls->view_date($model->to_date);
-        }, 'label' => Yii::t('app', 'To Date'), 'filter' => false],
-    [
-        'attribute' => 'created_at',
-        'value' => function ($model) {
-            return Yii::$app->controls->view_date($model->created_at);
-        }, 'label' => Yii::t('app', 'Hold Date'), 'filter' => false],
+            return $model->is_verified == 1 ? 'Yes' : 'No';
+        }, 'filter' => false
+    ],
 ];
 
 $grid_option = [

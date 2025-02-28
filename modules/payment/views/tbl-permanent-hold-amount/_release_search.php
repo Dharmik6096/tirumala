@@ -2,10 +2,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\payment\models\TblMemberPaymentSearch */
-/* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="payment-release-search">
@@ -52,13 +48,6 @@ use yii\widgets\ActiveForm;
         if (!empty($dataProvider->getModels())) {
             ?>
             <div class="col-sm-2">
-                <?php
-                $where = json_encode(['data_lock_member' => 1, 'billing_lock_member' => 0, 'productsale_lock_member' => 1]);
-                echo Html::hiddenInput('customer_type', 'DCS', ['id' => 'customer_type']);
-                echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
-                echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
-                ?>
-                <?php // Yii::$app->dropdown->paymentCycle($model, $form, 'tblpermanentholdamountsearch-union_code,tblpermanentholdamountsearch-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
                 <?= Yii::$app->controls->date($model, $form, 'release_date'); ?>
             </div>
             <?php

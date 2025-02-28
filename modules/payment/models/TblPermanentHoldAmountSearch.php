@@ -80,8 +80,8 @@ class TblPermanentHoldAmountSearch extends TblPermanentHoldAmount
         }
         if($release){
             $query->where(['tbl_permanent_hold_amount.is_verified' => 1]);
+            $query->andwhere(['>','tbl_permanent_hold_amount.hold_amount', 0]);
         }
-        $query->andwhere(['>','tbl_permanent_hold_amount.hold_amount', 0]);
 
         $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
         $query->andFilterWhere(['>=', 'cast(tbl_permanent_hold_amount.from_date as date)', $this->from_date]);
@@ -94,6 +94,16 @@ class TblPermanentHoldAmountSearch extends TblPermanentHoldAmount
                 ->andFilterWhere(['tbl_permanent_hold_amount.mcc_plant_code' => $this->mcc_plant_code])
                 ->andFilterWhere(['tbl_permanent_hold_amount.bmc_code' => $this->bmc_code])
                 ->andFilterWhere(['tbl_permanent_hold_amount.dcs_code' => $this->dcs_code]);
+
+        $query->andFilterWhere(['like', 'tbl_permanent_hold_amount.hold_amount', $this->hold_amount])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.bank_code', $this->bank_code])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.bank_name', $this->bank_name])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.branch_code', $this->branch_code])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.branch_name', $this->branch_name])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.ifsc', $this->ifsc])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.beneficiary_name', $this->beneficiary_name])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.is_verified', $this->is_verified]);
         
         return $dataProvider;
     }
