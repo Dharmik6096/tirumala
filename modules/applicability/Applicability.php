@@ -81,6 +81,7 @@ class Applicability extends \yii\base\Module {
     public $update_applicability = FALSE;
     public $rateMccCode = [];
     public $with_applicable_code = false;
+    public $load_data_on_apply_to_checkbox = false;
 
     /**
      * @inheritdoc
@@ -203,6 +204,7 @@ class Applicability extends \yii\base\Module {
                     'login_type' => $this->login_type,
                     'is_bulk_notification' => $this->is_bulk_notification,
                     'periodic_applicability' => $this->periodic_applicability,
+                    'load_data_on_apply_to_checkbox' => $this->load_data_on_apply_to_checkbox,
         ]);
     }
 

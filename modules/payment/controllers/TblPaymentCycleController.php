@@ -208,6 +208,7 @@ class TblPaymentCycleController extends ChildController {
 
         $appModel->options = ['bmc'];
         $appModel->payment = true;
+        $appModel->load_data_on_apply_to_checkbox = true;
         $appModel->customer_type_wise_entry = true;
         $appModel->assignMultiData = true;
         $appModel->setModelFields = true;

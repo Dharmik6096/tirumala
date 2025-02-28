@@ -6,11 +6,16 @@ use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
+$fDate = date('Y-m-d', strtotime('+1 day', strtotime($ActiveModel->from_date)));
+$curDate = date('Y-m-d');
+if (strtotime($fDate) > strtotime($curDate)) {
+    $minDate = date('Y-m-d', strtotime($fDate));
+} else {
+    $minDate = $curDate;
+}
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblProject */
 /* @var $form yii\widgets\ActiveForm */
-$fDate = date('Y-m-d', strtotime('+1 day'));
-$minDate = date('d-m-Y', strtotime($fDate));
 ?>
 <div class="modal modal-default fade" id="MemberActiveModal" role="dialog">
     <div class="modal-dialog">
@@ -27,7 +32,7 @@ $minDate = date('d-m-Y', strtotime($fDate));
                                     'class' => 'form-group popup-form',
                                     'id' => 'activate-dcs-form',
                                 ],
-                                'action' => Url::to(['/dcsoperation/tbl-member-deactive/activate-member'])
+                                'action' => Url::to(['/dcsoperation/tbl-member-deactive/activate-member', 'member_deactive_code' => $member_deactive_code])
                     ]);
                     ?>
 
@@ -46,11 +51,11 @@ $minDate = date('d-m-Y', strtotime($fDate));
                                 'label' => Yii::t('app', 'Save'),
                                 'ajaxOptions' => [
                                     'type' => 'POST',
-                                    'url' => Url::to(['activate-member']),
+                                    'url' => Url::to(['activate-member', 'member_deactive_code' => $member_deactive_code]),
                                     'beforeSend' => new JsExpression("function(data){
 //                                                $('#loadercontent').show();
 //                                                $('#pageloader').show();
-                                                }"),
+                                    }"),
                                     'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
 //                                                                $("#loadercontent").hide();
@@ -69,6 +74,7 @@ $minDate = date('d-m-Y', strtotime($fDate));
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     $.each(data, function(key, val) {
+                                                                        bootbox.alert(\'<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-danger\"><i class=\"fa fa-times\"></i></div><span>\'+val+\'</span></div></div>\'); 
                                                                         $(".error-summary ul").append("<li>"+val+"</li>");
                                                                     });
                                                                     $(".error-summary").show();
