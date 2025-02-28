@@ -649,6 +649,21 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Previous Approval Detail</h4>
+            </div>
+            <div class="col-sm-12">
+                <?=
+                $this->render('_process_approval_grid', [
+                    'processApprovalModel' => $processApprovalModel,
+                    'processApprovalDataProvider' => $processApprovalDataProvider,
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
     <br>
 </div>
 <?php
