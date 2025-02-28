@@ -156,6 +156,8 @@ class TblUserDownloadAck extends \app\models\ChildModel {
             $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
         } elseif ($org_type == 'VLC') {
             $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
+        } elseif ($org_type == 'PLANT') {
+            $query->andWhere(['plant_code' => $this->plant_code])->andWhere(['=', 'ISNULL(mcc_plant_code,\'\')', '']);
         }
         $bmc = $query->all();
         return $bmc;

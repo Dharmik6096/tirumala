@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\installation\models\TblUserRoleMapping;
 use app\modules\installation\models\TblRole;
 use app\modules\installation\models\TblUserDownloadAck;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_user_android".
@@ -59,7 +60,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['installation', 'importCsv']],
+                [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code'], 'required', 'except' => ['installation', 'importCsv']],
                 [['username', 'name', 'password', 'repeat_password', 'mobile_no', 'org_type', 'org_code'], 'required', 'on' => 'importCsv'],
                 [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no', 'device_id'], 'safe'],
                 [['originating_type'], 'integer'],
@@ -86,6 +87,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => ['importCsv']],
                 [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
                 [['role_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRole::className(), 'targetAttribute' => ['role_code' => 'role_code'], 'on' => ['importCsv']],
+                [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'on' => ['importCsv']],
         ];
     }
 
@@ -148,6 +150,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 return 'BMC';
             } elseif (!empty($data->mcc_plant_code)) {
                 return 'MCC';
+            } elseif (!empty($data->plant_code)) {
+                return 'PLANT';
             }
         } elseif ($return == 'name') {
             if (!empty($data->dcs_code)) {
@@ -156,6 +160,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 return Yii::$app->general->getforeignkey($data->bmcCode, 'bmc_name');
             } elseif (!empty($data->mcc_plant_code)) {
                 return Yii::$app->general->getforeignkey($data->mccCode, 'name');
+            } elseif (!empty($data->plant_code)) {
+                return Yii::$app->general->getforeignkey($data->plantCode, 'name');
             }
         } else {
             if (!empty($data->dcs_code)) {
@@ -164,6 +170,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 return $data->bmc_code;
             } elseif (!empty($data->mcc_plant_code)) {
                 return $data->mcc_plant_code;
+            } elseif (!empty($data->plant_code)) {
+                return $data->plant_code;
             }
         }
     }
@@ -337,10 +345,17 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 $this->mcc_plant_code = $this->org_code;
                 $this->union_code = Yii::$app->general->getforeignkey($this->mccCode, 'union_code');
                 $this->plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
+            } else if (strtoupper($this->org_type) == 'PLANT') {
+                $this->plant_code = $this->org_code;
+                $this->union_code = Yii::$app->general->getforeignkey($this->plantCode, 'union_code');
             } else {
                 $this->addError('org_type', Yii::t('app/validation', 'Invalide Org Type'));
             }
         }
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
 }
