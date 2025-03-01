@@ -57,6 +57,7 @@ use app\modules\general\models\TblProcessApproval;
 use app\modules\organisation\models\TblDcs;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\document\controllers\TblAttachmentController;
+use app\modules\general\models\TblProcessApprovalSearch;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -209,12 +210,20 @@ class TblDcsProvisionalController extends ChildController {
         $dataProviderOther = new ActiveDataProvider([
             'query' => $attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_dcs_provisional']),
         ]);
+
+        $processApprovalModel = new TblProcessApprovalSearch();
+        $processApprovalModel->process_name = 'society';
+        $processApprovalModel->process_code = $id;
+        $processApprovalDataProvider = $processApprovalModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'dataProviderOther' => $dataProviderOther,
-                    'attachment' => $attachment
+                    'attachment' => $attachment,
+                    'processApprovalModel' => $processApprovalModel,
+	                'processApprovalDataProvider' => $processApprovalDataProvider,
         ]);
     }
 

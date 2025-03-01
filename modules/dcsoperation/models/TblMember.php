@@ -612,7 +612,7 @@ class TblMember extends ChildModel {
         $max_qty_config_val = Yii::$app->general->getUnionConfiguration($this->union_code, 'max_qty_limit_member', 'PORTAL');
         $this->x_col3 = !empty($this->max_allowed_qty) ? $this->max_allowed_qty : $this->x_col3;
         if (empty($this->x_col3)) {
-            $this->x_col3 = !empty($max_qty_config_val) && $max_qty_config_val > 0 ? $max_qty_config_val : 15;
+            $this->x_col3 = (!empty($max_qty_config_val) && ($max_qty_config_val > 0)) ? $max_qty_config_val : 15;
         }
     }
 
