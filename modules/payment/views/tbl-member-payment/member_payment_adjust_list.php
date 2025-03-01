@@ -157,7 +157,19 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <?php
                                     if($member_payment_hold_type){ ?>
                                         <td class="no_padding_input hide_help_block">
-                                            <?php echo  Yii::$app->dropdown->dropdownStatic('hold_type', $model, $form, 'grid-dropdown hold-type', '', false, 'hold_type[' . $index . ']', false, false, true, true, false, $m['hold_type']); ?>
+                                            <?php 
+                                                $holdTypeData = Yii::$app->dropdown->getRecords('hold_type')['data'];
+                                                echo $form->field($model, 'hold_type', ['options' => ['class' => 'hold-type']])->dropDownList(
+                                                    $holdTypeData,
+                                                    [
+                                                        'prompt' => Yii::t('app', 'Select'),
+                                                        'class' => 'hold_type form-control',
+                                                        'id' => 'tblmemberpaymentalias-hold_type-' . $index,
+                                                        'name' => 'TblMemberPaymentAlias[hold_type][' . $index . ']',
+                                                        'options' => [$m['hold_type'] => ['Selected' => true]]
+                                                    ]
+                                                )->label(false); 
+                                            ?>
                                         </td>
                                     <?php
                                     } ?>
@@ -274,10 +286,12 @@ $tot_amt = array_sum(array_map(function ($array) {
                         'beforeSend' => new JsExpression('function(data){
                                             $(".process_lock_flag_member").val("Process");
                                             var negativeVal = "No";
+                                            var permanentAndPossitiveValue = "No";
                                             $(".final-amount").each(function() {
                                                 var parent = $(this).parents("tr");
                                                 var final = parseFloat(parent.find(".final-amount").text());
                                                 var netPay = parseFloat(parent.find(".net-amount").val());
+                                                var holdType = parent.find(".hold_type").val();
                                                 if(final == "" ||  isNaN(final)){
                                                     final=0;
                                                 }
@@ -286,12 +300,18 @@ $tot_amt = array_sum(array_map(function ($array) {
                                                         negativeVal = "Yes";
                                                     }
 //                                                }
+                                                if(holdType == "permanent" && netPay > 0){
+                                                    permanentAndPossitiveValue = "Yes";
+                                                }
                                             });
                                             var message = "' . $message . '";
                                             var negativeCount = ' . $negativeValCount . ';
                                             var dispMessage = "";
                                             if(negativeCount > 0 || negativeVal == "Yes") {
                                                 dispMessage = dispMessage+"' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+                                            }
+                                            if(permanentAndPossitiveValue == "Yes") {
+                                                dispMessage = dispMessage+"<br>Net Payable value must be zero for all users when Hold Type is Permanent";
                                             }
                                             if(milk_short_recovery_member == 1){
                                                 var pending_shortage = parseFloat(0.00);
