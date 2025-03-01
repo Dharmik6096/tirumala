@@ -79,7 +79,6 @@ $form = ActiveForm::begin([
 $script = "
 var party =`{$model->party}`;
 party = $.parseJSON(party);
-console.log(party);
 $('#tblvehicletrip-plant_code').on('change',function(){
     var plant_code = $('#tblvehicletrip-plant_code').val(); 
     $.ajax({
@@ -97,7 +96,7 @@ $('#tblvehicletrip-plant_code').on('change',function(){
             var options='';  
 
             $.each(plant_code, function(index, plant_code) {
-                options += '<option value=\"' + plant_code + '-plant' + '\">' + $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text() + ' - PLANT</option>';
+                options += '<option value=\"' + plant_code + '#plant' + '\">' + $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text() + ' - PLANT</option>';
             });          
             $.each(obj1.data, function(index, value) {
                     if(jQuery.inArray(index,selarray) == -1){   

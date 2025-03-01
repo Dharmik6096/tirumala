@@ -89,18 +89,18 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $bmc_array = $this->model->bmc_code;
             $is_valid_trip = FALSE;
             if (count($bmc_array) > 2) {
-                $sl_detail = explode('-', $bmc_array[0]);
+                $sl_detail = explode('#', $bmc_array[0]);
                 $sl_code = $sl_detail[0];
                 $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
 
-                $el_detail = explode('-', $bmc_array[count($bmc_array) - 1]);
+                $el_detail = explode('#', $bmc_array[count($bmc_array) - 1]);
                 $el_code = $el_detail[0];
                 $el_type = !empty($el_detail[1]) ? $el_detail[1] : 'bmc';
 
                 $is_valid_trip = ($sl_type == 'plant' && $el_type == 'plant') ? TRUE : FALSE;
                 if ($is_valid_trip) {
                     $this->model->plant_code = $sl_code;
-                    $fl_detail = explode('-', $bmc_array[1]);
+                    $fl_detail = explode('#', $bmc_array[1]);
                     $this->model->fl_code = $fl_detail[0];
                     $this->model->fl_type = !empty($fl_detail[1]) ? $fl_detail[1] : 'bmc';
                     if ($this->model->fl_type == 'bmc') {
@@ -136,8 +136,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         if($lastIndex == $key){
                             $trip_detai->is_last_destination = 1;
                         }
-                        $sloc_detail = explode('-', $bmc);
-                        $dloc_detail = explode('-', $bmc_array[$key + 1]);
+                        $sloc_detail = explode('#', $bmc);
+                        $dloc_detail = explode('#', $bmc_array[$key + 1]);
 
                         $trip_detai->source_org_code = $sloc_detail[0];
                         $trip_detai->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
@@ -161,10 +161,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $save_model[] = $trip_detai;
                     }
                     if ($validate) {
-                        echo '<pre>';
-                        print_r($save_model);
-                        echo '</pre>';
-                        die;
                         $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
                         if ($transaction == 'customRedirect') {
                             if ($result[2]['inspection_require']) {
@@ -183,20 +179,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
         $this->model->bmc_code = $bmc_array;
         if($this->model->type == 'party'){
-            $party = TblPartyMaster::find()->select(["CONCAT(party_master_code, '-party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])->where(['is_active' => 1])->asArray()->all();
+            $party = TblPartyMaster::find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])->where(['is_active' => 1])->asArray()->all();
             $this->model->party = !empty($party) ? Json::encode($party) : '';
         }
         return $this->customRender();
     }
-
-    // public function actionCreateWithParty()
-    // {
-    //     $this->model = new TblVehicleTrip();
-    //     $this->model->scenario = 'createTrip';
-    //     $this->model->transaction_date = date('Y-m-d');
-    //     $this->viewFile = 'create_with_party';
-    //     return $this->customRender();
-    // }
 
     public function actionGenerateChallan($id) {
         $model = new TblVehicleTrip();

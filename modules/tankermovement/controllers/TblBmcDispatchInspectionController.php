@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\configuration\models\TblConfig;
 use app\modules\tankermovement\models\TblConfigTxnResult;
+use app\modules\tankermovement\models\TblVehicleTrip;
+use app\modules\tankermovement\models\TblVehicleTripHistory;
 
 /**
  * TblBmcDispatchInspectionController implements the CRUD actions for TblBmcDispatchInspection model.
@@ -90,6 +92,14 @@ class TblBmcDispatchInspectionController extends \app\controllers\ChildControlle
                     $config_detail = $config_model->configCode;
                     $saveModel[] = $config_model;
                     $cnt++;
+                }
+                $tripModel = TblVehicleTrip::find()->where(['vehicle_trip_code' => $trip_detail->vehicle_trip_code])->one();
+                if(!empty($tripModel)){
+                    $historyModel = new TblVehicleTripHistory();
+                    Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                    $tripModel->trip_sub_status = 'quality_checked';
+                    $saveModel[] = $tripModel;
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Inspection', 'create']);
                 if ($transaction == 'customRedirect') {

@@ -202,7 +202,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $trip_detai->vehicle_code = $model->vehicle_code;
             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
             $trip_detai->trip_code = $model->trip_code;
-            $trip_detai->arrival_time = date('Y-m-d H:i:s');
+            // $trip_detai->arrival_time = date('Y-m-d H:i:s');
             if (empty($vehicle_trip_detail_code)) {
                 $vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . (((int) substr($last_trip->vehicle_trip_detail_code, strlen($trip_detai->vehicle_trip_code) + 1)) + 1);
             }
