@@ -2049,6 +2049,7 @@ ul.orderable label.checked {
 .grid-search.no-effect{
     position: relative !important;
     width: auto !important;
+    margin: auto;
 }
 .report-grid{
     position: relative;
@@ -2915,7 +2916,7 @@ td.action-cell{
 
 .panel-main .panel-body .grid-search .btn {
     padding: 3px 15px;
-    float: right;
+    /* float: right; */
 }
 
 .dropdown-menu{
@@ -2927,10 +2928,10 @@ td.action-cell{
     font-size: 11px;
 }
 
-.modal .close{
+/* .modal .close{
     top: 6px !important;
     right: 12px !important;
-}
+} */
 
 .dynagrid-config-form .form-group .input-group-addon{
     width: 0%;
@@ -5598,4 +5599,28 @@ h4{
 }
 .mt-10 {
     margin-top: 10px !important;
+}
+
+#MemberPaymentAdjustmentModel .hold_type {
+    width: auto;
+    font-size: 12px;
+    border-radius: 2px;
+    color: #607188;
+    padding: 4px 28px 4px 4px;
+}
+
+#MemberPaymentAdjustmentModel .was-validated .form-control:valid, .form-control.is-valid {
+    background-image: none !important;
+    padding-right: 0px !important;
+}
+#MemberPaymentAdjustmentModel .mb-3 {
+    margin-bottom: 0px !important;
+}
+
+.modal-header {
+    display: block !important;
+}
+
+.mb-5 {
+    margin-bottom: 5px !important;
 }

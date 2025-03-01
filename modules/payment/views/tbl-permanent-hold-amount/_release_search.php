@@ -37,7 +37,7 @@ use yii\widgets\ActiveForm;
         <div class="col-sm-2">
             <?= Yii::$app->controls->date($model, $form, 'to_date'); ?>
         </div>        
-        <div class=" col-sm-2 form-group mt23">
+        <div class=" col-sm-2 form-group mt18 mb-5">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         </div>
     </div>

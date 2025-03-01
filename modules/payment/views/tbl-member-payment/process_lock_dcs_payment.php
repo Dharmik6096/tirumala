@@ -134,11 +134,11 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                         <?php foreach ($dataProvider->getModels() as $data) { ?>
                             <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
                         <?php } ?>
-                        <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
+                        <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary btn-login', 'id' => 'adjust']); ?>
                         <?php //Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
                         <?php // Yii::$app->controls->save('Next', $model); ?>
                     <?php } ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?>        
+                    <?= Yii::$app->controls->custombutton('Cancel', 'create-payment', '', 'btn-login'); ?>        
                 </div>
                 <?php ActiveForm::end(); ?>
 

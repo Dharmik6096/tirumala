@@ -47,7 +47,7 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
             ?>
             <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblmemberpaymentalias-union_code,tblmemberpaymentalias-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
         </div>
-        <div class=" col-sm-3 form-group mt23">
+        <div class=" col-sm-3 form-group mt18">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         </div>
     </div>

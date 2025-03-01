@@ -91,7 +91,7 @@ $grid_option = [
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 if (!empty($dataProvider->getModels())) {
-    echo Html::button(Yii::t('app', 'Release'), ['class' => 'btn btn-primary ', 'id' => 'release']);
-    echo Yii::$app->controls->custombutton('Cancel', 'create-payment');
+    echo Html::button(Yii::t('app', 'Release'), ['class' => 'btn btn-primary btn-login mr-2', 'id' => 'release']);
+    echo Yii::$app->controls->custombutton('Cancel', 'create-payment', '', 'btn-login');
 } ?>
 <?php ActiveForm::end(); ?>
