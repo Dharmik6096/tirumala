@@ -1038,7 +1038,8 @@ class GeneralFunctions extends Component {
         Yii::$app->{$db}->password = $connection->db_password;
     }
 
-    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '', $appendVlc = true) {
+    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '', $appendVlc = true, $plantFilter = 0) {
+        //$plantFilter (0-noimpact/1-onlyforplant/2-includeplant)
         $sentboxArray = [];
         $mcc = [];
         $bmc = [];
@@ -1059,6 +1060,16 @@ class GeneralFunctions extends Component {
             foreach ($plants as $pl) {
                 $plant[] = (string) $pl;
             }
+        }
+        if ($plantFilter == 1) {
+            $plant = array_unique($plant);
+            foreach ($plant as $key => $plantCode) {
+                $array = [];
+                $array['code'] = $plantCode;
+                $array['type'] = 'PLANT';
+                $sentboxArray[] = $array;
+            }
+            return $sentboxArray;
         }
         if (!empty($plant)) {
             $model = new TblMccPlant();
@@ -1144,6 +1155,32 @@ class GeneralFunctions extends Component {
             $array['type'] = 'VLC';
             $sentboxArray[] = $array;
         }
+
+        /* include plant for sentbox */
+        if ($plantFilter == 2) {
+            if (empty($union_code)) {
+                foreach ($bmc as $key => $bmcCode) {
+                    $model = new TblDcsBmc();
+                    $model->bmc_code = $bmcCode;
+                    $modelData = $model->getDcsBmcData('bmc_code');
+                    $union_code = !empty($modelData) ? $modelData->union_code : '';
+                    break;
+                }
+                $model = new TblPlant();
+                $model->union_code = $union_code;
+                $modelData = $model->getPlantRecords();
+                $plant = array_keys($modelData);
+            }
+            $plant = array_unique($plant);
+            foreach ($plant as $key => $plantCode) {
+                $array = [];
+                $array['code'] = $plantCode;
+                $array['type'] = 'PLANT';
+                $sentboxArray[] = $array;
+            }
+        }
+        /* include plant for sentbox */
+
         return $sentboxArray;
     }
 

@@ -12,6 +12,7 @@ use app\modules\geo\models\TblSubDistricts;
 use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_party_master".
@@ -84,7 +85,7 @@ class TblPartyMaster extends \app\models\ChildModel {
                         $this->addError($attribute, $error);
                 },],
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            ];
+        ];
         $client_rules = Yii::$app->customvalidation->getRules('TblPartyMaster', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
@@ -173,6 +174,28 @@ class TblPartyMaster extends \app\models\ChildModel {
 
     public function getHamletCode() {
         return $this->hasOne(TblHamlets::className(), ['hamlet_code' => 'hamlet_code']);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', false, 1);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
