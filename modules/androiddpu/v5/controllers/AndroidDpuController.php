@@ -191,7 +191,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
             $orgCode = $org_type == 'VLC' ? $ackModel->dcs_code : ($org_type == 'BMC' ? $ackModel->bmc_code : $ackModel->mcc_plant_code);
             $orgCode = $org_type == 'PLANT' ? $ackModel->plant_code : $orgCode;
             //CHECK MAIN USER EXIST
-            $username = [$orgCode, $orgCode . '01'];
+            $username = ($org_type == 'PLANT') ? [$orgCode . '98', $orgCode . '99'] : [$orgCode, $orgCode . '01'];
             $user = $androidUsr->getMainExistData($org_type, $ackModel, $username);
             if (!empty($user)) {
                 if (!empty($ActiveUser)) {
@@ -212,7 +212,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
                 $contact = $androidUsr->getContactDetails($org_type, $ackModel);
                 $androidUsr->user_code = Yii::$app->general->getCodeAutoIncrement($androidUsr);
                 $androidUsr->name = !empty($contact) ? $contact->firstname : $org_type;
-                $androidUsr->username = $orgCode . '01';
+                $androidUsr->username = ($org_type == 'PLANT') ? ($orgCode . '98') : ($orgCode . '01');
                 $androidUsr->password = Yii::$app->general->generateRandomString();
                 $androidUsr->mobile_no = !empty($contact) ? $contact->mobile_no : '';
                 $androidUsr->email = !empty($contact) ? $contact->email : '';
@@ -240,7 +240,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
                 $androidUser->user_code = $usrAckModel->user_code + 1;
                 $androidUser->name = $org_type == 'VLC' ? 'VLC Admin' : ($org_type == 'BMC' ? 'BMC Admin' : 'BMC Admin');
                 $androidUser->name = $org_type == 'PLANT' ? 'PLANT Admin' : $androidUser->name;
-                $androidUser->username = $orgCode;
+                $androidUser->username = ($org_type == 'PLANT') ? ($orgCode . '99') : $orgCode;
                 $androidUser->password = 'am' . $orgCode . 'cs';
                 $androidUser->mobile_no = '0000000000';
                 $saveModel[] = $androidUser;
