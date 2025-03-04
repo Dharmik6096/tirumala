@@ -92,7 +92,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
         'dock-mapping' => function ($url, $model) {
-            $options = ['data-name' => $model->name, 'data-val' => $model->plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Plant Dock Mapping'];
+            $options = ['data-name' => $model->name, 'data-val' => $model->plant_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Plant Dock Mapping'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-plant/plant-dock-mapping', 'id' => $model->plant_code], $options);
         },
     ]

@@ -17,7 +17,7 @@ if ($mapping_flag == 'view') {
 } else {
     $grid_option['actions']['delete-mapping'] = function($url, $model) use ($mapping_flag) {
         $class = ($mapping_flag == 'view') ? 'link-disable' : '';
-        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete Dock Mapping', 'class' => $class];
+        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Delete Dock Mapping', 'class' => $class];
         return GhostHtml::a('<i class="fa fa-trash"></i>', ['tbl-plant/delete-dock-mapping', 'id' => $model->plant_dock_mapping_code], $options);
     };
 }
