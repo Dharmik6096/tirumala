@@ -665,6 +665,7 @@ $(".shortage-recovery-amount").each(function(){
     var shortRecAmount = $(this).val();
     if(shortRecAmount > 0){
         $("#adjust-lock-dcs-data").prop("disabled", true);
+        $("#adjust-lock-dcs-data").addClass("disabled");
     }
 });
            ';
