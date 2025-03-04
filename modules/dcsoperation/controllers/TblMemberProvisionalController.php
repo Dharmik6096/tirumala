@@ -44,6 +44,7 @@ use app\modules\dcsoperation\models\TblMemberProvisionalAnimalDetailsSearch;
 use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberFamilyDetailsHistory;
+use app\modules\general\models\TblProcessApprovalSearch;
 use Exception;
 
 /**
@@ -96,6 +97,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $shareMemberModel->provisional_member_code = $id;
         $shareDataProvider = $shareMemberModel->search(Yii::$app->request->queryParams);
 
+        $processApprovalModel = new TblProcessApprovalSearch();
+        $processApprovalModel->process_name = 'member';
+        $processApprovalModel->process_code = $id;
+        $processApprovalDataProvider = $processApprovalModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $this->model,
                     'dataProvider' => $dataProvider,
@@ -108,6 +114,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     'animalDataProvider' => $animalDataProvider,
                     'shareMemberModel' => $shareMemberModel,
                     'shareDataProvider' => $shareDataProvider,
+                    'processApprovalModel' => $processApprovalModel,
+                    'processApprovalDataProvider' => $processApprovalDataProvider
         ]);
     }
 
