@@ -502,7 +502,7 @@ class TblUnions extends ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', true, 2);
         foreach ($sentboxArray as $sent) {
