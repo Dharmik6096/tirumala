@@ -1355,6 +1355,18 @@ class TblDcs extends ChildModel {
                     });
             asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
             return $dcs;
+        } else if (in_array($type, [3])) {
+            $plantModel = new TblPlant();
+            $query = $plantModel->find()->where(['is_active' => 1]);
+            if (Yii::$app->session->get('Plant') !== '') {
+                $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+            }
+            $plant = $query->all();
+            $plant = ArrayHelper::map($plant, 'plant_code', function($plant) {
+                        return $plant->ref_code . ' - ' . $plant->name;
+                    });
+            asort($plant, SORT_NATURAL | SORT_FLAG_CASE);
+            return $plant;
         }
     }
 

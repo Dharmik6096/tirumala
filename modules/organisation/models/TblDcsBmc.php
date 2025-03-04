@@ -368,7 +368,7 @@ class TblDcsBmc extends \app\models\ChildModel {
     public function afterSave($insert, $changedAttributes) {
         $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
         $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '', TRUE, 2);
         foreach ($sentboxArray as $sent) {
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
@@ -377,8 +377,8 @@ class TblDcsBmc extends \app\models\ChildModel {
                 }
             }
         }
-        if(!empty($this->set_master_hierarchy) && $flag == 'INSERT'){
-            foreach($this->set_master_hierarchy as $hierarchy) {
+        if (!empty($this->set_master_hierarchy) && $flag == 'INSERT') {
+            foreach ($this->set_master_hierarchy as $hierarchy) {
                 $hierarchy->save();
             }
         }

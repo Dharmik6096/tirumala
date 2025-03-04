@@ -202,7 +202,7 @@ class TblPlant extends \app\models\ChildModel {
     public function afterSave($insert, $changedAttributes) {
         $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
         $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes($this->plant_code, '', '');
+        $sentboxArray = Yii::$app->general->getSentBoxCodes($this->plant_code, '', '', '', '', TRUE, 2);
         foreach ($sentboxArray as $sent) {
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
@@ -211,8 +211,8 @@ class TblPlant extends \app\models\ChildModel {
                 }
             }
         }
-        if(!empty($this->set_master_hierarchy) && $flag == 'INSERT'){
-            foreach($this->set_master_hierarchy as $hierarchy) {
+        if (!empty($this->set_master_hierarchy) && $flag == 'INSERT') {
+            foreach ($this->set_master_hierarchy as $hierarchy) {
                 $hierarchy->save();
             }
         }
@@ -246,6 +246,21 @@ class TblPlant extends \app\models\ChildModel {
         return ArrayHelper::map($data, function($data) {
                     return (string) $data->plant_code;
                 }, 'name');
+    }
+
+    public function getData($ref_code_check = FALSE) {
+        if ($ref_code_check) {
+            $data = $this->find()
+                    ->where(['or', ['plant_code' => $this->plant_code], ['ref_code' => $this->plant_code]])
+                    ->andWhere(['is_active' => 1])
+                    ->all();
+            $data = (count($data) == 1) ? $data : [];
+        } else {
+            $data = $this->find()
+                    ->where(['plant_code' => $this->plant_code])
+                    ->one();
+        }
+        return $data;
     }
 
 }

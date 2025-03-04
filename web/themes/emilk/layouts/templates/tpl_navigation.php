@@ -197,6 +197,14 @@ echo GhostMenu::widget([
                     'template' => '<a  class="dropdown-toggle" href="#">Tanker Movement <b class="caret"></b></a>',
                     'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
+                         [
+                            'options' => ['class' => 'dropdown-submenu toggle_right'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Weight Bridge') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'Material Master', 'url' => ['/tankermovement/tbl-material-master/index'], 'active' => ($cntrl == 'tbl-material-master')],
+                                    ['label' => 'Raw Material Receipt', 'url' => ['/tankermovement/tbl-raw-fg-material-receipt/index'], 'active' => ($cntrl == 'tbl-raw-fg-material-receipt')],
+                            ]
+                        ],
                             ['label' => 'Tanker Rate', 'url' => ['/tankermovement/tbl-tanker-rate/index'], 'active' => ($cntrl == 'tbl-tanker-rate')],
                             ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
                         //                        ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],

@@ -297,7 +297,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
         foreach ($sentboxArray as $sent) {
             $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);

@@ -12,33 +12,41 @@ use kartik\grid\GridView;
     <h5 class="panel-heading"><?= Yii::t('app', 'Mapping Details') ?></h5>
     <?php
     $attribute = [
-        ['attribute' => 'device_master_code', 'value' => function($model) {
+            ['attribute' => 'device_master_code', 'value' => function($model) {
                 $tab = Yii::$app->general->getforeignkey($model->deviceMasterCode, 'tab_type');
                 $tabtype = !empty($tab) ? Yii::$app->dropdown->getRecords('tab_type')['data'][$tab] : '';
                 $add = Yii::$app->general->getforeignkey($model->deviceMasterCode, 'mac_address');
                 return $tabtype . ' (' . $add . ')';
             }, 'filter' => false],
-        ['attribute' => 'applicability_type',
+            ['attribute' => 'applicability_type',
             'filter' => FALSE,
             'value' => function ($model) {
                 return isset($model->applicability_type) ? Yii::$app->dropdown->getRecords('applicability_type')['data'][$model->applicability_type] : '';
             },],
-        ['attribute' => 'applicability_code', 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+            ['attribute' => 'applicability_code', 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
                 if (in_array($model->applicability_type, [1])) {
                     return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
                 } elseif (in_array($model->applicability_type, [2])) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                } elseif (in_array($model->applicability_type, [3])) {
+                    return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
                 }
             }, 'filter' => FALSE],
-        ['attribute' => 'applicability_code', 'value' => function($model) {
+            ['attribute' => 'applicability_code', 'value' => function($model) {
                 if (in_array($model->applicability_type, [1])) {
                     return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
                 } elseif (in_array($model->applicability_type, [2])) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                } elseif (in_array($model->applicability_type, [3])) {
+                    return Yii::$app->general->getforeignkey($model->plantCode, 'name');
                 }
             }, 'visible' => true, 'filter' => FALSE],
-        ['attribute' => 'wef_date', 'value' => function($model) {
+            ['attribute' => 'wef_date', 'value' => function($model) {
                 return Yii::$app->controls->view_date($model->wef_date);
+            }, 'filter' => FALSE],
+            ['attribute' => 'dock_no', 'value' => function($model) {
+                $dock_name = Yii::$app->general->getforeignkey($model->dockNo, 'dock_name');
+                return !empty($dock_name) ? $dock_name . '(' . $model->dock_no . ')' : '';
             }, 'filter' => FALSE],
     ];
 

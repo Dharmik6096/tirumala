@@ -1361,8 +1361,10 @@ class TblDcsController extends ChildController {
                 $is_call = true;
                 if ($parents[0] == 2 && empty($bmcCode)) {
                     $is_call = false;
+                } else if ($parents[0] == 1 && empty($mccCode)) {
+                    $is_call = false;
                 }
-                if ($is_call && !empty($mccCode)) {
+                if ($is_call) {
                     $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode, $bmcCode);
                     foreach ($data as $key => $val) {
                         $out[] = array('id' => $key, 'name' => $val);

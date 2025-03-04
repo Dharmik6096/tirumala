@@ -1627,7 +1627,7 @@ class DropDown extends Component {
             'applicability_type' => [
                 'name' => 'applicability_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'BMC'), 2 => Yii::t('app', 'DCS')],
+                'data' => [1 => Yii::t('app', 'BMC'), 2 => Yii::t('app', 'DCS'), 3 => Yii::t('app', 'Plant')],
             ],
             'transfer_type' => [
                 'name' => 'transfer_type',
@@ -2189,6 +2189,7 @@ class DropDown extends Component {
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
             'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
             'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'dock_no' => ['name' => 'dock_no', 'fields' => 'dock_no,dock_name,dock_no', 'prompt' => Yii::t('app', 'Select Dock No'), 'model' => 'TblPlantDockMapping', 'depend' => 'plant_code'],
         ];
         return $label[$l];
     }

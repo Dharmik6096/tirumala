@@ -210,5 +210,21 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fas fa-user-c
                 ?>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 view-subtitle padding_10_0 theme-box hide-grid-settings">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading mb15">Plant Dock Mapping</h4>
+                </div>
+                <div class="col-sm-12">
+                    <?=
+                    $this->render('_plant_dock_grid', [
+                        'dockdataProvider' => $dockdataProvider,
+                        'docksearchModel' => $docksearchModel,
+                        'mapping_flag' => 'view',
+                    ])
+                    ?>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
