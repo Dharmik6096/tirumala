@@ -920,7 +920,6 @@ class DropDown extends Component {
                 unset($records[$value]);
             }
         }
-
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
                         'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
@@ -1997,6 +1996,11 @@ class DropDown extends Component {
                 'name' => 'type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['bmc_collection' => Yii::t('app', 'BMC Collection'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
+            ],
+            'hold_type' => [
+                'name' => 'hold_type',
+                'prompt' => Yii::t('app', 'Hold Type'),
+                'data' => ['next_payment' => Yii::t('app', 'Next Payment'), 'permanent' => Yii::t('app', 'Permanent')],
             ],
             'operation_perform' => [
                 'name' => 'action_perform',
