@@ -24,7 +24,7 @@ use yii\web\Response;
  */
 class TblVehicleTripController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['open-trip-list'];
+    public $freeAccessActions = ['open-trip-list', 'open-trip-detail-list'];
 
     /**
      * Lists all TblVehicleTrip models.
@@ -133,7 +133,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         if ($key == 0 || $key == count($bmc_array) - 1) {
                             continue;
                         }
-                        if($lastIndex == $key){
+                        if ($lastIndex == $key) {
                             $trip_detai->is_last_destination = 1;
                         }
                         $sloc_detail = explode('#', $bmc);
@@ -178,7 +178,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
         }
         $this->model->bmc_code = $bmc_array;
-        if($this->model->type == 'party'){
+        if ($this->model->type == 'party') {
             $party = TblPartyMaster::find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])->where(['is_active' => 1])->asArray()->all();
             $this->model->party = !empty($party) ? Json::encode($party) : '';
         }
@@ -322,12 +322,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
-    public function actionGetVehicleDetail()
-    {
+    public function actionGetVehicleDetail() {
         $status = 'error';
         $vehicleData = [];
         $postData = Yii::$app->request->post();
-        if(!empty($postData['vehicle_code'])){
+        if (!empty($postData['vehicle_code'])) {
             $vehicleData = TblVehicleMaster::find()->where(['vehicle_code' => $postData['vehicle_code']])->one();
             $status = 'success';
         }
@@ -335,6 +334,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
+
     public function actionGateProcess($vehicle_trip_detail_code = '', $actionType = '') {
         if (Yii::$app->request->isPost) {
             $postData = Yii::$app->request->post('TblVehicleTripDetail');
@@ -371,6 +371,22 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     'tripDetail' => $tripDetail,
                     'actionType' => $actionType
         ]);
+    }
+
+    public function actionOpenTripDetailList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $trip = new TblVehicleTripDetail();
+                $data = $trip->getOpenTripDetailList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

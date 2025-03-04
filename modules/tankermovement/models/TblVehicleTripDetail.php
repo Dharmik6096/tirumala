@@ -213,4 +213,23 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return ArrayHelper::map($data, 'trip_code', 'trip_code');
     }
 
+    public function getOpenTripDetailList($union_code) {
+        $currentDate = date('Y-m-d H:i:s');
+        $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
+
+        $query = TblVehicleTripDetail::find()
+                ->select(['tbl_vehicle_trip.trip_code'])
+                ->distinct()
+                ->joinWith(['tripCode'])
+                ->where(['tbl_vehicle_trip.union_code' => $union_code, 'is_last_destination' => 1])
+                ->andWhere(['tbl_vehicle_trip.trip_status' => ['open', 'tankerfull']])
+                ->andWhere(['<', 'transaction_datetime', $currentDate]);
+
+        if (!empty($plants)) {
+            $query->andWhere(['plant_code' => $plants]);
+        }
+        $data = $query->all();
+        return ArrayHelper::map($data, 'trip_code', 'trip_code');
+    }
+
 }
