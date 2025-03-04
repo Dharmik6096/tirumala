@@ -199,7 +199,7 @@ echo GhostMenu::widget([
                     'items' => [
                             [
                             'options' => ['class' => 'dropdown-submenu'],
-                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Weight Bridge') . '<b class="caret"></b></a>',
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Weigh Bridge') . '<b class="caret"></b></a>',
                             'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                             'items' => [
                                     ['label' => 'Material Master', 'url' => ['/tankermovement/tbl-material-master/index'], 'active' => ($cntrl == 'tbl-material-master')],
