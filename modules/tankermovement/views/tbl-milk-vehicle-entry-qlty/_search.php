@@ -13,7 +13,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($searchModel, $form, 'union_code', 'Union', ($dataProvider->getCount() == 0) ? true : false); ?>
     </div>
     <div class="col-sm-2 filldata">
-        <?php echo Html::hiddenInput('trip_status', 'open###tankerfull', ['id' => 'tblmilkvehicleentryqltysearch-trip_status']); ?>
+        <?php echo Html::hiddenInput('trip_status', 'milk_entry_qlty', ['id' => 'tblmilkvehicleentryqltysearch-trip_status']); ?>
         <?= Yii::$app->dropdown->vehicleOpenTripDetail($searchModel, $form, 'tblmilkvehicleentryqltysearch-union_code,tblmilkvehicleentryqltysearch-trip_status', 'trip_code', $searchModel->getAttributeLabel('trip_code'), false, '', ($dataProvider->getCount() > 0) ? true : false); ?>
     </div>
     <?php if ($dataProvider->getCount() == 0) { ?>
