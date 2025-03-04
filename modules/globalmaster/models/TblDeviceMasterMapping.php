@@ -217,7 +217,7 @@ class TblDeviceMasterMapping extends \app\models\ChildModel {
     }
 
     public function getDockNo() {
-        return $this->hasOne(TblPlantDockMapping::className(), ['dock_no' => 'dock_no']);
+        return $this->hasOne(TblPlantDockMapping::className(), ['dock_no' => 'dock_no'])->andWhere(['plant_code' => $this->applicability_code]);
     }
 
 }
