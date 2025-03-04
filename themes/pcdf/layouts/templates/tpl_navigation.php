@@ -176,7 +176,7 @@ echo GhostMenu::widget([
                     'items' => [
                             [
                             'options' => ['class' => 'dropdown-submenu'],
-                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Weight Bridge') . '<b class="caret"></b></a>',
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Weigh Bridge') . '<b class="caret"></b></a>',
                             'items' => [
                                     ['label' => 'Material Master', 'url' => ['/tankermovement/tbl-material-master/index'], 'active' => ($cntrl == 'tbl-material-master')],
                                     ['label' => 'Raw Material Receipt', 'url' => ['/tankermovement/tbl-raw-fg-material-receipt/index'], 'active' => ($cntrl == 'tbl-raw-fg-material-receipt')],
