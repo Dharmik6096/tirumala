@@ -108,7 +108,7 @@ $defaultToggle = true;
                                     if (in_array($value, array('p_sub_district_code'))) { 
                                         ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->unionpaymentcyclewithdate($model, $form, 'reportsmodel-union_code', 'p_dcs_payment', 'Payment Cycle'); ?>
+                                                <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'reportsmodel-p_district_code', 'form-group col-sm-3 padding-right-5 padding-left-0', 'Sub District', 'p_sub_district_code'); ?>
                                             </div>    
                                             <?php
                                         }
