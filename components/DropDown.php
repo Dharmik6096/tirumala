@@ -598,6 +598,11 @@ class DropDown extends Component {
         }
     }
 
+    public function vehicleOpenTripDetail($model, $form, $depends, $name = 'trip_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-trip/open-trip-detail-list', Yii::t('app', 'Select Trip Code'), $multiple, $extra_param, $readonly);
+    }
+
     public function vehicleMasterOpen($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-vehicle-master/vehicle-open-list', Yii::t('app', 'Select Vehicle'), $multiple, $extra_param, $readonly);
@@ -2142,6 +2147,7 @@ class DropDown extends Component {
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
             'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
             'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'chamber_no' => ['name' => 'chamber_no', 'fields' => 'milk_vehicle_entry_qlty_code,chamber_no,', 'prompt' => Yii::t('app', 'Select Compartment'), 'model' => 'TblMilkVehicleEntryQlty', 'depend' => 'trip_code', 'dependArray' => ['status']],
         ];
         return $label[$l];
     }

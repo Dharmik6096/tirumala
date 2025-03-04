@@ -96,7 +96,7 @@ ul {
 }
 
 .mt15 {
-    margin-top: 15px;
+    margin-top: 15px !important;
 }
 
 .mb15 {
@@ -5926,4 +5926,9 @@ tr.highlightRow {
 .plus-button{
     margin: 0 0 -29px 8px;
     z-index: 1;
+}
+.custhead{
+    margin-inline: 25%;
+    border: 1px solid #00a3de;
+    max-width: 43%;
 }

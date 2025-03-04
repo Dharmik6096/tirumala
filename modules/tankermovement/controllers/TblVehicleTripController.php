@@ -318,4 +318,21 @@ class TblVehicleTripController extends \app\controllers\ChildController
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
+
+    public function actionOpenTripDetailList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $trip = new TblVehicleTripDetail();
+                $data = $trip->getOpenTripDetailList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
 }
