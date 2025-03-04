@@ -1998,6 +1998,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['bmc_collection' => Yii::t('app', 'BMC Collection'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
             ],
+            'operation_perform' => [
+                'name' => 'action_perform',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['CREATE' => Yii::t('app', 'CREATE'), 'MODIFY' => Yii::t('app', 'MODIFY')],
+            ],
         ];
         return $records[$l];
     }
