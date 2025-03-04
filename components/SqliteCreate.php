@@ -172,7 +172,7 @@ class SqliteCreate extends Component {
                                         $sql = str_replace('tbl_customer_master.is_active', ' CASE WHEN cd.from_date is null THEN tbl_customer_master.is_active ELSE 0 END as is_active ', $sql);
                                     }
                                     if (strtolower($org_type) == 'plant') {
-                                        $whereKey = 'union_code';
+                                        $whereKey = $tableName . '.union_code';
                                         $whereKeyField = $union_code;
                                     }
                                     $sql .= ' where ' . $whereKey . " in ($whereKeyField)";
