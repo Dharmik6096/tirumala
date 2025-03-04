@@ -287,11 +287,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
             }
 
             /* Old/Current Device Inactivation on Existing/Old Location */
-            $model->updateAll(['sync_active' => 0, 'is_active' => 0], ['device_id' => $model->device_id, ['android_installation_details_id', '!=', $model->android_installation_details_id]]);
+            $model->updateAll(['sync_active' => 0, 'is_active' => 0], ['and', ['device_id' => $model->device_id], ['!=', 'android_installation_details_id', $model->android_installation_details_id]]);
             if (empty($model->dock_no)) {
-                $model->updateAll(['sync_active' => 0], ['android_installation_id' => $model->android_installation_id, ['android_installation_details_id', '!=', $model->android_installation_details_id]]);
+                $model->updateAll(['sync_active' => 0], ['and', ['android_installation_id' => $model->android_installation_id], ['!=', 'android_installation_details_id', $model->android_installation_details_id]]);
             } else {
-                $model->updateAll(['sync_active' => 0, 'is_active' => 0], ['android_installation_id' => $model->android_installation_id, 'dock_no' => $model->dock_no, ['android_installation_details_id', '!=', $model->android_installation_details_id]]);
+                $model->updateAll(['sync_active' => 0, 'is_active' => 0], ['and', ['android_installation_id' => $model->android_installation_id], ['dock_no' => $model->dock_no], ['!=', 'android_installation_details_id', $model->android_installation_details_id]]);
             }
             /* Old/Current Device Inactivation on Existing/Old Location */
 
