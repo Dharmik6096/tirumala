@@ -29,9 +29,9 @@ class TblConfig extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['config_name', 'config_key', 'config_for'], 'string'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+                [['config_name', 'config_key', 'config_for'], 'string'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
         ];
     }
 
@@ -127,6 +127,15 @@ class TblConfig extends \app\models\ChildModel {
                 ->where(['config_for' => $this->config_for, 'config_type' => $this->config_type, 'process_name' => $this->process_name, 'is_input_config' => $this->is_input_config])
                 ->all();
         return $data;
+    }
+
+    public function getConfigList() {
+        return $this->find()->distinct()
+                        ->joinWith(['configResult'])
+                        ->where(['tbl_config.config_for' => $this->config_for, 'tbl_config.process_name' => $this->process_name, 'tbl_config.config_type' => $this->config_type])
+                        ->andWhere(['tbl_config_result.is_active' => 1])
+                        ->orderby(['tbl_config.seq_no' => SORT_ASC])
+                        ->all();
     }
 
 }

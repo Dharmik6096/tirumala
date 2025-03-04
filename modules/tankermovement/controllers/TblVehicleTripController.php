@@ -377,9 +377,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0])) {
+            if (!empty($parents[0]) && !empty($parents[1])) {
                 $trip = new TblVehicleTripDetail();
-                $data = $trip->getOpenTripDetailList($parents[0]);
+
+                if ($parents[1] != 'cleaning_inspection' || $parents[1] != 'qa_inspection') {
+                    $parents[2] = isset($parents[2]) ? $parents[2] : '';
+                }
+                $data = $trip->getOpenTripDetailList($parents[0], $parents[1], $parents[2]);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
