@@ -332,6 +332,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'DCS Wise Billing Config'), 'url' => ['/payment/tbl-vsp-payment-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-config' && $action == 'index')],
                     ['label' => Yii::t('app', 'Member Payment'), 'url' => ['/payment/tbl-member-payment/index'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'index')],
                     ['label' => Yii::t('app', 'Vendor Payment'), 'url' => ['/payment/tbl-vsp-payment/index'], 'active' => ($cntrl == 'tbl-vsp-payment' && $action == 'index')],
+                    ['label' => Yii::t('app', 'Reject Reinitiate Payment'), 'url' => ['/payment/tbl-payment-transaction/reject-reinitiate'], 'active' => ($cntrl == 'tbl-payment-transaction' && $action == 'reject-reinitiate')],
                     ['label' => Yii::t('app', 'Payment Disburse Approval'), 'url' => ['/payment/tbl-payment-transaction-approval/index'], 'active' => ($cntrl == 'tbl-payment-transaction-approval' && $action == 'index')],
                     ['label' => Yii::t('app', 'Transporter Payment Process'), 'url' => ['/payment/tbl-transporter-payment/index'], 'active' => ($cntrl == 'tbl-transporter-payment')],
                     ['label' => Yii::t('app', 'Payment Data[Thirumala]'), 'url' => ['/misreports/default/farmer-payment-report'], 'active' => ($cntrl == 'default' && $action == 'farmer-payment-report')],
