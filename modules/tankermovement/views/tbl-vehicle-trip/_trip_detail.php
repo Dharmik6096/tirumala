@@ -5,13 +5,17 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
 $minDate = $trip->transaction_date;
+$rel = Yii::$app->general->getDestRelation($tripDetail->source_org_type);
+$att = strtolower($tripDetail->source_org_type) == 'bmc' ? 'bmc_name' : (strtolower($tripDetail->source_org_type) == 'vendor' ? 'customer_name' : 'name');
+$sourceValue = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Dest'}, $att) . '-' . strtoupper($tripDetail->source_org_type) : '';
+$sourceCode = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Dest'}, 'ref_code') : '';
 ?>
 <div class="modal modal-default fade" id="TripDetailModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title"><?= Yii::t('app', 'Trip Detail') ?></h4>
+                <h4 class="modal-title"><?= strtoupper($actionType) . ' :: ' . $sourceCode . '/' . $sourceValue ?></h4>
             </div>
 
             <div class="row">
