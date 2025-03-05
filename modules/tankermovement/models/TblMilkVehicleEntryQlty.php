@@ -132,7 +132,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 ->andWhere(['!=', 'status', 'discarded'])
                 ->all();
         if (!empty($records)) {
-            $plantLotCreationInterval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'plant_lot_creation_interval  ', 'PORTAL');
+            $plantLotCreationInterval = Yii::$app->general->getUnionConfiguration($this->union_code, 'plant_lot_creation_interval  ', 'PORTAL');
             $totalRecords = count($records);
             $doneRecordsCount = 0;
             $maxStatusDatetime = NULL;
