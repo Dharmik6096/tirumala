@@ -349,10 +349,10 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $tripDetail->scenario = $actionType;
             if (!empty($postData['arrival_time']) && $actionType == 'gate-in') {
                 $tripDetail->arrival_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['arrival_time']));
-                $trip->trip_sub_status = 'Get_in';
+                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'Get_in';
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
-                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'Get_out';
+                $trip->trip_sub_status = 'Get_out';
             }
             if ($tripDetail->validate()) {
                 $models = [$tripDetail, $trip];

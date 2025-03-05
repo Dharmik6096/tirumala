@@ -233,7 +233,7 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                             return Html::a('<i class="fa fa-sign-in"></i>', '#', $options);
                         },
                         'gate-out' => function ($url, $model) {
-                            $class = empty($model->arrival_time) || !empty($model->departure_time) ? 'link-disable' : '';
+                            $class = empty($model->arrival_time) || !empty($model->departure_time || $model->is_last_destination = 1) ? 'link-disable' : '';
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate Out', 'class' => 'gate-out-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-out',];
                             return Html::a('<i class="fa fa-sign-out"></i>', '#', $options);
                         },
