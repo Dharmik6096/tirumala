@@ -246,12 +246,18 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     'default_sorting' => FALSE,
                     'actions' => [
                         'gate-in' => function ($url, $model) {
+                            if (substr($model->vehicle_trip_detail_code, -2) == 'T1') {
+                                return '';
+                            }
                             $class = (!empty($model->arrival_time) && !empty($model->departure_time) || !empty($model->arrival_time) && empty($model->departure_time)) ? 'link-disable' : '';
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate In', 'class' => 'gate-in-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-in',];
                             return Html::a('<i class="fa fa-sign-in"></i>', '#', $options);
                         },
                         'gate-out' => function ($url, $model) {
-                            $class = empty($model->arrival_time) || !empty($model->departure_time || $model->is_last_destination = 1) ? 'link-disable' : '';
+                            if ($model->is_last_destination == 1) {
+                                return '';
+                            }
+                            $class = ((substr($model->vehicle_trip_detail_code, -2) == 'T1' && empty($model->arrival_time) && empty($model->departure_time)) || (!empty($model->arrival_time) && empty($model->departure_time))) ? '' : 'link-disable';
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate Out', 'class' => 'gate-out-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-out',];
                             return Html::a('<i class="fa fa-sign-out"></i>', '#', $options);
                         },

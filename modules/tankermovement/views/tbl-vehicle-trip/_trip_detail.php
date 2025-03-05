@@ -37,7 +37,16 @@ $sourceCode = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$re
                             $column_name = 'arrival_time';
                         }
                         ?>
-                        <?= $form->field($tripDetail, $column_name)->textInput(['type' => 'datetime-local', 'min' => date('Y-m-d\TH:i', strtotime($minDate))]) ?>
+                        <?= $form->field($tripDetail, $column_name)->textInput(['type' => 'datetime-local', 'min' => date('Y-m-d\TH:i', strtotime($minDate)), 'class' => 'first-input form-control']) ?>
+                    </div>
+                    <div class="col-sm-6">
+                        <?php
+                        $column_name = 'out_remarks';
+                        if ($actionType == 'gate-in') {
+                            $column_name = 'in_remarks';
+                        }
+                        ?>
+                        <?= $form->field($tripDetail, $column_name)->textInput() ?>
                     </div>
 
                     <?= Html::activeHiddenInput($tripDetail, 'vehicle_trip_detail_code'); ?>
@@ -80,8 +89,7 @@ $(document).ready(function () {
                         }else{
                             msg = response.errors.departure_time ;    
                         }
-        
-                        $('.help-block').html('<ul><li>' + msg + '</li></ul>').closest('.form-group').addClass('has-error').show();
+                        $('.first-input').closest('.form-group').addClass('has-error').find('.help-block').html('<ul><li>' + msg + '</li></ul>').show();
                     } else {
                         $('#TripDetailModal').modal('hide');
                         location.reload();
