@@ -312,7 +312,8 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         $this->receipt_datetime = date('Y-m-d', strtotime($this->receipt_datetime)) . ' ' . \Yii::$app->general->getshift($this->receipt_shift_code) . '.000000';
         $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
         if (!empty($stock_date) && $this->receipt_at == 'BMC') {
-            $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
+            //$dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
+            $dispatch_date = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date)));
             $dispatch_date .= '.000000';
             if ($this->receipt_datetime < $dispatch_date) {
                 $this->addError($attribute, Yii::t('app/validation', 'Receipt Datetime & shift must be greater than last stock entry.'));
@@ -321,4 +322,5 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         }
         return TRUE;
     }
+
 }

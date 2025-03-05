@@ -5932,3 +5932,9 @@ tr.highlightRow {
     border: 1px solid #00a3de;
     max-width: 43%;
 }
+#MemberPaymentAdjustmentModel .hold_type {
+    width: auto;
+    font-size: 12px;
+    border-radius: 2px;
+    color: #607188;
+}

@@ -174,6 +174,14 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
                     'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Weigh Bridge') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'Material Master', 'url' => ['/tankermovement/tbl-material-master/index'], 'active' => ($cntrl == 'tbl-material-master')],
+                                    ['label' => 'Raw Material Receipt', 'url' => ['/tankermovement/tbl-raw-fg-material-receipt/index'], 'active' => ($cntrl == 'tbl-raw-fg-material-receipt')],
+                            ]
+                        ],
                             ['label' => 'Tanker Rate', 'url' => ['/tankermovement/tbl-tanker-rate/index'], 'active' => ($cntrl == 'tbl-tanker-rate')],
                             ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
                             ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
@@ -291,6 +299,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Payment Cycle'), 'url' => ['/payment/tbl-payment-cycle/index'], 'active' => ($cntrl == 'tbl-dcs-payment-cycle')],
                     ['label' => Yii::t('app', 'Member Payment Restrict'), 'url' => ['/payment/tbl-member-payment-restrict/index'], 'active' => ($cntrl == 'tbl-member-payment-restrict' && $action == 'index')],
                     ['label' => Yii::t('app', 'DCS Wise Billing Config'), 'url' => ['/payment/tbl-vsp-payment-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-config' && $action == 'index')],
+                    ['label' => Yii::t('app', 'Release Hold Amount (Member)'), 'url' => ['/payment/tbl-permanent-hold-amount/index'], 'active' => ($cntrl == 'tbl-permanent-hold-amount' && $action == 'index')],
                     ['label' => Yii::t('app', 'Member Payment'), 'url' => ['/payment/tbl-member-payment/index'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'index')],
                     ['label' => Yii::t('app', 'Vendor Payment'), 'url' => ['/payment/tbl-vsp-payment/index'], 'active' => ($cntrl == 'tbl-vsp-payment' && $action == 'index')],
                     ['label' => Yii::t('app', 'Reject Reinitiate Payment'), 'url' => ['/payment/tbl-payment-transaction/reject-reinitiate'], 'active' => ($cntrl == 'tbl-payment-transaction' && $action == 'reject-reinitiate')],

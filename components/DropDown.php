@@ -925,7 +925,6 @@ class DropDown extends Component {
                 unset($records[$value]);
             }
         }
-
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
                         'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
@@ -981,7 +980,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1595,7 +1594,7 @@ class DropDown extends Component {
             'applicability_type' => [
                 'name' => 'applicability_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'BMC'), 2 => Yii::t('app', 'DCS')],
+                'data' => [1 => Yii::t('app', 'BMC'), 2 => Yii::t('app', 'DCS'), 3 => Yii::t('app', 'Plant')],
             ],
             'transfer_type' => [
                 'name' => 'transfer_type',
@@ -2003,6 +2002,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['bmc_collection' => Yii::t('app', 'BMC Collection'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
             ],
+            'hold_type' => [
+                'name' => 'hold_type',
+                'prompt' => Yii::t('app', 'Hold Type'),
+                'data' => ['next_payment' => Yii::t('app', 'Next Payment'), 'permanent' => Yii::t('app', 'Permanent')],
+            ],
+            'operation_perform' => [
+                'name' => 'action_perform',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['CREATE' => Yii::t('app', 'CREATE'), 'MODIFY' => Yii::t('app', 'MODIFY')],
+            ],
         ];
         return $records[$l];
     }
@@ -2148,6 +2157,7 @@ class DropDown extends Component {
             'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
             'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
             'chamber_no' => ['name' => 'chamber_no', 'fields' => 'milk_vehicle_entry_qlty_code,chamber_no,', 'prompt' => Yii::t('app', 'Select Compartment'), 'model' => 'TblMilkVehicleEntryQlty', 'depend' => 'trip_code', 'dependArray' => ['status']],
+            'dock_no' => ['name' => 'dock_no', 'fields' => 'dock_no,dock_name,dock_no', 'prompt' => Yii::t('app', 'Select Dock No'), 'model' => 'TblPlantDockMapping', 'depend' => 'plant_code'],
         ];
         return $label[$l];
     }
@@ -2234,7 +2244,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

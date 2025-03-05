@@ -6,6 +6,8 @@ use Yii;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\globalmaster\models\TblDeviceMaster;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblPlantDockMapping;
 
 /**
  * This is the model class for table "tbl_device_master_mapping".
@@ -25,7 +27,7 @@ use app\modules\globalmaster\models\TblDeviceMaster;
  */
 class TblDeviceMasterMapping extends \app\models\ChildModel {
 
-    public $device_id, $collection_center_type, $collection_center_code, $eff_date;
+    public $device_id, $center_type, $center_code;
     public $union_code, $plant_code, $mcc_plant_code, $bmc_code;
 
     /**
@@ -40,27 +42,32 @@ class TblDeviceMasterMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['device_id', 'collection_center_type', 'collection_center_code', 'eff_date'], 'safe'],
-            [['collection_center_type'], function ($attribute, $params) {
+                [['device_id', 'center_type', 'center_code', 'wef_date', 'dock_no'], 'safe'],
+                [['center_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'applicability_type');
                 }, 'on' => 'importMapping'],
-            [['applicability_type', 'applicability_code', 'wef_date'], 'required', 'on' => ['create']],
-            [['device_id', 'collection_center_type', 'collection_center_code', 'eff_date'], 'required', 'on' => ['importMapping']],
-            [['collection_center_code'], 'validateCollectionCode', 'on' => ['importMapping']],
-            [['device_id'], 'setImportVariables', 'on' => ['importMapping']],
-            [['device_master_code', 'wef_date', 'applicability_code', 'applicability_type'], 'on', 'except' => ['importMapping']],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['wef_date'], 'convertDateDot', 'on' => 'importMapping'],
-            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => 'importMapping'],
-            [['wef_date'], 'convertDate', 'on' => 'importMapping'],
-            [['originating_type'], 'integer'],
-            [['applicability_code', 'originating_org_type', 'originating_org_code'], 'string', 'max' => 25],
-            [['applicability_type', 'created_by', 'updated_by'], 'string', 'max' => 20],
-            ['device_master_code', 'unique', 'skipOnError' => true, 'targetAttribute' => ['device_master_code', 'wef_date'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                [['applicability_type', 'applicability_code', 'wef_date'], 'required', 'on' => ['create']],
+                [['device_id', 'center_type', 'center_code', 'wef_date'], 'required', 'on' => ['importMapping']],
+                [['center_code'], 'validateCollectionCode', 'on' => ['importMapping']],
+                [['device_id'], 'setImportVariables', 'on' => ['importMapping']],
+                [['device_master_code', 'wef_date', 'applicability_code', 'applicability_type'], 'on', 'except' => ['importMapping']],
+                [['wef_date', 'created_at', 'updated_at'], 'safe'],
+                [['wef_date'], 'convertDateDot', 'on' => 'importMapping'],
+                [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => 'importMapping'],
+                [['wef_date'], 'convertDate', 'on' => 'importMapping'],
+                [['originating_type'], 'integer'],
+                [['applicability_type', 'created_by', 'updated_by', 'applicability_code', 'originating_org_type', 'originating_org_code'], 'safe'],
+                ['device_master_code', 'unique', 'skipOnError' => true, 'targetAttribute' => ['device_master_code', 'wef_date'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                     return empty($model->getErrors());
                 }],
-            ['applicability_code', 'unique', 'skipOnError' => true, 'targetAttribute' => ['applicability_code', 'wef_date'], 'message' => Yii::t('app/validation', 'Collection Center Code has already been taken.'), 'when' => function ($model) {
+                ['applicability_code', 'unique', 'skipOnError' => true, 'targetAttribute' => ['applicability_code', 'wef_date'], 'message' => Yii::t('app/validation', 'Center Code has already been taken.'), 'when' => function ($model) {
                     return empty($model->getErrors());
+                }],
+                [['dock_no'], 'required', 'when' => function($model) {
+                    return $model->applicability_type == 3;
+                }],
+                [['applicability_code'], 'unique', 'skipOnError' => true, 'targetAttribute' => ['dock_no', 'applicability_code', 'device_master_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                    return empty($model->getErrors()) && $model->applicability_type == 3;
                 }],
         ];
     }
@@ -82,6 +89,10 @@ class TblDeviceMasterMapping extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dock_no' => Yii::t('app', 'Dock No'),
         ];
     }
 
@@ -132,29 +143,42 @@ class TblDeviceMasterMapping extends \app\models\ChildModel {
 
     public function setImportVariables() {
         $this->device_master_code = $this->deviceId->device_master_code;
-        $this->applicability_type = $this->collection_center_type;
-        $this->applicability_code = $this->collection_center_code;
-        $this->wef_date = $this->eff_date;
+        $this->applicability_type = $this->center_type;
+        $this->applicability_code = $this->center_code;
+        if ($this->applicability_type != '3') {
+            $this->dock_no = NULL;
+        }
     }
 
     public function validateCollectionCode() {
         if (empty($this->deviceId)) {
             $this->addError('device_id', Yii::t('app/validation', 'Invalid Device Id.'));
         }
-        if (!empty($this->collection_center_type)) {
-            if ($this->collection_center_type == '1') {
-                $bmc = TblDcsBmc::find()->where(['bmc_code' => $this->collection_center_code, 'type' => $this->collection_center_type])->one();
+        if (!empty($this->center_type)) {
+            if ($this->center_type == '1') {
+                $bmc = TblDcsBmc::find()->select('bmc_code')->where(['or', ['bmc_code' => $this->center_code], ['ref_code' => $this->center_code]])->all();
                 if (empty($bmc)) {
-                    $this->addError('collection_center_code', Yii::t('app/validation', 'Invalide Collection Center Code.'));
+                    $this->addError('center_code', Yii::t('app/validation', 'Invalid Center Code.'));
+                } else {
+                    $this->center_code = !empty($bmc) && count($bmc) == 1 ? $bmc[0]->bmc_code : '';
                 }
-            } else if ($this->collection_center_type == '2') {
-                $dcs = TblDcs::find()->where(['dcs_code' => $this->collection_center_code, 'type' => $this->collection_center_type])->one();
+            } else if ($this->center_type == '2') {
+                $dcs = TblDcs::find()->select('dcs_code')->where(['or', ['dcs_code' => $this->center_code], ['ref_code' => $this->center_code]])->all();
                 if (empty($dcs)) {
-                    $this->addError('collection_center_code', Yii::t('app/validation', 'Invalide Collection Center Code.'));
+                    $this->addError('center_code', Yii::t('app/validation', 'Invalid Center Code.'));
+                } else {
+                    $this->center_code = !empty($dcs) && count($dcs) == 1 ? $dcs[0]->dcs_code : '';
+                }
+            } else if ($this->center_type == '3') {
+                $plant = TblPlant::find()->select('plant_code')->where(['or', ['plant_code' => $this->center_code], ['ref_code' => $this->center_code]])->all();
+                if (empty($plant)) {
+                    $this->addError('center_code', Yii::t('app/validation', 'Invalid Center Code.'));
+                } else {
+                    $this->center_code = !empty($plant) && count($plant) == 1 ? $plant[0]->plant_code : '';
                 }
             }
         } else {
-            $this->addError('collection_center_type', Yii::t('app/validation', 'Invalide Collection Center Type.'));
+            $this->addError('center_type', Yii::t('app/validation', 'Invalid Center Type.'));
         }
     }
 
@@ -186,6 +210,14 @@ class TblDeviceMasterMapping extends \app\models\ChildModel {
 //                }
 //            }
 //        }
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'applicability_code']);
+    }
+
+    public function getDockNo() {
+        return $this->hasOne(TblPlantDockMapping::className(), ['dock_no' => 'dock_no'])->andWhere(['plant_code' => $this->applicability_code]);
     }
 
 }
