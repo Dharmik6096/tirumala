@@ -566,7 +566,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
             'TblMilkVehicleEntryQltySearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'vehicle_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'vehicle_code:union_vehicle', 'from_date', 'to_date'],
             ],
             'TblVehicleCleaningInspectionSearch' => [
                 'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],

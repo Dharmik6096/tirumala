@@ -97,7 +97,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $milkVehicleEntryQltyData->status_datetime = date('Y-m-d H:i:s');
 
             $saveModel[] = $milkVehicleEntryQltyData;
-            $query = $model->find()->where(['!=', 'status', 'discarded'])->andWhere(['not in', 'milk_vehicle_entry_qlty_code', $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code]);
+            $query = $model->find()->where(['!=', 'status', 'discarded'])->andWhere(['trip_code' => $milkVehicleEntryQltyData->trip_code])->andWhere(['not in', 'milk_vehicle_entry_qlty_code', $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code]);
             $totalCount = $query->count();
             $doneCount = $query->andWhere(['status' => 'done'])->count();
             if ($totalCount == $doneCount) {
