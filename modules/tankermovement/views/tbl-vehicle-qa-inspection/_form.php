@@ -67,6 +67,19 @@ $form = ActiveForm::begin([
 <?php
 $script = "
    $(document).ready(function() {
+    function autoSelectFields() {
+            $('#tblvehicleqainspection-trip_code').trigger('change');
+            $('#tblvehicleqainspection-trip_code').trigger('select2:select');
+            $('#tblvehicleqainspection-union_code').trigger('change');
+            $('#tblvehicleqainspection-union_code').trigger('select2:select');
+            $('#tblvehicleqainspection-transporter_code').trigger('change');
+            $('#tblvehicleqainspection-transporter_code').trigger('select2:select');
+            $('#tblvehicleqainspection-vehicle_code').trigger('change');
+            $('#tblvehicleqainspection-vehicle_code').trigger('select2:select');
+    }
+        
+     autoSelectFields();
+    
     function setDefaultTripCode() {
         var tripDropdown = $('#tblvehicleqainspection-trip_code');
         var options = tripDropdown.find('option');

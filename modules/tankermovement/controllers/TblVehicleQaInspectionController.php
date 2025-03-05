@@ -14,6 +14,7 @@ use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
 use app\modules\tankermovement\models\TblConfigTxnResultHistory;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\transporter\models\TblVehicleMaster;
 
 /**
  * TblVehicleQaInspectionController implements the CRUD actions for TblVehicleQaInspection model.
@@ -46,6 +47,17 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
      */
     public function actionCreate() {
         $model = new TblVehicleQaInspection();
+        $trip_code = Yii::$app->request->get('tripcode');
+        if (!empty($trip_code)) {
+            $vehicleTrip = TblVehicleTrip::find()->where(['trip_code' => $trip_code, 'trip_sub_status' => 'qa_pending', 'trip_status' => 'closed'])->one();
+            if (!empty($vehicleTrip->vehicle_code)) {
+                $model->trip_code = $trip_code;
+                $transporterData = TblVehicleMaster::find()->select('transporter_code')->where(['vehicle_code' => $vehicleTrip->vehicle_code])->one();
+                $model->transporter_code = !empty($transporterData['transporter_code']) ? $transporterData['transporter_code'] : '';
+                $model->vehicle_code = $vehicleTrip->vehicle_code;
+                $model->union_code = $vehicleTrip->union_code;
+            }
+        }
         $config = new TblConfig();
         $config->config_for = 'PLANT';
         $config->process_name = 'VEHICLE_QA_INSPECTION';
@@ -56,6 +68,7 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
         $auto_key_config = [];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->transaction_datetime = date('Y-m-d H:i:s');
+            $model->status = 'pending';
             $qaInspectionData = $model->find()->where(['vehicle_code' => $model->vehicle_code])->andWhere(['<>', 'status', 'closed'])->all();
             if (!empty($qaInspectionData)) {
                 foreach ($qaInspectionData as $key => $inspectionData) {
@@ -65,8 +78,6 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                     $saveModel[] = $historyModel;
                     $saveModel[] = $inspectionData;
                 }
-            } else {
-                $model->status = 'pending';
             }
             $saveModel[] = $model;
 
