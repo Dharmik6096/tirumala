@@ -78,7 +78,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "
 var party =`{$model->party}`;
-party = $.parseJSON(party);
+party = party ? $.parseJSON(party) : '';
 $('#tblvehicletrip-plant_code').on('change',function(){
     var plant_code = $('#tblvehicletrip-plant_code').val(); 
     $.ajax({

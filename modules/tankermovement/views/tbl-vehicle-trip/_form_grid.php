@@ -165,6 +165,10 @@ $grid_option = [
                 return GhostHtml::a_alert('<i class="fa fa-ban"></i>', ['/tankermovement/tbl-vehicle-trip/inactive-trip', 'id' => $model->vehicle_trip_code], $options);
             }
         },
+        'inspection' => function ($url, $model) {
+            $disabled = ($model->trip_status == 'closed' && $model->trip_sub_status == 'qa_pending') ? '' : 'disabled';
+            return GhostHtml::a('<i class="glyphicon glyphicon-plus"></i>', ['/tankermovement/tbl-vehicle-qa-inspection/create', 'tripcode' => $model->trip_code], ['class' => $disabled]);
+        },
     ]
 ];
 

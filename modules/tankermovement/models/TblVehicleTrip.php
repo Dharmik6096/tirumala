@@ -177,6 +177,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $inspection = TRUE;
             $this->vehicle_trip_code = Yii::$app->general->getPrimaryCode($this);
             $this->trip_code = $this->generateTripCode();
+            $this->trip_code = !empty($this->trip_code) ? str_replace("-","0",$this->trip_code) : '';
             $vehicle_trip_detail_code = $this->vehicle_trip_code . 'T1';
             $model = $this;
             $save_model[] = $this;

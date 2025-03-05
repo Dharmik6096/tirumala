@@ -191,7 +191,16 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     ['attribute' => 'source_org_code',],
                     ['attribute' => 'source_org_type', 'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->source_org_type);
-                            $att = strtolower($model->source_org_type) == 'bmc' ? 'bmc_name' : (strtolower($model->source_org_type) == 'vendor' ? 'customer_name' : 'name');
+                            $sourceOrgType = strtolower($model->source_org_type);
+                            if ($sourceOrgType == 'bmc') {
+                                $att = 'bmc_name';
+                            } elseif ($sourceOrgType == 'vendor') {
+                                $att = 'customer_name';
+                            } elseif ($sourceOrgType == 'party') {
+                                $att = 'party_name';
+                            } else {
+                                $att = 'name';
+                            }
                             if (!empty($rel))
                                 return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->source_org_type);
                         }, 'filter' => false],
@@ -201,13 +210,22 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                         'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->source_org_type);
                             if (!empty($rel))
-                                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, 'ref_code');
+                                return (strtolower($model->source_org_type) == 'party') ? 'N/A' : Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, 'ref_code');
                         }, 'filter' => false
                     ],
                     ['attribute' => 'destination_code',],
                     ['attribute' => 'destination_type', 'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->destination_type);
-                            $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
+                            $destinationType = strtolower($model->destination_type);
+                            if ($destinationType == 'bmc') {
+                                $att = 'bmc_name';
+                            } elseif ($destinationType == 'vendor') {
+                                $att = 'customer_name';
+                            } elseif ($destinationType == 'party') {
+                                $att = 'party_name';
+                            } else {
+                                $att = 'name';
+                            }
                             if (!empty($rel))
                                 return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
                         }, 'filter' => false],
@@ -217,7 +235,7 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                         'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->destination_type);
                             if (!empty($rel))
-                                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code');
+                                return (strtolower($model->destination_type) == 'party') ? 'N/A' : Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code');
                         }, 'filter' => false
                     ],
                 ];

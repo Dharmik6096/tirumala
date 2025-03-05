@@ -54,7 +54,8 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['destination_code', 'destination_type', 'source_org_code', 'source_org_type'], 'required'],
+            [['source_org_code', 'source_org_type'], 'required'],
+            [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip']],
             [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination'], 'safe'],
             [['travel_km', 'originating_type', 'is_active'], 'safe'],
@@ -133,6 +134,14 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
 
     public function getTripCode() {
         return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
+    }
+
+    public function getPartyMasterCodeSource() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'source_org_code']);
+    }
+
+    public function getPartyMasterCodeDest() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'destination_code']);
     }
 
     public function getTripDetailEntry() {

@@ -99,6 +99,7 @@ class TblBmcDispatchInspectionController extends \app\controllers\ChildControlle
                     Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
                     $saveModel[] = $historyModel;
                     $tripModel->trip_sub_status = 'quality_checked';
+                    $tripModel->sub_status_time = date('Y-m-d H:i:s');
                     $saveModel[] = $tripModel;
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Inspection', 'create']);

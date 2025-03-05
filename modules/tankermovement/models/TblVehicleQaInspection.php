@@ -96,5 +96,9 @@ class TblVehicleQaInspection extends \app\models\ChildModel {
     public function getConfigResult() {
         return TblConfigTxnResult::findOne(['ref_code' => $this->vehicle_qa_inspection_code, 'config_code' => $this->config_code, 'config_for' => 'VEHICLE_QA_INSPECTION']);
     }
+    
+    public function getVehicleQaInpection($vehicle_code) {
+        return $this->find()->where(['vehicle_code' => $vehicle_code, 'status' => 'pending'])->all();
+    }
 
 }
