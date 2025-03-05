@@ -7,8 +7,8 @@ use yii\helpers\Url;
 $minDate = $trip->transaction_date;
 $rel = Yii::$app->general->getDestRelation($tripDetail->source_org_type);
 $att = strtolower($tripDetail->source_org_type) == 'bmc' ? 'bmc_name' : (strtolower($tripDetail->source_org_type) == 'vendor' ? 'customer_name' : 'name');
-$sourceValue = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Dest'}, $att) . '-' . strtoupper($tripDetail->source_org_type) : '';
-$sourceCode = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Dest'}, 'ref_code') : '';
+$sourceValue = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, $att) . '-' . strtoupper($tripDetail->source_org_type) : '';
+$sourceCode = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, 'ref_code') : '';
 ?>
 <div class="modal modal-default fade" id="TripDetailModal" role="dialog">
     <div class="modal-dialog">
