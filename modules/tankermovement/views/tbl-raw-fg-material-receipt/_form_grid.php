@@ -12,13 +12,14 @@ $attribute = [
         }, 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-        }, 'filter' => false, 'visible' => FALSE],
+        }, 'filter' => false],
         [
         'attribute' => 'receipt_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->receipt_datetime, 'php:d-m-Y H:i:s');
         }, 'filter' => false],
         ['attribute' => 'party_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->partyMaster, 'party_name') . ' (' . Yii::$app->general->getforeignkey($model->partyMaster, 'sap_vendor_code') . ')';
+            $sapVendorCode = Yii::$app->general->getforeignkey($model->partyMaster, 'sap_vendor_code');
+            return Yii::$app->general->getforeignkey($model->partyMaster, 'party_name') . ($sapVendorCode ? ' (' . $sapVendorCode . ')' : '');
         }],
         ['attribute' => 'vehicle_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
@@ -48,6 +49,8 @@ $attribute = [
         ['attribute' => 'tare_weight_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->tare_weight_datetime, 'php:d-m-Y H:i:s');
         }, 'filter' => false],
+        ['attribute' => 'material_entry_type'],
+        ['attribute' => 'remarks'],
 ];
 
 $grid_option = [
