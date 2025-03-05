@@ -51,17 +51,16 @@ class TblMilkVehicleEntryQltySearch extends TblMilkVehicleEntryQlty {
         ]);
 
         $this->load($params);
-        if($grid){
+        if ($grid) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $query->andFilterWhere(['>=', 'cast(created_at as date)', $from_date]);
+            $query->andFilterWhere(['>=', 'cast(arrival_datetime as date)', $from_date]);
 
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $query->andFilterWhere(['<=', 'cast(created_at as date)', $to_date]);
+            $query->andFilterWhere(['<=', 'cast(arrival_datetime as date)', $to_date]);
         }
 
-
         Yii::$app->general->filterByOrg($query, $this, 'tbl_milk_vehicle_entry_qlty', 'tbl_milk_vehicle_entry_qlty');
-        
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             $query->where('0=1');
@@ -70,27 +69,11 @@ class TblMilkVehicleEntryQltySearch extends TblMilkVehicleEntryQlty {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'milk_vehicle_entry_qlty_code' => $this->milk_vehicle_entry_qlty_code,
-            'arrival_datetime' => $this->arrival_datetime,
-            'fat' => $this->fat,
-            'snf' => $this->snf,
-            'clr' => $this->clr,
-            'water' => $this->water,
-            'density' => $this->density,
-            'protein' => $this->protein,
-            'lactose' => $this->lactose,
-            'freezing_point' => $this->freezing_point,
-            'mbrt' => $this->mbrt,
-            'temp' => $this->temp,
-            'acidity' => $this->acidity,
-            'status_datetime' => $this->status_datetime,
+            'vehicle_code' => $this->vehicle_code,
+            'trip_code' => $this->trip_code,
         ]);
 
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-                ->andFilterWhere(['like', 'vehicle_code', $this->vehicle_code])
-                ->andFilterWhere(['like', 'trip_code', $this->trip_code])
-                ->andFilterWhere(['like', 'chamber_no', $this->chamber_no])
+        $query->andFilterWhere(['like', 'chamber_no', $this->chamber_no])
                 ->andFilterWhere(['like', 'status', $this->status]);
 
         return $dataProvider;

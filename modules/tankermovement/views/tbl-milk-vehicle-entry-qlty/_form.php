@@ -6,7 +6,7 @@ use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 ?>
-<?php $url = Url::to(['/tankermovement/tbl-milk-vehicle-entry-qlty/qlty-submit', 'TblShipmentSummary' => ['trip_code' => $model->trip_code]]); ?>
+<?php $url = Url::to(['/tankermovement/tbl-milk-vehicle-entry-qlty/qlty-submit', 'TblMilkVehicleEntry' => ['trip_code' => $model->trip_code]]); ?>
 <?php
 $form = ActiveForm::begin([
             'options' => [
@@ -22,23 +22,44 @@ $form = ActiveForm::begin([
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix custhead">
         <h4 class="theme-box-heading " style="padding: 5px;">Compartment Wise Tanker Milk Quality</h4>
         <div class="table-responsive padding_left_10">
-            <div class="col-sm-3">
-                <?php echo Yii::t('app', 'Compartment No') ?>
+            <div class="col-sm-2">
                 <?php echo Html::hiddenInput('status', 'pending', ['id' => 'tblmilkvehicleentryqlty-status']); ?>
-                <?php echo Html::hiddenInput('trip_code', '', ['id' => 'hidden-trip-code']); ?>
-                <?php echo Html::hiddenInput('union_code', '', ['id' => 'hidden-union-code']); ?>
-                <?= Yii::$app->dropdown->depend_dropdown('chamber_no', $model, $form, 'tblmilkvehicleentryqltysearch-trip_code,tblmilkvehicleentryqlty-status', 'form-group col-sm-4', false, '', FALSE); ?>
+                <?= Yii::$app->dropdown->depend_dropdown('chamber_no', $model, $form, 'tblmilkvehicleentryqltysearch-trip_code,tblmilkvehicleentryqlty-status', 'form-group col-sm-4', $model->getAttributeLabel('chamber_no'), '', FALSE); ?>
             </div>
-            <div class="col-sm-3">
-                <?php echo Yii::t('app', 'FAT') ?>
-                <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(FALSE); ?>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-3">
-                <?php echo Yii::t('app', 'SNF') ?>
-                <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(FALSE); ?>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="form-group col-sm-3 mt15">
-
+            <div class="col-sm-1">
+                <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'water')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'density')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'protein')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'lactose')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'freezing_point')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'temp')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+            </div>
+            <div class="form-group col-sm-3 mt23">
                 <?php
                 AjaxSubmitButton::begin([
                     'label' => Yii::t('app', 'Save'),
@@ -85,7 +106,6 @@ $form = ActiveForm::begin([
                 ?>
                 <?= Yii::$app->controls->reset(); ?>
                 <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
-
             </div>
         </div>
     </div>

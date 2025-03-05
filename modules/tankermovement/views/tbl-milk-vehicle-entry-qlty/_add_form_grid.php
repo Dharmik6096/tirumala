@@ -11,12 +11,12 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'plant_code', 'label' => (Yii::t('app', 'Plant Code')), 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->plantCode, 'plant_code');
-        }, 'filter' => false],
     ['attribute' => 'plant_code', 'label' => (Yii::t('app', 'Plant')), 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'filter' => false],
+    ['attribute' => 'plant_code', 'label' => Yii::t('app', 'Plant') . ' Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
+        }, 'visible' => true, 'filter' => FALSE],
     ['attribute' => 'chamber_no', 'filter' => false],
     ['attribute' => 'status', 'filter' => false],
     ['attribute' => 'status_datetime', 'value' => function($model) {
@@ -24,6 +24,15 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'fat', 'filter' => false],
     ['attribute' => 'snf', 'filter' => false],
+    ['attribute' => 'clr', 'filter' => false],
+    ['attribute' => 'water', 'filter' => false],
+    ['attribute' => 'density', 'filter' => false],
+    ['attribute' => 'protein', 'filter' => false],
+    ['attribute' => 'lactose', 'filter' => false],
+    ['attribute' => 'freezing_point', 'filter' => false],
+    ['attribute' => 'mbrt', 'filter' => false],
+    ['attribute' => 'temp', 'filter' => false],
+    ['attribute' => 'acidity', 'filter' => false],
 ];
 
 $grid_option = [

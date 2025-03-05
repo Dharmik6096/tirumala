@@ -33,6 +33,17 @@ class TblMilkVehicleEntryQltyController extends ChildController {
     }
 
     /**
+     * Displays a single TblPartyMaster model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionView($id) {
+        return $this->render('view', [
+                    'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
      * Creates a new TblMilkVehicleEntryQlty model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -45,11 +56,12 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $searchModel->load(\Yii::$app->request->get());
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $searchModel->parsing_no = TblVehicleTrip::find()->alias('vt')->joinWith('vehicleCode vm')->where(['vt.trip_code' => $searchModel->trip_code, 'vt.is_active' => 1])->select('vm.parsing_no')->scalar();
-
+        $dataProviderCount = $dataProvider->getCount();
         return $this->render('create', [
                     'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'dataProviderCount' => $dataProviderCount,
         ]);
     }
 
@@ -74,34 +86,28 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $res = [];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $saveModel = [];
-            $tripCode = Yii::$app->request->post('trip_code');
-            $unionCode = Yii::$app->session->get('Unions');
-            $milkVehicleEntryQltyData = $model->findOne(['union_code' => $unionCode, 'trip_code' => $tripCode, 'chamber_no' => $model->chamber_no]);
-
+            $milkVehicleEntryQltyData = $this->findModel($model->chamber_no);
             $historyModel = new TblMilkVehicleEntryQltyHistory();
             Yii::$app->operation->history($milkVehicleEntryQltyData, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
-
-            $milkVehicleEntryQltyData->fat = $model->fat;
-            $milkVehicleEntryQltyData->snf = $model->snf;
+            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'] as $attr) {
+                $milkVehicleEntryQltyData->$attr = $model->$attr;
+            }
             $milkVehicleEntryQltyData->status = 'done';
             $milkVehicleEntryQltyData->status_datetime = date('Y-m-d H:i:s');
 
             $saveModel[] = $milkVehicleEntryQltyData;
-
-            $query = $model->find()->where(['union_code' => $unionCode, 'trip_code' => $tripCode])->andWhere(['not in', 'chamber_no', $model->chamber_no]);
+            $query = $model->find()->where(['!=', 'status', 'discarded'])->andWhere(['not in', 'milk_vehicle_entry_qlty_code', $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code]);
             $totalCount = $query->count();
             $doneCount = $query->andWhere(['status' => 'done'])->count();
-
             if ($totalCount == $doneCount) {
                 $tripModel = new TblVehicleTrip();
-                $vehicleTripData = $tripModel->find()->where(['trip_code' => $tripCode, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->one();
+                $vehicleTripData = $tripModel->find()->where(['trip_code' => $milkVehicleEntryQltyData->trip_code, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->one();
                 $vehicleTriphistoryModel = new TblVehicleTripHistory();
                 Yii::$app->operation->history($vehicleTripData, $vehicleTriphistoryModel, UPDATE);
                 $saveModel[] = $vehicleTriphistoryModel;
                 $vehicleTripData->trip_sub_status = 'plant_lot_quality_done';
                 $vehicleTripData->sub_status_time = date('Y-m-d H:i:s');
-                ;
                 $saveModel[] = $vehicleTripData;
             }
 
@@ -126,13 +132,14 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $historyModel = new TblMilkVehicleEntryQltyHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $saveModel[] = $historyModel;
-        $this->model->fat = 0;
-        $this->model->snf = 0;
+        foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'] as $attribute) {
+            $this->model->$attribute = 0;
+        }
         $this->model->status = 'pending';
         $this->model->status_datetime = date('Y-m-d H:i:s');
         $saveModel[] = $this->model;
 
-        $pendingCount = $this->model->find()->where(['union_code' => $this->model->union_code, 'trip_code' => $this->model->trip_code, 'status' => 'pending',])->andWhere(['not in', 'chamber_no', $this->model->chamber_no])->count();
+        $pendingCount = $this->model->find()->where(['union_code' => $this->model->union_code, 'trip_code' => $this->model->trip_code, 'status' => 'pending'])->andWhere(['not in', 'chamber_no', $this->model->chamber_no])->count();
         if ($pendingCount == 0) {
             $tripModel = new TblVehicleTrip();
             $vehicleTripData = $tripModel->find()->where(['trip_code' => $this->model->trip_code, 'trip_status' => ['open', 'tankerfull']])->one();
@@ -141,7 +148,6 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $saveModel[] = $vehicleTriphistoryModel;
             $vehicleTripData->trip_sub_status = 'plant_lot_pending';
             $vehicleTripData->sub_status_time = date('Y-m-d H:i:s');
-            ;
             $saveModel[] = $vehicleTripData;
         }
 

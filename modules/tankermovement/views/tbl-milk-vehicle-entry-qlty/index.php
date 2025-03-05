@@ -1,7 +1,7 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Vehicle Entry Quality'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Tanker Milk Quality'));
 
-$this->params['menu'][] = Yii::$app->controls->add('Milk Vehicle Entry Quality');
+$this->params['menu'][] = Yii::$app->controls->add('Tanker Milk Quality');
 ?>
 <div class="tbl-vehicle-trip-index">
     <div class="panel panel-default panel-grid panel-main">

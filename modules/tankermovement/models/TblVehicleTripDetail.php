@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -53,14 +54,14 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['destination_code', 'destination_type', 'source_org_code', 'source_org_type'], 'required'],
-                [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination'], 'safe'],
-                [['travel_km', 'originating_type', 'is_active'], 'safe'],
-                [['is_last_destination'], 'default', 'value' => 0],
-                [['is_active'], 'default', 'value' => 1],
-                [['arrival_time'], 'required', 'on' => ['gate-in']],
-                [['departure_time'], 'required', 'on' => ['gate-out']],
+            [['destination_code', 'destination_type', 'source_org_code', 'source_org_type'], 'required'],
+            [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination'], 'safe'],
+            [['travel_km', 'originating_type', 'is_active'], 'safe'],
+            [['is_last_destination'], 'default', 'value' => 0],
+            [['is_active'], 'default', 'value' => 1],
+            [['arrival_time'], 'required', 'on' => ['gate-in']],
+            [['departure_time'], 'required', 'on' => ['gate-out']],
                 //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }
@@ -166,7 +167,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $sentboxArray = [];
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->source_org_code, '', '', FALSE);
             foreach ($sentboxArray as $sent) {
-                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+                $flag = ((isset($this->operation) && $this->operation == true) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
                 $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
                 if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                     if (!($sentbox->setSentbox($this, $flag))) {
@@ -214,7 +215,6 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
     }
 
     public function getOpenTripDetailList($union_code, $trip_process, $vehicle_code = '') {
-
         $query = TblVehicleTripDetail::find()
                 ->select(['tbl_vehicle_trip.trip_code'])
                 ->distinct()
@@ -223,11 +223,10 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
 
         if ($trip_process == 'milk_entry_qlty') {
             $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
-
-            $query->andWhere(['is_last_destination' => 1, 'tbl_vehicle_trip.trip_status' => ['open', 'tankerfull']]);
-            $query->andWhere(['<', 'transaction_datetime', date('Y-m-d H:i:s')]);
+            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['open', 'tankerfull']]);
+            $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', date('Y-m-d H:i:s')]);
             if (!empty($plants)) {
-                $query->andWhere(['plant_code' => $plants]);
+                $query->andWhere(['is_last_destination' => 1, 'source_org_type' => 'plant', 'source_org_code' => $plants]);
             }
         } else if (in_array($trip_process, ['cleaning_inspection', 'qa_inspection'])) {
             $subStatus = $trip_process == 'cleaning_inspection' ? 'cleaning_pending' : 'qa_pending';

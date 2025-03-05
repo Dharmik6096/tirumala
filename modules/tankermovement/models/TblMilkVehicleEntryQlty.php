@@ -3,7 +3,10 @@
 namespace app\modules\tankermovement\models;
 
 use app\models\ChildModel;
+use app\modules\globalmaster\models\TblVehicleType;
 use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblVehicleMaster;
 use Yii;
 
 /**
@@ -79,9 +82,9 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             'arrival_datetime' => Yii::t('app', 'Arrival Datetime'),
             'trip_code' => Yii::t('app', 'Trip '),
             'chamber_no' => Yii::t('app', 'Compartment No'),
-            'fat' => Yii::t('app', 'Fat'),
-            'snf' => Yii::t('app', 'Snf'),
-            'clr' => Yii::t('app', 'Clr'),
+            'fat' => Yii::t('app', 'FAT'),
+            'snf' => Yii::t('app', 'SNF'),
+            'clr' => Yii::t('app', 'CLR'),
             'water' => Yii::t('app', 'Water'),
             'density' => Yii::t('app', 'Density'),
             'protein' => Yii::t('app', 'Protein'),
@@ -111,25 +114,40 @@ class TblMilkVehicleEntryQlty extends ChildModel {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
+    public function getVehicleType() {
+        return $this->hasOne(TblVehicleType::className(), ['vehicle_type_code' => 'vehicle_type_code']);
+    }
+
+    public function getVehicle() {
+        return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
     public function getMilkVehicleEntryQlty() {
-        $records = $this->find()->where(['trip_code' => $this->trip_code, 'union_code' => $this->union_code])->all();
+        $records = $this->find()
+                ->where(['trip_code' => $this->trip_code, 'union_code' => $this->union_code])
+                ->andWhere(['!=', 'status', 'discarded'])
+                ->all();
         if (!empty($records)) {
             $plantLotCreationInterval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'plant_lot_creation_interval  ', 'PORTAL');
             $totalRecords = count($records);
-            $closedRecordsCount = 0;
+            $doneRecordsCount = 0;
+            $maxStatusDatetime = NULL;
             foreach ($records as $record) {
-                if ($record->status === 'closed') {
-                    $closedRecordsCount++;
+                if ($record->status === 'done') {
+                    $doneRecordsCount++;
                 }
                 $currentStatusDatetime = strtotime($record->status_datetime);
-                $maxStatusDatetime = NULL;
                 if ($maxStatusDatetime === NULL || $currentStatusDatetime > $maxStatusDatetime) {
                     $maxStatusDatetime = $currentStatusDatetime;
                 }
             }
             $currentTime = time();
             $intervalInSeconds = $plantLotCreationInterval * 3600;
-            if (($currentTime - $maxStatusDatetime) > $intervalInSeconds || $totalRecords !== $closedRecordsCount) {
+            if (($currentTime - $maxStatusDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
                 return ['success' => 0, 'record_data' => []];
             }
 

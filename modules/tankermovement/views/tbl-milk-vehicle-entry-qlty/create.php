@@ -13,10 +13,10 @@ Url::remember();
     </div>
     <div class="panel-body">
         <div class="large-search">
-            <?php echo $this->render('_search', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
+            <?php echo $this->render('_search', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'dataProviderCount' => $dataProviderCount]); ?>
         </div>
         <?php
-        if ($dataProvider->getCount() > 0) {
+        if ($dataProviderCount > 0) {
             echo $this->render('_form', ['model' => $model]);
             ?>
             <div class="clearfix"></div>
