@@ -33,7 +33,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
     }
 
     /**
-     * Displays a single TblPartyMaster model.
+     * Displays a single TblMilkVehicleEntryQlty model.
      * @param string $id
      * @return mixed
      */
