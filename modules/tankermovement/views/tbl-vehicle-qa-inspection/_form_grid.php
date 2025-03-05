@@ -38,9 +38,9 @@ $grid_option = [
     'id' => 'vehicle-qa-inspection-detail-list',
     'attributes' => $attribute,
     'active_column' => FALSE,
-    'actions' => [
-        'delete' => ['option' => 'vehicle_qa_inspection_code,vehicle_qa_inspection_code,tbl-vehicle-qa-inspection/delete'],
-    ]
+//    'actions' => [
+//        'delete' => ['option' => 'vehicle_qa_inspection_code,vehicle_qa_inspection_code,tbl-vehicle-qa-inspection/delete'],
+//    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
