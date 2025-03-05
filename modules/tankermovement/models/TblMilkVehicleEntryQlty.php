@@ -136,17 +136,17 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             $formattedRecords = [];
             foreach ($records as $record) {
                 $formattedRecords[$record->chamber_no] = [
-                    'fat' => $record->fat,
-                    'snf' => $record->snf,
-                    'clr' => $record->clr,
-                    'water' => $record->water,
-                    'density' => $record->density,
-                    'protein' => $record->protein,
-                    'lactose' => $record->lactose,
-                    'freezing_point' => $record->freezing_point,
-                    'mbrt' => $record->mbrt,
-                    'temp' => $record->temp,
-                    'acidity' => $record->acidity,
+                    'fat' => number_format($record->fat, 2, '.', ''),
+                    'snf' => number_format($record->snf, 2, '.', ''),
+                    'clr' => number_format($record->clr, 2, '.', ''),
+                    'water' => number_format($record->water, 2, '.', ''),
+                    'density' => number_format($record->density, 2, '.', ''),
+                    'protein' => number_format($record->protein, 2, '.', ''),
+                    'lactose' => number_format($record->lactose, 2, '.', ''),
+                    'freezing_point' => number_format($record->freezing_point, 2, '.', ''),
+                    'mbrt' => number_format($record->mbrt, 2, '.', ''),
+                    'temp' => number_format($record->temp, 2, '.', ''),
+                    'acidity' => number_format($record->acidity, 2, '.', ''),
                 ];
             }
             return ['success' => 1, 'record_data' => $formattedRecords];
