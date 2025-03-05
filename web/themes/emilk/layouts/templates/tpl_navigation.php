@@ -215,7 +215,7 @@ echo GhostMenu::widget([
                             ['label' => 'Sample Bottle Testing', 'url' => ['/tankermovement/tbl-sample-bottle-testing/index'], 'active' => ($cntrl == 'tbl-sample-bottle-testing')],
                             ['label' => 'Milk Receipt', 'url' => ['/tankermovement/tbl-milk-vehicle-entry/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry')],
                             ['label' => 'Vehicle Cleaning Detail', 'url' => ['/tankermovement/tbl-vehicle-cleaning-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-cleaning-inspection')],
-                            ['label' => 'Vehicle Qa Inspection Detail', 'url' => ['/tankermovement/tbl-vehicle-qa-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-qa-inspection')],
+                            ['label' => 'Vehicle QA Inspection Detail', 'url' => ['/tankermovement/tbl-vehicle-qa-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-qa-inspection')],
                             ['label' => Yii::t('app', 'Milk Vehicle Entry Qlty'), 'url' => ['/tankermovement/tbl-milk-vehicle-entry-qlty/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry-qlty' && $action == 'index')],
                             ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
                             ['label' => 'Payment Head', 'url' => ['/tankermovement/tbl-payment-head/index'], 'active' => ($cntrl == 'tbl-payment-head')],

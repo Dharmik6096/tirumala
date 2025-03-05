@@ -5938,3 +5938,6 @@ tr.highlightRow {
     border-radius: 2px;
     color: #607188;
 }
+.custom-radio-class {
+    margin-top: auto !important;
+}

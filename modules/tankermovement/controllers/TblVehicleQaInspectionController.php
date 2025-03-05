@@ -12,6 +12,8 @@ use app\modules\tankermovement\models\TblVehicleTripHistory;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
 use app\modules\tankermovement\models\TblConfigTxnResultHistory;
+use yii\web\Response;
+use yii\helpers\Json;
 
 /**
  * TblVehicleQaInspectionController implements the CRUD actions for TblVehicleQaInspection model.
@@ -89,7 +91,7 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                 $saveModel[] = $historyModel;
                 $saveModel[] = $tripDetail;
             }
-            $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Vehicle QA', 'create'], $auto_key_config);
+            $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Vehicle QA Inspection', 'create'], $auto_key_config);
             if ($transaction == 'customRedirect') {
                 $this->redirect(['index']);
             }
@@ -143,6 +145,25 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionCloseQaInspection($id) {
+        $saveModel = [];
+        $this->model = $this->findModel($id);
+        $historyModel = new TblVehicleQaInspectionHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->status = 'closed';
+        $saveModel[] = $historyModel;
+        $saveModel[] = $this->model;
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle QA Inspection', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Vehicle QA Inspection Closed Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Vehicle QA Inspection Not Closed.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

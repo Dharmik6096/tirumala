@@ -38,7 +38,7 @@ $form = ActiveForm::begin([
     foreach ($config_list as $c) {
         ?>
         <?= Html::activeHiddenInput($config, '[' . $index . ']config_code', ['value' => $c->config_code]); ?>
-        <div class="col-sm-2">
+        <div class="col-sm-2 margin_left15">
             <?= $c->prepareControl($form, $config, $index); ?>
         </div>
         <?php if ($cnt == 6) { ?>

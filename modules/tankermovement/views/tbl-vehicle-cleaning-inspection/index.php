@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Vehicle Cleaning'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Vehicle Cleaning Detail'));
 $this->params['menu'][] = Yii::$app->controls->add('Vehicle Cleaning Detail');
 ?>
 <div class="tbl-vehicle-trip-index">

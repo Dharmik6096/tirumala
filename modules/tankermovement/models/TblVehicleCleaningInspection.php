@@ -61,7 +61,7 @@ class TblVehicleCleaningInspection extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'transporter_code' => Yii::t('app', 'Transporter'),
             'vehicle_code' => Yii::t('app', 'Vehicle'),
-            'trip_code' => Yii::t('app', 'Trip'),
+            'trip_code' => Yii::t('app', 'Trip Code'),
             'transaction_datetime' => Yii::t('app', 'Transaction Datetime'),
             'remarks' => Yii::t('app', 'Remarks'),
             'x_col1' => Yii::t('app', 'X Col1'),
