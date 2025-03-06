@@ -55,6 +55,8 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\general\models\TblProcessApproval;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
+use app\modules\tankermovement\models\TblVehicleTrip;
+use app\modules\tankermovement\models\TblVehicleTripTracking;
 use Exception;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use PHPExcel;
@@ -2913,4 +2915,13 @@ class GeneralFunctions extends Component {
         return [$fromDate, $toDate];
     }
 
+    public function setVehicleTripTrackingDetail($trip, $remarks = '') {
+        if(!empty($trip)) {
+            $tripTrackingModel = new TblVehicleTripTracking();
+            $tripTrackingModel->attributes = $trip->attributes;
+            $tripTrackingModel->trip_date = $trip->transaction_date;
+            $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
+            $tripTrackingModel->save(TRUE, FALSE);
+        }
+    }
 }

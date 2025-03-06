@@ -183,6 +183,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     if ($validate) {
                         $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
                         if ($transaction == 'customRedirect') {
+                            Yii::$app->general->setVehicleTripTrackingDetail($save_model[0]);
                             if ($result[2]['inspection_require']) {
                                 return $this->redirect([
                                             '/tankermovement/tbl-bmc-dispatch-inspection/create',
