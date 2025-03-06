@@ -20,7 +20,7 @@ use app\modules\transporter\models\TblVehicleMaster;
  * TblVehicleQaInspectionController implements the CRUD actions for TblVehicleQaInspection model.
  */
 class TblVehicleQaInspectionController extends \app\controllers\ChildController {
-
+    public $freeAccessActions = ['get-vehicle-list'];
     /**
      * Lists all TblVehicleQaInspection models.
      * @return mixed
@@ -177,4 +177,19 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
         return Json::encode($record);
     }
 
+    public function actionGetVehicleList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $this->model = new TblVehicleQaInspection();
+                $data = $this->model->getVehicleList($parents[0], $parents[1]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
 }

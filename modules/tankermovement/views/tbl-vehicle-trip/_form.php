@@ -5,6 +5,8 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use softark\duallistbox\DualListbox;
+
+$tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL');
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -18,20 +20,23 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 
 <div class="row">
+    <?= Html::activeHiddenInput($model, 'type', ['id' => 'type']) ?>
+    <div class="col-sm-2" id="union">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
+    </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', FALSE, FALSE); ?>
     </div>
-
-
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletrip-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
     </div>
-
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletrip-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
-    </div>
-    <div class="col-sm-2" id="union">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
+        <?php
+        if($tankerMovementWithTripSubStatus) {
+            echo Yii::$app->dropdown->vehicleQaInspectionList($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-transporter_code', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE);
+        } else {
+            echo Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletrip-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE);
+        } ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'driver_name')->textInput() ?>
@@ -77,14 +82,14 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
-var party =`{$model->party}`;
-party = party ? $.parseJSON(party) : '';
 $('#tblvehicletrip-plant_code').on('change',function(){
     var plant_code = $('#tblvehicletrip-plant_code').val(); 
+    var union_code = $('#tblvehicletrip-union_code').val();
+    var action_type = $('#type').val();
     $.ajax({
         type: 'post',
         url: '" . Url::to(['/organisation/tbl-dcs-bmc/get-plant-bmc']) . "',    
-        data: 'plant_code='+plant_code,
+        data: 'union_code='+union_code+'&plant_code='+plant_code+'&action_type='+action_type,
         success: function(data) {
             var obj1 = $.parseJSON(data);
             if (obj1.status == 'success') {                          
@@ -120,9 +125,6 @@ $('#tblvehicletrip-plant_code').on('change',function(){
                     var valtxt=value.split('~~~')
                     options += '<option value=\"'+valtxt[0]+'\"  data-sortindex=\"'+index+'\" selected>'+valtxt[1]+'</option>';
                 }
-            });
-            $.each(party, function(index, value) {
-                options += '<option value=\"'+value.party_master_code+'\">'+value.party_name+'</option>'; 
             });
             $('#tblvehicletrip-bmc_code').html(options);
             $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true); 

@@ -26,7 +26,7 @@ use yii\web\Response;
  */
 class TblVehicleTripController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['open-trip-list', 'open-trip-detail-list'];
+    public $freeAccessActions = ['open-trip-list', 'open-trip-detail-list', 'get-vehicle-detail'];
 
     /**
      * Lists all TblVehicleTrip models.
@@ -198,10 +198,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
         }
         $this->model->bmc_code = $bmc_array;
-        if ($this->model->type == 'party') {
-            $party = TblPartyMaster::find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])->where(['is_active' => 1])->asArray()->all();
-            $this->model->party = !empty($party) ? Json::encode($party) : '';
-        }
         return $this->customRender();
     }
 
@@ -347,7 +343,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $vehicleData = [];
         $postData = Yii::$app->request->post();
         if (!empty($postData['vehicle_code'])) {
-            $vehicleData = TblVehicleMaster::find()->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $vehicleData = TblVehicleMaster::find()->select(['driver_name', 'driver_contact_no'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
             $status = 'success';
         }
         $record = ['status' => $status, 'data' => $vehicleData];

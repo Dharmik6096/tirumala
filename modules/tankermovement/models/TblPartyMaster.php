@@ -177,6 +177,12 @@ class TblPartyMaster extends \app\models\ChildModel {
         return $this->hasOne(TblHamlets::className(), ['hamlet_code' => 'hamlet_code']);
     }
 
+    public function getUnionPartyList($unionCode) {
+        $partyList = $this->find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])
+                        ->where(['is_active' => 1, 'union_code' => $unionCode])->asArray()->all();
+        return ArrayHelper::map($partyList, 'party_master_code', 'party_name');
+    }
+
     public function afterSave($insert, $changedAttributes) {
         $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         $sentboxArray = [];
