@@ -209,8 +209,14 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                         'label' => (Yii::t('app', 'Source Ref.Code')),
                         'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->source_org_type);
+                            $sourceOrgType = strtolower($model->source_org_type);
+                            if ($sourceOrgType == 'party') {
+                                $att = 'sap_vendor_code';
+                            } else {
+                                $att = 'ref_code';
+                            }
                             if (!empty($rel))
-                                return (strtolower($model->source_org_type) == 'party') ? 'N/A' : Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, 'ref_code');
+                                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
                         }, 'filter' => false
                     ],
                     ['attribute' => 'destination_code',],
@@ -234,8 +240,14 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                         'label' => (Yii::t('app', 'Dest. Ref.Code')),
                         'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->destination_type);
+                            $destinationType = strtolower($model->destination_type);
+                            if ($destinationType == 'party') {
+                                $att = 'sap_vendor_code';
+                            } else {
+                                $att = 'ref_code';
+                            }
                             if (!empty($rel))
-                                return (strtolower($model->destination_type) == 'party') ? 'N/A' : Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code');
+                                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
                         }, 'filter' => false
                     ],
                 ];
