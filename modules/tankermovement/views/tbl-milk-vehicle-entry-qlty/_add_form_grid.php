@@ -18,6 +18,13 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
         }, 'visible' => true, 'filter' => FALSE],
     ['attribute' => 'chamber_no', 'filter' => false],
+    ['attribute' => 'lot_no', 'filter' => false],
+    ['attribute' => 'lot_datetime', 'value' => function($model) {
+        return Yii::$app->controls->view_datetime($model->lot_datetime);
+    }, 'filter' => false],
+    ['attribute' => 'arrival_datetime', 'value' => function($model) {
+        return Yii::$app->controls->view_datetime($model->arrival_datetime);
+    }, 'filter' => false],
     ['attribute' => 'status', 'filter' => false],
     ['attribute' => 'status_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->status_datetime);
