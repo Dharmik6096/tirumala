@@ -59,7 +59,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
      */
     public function rules() {
         return [
-            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at'], 'safe'],
+            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no'], 'safe'],
             [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['fat', 'snf', 'chamber_no'], 'required'],
             [['originating_type'], 'integer'],
@@ -107,6 +107,8 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'lot_datetime' => Yii::t('app', 'Lot Datetime'),
+            'lot_no' => Yii::t('app', 'Lot No'),
         ];
     }
 
