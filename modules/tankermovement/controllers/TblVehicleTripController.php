@@ -142,7 +142,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         //     $trip_detai->is_last_destination = 1;
                         // }
                         $sloc_detail = explode('#', $bmc);
-                        if(!empty($bmc_array[$key + 1])){
+                        if (!empty($bmc_array[$key + 1])) {
                             $dloc_detail = explode('#', $bmc_array[$key + 1]);
                             $trip_detai->destination_code = $dloc_detail[0];
                             $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
@@ -171,8 +171,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     }
                     $qaModel = new TblVehicleQaInspection();
                     $qaRecords = $qaModel->getVehicleQaInpection($this->model->vehicle_code);
-                    if(!empty($qaRecords)){
-                        foreach($qaRecords as $qa) {
+                    if (!empty($qaRecords)) {
+                        foreach ($qaRecords as $qa) {
                             $historyModel = new TblVehicleQaInspectionHistory();
                             Yii::$app->operation->history($qa, $historyModel, UPDATE);
                             $qa->status = 'closed';
@@ -400,7 +400,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1])) {
+            if (!empty($parents[0]) && !empty($parents[1]) && ($parents[1] == 'milk_entry_qlty' || !empty($parents[2]))) {
                 $trip = new TblVehicleTripDetail();
 
                 if ($parents[1] != 'cleaning_inspection' || $parents[1] != 'qa_inspection') {
