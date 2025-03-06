@@ -36,8 +36,9 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Quality');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'lot_no',
+                            'attribute' => 'arrival_datetime',
                             'valueColOptions' => ['style' => 'width:30%'],
+                            'value' => Yii::$app->controls->view_datetime($model->arrival_datetime)
                         ]
                     ]
                 ],
@@ -49,10 +50,10 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Quality');
                             'value' => Yii::$app->controls->view_datetime($model->lot_datetime)
                         ],
                         [
-                            'attribute' => 'arrival_datetime',
+                            'attribute' => 'lot_no',
                             'valueColOptions' => ['style' => 'width:30%'],
-                            'value' => Yii::$app->controls->view_datetime($model->arrival_datetime)
-                        ]
+                        ],
+                       
                     ]
                 ],
                 [
