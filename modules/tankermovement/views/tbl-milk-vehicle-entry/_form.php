@@ -88,9 +88,13 @@ $form = ActiveForm::begin([
                             <th>From Shift</th>   
                             <th>To Date</th>
                             <th>To Shift</th>                   
-                            <th>Vehicle No.</th>                   
+                            <th>Vehicle No.</th>    
+                            <th>Dispatch Qty.</th>  
+                            <th>Fat.</th>  
+                            <th>Snf.</th>                 
                             <th>In Time</th>                   
-                            <th>Out Time</th>     
+                            <th>Out Time</th>
+                            <th>Action</th>     
                         </tr>
                     </thead>
                     <tbody></tbody>
