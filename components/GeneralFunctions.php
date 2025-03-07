@@ -58,7 +58,6 @@ use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblVehicleTripTracking;
-use Exception;
 use app\modules\usermanagement\components\GhostHtml;
 use PHPExcel;
 use yii\helpers\Url;

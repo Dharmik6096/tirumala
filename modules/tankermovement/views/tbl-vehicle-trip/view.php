@@ -267,8 +267,8 @@ $is_button_visible = true;
                                 $is_button_visible = false;
                                 $class = '';
                             }
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate In', 'class' => 'gate-in-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-in',];
-                            return Html::a('<i class="fa fa-sign-in"></i>', '#', $options);
+                            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Gate In', 'class' => 'gate-in-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-in',];
+                            return Html::a('<i class="fa fa-sign-in-alt"></i>', '#', $options);
                         },
                         'gate-out' => function ($url, $model) use (&$is_button_visible) {
                             if ($model->is_last_destination == 1) {
@@ -279,8 +279,8 @@ $is_button_visible = true;
                                 $is_button_visible = false;
                                 $class = '';
                             }
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate Out', 'class' => 'gate-out-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-out',];
-                            return Html::a('<i class="fa fa-sign-out"></i>', '#', $options);
+                            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Gate Out', 'class' => 'gate-out-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-out',];
+                            return Html::a('<i class="fa fa-sign-out-alt"></i>', '#', $options);
                         },
                     ],
                 ];

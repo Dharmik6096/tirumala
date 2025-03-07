@@ -66,9 +66,9 @@ $sourceCode = !empty($rel) ? (Yii::$app->general->getforeignkey($tripDetail->{$r
                     <div class="modal-footer mt10 col-sm-12">
                         <div class="col-md-12">
                             <?php //Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']) ?>
-                            <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $tripDetail, 'save_data'); ?>
+                            <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $tripDetail, 'save_data btn-login'); ?>
 
-                            <?= Html::resetButton('Reset', ['class' => 'btn btn-danger']) ?>
+                            <?= Html::resetButton('Reset', ['class' => 'btn btn-danger btn-login']) ?>
                         </div>
                     </div>
 
