@@ -21,7 +21,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix custhead">
         <h4 class="theme-box-heading " style="padding: 5px;">Compartment Wise Tanker Milk Quality</h4>
-        <div class="table-responsive padding_left_10">
+        <div class="table-responsive padding_left_10 row">
             <div class="col-sm-2">
                 <?php echo Html::hiddenInput('status', 'pending', ['id' => 'tblmilkvehicleentryqlty-status']); ?>
                 <?= Yii::$app->dropdown->depend_dropdown('chamber_no', $model, $form, 'tblmilkvehicleentryqltysearch-trip_code,tblmilkvehicleentryqlty-status', 'form-group col-sm-4', $model->getAttributeLabel('chamber_no'), '', FALSE); ?>
@@ -59,7 +59,7 @@ $form = ActiveForm::begin([
             <div class="col-sm-1">
                 <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="form-group col-sm-3 mt23">
+            <div class="form-group col-sm-3 mt18">
                 <?php
                 AjaxSubmitButton::begin([
                     'label' => Yii::t('app', 'Save'),
@@ -98,14 +98,14 @@ $form = ActiveForm::begin([
                                 }'),
                     ],
                     'options' => [
-                        'class' => 'btn btn-default btn-raised',
+                        'class' => 'btn btn-default btn-raised btn-login',
                         'type' => 'submit'
                     ],
                 ]);
                 AjaxSubmitButton::end();
                 ?>
                 <?= Yii::$app->controls->reset(); ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
+                <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?>
             </div>
         </div>
     </div>

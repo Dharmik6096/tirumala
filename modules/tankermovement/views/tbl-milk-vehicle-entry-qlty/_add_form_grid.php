@@ -52,7 +52,7 @@ $grid_option = [
                 $name = $model->chamber_no;
                 $tripCode = $model->trip_code;
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Reset', 'class' => 'reset-qlty', 'data-val' => $model->milk_vehicle_entry_qlty_code, 'data-name' => $name, 'trip-code' => $tripCode];
-                return GhostHtml::a_alert('<i class="fa fa-refresh"></i>', ['/tankermovement/tbl-milk-vehicle-entry-qlty/reset-qlty'], $options);
+                return GhostHtml::a_alert('<i class="fas fa-sync-alt"></i>', ['/tankermovement/tbl-milk-vehicle-entry-qlty/reset-qlty'], $options);
             }
         },
     ]

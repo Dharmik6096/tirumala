@@ -4,7 +4,7 @@ use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
 ?>
-<div class="col-sm-12 padding-left-0 padding-right-0 ">
+<div class="col-sm-12 padding-left-0 padding-right-0 d-contents">
     <h5 class="panel-heading"><?= Yii::t('app', 'Milk Receipt Transaction Detail') ?></h5>
 
 
