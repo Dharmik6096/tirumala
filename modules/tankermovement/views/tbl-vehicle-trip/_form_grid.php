@@ -40,10 +40,9 @@ $attribute = [
         'value' => function ($model) {
             $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
             $sourceCode = !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code;
-            $rel = Yii::$app->general->getDestRelation($sourceType);
-            $att = strtolower($sourceType) == 'bmc' ? 'bmc_name' : (strtolower($sourceType) == 'vendor' ? 'customer_name' : (strtolower($sourceType) == 'party' ? 'party_name' : 'name'));
-            if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->$rel, $att) . '-' . $sourceCode;
+            $response = Yii::$app->general->getColumnName($sourceType);
+            if (!empty($response['rel']))
+                return Yii::$app->general->getforeignkey($model->{$response['rel']}, $response['name']) . '-' . $sourceCode;
         }, 'vAlign' => 'middle', 'filter' => false
     ],
     [
@@ -59,9 +58,9 @@ $attribute = [
         'label' => (Yii::t('app', 'Source Ref.Code')),
         'value' => function ($model) {
             $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
-            $rel = Yii::$app->general->getDestRelation($sourceType);
-            if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->$rel, 'ref_code');
+            $response = Yii::$app->general->getColumnName($sourceType);
+            if (!empty($response['rel']))
+                return Yii::$app->general->getforeignkey($model->{$response['rel']}, $response['ref_code']);
         }, 'vAlign' => 'middle'
     ],
     [

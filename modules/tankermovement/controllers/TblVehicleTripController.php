@@ -184,7 +184,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     if ($validate) {
                         $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
                         if ($transaction == 'customRedirect') {
-                            Yii::$app->general->setVehicleTripTrackingDetail($save_model[0]);
+                            $response = Yii::$app->general->getColumnName($save_model[1]->source_org_type);
+                            $remarks = '';
+                            if(!empty($response['rel'])){
+                                $sourceData = $save_model[1]->{$response['rel'] . 'Source'};
+                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
+                            }
+                            Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
                             if ($result[2]['inspection_require']) {
                                 return $this->redirect([
                                             '/tankermovement/tbl-bmc-dispatch-inspection/create',
@@ -382,7 +388,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $models = [$tripDetail, $trip];
                 $transaction = $this->generalModel->saveTransaction($models, ['Trip Detail', 'edit']);
                 if ($transaction == 'customRedirect') {
-                Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
+                    $response = Yii::$app->general->getColumnName($tripDetail->source_org_type);
+                    if(!empty($response['rel'])){
+                        $sourceData = $tripDetail->{$response['rel'] . 'Source'};
+                        $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']}.'-'.$remarks;
+                    }
+                    Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
                     return ['status' => 'success', 'msg' => 'Trip processed successfully.'];
                 } else {
                     return ['status' => 'error', 'msg' => Yii::$app->getSession()->getFlash('success')['message']];
