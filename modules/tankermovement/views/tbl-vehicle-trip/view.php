@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use yii\web\View;
 
 $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
+$is_button_visible = true;
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -257,19 +258,27 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     'active_column' => FALSE,
                     'default_sorting' => FALSE,
                     'actions' => [
-                        'gate-in' => function ($url, $model) {
+                        'gate-in' => function ($url, $model) use (&$is_button_visible) {
                             if (substr($model->vehicle_trip_detail_code, -2) == 'T1') {
                                 return '';
                             }
-                            $class = (!empty($model->arrival_time) && !empty($model->departure_time) || !empty($model->arrival_time) && empty($model->departure_time)) ? 'link-disable' : '';
+                            $class = 'link-disable';
+                            if ($is_button_visible && empty($model->arrival_time)) {
+                                $is_button_visible = false;
+                                $class = '';
+                            }
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate In', 'class' => 'gate-in-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-in',];
                             return Html::a('<i class="fa fa-sign-in"></i>', '#', $options);
                         },
-                        'gate-out' => function ($url, $model) {
+                        'gate-out' => function ($url, $model) use (&$is_button_visible) {
                             if ($model->is_last_destination == 1) {
                                 return '';
                             }
-                            $class = ((substr($model->vehicle_trip_detail_code, -2) == 'T1' && empty($model->arrival_time) && empty($model->departure_time)) || (!empty($model->arrival_time) && empty($model->departure_time))) ? '' : 'link-disable';
+                            $class = 'link-disable';
+                            if ($is_button_visible && empty($model->departure_time)) {
+                                $is_button_visible = false;
+                                $class = '';
+                            }
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate Out', 'class' => 'gate-out-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-out',];
                             return Html::a('<i class="fa fa-sign-out"></i>', '#', $options);
                         },
