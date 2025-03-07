@@ -56,6 +56,9 @@ use Exception;
 use app\modules\general\models\TblProcessApproval;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
+use app\modules\tankermovement\models\TblVehicleTrip;
+use app\modules\tankermovement\models\TblVehicleTripTracking;
+use Exception;
 use app\modules\usermanagement\components\GhostHtml;
 use PHPExcel;
 use yii\helpers\Url;
@@ -1674,7 +1677,7 @@ class GeneralFunctions extends Component {
                 $key_config['master_hierarchy_auto_entry'] = $data->master_hierarchy_auto_entry;
                 $key_config['key_pattern_code'] = $data->key_pattern_code;
                 //$key_config['has_prefix'] = $data->has_prefix;
-               //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
+                //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
                 $PatternArray[$data->pattern_for] = $key_config;
             }
             return $PatternArray;
@@ -2919,6 +2922,16 @@ class GeneralFunctions extends Component {
         $fromDate = $dateTime->modify("first day of $modifier")->format('Y-m-d');
         $toDate = (new \DateTime($date))->modify("last day of $modifier")->format('Y-m-d');
         return [$fromDate, $toDate];
+    }
+
+    public function setVehicleTripTrackingDetail($trip, $remarks = '') {
+        if (!empty($trip)) {
+            $tripTrackingModel = new TblVehicleTripTracking();
+            $tripTrackingModel->attributes = $trip->attributes;
+            $tripTrackingModel->trip_date = $trip->transaction_date;
+            $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
+            $tripTrackingModel->save(TRUE, FALSE);
+        }
     }
 
 }
