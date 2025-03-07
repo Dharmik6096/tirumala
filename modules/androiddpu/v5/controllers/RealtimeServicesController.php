@@ -16,10 +16,10 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
             $uploads = UploadedFile::getInstancesByName("attachment");
             $auto_inc = 0;
             $attach_path = Yii::$app->params['document_upload'] . 'material_receipt';
-            foreach ($uploads as $key => $file) {
-                $extension = pathinfo($file->name, PATHINFO_EXTENSION);
-                if (Yii::$app->general->checkDirectory($attach_path)) {
-                    $file_name = 'material_receipt' . '_' . $postData['module_code'] . '_' . time() . '.' . $extension;
+            if (Yii::$app->general->checkDirectory($attach_path)) {
+                foreach ($uploads as $key => $file) {
+                    $extension = pathinfo($file->name, PATHINFO_EXTENSION);
+                    $file_name = $file->name;
                     $attachment = $attach_path . '/' . $file_name;
                     if ($file->saveAs($attachment)) {
                         $modelAttachment = new TblAttachment();
@@ -42,8 +42,6 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Attachment', 'create']);
             if ($transaction == 'customRedirect') {
                 $message = 'Successfully Saved!';
-            } else {
-                $this->response['status'] = 501;
             }
         }
         $this->response['data'] = ['message' => $message];
