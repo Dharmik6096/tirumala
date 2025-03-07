@@ -296,16 +296,6 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                     $this->model->received_date = (Yii::$app->request->post()['TblAssetTransaction']['received_date'] == '') ? null : Yii::$app->formatter->asDate(Yii::$app->request->post()['TblAssetTransaction']['received_date'], DATE_FORMAT);
                     $this->model->received_by = Yii::$app->request->post()['TblAssetTransaction']['received_by'];
                     $saveModel[] = $this->model;
-
-                    $assetDetailModel = new TblAssetDetail();
-                    $assetDetailModel->scenario = 'inwardAsset';
-                    $assetDetailData = $assetDetailModel->find()->where(['asset_code' => $this->model->asset_code, 'serial_number' => $this->model->serial_number, 'is_active' => '1'])->one();
-                    $assetDetailData->store_location_code = $this->model->to_dest;
-                    $assetDetailData->detail_code = $this->model->detail_code;
-                    $saveModel[] = $assetDetailData;
-                    $assetDetailhistoryModel = new TblAssetDetailHistory();
-                    Yii::$app->operation->history($assetDetailModel, $assetDetailhistoryModel, UPDATE);
-                    $HisModel[] = $assetDetailhistoryModel;
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, $HisModel, ['Inward Asset', 'create']);
                 if ($transaction == 'customRedirect') {
