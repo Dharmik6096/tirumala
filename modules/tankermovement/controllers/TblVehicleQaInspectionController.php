@@ -20,7 +20,9 @@ use app\modules\transporter\models\TblVehicleMaster;
  * TblVehicleQaInspectionController implements the CRUD actions for TblVehicleQaInspection model.
  */
 class TblVehicleQaInspectionController extends \app\controllers\ChildController {
+
     public $freeAccessActions = ['get-vehicle-list'];
+
     /**
      * Lists all TblVehicleQaInspection models.
      * @return mixed
@@ -104,6 +106,9 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
             }
             $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Vehicle QA Inspection', 'create'], $auto_key_config);
             if ($transaction == 'customRedirect') {
+                if (!empty($model->trip_code)) {
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripDetail, $model->remarks);
+                }
                 $this->redirect(['index']);
             }
         }
@@ -192,4 +197,5 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
+
 }

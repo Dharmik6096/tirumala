@@ -79,6 +79,9 @@ class TblVehicleCleaningInspectionController extends \app\controllers\ChildContr
             }
             $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Vehicle Cleaning', 'create'], $auto_key_config);
             if ($transaction == 'customRedirect') {
+                if (!empty($model->trip_code)) {
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripDetail, $model->remarks);
+                }
                 $this->redirect(['index']);
             }
         }
