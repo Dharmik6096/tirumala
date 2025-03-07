@@ -100,6 +100,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $query = $model->find()->where(['!=', 'status', 'discarded'])->andWhere(['trip_code' => $milkVehicleEntryQltyData->trip_code])->andWhere(['not in', 'milk_vehicle_entry_qlty_code', $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code]);
             $totalCount = $query->count();
             $doneCount = $query->andWhere(['status' => 'done'])->count();
+            $vehicleTripData = NULL;
             if ($totalCount == $doneCount) {
                 $tripModel = new TblVehicleTrip();
                 $vehicleTripData = $tripModel->find()->where(['trip_code' => $milkVehicleEntryQltyData->trip_code, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->one();
@@ -113,6 +114,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
 
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Tanker Milk Quality', 'edit']);
             if ($transaction == 'customRedirect') {
+                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData);
                 $msg = Yii::$app->getSession()->getFlash('success')['message'];
                 $res = ['status' => 'success', 'msg' => $msg];
             } else {
@@ -139,6 +141,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $this->model->status_datetime = date('Y-m-d H:i:s');
         $saveModel[] = $this->model;
 
+        $vehicleTripData = NULL;
         $pendingCount = $this->model->find()->where(['union_code' => $this->model->union_code, 'trip_code' => $this->model->trip_code, 'status' => 'pending'])->andWhere(['not in', 'chamber_no', $this->model->chamber_no])->count();
         if ($pendingCount == 0) {
             $tripModel = new TblVehicleTrip();
@@ -153,6 +156,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
 
         $transaction = $this->generalModel->saveTransaction($saveModel, ['Tanker Milk Quality', 'edit']);
         if ($transaction == 'customRedirect') {
+            Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData);
             $record = ['status' => 'success', 'msg' => 'Tanker Milk Quality Reset Successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'Tanker Milk Quality Not Reset.'];

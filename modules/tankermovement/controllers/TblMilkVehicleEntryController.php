@@ -105,6 +105,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $this->setCode($this->model);
         if (Yii::$app->request->post()) {
             $update = FALSE;
+            $tripModel = NULL;
             $this->model->load(Yii::$app->request->post());
             $masterPost = Yii::$app->request->post()['TblMilkVehicleEntry'];
             $trPost = Yii::$app->request->post()['TblMilkVehicleEntryTransaction'];
@@ -197,6 +198,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $transaction = $this->generalModel->saveTransaction($modelSave, ['Milk Vehicle Entry', ($update) ? 'edit' : 'create']);
                     $key = $this->model->milk_vehicle_entry_code;
                     if ($transaction == 'customRedirect') {
+                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel);
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
                         $record = ['status' => 'success', 'msg' => $msg, 'milk_vehicle_entry_code' => $key];
                     } else {
