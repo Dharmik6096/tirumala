@@ -6,23 +6,10 @@ use yii\helpers\Url;
 use yii\web\View;
 
 $minDate = $trip->transaction_date;
-$rel = Yii::$app->general->getDestRelation($tripDetail->source_org_type);
-$sourceOrgType = strtolower($tripDetail->source_org_type);
-if ($sourceOrgType == 'bmc') {
-    $att = 'bmc_name';
-    $ref_code = 'ref_code';
-} elseif ($sourceOrgType == 'vendor') {
-    $att = 'customer_name';
-    $ref_code = 'ref_code';
-} elseif ($sourceOrgType == 'party') {
-    $att = 'party_name';
-    $ref_code = 'sap_vendor_code';
-} else {
-    $ref_code = 'ref_code';
-    $att = 'name';
-}
-$sourceValue = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, $att) . '-' . strtoupper($tripDetail->source_org_type) : '';
-$sourceCode = !empty($rel) ? (Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, $ref_code)) : '';
+$response = Yii::$app->general->getColumnName($tripDetail->source_org_type);
+$sourceData = $tripDetail->{$response['rel'] . 'Source'};
+$sourceValue = !empty($sourceData) ? $sourceData->{$response['name']} . '-' . strtoupper($tripDetail->source_org_type) : '';
+$sourceCode = !empty($sourceData) ? $sourceData->{$response['ref_code']}: '';
 ?>
 <div class="modal modal-default fade" id="TripDetailModal" role="dialog">
     <div class="modal-dialog">

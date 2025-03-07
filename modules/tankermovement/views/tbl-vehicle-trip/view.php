@@ -191,64 +191,40 @@ $is_button_visible = true;
                     ],
                     ['attribute' => 'source_org_code',],
                     ['attribute' => 'source_org_type', 'value' => function ($model) {
-                            $rel = Yii::$app->general->getDestRelation($model->source_org_type);
-                            $sourceOrgType = strtolower($model->source_org_type);
-                            if ($sourceOrgType == 'bmc') {
-                                $att = 'bmc_name';
-                            } elseif ($sourceOrgType == 'vendor') {
-                                $att = 'customer_name';
-                            } elseif ($sourceOrgType == 'party') {
-                                $att = 'party_name';
-                            } else {
-                                $att = 'name';
+                            $response = Yii::$app->general->getColumnName($model->destination_type);
+                            if (!empty($response['rel'])) {
+                                $data = $model->{$response['rel'] . 'Source'};
+                                return $data->{$response['name']} . '-' . strtoupper($model->source_org_type);
                             }
-                            if (!empty($rel))
-                                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->source_org_type);
                         }, 'filter' => false],
                     [
                         'attribute' => 'source_org_code',
                         'label' => (Yii::t('app', 'Source Ref.Code')),
                         'value' => function ($model) {
-                            $rel = Yii::$app->general->getDestRelation($model->source_org_type);
-                            $sourceOrgType = strtolower($model->source_org_type);
-                            if ($sourceOrgType == 'party') {
-                                $att = 'sap_vendor_code';
-                            } else {
-                                $att = 'ref_code';
+                            $response = Yii::$app->general->getColumnName($model->source_org_type);
+                            if (!empty($response['rel'])) {
+                                $data = $model->{$response['rel'] . 'Source'};
+                                return $data->{$response['ref_code']};
                             }
-                            if (!empty($rel))
-                                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
                         }, 'filter' => false
                     ],
                     ['attribute' => 'destination_code',],
                     ['attribute' => 'destination_type', 'value' => function ($model) {
-                            $rel = Yii::$app->general->getDestRelation($model->destination_type);
-                            $destinationType = strtolower($model->destination_type);
-                            if ($destinationType == 'bmc') {
-                                $att = 'bmc_name';
-                            } elseif ($destinationType == 'vendor') {
-                                $att = 'customer_name';
-                            } elseif ($destinationType == 'party') {
-                                $att = 'party_name';
-                            } else {
-                                $att = 'name';
+                            $response = Yii::$app->general->getColumnName($model->destination_type);
+                            if (!empty($response['rel'])) {
+                                $data = $model->{$response['rel'] . 'Dest'};
+                                return $data->{$response['name']} . '-' . strtoupper($model->destination_type);
                             }
-                            if (!empty($rel))
-                                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
                         }, 'filter' => false],
                     [
                         'attribute' => 'destination_code',
                         'label' => (Yii::t('app', 'Dest. Ref.Code')),
                         'value' => function ($model) {
-                            $rel = Yii::$app->general->getDestRelation($model->destination_type);
-                            $destinationType = strtolower($model->destination_type);
-                            if ($destinationType == 'party') {
-                                $att = 'sap_vendor_code';
-                            } else {
-                                $att = 'ref_code';
+                            $response = Yii::$app->general->getColumnName($model->destination_type);
+                            if (!empty($response['rel'])) {
+                                $data = $model->{$response['rel'] . 'Dest'};
+                                return $data->{$response['ref_code']};
                             }
-                            if (!empty($rel))
-                                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
                         }, 'filter' => false
                     ],
                 ];
