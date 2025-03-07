@@ -149,7 +149,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $auto_trip_detail->destination_type = strtolower($model->destination_type);
                         $auto_trip_detail->source_org_code = $exist_auto_trip_detail->destination_code;
                         $auto_trip_detail->source_org_type = $exist_auto_trip_detail->destination_type;
-                        $auto_trip_detail->arrival_time = $exist_auto_trip_detail->arrival_time ?: date('Y-m-d H:i:s');
+                        $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
                         $auto_trip_detail->challan_no = $model->challan_no;
                         $saveModel[] = $auto_trip_detail;
                     }
@@ -582,7 +582,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $auto_trip_detail->destination_type = strtolower($model->destination_type);
                         $auto_trip_detail->source_org_code = $exist_auto_trip_detail->destination_code;
                         $auto_trip_detail->source_org_type = $exist_auto_trip_detail->destination_type;
-                        $auto_trip_detail->arrival_time = $exist_auto_trip_detail->arrival_time ?: date('Y-m-d H:i:s');
+                        $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
                         $auto_trip_detail->challan_no = $model->challan_no;
                         $saveModel[] = $auto_trip_detail;
                     }
