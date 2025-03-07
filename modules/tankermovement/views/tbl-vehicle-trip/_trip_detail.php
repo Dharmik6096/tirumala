@@ -3,21 +3,26 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use yii\web\View;
 
 $minDate = $trip->transaction_date;
 $rel = Yii::$app->general->getDestRelation($tripDetail->source_org_type);
 $sourceOrgType = strtolower($tripDetail->source_org_type);
 if ($sourceOrgType == 'bmc') {
     $att = 'bmc_name';
+    $ref_code = 'ref_code';
 } elseif ($sourceOrgType == 'vendor') {
     $att = 'customer_name';
+    $ref_code = 'ref_code';
 } elseif ($sourceOrgType == 'party') {
     $att = 'party_name';
+    $ref_code = 'sap_vendor_code';
 } else {
+    $ref_code = 'ref_code';
     $att = 'name';
 }
 $sourceValue = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, $att) . '-' . strtoupper($tripDetail->source_org_type) : '';
-$sourceCode = !empty($rel) ? ($sourceOrgType == 'party' ? 'N/A' : Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, 'ref_code')) : '';
+$sourceCode = !empty($rel) ? (Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, $ref_code)) : '';
 ?>
 <div class="modal modal-default fade" id="TripDetailModal" role="dialog">
     <div class="modal-dialog">
@@ -32,10 +37,7 @@ $sourceCode = !empty($rel) ? ($sourceOrgType == 'party' ? 'N/A' : Yii::$app->gen
                     <?php
                     $form = ActiveForm::begin([
                                 'id' => 'trip-detail-form',
-                                'enableAjaxValidation' => true,
-                                'enableClientValidation' => true,
                                 'options' => ['class' => 'panel panel-body'],
-                                'action' => Url::to(['/tankermovement/tbl-vehicle-trip/gate-process']),
                     ]);
                     ?>
 
@@ -63,7 +65,9 @@ $sourceCode = !empty($rel) ? ($sourceOrgType == 'party' ? 'N/A' : Yii::$app->gen
 
                     <div class="modal-footer mt10 col-sm-12">
                         <div class="col-md-12">
-                            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']) ?>
+                            <?php //Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']) ?>
+                            <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $tripDetail, 'save_data'); ?>
+
                             <?= Html::resetButton('Reset', ['class' => 'btn btn-danger']) ?>
                         </div>
                     </div>
@@ -76,20 +80,16 @@ $sourceCode = !empty($rel) ? ($sourceOrgType == 'party' ? 'N/A' : Yii::$app->gen
 </div>
 
 <?php
-$script = <<<JS
+$script = "
 $(document).ready(function () {
-    $('#trip-detail-form').on('beforeSubmit', function (event) {
+    $('.save_data').on('click', function (event) {
         event.preventDefault();
-
-        var form = $(this);
-        if (form.find('.has-error').length) {
-            return false;
-        }
-
+        var formData = $('#trip-detail-form').serialize();
+        var formUrl = '" . Url::to(['/tankermovement/tbl-vehicle-trip/gate-process']) . "';
         $.ajax({
-            url: form.attr('action'),
+            url: formUrl,
             type: 'POST',
-            data: form.serialize(),
+            data: formData,
             success: function (response) {
                     if (response.status == 'error') {
                         var msg = '';
@@ -105,14 +105,13 @@ $(document).ready(function () {
                     }
             },
             error: function (xhr) {
-                console.error("AJAX error:", xhr.responseText);
             }
         });
 
         return false;
     });
 });
-JS;
+";
 
-$this->registerJs($script);
+$this->registerJs($script, View::POS_END, 'vehicle-trip-detail1');
 ?>

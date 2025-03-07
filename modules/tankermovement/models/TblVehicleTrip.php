@@ -230,14 +230,14 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $bmc_plant_code = !empty($this->fl_code) ? $this->fl_code : $this->bmc_code;
         $primaryKey = 'trip_code';
         $prefix = substr($this->vehicleCode->parsing_no, -4) . substr($bmc_plant_code, -2);
+        $prefix = str_replace("-","0",$prefix);
         $len = strlen($prefix);
         $val = $this->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
                 ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($prefix) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + 1;
-        $trip_code = $prefix . $code1;
-        return str_replace("-","0",$trip_code);
+        return $prefix . $code1;
     }
 
     public function dispatchConsolidatedSummary() {

@@ -5941,3 +5941,53 @@ tr.highlightRow {
 .custom-radio-class {
     margin-top: auto !important;
 }
+.order-status {
+    text-align: left;
+    position: relative;
+    width: 70%;
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 50px;
+}
+.order-status::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 20px;
+    width: 2px;
+    height: -webkit-fill-available;
+    background: #00A3DE;
+}
+.status-item {
+    display: flex;
+    margin-bottom: 20px;
+}
+.order-status .fa-circle {
+    color: #00A3DE;
+    margin-right: 15px;
+    font-size: 22px;
+}
+.mt-5{
+    margin-top: 5px;
+}
+.image_sec{
+    width: 75%;
+    margin: auto;
+}
+.image{
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}                             
+.line-break {
+    line-break: anywhere;
+}
+.emptymsg{
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #4c87d975;
+}
+.fa-truck{
+    font-size: 30px;
+    color: #00A3DE;
+}

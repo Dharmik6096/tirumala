@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use yii\web\View;
 
 $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
+$is_button_visible = true;
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -209,8 +210,14 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                         'label' => (Yii::t('app', 'Source Ref.Code')),
                         'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->source_org_type);
+                            $sourceOrgType = strtolower($model->source_org_type);
+                            if ($sourceOrgType == 'party') {
+                                $att = 'sap_vendor_code';
+                            } else {
+                                $att = 'ref_code';
+                            }
                             if (!empty($rel))
-                                return (strtolower($model->source_org_type) == 'party') ? 'N/A' : Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, 'ref_code');
+                                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
                         }, 'filter' => false
                     ],
                     ['attribute' => 'destination_code',],
@@ -234,8 +241,14 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                         'label' => (Yii::t('app', 'Dest. Ref.Code')),
                         'value' => function ($model) {
                             $rel = Yii::$app->general->getDestRelation($model->destination_type);
+                            $destinationType = strtolower($model->destination_type);
+                            if ($destinationType == 'party') {
+                                $att = 'sap_vendor_code';
+                            } else {
+                                $att = 'ref_code';
+                            }
                             if (!empty($rel))
-                                return (strtolower($model->destination_type) == 'party') ? 'N/A' : Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code');
+                                return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
                         }, 'filter' => false
                     ],
                 ];
@@ -245,19 +258,27 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                     'active_column' => FALSE,
                     'default_sorting' => FALSE,
                     'actions' => [
-                        'gate-in' => function ($url, $model) {
+                        'gate-in' => function ($url, $model) use (&$is_button_visible) {
                             if (substr($model->vehicle_trip_detail_code, -2) == 'T1') {
                                 return '';
                             }
-                            $class = (!empty($model->arrival_time) && !empty($model->departure_time) || !empty($model->arrival_time) && empty($model->departure_time)) ? 'link-disable' : '';
+                            $class = 'link-disable';
+                            if ($is_button_visible && empty($model->arrival_time)) {
+                                $is_button_visible = false;
+                                $class = '';
+                            }
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate In', 'class' => 'gate-in-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-in',];
                             return Html::a('<i class="fa fa-sign-in"></i>', '#', $options);
                         },
-                        'gate-out' => function ($url, $model) {
+                        'gate-out' => function ($url, $model) use (&$is_button_visible) {
                             if ($model->is_last_destination == 1) {
                                 return '';
                             }
-                            $class = ((substr($model->vehicle_trip_detail_code, -2) == 'T1' && empty($model->arrival_time) && empty($model->departure_time)) || (!empty($model->arrival_time) && empty($model->departure_time))) ? '' : 'link-disable';
+                            $class = 'link-disable';
+                            if ($is_button_visible && empty($model->departure_time)) {
+                                $is_button_visible = false;
+                                $class = '';
+                            }
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate Out', 'class' => 'gate-out-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-out',];
                             return Html::a('<i class="fa fa-sign-out"></i>', '#', $options);
                         },

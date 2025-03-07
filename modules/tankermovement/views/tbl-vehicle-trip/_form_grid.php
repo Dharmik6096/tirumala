@@ -169,6 +169,10 @@ $grid_option = [
             $disabled = ($model->trip_status == 'closed' && $model->trip_sub_status == 'qa_pending') ? '' : 'disabled';
             return GhostHtml::a('<i class="glyphicon glyphicon-plus"></i>', ['/tankermovement/tbl-vehicle-qa-inspection/create', 'tripcode' => $model->trip_code], ['class' => $disabled]);
         },
+        'map' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Map', 'data-val' => $model->trip_code];
+            return GhostHtml::a('<i class="fa fa-map-marker"></i>', ['/tankermovement/tbl-vehicle-trip/map', 'trip_code' => $model->trip_code], $options);
+        },
     ]
 ];
 

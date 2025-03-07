@@ -20,6 +20,7 @@ use app\modules\transporter\models\TblVehicleMaster;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\Response;
+use app\modules\tankermovement\models\TblVehicleTripTracking;
 
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
@@ -183,6 +184,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     if ($validate) {
                         $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
                         if ($transaction == 'customRedirect') {
+                            Yii::$app->general->setVehicleTripTrackingDetail($save_model[0]);
                             if ($result[2]['inspection_require']) {
                                 return $this->redirect([
                                             '/tankermovement/tbl-bmc-dispatch-inspection/create',
@@ -363,20 +365,24 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $actionType = Yii::$app->request->post('actionType');
             $tripDetail->load(Yii::$app->request->post());
             $tripDetail->scenario = $actionType;
+            $remarks = '';
             if (!empty($postData['arrival_time']) && $actionType == 'gate-in') {
                 $tripDetail->arrival_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['arrival_time']));
                 $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'get_in';
+                $remarks = $tripDetail->in_remarks;
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
                 if (substr($vehicle_trip_detail_code, -2) == 'T1' && !empty($tripDetail->departure_time)) {
                     $tripDetail->arrival_time = $tripDetail->departure_time;
                 }
+                $remarks = $tripDetail->out_remarks;
                 $trip->trip_sub_status = 'get_out';
             }
             if ($tripDetail->validate()) {
                 $models = [$tripDetail, $trip];
                 $transaction = $this->generalModel->saveTransaction($models, ['Trip Detail', 'edit']);
                 if ($transaction == 'customRedirect') {
+                Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
                     return ['status' => 'success', 'msg' => 'Trip processed successfully.'];
                 } else {
                     return ['status' => 'error', 'msg' => Yii::$app->getSession()->getFlash('success')['message']];
@@ -410,6 +416,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+    
+    public function actionMap($trip_code) {
+        $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->all();
+        return $this->render('_map', [
+            'tripTrack' => $tripTrack,
+        ]);
     }
 
 }

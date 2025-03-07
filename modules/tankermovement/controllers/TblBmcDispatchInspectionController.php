@@ -104,6 +104,7 @@ class TblBmcDispatchInspectionController extends \app\controllers\ChildControlle
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Inspection', 'create']);
                 if ($transaction == 'customRedirect') {
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $model->remarks);
                     $this->redirect(['index']);
                 }
             }
