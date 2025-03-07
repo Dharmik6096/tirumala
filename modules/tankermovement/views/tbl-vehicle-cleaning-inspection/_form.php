@@ -66,7 +66,7 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-   $(document).ready(function() {
+$(document).ready(function() {
     function setDefaultTripCode() {
         var tripDropdown = $('#tblvehiclecleaninginspection-trip_code');
         var options = tripDropdown.find('option');
@@ -76,7 +76,7 @@ $script = "
         }
     }
     $('#tblvehiclecleaninginspection-vehicle_code').on('change', function() {
-        $('#tblvehiclecleaninginspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
+        $('#tblvehiclecleaninginspection-trip_code').on('depdrop:afterChange', function(event, id, value) {
             setDefaultTripCode();
         });
     });

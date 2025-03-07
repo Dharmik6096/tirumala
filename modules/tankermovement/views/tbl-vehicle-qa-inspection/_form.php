@@ -89,7 +89,7 @@ $script = "
         }
     }
     $('#tblvehicleqainspection-vehicle_code').on('change', function() {
-        $('#tblvehicleqainspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
+        $('#tblvehicleqainspection-trip_code').on('depdrop:afterChange', function(event, id, value) {
             setDefaultTripCode();
          });
     });

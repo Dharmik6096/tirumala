@@ -45,8 +45,8 @@ $grid_option = [
 //        'delete' => ['option' => 'vehicle_qa_inspection_code,vehicle_qa_inspection_code,tbl-vehicle-qa-inspection/delete'],
         'deactive' => function ($url, $model) {
             $class = $model->status != 'pending' ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-qa ' . $class, 'data-val' => $model->vehicle_qa_inspection_code];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-vehicle-qa-inspection/close-qa-inspection'], $options);
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deact-qa ' . $class, 'data-val' => $model->vehicle_qa_inspection_code];
+            return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/tankermovement/tbl-vehicle-qa-inspection/close-qa-inspection'], $options);
         },
     ],
 ];
