@@ -167,11 +167,15 @@ $form = ActiveForm::begin([
 <div id='trip_auto_generate_data'></div>
 
 <?php
+$tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
 $script = "
-$(document).ready(function(){
-    $('#addTripButtonDiv').hide();
-     
-    $('#tblbmcmilkdispatch-trip_code').on('change',function() {
+$(document).ready(function(){";
+    if ($tankerMovementWithTripSubStatus) {
+        $script .= "$('#addTripButtonDiv').hide();";
+    } else {
+        $script .= "
+        $('#addTripButtonDiv').hide();
+        $('#tblbmcmilkdispatch-trip_code').on('change',function() {
         $('#addTripButtonDiv').hide();
         var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
         var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
@@ -181,8 +185,9 @@ $(document).ready(function(){
         } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
             $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
         }
-    });
-
+        });";
+    }
+    $script .= "
     $('#addTripButton').on('click', function(e) {
         e.preventDefault();
         
