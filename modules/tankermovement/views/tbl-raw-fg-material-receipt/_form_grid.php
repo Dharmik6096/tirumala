@@ -57,6 +57,9 @@ $grid_option = [
     'id' => 'material-receipt-list',
     'attributes' => $attribute,
     'active_column' => false,
+    'actions' => [
+        'view' => true
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
