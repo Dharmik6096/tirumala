@@ -85,15 +85,13 @@ $script = "
         var options = tripDropdown.find('option');
         if (options.length == 2) {
             var singleOption = options.eq(1).val();
-            $('#tblvehicleqainspection-trip_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                $('#tblvehicleqainspection-trip_code').val(singleOption);
-                $('#tblvehicleqainspection-trip_code').trigger('change');
-                $('#tblvehicleqainspection-trip_code').trigger('select2:select');
-            });
+            tripDropdown.val(singleOption).trigger('change');
         }
     }
     $('#tblvehicleqainspection-vehicle_code').on('change', function() {
-        setDefaultTripCode();
+        $('#tblvehicleqainspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
+            setDefaultTripCode();
+         });
     });
   
 });

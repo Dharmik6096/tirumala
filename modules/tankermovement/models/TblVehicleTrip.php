@@ -41,7 +41,7 @@ use app\modules\syncutility\models\TblSentbox;
 class TblVehicleTrip extends \app\models\ChildModel {
 
     public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $filter_plant_code;
-    public $fl_type, $fl_code, $type, $party;
+    public $fl_type, $fl_code, $type;
 
     /**
      * @inheritdoc
@@ -177,7 +177,6 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $inspection = TRUE;
             $this->vehicle_trip_code = Yii::$app->general->getPrimaryCode($this);
             $this->trip_code = $this->generateTripCode();
-            $this->trip_code = !empty($this->trip_code) ? str_replace("-","0",$this->trip_code) : '';
             $vehicle_trip_detail_code = $this->vehicle_trip_code . 'T1';
             $model = $this;
             $save_model[] = $this;
@@ -237,7 +236,8 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($prefix) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + 1;
-        return $prefix . $code1;
+        $trip_code = $prefix . $code1;
+        return str_replace("-","0",$trip_code);
     }
 
     public function dispatchConsolidatedSummary() {

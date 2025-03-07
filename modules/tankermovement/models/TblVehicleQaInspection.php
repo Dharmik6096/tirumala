@@ -7,6 +7,8 @@ use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\organisation\models\TblUnions;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\tankermovement\models\TblConfigTxnResult;
+use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_vehicle_qa_inspection".
@@ -96,9 +98,19 @@ class TblVehicleQaInspection extends \app\models\ChildModel {
     public function getConfigResult() {
         return TblConfigTxnResult::findOne(['ref_code' => $this->vehicle_qa_inspection_code, 'config_code' => $this->config_code, 'config_for' => 'VEHICLE_QA_INSPECTION']);
     }
-    
+
     public function getVehicleQaInpection($vehicle_code) {
         return $this->find()->where(['vehicle_code' => $vehicle_code, 'status' => 'pending'])->all();
+    }
+
+    public function getVehicleList($unionCode, $transporterCode) {
+        $tankerQualifiedWithin = Yii::$app->general->getUnionConfiguration($unionCode, 'tanker_qualified_within', 'PORTAL');
+        $inspectionVehicle = TblVehicleMaster::find()->alias('vm')->select('vm.vehicle_code, vm.parsing_no')
+                        ->innerJoin('tbl_vehicle_qa_inspection as vqi', 'vqi.vehicle_code = vm.vehicle_code')
+                        ->where(['vqi.transporter_code' => $transporterCode, 'vqi.status' => 'pending'])
+                        ->andWhere(['>=', 'vqi.transaction_datetime', new Expression('DATEADD(HOUR, -' . (int)$tankerQualifiedWithin . ', GETDATE())')])
+                        ->orderBy('vqi.transaction_datetime', SORT_DESC)->one();
+        return !empty($inspectionVehicle) ? [$inspectionVehicle->vehicle_code => $inspectionVehicle->parsing_no] : [];
     }
 
 }

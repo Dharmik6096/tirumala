@@ -26,7 +26,7 @@ use yii\web\Response;
  */
 class TblVehicleTripController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['open-trip-list', 'open-trip-detail-list'];
+    public $freeAccessActions = ['open-trip-list', 'open-trip-detail-list', 'get-vehicle-detail'];
 
     /**
      * Lists all TblVehicleTrip models.
@@ -142,7 +142,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         //     $trip_detai->is_last_destination = 1;
                         // }
                         $sloc_detail = explode('#', $bmc);
-                        if(!empty($bmc_array[$key + 1])){
+                        if (!empty($bmc_array[$key + 1])) {
                             $dloc_detail = explode('#', $bmc_array[$key + 1]);
                             $trip_detai->destination_code = $dloc_detail[0];
                             $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
@@ -171,8 +171,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     }
                     $qaModel = new TblVehicleQaInspection();
                     $qaRecords = $qaModel->getVehicleQaInpection($this->model->vehicle_code);
-                    if(!empty($qaRecords)){
-                        foreach($qaRecords as $qa) {
+                    if (!empty($qaRecords)) {
+                        foreach ($qaRecords as $qa) {
                             $historyModel = new TblVehicleQaInspectionHistory();
                             Yii::$app->operation->history($qa, $historyModel, UPDATE);
                             $qa->status = 'closed';
@@ -198,10 +198,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
         }
         $this->model->bmc_code = $bmc_array;
-        if ($this->model->type == 'party') {
-            $party = TblPartyMaster::find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])->where(['is_active' => 1])->asArray()->all();
-            $this->model->party = !empty($party) ? Json::encode($party) : '';
-        }
         return $this->customRender();
     }
 
@@ -347,7 +343,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $vehicleData = [];
         $postData = Yii::$app->request->post();
         if (!empty($postData['vehicle_code'])) {
-            $vehicleData = TblVehicleMaster::find()->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $vehicleData = TblVehicleMaster::find()->select(['driver_name', 'driver_contact_no'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
             $status = 'success';
         }
         $record = ['status' => $status, 'data' => $vehicleData];
@@ -369,10 +365,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $tripDetail->scenario = $actionType;
             if (!empty($postData['arrival_time']) && $actionType == 'gate-in') {
                 $tripDetail->arrival_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['arrival_time']));
-                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'Get_in';
+                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'get_in';
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
-                $trip->trip_sub_status = 'Get_out';
+                if (substr($vehicle_trip_detail_code, -2) == 'T1' && !empty($tripDetail->departure_time)) {
+                    $tripDetail->arrival_time = $tripDetail->departure_time;
+                }
+                $trip->trip_sub_status = 'get_out';
             }
             if ($tripDetail->validate()) {
                 $models = [$tripDetail, $trip];
@@ -397,7 +396,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1])) {
+            if (!empty($parents[0]) && !empty($parents[1]) && ($parents[1] == 'milk_entry_qlty' || !empty($parents[2]))) {
                 $trip = new TblVehicleTripDetail();
 
                 if ($parents[1] != 'cleaning_inspection' || $parents[1] != 'qa_inspection') {

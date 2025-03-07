@@ -54,15 +54,15 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['source_org_code', 'source_org_type'], 'required'],
-            [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip']],
-            [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination'], 'safe'],
-            [['travel_km', 'originating_type', 'is_active'], 'safe'],
-            [['is_last_destination'], 'default', 'value' => 0],
-            [['is_active'], 'default', 'value' => 1],
-            [['arrival_time'], 'required', 'on' => ['gate-in']],
-            [['departure_time'], 'required', 'on' => ['gate-out']],
+                [['source_org_code', 'source_org_type'], 'required'],
+                [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out']],
+                [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks'], 'safe'],
+                [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination'], 'safe'],
+                [['travel_km', 'originating_type', 'is_active'], 'safe'],
+                [['is_last_destination'], 'default', 'value' => 0],
+                [['is_active'], 'default', 'value' => 1],
+                [['arrival_time'], 'required', 'on' => ['gate-in']],
+                [['departure_time'], 'required', 'on' => ['gate-out']],
                 //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }
@@ -97,6 +97,8 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'in_remarks' => Yii::t('app', 'Remarks'),
+            'out_remarks' => Yii::t('app', 'Remarks'),
         ];
     }
 
@@ -224,26 +226,26 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
     }
 
     public function getOpenTripDetailList($union_code, $trip_process, $vehicle_code = '') {
-        $query = TblVehicleTripDetail::find()
-                ->select(['tbl_vehicle_trip.trip_code'])
+        $query = TblVehicleTripDetail::find()->alias('vtd')
+                ->select(['vt.trip_code'])
                 ->distinct()
-                ->joinWith(['tripCode'])
-                ->where(['tbl_vehicle_trip.union_code' => $union_code, 'tbl_vehicle_trip.is_active' => 1]);
+                ->joinWith(['tripCode vt'])
+                ->where(['vt.union_code' => $union_code, 'vt.is_active' => 1]);
 
         if ($trip_process == 'milk_entry_qlty') {
             $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
-            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['open', 'tankerfull']]);
-            $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', date('Y-m-d H:i:s')]);
+            $query->andWhere(['vt.trip_status' => ['open', 'tankerfull']]);
+            $query->andWhere(['<=', 'vt.transaction_date', date('Y-m-d H:i:s')]);
             if (!empty($plants)) {
-                $query->andWhere(['is_last_destination' => 1, 'source_org_type' => 'plant', 'source_org_code' => $plants]);
+                $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);
             }
         } else if (in_array($trip_process, ['cleaning_inspection', 'qa_inspection'])) {
             $subStatus = $trip_process == 'cleaning_inspection' ? 'cleaning_pending' : 'qa_pending';
-            $query->andWhere(['tbl_vehicle_trip.trip_status' => 'closed', 'tbl_vehicle_trip.trip_sub_status' => $subStatus]);
+            $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => $subStatus]);
         }
 
         if (!empty($vehicle_code)) {
-            $query->andWhere(['tbl_vehicle_trip.vehicle_code' => $vehicle_code]);
+            $query->andWhere(['vt.vehicle_code' => $vehicle_code]);
         }
         $data = $query->all();
         return ArrayHelper::map($data, 'trip_code', 'trip_code');

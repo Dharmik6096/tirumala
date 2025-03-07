@@ -6,9 +6,18 @@ use yii\helpers\Url;
 
 $minDate = $trip->transaction_date;
 $rel = Yii::$app->general->getDestRelation($tripDetail->source_org_type);
-$att = strtolower($tripDetail->source_org_type) == 'bmc' ? 'bmc_name' : (strtolower($tripDetail->source_org_type) == 'vendor' ? 'customer_name' : 'name');
+$sourceOrgType = strtolower($tripDetail->source_org_type);
+if ($sourceOrgType == 'bmc') {
+    $att = 'bmc_name';
+} elseif ($sourceOrgType == 'vendor') {
+    $att = 'customer_name';
+} elseif ($sourceOrgType == 'party') {
+    $att = 'party_name';
+} else {
+    $att = 'name';
+}
 $sourceValue = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, $att) . '-' . strtoupper($tripDetail->source_org_type) : '';
-$sourceCode = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, 'ref_code') : '';
+$sourceCode = !empty($rel) ? ($sourceOrgType == 'party' ? 'N/A' : Yii::$app->general->getforeignkey($tripDetail->{$rel . 'Source'}, 'ref_code')) : '';
 ?>
 <div class="modal modal-default fade" id="TripDetailModal" role="dialog">
     <div class="modal-dialog">
@@ -37,7 +46,16 @@ $sourceCode = !empty($rel) ? Yii::$app->general->getforeignkey($tripDetail->{$re
                             $column_name = 'arrival_time';
                         }
                         ?>
-                        <?= $form->field($tripDetail, $column_name)->textInput(['type' => 'datetime-local', 'min' => date('Y-m-d\TH:i', strtotime($minDate))]) ?>
+                        <?= $form->field($tripDetail, $column_name)->textInput(['type' => 'datetime-local', 'min' => date('Y-m-d\TH:i', strtotime($minDate)), 'class' => 'first-input form-control']) ?>
+                    </div>
+                    <div class="col-sm-6">
+                        <?php
+                        $column_name = 'out_remarks';
+                        if ($actionType == 'gate-in') {
+                            $column_name = 'in_remarks';
+                        }
+                        ?>
+                        <?= $form->field($tripDetail, $column_name)->textInput() ?>
                     </div>
 
                     <?= Html::activeHiddenInput($tripDetail, 'vehicle_trip_detail_code'); ?>
@@ -80,8 +98,7 @@ $(document).ready(function () {
                         }else{
                             msg = response.errors.departure_time ;    
                         }
-        
-                        $('.help-block').html('<ul><li>' + msg + '</li></ul>').closest('.form-group').addClass('has-error').show();
+                        $('.first-input').closest('.form-group').addClass('has-error').find('.help-block').html('<ul><li>' + msg + '</li></ul>').show();
                     } else {
                         $('#TripDetailModal').modal('hide');
                         location.reload();

@@ -72,15 +72,13 @@ $script = "
         var options = tripDropdown.find('option');
         if (options.length == 2) {
             var singleOption = options.eq(1).val();
-            $('#tblvehiclecleaninginspection-trip_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                $('#tblvehiclecleaninginspection-trip_code').val(singleOption);
-                $('#tblvehiclecleaninginspection-trip_code').trigger('change');
-                $('#tblvehiclecleaninginspection-trip_code').trigger('select2:select');
-            });
+            tripDropdown.val(singleOption).trigger('change');
         }
     }
     $('#tblvehiclecleaninginspection-vehicle_code').on('change', function() {
-        setDefaultTripCode();
+        $('#tblvehiclecleaninginspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
+            setDefaultTripCode();
+        });
     });
   
 });
