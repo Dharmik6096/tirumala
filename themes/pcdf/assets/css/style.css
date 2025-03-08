@@ -5991,3 +5991,8 @@ tr.highlightRow {
     font-size: 30px;
     color: #00A3DE;
 }
+.dynamic-ctr {
+    float: left;
+    padding-left: 20px;
+    height: 50px;
+}
