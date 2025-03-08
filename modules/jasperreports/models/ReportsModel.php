@@ -100,6 +100,7 @@ class ReportsModel extends Model {
             [['p_from_date', 'p_to_date', 'p_lang_code'], 'required', 'on' => ['RptMemberRegisterAll']],
             [['p_date', 'p_lr_no', 'p_vehicle_no'], 'required', 'on' => ['MilkChillBillCenterWise', 'MilkChillingBillLrNoWise']],
             [['union_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['PartyPaymentBill']],
+            [['union_code', 'p_plant_code', 'p_mcc_code'], 'required', 'on' => ['ShiftWiseBill']],
         ];
     }
 
