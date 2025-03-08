@@ -2,7 +2,9 @@
 $this->title = Yii::t('app', 'Vehicle Trip Map');
 ?>
 <div class="row">
-    <div class="col-sm-6 col-sm-offset-3">
+    <div class="col-sm-3">
+     </div>
+    <div class="col-sm-6">
         <div class="card">
             <div class="card-body">
                 <div class="text-center mt35">
@@ -19,9 +21,9 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                             ?>
                             <div class="status-item">
                                 <i class="fa fa-circle"></i>
-                                <div class="mt-5">
+                                <div class="mt5">
                                     <h5><strong><?= ucwords(str_replace('_', ' ', $trip->trip_sub_status)) ?></strong></h5>
-                                    <h6 class="mt-5"><?= Yii::$app->controls->view_datetime($trip->sub_status_time) ?></h6>
+                                    <h6><?= Yii::$app->controls->view_datetime($trip->sub_status_time) ?></h6>
                                     <p class="line-break"><?= $trip->remarks ?></p>
                                 </div>
                             </div>

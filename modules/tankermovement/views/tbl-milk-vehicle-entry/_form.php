@@ -105,10 +105,10 @@ $form = ActiveForm::begin([
         <div id="milk-receipt-transaction">
             <div class="col-lg-12 mt35">
                 <h5 class="panel-heading mb15"><?= Yii::t('app', 'Milk Receipt Transaction') ?></h5>
-                <div class="col-sm-1 entry_type"> 
-                    <?= Yii::$app->dropdown->dropdownStatic('entry_type', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('entry_type'), false, 'entry_type', false); ?>
-                </div>
-                <div class='reset_field'>
+                <div class='reset_field row'>
+                    <div class="col-sm-1 entry_type"> 
+                        <?= Yii::$app->dropdown->dropdownStatic('entry_type', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('entry_type'), false, 'entry_type', false); ?>
+                    </div>
                     <div class="col-sm-2 type_hide"> 
                         <?= Yii::$app->dropdown->depend_dropdown('trip_challan', $txn_model, $form, 'tblmilkvehicleentry-trip_code', 'form-group', $txn_model->getAttributeLabel('challan_no'), '', FALSE); ?>
                     </div>
