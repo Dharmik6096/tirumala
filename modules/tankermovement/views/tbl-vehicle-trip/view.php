@@ -26,23 +26,23 @@ $is_button_visible = true;
                         )
                         );
                 $attributes = [
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'union_code',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:' . (!empty($model->bmc_code) ? '30%' : '80%')],
                             ],
-                            [
+                                [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
@@ -50,15 +50,15 @@ $is_button_visible = true;
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'bmc_code',
                                 'label' => Yii::t('app', 'Source Type'),
                                 'value' => $sourceType,
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'bmc_code',
                                 'label' => Yii::t('app', 'Source Name'),
                                 'value' => Yii::$app->general->getforeignkey($model->$rel, $att),
@@ -66,15 +66,15 @@ $is_button_visible = true;
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'bmc_code',
                                 'label' => Yii::t('app', 'Source Code'),
                                 'value' => !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code,
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'bmc_code',
                                 'label' => (Yii::t('app', 'Source Ref.Code')),
                                 'value' => Yii::$app->general->getforeignkey($model->$rel, 'ref_code'),
@@ -82,14 +82,14 @@ $is_button_visible = true;
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'transporter_code',
                                 'value' => Yii::$app->general->getmultiforeignkey($model->vehicleCode, ['transporter'], 'transporter_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'vehicle_code',
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no'),
                                 'label' => Yii::t('app', 'Vehicle No.'),
@@ -97,28 +97,28 @@ $is_button_visible = true;
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'transaction_date',
                                 'value' => Yii::$app->controls->view_date($model->transaction_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'trip_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'vehicle_code',
                                 'label' => Yii::t('app', 'Driver Name'),
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'driver_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'vehicle_code',
                                 'label' => Yii::t('app', 'Driver Contact No.'),
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'driver_contact_no'),
@@ -126,25 +126,25 @@ $is_button_visible = true;
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'trip_mode',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'trip_status',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'grn_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
@@ -183,47 +183,55 @@ $is_button_visible = true;
             <div class="form-grid">
                 <?php
                 $attribute = [
-                    [
+                        [
                         'attribute' => 'transaction_datetime',
                         'value' => function ($model) {
                             return Yii::$app->controls->view_datetime($model->transaction_datetime);
                         }
                     ],
-                    ['attribute' => 'source_org_code',],
-                    ['attribute' => 'source_org_type', 'value' => function ($model) {
+                        ['attribute' => 'source_org_code',],
+                        ['attribute' => 'source_org_type', 'value' => function ($model) {
                             $response = Yii::$app->general->getColumnName($model->destination_type);
                             if (!empty($response['rel'])) {
                                 $data = $model->{$response['rel'] . 'Source'};
-                                return $data->{$response['name']} . '-' . strtoupper($model->source_org_type);
+                                if (!empty($data)) {
+                                    return $data->{$response['name']} . '-' . strtoupper($model->source_org_type);
+                                }
                             }
                         }, 'filter' => false],
-                    [
+                        [
                         'attribute' => 'source_org_code',
                         'label' => (Yii::t('app', 'Source Ref.Code')),
                         'value' => function ($model) {
                             $response = Yii::$app->general->getColumnName($model->source_org_type);
                             if (!empty($response['rel'])) {
                                 $data = $model->{$response['rel'] . 'Source'};
-                                return $data->{$response['ref_code']};
+                                if (!empty($data)) {
+                                    return $data->{$response['ref_code']};
+                                }
                             }
                         }, 'filter' => false
                     ],
-                    ['attribute' => 'destination_code',],
-                    ['attribute' => 'destination_type', 'value' => function ($model) {
+                        ['attribute' => 'destination_code',],
+                        ['attribute' => 'destination_type', 'value' => function ($model) {
                             $response = Yii::$app->general->getColumnName($model->destination_type);
                             if (!empty($response['rel'])) {
                                 $data = $model->{$response['rel'] . 'Dest'};
-                                return $data->{$response['name']} . '-' . strtoupper($model->destination_type);
+                                if (!empty($data)) {
+                                    return $data->{$response['name']} . '-' . strtoupper($model->destination_type);
+                                }
                             }
                         }, 'filter' => false],
-                    [
+                        [
                         'attribute' => 'destination_code',
                         'label' => (Yii::t('app', 'Dest. Ref.Code')),
                         'value' => function ($model) {
                             $response = Yii::$app->general->getColumnName($model->destination_type);
                             if (!empty($response['rel'])) {
                                 $data = $model->{$response['rel'] . 'Dest'};
-                                return $data->{$response['ref_code']};
+                                if (!empty($data)) {
+                                    return $data->{$response['ref_code']};
+                                }
                             }
                         }, 'filter' => false
                     ],
