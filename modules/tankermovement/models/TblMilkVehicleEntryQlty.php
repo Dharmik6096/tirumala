@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblVehicleMaster;
 use Yii;
+use app\modules\tankermovement\models\TblConfigTxnResult;
 
 /**
  * This is the model class for table "tbl_milk_vehicle_entry_qlty".
@@ -47,6 +48,8 @@ use Yii;
  */
 class TblMilkVehicleEntryQlty extends ChildModel {
 
+    public $config_code;
+
     /**
      * @inheritdoc
      */
@@ -59,14 +62,14 @@ class TblMilkVehicleEntryQlty extends ChildModel {
      */
     public function rules() {
         return [
-            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no'], 'safe'],
-            [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
-            [['fat', 'snf', 'chamber_no'], 'required'],
-            [['originating_type'], 'integer'],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code'], 'string', 'max' => 6],
-            [['vehicle_code', 'trip_code'], 'string', 'max' => 20],
-            [['chamber_no', 'status'], 'string', 'max' => 50],
+                [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code'], 'safe'],
+                [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
+                [['fat', 'snf', 'chamber_no'], 'required'],
+                [['originating_type'], 'integer'],
+                [['union_code'], 'string', 'max' => 3],
+                [['plant_code'], 'string', 'max' => 6],
+                [['vehicle_code', 'trip_code'], 'string', 'max' => 20],
+                [['chamber_no', 'status'], 'string', 'max' => 50],
         ];
     }
 
@@ -172,6 +175,10 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             return ['success' => 1, 'record_data' => $formattedRecords];
         }
         return ['success' => 0, 'record_data' => []];
+    }
+
+    public function getConfigResult() {
+        return TblConfigTxnResult::findOne(['ref_code' => $this->milk_vehicle_entry_qlty_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT']);
     }
 
 }

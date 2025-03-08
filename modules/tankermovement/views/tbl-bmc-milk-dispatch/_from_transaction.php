@@ -17,7 +17,7 @@ $index = 1;
 foreach ($config_list as $c) {
     ?>
     <?= Html::activeHiddenInput($config, '[' . $index . ']config_code', ['value' => $c->config_code]); ?>
-    <div class="dynamic-controls">
+    <div class="dynamic-ctr">
         <?= $c->prepareControl($form, $config, $index); ?>
     </div>
 

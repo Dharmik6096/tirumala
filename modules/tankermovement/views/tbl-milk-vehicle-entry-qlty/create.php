@@ -17,14 +17,14 @@ Url::remember();
         </div>
         <?php
         if ($dataProviderCount > 0) {
-            echo $this->render('_form', ['model' => $model]);
+            echo $this->render('_form', ['model' => $model, 'config_list' => $config_list, 'config' => $config]);
             ?>
             <div class="clearfix"></div>
             <div class="panel-heading">
                 <?php echo 'Tanker Milk Quality Records'; ?>
             </div>
             <?php
-            echo $this->render('_add_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+            echo $this->render('_add_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'config_list' => $config_list]);
         }
         ?>
     </div>
