@@ -442,22 +442,22 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VendorBillElanad';
         return $this->actionIndex();
     }
-    
+
     public function actionMppSurvey() {
         $this->report = 'MppSurvey';
         return $this->actionIndex();
     }
-    
+
     public function actionVcgMeeting() {
         $this->report = 'VcgMeeting';
         return $this->actionIndex();
     }
-    
+
     public function actionMccChillingBill() {
         $this->report = 'MccChillingBill';
         return $this->actionIndex();
     }
-    
+
     public function actionMccChillingBillInvoice() {
         $this->report = 'MccChillingBillInvoice';
         return $this->actionIndex();
@@ -477,29 +477,34 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VspPaymentOnlineNawasa';
         return $this->actionIndex();
     }
-    
+
     public function actionBankAdvice() {
         $this->report = 'BankAdvice';
         return $this->actionIndex();
     }
-    
+
     public function actionMpgBillStatement() {
         $this->report = 'MpgBillStatement';
         return $this->actionIndex();
     }
-    
+
     public function actionProductSaleInvoice() {
         $this->report = 'ProductSaleInvoice';
         return $this->actionIndex();
     }
-    
+
     public function actionPrimaryTransporterMonthlyBill() {
         $this->report = 'PrimaryTransporterMonthlyBill';
         return $this->actionIndex();
     }
-    
+
     public function actionPartyPaymentBill() {
         $this->report = 'PartyPaymentBill';
+        return $this->actionIndex();
+    }
+
+    public function actionShiftWiseBill() {
+        $this->report = 'ShiftWiseBill';
         return $this->actionIndex();
     }
 
@@ -553,6 +558,10 @@ class DefaultController extends \app\controllers\ChildController {
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
             $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
+            if (isset(Yii::$app->params['language_mapping']) && isset(Yii::$app->params['language_mapping'][$controls['locale']])) {
+                $controls['locale'] = Yii::$app->params['language_mapping'][$controls['locale']];
+                $controls['REPORT_LOCALE'] = $controls['locale'] . '_IN';
+            }
             $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
@@ -1191,6 +1200,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/PartyPaymentBill',
                 'scenario' => 'PartyPaymentBill',
                 'title' => 'TP Bill',
+                'bkg_export' => TRUE,
+            ],
+            'ShiftWiseBill' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_type,p_route_code:union_code,p_dcs_code,p_payment_cycle_code,p_lang_code,locale,digit_config',
+                'path' => ['ELANAD' => 'vsp/ShiftWiseBill'],
+                'scenario' => 'ShiftWiseBill',
+                'title' => 'Shift Wise Bill',
                 'bkg_export' => TRUE,
             ],
         ];

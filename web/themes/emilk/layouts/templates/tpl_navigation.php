@@ -817,6 +817,7 @@ echo GhostMenu::widget([
                                     'items' => [
                                             ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/member-payment-vrs']],
                                             ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/member-payment-nawasa']],
+                                            ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/shift-wise-bill']],
                                     ]
                                 ],
                                     [
