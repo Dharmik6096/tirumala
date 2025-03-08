@@ -1940,7 +1940,7 @@ class DropDown extends Component {
             'language_list' => [
                 'name' => 'language_code',
                 'prompt' => Yii::t('app', 'Select Language'),
-                'data' => [0 => Yii::t('app', 'English'), 1 => Yii::t('app', 'Hindi')],
+                'data' => [0 => Yii::t('app', 'English'), 1 => Yii::t('app', 'Local')],
             ],
             'indent_group_by' => [
                 'name' => 'group_by',

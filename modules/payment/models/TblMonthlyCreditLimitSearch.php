@@ -14,8 +14,8 @@ class TblMonthlyCreditLimitSearch extends TblMonthlyCreditLimit {
      */
     public function rules() {
         return [
-            [['customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'final_amount', 'milk_amount', 'manual_amount', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'customer_name'], 'safe'],
-            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'], 'safe'],
+                [['customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'final_amount', 'milk_amount', 'manual_amount', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'customer_name'], 'safe'],
+                [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class TblMonthlyCreditLimitSearch extends TblMonthlyCreditLimit {
             'query' => $query,
         ]);
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_monthly_credit_limit', 'tbl_monthly_credit_limit', 'tbl_monthly_credit_limit');
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'memberCode', 'bmcCode']);
 
         $this->from_date = empty($this->from_date) ? date('Y-m-01', strtotime('first day of last month')) : $this->from_date;
