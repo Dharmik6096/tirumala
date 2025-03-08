@@ -555,15 +555,13 @@ class DefaultController extends \app\controllers\ChildController {
             }
             //$controls['locale'] = Yii::$app->session->get('LanguageCode');
             $controls['locale'] = !empty($model->locale) ? $model->locale : 'en';
-            if (isset(Yii::$app->params['language_mapping']['hn']) && $controls['locale'] == 'hn') {
-                $controls['locale'] = Yii::$app->params['language_mapping']['hn'];
-            }
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
             $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
-            if (isset(Yii::$app->params['language_mapping']['hn']) && $controls['REPORT_LOCALE'] == 'hn_IN') {
-                $controls['REPORT_LOCALE'] = Yii::$app->params['language_mapping']['hn'] . '_IN';
-            }
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
+            if (isset(Yii::$app->params['language_mapping']) && isset(Yii::$app->params['language_mapping'][$controls['locale']])) {
+                $controls['locale'] = Yii::$app->params['language_mapping'][$controls['locale']];
+                $controls['REPORT_LOCALE'] = $controls['locale'] . '_IN';
+            }
             $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
