@@ -442,22 +442,22 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VendorBillElanad';
         return $this->actionIndex();
     }
-    
+
     public function actionMppSurvey() {
         $this->report = 'MppSurvey';
         return $this->actionIndex();
     }
-    
+
     public function actionVcgMeeting() {
         $this->report = 'VcgMeeting';
         return $this->actionIndex();
     }
-    
+
     public function actionMccChillingBill() {
         $this->report = 'MccChillingBill';
         return $this->actionIndex();
     }
-    
+
     public function actionMccChillingBillInvoice() {
         $this->report = 'MccChillingBillInvoice';
         return $this->actionIndex();
@@ -477,32 +477,32 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VspPaymentOnlineNawasa';
         return $this->actionIndex();
     }
-    
+
     public function actionBankAdvice() {
         $this->report = 'BankAdvice';
         return $this->actionIndex();
     }
-    
+
     public function actionMpgBillStatement() {
         $this->report = 'MpgBillStatement';
         return $this->actionIndex();
     }
-    
+
     public function actionProductSaleInvoice() {
         $this->report = 'ProductSaleInvoice';
         return $this->actionIndex();
     }
-    
+
     public function actionPrimaryTransporterMonthlyBill() {
         $this->report = 'PrimaryTransporterMonthlyBill';
         return $this->actionIndex();
     }
-    
+
     public function actionPartyPaymentBill() {
         $this->report = 'PartyPaymentBill';
         return $this->actionIndex();
     }
-    
+
     public function actionShiftWiseBill() {
         $this->report = 'ShiftWiseBill';
         return $this->actionIndex();
@@ -555,6 +555,9 @@ class DefaultController extends \app\controllers\ChildController {
             }
             //$controls['locale'] = Yii::$app->session->get('LanguageCode');
             $controls['locale'] = !empty($model->locale) ? $model->locale : 'en';
+            if (isset(Yii::$app->params['language_mapping']['hn']) && $controls['locale'] == 'hn') {
+                $controls['locale'] = Yii::$app->params['language_mapping']['hn'];
+            }
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
             $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
