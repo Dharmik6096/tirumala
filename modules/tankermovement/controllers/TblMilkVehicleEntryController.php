@@ -186,6 +186,14 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     }
                 }
                 $this->model->vehicle_entry_date = !empty($this->model->vehicle_entry_date) ? date('Y-m-d', strtotime($this->model->vehicle_entry_date)) : '';
+                if (empty($masterPost['milk_vehicle_entry_code'])) {
+                    $this->model->gross_weight = $txn_model->gross_weight;   
+                }
+                $this->model->tare_weight = $txn_model->tare_weight;
+                $this->model->tare_weight_time = $txn_model->tare_weight_time;
+                $this->model->qty = number_format((float) $this->model->gross_weight - (float) $this->model->tare_weight, 2, '.', '');
+                $txn_model->tare_weight_time = date('Y-m-d').' '.$txn_model->tare_weight_time;
+                $txn_model->gross_weight_time =  date('Y-m-d').' '.$txn_model->gross_weight_time;
                 $modelSave[] = $this->model;
 
                 $txn_model->vehicle_entry_chamber_date = $this->model->vehicle_entry_date;
@@ -194,16 +202,15 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $modelStages = new TblApprovalStagesDetail();
                     $modelStages->setApprovalData($this->model->union_code, 'tbl_milk_vehicle_entry', $this->model->milk_vehicle_entry_code, $modelSave, $approval_stages);
                     $this->model->approval_status = 'Pending';
-
                     $transaction = $this->generalModel->saveTransaction($modelSave, ['Milk Vehicle Entry', ($update) ? 'edit' : 'create']);
                     $key = $this->model->milk_vehicle_entry_code;
                     if ($transaction == 'customRedirect') {
                         Yii::$app->general->setVehicleTripTrackingDetail($tripModel);
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                        $record = ['status' => 'success', 'msg' => $msg, 'milk_vehicle_entry_code' => $key];
+                        $record = ['status' => 'success', 'msg' => $msg, 'milk_vehicle_entry_code' => $key, 'gross_weight' => $this->model->gross_weight, 'tare_weight' => $this->model->tare_weight, 'tare_weight_time' => $this->model->tare_weight_time];
                     } else {
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                        $record = ['status' => 'error', 'msg' => $msg, 'milk_vehicle_entry_code' => $key];
+                        $record = ['status' => 'error', 'msg' => $msg, 'milk_vehicle_entry_code' => $key, 'gross_weight' => $this->model->gross_weight, 'tare_weight' => $this->model->tare_weight, 'tare_weight_time' => $this->model->tare_weight_time];
                     }
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     return Json::encode($record);
@@ -299,6 +306,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionListGrid() {
         $searchModel = new TblMilkVehicleEntryTransactionSearch();
         $searchModel->setAttributes(Yii::$app->request->get('TblMilkVehicleEntry'));
+        $searchModel->scenario = 'view';
         $dataProvider = $searchModel->search([]);
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }

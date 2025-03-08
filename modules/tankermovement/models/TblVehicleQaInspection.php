@@ -109,8 +109,8 @@ class TblVehicleQaInspection extends \app\models\ChildModel {
                         ->innerJoin('tbl_vehicle_qa_inspection as vqi', 'vqi.vehicle_code = vm.vehicle_code')
                         ->where(['vqi.transporter_code' => $transporterCode, 'vqi.status' => 'pending'])
                         ->andWhere(['>=', 'vqi.transaction_datetime', new Expression('DATEADD(HOUR, -' . (int)$tankerQualifiedWithin . ', GETDATE())')])
-                        ->orderBy('vqi.transaction_datetime', SORT_DESC)->one();
-        return !empty($inspectionVehicle) ? [$inspectionVehicle->vehicle_code => $inspectionVehicle->parsing_no] : [];
+                        ->orderBy('vqi.transaction_datetime', SORT_DESC)->all();
+        return ArrayHelper::map($inspectionVehicle, 'vehicle_code', 'parsing_no');
     }
 
 }

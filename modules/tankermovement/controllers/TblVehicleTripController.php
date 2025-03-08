@@ -101,7 +101,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $el_type = !empty($el_detail[1]) ? $el_detail[1] : 'bmc';
 
                 $is_valid_trip = ($sl_type == 'plant' && $el_type == 'plant') ? TRUE : FALSE;
-                if ($is_valid_trip) {
+                if ($this->model->validate() && $is_valid_trip) {
                     $this->model->plant_code = $sl_code;
                     $fl_detail = explode('#', $bmc_array[1]);
                     $this->model->fl_code = $fl_detail[0];
