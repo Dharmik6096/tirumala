@@ -152,12 +152,12 @@ $is_button_visible = true;
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
-                        [
-                            'columns' => [
-                                [
-                                    'attribute' => 'trip_sub_status',
-                                    'valueColOptions' => ['style' => 'width:80%']
-                                ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'trip_sub_status',
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
@@ -250,6 +250,7 @@ $is_button_visible = true;
                             return Yii::$app->controls->view_datetime($model->arrival_time);
                         }
                     ],
+                    ['attribute' => 'in_remarks', 'label' => (Yii::t('app', 'GateIn Remarks')),],
                     [
                         'attribute' => 'departure_time',
                         'label' => (Yii::t('app', 'GateOut Time')),
@@ -257,7 +258,6 @@ $is_button_visible = true;
                             return Yii::$app->controls->view_datetime($model->departure_time);
                         }
                     ],
-                    ['attribute' => 'in_remarks', 'label' => (Yii::t('app', 'GateIn Remarks')),],
                     ['attribute' => 'out_remarks', 'label' => (Yii::t('app', 'GateOut Remarks')),],
                 ];
                 $grid_option = [
