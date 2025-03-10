@@ -193,4 +193,5 @@ return [
     'Society Wise Rate Difference Report' => 'MPP Wise Rate Difference Report',
     'BMC Wise Society Wise Auto Manual Report' => 'BMC Wise MPP Wise Auto Manual Report',
     'Dcs Stock' => 'MPP Stock',
+    'Local' => 'Hindi',
 ];
