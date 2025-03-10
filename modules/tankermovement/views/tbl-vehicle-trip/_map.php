@@ -2,14 +2,14 @@
 $this->title = Yii::t('app', 'Vehicle Trip Map');
 ?>
 <div class="row">
-    <div class="col-sm-6 col-sm-offset-3">
+    <div class="col-sm-4 col-sm-offset-4">
         <div class="card">
             <div class="card-body">
                 <div class="text-center mt35">
                     <h3 class="">Trip Status</h3>
                     <h5 class="mt15">Trip Code : <?= !empty($tripTrack[0]->trip_code) ? $tripTrack[0]->trip_code : '' ?></h5>
                     <div class="image_sec">
-                        <img src="themes\pcdf\assets\images\vehicle.png" alt="Food Icon" width="80" class="image">
+                        <img src="themes\pcdf\assets\images\milk_truck.jpg" alt="Food Icon" width="80" class="image">
                     </div>
                 </div>
                 <?php if (!empty($tripTrack)) { ?>
