@@ -17,6 +17,9 @@ use app\modules\product\models\TblProductStockTransaction;
 use app\modules\product\models\TblProductReceipt;
 use app\modules\product\models\TblProductReceiptTransaction;
 use app\modules\product\models\TblProductStockSearch;
+use app\modules\payment\models\TblProductSale;
+use app\modules\payment\models\TblProductSaleTransaction;
+use app\modules\payment\models\TblSaleInstallments;
 use yii\base\Model;
 use yii\helpers\Url;
 
@@ -84,7 +87,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
             if (Model::validateMultiple($indentModel)) {
                 $indentPostData = Yii::$app->request->post()['TblIndentDispatch'];
                 $DispatchConsiderAs = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'dispatch_consider', 'PORTAL');
-                $txnType = $DispatchConsiderAs == 0 ? 'PRODUCT SALE' : '';
+                $txnType = ($DispatchConsiderAs == 0 || $indentMasterParam['customer_type'] == 'BULKVEN') ? 'PRODUCT SALE' : '';
                 $searchModel->load(Yii::$app->request->post());
                 if (isset($_REQUEST['selection'])) {
                     $saveModel = [];
@@ -99,6 +102,9 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                     $productStock = [];
                     foreach ($codes as $code) {
                         $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
+                        $bmc = $existData->bmc_code;
+                        $customer_code = $existData->customer_code;
+                        $type = $existData->customer_type;
                         $dcs = $existData->dcs_code;
                         $product = $existData->product_code;
                         $approve_qty = $existData->approve_qty;
@@ -115,8 +121,8 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         $dispatch->lr_no = $_REQUEST['lrno'];
                         $dispatch->dcs_code = $dcs;
                         $dispatch->product_code = $product;
-                        $dispatch->customer_code = $dcs;
-                        $dispatch->customer_type = 'DCS';
+                        $dispatch->customer_code = ($type == 'BULKVEN') ? $customer_code : $dcs;
+                        $dispatch->customer_type = ($type == 'BULKVEN') ? 'BULKVEN' : 'DCS';
                         $dispatch->status = 5;
                         $dispatch->route_code = $searchModel->route_code;
                         $dispatch->dispatch_qty = $disp_qty;
@@ -224,41 +230,99 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         }
 
                         foreach ($batchQuantities as $batch => $totalQty) {
+                            $checkStockFor = 'DCS';
                             //set to stock
                             $rate = $totalQty['rate'];
                             $totalQty = $totalQty['qty'];
+
                             $stockModel = new TblProductStock();
-                            $stockModel->setCodes('DCS', $dcs);
+                            if($type == 'BULKVEN'){
+                                $stockModel->setCodes('BMC', $bmc);
+                                $checkStockFor = 'BMC';
+                            } else {
+                                $stockModel->setCodes('DCS', $dcs);
+                                $checkStockFor = 'DCS';
+                            }
+                            
+                            // $stockModel->setCodes('DCS', $dcs);
 
                             $stockModel->product_code = $product;
                             $stockModel->union_code = $dispatch->union_code;
                             $stockModel->sap_batch_no = $batch;
-                            $existtoStock = $stockModel->getExistStock('DCS', $batch);
+                            $existtoStock = $stockModel->getExistStock($checkStockFor, $batch);
                             $key = $stockModel->mcc_plant_code . '_' . $dcs . '_' . $stockModel->product_code . '_' . $batch;
                             $oldQty = 0;
 
-                            if (!empty($existtoStock)) {
-                                if (empty($setOldVal[$key])) {
-                                    $setOldVal[$key] = $existtoStock->stock;
+                            if($type != 'BULKVEN'){
+                                if (!empty($existtoStock)) {
+                                    if (empty($setOldVal[$key])) {
+                                        $setOldVal[$key] = $existtoStock->stock;
+                                    }
+                                    $oldQty = $setOldVal[$key];
+                                    $setOldVal[$key] = $setOldVal[$key] + $totalQty;
+
+                                    $historyModel = new TblProductStockHistory();
+                                    Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
+                                    $historyModel->stock = $oldQty;
+                                    $saveModel[] = $historyModel;
+                                    $existtoStock->stock = $oldQty + $totalQty;
+                                    $stockModel = $existtoStock;
+                                } else {
+                                    $stockModel->product_stock_code = $stockModel->getCode($k);
+                                    $stockModel->stock = $oldQty + $totalQty;
+                                    $stockModel->x_col1 = Yii::$app->general->getUuid();
+                                    $stockModel->rate = $rate;
+                                    $k++;
                                 }
-                                $oldQty = $setOldVal[$key];
-                                $setOldVal[$key] = $setOldVal[$key] + $totalQty;
-
-                                $historyModel = new TblProductStockHistory();
-                                Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
-                                $historyModel->stock = $oldQty;
-                                $saveModel[] = $historyModel;
-                                $existtoStock->stock = $oldQty + $totalQty;
-                                $stockModel = $existtoStock;
-                            } else {
-                                $stockModel->product_stock_code = $stockModel->getCode($k);
-                                $stockModel->stock = $oldQty + $totalQty;
-                                $stockModel->x_col1 = Yii::$app->general->getUuid();
-                                $stockModel->rate = $rate;
-                                $k++;
+                                $saveModel[] = $stockModel;
                             }
-                            $saveModel[] = $stockModel;
+                            $reference_code = $dispatch->indent_dispatch_code;
+                            if($type == 'BULKVEN'){
+                                $reference_code = Yii::$app->general->getUuid();
+                                $saleModel = new TblProductSale();
+                                $saleModel->scenario = 'saleProductOnDispatch';
+                                $sale_amount = $disp_qty * $existData->amount;
+                                $saleModel->attributes = $existData->attributes;
+                                $saleModel->product_sale_code = $reference_code;
+                                $saleModel->invoice_date = date('Y-m-d H:i:s');
+                                $saleModel->payment_mode = 1;
+                                $saleModel->deduction_start_date = date('Y-m-d');
+                                $saleModel->amount_due = $sale_amount;
+                                $saleModel->amount = $sale_amount;
+                                $saleModel->other_amount = 0;
+                                $saleModel->paid_amount = $saleModel->payment_mode == 1 ? 0 : $saleModel->amount_due;
+                                $saleModel->is_installment = $saleModel->payment_mode == 1 ? 1 : 0;
+                                $saleModel->no_of_installment = $saleModel->payment_mode == 1 ? 1 : 0;
+                                $instAmount = floatval($saleModel->amount_due / $saleModel->no_of_installment);
 
+                                $detailSaleModel = new TblProductSaleTransaction();
+                                $detailSaleModel->scenario = 'saleProductOnDispatch';
+                                $detailSaleModel->attributes = $saleModel->attributes;
+                                $detailSaleModel->quantity = $disp_qty;
+                                $detailSaleModel->rate = $existData->rate;
+                                $detailSaleModel->sap_batch_no = $batch;
+                                $detailSaleModel->tax_code = 1;
+                                $detailSaleModel->available_stock = $existtoStock->stock;
+                                $detailSaleModel->product_sale_code = $saleModel->product_sale_code;
+                                $detailSaleModel->product_code = $product;
+                                $detailSaleModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($detailSaleModel, $detailSaleModel->product_sale_code);
+
+
+                                $installmentModel = new TblSaleInstallments();
+                                $installmentModel->attributes = $saleModel->attributes;
+                                $installmentModel->main_amount = $saleModel->amount_due;
+                                $installmentModel->installment_amount = $instAmount;
+                                $installmentModel->payment_cycle_applicability_code = NULL;
+                                $installmentModel->payment_cycle_code = NULL;
+                                $installmentModel->installment_date = NULL;
+                                $installmentModel->installment_status = 0;
+                                $installmentModel->product_sale_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $saleModel->product_sale_code, $j);
+
+                                $saveModel[] = $saleModel;
+                                $saveModel[] = $detailSaleModel;
+                                $saveModel[] = $installmentModel;
+
+                            }
                             $stockTxnModel = new TblProductStockTransaction();
                             $stockTxnModel->attributes = $stockModel->attributes;
                             unset($stockTxnModel->created_at);
@@ -266,19 +330,19 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($j);
                             $stockTxnModel->old_value = $oldQty;
                             $stockTxnModel->new_value = $totalQty;
-                            $stockTxnModel->final_value = $stockModel->stock;
-                            $stockTxnModel->transaction_type = !empty($txnType) ? $txnType : 'INVENTORY RECEIVED';
+                            $stockTxnModel->final_value = ($type == 'BULKVEN') ? $totalQty : $stockModel->stock;
+                            $stockTxnModel->transaction_type = ($type == 'BULKVEN') ? 'PRODUCT SALE TO BULKVEN' : (!empty($txnType) ? $txnType : 'INVENTORY RECEIVED');
                             $stockTxnModel->transaction_date = date('Y-m-d');
-                            $stockTxnModel->reference_code = $dispatch->indent_dispatch_code;
+                            $stockTxnModel->reference_code = $reference_code;
                             $stockTxnModel->x_col2 = 'Indent Dispatch';
                             $saveModel[] = $stockTxnModel;
-
+                            
                             $receiptTo = new TblProductReceipt();
                             $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
                             $receiptTo->grn_no = '1234';
                             $receiptTo->grn_date = date('Y-m-d');
-                            $receiptTo->vendor_type = 'DCS';
-                            $receiptTo->vendor_code = $dcs;
+                            $receiptTo->vendor_type = ($type == 'BULKVEN') ? 'BMC' : 'DCS';
+                            $receiptTo->vendor_code = ($type == 'BULKVEN') ? $bmc : $dcs;
                             $receiptTo->union_code = $stockModel->union_code;
                             $receiptTo->plant_code = $stockModel->plant_code;
                             $receiptTo->mcc_plant_code = $stockModel->mcc_plant_code;
@@ -296,7 +360,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $receiptTxnTo->rejected_quantity = 0;
                             $receiptTxnTo->rate = 0;
                             $receiptTxnTo->amount = 0;
-                            $receiptTxnTo->remark = !empty($txnType) ? $txnType : 'INVENTORY RECEIVED';
+                            $receiptTxnTo->remark = ($type == 'BULKVEN') ? 'PRODUCT SALE TO BULKVEN' : (!empty($txnType) ? $txnType : 'INVENTORY RECEIVED');
                             $saveModel[] = $receiptTxnTo;
                             $j++;
                         }

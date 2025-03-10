@@ -28,9 +28,9 @@ $this->title = Yii::t('app', 'Indent Approval');
                 }],
             ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'filter' => FALSE],
             ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'filter' => FALSE],
-            ['attribute' => 'member_code', 'label' => 'Member Code', 'filter' => FALSE, 'visible' => ($visible ? FALSE : TRUE)],
-            ['attribute' => 'member_ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
-            ['attribute' => 'member_name', 'filter' => FALSE],
+            ['attribute' => 'code', 'label' => 'Member Code', 'filter' => FALSE, 'visible' => ($visible ? FALSE : TRUE)],
+            ['attribute' => 'ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
+            ['attribute' => 'name', 'filter' => FALSE],
             ['attribute' => 'product_name', 'filter' => FALSE],
             ['attribute' => 'qty', 'filter' => FALSE],
             ['attribute' => 'indent_date', 'value' => function($model) {
