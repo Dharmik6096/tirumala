@@ -30,8 +30,13 @@ class TblConfig extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['config_name', 'config_key', 'config_for'], 'string'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
+                [['union_code', 'plant_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+                [['bmc_code', 'mcc_plant_code'], 'required', 'when' => function($model) {
+                    return $model->config_for == 'BMC';
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tblconfig-config_for').val() == 'BMC'; 
+                    }"],
         ];
     }
 
@@ -107,7 +112,7 @@ class TblConfig extends \app\models\ChildModel {
     }
 
     public function getProcessList($configFor, $inputAllow = '') {
-        $data = $this->find()->select(['process_name'])
+        $data = $this->find()->select(['process_name', 'config_for'])
                 ->distinct()
                 ->where(['config_for' => $configFor])
                 ->andWhere(['IS NOT', 'process_name', NULL]);
@@ -117,8 +122,13 @@ class TblConfig extends \app\models\ChildModel {
             $data->andWhere(['is_input_config' => 1]);
         }
         $data = $data->all();
-        $array = \yii\helpers\ArrayHelper::map($data, 'process_name', 'process_name');
-
+        if ($inputAllow == '1') {
+            $array = \yii\helpers\ArrayHelper::map($data, function ($value) {
+                        return $value->process_name . '##' . $value->config_for;
+                    }, 'process_name');
+        } else {
+            $array = \yii\helpers\ArrayHelper::map($data, 'process_name', 'process_name');
+        }
         return $array;
     }
 
