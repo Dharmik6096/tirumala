@@ -2,7 +2,9 @@
 $this->title = Yii::t('app', 'Vehicle Trip Map');
 ?>
 <div class="row">
-    <div class="col-sm-4 col-sm-offset-4">
+    <div class="col-sm-4">
+     </div>
+    <div class="col-sm-4">
         <div class="card">
             <div class="card-body">
                 <div class="text-center mt35">
