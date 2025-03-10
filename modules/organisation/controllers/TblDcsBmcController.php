@@ -544,7 +544,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
             $model = new TblPartyMaster();
             $partyList = $model->getUnionPartyList($union_code);
         }
-        $result = array_merge($plantList, $partyList);
+        $result = $plantList + $partyList;
         return Json::encode(['status' => 'success', 'data' => $result]);
     }
 
