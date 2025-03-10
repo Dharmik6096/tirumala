@@ -13,6 +13,7 @@ $this->params['menu'][] = Yii::$app->controls->add('Tanker Milk Quality');
             $this->render('_form_grid', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
+                'config_list' => $config_list
             ])
             ?>
         </div>

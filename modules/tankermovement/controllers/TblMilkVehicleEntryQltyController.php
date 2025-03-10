@@ -12,6 +12,9 @@ use app\modules\tankermovement\models\TblVehicleTripHistory;
 use yii\web\Response;
 use yii\web\NotFoundHttpException;
 use yii\helpers\Json;
+use app\modules\configuration\models\TblConfig;
+use app\modules\tankermovement\models\TblConfigTxnResult;
+use app\modules\tankermovement\models\TblConfigTxnResultHistory;
 
 /**
  * TblMilkVehicleEntryQltyController implements the CRUD actions for TblMilkVehicleEntryQlty model.
@@ -25,10 +28,15 @@ class TblMilkVehicleEntryQltyController extends ChildController {
     public function actionIndex() {
         $searchModel = new TblMilkVehicleEntryQltySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $config = new TblConfig();
+        $config->config_for = 'PLANT';
+        $config->process_name = 'PLANT_RECEIPT';
+        $config->config_type = 'CONTROL';
+        $config_list = $config->getControlConfigList();
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'config_list' => $config_list
         ]);
     }
 
@@ -51,6 +59,12 @@ class TblMilkVehicleEntryQltyController extends ChildController {
     public function actionCreate() {
         $model = new TblMilkVehicleEntryQlty();
         $model->load(\Yii::$app->request->get());
+        $config = new TblConfig();
+        $config->config_for = 'PLANT';
+        $config->process_name = 'PLANT_RECEIPT';
+        $config->config_type = 'CONTROL';
+        $config_mapping = new TblConfigTxnResult();
+        $config_list = $config->getConfigList();
         $searchModel = new TblMilkVehicleEntryQltySearch();
         $searchModel->scenario = 'update';
         $searchModel->load(\Yii::$app->request->get());
@@ -62,6 +76,8 @@ class TblMilkVehicleEntryQltyController extends ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'dataProviderCount' => $dataProviderCount,
+                    'config' => $config_mapping,
+                    'config_list' => $config_list
         ]);
     }
 
@@ -87,6 +103,20 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $saveModel = [];
             $milkVehicleEntryQltyData = $this->findModel($model->chamber_no);
+
+            $config_data = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
+            $cnt = 1;
+            foreach ($config_data as $data) {
+                $config_model = new TblConfigTxnResult();
+                $config_model->attributes = $milkVehicleEntryQltyData->attributes;
+                $config_model->attributes = $data;
+                $config_model->config_for = 'PLANT_RECEIPT';
+                $config_model->ref_code = $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code;
+                $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
+                $saveModel[] = $config_model;
+                $cnt++;
+            }
+
             $historyModel = new TblMilkVehicleEntryQltyHistory();
             Yii::$app->operation->history($milkVehicleEntryQltyData, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
@@ -131,6 +161,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
     public function actionResetQlty($id) {
         $this->model = $this->findModel($id);
         $saveModel = [];
+        $deleteModel = [];
         $historyModel = new TblMilkVehicleEntryQltyHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $saveModel[] = $historyModel;
@@ -154,7 +185,14 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $saveModel[] = $vehicleTripData;
         }
 
-        $transaction = $this->generalModel->saveTransaction($saveModel, ['Tanker Milk Quality', 'edit']);
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => $id, 'config_for' => 'PLANT_RECEIPT'])->all();
+        foreach ($configTxnData as $key => $id) {
+            $configTxnHistoryModel = new TblConfigTxnResultHistory();
+            Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);
+            $deleteModel[] = $id;
+            $saveModel[] = $configTxnHistoryModel;
+        }
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Tanker Milk Quality', 'delete']);
         if ($transaction == 'customRedirect') {
             Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData);
             $record = ['status' => 'success', 'msg' => 'Tanker Milk Quality Reset Successfully.'];

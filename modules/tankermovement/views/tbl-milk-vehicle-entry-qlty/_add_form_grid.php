@@ -1,47 +1,50 @@
 <?php
 
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 
 ?>
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'plant_code', 'label' => (Yii::t('app', 'Plant')), 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-        }, 'filter' => false],
-    ['attribute' => 'plant_code', 'label' => Yii::t('app', 'Plant') . ' Ref Code', 'value' => function($model) {
+        ['attribute' => 'plant_code', 'label' => 'Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
         }, 'visible' => true, 'filter' => FALSE],
-    ['attribute' => 'chamber_no', 'filter' => false],
-    ['attribute' => 'arrival_datetime', 'value' => function($model) {
-        return Yii::$app->controls->view_datetime($model->arrival_datetime);
-    }, 'filter' => false],
-    ['attribute' => 'lot_datetime', 'value' => function($model) {
-        return Yii::$app->controls->view_datetime($model->lot_datetime);
-    }, 'filter' => false],
-    ['attribute' => 'lot_no', 'filter' => false],
-    ['attribute' => 'status', 'filter' => false],
-    ['attribute' => 'status_datetime', 'value' => function($model) {
+        ['attribute' => 'chamber_no', 'label' => Yii::t('app', 'Com No.'), 'filter' => false],
+        ['attribute' => 'arrival_datetime', 'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->arrival_datetime);
+        }, 'filter' => false],
+        ['attribute' => 'lot_datetime', 'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->lot_datetime);
+        }, 'filter' => false],
+        ['attribute' => 'lot_no', 'filter' => false],
+        ['attribute' => 'status', 'filter' => false],
+        ['attribute' => 'status_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->status_datetime);
         }, 'filter' => false],
-    ['attribute' => 'fat', 'filter' => false],
-    ['attribute' => 'snf', 'filter' => false],
-    ['attribute' => 'clr', 'filter' => false],
-    ['attribute' => 'water', 'filter' => false],
-    ['attribute' => 'density', 'filter' => false],
-    ['attribute' => 'protein', 'filter' => false],
-    ['attribute' => 'lactose', 'filter' => false],
-    ['attribute' => 'freezing_point', 'filter' => false],
-    ['attribute' => 'mbrt', 'filter' => false],
-    ['attribute' => 'temp', 'filter' => false],
-    ['attribute' => 'acidity', 'filter' => false],
+        ['attribute' => 'fat', 'filter' => false],
+        ['attribute' => 'snf', 'filter' => false],
+        ['attribute' => 'clr', 'filter' => false],
+        ['attribute' => 'water', 'filter' => false],
+        ['attribute' => 'density', 'filter' => false],
+        ['attribute' => 'protein', 'filter' => false],
+        ['attribute' => 'lactose', 'filter' => false],
+        ['attribute' => 'freezing_point', 'filter' => false],
+        ['attribute' => 'mbrt', 'filter' => false],
+        ['attribute' => 'temp', 'filter' => false],
+        ['attribute' => 'acidity', 'filter' => false],
 ];
-
+foreach ($config_list as $config) {
+    $attribute[] = [
+        'attribute' => 'config_code', 'label' => Yii::t('app', $config->config_name),
+        'value' => function ($model) use ($config) {
+            $model->config_code = $config->config_code;
+            $configResult = $model->configResult;
+            return !empty($configResult) ? (!empty($configResult->configResultCode->config_result) ? $configResult->configResultCode->config_result : $configResult->config_result) : '';
+        }
+    ];
+}
 $grid_option = [
     'id' => 'milk-vehicle-entry-qlty-grid',
     'attributes' => $attribute,

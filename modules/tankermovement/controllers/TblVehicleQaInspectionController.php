@@ -96,7 +96,7 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                 $cnt++;
             }
             if (!empty($model->trip_code) && !empty($model->vehicle_code)) {
-                $tripDetail = TblVehicleTrip::find()->where(['trip_code' => $model->trip_code, 'vehicle_code' => $model->vehicle_code, 'is_active' => 1])->one();
+                $tripDetail = TblVehicleTrip::find()->where(['trip_code' => $model->trip_code, 'vehicle_code' => $model->vehicle_code, 'is_active' => 1, 'trip_sub_status' => 'qa_pending', 'trip_status' => 'closed'])->one();
                 $historyModel = new TblVehicleTripHistory();
                 Yii::$app->operation->history($tripDetail, $historyModel, UPDATE);
                 $tripDetail->sub_status_time = date('Y-m-d H:i:s');

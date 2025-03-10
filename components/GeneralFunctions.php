@@ -1258,7 +1258,8 @@ class GeneralFunctions extends Component {
     }
 
     public function getDestRelation($type = '') {
-        switch (strtolower($type)) {
+        $type = !empty($type) ? strtolower($type) : '';
+        switch ($type) {
             case '2' :
                 $rel = 'plantCode';
                 break;
@@ -2923,5 +2924,26 @@ class GeneralFunctions extends Component {
             $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
             $tripTrackingModel->save(TRUE, FALSE);
         }
+    }
+
+    public function getColumnName($type) {
+        $rel = $this->getDestRelation($type);
+        $type = !empty($type) ? strtolower($type) : '';
+        $ref_code = 'ref_code';
+        $name = 'name';
+        if ($type == 'plant') {
+            $name = 'name';
+            $ref_code = 'ref_code';
+        } else if ($type == 'bmc') {
+            $name = 'bmc_name';
+            $ref_code = 'ref_code';
+        } elseif ($type == 'vendor') {
+            $name = 'customer_name';
+            $ref_code = 'ref_code';
+        } elseif ($type == 'party') {
+            $name = 'party_name';
+            $ref_code = 'sap_vendor_code';
+        }
+        return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
 }

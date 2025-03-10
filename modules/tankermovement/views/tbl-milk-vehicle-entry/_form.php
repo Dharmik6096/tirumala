@@ -65,16 +65,16 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?> 
             </div>
             <div class="col-sm-2 number-validate"> 
-                <?= $form->field($model, 'gross_weight')->textInput() ?>
+                <?= $form->field($model, 'gross_weight')->textInput(['readonly' => 'readonly']) ?>
             </div>
             <div class="col-sm-2 number-validate"> 
-                <?= $form->field($model, 'tare_weight')->textInput() ?>
+                <?= $form->field($model, 'tare_weight')->textInput(['readonly' => 'readonly']) ?>
             </div>
             <div class="col-sm-2 number-validate"> 
                 <?= $form->field($model, 'qty')->textInput(['readonly' => 'readonly']) ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
+                <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99','options' => ['readonly' => true]]); ?>
             </div>
         </div>
         <div class="col-lg-12">
@@ -135,6 +135,20 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1"> 
                         <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
                     </div>
+
+                    <div class="col-sm-1 number-validate"> 
+                        <?= $form->field($txn_model, 'gross_weight')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 number-validate"> 
+                        <?= $form->field($txn_model, 'tare_weight')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1">
+                        <?= $form->field($txn_model, 'gross_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
+                    </div>
+                    <div class="col-sm-1">
+                        <?= $form->field($txn_model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
+                    </div>
+
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'chamber_quantity')->textInput() ?>
                     </div>
@@ -196,6 +210,10 @@ $form = ActiveForm::begin([
                                                                         $("#loadercontent").hide();
                                                                         $("#pageloader").hide();
                                                                         $("#tblmilkvehicleentry-milk_vehicle_entry_code").val(data.milk_vehicle_entry_code);
+                                                                        $("#tblmilkvehicleentry-gross_weight").val(data.gross_weight);
+                                                                        $("#tblmilkvehicleentry-tare_weight").val(data.tare_weight);
+                                                                        $("#tblmilkvehicleentry-tare_weight_time").val(data.tare_weight_time);
+                                                                        $("#tblmilkvehicleentry-tare_weight").trigger("change");
                                                                         $(".help-block").text("");
                                                                         $(".form-group").removeClass("has-error");         
                                                                         $(".error-summary").hide();
@@ -579,6 +597,18 @@ $script = "
             qty = 0;
         }
         $('#tblmilkvehicleentry-qty').val((qty).toFixed(2));
+    });
+    $(document).on('change','#tblmilkvehicleentrytransaction-gross_weight,#tblmilkvehicleentrytransaction-tare_weight', function() {
+        var gross_weight=$('#tblmilkvehicleentrytransaction-gross_weight').val() || 0;
+        var tare_weight=$('#tblmilkvehicleentrytransaction-tare_weight').val() || 0;
+
+        var qty = parseFloat(gross_weight) - parseFloat(tare_weight);
+        if (!isNaN(qty)) {
+            qty = Math.max(0, qty);
+        } else {
+            qty = 0;
+        }
+        $('#tblmilkvehicleentrytransaction-chamber_quantity').val((qty).toFixed(2));
     });
     
 ";

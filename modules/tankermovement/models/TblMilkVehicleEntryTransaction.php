@@ -62,7 +62,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['chamber_quantity', 'fat', 'snf', 'water', 'temp', 'milk_quality_type_code', 'milk_type_code', 'entry_type', 'chamber_no'], 'required'],
+            [['chamber_quantity', 'fat', 'snf', 'water', 'temp', 'milk_quality_type_code', 'milk_type_code', 'entry_type', 'chamber_no', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'required'],
             [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'grn_no', 'chamber_no', 'challan_no', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
             [['vehicle_entry_chamber_date', 'created_at', 'updated_at'], 'safe'],
             [['chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
@@ -74,7 +74,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
           }"],
             [['entry_type'], 'validateCreate'],
             [['clr', 'protein', 'density', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'default', 'value' => '0'],
-            [['status', 'cron_pick_datetime','pick_datetime','response_datetime','response_msg'], 'safe'],
+            [['status', 'cron_pick_datetime','pick_datetime','response_datetime','response_msg', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'safe'],
             [['status'], 'default', 'value' => 0],
         ];
     }

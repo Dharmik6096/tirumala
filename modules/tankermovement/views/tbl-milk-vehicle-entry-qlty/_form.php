@@ -59,6 +59,26 @@ $form = ActiveForm::begin([
             <div class="col-sm-1">
                 <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
+            <?php
+            $index = 1;
+            $cnt = 1;
+            foreach ($config_list as $c) {
+                ?>
+                <?= Html::activeHiddenInput($config, '[' . $index . ']config_code', ['value' => $c->config_code]); ?>
+                <div class="col-sm-2">
+                    <?= $c->prepareControl($form, $config, $index); ?>
+                </div>
+                <?php if ($cnt == 6) { ?>
+                    <?php
+                    $cnt = 0;
+                }
+                ?>
+                <?php
+                $cnt++;
+                $index++;
+            }
+            ?>
+            <div class="clearfix"></div>
             <div class="form-group col-sm-3 mt23">
                 <?php
                 AjaxSubmitButton::begin([
