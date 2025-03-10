@@ -191,7 +191,7 @@ $is_button_visible = true;
                     ],
                         ['attribute' => 'source_org_code',],
                         ['attribute' => 'source_org_type', 'value' => function ($model) {
-                            $response = Yii::$app->general->getColumnName($model->destination_type);
+                            $response = Yii::$app->general->getColumnName($model->source_org_type);
                             if (!empty($response['rel'])) {
                                 $data = $model->{$response['rel'] . 'Source'};
                                 if (!empty($data)) {
