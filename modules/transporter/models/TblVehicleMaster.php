@@ -80,12 +80,16 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 [['transporter_code'], 'fieldValidate', 'on' => 'importCsv'],
                 [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'parsing_no', 'billing_method', 'vehicle_use_type'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
                 [['parsing_no', 'driver_name', 'transporter_code', 'wef_date', 'billing_method'], 'required', 'on' => 'importCsv'],
+                [['no_of_compartment'], 'default', 'value' => 1],
+                [['no_of_compartment'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'chamber_no');
+                }, 'on' => 'importCsv'],
                 [['vehicle_type_code', 'fuel_type_code', 'capacity_code'], 'required', 'except' => ['activation']],
 //                [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required', 'except' => ['activation']],
 //                [['union_code'], 'required', 'except' => ['importCsv', 'activation']],
             [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['activation']],
                 [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'is_active'], 'integer', 'except' => ['activation']],
-                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code', 'billing_method', 'billing_type_code', 'vehicle_use_type', 'billing_with_capacity', 'flag_wef_date', 'billing_qty_flag'], 'safe'],
+                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code', 'billing_method', 'billing_type_code', 'vehicle_use_type', 'billing_with_capacity', 'flag_wef_date', 'billing_qty_flag', 'no_of_compartment'], 'safe'],
                 [['rent', 'average'], 'number', 'min' => 1],
                 [['driver_contact_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
@@ -163,6 +167,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
             'vehicle_use_type' => Yii::t('app', 'Used for'),
             'billing_with_capacity' => Yii::t('app', 'Billing With Capacity ?'),
             'parsing_no' => Yii::t('app', 'Parsing No'),
+            'no_of_compartment' => Yii::t('app', 'No Of Compartment'),
         ];
     }
 
@@ -297,9 +302,9 @@ class TblVehicleMaster extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {

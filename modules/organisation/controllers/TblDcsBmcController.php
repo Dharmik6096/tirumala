@@ -30,6 +30,7 @@ use app\modules\document\controllers\TblAttachmentController;
 use app\modules\organisation\models\TblBmcChillerInfo;
 use app\modules\organisation\models\TblBmcChillerInfoSearch;
 use app\modules\organisation\models\TblBmcChillerInfoHistory;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 /**
  * TblDcsBmcController implements the CRUD actions for TblDcsBmc model.
@@ -536,7 +537,14 @@ class TblDcsBmcController extends \app\controllers\ChildController
             $model = new TblDcsBmc();
             $plantList = $model->getBMCList([], 'TRUE', false, false, [], $plant, 'BMC');
         }
-        return Json::encode(['status' => 'success', 'data' => $plantList]);
+        $partyList = [];
+        if (!empty($_POST['action_type']) && $_POST['action_type'] == 'party' && !empty($_POST['union_code'])) {
+            $union_code = $_POST['union_code'];
+            $model = new TblPartyMaster();
+            $partyList = $model->getUnionPartyList($union_code);
+        }
+        $result = array_merge($plantList, $partyList);
+        return Json::encode(['status' => 'success', 'data' => $result]);
     }
 
     public function actionUnionBmcList()

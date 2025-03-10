@@ -29,6 +29,7 @@ use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\general\models\TblProcessApprovalSearch;
+use app\modules\tankermovement\models\TblMilkVehicleEntryQlty;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionReject;
 use app\modules\tankermovement\models\TblMilkVehicleEntryReject;
 
@@ -61,6 +62,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionView($id) {
         $searchModel = new TblMilkVehicleEntryTransactionSearch();
         $searchModel->milk_vehicle_entry_code = $id;
+        $searchModel->scenario = 'view';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $approvalModel = new TblProcessApprovalSearch();
@@ -103,6 +105,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $this->setCode($this->model);
         if (Yii::$app->request->post()) {
             $update = FALSE;
+            $tripModel = NULL;
             $this->model->load(Yii::$app->request->post());
             $masterPost = Yii::$app->request->post()['TblMilkVehicleEntry'];
             $trPost = Yii::$app->request->post()['TblMilkVehicleEntryTransaction'];
@@ -130,6 +133,8 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                         $tripModel->scenario = 'closetrip';
                         $tripModel->grn_no = $this->model->grn_no;
                         $tripModel->trip_status = 'closed';
+                        $tripModel->trip_sub_status = 'cleaning_pending';
+                        $tripModel->sub_status_time = date('Y-m-d H:i:s');
                         $modelSave[] = $tripModel;
                         /*  $tripDetailModel = new TblVehicleTripDetail();
                           $last_trip = $tripDetailModel->getLastTrip($this->model->trip_code);
@@ -181,6 +186,14 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     }
                 }
                 $this->model->vehicle_entry_date = !empty($this->model->vehicle_entry_date) ? date('Y-m-d', strtotime($this->model->vehicle_entry_date)) : '';
+                if (empty($masterPost['milk_vehicle_entry_code'])) {
+                    $this->model->gross_weight = $txn_model->gross_weight;   
+                }
+                $this->model->tare_weight = $txn_model->tare_weight;
+                $this->model->tare_weight_time = $txn_model->tare_weight_time;
+                $this->model->qty = number_format((float) $this->model->gross_weight - (float) $this->model->tare_weight, 2, '.', '');
+                $txn_model->tare_weight_time = date('Y-m-d').' '.$txn_model->tare_weight_time;
+                $txn_model->gross_weight_time =  date('Y-m-d').' '.$txn_model->gross_weight_time;
                 $modelSave[] = $this->model;
 
                 $txn_model->vehicle_entry_chamber_date = $this->model->vehicle_entry_date;
@@ -189,15 +202,15 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $modelStages = new TblApprovalStagesDetail();
                     $modelStages->setApprovalData($this->model->union_code, 'tbl_milk_vehicle_entry', $this->model->milk_vehicle_entry_code, $modelSave, $approval_stages);
                     $this->model->approval_status = 'Pending';
-
                     $transaction = $this->generalModel->saveTransaction($modelSave, ['Milk Vehicle Entry', ($update) ? 'edit' : 'create']);
                     $key = $this->model->milk_vehicle_entry_code;
                     if ($transaction == 'customRedirect') {
+                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel);
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                        $record = ['status' => 'success', 'msg' => $msg, 'milk_vehicle_entry_code' => $key];
+                        $record = ['status' => 'success', 'msg' => $msg, 'milk_vehicle_entry_code' => $key, 'gross_weight' => $this->model->gross_weight, 'tare_weight' => $this->model->tare_weight, 'tare_weight_time' => $this->model->tare_weight_time];
                     } else {
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                        $record = ['status' => 'error', 'msg' => $msg, 'milk_vehicle_entry_code' => $key];
+                        $record = ['status' => 'error', 'msg' => $msg, 'milk_vehicle_entry_code' => $key, 'gross_weight' => $this->model->gross_weight, 'tare_weight' => $this->model->tare_weight, 'tare_weight_time' => $this->model->tare_weight_time];
                     }
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     return Json::encode($record);
@@ -275,10 +288,14 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionDispatchDetail() {
         $existData = TblBmcMilkDispatch::find()
                 ->alias('bmd')
-                ->select(['bmd.challan_no', 'bmd.from_date', 'bmd.from_shift_code', 'bmd.to_date', 'bmd.to_shift_code', 'bmd.vehicle_code', 'bmd.vehicle_in_time', 'bmd.vehicle_out_time', 'bmd.bmc_milk_dispatch_code', 'gross_weight' => 'sum(a.dispatch_qty)'])
+                ->select(['bmd.challan_no', 'bmd.from_date', 'bmd.from_shift_code', 'bmd.to_date', 'bmd.to_shift_code', 'bmd.vehicle_code', 'bmd.vehicle_in_time', 'bmd.vehicle_out_time', 'bmd.bmc_milk_dispatch_code', 'gross_weight' => 'sum(a.dispatch_qty)', 'a.fat', 'a.snf', 's.shift as from_shift', 'ts.shift as to_shift', 'vm.parsing_no'])
                 ->join('INNER JOIN', 'tbl_bmc_milk_dispatch_txn a', 'a.bmc_milk_dispatch_code=bmd.bmc_milk_dispatch_code')
+                ->join('LEFT JOIN', 'tbl_shift s', 's.id=bmd.from_shift_code')
+                ->join('LEFT JOIN', 'tbl_shift ts', 'ts.id=bmd.to_shift_code')
+                ->join('LEFT JOIN', 'tbl_vehicle_master vm', 'vm.vehicle_code=bmd.vehicle_code')
                 ->where(['trip_code' => Yii::$app->request->get('trip_code')])
-                ->groupBy(['bmd.challan_no', 'bmd.from_date', 'bmd.from_shift_code', 'bmd.to_date', 'bmd.to_shift_code', 'bmd.vehicle_code', 'bmd.vehicle_in_time', 'bmd.vehicle_out_time', 'bmd.bmc_milk_dispatch_code'])
+                ->groupBy(['bmd.challan_no', 'bmd.from_date', 'bmd.from_shift_code', 'bmd.to_date', 'bmd.to_shift_code', 'bmd.vehicle_code', 'bmd.vehicle_in_time', 'bmd.vehicle_out_time', 'bmd.bmc_milk_dispatch_code', 'a.fat', 'a.snf', 's.shift', 'ts.shift', 'vm.parsing_no'])
+                ->asArray()
                 ->all();
 
         return $this->renderAjax('_dispatch_detail', [
@@ -289,6 +306,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionListGrid() {
         $searchModel = new TblMilkVehicleEntryTransactionSearch();
         $searchModel->setAttributes(Yii::$app->request->get('TblMilkVehicleEntry'));
+        $searchModel->scenario = 'view';
         $dataProvider = $searchModel->search([]);
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
@@ -549,6 +567,19 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     'dataProvider' => $dataProvider,
                     'milkVehicleEntryModel' => $milkVehicleEntryModel,
         ]);
+    }
+
+    public function actionTripSubStatus() {
+        $milkVehicleEntryQlty = new TblMilkVehicleEntryQlty();
+        $milkVehicleEntryQlty->union_code = \Yii::$app->request->post()['union_code'];
+        $milkVehicleEntryQlty->trip_code = \Yii::$app->request->post()['trip_code'];
+        $milkVehicleEntryQltyData = $milkVehicleEntryQlty->getMilkVehicleEntryQlty();
+        if ($milkVehicleEntryQltyData['success']) {
+            $response = ['status' => 'success', 'record_data' => $milkVehicleEntryQltyData['record_data']];
+        } else {
+            $response = ['status' => 'error', 'msg' => 'Quality not Done or exceeded time limit for selected trip.'];
+        }
+        return Json::encode($response);
     }
 
 }

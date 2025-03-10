@@ -33,10 +33,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), $readonly, 'store_location_type'); ?>
     </div>
-    <!--    <div class="col-sm-2">
-    <?php //Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassetdetail-store_location_type', '', $model->getAttributeLabel('store_location_code'), 'store_location_code', $readonly);  ?>
-        </div> -->
-
     <div class="col-sm-2 to_4 to_1 default_hide to_hide">
         <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassetdetail-store_location_type', '', $model->getAttributeLabel('store_location_code'), 'store_location_code', $readonly); ?>
     </div>
@@ -52,9 +48,14 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 to_3 default_hide to_hide">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassetdetail-to_bmc', 'to_dcs', $model->getAttributeLabel('to_dcs'), FALSE, '', $readonly, TRUE); ?>
     </div>
-
     <div class="col-sm-2 hide-serial-no">
         <?= $form->field($model, 'serial_number')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('manufacture', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('manufacturer_id'), FALSE, 'manufacturer_id'); ?>
+    </div>
+    <div class="col-sm-2 hide-serial-no">
+        <?= $form->field($model, 'manufacturer_serial_number')->textInput() ?>
     </div>
     <div class="col-sm-2 hide-qty-no <?= $class ?>">
         <?= $form->field($model, 'qty')->textInput() ?>

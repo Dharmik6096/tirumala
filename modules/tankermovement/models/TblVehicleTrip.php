@@ -41,7 +41,7 @@ use app\modules\syncutility\models\TblSentbox;
 class TblVehicleTrip extends \app\models\ChildModel {
 
     public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $filter_plant_code;
-    public $fl_type, $fl_code;
+    public $fl_type, $fl_code, $type;
 
     /**
      * @inheritdoc
@@ -57,7 +57,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return [
                 [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
                 [['trip_for'], 'default', 'value' => 'bmcdispatch'],
                 [['trip_mode'], 'default', 'value' => 'online'],
@@ -104,6 +104,10 @@ class TblVehicleTrip extends \app\models\ChildModel {
             'kg_snf' => Yii::t('app', 'SNFKg'),
             'total_qty' => Yii::t('app', 'Total Qty'),
             'rejected_count' => Yii::t('app', 'Rejected Sample'),
+            'trip_sub_status' => Yii::t('app', 'Trip Sub Status'),
+            'sub_status_time' => Yii::t('app', 'Sub Status Time'),
+            'driver_name' => Yii::t('app', 'Driver Name'),
+            'mobile_no' => Yii::t('app', 'Mobile No'),
         ];
     }
 
@@ -198,7 +202,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $trip_detai->vehicle_code = $model->vehicle_code;
             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
             $trip_detai->trip_code = $model->trip_code;
-            $trip_detai->arrival_time = date('Y-m-d H:i:s');
+            // $trip_detai->arrival_time = date('Y-m-d H:i:s');
             if (empty($vehicle_trip_detail_code)) {
                 $vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . (((int) substr($last_trip->vehicle_trip_detail_code, strlen($trip_detai->vehicle_trip_code) + 1)) + 1);
             }
@@ -226,6 +230,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $bmc_plant_code = !empty($this->fl_code) ? $this->fl_code : $this->bmc_code;
         $primaryKey = 'trip_code';
         $prefix = substr($this->vehicleCode->parsing_no, -4) . substr($bmc_plant_code, -2);
+        $prefix = str_replace("-","0",$prefix);
         $len = strlen($prefix);
         $val = $this->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
@@ -263,7 +268,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
                         ->where(['trip_code' => $this->trip_code, 'lower(trip_status)' => ['tankerfull', 'open', 'generated']])->one();
     }
 
-    public function getClosedtripData(){
+    public function getClosedtripData() {
         return $this->find()
                         ->where(['trip_code' => $this->trip_code, 'lower(trip_status)' => ['closed']])->one();
     }

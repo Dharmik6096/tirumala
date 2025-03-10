@@ -151,6 +151,15 @@ $this->title = Yii::$app->label->title('view', 'party master');
                         ],
                     ],
                 ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'is_sales_office',
+                            'value' => !empty($model->is_sales_office) ? 'Yes' : 'No',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget

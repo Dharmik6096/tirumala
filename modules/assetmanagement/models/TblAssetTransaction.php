@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblUnions;
 use app\modules\assetmanagement\models\TblAssetSet;
+use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\document\models\TblAttachment;
 
@@ -50,7 +51,7 @@ class TblAssetTransaction extends \app\models\ChildModel {
         return [
 //            [['asset_detail_code'], 'required'],
             [['asset_detail_code', 'status'], 'integer'],
-            [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_by', 'created_by', 'updated_by', 'qty', 'in_ward', 'selected_sr_no', 'remarks', 'put_to_use_date', 'from_plant', 'from_mcc', 'from_bmc', 'from_dcs', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'sap_code', 'remain_qty'], 'safe'],
+            [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_by', 'created_by', 'updated_by', 'qty', 'in_ward', 'selected_sr_no', 'remarks', 'put_to_use_date', 'from_plant', 'from_mcc', 'from_bmc', 'from_dcs', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'sap_code', 'remain_qty', 'detail_code', 'manufacturer_serial_number'], 'safe'],
             [['received_date', 'created_at', 'updated_at', 'asset_type', 'transaction_date'], 'safe'],
             [['asset_type'], 'default', 'value' => 0],
             [['to_type', 'to_dest', 'transaction_date'], 'required', 'skipOnError' => true, 'when' => function ($model) {
@@ -75,6 +76,7 @@ class TblAssetTransaction extends \app\models\ChildModel {
                 }, 'skipOnError' => true, 'on' => 'importCsv'],
             [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
             [['asset_code'], 'checkUnique', 'skipOnError' => true],
+            [['asset_code'], 'getDetailCode', 'skipOnError' => true, 'except' => ['importCsv', 'assetTransfer', 'create']],
             //   ['serial_number', 'unique', 'targetAttribute' => ['serial_number', 'asset_code', 'from_type', 'from_dest', 'to_type', 'to_dest', 'transaction_date'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Serial No. has already been taken.')],
             [['from_dest'], 'exist', 'skipOnError' => true,
                 'targetClass' => ($this->from_type == 'VEN') ? TblCustomerMaster::className() : TblStoreLocation::className()
@@ -126,6 +128,8 @@ class TblAssetTransaction extends \app\models\ChildModel {
             'to_plant' => Yii::t('app', 'To Plant'),
             'to_dcs' => Yii::t('app', 'To DCS'),
             'sap_code' => Yii::t('app', 'SAP Code'),
+            'detail_code' => Yii::t('app', 'Detail Code'),
+            'manufacturer_serial_number' => Yii::t('app', 'Manufacturer Serial No.'),
         ];
     }
 
@@ -155,6 +159,10 @@ class TblAssetTransaction extends \app\models\ChildModel {
 
     public function getToSlocCode() {
         return $this->hasOne(TblStoreLocation::className(), ['sloc_code' => 'to_sloc']);
+    }
+
+    public function getContactDetailCode() {
+        return $this->hasOne(TblContactDetails::className(), ['detail_code' => 'detail_code']);
     }
 
     public static function getSerialNo($serial_number) {
@@ -233,15 +241,12 @@ class TblAssetTransaction extends \app\models\ChildModel {
     public function checkUnique($attribute, $params) {
         $data = 0;
         if (Yii::$app->general->getforeignkey($this->assetCode, 'is_serial_number') == '1') {
-            $data = $this->find()->where(['serial_number' => $this->serial_number, 'asset_code' => $this->asset_code, 'from_type' => $this->from_type, 'from_dest' => $this->from_dest, 'to_type' => $this->to_type, 'to_dest' => $this->to_dest, 'transaction_date' => $this->transaction_date])
-                    ->andWhere(['<>', 'asset_transaction_code', $this->asset_transaction_code])
-                    ->count();
+            $query = $this->find()->where(['serial_number' => $this->serial_number, 'asset_code' => $this->asset_code, 'from_type' => $this->from_type, 'from_dest' => $this->from_dest, 'to_type' => $this->to_type, 'to_dest' => $this->to_dest, 'transaction_date' => $this->transaction_date]);
+            if (!empty($this->asset_transaction_code)) {
+                $query->andWhere(['<>', 'asset_transaction_code', $this->asset_transaction_code]);
+            }
+            $data = $query->count();
         }
-        /* else {
-          $data = $this->find()->where(['qty' => $this->qty, 'asset_code' => $this->asset_code, 'from_type' => $this->from_type, 'from_dest' => $this->from_dest, 'to_type' => $this->to_type, 'to_dest' => $this->to_dest, 'transaction_date' => $this->transaction_date])
-          ->andWhere(['<>', 'asset_transaction_code', $this->asset_transaction_code])
-          ->count();
-          } */
         if ($data != 0) {
             $this->addError($attribute, Yii::t('app/validation', 'Asset/Serial No. has already been taken.'));
         }
@@ -319,10 +324,21 @@ class TblAssetTransaction extends \app\models\ChildModel {
                         ->andWhere(['tbl_store_location.reference_code' => $ref_code])
                         ->asArray()->all();
     }
-    
+
     public function getAttachment() {
-        $this->asset_transaction_code = (string)$this->asset_transaction_code;
+        $this->asset_transaction_code = (string) $this->asset_transaction_code;
         return $this->hasOne(TblAttachment::className(), ['module_code' => 'asset_transaction_code']);
+    }
+
+    public function getDetailCode() {
+        $storeLocationData = TblStoreLocation::find()->select(['store_location_type', 'reference_code'])->where(['store_location_code' => $this->to_dest, 'is_active' => '1'])->one();
+        $moduleMapping = ['1' => 'plant', '2' => 'bmc', '3' => 'society'];
+        if (!empty($storeLocationData) && isset($moduleMapping[$this->to_type])) {
+            $detailCode = TblContactDetails::find()->select('detail_code')->where(['module_code' => $storeLocationData->reference_code, 'module_name' => $moduleMapping[$storeLocationData->store_location_type], 'is_active' => '1', 'is_default' => '1'])->scalar();
+            if (!empty($detailCode)) {
+                $this->detail_code = $detailCode;
+            }
+        }
     }
 
 }

@@ -127,6 +127,7 @@ class TblProductSale extends \app\models\ChildModel {
             [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+            [['invoice_date'], 'pastDateValidate', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync']],
             [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
             /*    [['bmc_code'], function ($attribute, $params) {
@@ -1155,4 +1156,10 @@ class TblProductSale extends \app\models\ChildModel {
         }
     }
 
+    public function pastDateValidate($attribute, $params) {
+        $invoice_date = ($this->invoice_date == '') ? null : date('Y-m-d', strtotime($this->invoice_date));
+        if (!empty($invoice_date) && ($invoice_date > date('Y-m-d'))) {
+            $this->addError('invoice_date', Yii::t('app/validation', $this->getAttributeLabel('invoice_date') . ' Must be smaller than ' . date('d.m.Y')));
+        }
+    }
 }

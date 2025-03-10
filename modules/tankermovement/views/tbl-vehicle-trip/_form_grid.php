@@ -40,10 +40,9 @@ $attribute = [
         'value' => function ($model) {
             $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
             $sourceCode = !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code;
-            $rel = Yii::$app->general->getDestRelation($sourceType);
-            $att = strtolower($sourceType) == 'bmc' ? 'bmc_name' : (strtolower($sourceType) == 'vendor' ? 'customer_name' : (strtolower($sourceType) == 'party' ? 'party_name' : 'name'));
-            if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->$rel, $att) . '-' . $sourceCode;
+            $response = Yii::$app->general->getColumnName($sourceType);
+            if (!empty($response['rel']))
+                return Yii::$app->general->getforeignkey($model->{$response['rel']}, $response['name']) . '-' . $sourceCode;
         }, 'vAlign' => 'middle', 'filter' => false
     ],
     [
@@ -59,9 +58,9 @@ $attribute = [
         'label' => (Yii::t('app', 'Source Ref.Code')),
         'value' => function ($model) {
             $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
-            $rel = Yii::$app->general->getDestRelation($sourceType);
-            if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->$rel, 'ref_code');
+            $response = Yii::$app->general->getColumnName($sourceType);
+            if (!empty($response['rel']))
+                return Yii::$app->general->getforeignkey($model->{$response['rel']}, $response['ref_code']);
         }, 'vAlign' => 'middle'
     ],
     [
@@ -164,6 +163,14 @@ $grid_option = [
                 $options = ['title' => Yii::t('app', 'In-Active Trip'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'In-Active Trip'), 'class' => 'inactive-trip', 'data-val' => $model->vehicle_trip_code, 'data-name' => $model->trip_code];
                 return GhostHtml::a_alert('<i class="fa fa-ban"></i>', ['/tankermovement/tbl-vehicle-trip/inactive-trip', 'id' => $model->vehicle_trip_code], $options);
             }
+        },
+        'inspection' => function ($url, $model) {
+            $disabled = ($model->trip_status == 'closed' && $model->trip_sub_status == 'qa_pending') ? '' : 'disabled';
+            return GhostHtml::a('<i class="glyphicon glyphicon-plus"></i>', ['/tankermovement/tbl-vehicle-qa-inspection/create', 'tripcode' => $model->trip_code], ['class' => $disabled]);
+        },
+        'map' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Map', 'data-val' => $model->trip_code];
+            return GhostHtml::a('<i class="fa fa-map-marker"></i>', ['/tankermovement/tbl-vehicle-trip/map', 'trip_code' => $model->trip_code], $options);
         },
     ]
 ];

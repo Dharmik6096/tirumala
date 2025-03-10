@@ -306,6 +306,9 @@ class TblDcs extends ChildModel {
                 [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
+                [['machine_owned'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'machine_owned_type');
+                }, 'on' => ['importCsv']],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
                 [['ts_code_m', 'ts_code_e'], 'number'],
                 [['is_bmc'], 'unique', 'targetAttribute' => ['is_bmc', 'bmc_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
@@ -1352,6 +1355,18 @@ class TblDcs extends ChildModel {
                     });
             asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
             return $dcs;
+        } else if (in_array($type, [3])) {
+            $plantModel = new TblPlant();
+            $query = $plantModel->find()->where(['is_active' => 1]);
+            if (Yii::$app->session->get('Plant') !== '') {
+                $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+            }
+            $plant = $query->all();
+            $plant = ArrayHelper::map($plant, 'plant_code', function($plant) {
+                        return $plant->ref_code . ' - ' . $plant->name;
+                    });
+            asort($plant, SORT_NATURAL | SORT_FLAG_CASE);
+            return $plant;
         }
     }
 

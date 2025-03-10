@@ -19,7 +19,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active'], 'safe'],
+                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no'], 'safe'],
                 [['is_active'], 'integer'],
         ];
     }
@@ -41,7 +41,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function search($params) {
         $query = TblVehicleTrip::find()->alias('t')->select(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
-            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code',
+            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status',
             'challan_no' => "STUFF((
           SELECT ',' + d.challan_no
           FROM tbl_bmc_milk_dispatch d WHERE d.trip_code=t.trip_code
@@ -83,7 +83,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
                 ->andFilterWhere(['like', 't.trip_status', $this->trip_status])
                 ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode]);
         $query->groupBy(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
-            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code']);
+            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status']);
         $query->orderBy(['transaction_date' => SORT_DESC, 'vehicle_trip_code' => SORT_ASC]);
         return $dataProvider;
     }

@@ -1909,6 +1909,80 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTpCostDetail() {
+        $this->report = 'TpCostDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionTpCostSummary() {
+        $this->report = 'TpCostSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionAreBmcCollectionShiftReport() {
+        $this->report = 'AreBmcCollectionShiftReport';
+        return $this->actionIndex();
+    }
+
+    public function actionAreBmcCollDateShiftWiseSummary() {
+        $this->report = 'AreBmcCollDateShiftWiseSummary';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AreBmcCollDateWiseSummary';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'AreBmcCollConsolidated';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'AreConsolidatedWithBank';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionAreSocietyWiseCda() {
+        $this->report = 'AreSocietyWiseCda';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AreSocietyWiseCdaDateWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'AreSocietyWiseCdaConsolidated';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionAreVendorPayment() {
+        $this->report = 'AreVendorPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionAreMemberPayment() {
+        $this->report = 'AreMemberPaymentDcsWise';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AreMemberPaymentMemberWise';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionAreVendorBankPayment() {
+        $this->report = 'AreVendorBankPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionAreMemberBankPayment() {
+        $this->report = 'AreMemberBankPayment';
+        return $this->actionIndex();
+    }
+    
+    public function actionVspTransitRecovery() {
+        $this->report = 'VspTransitRecovery';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4083,6 +4157,126 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
                 'scenario' => 'RateRecalculationWefDateWise',
                 'title' => 'Rate Recalculation(Custom)',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost',
+                'scenario' => 'TpCostDetail',
+                'title' => 'Tp Cost Detail',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost_summary',
+                'scenario' => 'TpCostSummary',
+                'title' => 'Tp Cost Summary',
+                'bkg_export' => TRUE,
+            ],
+            'AreBmcCollectionShiftReport' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift,route_type_trans:static:route_type_trans',
+                'sp_name' => 'sp_mis_are_bmc_collection_shift_report',
+                'scenario' => 'AreBmcCollectionShiftReport',
+                'title' => '201 - BMC Collection Shift Report',
+                'bkg_export' => TRUE,
+            ],
+            'AreBmcCollDateShiftWiseSummary' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_bmc_wise_society_collection_date_shift_wise',
+                'scenario' => 'AreBmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Date And Shift Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+                'bkg_export' => TRUE,
+            ],
+            'AreBmcCollDateWiseSummary' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_bmc_wise_soceity_collection_date_wise',
+                'scenario' => 'AreBmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Date Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+                'bkg_export' => TRUE,
+            ],
+            'AreBmcCollConsolidated' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_bmc_collection_consolidated',
+                'scenario' => 'AreBmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+                'bkg_export' => TRUE,
+            ],
+            'AreConsolidatedWithBank' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_bmc_collection_consolidated_with_bank',
+                'scenario' => 'AreBmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+            ],
+            'AreSocietyWiseCda' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status', 
+                'sp_name' => 'sp_mis_are_cda_date_shift',
+                'scenario' => 'AreSocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE,
+            ],
+            'AreSocietyWiseCdaDateWise' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_cda_date',
+                'scenario' => 'AreSocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE,
+            ],
+            'AreSocietyWiseCdaConsolidated' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status', 
+                'sp_name' => 'sp_mis_are_cda_consolidated',
+                'scenario' => 'AreSocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE,
+            ],
+            'AreVendorPayment' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift', 
+                'sp_name' => 'sp_mis_are_vendor_payment',
+                'scenario' => 'AreVendorPayment',
+                'title' => '602 - Vendor Payment',
+                'bkg_export' => TRUE,
+            ],
+            'AreMemberPaymentDcsWise' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift', 
+                'sp_name' => 'sp_mis_are_member_billing_dcs_wise',
+                'scenario' => 'AreMemberPaymentDcsWise',
+                'title' => '603 - Member Payment',
+                'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+                'bkg_export' => TRUE,
+            ],
+            'AreMemberPaymentMemberWise' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift', 
+                'sp_name' => 'sp_mis_are_member_billing_member_wise',
+                'scenario' => 'AreMemberPaymentDcsWise',
+                'title' => '603 - Member Payment',
+                'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+                'bkg_export' => TRUE,
+            ],
+            'AreVendorBankPayment' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,customer_type,payment_cycle_code:type_check,bank_type:static:bank_type',
+                'sp_name' => 'sp_mis_are_vendor_bank_payment',
+                'scenario' => 'AreVendorBankPayment',
+                'title' => '606 - Vendor Bank Payment',
+                'bkg_export' => TRUE,
+            ],
+            'AreMemberBankPayment' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,payment_cycle_code:default:dcs,bank_type:static:bank_type',
+                'sp_name' => 'sp_mis_are_member_bank_payment',
+                'scenario' => 'AreMemberBankPayment',
+                'title' => '607 - Member Bank Payment',
+                'bkg_export' => TRUE,
+            ],
+            'VspTransitRecovery' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_vsp_transit_recovery',
+                'scenario' => 'VspTransitRecovery',
+                'title' => '921 - TS Recovery Report',
                 'bkg_export' => TRUE,
             ],
         ];
