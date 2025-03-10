@@ -1203,7 +1203,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'ShiftWiseBill' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_type,p_route_code:union_code,p_dcs_code,p_payment_cycle_code,p_lang_code,locale,digit_config',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:union_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_lang_code,locale,digit_config',
                 'path' => ['ELANAD' => 'vsp/ShiftWiseBill'],
                 'scenario' => 'ShiftWiseBill',
                 'title' => 'Shift Wise Bill',
