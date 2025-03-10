@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblVehicleMaster;
 use Yii;
 use app\modules\tankermovement\models\TblConfigTxnResult;
+use app\modules\tankermovement\models\TblVehicleTripDetail;
 
 /**
  * This is the model class for table "tbl_milk_vehicle_entry_qlty".
@@ -178,7 +179,12 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getConfigResult() {
-        return TblConfigTxnResult::findOne(['ref_code' => (string)$this->milk_vehicle_entry_qlty_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT']);
+        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT']);
+    }
+
+    public function getPlant($trip_code) {
+        return TblVehicleTripDetail::find()->select(['source_org_code'])
+                        ->where(['is_last_destination' => 1, 'source_org_type' => 'plant', 'trip_code' => $trip_code])->one();
     }
 
 }

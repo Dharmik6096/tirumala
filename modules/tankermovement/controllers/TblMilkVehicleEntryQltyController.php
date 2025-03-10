@@ -59,18 +59,20 @@ class TblMilkVehicleEntryQltyController extends ChildController {
     public function actionCreate() {
         $model = new TblMilkVehicleEntryQlty();
         $model->load(\Yii::$app->request->get());
-        $config = new TblConfig();
-        $config->config_for = 'PLANT';
-        $config->process_name = 'PLANT_RECEIPT';
-        $config->config_type = 'CONTROL';
-        $config_mapping = new TblConfigTxnResult();
-        $config_list = $config->getConfigList();
         $searchModel = new TblMilkVehicleEntryQltySearch();
         $searchModel->scenario = 'update';
         $searchModel->load(\Yii::$app->request->get());
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $searchModel->parsing_no = TblVehicleTrip::find()->alias('vt')->joinWith('vehicleCode vm')->where(['vt.trip_code' => $searchModel->trip_code, 'vt.is_active' => 1])->select('vm.parsing_no')->scalar();
         $dataProviderCount = $dataProvider->getCount();
+        $trip_code = $searchModel->trip_code;
+        $trip_model = $model->getPlant($trip_code);
+        $config = new TblConfig();
+        $config->config_for = 'PLANT';
+        $config->process_name = 'PLANT_RECEIPT';
+        $config->config_type = 'CONTROL';
+        $config_mapping = new TblConfigTxnResult();
+        $config_list = $config->getOrgConfigList($config->config_for, $trip_model['source_org_code']);
         return $this->render('create', [
                     'model' => $model,
                     'searchModel' => $searchModel,
@@ -190,7 +192,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $saveModel[] = $vehicleTripData;
         }
 
-        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string)$id, 'config_for' => 'PLANT_RECEIPT'])->all();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT'])->all();
         foreach ($configTxnData as $key => $id) {
             $configTxnHistoryModel = new TblConfigTxnResultHistory();
             Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);
