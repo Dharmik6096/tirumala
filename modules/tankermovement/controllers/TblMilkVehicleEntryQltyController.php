@@ -144,7 +144,12 @@ class TblMilkVehicleEntryQltyController extends ChildController {
 
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Tanker Milk Quality', 'edit']);
             if ($transaction == 'customRedirect') {
-                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData);
+                $plantData = $milkVehicleEntryQltyData->plantCode;
+                $remarks = '';
+                if (!empty($plantData)) {
+                    $remarks = $plantData->ref_code . '-' . $plantData->name;
+                }
+                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
                 $msg = Yii::$app->getSession()->getFlash('success')['message'];
                 $res = ['status' => 'success', 'msg' => $msg];
             } else {
@@ -185,7 +190,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $saveModel[] = $vehicleTripData;
         }
 
-        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => $id, 'config_for' => 'PLANT_RECEIPT'])->all();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string)$id, 'config_for' => 'PLANT_RECEIPT'])->all();
         foreach ($configTxnData as $key => $id) {
             $configTxnHistoryModel = new TblConfigTxnResultHistory();
             Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);
@@ -194,7 +199,12 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         }
         $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Tanker Milk Quality', 'delete']);
         if ($transaction == 'customRedirect') {
-            Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData);
+            $plantData = $this->model->plantCode;
+            $remarks = '';
+            if (!empty($plantData)) {
+                $remarks = $plantData->ref_code . '-' . $plantData->name;
+            }
+            Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
             $record = ['status' => 'success', 'msg' => 'Tanker Milk Quality Reset Successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'Tanker Milk Quality Not Reset.'];
