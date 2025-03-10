@@ -11,7 +11,7 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                     <h3 class="">Trip Status</h3>
                     <h5 class="mt15">Trip Code : <?= !empty($tripTrack[0]->trip_code) ? $tripTrack[0]->trip_code : '' ?></h5>
                     <div class="image_sec">
-                        <img src="themes\pcdf\assets\images\vehicle.png" alt="Food Icon" width="80" class="image">
+                        <img src="web\themes\emilk\assets\images\milk_truck.jpg" alt="Food Icon" width="80" class="image">
                     </div>
                 </div>
                 <?php if (!empty($tripTrack)) { ?>
