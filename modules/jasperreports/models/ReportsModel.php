@@ -39,7 +39,7 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['locale', 'digit_config', 'p_provisional_member_code', 'p_language_code', 'p_lang_code', 'p_mpp_survey_id', 'p_VCG_M_Id'], 'safe'],
+            [['locale', 'digit_config', 'p_provisional_member_code', 'p_language_code', 'p_lang_code', 'p_mpp_survey_id', 'p_VCG_M_Id', 'p_type'], 'safe'],
             [['p_customer_code', 'p_staff_member_code', 'p_dcs_code', 'p_member_code', 'p_dcsc_code', 'p_route_code', 'p_billing_for', 'route_code'], 'default', 'value' => '0'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionRegister'],
@@ -100,7 +100,7 @@ class ReportsModel extends Model {
             [['p_from_date', 'p_to_date', 'p_lang_code'], 'required', 'on' => ['RptMemberRegisterAll']],
             [['p_date', 'p_lr_no', 'p_vehicle_no'], 'required', 'on' => ['MilkChillBillCenterWise', 'MilkChillingBillLrNoWise']],
             [['union_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['PartyPaymentBill']],
-            [['union_code', 'p_plant_code', 'p_mcc_code'], 'required', 'on' => ['ShiftWiseBill']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ShiftWiseBill']],
         ];
     }
 
