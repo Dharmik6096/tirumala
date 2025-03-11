@@ -579,11 +579,14 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $milkVehicleEntryQlty = new TblMilkVehicleEntryQlty();
         $milkVehicleEntryQlty->union_code = \Yii::$app->request->post()['union_code'];
         $milkVehicleEntryQlty->trip_code = \Yii::$app->request->post()['trip_code'];
+        $milkVehicleEntryQlty->plant_code = \Yii::$app->request->post()['receipt_at_code'];
         $milkVehicleEntryQltyData = $milkVehicleEntryQlty->getMilkVehicleEntryQlty();
         if ($milkVehicleEntryQltyData['success']) {
             $response = ['status' => 'success', 'record_data' => $milkVehicleEntryQltyData['record_data']];
+        } else if($milkVehicleEntryQltyData['validation']) {
+            $response = ['status' => 'error', 'msg' => 'Quality not Done or exceeded time limit for selected trip.', 'validation' => TRUE];
         } else {
-            $response = ['status' => 'error', 'msg' => 'Quality not Done or exceeded time limit for selected trip.'];
+            $response = ['status' => 'error', 'validation' => FALSE];
         }
         return Json::encode($response);
     }
