@@ -64,7 +64,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
         return [
             [['chamber_quantity', 'fat', 'snf', 'water', 'temp', 'milk_quality_type_code', 'milk_type_code', 'entry_type', 'chamber_no', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'required'],
             [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'grn_no', 'chamber_no', 'challan_no', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['vehicle_entry_chamber_date', 'created_at', 'updated_at'], 'safe'],
+            [['vehicle_entry_chamber_date', 'created_at', 'updated_at', 'is_qty_only', 'is_pending_merge'], 'safe'],
             [['chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'integer'],
             [['challan_no', 'source_org_code', 'source_org_type', 'destination_type', 'destination_code'], 'required', 'when' => function ($model) {

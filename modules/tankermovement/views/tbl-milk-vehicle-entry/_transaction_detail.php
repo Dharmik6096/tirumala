@@ -23,13 +23,19 @@ use yii\helpers\Url;
             ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'chamber_quantity', 'value' => 'chamber_quantity', 'vAlign' => 'middle', 'filter' => false],
-        'clr',
-        'protein',
-        'density',
-        'lactose',
-        'freezing_point',
-        'mbrt',
-        'acidity'
+            ['attribute' => 'clr', 'filter' => false],
+            ['attribute' => 'protein', 'filter' => false],
+            ['attribute' => 'density', 'filter' => false],
+            ['attribute' => 'lactose', 'filter' => false],
+            ['attribute' => 'freezing_point', 'filter' => false],
+            ['attribute' => 'mbrt', 'filter' => false],
+            ['attribute' => 'acidity', 'filter' => false],
+            ['attribute' => 'is_qty_only', 'value' => function($model) {
+                return ($model->is_qty_only == 1) ? 'Yes' : 'No';
+            }, 'filter' => false, 'visible' => true],
+            ['attribute' => 'is_pending_merge', 'value' => function($model) {
+                return ($model->is_pending_merge == 1) ? 'Yes' : 'No';
+            }, 'filter' => false, 'visible' => true]
     ];
 
     $grid_option = [

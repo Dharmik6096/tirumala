@@ -184,6 +184,8 @@ $form = ActiveForm::begin([
                     </div>
                     <div class="col-sm-1"> 
                         <?= Html::activeHiddenInput($txn_model, 'milk_vehicle_entry_transaction_code'); ?>
+                        <?= Html::activeHiddenInput($txn_model, 'is_qty_only'); ?>
+                        <?= Html::activeHiddenInput($txn_model, 'is_pending_merge'); ?>
                         <?= $form->field($txn_model, 'acidity')->textInput() ?>
                     </div>                
                 </div>
@@ -318,7 +320,7 @@ $script = "
         }
     });
     
-    $(document).on('change', '#tblmilkvehicleentry-receipt_at, #tblmilkvehicleentry-dispatch_from', function() {
+    $(document).on('change', '#tblmilkvehicleentry-receipt_at, #tblmilkvehicleentry-dispatch_from, #tblmilkvehicleentry-receipt_at_code', function() {
         var receipt_at = $('#tblmilkvehicleentry-receipt_at').val();
         var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
         
@@ -338,7 +340,7 @@ $script = "
                $('#tblmilkvehicleentry-trip_code').val('').trigger('change');
                $('#tblmilkvehicleentry-vehicle_code').val('').trigger('change');
                EntryType.classList.add('no_pointer');
-            } else {
+            } else if (receipt_at == 'PLANT') {
                 $('.vehicle_code_hide').css('display', 'block');
                 $('.tanker_no_hide').css('display', 'none');
                 $('.trip-code-hide').css('display', 'block');
@@ -346,55 +348,67 @@ $script = "
                 EntryType.classList.remove('no_pointer');    
                 $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
 
-                $(document).on('change','#tblmilkvehicleentry-trip_code', function() {
+                $(document).on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at, #tblmilkvehicleentry-receipt_at_code', function() {
                         var trip_code = $('#tblmilkvehicleentry-trip_code').val();
                         var union_code = $('#tblmilkvehicleentry-union_code').val();  
-                        if(setData(trip_code)){
+                        var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();  
+                        var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();  
+                        if(setData(trip_code) && setData(union_code) && setData(receiptAt) && setData(receiptAtCode) && receiptAt == 'PLANT'){
                             if(tankerMovementWithTripSubStatus){
                                  $.ajax({
                                     type: 'post',
                                     url: '" . Url::to(['trip-sub-status']) . "',
-                                    data: {'trip_code' : trip_code,'union_code':union_code}, 
+                                    data: {'trip_code' : trip_code,'union_code':union_code,'receipt_at_code' : receiptAtCode,'receipt_at' : receiptAt}, 
                                     success: function(data) {
                                         var obj1 = $.parseJSON(data);
                                         if(obj1.status == 'success'){
                                             $('#dispatch-detail').css('display', 'block');
                                             $('#milk-receipt-transaction').css('display', 'block');
                                             $('#milk-receipt-transaction-detail').css('display', 'block');
-                                            $(document).on('change','#tblmilkvehicleentrytransaction-chamber_no', function() {
-                                                    var chamber_no = $('#tblmilkvehicleentrytransaction-chamber_no').val();
-                                                    if (setData(chamber_no) && obj1.record_data.hasOwnProperty(chamber_no) ) {
-                                                        $('#tblmilkvehicleentrytransaction-fat').val(obj1.record_data[chamber_no].fat);
-                                                        $('#tblmilkvehicleentrytransaction-snf').val(obj1.record_data[chamber_no].snf);
-                                                        $('#tblmilkvehicleentrytransaction-clr').val(obj1.record_data[chamber_no].clr);
-                                                        $('#tblmilkvehicleentrytransaction-water').val(obj1.record_data[chamber_no].water);
-                                                        $('#tblmilkvehicleentrytransaction-temp').val(obj1.record_data[chamber_no].temp);
-                                                        $('#tblmilkvehicleentrytransaction-protein').val(obj1.record_data[chamber_no].protein);
-                                                        $('#tblmilkvehicleentrytransaction-density').val(obj1.record_data[chamber_no].density);
-                                                        $('#tblmilkvehicleentrytransaction-lactose').val(obj1.record_data[chamber_no].lactose);
-                                                        $('#tblmilkvehicleentrytransaction-freezing_point').val(obj1.record_data[chamber_no].freezing_point);
-                                                        $('#tblmilkvehicleentrytransaction-mbrt').val(obj1.record_data[chamber_no].mbrt);
-                                                        $('#tblmilkvehicleentrytransaction-acidity').val(obj1.record_data[chamber_no].acidity);
-                                                    } else {
-                                                        $('#tblmilkvehicleentrytransaction-fat').val('');
-                                                        $('#tblmilkvehicleentrytransaction-snf').val('');
-                                                        $('#tblmilkvehicleentrytransaction-clr').val('');
-                                                        $('#tblmilkvehicleentrytransaction-water').val('');
-                                                        $('#tblmilkvehicleentrytransaction-temp').val('');
-                                                        $('#tblmilkvehicleentrytransaction-protein').val('');
-                                                        $('#tblmilkvehicleentrytransaction-density').val('');
-                                                        $('#tblmilkvehicleentrytransaction-lactose').val('');
-                                                        $('#tblmilkvehicleentrytransaction-freezing_point').val('');
-                                                        $('#tblmilkvehicleentrytransaction-mbrt').val('');
-                                                        $('#tblmilkvehicleentrytransaction-acidity').val('');
-                                                    }
-                                            });
-                                        } else {
+                                            // $(document).on('change','#tblmilkvehicleentrytransaction-chamber_no', function() {
+                                                    // var chamber_no = $('#tblmilkvehicleentrytransaction-chamber_no').val();
+                                                    // if (setData(chamber_no) && obj1.record_data.hasOwnProperty(chamber_no) ) {
+                                                    //     $('#tblmilkvehicleentrytransaction-fat').val(obj1.record_data[chamber_no].fat);
+                                                    //     $('#tblmilkvehicleentrytransaction-snf').val(obj1.record_data[chamber_no].snf);
+                                                    //     $('#tblmilkvehicleentrytransaction-clr').val(obj1.record_data[chamber_no].clr);
+                                                    //     $('#tblmilkvehicleentrytransaction-water').val(obj1.record_data[chamber_no].water);
+                                                    //     $('#tblmilkvehicleentrytransaction-temp').val(obj1.record_data[chamber_no].temp);
+                                                    //     $('#tblmilkvehicleentrytransaction-protein').val(obj1.record_data[chamber_no].protein);
+                                                    //     $('#tblmilkvehicleentrytransaction-density').val(obj1.record_data[chamber_no].density);
+                                                    //     $('#tblmilkvehicleentrytransaction-lactose').val(obj1.record_data[chamber_no].lactose);
+                                                    //     $('#tblmilkvehicleentrytransaction-freezing_point').val(obj1.record_data[chamber_no].freezing_point);
+                                                    //     $('#tblmilkvehicleentrytransaction-mbrt').val(obj1.record_data[chamber_no].mbrt);
+                                                    //     $('#tblmilkvehicleentrytransaction-acidity').val(obj1.record_data[chamber_no].acidity);
+                                                    // } else {
+                                                        $('#tblmilkvehicleentrytransaction-fat').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-snf').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-clr').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-water').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-temp').val('0').prop('readonly', true).prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-protein').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-density').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-lactose').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-freezing_point').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-mbrt').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-acidity').val('0').prop('readonly', true);
+                                                        $('#tblmilkvehicleentrytransaction-is_qty_only').val('1');
+                                                        $('#tblmilkvehicleentrytransaction-is_pending_merge').val('1');     
+                                                    // }
+                                            // });
+                                        } else if(obj1.validation){
                                             bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                                        } else {
+                                            $('#tblmilkvehicleentrytransaction-is_qty_only').val('0');
+                                            $('#tblmilkvehicleentrytransaction-is_pending_merge').val('0');
+                                            $('#dispatch-detail').css('display', 'block');
+                                            $('#milk-receipt-transaction').css('display', 'block');
+                                            $('#milk-receipt-transaction-detail').css('display', 'block');
                                         }
                                     },
                                 });
                             } else {
+                                $('#tblmilkvehicleentrytransaction-is_qty_only').val('0');
+                                $('#tblmilkvehicleentrytransaction-is_pending_merge').val('0');
                                 $('#dispatch-detail').css('display', 'block');
                                 $('#milk-receipt-transaction').css('display', 'block');
                                 $('#milk-receipt-transaction-detail').css('display', 'block');
@@ -405,6 +419,12 @@ $script = "
                             $('#milk-receipt-transaction-detail').css('display', 'none');
                         }
                 });
+            } else {
+                $('#tblmilkvehicleentrytransaction-is_qty_only').val('0');
+                $('#tblmilkvehicleentrytransaction-is_pending_merge').val('0');
+                $('#dispatch-detail').css('display', 'block');
+                $('#milk-receipt-transaction').css('display', 'block');
+                $('#milk-receipt-transaction-detail').css('display', 'block');
             }
         }
     });
