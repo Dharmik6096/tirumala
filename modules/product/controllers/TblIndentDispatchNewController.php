@@ -281,7 +281,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $reference_code = Yii::$app->general->getUuid();
                                 $saleModel = new TblProductSale();
                                 $saleModel->scenario = 'saleProductOnDispatch';
-                                $sale_amount = $disp_qty * $existData->amount;
+                                $sale_amount = $disp_qty * $existData->rate;
                                 $saleModel->attributes = $existData->attributes;
                                 $saleModel->product_sale_code = $reference_code;
                                 $saleModel->invoice_date = date('Y-m-d H:i:s');

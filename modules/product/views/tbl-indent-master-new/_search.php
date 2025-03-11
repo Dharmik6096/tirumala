@@ -33,7 +33,7 @@ use yii\web\View;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('indent_customer_type', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Customer Type'), false) ?>
     </div>  
-    <div class="col-sm-2 hide_section">">
+    <div class="col-sm-2 hide_section">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblindentmastersearch-bmc_code', 'dcs_code', Yii::t('app', 'Society'), FALSE); ?>
     </div>
     <div class="col-sm-2 hide_section">
@@ -49,7 +49,7 @@ use yii\web\View;
     </div>
     <?php
     if(!$isIndentApprovalCreditLimitCheck){ ?>
-        <div class="col-sm-2 hide_section">">
+        <div class="col-sm-2 hide_section">
             <?= Yii::$app->dropdown->dropdownStatic('indent_group_by', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Group By'), false, 'group_by') ?>
         </div>
     <?php
