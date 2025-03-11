@@ -61,7 +61,7 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $searchModel = new TblMilkVehicleEntryQltyMergeSearch();
         $searchModel->scenario = 'update';
         $searchModel->load(\Yii::$app->request->get());
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $searchModel->parsing_no = TblVehicleTrip::find()->alias('vt')->joinWith('vehicleCode vm')->where(['vt.trip_code' => $searchModel->trip_code, 'vt.is_active' => 1])->select('vm.parsing_no')->scalar();
         $dataProviderCount = $dataProvider->getCount();
         $trip_code = $searchModel->trip_code;
