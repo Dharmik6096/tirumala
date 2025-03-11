@@ -16,7 +16,6 @@ use yii\helpers\ArrayHelper;
     $form = ActiveForm::begin(['options' => [
                     'field-class' => 'form-group col-sm-3'
                 ], 'validateOnBlur' => FALSE,
-                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,
@@ -25,14 +24,19 @@ use yii\helpers\ArrayHelper;
     ?>
     <?php
     if (!empty($model[0])) {
-        $bmc = $model[0]->bmc_code;
-        
-        $bmcName = Yii::$app->general->getforeignkey($model[0]->mainBmcCode, 'bmc_name');
-        $refCode = Yii::$app->general->getforeignkey($model[0]->mainBmcCode, 'ref_code');
+        if ($model[0]->org_type == 'PLANT') {
+            $code = $model[0]->plant_code;
+            $name = Yii::$app->general->getforeignkey($model[0]->plantCode, 'name');
+            $refCode = Yii::$app->general->getforeignkey($model[0]->plantCode, 'ref_code');
+        } else {
+            $code = $model[0]->bmc_code;
+            $name = Yii::$app->general->getforeignkey($model[0]->mainBmcCode, 'bmc_name');
+            $refCode = Yii::$app->general->getforeignkey($model[0]->mainBmcCode, 'ref_code');
+        }
     }
     $pro_name = (isset($masterData[0]->process_name)) ? $masterData[0]->process_name : '';
     ?>
-    <div class="panel-heading"><?= $pro_name ?> > BMC : <?= $bmcName . '(' . $bmc . ')' ?>, Ref. Code: <?= $refCode ?></div>
+    <div class="panel-heading"><?= $pro_name ?> > <?php $model[0]->org_type ?> : <?= $name . '(' . $code . ')' ?>, Ref. Code: <?= $refCode ?></div>
 
     <div class="panel-body">
         <div class="row">
@@ -51,6 +55,8 @@ use yii\helpers\ArrayHelper;
                         <?php echo $form->field($models, '[' . $key . ']plant_code')->hiddenInput()->label(false); ?>
                         <?php echo $form->field($models, '[' . $key . ']mcc_plant_code')->hiddenInput()->label(false); ?>
                         <?php echo $form->field($models, '[' . $key . ']bmc_code')->hiddenInput()->label(false); ?>
+                        <?php echo $form->field($models, '[' . $key . ']org_code')->hiddenInput()->label(false); ?>
+                        <?php echo $form->field($models, '[' . $key . ']org_type')->hiddenInput()->label(false); ?>
                     </div>
                     <?php
                     if ($fieldType[0]->config_result_key == 'text') {
