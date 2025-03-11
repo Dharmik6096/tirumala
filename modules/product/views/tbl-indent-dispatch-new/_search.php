@@ -19,7 +19,7 @@ use yii\web\View;
     ]);
     ?>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-6 row">
             <div class="col-sm-4">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
             </div>
@@ -64,7 +64,7 @@ use yii\web\View;
             </div>
         </div>
         <div class="col-sm-6">
-            <div class="col-lg-12 ml35 view-grid text-wrap">
+            <div class="col-lg-12 view-grid text-wrap">
                 <h5 class="panel-heading mb15"><?= Yii::t('app', 'Product Information') ?></h5>
                 <div id="product-detail">
                     <table class="table tab-bordered">
