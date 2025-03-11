@@ -86,7 +86,9 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
             Model::loadMultiple($indentModel, Yii::$app->request->post(), 'TblIndentDispatch');
             if (Model::validateMultiple($indentModel)) {
                 $indentPostData = Yii::$app->request->post()['TblIndentDispatch'];
-                $DispatchConsiderAs = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'dispatch_consider', 'PORTAL');
+                $DispatchConsiderAs = Yii::$app->general->getUnionConfiguration($indentMasterParam['union_code'], 'dispatch_consider', 'PORTAL');
+                $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($indentMasterParam['union_code'], 'batch_no_wise_inventory', 'PORTAL');
+                $batchNoWiseProductRate = Yii::$app->general->getUnionConfiguration($indentMasterParam['union_code'], 'batch_no_wise_product_rate', 'PORTAL');
                 $txnType = ($DispatchConsiderAs == 0 || $indentMasterParam['customer_type'] == 'BULKVEN') ? 'PRODUCT SALE' : '';
                 $searchModel->load(Yii::$app->request->post());
                 if (isset($_REQUEST['selection'])) {
@@ -281,7 +283,11 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $reference_code = Yii::$app->general->getUuid();
                                 $saleModel = new TblProductSale();
                                 $saleModel->scenario = 'saleProductOnDispatch';
-                                $sale_amount = $disp_qty * $existData->rate;
+                                $sale_rate = $existData->rate;
+                                if($batchNoWiseInventory && $batchNoWiseProductRate){
+                                    $sale_rate = $existtoStock->rate;
+                                }
+                                $sale_amount = $disp_qty * $sale_rate;
                                 $saleModel->attributes = $existData->attributes;
                                 $saleModel->product_sale_code = $reference_code;
                                 $saleModel->invoice_date = date('Y-m-d H:i:s');
@@ -300,7 +306,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $detailSaleModel->scenario = 'saleProductOnDispatch';
                                 $detailSaleModel->attributes = $saleModel->attributes;
                                 $detailSaleModel->quantity = $disp_qty;
-                                $detailSaleModel->rate = $existData->rate;
+                                $detailSaleModel->rate = $sale_rate;
                                 $detailSaleModel->sap_batch_no = $batch;
                                 $detailSaleModel->tax_code = 1;
                                 $detailSaleModel->available_stock = $existtoStock->stock;
