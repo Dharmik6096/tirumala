@@ -59,18 +59,20 @@ class TblMilkVehicleEntryQltyController extends ChildController {
     public function actionCreate() {
         $model = new TblMilkVehicleEntryQlty();
         $model->load(\Yii::$app->request->get());
-        $config = new TblConfig();
-        $config->config_for = 'PLANT';
-        $config->process_name = 'PLANT_RECEIPT';
-        $config->config_type = 'CONTROL';
-        $config_mapping = new TblConfigTxnResult();
-        $config_list = $config->getConfigList();
         $searchModel = new TblMilkVehicleEntryQltySearch();
         $searchModel->scenario = 'update';
         $searchModel->load(\Yii::$app->request->get());
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $searchModel->parsing_no = TblVehicleTrip::find()->alias('vt')->joinWith('vehicleCode vm')->where(['vt.trip_code' => $searchModel->trip_code, 'vt.is_active' => 1])->select('vm.parsing_no')->scalar();
         $dataProviderCount = $dataProvider->getCount();
+        $trip_code = $searchModel->trip_code;
+        $trip_model = $model->getPlant($trip_code);
+        $config = new TblConfig();
+        $config->config_for = 'PLANT';
+        $config->process_name = 'PLANT_RECEIPT';
+        $config->config_type = 'CONTROL';
+        $config_mapping = new TblConfigTxnResult();
+        $config_list = $config->getOrgConfigList($config->config_for, $trip_model['source_org_code']);
         return $this->render('create', [
                     'model' => $model,
                     'searchModel' => $searchModel,
@@ -144,7 +146,12 @@ class TblMilkVehicleEntryQltyController extends ChildController {
 
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Tanker Milk Quality', 'edit']);
             if ($transaction == 'customRedirect') {
-                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData);
+                $plantData = $milkVehicleEntryQltyData->plantCode;
+                $remarks = '';
+                if (!empty($plantData)) {
+                    $remarks = $plantData->ref_code . '-' . $plantData->name;
+                }
+                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
                 $msg = Yii::$app->getSession()->getFlash('success')['message'];
                 $res = ['status' => 'success', 'msg' => $msg];
             } else {
@@ -185,7 +192,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $saveModel[] = $vehicleTripData;
         }
 
-        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => $id, 'config_for' => 'PLANT_RECEIPT'])->all();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT'])->all();
         foreach ($configTxnData as $key => $id) {
             $configTxnHistoryModel = new TblConfigTxnResultHistory();
             Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);
@@ -194,7 +201,12 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         }
         $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Tanker Milk Quality', 'delete']);
         if ($transaction == 'customRedirect') {
-            Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData);
+            $plantData = $this->model->plantCode;
+            $remarks = '';
+            if (!empty($plantData)) {
+                $remarks = $plantData->ref_code . '-' . $plantData->name;
+            }
+            Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
             $record = ['status' => 'success', 'msg' => 'Tanker Milk Quality Reset Successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'Tanker Milk Quality Not Reset.'];

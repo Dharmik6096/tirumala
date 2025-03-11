@@ -11,6 +11,7 @@ $this->title = Yii::$app->label->title('create', 'Payment Configurations');
         $this->render('payment_form', [
             'model' => $model,
             'type' => 'create',
+            'config_param' => $config_param
         ])
         ?>
     </div>

@@ -51,6 +51,7 @@ $attribute = [
         }, 'filter' => false],
         ['attribute' => 'material_entry_type'],
         ['attribute' => 'remarks'],
+        ['attribute' => 'dock_no'],
 ];
 
 $grid_option = [

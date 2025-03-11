@@ -105,6 +105,7 @@ $attribute = [
     ['attribute' => 'grn_no'],
     ['attribute' => 'trip_mode'],
     ['attribute' => 'trip_status'],
+    ['attribute' => 'trip_sub_status'],
 ];
 
 $grid_option = [
