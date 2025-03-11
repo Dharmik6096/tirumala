@@ -136,7 +136,6 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getMilkVehicleEntryQlty() {
-        return ['success' => 1, 'record_data' => [], 'validation' => TRUE];
         $configMappingData = [];
         $configCode = TblConfig::find()->select(['config_code'])->where(['config_key' => 'plant_lot_creation_interval', 'process_name' => 'PLANT_RECEIPT_CONFIG', 'config_for' => 'PLANT'])->scalar();
         if (!empty($configCode)) {
