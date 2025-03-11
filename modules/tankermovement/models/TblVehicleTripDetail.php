@@ -242,6 +242,13 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         } else if (in_array($trip_process, ['cleaning_inspection', 'qa_inspection'])) {
             $subStatus = $trip_process == 'cleaning_inspection' ? 'cleaning_pending' : 'qa_pending';
             $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => $subStatus]);
+        } else if ($trip_process == 'milk_entry_qlty_merge') {
+            $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
+            $query->andWhere(['vt.trip_status' => ['closed']]);
+            $query->andWhere(['<=', 'vt.transaction_date', date('Y-m-d H:i:s', strtotime('-2 days'))]);
+            if (!empty($plants)) {
+                $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);
+            }
         }
 
         if (!empty($vehicle_code)) {

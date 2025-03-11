@@ -144,7 +144,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
                 $saveModel[] = $vehicleTripData;
             }
 
-            $transaction = $this->generalModel->saveTransaction($saveModel, ['Tanker Milk Quality', 'edit']);
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Tanker Milk Lot Quality', 'edit']);
             if ($transaction == 'customRedirect') {
                 $plantData = $milkVehicleEntryQltyData->plantCode;
                 $remarks = '';
@@ -199,7 +199,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $deleteModel[] = $id;
             $saveModel[] = $configTxnHistoryModel;
         }
-        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Tanker Milk Quality', 'delete']);
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Tanker Milk Lot Quality', 'delete']);
         if ($transaction == 'customRedirect') {
             $plantData = $this->model->plantCode;
             $remarks = '';
@@ -207,9 +207,9 @@ class TblMilkVehicleEntryQltyController extends ChildController {
                 $remarks = $plantData->ref_code . '-' . $plantData->name;
             }
             Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
-            $record = ['status' => 'success', 'msg' => 'Tanker Milk Quality Reset Successfully.'];
+            $record = ['status' => 'success', 'msg' => 'Tanker Milk Lot Quality Reset Successfully.'];
         } else {
-            $record = ['status' => 'error', 'msg' => 'Tanker Milk Quality Not Reset.'];
+            $record = ['status' => 'error', 'msg' => 'Tanker Milk Lot Quality Not Reset.'];
         }
 
         Yii::$app->getSession()->setFlash('success');
