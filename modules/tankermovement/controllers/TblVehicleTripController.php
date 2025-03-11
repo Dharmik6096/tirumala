@@ -186,7 +186,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         if ($transaction == 'customRedirect') {
                             $response = Yii::$app->general->getColumnName($save_model[1]->source_org_type);
                             $remarks = '';
-                            if(!empty($response['rel'])){
+                            if (!empty($response['rel'])) {
                                 $sourceData = $save_model[1]->{$response['rel'] . 'Source'};
                                 $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
                             }
@@ -389,9 +389,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $transaction = $this->generalModel->saveTransaction($models, ['Trip Detail', 'edit']);
                 if ($transaction == 'customRedirect') {
                     $response = Yii::$app->general->getColumnName($tripDetail->source_org_type);
-                    if(!empty($response['rel'])){
+                    if (!empty($response['rel'])) {
                         $sourceData = $tripDetail->{$response['rel'] . 'Source'};
-                        $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']}.'-'.$remarks;
+                        $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
                     }
                     Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
                     return ['status' => 'success', 'msg' => 'Trip processed successfully.'];
@@ -413,7 +413,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1]) && ($parents[1] == 'milk_entry_qlty' || !empty($parents[2]))) {
+            if (!empty($parents[0]) && !empty($parents[1]) && ($parents[1] == 'milk_entry_qlty' || $parents[1] == 'milk_entry_qlty_merge' || !empty($parents[2]))) {
                 $trip = new TblVehicleTripDetail();
 
                 if ($parents[1] != 'cleaning_inspection' || $parents[1] != 'qa_inspection') {
@@ -428,11 +428,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
-    
+
     public function actionMap($trip_code) {
         $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->all();
         return $this->render('_map', [
-            'tripTrack' => $tripTrack,
+                    'tripTrack' => $tripTrack,
         ]);
     }
 
