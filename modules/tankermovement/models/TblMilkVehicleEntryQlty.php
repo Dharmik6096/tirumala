@@ -155,19 +155,19 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 $plantLotCreationInterval = (int) $configMappingData->config_result;
                 $totalRecords = count($records);
                 $doneRecordsCount = 0;
-                $maxStatusDatetime = NULL;
+                $maxLotDatetime = NULL;
                 foreach ($records as $record) {
                     if ($record->status === 'done') {
                         $doneRecordsCount++;
                     }
-                    $currentStatusDatetime = strtotime($record->lot_datetime);
-                    if ($maxStatusDatetime === NULL || $currentStatusDatetime > $maxStatusDatetime) {
-                        $maxStatusDatetime = $currentStatusDatetime;
+                    $currentLotDatetime = strtotime($record->lot_datetime);
+                    if ($maxLotDatetime === NULL || $currentLotDatetime > $maxLotDatetime) {
+                        $maxLotDatetime = $currentLotDatetime;
                     }
                 }
                 $currentTime = time();
                 $intervalInSeconds = $plantLotCreationInterval * 3600;
-                if (($currentTime - $maxStatusDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
+                if (($currentTime - $maxLotDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
                     return ['success' => 0, 'record_data' => [], 'validation' => TRUE];
                 }
 
