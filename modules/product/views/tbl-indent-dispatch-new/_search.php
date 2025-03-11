@@ -32,7 +32,7 @@ use yii\web\View;
             <div class="col-sm-4">
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblindentmastersearch-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <?= Yii::$app->dropdown->dropdownStatic('indent_customer_type', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Customer Type'), false) ?>
             </div> 
             <div class="col-sm-4 hide_section">
@@ -41,7 +41,7 @@ use yii\web\View;
             <div class="col-sm-4 hide_section">
                 <?= Yii::$app->dropdown->route_dcs($model, $form, 'tblindentmastersearch-route_code', 'dcs_code', Yii::t('app', 'DCS'), false, false); ?>
             </div>
-            <div class="col-sm-2 hide_section">
+            <div class="col-sm-4 hide_section">
                 <?= Yii::$app->dropdown->customer_code($model, $form, 'tblindentmastersearch-bmc_code,tblindentmastersearch-customer_type', 'customer_code', Yii::t('app', 'Customer'), FALSE); ?>
             </div>
             <?php
