@@ -283,8 +283,6 @@ class TblIndentMasterSearch extends TblIndentMaster {
 
     public function indentdispatchothernewsearch($params) {
         $this->load($params);
-        // $select = ['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)', 'tbl_indent_master.status_date', 'tbl_indent_master.is_close'];
-        // $group_by = ['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date', 'tbl_indent_master.is_close'];
         $customer_code = '';
         $code = '';
         if($this->customer_type == 'BULKVEN'){
@@ -298,8 +296,8 @@ class TblIndentMasterSearch extends TblIndentMaster {
             $customer_code = ['DCS','MEMBER'];
             $code = 'member_code';
         }
-        $select = ['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)', 'tbl_indent_master.status_date', 'tbl_indent_master.customer_type', 'tbl_indent_master.'.$code.' AS code'];
-        $group_by = ['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date', 'tbl_indent_master.customer_type', 'tbl_indent_master.'.$code];
+        $select = ['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)', 'tbl_indent_master.status_date', 'tbl_indent_master.is_close', 'tbl_indent_master.customer_type', 'tbl_indent_master.'.$code.' AS code'];
+        $group_by = ['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date', 'tbl_indent_master.is_close', 'tbl_indent_master.customer_type', 'tbl_indent_master.'.$code];
 
         if (!empty($this->group_by)) {
             $select = ['tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.member_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)), 0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)), 0)'];

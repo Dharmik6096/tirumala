@@ -293,6 +293,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $saleModel->paid_amount = $saleModel->payment_mode == 1 ? 0 : $saleModel->amount_due;
                                 $saleModel->is_installment = $saleModel->payment_mode == 1 ? 1 : 0;
                                 $saleModel->no_of_installment = $saleModel->payment_mode == 1 ? 1 : 0;
+                                unset($saleModel->created_at, $saleModel->created_by, $saleModel->updated_at, $saleModel->updated_by, $saleModel->originating_org_code, $saleModel->originating_org_type, $saleModel->originating_type);
                                 $instAmount = floatval($saleModel->amount_due / $saleModel->no_of_installment);
 
                                 $detailSaleModel = new TblProductSaleTransaction();
@@ -306,7 +307,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $detailSaleModel->product_sale_code = $saleModel->product_sale_code;
                                 $detailSaleModel->product_code = $product;
                                 $detailSaleModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($detailSaleModel, $detailSaleModel->product_sale_code);
-
+                                unset($detailSaleModel->created_at, $detailSaleModel->created_by, $detailSaleModel->updated_at, $detailSaleModel->updated_by, $detailSaleModel->originating_org_code, $detailSaleModel->originating_org_type, $detailSaleModel->originating_type);
 
                                 $installmentModel = new TblSaleInstallments();
                                 $installmentModel->attributes = $saleModel->attributes;
@@ -317,7 +318,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $installmentModel->installment_date = NULL;
                                 $installmentModel->installment_status = 0;
                                 $installmentModel->product_sale_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $saleModel->product_sale_code, $j);
-
+                                unset($installmentModel->created_at, $installmentModel->created_by, $installmentModel->updated_at, $installmentModel->updated_by, $installmentModel->originating_org_code, $installmentModel->originating_org_type, $installmentModel->originating_type);
                                 $saveModel[] = $saleModel;
                                 $saveModel[] = $detailSaleModel;
                                 $saveModel[] = $installmentModel;
