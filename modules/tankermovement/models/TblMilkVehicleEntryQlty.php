@@ -136,59 +136,61 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getMilkVehicleEntryQlty() {
-        $records = $this->find()
-                ->where(['trip_code' => $this->trip_code, 'union_code' => $this->union_code, 'plant_code' => $this->plant_code])
-                ->andWhere(['!=', 'status', 'discarded'])
-                ->all();
-
         $configMappingData = [];
-        if (!empty($records)) {
-            $configCode = TblConfig::find()->select(['config_code'])->where(['config_key' => 'plant_lot_creation_interval', 'process_name' => 'PLANT_RECEIPT_CONFIG', 'config_for' => 'PLANT'])->scalar();
-            if(!empty($configCode)){
-                $configMappingModel = new TblConfigMapping();
-                $configMappingModel->org_type = 'PLANT';
-                $configMappingModel->org_code = $this->plant_code;
-                $configMappingModel->config_code = $configCode;
-                $configMappingData = $configMappingModel->ExistMappedControl;
-            }
+        $configCode = TblConfig::find()->select(['config_code'])->where(['config_key' => 'plant_lot_creation_interval', 'process_name' => 'PLANT_RECEIPT_CONFIG', 'config_for' => 'PLANT'])->scalar();
+        if (!empty($configCode)) {
+            $configMappingModel = new TblConfigMapping();
+            $configMappingModel->org_type = 'PLANT';
+            $configMappingModel->org_code = $this->plant_code;
+            $configMappingModel->config_code = $configCode;
+            $configMappingData = $configMappingModel->ExistMappedControl;
         }
-        if (!empty($configMappingData) && (int) $configMappingData->config_result > 1) {
-            $plantLotCreationInterval = Yii::$app->general->getUnionConfiguration($this->union_code, 'plant_lot_creation_interval  ', 'PORTAL');
-            $totalRecords = count($records);
-            $doneRecordsCount = 0;
-            $maxStatusDatetime = NULL;
-            foreach ($records as $record) {
-                if ($record->status === 'done') {
-                    $doneRecordsCount++;
+
+        if (!empty($configMappingData) && (int) $configMappingData->config_result > 0) {
+            $records = $this->find()
+                    ->where(['trip_code' => $this->trip_code, 'union_code' => $this->union_code])
+                    ->andWhere(['!=', 'status', 'discarded'])
+                    ->all();
+            if (!empty($records)) {
+                $plantLotCreationInterval = (int) $configMappingData->config_result;
+                $totalRecords = count($records);
+                $doneRecordsCount = 0;
+                $maxLotDatetime = NULL;
+                foreach ($records as $record) {
+                    if ($record->status === 'done') {
+                        $doneRecordsCount++;
+                    }
+                    $currentLotDatetime = strtotime($record->lot_datetime);
+                    if ($maxLotDatetime === NULL || $currentLotDatetime > $maxLotDatetime) {
+                        $maxLotDatetime = $currentLotDatetime;
+                    }
                 }
-                $currentStatusDatetime = strtotime($record->status_datetime);
-                if ($maxStatusDatetime === NULL || $currentStatusDatetime > $maxStatusDatetime) {
-                    $maxStatusDatetime = $currentStatusDatetime;
+                $currentTime = time();
+                $intervalInSeconds = $plantLotCreationInterval * 3600;
+                if (($currentTime - $maxLotDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
+                    return ['success' => 0, 'record_data' => [], 'validation' => TRUE];
                 }
-            }
-            $currentTime = time();
-            $intervalInSeconds = $plantLotCreationInterval * 3600;
-            if (($currentTime - $maxStatusDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
+
+                $formattedRecords = [];
+                // foreach ($records as $record) {
+                //     $formattedRecords[$record->chamber_no] = [
+                //         'fat' => number_format($record->fat, 2, '.', ''),
+                //         'snf' => number_format($record->snf, 2, '.', ''),
+                //         'clr' => number_format($record->clr, 2, '.', ''),
+                //         'water' => number_format($record->water, 2, '.', ''),
+                //         'density' => number_format($record->density, 2, '.', ''),
+                //         'protein' => number_format($record->protein, 2, '.', ''),
+                //         'lactose' => number_format($record->lactose, 2, '.', ''),
+                //         'freezing_point' => number_format($record->freezing_point, 2, '.', ''),
+                //         'mbrt' => number_format($record->mbrt, 2, '.', ''),
+                //         'temp' => number_format($record->temp, 2, '.', ''),
+                //         'acidity' => number_format($record->acidity, 2, '.', ''),
+                //     ];
+                // }
+                return ['success' => 1, 'record_data' => $formattedRecords, 'validation' => FALSE];
+            } else {
                 return ['success' => 0, 'record_data' => [], 'validation' => TRUE];
             }
-
-            $formattedRecords = [];
-            // foreach ($records as $record) {
-            //     $formattedRecords[$record->chamber_no] = [
-            //         'fat' => number_format($record->fat, 2, '.', ''),
-            //         'snf' => number_format($record->snf, 2, '.', ''),
-            //         'clr' => number_format($record->clr, 2, '.', ''),
-            //         'water' => number_format($record->water, 2, '.', ''),
-            //         'density' => number_format($record->density, 2, '.', ''),
-            //         'protein' => number_format($record->protein, 2, '.', ''),
-            //         'lactose' => number_format($record->lactose, 2, '.', ''),
-            //         'freezing_point' => number_format($record->freezing_point, 2, '.', ''),
-            //         'mbrt' => number_format($record->mbrt, 2, '.', ''),
-            //         'temp' => number_format($record->temp, 2, '.', ''),
-            //         'acidity' => number_format($record->acidity, 2, '.', ''),
-            //     ];
-            // }
-            return ['success' => 1, 'record_data' => $formattedRecords, 'validation' => FALSE];
         }
         return ['success' => 0, 'record_data' => [], 'validation' => FALSE];
     }
