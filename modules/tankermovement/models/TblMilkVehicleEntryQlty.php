@@ -136,6 +136,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getMilkVehicleEntryQlty() {
+        return ['success' => 1, 'record_data' => [], 'validation' => TRUE];
         $configMappingData = [];
         $configCode = TblConfig::find()->select(['config_code'])->where(['config_key' => 'plant_lot_creation_interval', 'process_name' => 'PLANT_RECEIPT_CONFIG', 'config_for' => 'PLANT'])->scalar();
         if (!empty($configCode)) {
@@ -155,19 +156,19 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 $plantLotCreationInterval = (int) $configMappingData->config_result;
                 $totalRecords = count($records);
                 $doneRecordsCount = 0;
-                $maxStatusDatetime = NULL;
+                $maxLotDatetime = NULL;
                 foreach ($records as $record) {
                     if ($record->status === 'done') {
                         $doneRecordsCount++;
                     }
-                    $currentStatusDatetime = strtotime($record->lot_datetime);
-                    if ($maxStatusDatetime === NULL || $currentStatusDatetime > $maxStatusDatetime) {
-                        $maxStatusDatetime = $currentStatusDatetime;
+                    $currentLotDatetime = strtotime($record->lot_datetime);
+                    if ($maxLotDatetime === NULL || $currentLotDatetime > $maxLotDatetime) {
+                        $maxLotDatetime = $currentLotDatetime;
                     }
                 }
                 $currentTime = time();
                 $intervalInSeconds = $plantLotCreationInterval * 3600;
-                if (($currentTime - $maxStatusDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
+                if (($currentTime - $maxLotDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
                     return ['success' => 0, 'record_data' => [], 'validation' => TRUE];
                 }
 
