@@ -66,7 +66,6 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $dataProviderCount = $dataProvider->getCount();
         $trip_code = $searchModel->trip_code;
         $trip_model = $model->getPlant($trip_code);
-        $tripData = TblVehicleTripDetail::find()->where(['trip_code' => $searchModel->trip_code, 'is_active' => 1, 'is_last_destination' => 1])->one();
         $config = new TblConfig();
         $config->config_for = 'PLANT';
         $config->process_name = 'PLANT_RECEIPT';
@@ -79,8 +78,7 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
                     'dataProvider' => $dataProvider,
                     'dataProviderCount' => $dataProviderCount,
                     'config' => $config_mapping,
-                    'config_list' => $config_list,
-                    'tripData' => $tripData,
+                    'config_list' => $config_list
         ]);
     }
 

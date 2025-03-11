@@ -83,10 +83,10 @@ class TblMilkVehicleEntryQltyMergeSearch extends TblMilkVehicleEntryQltyMerge {
             'is_pending_merge' => $this->is_pending_merge,
             'is_approved' => $this->is_approved,
             'vehicle_code' => $this->vehicle_code,
-            'trip_code' => $this->trip_code,
         ]);
 
-        $query->andFilterWhere(['like', 'chamber_no', $this->chamber_no]);
+        $query->andFilterWhere(['like', 'chamber_no', $this->chamber_no])
+                ->andFilterWhere(['like', 'trip_code', $this->trip_code]);
 
         return $dataProvider;
     }

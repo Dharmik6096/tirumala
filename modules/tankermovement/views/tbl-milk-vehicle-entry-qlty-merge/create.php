@@ -24,7 +24,7 @@ Url::remember();
                 <?php echo 'Tanker Milk Quality Records'; ?>
             </div>
             <?php
-            echo $this->render('_add_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'config_list' => $config_list, 'tripData' => $tripData]);
+            echo $this->render('_add_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'config_list' => $config_list]);
             ?>
         <?php } ?>
     </div>

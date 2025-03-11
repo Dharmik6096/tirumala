@@ -29,37 +29,37 @@ $form = ActiveForm::begin([
                 <?= Html::hiddenInput('union', $searchModel->union_code, ['id' => 'union']); ?>
                 <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $model, $form, 'form-group', $model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'water')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'density')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'protein')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'lactose')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2 number-validate">
                 <?= $form->field($model, 'freezing_point')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'temp')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
             </div>
             <?php
