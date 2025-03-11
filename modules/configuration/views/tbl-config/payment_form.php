@@ -135,11 +135,11 @@ $script = "
         $('#transaction_view').hide(); 
         }
     }
-    $('#configSetModal').modal('toggle');
     
 
     $(document).ready(function() {
-    
+    $('#configSetModal').modal('toggle');
+
     $('#tblconfig-process_name').on('change',function(){
         var process_name = $(this).val();
         var configFor = process_name.split('##')[1];
