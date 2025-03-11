@@ -16,6 +16,7 @@ use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\product\models\TblProductStock;
 use app\modules\assetmanagement\models\TblStoreLocation;
+use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\product\models\TblProductSaleRateApplicability;
 use yii\data\ArrayDataProvider;
 
@@ -53,7 +54,7 @@ use yii\data\ArrayDataProvider;
  */
 class TblIndentMaster extends \app\models\ChildModel {
 
-    public $member, $route_code, $from_date, $to_date;
+    public $member, $route_code, $from_date, $to_date, $code;
 
     /**
      * @inheritdoc
@@ -69,7 +70,7 @@ class TblIndentMaster extends \app\models\ChildModel {
         return [
             [['indent_code'], 'required', 'except' => ['importCsv', 'importCsvOther']],
             [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close', 'from_date', 'to_date'], 'safe'],
-            [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
+            [['indent_type', 'warehouse_code', 'rate', 'amount', 'code'], 'safe'],
             [['product_code', 'indent_date', 'qty'], 'required', 'on' => ['create', 'createOther', 'importCsv', 'importCsvOther']],
             [['dcs_code'], 'required', 'on' => ['create', 'createOther', 'importCsv']],
             [['indent_type', 'rate', 'amount'], 'required', 'on' => ['createOther']],
@@ -184,6 +185,10 @@ class TblIndentMaster extends \app\models\ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
     }
 
     public function convertDateDot() {

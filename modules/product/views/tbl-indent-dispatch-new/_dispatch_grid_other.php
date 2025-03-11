@@ -36,11 +36,25 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                     return ['class' => 'checkbox child-checkbox-' . $model['indent_code'], 'value' => $model['indent_code']];
                 }],
             ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
-            ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref Code.'), 'value' => function($model) {
+            ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS Ref Code'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
             ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                }, 'vAlign' => 'middle', 'filter' => FALSE],
+            ['attribute' => 'code', 'label' => Yii::t('app', 'Code'), 'filter' => FALSE],
+            ['attribute' => 'code', 'label' => Yii::t('app', 'Ref Code'), 'value' => function($model) {
+                    $code_column = ($model->customer_type == 'BULKVEN') ? 'customer_code' : 'member_code';
+                    $model->{$code_column} = $model->code;
+                    $code = ($model->customer_type == 'BULKVEN') ? $model->customerCode : $model->memberCode;
+                    return Yii::$app->general->getforeignkey($code, 'ref_code');
+                }, 'vAlign' => 'middle', 'filter' => FALSE],
+            ['attribute' => 'code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+                    $code_column = ($model->customer_type == 'BULKVEN') ? 'customer_code' : 'member_code';
+                    $model->{$code_column} = $model->code;
+                    $column = ($model->customer_type == 'BULKVEN') ? 'customer_name' : 'member_name';
+                    $code = ($model->customer_type == 'BULKVEN') ? $model->customerCode : $model->memberCode;
+                    return Yii::$app->general->getforeignkey($code, $column);
                 }, 'vAlign' => 'middle', 'filter' => FALSE],
             ['attribute' => 'status_date', 'label' => Yii::t('app', 'Indent Approve Date'), 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->status_date);

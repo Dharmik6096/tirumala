@@ -75,8 +75,8 @@ class TblProductSale extends \app\models\ChildModel {
             [['payment_mode'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'payment_mode');
                 }, 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync', 'productSaleImport', 'productSaleMemberImport']],
-            [['bmc_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct', 'productSaleImport']],
+            [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
+            [['bmc_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct', 'productSaleImport', 'saleProductOnDispatch']],
             [['union_code', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
             [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
@@ -86,7 +86,7 @@ class TblProductSale extends \app\models\ChildModel {
             [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
             [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
             [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
-            [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct', 'androidsync']],
+            [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct', 'androidsync', 'saleProductOnDispatch']],
             [['other_amount', 'discount', 'paid_amount', 'amount_due', 'is_cash_sale'], 'default', 'value' => 0],
 //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
@@ -102,7 +102,7 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblproductsale-payment_mode').val() == 1; 
           }", 'tooSmall' => 'You must have atleast 1 installment to pay the due'],
-            [['no_of_installment'], 'validateInstallments', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+            [['no_of_installment'], 'validateInstallments', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
             [['dcs_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
                     return ($this->customer_type == 'Member');
                 }, 'whenClient' => "function (attribute, value) { 
@@ -127,9 +127,9 @@ class TblProductSale extends \app\models\ChildModel {
             [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
-            [['invoice_date'], 'pastDateValidate', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync']],
+            [['invoice_date'], 'pastDateValidate', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync', 'saleProductOnDispatch']],
             [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+            [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
             /*    [['bmc_code'], function ($attribute, $params) {
               if (empty($this->getErrors())) {
               $flag = strtolower($this->customer_type) == 'member' ? 'member_lock' : 'bmc_lock';
