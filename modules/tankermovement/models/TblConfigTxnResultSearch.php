@@ -17,8 +17,8 @@ class TblConfigTxnResultSearch extends TblConfigTxnResult {
      */
     public function rules() {
         return [
-            [['config_txn_result_code', 'config_result', 'config_for', 'ref_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['config_code', 'originating_type'], 'integer'],
+                [['config_txn_result_code', 'config_result', 'config_for', 'ref_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_table'], 'safe'],
+                [['config_code', 'originating_type'], 'integer'],
         ];
     }
 
@@ -38,7 +38,7 @@ class TblConfigTxnResultSearch extends TblConfigTxnResult {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblConfigTxnResult::find()->where(['config_for' => $this->config_for,'ref_code'=>  $this->ref_code]);
+        $query = TblConfigTxnResult::find()->where(['config_for' => $this->config_for, 'ref_code' => $this->ref_code]);
 
         // add conditions that should always apply here
 
