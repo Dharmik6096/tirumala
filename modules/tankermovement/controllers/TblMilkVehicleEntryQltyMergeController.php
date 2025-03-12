@@ -70,7 +70,10 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $config->process_name = 'PLANT_RECEIPT';
         $config->config_type = 'CONTROL';
         $config_mapping = new TblConfigTxnResult();
-        $config_list = $config->getOrgConfigList($config->config_for, $trip_model['source_org_code']);
+        $config_list = [];
+        if ($trip_model && !empty($trip_model['source_org_code'])) {
+            $config_list = $config->getOrgConfigList($config->config_for, $trip_model['source_org_code']);
+        }
         return $this->render('create', [
                     'model' => $model,
                     'searchModel' => $searchModel,
