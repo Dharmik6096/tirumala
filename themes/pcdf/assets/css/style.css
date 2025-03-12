@@ -5939,7 +5939,7 @@ tr.highlightRow {
     color: #607188;
 }
 .custom-radio-class {
-    margin-top: auto !important;
+    margin-top: 2px !important;
 }
 .order-status {
     text-align: left;
@@ -5995,4 +5995,8 @@ tr.highlightRow {
     float: left;
     padding-left: 20px;
     height: 50px;
+}
+
+.pt19 {
+    padding-top: 19px !important;
 }

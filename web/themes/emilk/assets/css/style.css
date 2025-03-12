@@ -5626,7 +5626,7 @@ h4{
 }
 
 .custom-radio-class {
-    margin-top: auto !important;
+    margin-top: 2px !important;
 }
 
 .order-status {
@@ -5692,4 +5692,8 @@ h4{
 }
 .mt1 {
     margin-top: 1px;
+}
+
+.pt19 {
+    padding-top: 19px !important;
 }
