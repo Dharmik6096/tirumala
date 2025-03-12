@@ -120,6 +120,7 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
                 $config_model->attributes = $model->attributes;
                 $config_model->attributes = $data;
                 $config_model->config_for = 'PLANT_RECEIPT';
+                $config_model->ref_table = 'tbl_milk_vehicle_entry_qlty_merge';
                 $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
                 $saveModel[] = $config_model;
                 $auto_key_config['TblConfigTxnResult'][] = ['self_key' => 'ref_code', 'parent_key' => 'milk_vehicle_entry_qlty_merge_code', 'parent_index' => 0];
@@ -149,7 +150,7 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $deleteModel[] = $this->model;
         $saveModel[] = $historyModel;
 
-        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT'])->all();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty_merge'])->all();
         foreach ($configTxnData as $key => $id) {
             $configTxnHistoryModel = new TblConfigTxnResultHistory();
             Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);

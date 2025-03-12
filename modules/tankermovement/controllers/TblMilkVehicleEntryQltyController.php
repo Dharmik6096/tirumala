@@ -116,6 +116,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
                 $config_model->attributes = $milkVehicleEntryQltyData->attributes;
                 $config_model->attributes = $data;
                 $config_model->config_for = 'PLANT_RECEIPT';
+                $config_model->ref_table = 'tbl_milk_vehicle_entry_qlty';
                 $config_model->ref_code = $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code;
                 $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
                 $saveModel[] = $config_model;
@@ -195,7 +196,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $saveModel[] = $vehicleTripData;
         }
 
-        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT'])->all();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
         foreach ($configTxnData as $key => $id) {
             $configTxnHistoryModel = new TblConfigTxnResultHistory();
             Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);

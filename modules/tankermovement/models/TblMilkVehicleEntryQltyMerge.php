@@ -126,7 +126,7 @@ class TblMilkVehicleEntryQltyMerge extends ChildModel {
     }
 
     public function getConfigResult() {
-        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_merge_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT']);
+        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_merge_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty_merge']);
     }
 
     public function getPlant($trip_code) {
