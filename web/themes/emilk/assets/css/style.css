@@ -5626,7 +5626,7 @@ h4{
 }
 
 .custom-radio-class {
-    margin-top: auto !important;
+    margin-top: 2px !important;
 }
 
 .order-status {
@@ -5689,4 +5689,7 @@ h4{
     font-size: 12px;
     border-radius: 2px;
     color: #607188;
+}
+.pt19 {
+    padding-top: 19px !important;
 }
