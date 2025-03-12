@@ -27,6 +27,8 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Html::hiddenInput('trip', $searchModel->trip_code, ['id' => 'trip']); ?>
                 <?= Html::hiddenInput('union', $searchModel->union_code, ['id' => 'union']); ?>
+                <?= Html::hiddenInput('vehicle', $trip_model->vehicle_code, ['id' => 'vehicle']); ?>
+                <?= Html::hiddenInput('plant', $trip_model->source_org_code, ['id' => 'plant']); ?>
                 <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $model, $form, 'form-group', $model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
             </div>
             <div class="col-sm-1 number-validate">

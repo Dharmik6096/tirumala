@@ -78,7 +78,8 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
                     'dataProvider' => $dataProvider,
                     'dataProviderCount' => $dataProviderCount,
                     'config' => $config_mapping,
-                    'config_list' => $config_list
+                    'config_list' => $config_list,
+                    'trip_model' => $trip_model
         ]);
     }
 
@@ -104,9 +105,8 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $saveModel = [];
         $auto_key_config = [];
         $postData = Yii::$app->request->post();
-        $tripDetailData = TblVehicleTripDetail::find()->where(['trip_code' => $postData['trip'], 'is_active' => 1, 'is_last_destination' => 1, 'source_org_type' => 'plant'])->one();
-        $model->vehicle_code = $tripDetailData['vehicle_code'];
-        $model->plant_code = $tripDetailData['source_org_code'];
+        $model->vehicle_code = $postData['vehicle'];
+        $model->plant_code = $postData['plant'];
         $model->trip_code = $postData['trip'];
         $model->union_code = $postData['union'];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {

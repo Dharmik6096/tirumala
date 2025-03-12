@@ -130,7 +130,7 @@ class TblMilkVehicleEntryQltyMerge extends ChildModel {
     }
 
     public function getPlant($trip_code) {
-        return TblVehicleTripDetail::find()->select(['source_org_code'])
+        return TblVehicleTripDetail::find()->select(['source_org_code', 'vehicle_code'])
                         ->where(['is_last_destination' => 1, 'source_org_type' => 'plant', 'trip_code' => $trip_code])->one();
     }
 
