@@ -17,7 +17,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->vehicleOpenTripDetail($searchModel, $form, 'tblmilkvehicleentryqltysearch-union_code,tblmilkvehicleentryqltysearch-trip_status', 'trip_code', $searchModel->getAttributeLabel('trip_code'), false, '', ($dataProviderCount > 0) ? true : false); ?>
     </div>
     <?php if ($dataProviderCount == 0) { ?>
-        <div class="form-group padding_top_20">
+        <div class="col-sm-2 pt19">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary search']); ?>
         </div>
     <?php } else if ($dataProviderCount > 0) { ?>

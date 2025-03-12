@@ -193,7 +193,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tanker Milk Quality'), 'url' => ['/tankermovement/tbl-milk-vehicle-entry-qlty-merge/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry-qlty-merge' && $action == 'index')],
                             ['label' => 'Vehicle Cleaning Detail', 'url' => ['/tankermovement/tbl-vehicle-cleaning-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-cleaning-inspection')],
                             ['label' => 'Vehicle QA Inspection Detail', 'url' => ['/tankermovement/tbl-vehicle-qa-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-qa-inspection')],
-                            ['label' => Yii::t('app', 'Milk Vehicle Entry Qlty'), 'url' => ['/tankermovement/tbl-milk-vehicle-entry-qlty/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry-qlty' && $action == 'index')],
                             ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
                             ['label' => 'Payment Head', 'url' => ['/tankermovement/tbl-payment-head/index'], 'active' => ($cntrl == 'tbl-payment-head')],
                             ['label' => 'Payment Head Transaction', 'url' => ['/tankermovement/tbl-payment-head-transaction/index'], 'active' => ($cntrl == 'tbl-payment-head-transaction')],
