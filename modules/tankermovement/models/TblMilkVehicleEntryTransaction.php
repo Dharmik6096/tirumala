@@ -72,7 +72,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblmilkvehicleentrytransaction-entry_type').val() == 'INDIVIDUAL';
           }", 'except' => ['androidsync']],
-            [['entry_type'], 'validateCreate'],
+            [['entry_type'], 'validateCreate', 'except' => ['androidsync']],
             [['clr', 'protein', 'density', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'default', 'value' => '0'],
             [['status', 'cron_pick_datetime','pick_datetime','response_datetime','response_msg', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'safe'],
             [['status'], 'default', 'value' => 0],
