@@ -134,6 +134,9 @@ class ReportsController extends \app\controllers\ChildController {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
                 $this->report = 'BmcCollConsolidated';
             }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'BmcConsolidatedWithBank';
+            }
         }
         return $this->actionIndex();
     }
@@ -2137,14 +2140,21 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_wise_soceity_collection_date_wise',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Date Wise Summary',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_collection_consolidated',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Consolidated',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+            ],
+            'BmcConsolidatedWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_bmc_collection_consolidated_with_bank',
+                'scenario' => 'BmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             //203
             'UnionCollDateShiftWiseSummary' => [
