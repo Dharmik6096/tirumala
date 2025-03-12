@@ -18,7 +18,7 @@ $readonly = empty($searchModel->trip_code) ? FALSE : TRUE;
         <?= Yii::$app->dropdown->vehicleOpenTripDetail($searchModel, $form, 'tblmilkvehicleentryqltymergesearch-union_code,process', 'trip_code', $searchModel->getAttributeLabel('trip_code'), false, '', $readonly); ?>
     </div>
     <?php if (empty($searchModel->parsing_no)) { ?>
-        <div class="form-group padding_top_20">
+        <div class="col-sm-2 pt19">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary search']); ?>
         </div>
     <?php } else if (!empty($searchModel->parsing_no)) { ?>
