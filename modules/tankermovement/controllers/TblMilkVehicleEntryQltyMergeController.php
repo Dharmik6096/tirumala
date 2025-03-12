@@ -13,7 +13,6 @@ use app\modules\tankermovement\models\TblConfigTxnResultHistory;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use yii\web\Response;
 use yii\helpers\Json;
-use app\modules\tankermovement\models\TblVehicleTripDetail;
 
 /**
  * TblMilkVehicleEntryQltyMergeController implements the CRUD actions for TblMilkVehicleEntryQltyMerge model.
