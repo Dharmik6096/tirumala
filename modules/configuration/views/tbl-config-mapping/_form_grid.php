@@ -8,21 +8,21 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         },
         'filter' => false, 'visible' => FALSE],
-    ['attribute' => 'plant_code', 'value' => function($model) {
+        ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'visible' => FALSE,
         'filter' => false],
-    ['attribute' => 'org_code'],
-    ['attribute' => 'config_for', 'value' => function($model) {
-            return $model->config_for == 'BMC' ? Yii::$app->general->getforeignkey($model->mainBmcCode, 'bmc_name') : Yii::$app->general->getforeignkey($model->mainMccCode, 'name');
+        ['attribute' => 'org_code'],
+        ['attribute' => 'config_for', 'value' => function($model) {
+            return $model->config_for == 'BMC' ? Yii::$app->general->getforeignkey($model->mainBmcCode, 'bmc_name') : ($model->config_for == 'PLANT' ? Yii::$app->general->getforeignkey($model->plantCode, 'name') : Yii::$app->general->getforeignkey($model->mainMccCode, 'name'));
         }, 'filter' => false],
-    ['attribute' => 'org_type', 'filter' => false],
-    ['attribute' => 'process_name', 'filter' => false],
-    ['attribute' => 'config_type', 'filter' => false],
+        ['attribute' => 'org_type', 'filter' => false],
+        ['attribute' => 'process_name', 'filter' => false],
+        ['attribute' => 'config_type', 'filter' => false],
 ];
 $grid_option = [
     'id' => 'config-mapping-list',

@@ -19,54 +19,54 @@ $this->title = Yii::$app->label->title('view', 'Control Mapping');
                 <?php
                 // DetailView Attributes Configuration
                 $attributes = [
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'union_code',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mainMccCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'bmc_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mainBmcCode, 'bmc_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'org_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'org_type',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'config_for',
-                                'value' => $model->config_for == 'BMC' ? Yii::$app->general->getforeignkey($model->mainBmcCode, 'bmc_name') : Yii::$app->general->getforeignkey($model->mainMccCode, 'name'),
+                                'value' => $model->org_type == 'BMC' ? Yii::$app->general->getforeignkey($model->mainBmcCode, 'bmc_name') : ($model->org_type == 'PLANT' ? Yii::$app->general->getforeignkey($model->plantCode, 'name') : Yii::$app->general->getforeignkey($model->mainMccCode, 'name')),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'process_name',
                                 'value' => Yii::$app->general->getforeignkey($model->configCode, 'process_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
@@ -98,14 +98,14 @@ $this->title = Yii::$app->label->title('view', 'Control Mapping');
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Mapping Config') ?></h4>
             </div>
-        <div class="form-grid">
-            <?=
-            $this->render('_mapping_view', [
-                'model' => $model,
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
-            ])
-            ?>
+            <div class="form-grid">
+                <?=
+                $this->render('_mapping_view', [
+                    'model' => $model,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ])
+                ?>
+            </div>
         </div>
     </div>
-</div>
