@@ -24,63 +24,67 @@ $form = ActiveForm::begin([
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix custhead">
         <h4 class="theme-box-heading " style="padding: 5px;">Compartment Wise Tanker Milk Quality</h4>
         <div class="table-responsive padding_left_10">
-            <div class="col-sm-2">
-                <?= Html::hiddenInput('trip', $searchModel->trip_code, ['id' => 'trip']); ?>
-                <?= Html::hiddenInput('union', $searchModel->union_code, ['id' => 'union']); ?>
-                <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $model, $form, 'form-group', $model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'water')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'density')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'protein')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'lactose')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'freezing_point')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'temp')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <div class="col-sm-1">
-                <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-            </div>
-            <?php
-            $index = 1;
-            $cnt = 1;
-            foreach ($config_list as $c) {
-                ?>
-                <?= Html::activeHiddenInput($config, '[' . $index . ']config_code', ['value' => $c->config_code]); ?>
+            <div class="row">
                 <div class="col-sm-2">
-                    <?= $c->prepareControl($form, $config, $index); ?>
+                    <?= Html::hiddenInput('trip', $searchModel->trip_code, ['id' => 'trip']); ?>
+                    <?= Html::hiddenInput('union', $searchModel->union_code, ['id' => 'union']); ?>
+                    <?= Html::hiddenInput('vehicle', $trip_model->vehicle_code, ['id' => 'vehicle']); ?>
+                    <?= Html::hiddenInput('plant', $trip_model->source_org_code, ['id' => 'plant']); ?>
+                    <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $model, $form, 'form-group', $model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
                 </div>
-                <?php if ($cnt == 6) { ?>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'water')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'density')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'protein')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'lactose')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-2 number-validate">
+                    <?= $form->field($model, 'freezing_point')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'temp')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <?php
+                $index = 1;
+                $cnt = 1;
+                foreach ($config_list as $c) {
+                    echo Html::activeHiddenInput($config, '[' . $index . ']config_code', ['value' => $c->config_code]);
+                    ?>
+                    <div class="col-sm-2">
+                        <?= $c->prepareControl($form, $config, $index); ?>
+                    </div>
+                    <?php if ($cnt == 6) { ?>
+                        <?php
+                        $cnt = 0;
+                    }
+                    ?>
                     <?php
-                    $cnt = 0;
+                    $cnt++;
+                    $index++;
                 }
                 ?>
-                <?php
-                $cnt++;
-                $index++;
-            }
-            ?>
+            </div>
             <div class="clearfix"></div>
             <div class="form-group col-sm-3 mt23">
                 <?php
@@ -121,16 +125,16 @@ $form = ActiveForm::begin([
                                 }'),
                     ],
                     'options' => [
-                        'class' => 'btn btn-default btn-raised',
+                        'class' => 'btn btn-default btn-raised btn-login',
                         'type' => 'submit'
                     ],
                 ]);
                 AjaxSubmitButton::end();
                 ?>
                 <?= Yii::$app->controls->reset(); ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
+                <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?>
             </div>
         </div>
     </div>
-    <br/>
-    <?php ActiveForm::end(); ?>
+</div>
+<?php ActiveForm::end(); ?>

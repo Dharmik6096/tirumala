@@ -13,7 +13,6 @@ use app\modules\tankermovement\models\TblConfigTxnResultHistory;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use yii\web\Response;
 use yii\helpers\Json;
-use app\modules\tankermovement\models\TblVehicleTripDetail;
 
 /**
  * TblMilkVehicleEntryQltyMergeController implements the CRUD actions for TblMilkVehicleEntryQltyMerge model.
@@ -61,18 +60,20 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $searchModel = new TblMilkVehicleEntryQltyMergeSearch();
         $searchModel->scenario = 'update';
         $searchModel->load(\Yii::$app->request->get());
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $searchModel->parsing_no = TblVehicleTrip::find()->alias('vt')->joinWith('vehicleCode vm')->where(['vt.trip_code' => $searchModel->trip_code, 'vt.is_active' => 1])->select('vm.parsing_no')->scalar();
         $dataProviderCount = $dataProvider->getCount();
         $trip_code = $searchModel->trip_code;
         $trip_model = $model->getPlant($trip_code);
-        $tripData = TblVehicleTripDetail::find()->where(['trip_code' => $searchModel->trip_code, 'is_active' => 1, 'is_last_destination' => 1])->one();
         $config = new TblConfig();
         $config->config_for = 'PLANT';
         $config->process_name = 'PLANT_RECEIPT';
         $config->config_type = 'CONTROL';
         $config_mapping = new TblConfigTxnResult();
-        $config_list = $config->getOrgConfigList($config->config_for, $trip_model['source_org_code']);
+        $config_list = [];
+        if ($trip_model && !empty($trip_model['source_org_code'])) {
+            $config_list = $config->getOrgConfigList($config->config_for, $trip_model['source_org_code']);
+        }
         return $this->render('create', [
                     'model' => $model,
                     'searchModel' => $searchModel,
@@ -80,7 +81,7 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
                     'dataProviderCount' => $dataProviderCount,
                     'config' => $config_mapping,
                     'config_list' => $config_list,
-                    'tripData' => $tripData,
+                    'trip_model' => $trip_model
         ]);
     }
 
@@ -106,9 +107,8 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $saveModel = [];
         $auto_key_config = [];
         $postData = Yii::$app->request->post();
-        $tripDetailData = TblVehicleTripDetail::find()->where(['trip_code' => $postData['trip'], 'is_active' => 1, 'is_last_destination' => 1, 'source_org_type' => 'plant'])->one();
-        $model->vehicle_code = $tripDetailData['vehicle_code'];
-        $model->plant_code = $tripDetailData['source_org_code'];
+        $model->vehicle_code = $postData['vehicle'];
+        $model->plant_code = $postData['plant'];
         $model->trip_code = $postData['trip'];
         $model->union_code = $postData['union'];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -120,6 +120,7 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
                 $config_model->attributes = $model->attributes;
                 $config_model->attributes = $data;
                 $config_model->config_for = 'PLANT_RECEIPT';
+                $config_model->ref_table = 'tbl_milk_vehicle_entry_qlty_merge';
                 $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
                 $saveModel[] = $config_model;
                 $auto_key_config['TblConfigTxnResult'][] = ['self_key' => 'ref_code', 'parent_key' => 'milk_vehicle_entry_qlty_merge_code', 'parent_index' => 0];
@@ -149,7 +150,7 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $deleteModel[] = $this->model;
         $saveModel[] = $historyModel;
 
-        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT'])->all();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty_merge'])->all();
         foreach ($configTxnData as $key => $id) {
             $configTxnHistoryModel = new TblConfigTxnResultHistory();
             Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);

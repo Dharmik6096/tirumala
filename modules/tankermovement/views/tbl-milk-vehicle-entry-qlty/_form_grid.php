@@ -13,8 +13,8 @@ $attribute = [
         ['attribute' => 'vehicle_code', 'value' => function($model) {
             return isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '';
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => true],
+        ['attribute' => 'trip_code'],
         ['attribute' => 'chamber_no'],
-        ['attribute' => 'trip_code', 'filter' => false],
         ['attribute' => 'arrival_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->arrival_datetime);
         }, 'filter' => false],

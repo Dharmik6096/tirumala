@@ -76,19 +76,19 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
                 [['trip_code'], 'required', 'when' => function ($model) {
                     $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL');
                     return !($model->dispatch_from == 'PARTY') || $tripMandateOnReceipt == '1';
-                }],
+                }, 'except' => ['androidsync']],
                 [['receipt_at'], 'AddBmcCode'],
                 [['tanker_no'], 'required', 'when' => function ($model) {
                     $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL');
                     return $model->dispatch_from == 'PARTY' && $tripMandateOnReceipt != '1';
-                }],
+                }, 'except' => ['androidsync']],
                 [['vehicle_code'], 'required', 'when' => function ($model) {
                     return !($model->dispatch_from == 'PARTY');
-                }, 'message' => 'Trip Code is required for the selected Source & Destination.'],
+                }, 'message' => 'Trip Code is required for the selected Source & Destination.', 'except' => ['androidsync']],
                 [['tanker_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
-                [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true],
+                [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true, 'except' => ['androidsync']],
         ];
     }
 

@@ -75,14 +75,14 @@ class TblMilkVehicleEntryQltyMerge extends ChildModel {
     public function attributeLabels() {
         return [
             'milk_vehicle_entry_qlty_merge_code' => Yii::t('app', 'Milk Vehicle Entry Qlty Merge Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'vehicle_code' => Yii::t('app', 'Vehicle Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'vehicle_code' => Yii::t('app', 'Vehicle'),
             'trip_code' => Yii::t('app', 'Trip Code'),
-            'chamber_no' => Yii::t('app', 'Chamber No'),
-            'fat' => Yii::t('app', 'Fat'),
-            'snf' => Yii::t('app', 'Snf'),
-            'clr' => Yii::t('app', 'Clr'),
+            'chamber_no' => Yii::t('app', 'Compartment No'),
+            'fat' => Yii::t('app', 'FAT'),
+            'snf' => Yii::t('app', 'SNF'),
+            'clr' => Yii::t('app', 'CLR'),
             'water' => Yii::t('app', 'Water'),
             'density' => Yii::t('app', 'Density'),
             'protein' => Yii::t('app', 'Protein'),
@@ -126,11 +126,11 @@ class TblMilkVehicleEntryQltyMerge extends ChildModel {
     }
 
     public function getConfigResult() {
-        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_merge_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT']);
+        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_merge_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty_merge']);
     }
 
     public function getPlant($trip_code) {
-        return TblVehicleTripDetail::find()->select(['source_org_code'])
+        return TblVehicleTripDetail::find()->select(['source_org_code', 'vehicle_code'])
                         ->where(['is_last_destination' => 1, 'source_org_type' => 'plant', 'trip_code' => $trip_code])->one();
     }
 

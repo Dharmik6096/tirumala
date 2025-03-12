@@ -7,6 +7,7 @@ use yii\widgets\ActiveForm;
 $form = ActiveForm::begin([
             'method' => 'get',
         ]);
+$readonly = empty($searchModel->trip_code) ? FALSE : TRUE;
 ?>
 <div class="row">
     <div class="col-sm-2">
@@ -14,7 +15,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2 filldata">
         <?php echo Html::hiddenInput('process', 'milk_entry_qlty_merge', ['id' => 'process']); ?>
-        <?= Yii::$app->dropdown->vehicleOpenTripDetail($searchModel, $form, 'tblmilkvehicleentryqltymergesearch-union_code,process', 'trip_code', $searchModel->getAttributeLabel('trip_code')); ?>
+        <?= Yii::$app->dropdown->vehicleOpenTripDetail($searchModel, $form, 'tblmilkvehicleentryqltymergesearch-union_code,process', 'trip_code', $searchModel->getAttributeLabel('trip_code'), false, '', $readonly); ?>
     </div>
     <?php if (empty($searchModel->parsing_no)) { ?>
         <div class="form-group padding_top_20">
