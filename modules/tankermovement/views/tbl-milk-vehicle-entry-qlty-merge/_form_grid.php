@@ -15,19 +15,15 @@ $attribute = [
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => true],
         ['attribute' => 'trip_code'],
         ['attribute' => 'chamber_no'],
-        ['attribute' => 'arrival_datetime', 'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->arrival_datetime);
-        }, 'filter' => false],
-        ['attribute' => 'lot_datetime', 'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->lot_datetime);
-        }, 'filter' => false],
-        ['attribute' => 'lot_no', 'filter' => false],
-        ['attribute' => 'status', 'filter' => false],
-        ['attribute' => 'status_datetime', 'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->status_datetime);
-        }, 'filter' => false],
         ['attribute' => 'fat', 'filter' => false],
         ['attribute' => 'snf', 'filter' => false],
+        ['attribute' => 'is_qty_only', 'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_qty_only');
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_qty_only')],
+        ['attribute' => 'is_pending_merge', 'filter' => FALSE,
+        'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_pending_merge');
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_pending_merge')],
 ];
 foreach ($config_list as $config) {
     $attribute[] = [
@@ -40,7 +36,7 @@ foreach ($config_list as $config) {
     ];
 }
 $grid_option = [
-    'id' => 'milk-vehicle-entry-qlty-grid',
+    'id' => 'milk-vehicle-entry-qlty-merge-grid',
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [

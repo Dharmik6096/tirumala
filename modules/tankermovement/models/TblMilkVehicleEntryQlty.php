@@ -87,7 +87,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'vehicle_code' => Yii::t('app', 'Vehicle'),
             'arrival_datetime' => Yii::t('app', 'Arrival Datetime'),
-            'trip_code' => Yii::t('app', 'Trip '),
+            'trip_code' => Yii::t('app', 'Trip Code'),
             'chamber_no' => Yii::t('app', 'Compartment No'),
             'fat' => Yii::t('app', 'FAT'),
             'snf' => Yii::t('app', 'SNF'),

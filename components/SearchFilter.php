@@ -580,6 +580,9 @@ class SearchFilter {
             'TblRawFgMaterialReceiptSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'from_date', 'to_date'],
             ],
+            'TblMilkVehicleEntryQltyMergeSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'vehicle_code:union_vehicle', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

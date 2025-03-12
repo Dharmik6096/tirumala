@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 
-$this->title = Yii::t('app', 'Tanker Milk Lot Quality');
+$this->title = Yii::t('app', 'Tanker Milk Quality');
 
 Url::remember();
 ?>
@@ -15,18 +15,18 @@ Url::remember();
         <div class="large-search">
             <?php echo $this->render('_search', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'dataProviderCount' => $dataProviderCount]); ?>
         </div>
-        <?php
-        if ($dataProviderCount > 0) {
-            echo $this->render('_form', ['model' => $model, 'config_list' => $config_list, 'config' => $config]);
+        <?php if (!empty($searchModel->parsing_no)) { ?>
+            <?php
+            echo $this->render('_form', ['model' => $model, 'config_list' => $config_list, 'config' => $config, 'searchModel' => $searchModel, 'trip_model' => $trip_model]);
             ?>
             <div class="clearfix"></div>
             <div class="panel-heading">
-                <?php echo 'Tanker Milk Lot Quality Records'; ?>
+                <?php echo 'Tanker Milk Quality Records'; ?>
             </div>
             <?php
             echo $this->render('_add_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'config_list' => $config_list]);
-        }
-        ?>
+            ?>
+        <?php } ?>
     </div>
 </div>
 

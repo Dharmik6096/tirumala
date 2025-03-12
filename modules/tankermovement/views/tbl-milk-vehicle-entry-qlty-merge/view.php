@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 
-$this->title = Yii::$app->label->title('view', 'Tanker Milk Lot Quality');
+$this->title = Yii::$app->label->title('view', 'Tanker Milk Quality');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -36,118 +36,97 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Lot Quality');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
-                            'attribute' => 'arrival_datetime',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                            'value' => Yii::$app->controls->view_datetime($model->arrival_datetime)
-                        ]
-                    ]
-                ],
-                    [
-                    'columns' => [
-                            [
-                            'attribute' => 'lot_datetime',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                            'value' => Yii::$app->controls->view_datetime($model->lot_datetime)
-                        ],
-                            [
-                            'attribute' => 'lot_no',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                    ]
-                ],
-                    [
-                    'columns' => [
-                            [
                             'attribute' => 'trip_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'chamber_no',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ]
                     ]
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'chamber_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'fat',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'snf',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ]
                     ]
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'snf',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'clr',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'water',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ]
                     ]
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'water',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'density',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'protein',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ]
                     ]
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'protein',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'lactose',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'freezing_point',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ]
                     ]
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'freezing_point',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'mbrt',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'temp',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ]
                     ]
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'temp',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                             [
                             'attribute' => 'acidity',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'status',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ]
                     ]
                 ],
                     [
                     'columns' => [
                             [
-                            'attribute' => 'status_datetime',
-                            'valueColOptions' => ['style' => 'width:80%'],
-                            'value' => Yii::$app->controls->view_datetime($model->status_datetime)
-                        ]
+                            'attribute' => 'is_qty_only',
+                            'value' => $model->is_qty_only == 1 ? 'Yes' : 'No',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'is_pending_merge',
+                            'value' => $model->is_pending_merge == 1 ? 'Yes' : 'No',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                     ]
-                ]
+                ],
             ];
 
             // View file rendering the widget

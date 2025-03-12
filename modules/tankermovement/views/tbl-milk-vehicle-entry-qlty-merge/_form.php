@@ -6,12 +6,14 @@ use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 ?>
-<?php $url = Url::to(['/tankermovement/tbl-milk-vehicle-entry-qlty/qlty-submit', 'TblMilkVehicleEntry' => ['trip_code' => $model->trip_code]]); ?>
+<?php
+$url = Url::to(['/tankermovement/tbl-milk-vehicle-entry-qlty-merge/qlty-submit', 'TblMilkVehicleEntry' => ['trip_code' => $model->trip_code]]);
+?>
 <?php
 $form = ActiveForm::begin([
             'options' => [
                 'class' => 'form-group popup-form',
-                'id' => 'milk-vehicle-entry-qlty-form',
+                'id' => 'milk-vehicle-entry-qlty-merge-form',
             ],
         ]);
 ?>
@@ -20,11 +22,14 @@ $form = ActiveForm::begin([
         <?php echo $form->errorSummary($model); ?>
     </div>
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix custhead">
-        <h4 class="theme-box-heading " style="padding: 5px;">Compartment Wise Tanker Milk Lot Quality</h4>
+        <h4 class="theme-box-heading " style="padding: 5px;">Compartment Wise Tanker Milk Quality</h4>
         <div class="table-responsive padding_left_10">
             <div class="col-sm-2">
-                <?php echo Html::hiddenInput('status', 'pending', ['id' => 'tblmilkvehicleentryqlty-status']); ?>
-                <?= Yii::$app->dropdown->depend_dropdown('chamber_no', $model, $form, 'tblmilkvehicleentryqltysearch-trip_code,tblmilkvehicleentryqlty-status', 'form-group col-sm-4', $model->getAttributeLabel('chamber_no'), '', FALSE); ?>
+                <?= Html::hiddenInput('trip', $searchModel->trip_code, ['id' => 'trip']); ?>
+                <?= Html::hiddenInput('union', $searchModel->union_code, ['id' => 'union']); ?>
+                <?= Html::hiddenInput('vehicle', $trip_model->vehicle_code, ['id' => 'vehicle']); ?>
+                <?= Html::hiddenInput('plant', $trip_model->source_org_code, ['id' => 'plant']); ?>
+                <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $model, $form, 'form-group', $model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
             </div>
             <div class="col-sm-1 number-validate">
                 <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
@@ -83,7 +88,7 @@ $form = ActiveForm::begin([
                 <?php
                 AjaxSubmitButton::begin([
                     'label' => Yii::t('app', 'Save'),
-                    'id' => 'recoveryBtn',
+                    'id' => 'recoveryBtns',
                     'ajaxOptions' => [
                         'type' => 'POST',
                         'url' => $url,
@@ -118,14 +123,14 @@ $form = ActiveForm::begin([
                                 }'),
                     ],
                     'options' => [
-                        'class' => 'btn btn-default btn-raised btn-login',
+                        'class' => 'btn btn-default btn-raised',
                         'type' => 'submit'
                     ],
                 ]);
                 AjaxSubmitButton::end();
                 ?>
                 <?= Yii::$app->controls->reset(); ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?>
+                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
             </div>
         </div>
     </div>
