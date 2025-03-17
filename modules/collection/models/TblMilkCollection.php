@@ -146,7 +146,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['tag_1'], 'default', 'value' => 'X'],
                 [['adt_param', 'adt_value', 'received_timestamp', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
                 [['member_code'], 'validateUnique', 'on' => ['create', 'create_allow', 'ho_sync_create', 'importApproval']],
-                [['milk_type_code'], 'validateUpdate', 'on' => ['update', 'update_allow']],
+                [['milk_type_code'], 'validateUpdate', 'on' => ['update', 'update_allow', 'ho_sync_update']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
@@ -1314,7 +1314,6 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                 }
             } else {
-                $approvalModel->approval_status = 'Pending';
                 $modelSave[] = $approvalModel;
             }
             $message = 'Data For Approval';
