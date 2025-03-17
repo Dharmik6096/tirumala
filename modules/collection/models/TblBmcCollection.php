@@ -593,7 +593,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getRateRange() {
-        return $this->hasOne(TblUnionRatechartRange::className(), ['union_code' => 'union_code', 'animal_type_code' => 'milk_type_code']);
+        return $this->hasOne(TblUnionRatechartRange::className(), ['union_code' => 'union_code', 'animal_type_code' => 'milk_type_code'])->where(['config_for' => 'BMC']);
     }
 
     public function setModel(&$model) {
