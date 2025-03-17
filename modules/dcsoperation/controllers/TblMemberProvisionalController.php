@@ -131,6 +131,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $validate = 1;
         if (isset($this->model->scenarios()[Yii::$app->session['eiplCode']])) {
             $this->model->scenario = Yii::$app->session['eiplCode'];
+        } else {
+            $this->model->scenario = 'createProvisionalMember';
         }
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->is_approved = 0;
@@ -339,6 +341,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             if (strtolower($model->provisional_status) == 'approve') {
                                 $model->member_status = 1; //Created
                             }
+                            $model->scenario = 'MemberDocument';
                             $save_model[] = $model;
                         } else {
                             if (Yii::$app->request->post('request_button') === 'approve') {
@@ -360,43 +363,54 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                     }
                                 }
                             } else {
+                                $model->scenario = 'MemberDocument';
                                 $model->is_approved = 0;
                                 $model->provisional_status = 'Pending';
                                 $save_model[] = $model;
                             }
                         }
-                        if (empty($member_error)) {
-                            $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
-                            if ($transaction == 'customRedirect') {
-                                if (strtolower($model->provisional_status) == 'approve') {
-                                    $baseDir = Yii::getAlias('@webroot') . '/' . Yii::$app->params['document_upload'];
-                                    $memberDir = $baseDir . 'member';
-                                    $proMemberDir = $baseDir . 'provisional_member';
-                                    if (!empty($unlink_files)) {
-                                        foreach ($unlink_files as $file) {
-                                            if (file_exists($memberDir . '/' . $file)) {
-                                                unlink($memberDir . '/' . $file);
+                        if ($model->validate()) {
+                            if (empty($member_error)) {
+                                $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
+                                if ($transaction == 'customRedirect') {
+                                    if (strtolower($model->provisional_status) == 'approve') {
+                                        $baseDir = Yii::getAlias('@webroot') . '/' . Yii::$app->params['document_upload'];
+                                        $memberDir = $baseDir . 'member';
+                                        $proMemberDir = $baseDir . 'provisional_member';
+                                        if (!empty($unlink_files)) {
+                                            foreach ($unlink_files as $file) {
+                                                if (file_exists($memberDir . '/' . $file)) {
+                                                    unlink($memberDir . '/' . $file);
+                                                }
+                                            }
+                                        }
+                                        for ($i = 0; $i < count($all_doc); $i++) {
+                                            $fileName = basename($memberdoc[$i]);
+                                            $file = $memberDir . '/' . $fileName;
+                                            $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
+                                            if ($upload) {
+                                                if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
+                                                    unlink($proMemberDir . '/' . $all_doc[$i]);
+                                                }
                                             }
                                         }
                                     }
-                                    for ($i = 0; $i < count($all_doc); $i++) {
-                                        $fileName = basename($memberdoc[$i]);
-                                        $file = $memberDir . '/' . $fileName;
-                                        $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
-                                        if ($upload) {
-                                            if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
-                                                unlink($proMemberDir . '/' . $all_doc[$i]);
-                                            }
-                                        }
-                                    }
+                                    $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                                } else {
+                                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                                    $record = ['status' => 'error', 'msg' => $msg];
                                 }
-                                $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
                             } else {
-                                $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                                $record = ['status' => 'error', 'msg' => $msg];
+                                $record = ['status' => 'error', 'msg' => $member_error . ' in Member'];
                             }
                         } else {
-                            $record = ['status' => 'error', 'msg' => $member_error . ' in Member'];
+                            $member_massege = '';
+                            if(!empty($model->getErrors())){
+                                foreach($model->getErrors() as $m) {
+                                    $member_massege = $member_massege.$m[0].'<br>';
+                                }
+                            }
+                            $record = ['status' => 'error', 'msg' => $member_massege];
                         }
                     } else {
                         $record = ['status' => 'error', 'msg' => 'Documnet already available for ' . $msg];
