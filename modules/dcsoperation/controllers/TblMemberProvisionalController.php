@@ -61,7 +61,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     public function actionIndex() {
         $searchModel = new TblMemberProvisionalSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        Url::remember(Yii::$app->request->url, 'member-provisional-index');
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
@@ -390,7 +390,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                         }
                                     }
                                 }
-                                $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                                $searchUrl = Url::previous('member-provisional-index');
+                                $record = ['status' => 'success', 'msg' => $this->redirect($searchUrl ? $searchUrl : ['index'])];
                             } else {
                                 $msg = Yii::$app->getSession()->getFlash('success')['message'];
                                 $record = ['status' => 'error', 'msg' => $msg];
