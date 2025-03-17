@@ -191,7 +191,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                 $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
                             }
                             Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
-                            if ($result[2]['inspection_require']) {
+                            $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
+                            if (!$tankerMovementWithTripSubStatus && $result[2]['inspection_require']) {
                                 return $this->redirect([
                                             '/tankermovement/tbl-bmc-dispatch-inspection/create',
                                             'trip_code' => $result[2]['trip_code'],
