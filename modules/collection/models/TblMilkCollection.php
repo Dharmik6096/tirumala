@@ -1314,6 +1314,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                 }
             } else {
+                $approvalModel->approval_status = 'Pending';
                 $modelSave[] = $approvalModel;
             }
             $message = 'Data For Approval';
