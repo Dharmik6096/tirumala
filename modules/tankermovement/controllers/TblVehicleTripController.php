@@ -375,7 +375,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $remarks = '';
             if (!empty($postData['arrival_time']) && $actionType == 'gate-in') {
                 $tripDetail->arrival_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['arrival_time']));
-                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'get_in';
+                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'gate_in';
                 $remarks = $tripDetail->in_remarks;
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
@@ -383,7 +383,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $tripDetail->arrival_time = $tripDetail->departure_time;
                 }
                 $remarks = $tripDetail->out_remarks;
-                $trip->trip_sub_status = 'get_out';
+                $trip->trip_sub_status = 'gate_out';
             }
             if ($tripDetail->validate()) {
                 $models = [$tripDetail, $trip];
@@ -432,8 +432,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
     public function actionMap($trip_code) {
         $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->all();
+        $parsingNo = '';
+        if (!empty($tripTrack) && isset($tripTrack[0]['vehicle_code'])) {
+            $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $tripTrack[0]['vehicle_code']])->one();
+        }
         return $this->render('_map', [
                     'tripTrack' => $tripTrack,
+                    'parsingNo' => $parsingNo,
         ]);
     }
 
