@@ -13,13 +13,15 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
             <?php
             foreach ($tripTrack as $index => $trip) {
                 $stepClass = ($index % 2 == 0) ? 'step-up' : 'step-down';
+                $remarks = explode('-', $trip->remarks);
                 ?>
                 <div class="step <?= $stepClass ?>">
 
                     <div class="step-content">
                         <h5><strong><?= ucwords(str_replace('_', ' ', $trip->trip_sub_status)) ?></strong></h5>
-                        <p><?= $trip->remarks ?></p>
+                        <p><?= isset($remarks[0]) ? $remarks[0] : '' ?> - <?= isset($remarks[1]) ? $remarks[1] : '' ?></p>
                         <h6><?= Yii::$app->controls->view_datetime($trip->sub_status_time) ?></h6>
+                        <p class="mt10"><?= isset($remarks[2]) ? $remarks[2] : '' ?></p>
                     </div>
                 </div>
             <?php } ?>
