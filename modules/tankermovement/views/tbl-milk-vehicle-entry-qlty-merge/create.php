@@ -17,15 +17,15 @@ Url::remember();
         </div>
         <?php if (!empty($searchModel->parsing_no)) { ?>
             <?php
-            echo $this->render('_form', ['model' => $model, 'config_list' => $config_list, 'config' => $config, 'searchModel' => $searchModel]);
+            echo $this->render('_form', ['model' => $model, 'config_list' => $config_list, 'config' => $config, 'searchModel' => $searchModel, 'trip_model' => $trip_model]);
             ?>
             <div class="clearfix"></div>
             <div class="panel-heading">
                 <?php echo 'Tanker Milk Quality Records'; ?>
             </div>
-            <?php
-            echo $this->render('_add_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'config_list' => $config_list, 'tripData' => $tripData]);
-            ?>
+            <div class="panel-body">
+                <?php echo $this->render('_add_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'config_list' => $config_list]); ?>
+            </div>
         <?php } ?>
     </div>
 </div>

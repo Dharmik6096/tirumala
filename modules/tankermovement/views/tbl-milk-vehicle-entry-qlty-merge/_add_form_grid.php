@@ -8,7 +8,7 @@ use yii\helpers\Url;
 <?php
 
 $attribute = [
-        ['attribute' => 'plant_code', 'label' => 'Ref Code', 'value' => function($model) {
+        ['attribute' => 'plant_code', 'label' => 'Plant', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
         }, 'visible' => true, 'filter' => FALSE],
         ['attribute' => 'chamber_no', 'label' => Yii::t('app', 'Com No.'), 'filter' => false],
@@ -31,10 +31,6 @@ $attribute = [
         'value' => function ($model) {
             return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_pending_merge');
         },],
-        ['attribute' => 'is_approved', 'filter' => FALSE,
-        'value' => function ($model) {
-            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_approved');
-        },],
 ];
 foreach ($config_list as $config) {
     $attribute[] = [
@@ -51,8 +47,8 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'close' => function ($url, $model) use($tripData) {
-            if ($tripData->is_last_destination == 1) {
+        'close' => function ($url, $model) {
+            if ($model->is_pending_merge == 1) {
                 $name = $model->chamber_no;
                 $tripCode = $model->trip_code;
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'class' => 'reset-qlty', 'data-val' => $model->milk_vehicle_entry_qlty_merge_code, 'data-name' => $name, 'trip-code' => $tripCode];

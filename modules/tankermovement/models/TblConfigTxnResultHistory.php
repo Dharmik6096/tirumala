@@ -48,7 +48,7 @@ class TblConfigTxnResultHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['ref_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'config_code', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'config_txn_result_code', 'config_result', 'config_for', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'x_col6'], 'safe'],
+                [['ref_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'config_code', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'config_txn_result_code', 'config_result', 'config_for', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'x_col6', 'ref_table'], 'safe'],
         ];
     }
 

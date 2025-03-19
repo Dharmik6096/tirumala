@@ -267,15 +267,15 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
         // set clr
         (float) $fat = $this->avg_fat;
         (float) $snf = $this->avg_snf;
-        
-        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1',$org_code, 'BMC','RMRD_COLLECTION');
-        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2',$org_code, 'BMC','RMRD_COLLECTION');
-        
-        if($lr1 == '' or $lr2 == '') {
+
+        (float) $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $org_code, 'BMC', 'RMRD_COLLECTION');
+        (float) $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $org_code, 'BMC', 'RMRD_COLLECTION');
+
+        if ($lr1 == '' or $lr2 == '') {
             (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
             (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
         }
-        
+
         $this->avg_clr = ($snf - ($fat * $lr1) - $lr2) * 4;
         $model->dcs_milk_dispatch_code = !empty($existMainData) ? $existMainData->dcs_milk_dispatch_code : $mainmodel->dcs_milk_dispatch_code;
         $model->dcs_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($model, $model->dcs_milk_dispatch_code);
@@ -337,7 +337,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
     }
 
     public function getRateRange() {
-        return $this->hasOne(TblUnionRatechartRange::className(), ['union_code' => 'union_code', 'animal_type_code' => 'milk_type_code']);
+        return $this->hasOne(TblUnionRatechartRange::className(), ['union_code' => 'union_code', 'animal_type_code' => 'milk_type_code'])->where(['config_for' => 'VLC']);
     }
 
     public function validateCanNo($attribute, $params) {

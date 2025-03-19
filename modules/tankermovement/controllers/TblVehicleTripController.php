@@ -150,6 +150,38 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                 $dloc_detail = explode('#', $bmc_array[$key + 1]);
                                 $trip_detai->destination_code = $dloc_detail[0];
                                 $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
+                            }
+                        }
+                        $save_model[] = $trip_detai;
+                    }
+                    $qaModel = new TblVehicleQaInspection();
+                    $qaRecords = $qaModel->getVehicleQaInpection($this->model->vehicle_code);
+                    if (!empty($qaRecords)) {
+                        foreach ($qaRecords as $qa) {
+                            $historyModel = new TblVehicleQaInspectionHistory();
+                            Yii::$app->operation->history($qa, $historyModel, UPDATE);
+                            $qa->status = 'closed';
+                            $save_model[] = $historyModel;
+                            $save_model[] = $qa;
+                        }
+                    }
+                    if ($validate) {
+                        $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
+                        if ($transaction == 'customRedirect') {
+                            $response = Yii::$app->general->getColumnName($save_model[1]->source_org_type);
+                            $remarks = '';
+                            if (!empty($response['rel'])) {
+                                $sourceData = $save_model[1]->{$response['rel'] . 'Source'};
+                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
+                            }
+                            Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
+                            $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
+                            if (!$tankerMovementWithTripSubStatus && $result[2]['inspection_require']) {
+                                return $this->redirect([
+                                            '/tankermovement/tbl-bmc-dispatch-inspection/create',
+                                            'trip_code' => $result[2]['trip_code'],
+                                            'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
+                                ]);
                             } else {
                                 $trip_detai->is_last_destination = 1;
                             }
@@ -378,7 +410,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $remarks = '';
             if (!empty($postData['arrival_time']) && $actionType == 'gate-in') {
                 $tripDetail->arrival_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['arrival_time']));
-                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'get_in';
+                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'gate_in';
                 $remarks = $tripDetail->in_remarks;
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
@@ -386,7 +418,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $tripDetail->arrival_time = $tripDetail->departure_time;
                 }
                 $remarks = $tripDetail->out_remarks;
-                $trip->trip_sub_status = 'get_out';
+                $trip->trip_sub_status = 'gate_out';
             }
             if ($tripDetail->validate()) {
                 $models = [$tripDetail, $trip];
@@ -435,8 +467,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
     public function actionMap($trip_code) {
         $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->all();
+        $parsingNo = '';
+        if (!empty($tripTrack) && isset($tripTrack[0]['vehicle_code'])) {
+            $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $tripTrack[0]['vehicle_code']])->one();
+        }
         return $this->render('_map', [
                     'tripTrack' => $tripTrack,
+                    'parsingNo' => $parsingNo,
         ]);
     }
 

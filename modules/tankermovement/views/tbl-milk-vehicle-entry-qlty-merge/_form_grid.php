@@ -13,22 +13,17 @@ $attribute = [
         ['attribute' => 'vehicle_code', 'value' => function($model) {
             return isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '';
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => true],
+        ['attribute' => 'trip_code'],
         ['attribute' => 'chamber_no'],
-        ['attribute' => 'trip_code', 'filter' => false],
         ['attribute' => 'fat', 'filter' => false],
         ['attribute' => 'snf', 'filter' => false],
-        ['attribute' => 'is_qty_only', 'filter' => FALSE,
-        'value' => function ($model) {
+        ['attribute' => 'is_qty_only', 'value' => function ($model) {
             return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_qty_only');
-        },],
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_qty_only')],
         ['attribute' => 'is_pending_merge', 'filter' => FALSE,
         'value' => function ($model) {
             return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_pending_merge');
-        },],
-        ['attribute' => 'is_approved', 'filter' => FALSE,
-        'value' => function ($model) {
-            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_approved');
-        },],
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_pending_merge')],
 ];
 foreach ($config_list as $config) {
     $attribute[] = [

@@ -127,15 +127,6 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Quality');
                         ],
                     ]
                 ],
-                    [
-                    'columns' => [
-                            [
-                            'attribute' => 'is_approved',
-                            'value' => $model->is_approved == 1 ? 'Yes' : 'No',
-                            'valueColOptions' => ['style' => 'width:80%']
-                        ],
-                    ]
-                ]
             ];
 
             // View file rendering the widget

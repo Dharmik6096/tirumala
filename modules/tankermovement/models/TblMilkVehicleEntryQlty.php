@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblVehicleMaster;
 use Yii;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
+use app\modules\tankermovement\models\TblVehicleTrip;
 
 /**
  * This is the model class for table "tbl_milk_vehicle_entry_qlty".
@@ -87,7 +88,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'vehicle_code' => Yii::t('app', 'Vehicle'),
             'arrival_datetime' => Yii::t('app', 'Arrival Datetime'),
-            'trip_code' => Yii::t('app', 'Trip '),
+            'trip_code' => Yii::t('app', 'Trip Code'),
             'chamber_no' => Yii::t('app', 'Compartment No'),
             'fat' => Yii::t('app', 'FAT'),
             'snf' => Yii::t('app', 'SNF'),
@@ -196,12 +197,16 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getConfigResult() {
-        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT']);
+        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty']);
     }
 
     public function getPlant($trip_code) {
         return TblVehicleTripDetail::find()->select(['source_org_code'])
                         ->where(['is_last_destination' => 1, 'source_org_type' => 'plant', 'trip_code' => $trip_code])->one();
+    }
+
+    public function getTripData($trip_code) {
+        return $query = TblVehicleTrip::find()->where(['trip_code' => $trip_code, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->count();
     }
 
 }

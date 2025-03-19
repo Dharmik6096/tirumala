@@ -228,7 +228,7 @@ class TblMemberProvisional extends ChildModel {
                 [['provisional_from'], 'default', 'value' => 'collection'],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
                 [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
-                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import']],
+                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import'], 'except' => ['createProvisionalMember']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

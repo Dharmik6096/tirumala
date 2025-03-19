@@ -1,5 +1,7 @@
 <?php
 
+use app\modules\usermanagement\components\GhostHtml;
+
 $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -13,8 +15,8 @@ $attribute = [
         ['attribute' => 'vehicle_code', 'value' => function($model) {
             return isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '';
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => true],
+        ['attribute' => 'trip_code'],
         ['attribute' => 'chamber_no'],
-        ['attribute' => 'trip_code', 'filter' => false],
         ['attribute' => 'arrival_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->arrival_datetime);
         }, 'filter' => false],
@@ -45,6 +47,14 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
+        'update' => function ($url, $model) {
+            $name = $model->chamber_no;
+            $tripCode = $model->trip_code;
+            $tripData = $model->getTripData($model->trip_code);
+            $class = (($tripData > 0) && ($model->status == 'pending' || $model->status == 'done')) ? '' : 'disabled';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->milk_vehicle_entry_qlty_code, 'data-name' => $name, 'trip-code' => $tripCode];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/tankermovement/tbl-milk-vehicle-entry-qlty/update', 'id' => $model->milk_vehicle_entry_qlty_code], $options);
+        }
     ]
 ];
 
