@@ -9,8 +9,10 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\collection\models\TblAllowManualCollectionRangeHistory;
+use app\modules\document\models\TblAttachment;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblAllowManualCollectionRangeController implements the CRUD actions for TblAllowManualCollectionRange model.
@@ -40,10 +42,16 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
         $this->model = $this->findModel($id);
         $searchModel = new TblAllowManualCollectionRangeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $attachment = new TblAttachment();
+        $dataProviderOther = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => (string)$id, 'module_name' => 'tbl_allow_manual_collection_range']),
+        ]);
         return $this->render('view', [
                     'model' => $this->model,
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
+                    'dataProviderOther' => $dataProviderOther,
+                    'attachment' => $attachment,
         ]);
     }
 
