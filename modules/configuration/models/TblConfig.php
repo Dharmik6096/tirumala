@@ -4,6 +4,7 @@ namespace app\modules\configuration\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\modules\tankermovement\models\TblConfigTxnResult;
 
 /**
  * This is the model class for table "tbl_config".
@@ -146,6 +147,19 @@ class TblConfig extends \app\models\ChildModel {
                         ->andWhere(['tbl_config_result.is_active' => 1])
                         ->orderby(['tbl_config.seq_no' => SORT_ASC])
                         ->all();
+    }
+
+    public function getconfigResultTxn() {
+        return $this->hasOne(TblConfigTxnResult::className(), ['config_code' => 'config_code']);
+    }
+
+    public function getConfigResultTxnList($ref_code) {
+        return TblConfigTxnResult::find()->select('tbl_config_txn_result.config_result')
+                        ->join('inner join', 'tbl_config', 'tbl_config.config_code = tbl_config_txn_result.config_code')
+                        ->where(['tbl_config.config_for' => $this->config_for, 'tbl_config.process_name' => $this->process_name, 'tbl_config.config_type' => $this->config_type])
+                        ->andWhere(['tbl_config_txn_result.config_code' => $this->config_code, 'tbl_config_txn_result.ref_code' => $ref_code])
+                        ->orderby(['tbl_config.seq_no' => SORT_ASC])
+                        ->one();
     }
 
 }
