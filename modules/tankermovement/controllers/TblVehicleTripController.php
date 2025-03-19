@@ -113,8 +113,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $this->model->bmc_code = NULL;
                         $this->model->mcc_plant_code = NULL;
                     }
-                } else {
-                    
                 }
             }
             if (!$is_valid_trip) {
@@ -150,38 +148,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                 $dloc_detail = explode('#', $bmc_array[$key + 1]);
                                 $trip_detai->destination_code = $dloc_detail[0];
                                 $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
-                            }
-                        }
-                        $save_model[] = $trip_detai;
-                    }
-                    $qaModel = new TblVehicleQaInspection();
-                    $qaRecords = $qaModel->getVehicleQaInpection($this->model->vehicle_code);
-                    if (!empty($qaRecords)) {
-                        foreach ($qaRecords as $qa) {
-                            $historyModel = new TblVehicleQaInspectionHistory();
-                            Yii::$app->operation->history($qa, $historyModel, UPDATE);
-                            $qa->status = 'closed';
-                            $save_model[] = $historyModel;
-                            $save_model[] = $qa;
-                        }
-                    }
-                    if ($validate) {
-                        $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
-                        if ($transaction == 'customRedirect') {
-                            $response = Yii::$app->general->getColumnName($save_model[1]->source_org_type);
-                            $remarks = '';
-                            if (!empty($response['rel'])) {
-                                $sourceData = $save_model[1]->{$response['rel'] . 'Source'};
-                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
-                            }
-                            Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
-                            $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
-                            if (!$tankerMovementWithTripSubStatus && $result[2]['inspection_require']) {
-                                return $this->redirect([
-                                            '/tankermovement/tbl-bmc-dispatch-inspection/create',
-                                            'trip_code' => $result[2]['trip_code'],
-                                            'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
-                                ]);
                             } else {
                                 $trip_detai->is_last_destination = 1;
                             }
@@ -226,7 +192,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                     $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
                                 }
                                 Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
-                                if ($result[2]['inspection_require']) {
+                                $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
+                                if (!$tankerMovementWithTripSubStatus && $result[2]['inspection_require']) {
                                     return $this->redirect([
                                                 '/tankermovement/tbl-bmc-dispatch-inspection/create',
                                                 'trip_code' => $result[2]['trip_code'],

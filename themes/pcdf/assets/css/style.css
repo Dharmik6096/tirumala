@@ -5939,7 +5939,7 @@ tr.highlightRow {
     color: #607188;
 }
 .custom-radio-class {
-    margin-top: 2px !important;
+    margin-top: -3px !important;
 }
 .fa-truck{
     font-size: 30px;
