@@ -121,84 +121,87 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     'message' => 'Vehicle Trip Must be Start and End at Plant.'
                 ]);
             }
-            $this->model->trip_mode = 'offline';
-            $this->model->trip_for = ($type == 'party') ? 'salesparty' : 'bmcdispatch';
-            $this->model->trip_sub_status = 'generated';
-            $this->model->sub_status_time = date('Y-m-d H:i:s');
-            if ($is_valid_trip) {
-                $result = $this->model->setModel();
-                if ($result[0]) {
-                    $validate = TRUE;
-                    $save_model = $result[1];
-                    if (!empty($save_model) && $this->model->fl_type == 'plant') {
-                        $save_model[0]->plant_code = $this->model->fl_code;
-                    }
-                    // $lastIndex = count($bmc_array) - 2;
-                    foreach ($bmc_array as $key => $bmc) {
-                        $trip_detai = new TblVehicleTripDetail();
-                        if ($key == 0) {
-                            continue;
+            if(empty($this->model->getErrors())){
+                $this->model->trip_mode = 'offline';
+                $this->model->trip_for = ($type == 'party') ? 'salesparty' : 'bmcdispatch';
+                $this->model->trip_sub_status = 'generated';
+                $this->model->sub_status_time = date('Y-m-d H:i:s');
+                if ($is_valid_trip) {
+                    $result = $this->model->setModel();
+                    if ($result[0]) {
+                        $validate = TRUE;
+                        $save_model = $result[1];
+                        if (!empty($save_model) && $this->model->fl_type == 'plant') {
+                            $save_model[0]->plant_code = $this->model->fl_code;
                         }
-                        // if ($lastIndex == $key) {
-                        //     $trip_detai->is_last_destination = 1;
-                        // }
-                        $sloc_detail = explode('#', $bmc);
-                        if (!empty($bmc_array[$key + 1])) {
-                            $dloc_detail = explode('#', $bmc_array[$key + 1]);
-                            $trip_detai->destination_code = $dloc_detail[0];
-                            $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
-                        } else {
-                            $trip_detai->is_last_destination = 1;
-                        }
-
-                        $trip_detai->source_org_code = $sloc_detail[0];
-                        $trip_detai->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
-
-                        $trip_detai->originating_org_code = $this->model->union_code;
-                        $trip_detai->vehicle_trip_code = $this->model->vehicle_trip_code;
-                        $trip_detai->vehicle_code = $this->model->vehicle_code;
-                        $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
-                        $trip_detai->trip_code = $this->model->trip_code;
-                        $trip_detai->vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . ($key + 2);
-                        $trip_detai->scenario = 'on_crete_trip';
-                        if (!$trip_detai->validate()) {
-                            $validate = FALSE;
-                            $errors = $trip_detai->getErrors();
-                            if (isset($errors['destination_code'])) {
-                                $this->model->addError('bmc_code', $errors['destination_code'][0]);
+                        // $lastIndex = count($bmc_array) - 2;
+                        foreach ($bmc_array as $key => $bmc) {
+                            $trip_detai = new TblVehicleTripDetail();
+                            if ($key == 0) {
+                                continue;
                             }
-                        }
-                        $save_model[] = $trip_detai;
-                    }
-                    $qaModel = new TblVehicleQaInspection();
-                    $qaRecords = $qaModel->getVehicleQaInpection($this->model->vehicle_code);
-                    if (!empty($qaRecords)) {
-                        foreach ($qaRecords as $qa) {
-                            $historyModel = new TblVehicleQaInspectionHistory();
-                            Yii::$app->operation->history($qa, $historyModel, UPDATE);
-                            $qa->status = 'closed';
-                            $save_model[] = $historyModel;
-                            $save_model[] = $qa;
-                        }
-                    }
-                    if ($validate) {
-                        $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
-                        if ($transaction == 'customRedirect') {
-                            $response = Yii::$app->general->getColumnName($save_model[1]->source_org_type);
-                            $remarks = '';
-                            if (!empty($response['rel'])) {
-                                $sourceData = $save_model[1]->{$response['rel'] . 'Source'};
-                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
-                            }
-                            Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
-                            if ($result[2]['inspection_require']) {
-                                return $this->redirect([
-                                            '/tankermovement/tbl-bmc-dispatch-inspection/create',
-                                            'trip_code' => $result[2]['trip_code'],
-                                            'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
-                                ]);
+                            // if ($lastIndex == $key) {
+                            //     $trip_detai->is_last_destination = 1;
+                            // }
+                            $sloc_detail = explode('#', $bmc);
+                            if (!empty($bmc_array[$key + 1])) {
+                                $dloc_detail = explode('#', $bmc_array[$key + 1]);
+                                $trip_detai->destination_code = $dloc_detail[0];
+                                $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
                             } else {
-                                return $this->{$transaction}();
+                                $trip_detai->is_last_destination = 1;
+                            }
+
+                            $trip_detai->source_org_code = $sloc_detail[0];
+                            $trip_detai->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+
+                            $trip_detai->originating_org_code = $this->model->union_code;
+                            $trip_detai->vehicle_trip_code = $this->model->vehicle_trip_code;
+                            $trip_detai->vehicle_code = $this->model->vehicle_code;
+                            $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
+                            $trip_detai->trip_code = $this->model->trip_code;
+                            $trip_detai->vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . ($key + 2);
+                            $trip_detai->scenario = 'on_crete_trip';
+                            if (!$trip_detai->validate()) {
+                                $validate = FALSE;
+                                $errors = $trip_detai->getErrors();
+                                if (isset($errors['destination_code'])) {
+                                    $this->model->addError('bmc_code', $errors['destination_code'][0]);
+                                }
+                            }
+                            $save_model[] = $trip_detai;
+                        }
+                        $qaModel = new TblVehicleQaInspection();
+                        $qaRecords = $qaModel->getVehicleQaInpection($this->model->vehicle_code);
+                        if (!empty($qaRecords)) {
+                            foreach ($qaRecords as $qa) {
+                                $historyModel = new TblVehicleQaInspectionHistory();
+                                Yii::$app->operation->history($qa, $historyModel, UPDATE);
+                                $qa->status = 'closed';
+                                $save_model[] = $historyModel;
+                                $save_model[] = $qa;
+                            }
+                        }
+                        if ($validate) {
+                            $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
+                            if ($transaction == 'customRedirect') {
+                                $response = Yii::$app->general->getColumnName($save_model[1]->source_org_type);
+                                $remarks = '';
+                                if (!empty($response['rel'])) {
+                                    $sourceData = $save_model[1]->{$response['rel'] . 'Source'};
+                                    $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
+                                }
+                                Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
+                                $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
+                                if (!$tankerMovementWithTripSubStatus && $result[2]['inspection_require']) {
+                                    return $this->redirect([
+                                                '/tankermovement/tbl-bmc-dispatch-inspection/create',
+                                                'trip_code' => $result[2]['trip_code'],
+                                                'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
+                                    ]);
+                                } else {
+                                    return $this->{$transaction}();
+                                }
                             }
                         }
                     }
@@ -374,7 +377,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $remarks = '';
             if (!empty($postData['arrival_time']) && $actionType == 'gate-in') {
                 $tripDetail->arrival_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['arrival_time']));
-                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'get_in';
+                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'gate_in';
                 $remarks = $tripDetail->in_remarks;
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
@@ -382,7 +385,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $tripDetail->arrival_time = $tripDetail->departure_time;
                 }
                 $remarks = $tripDetail->out_remarks;
-                $trip->trip_sub_status = 'get_out';
+                $trip->trip_sub_status = 'gate_out';
             }
             if ($tripDetail->validate()) {
                 $models = [$tripDetail, $trip];
@@ -431,8 +434,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
     public function actionMap($trip_code) {
         $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->all();
+        $parsingNo = '';
+        if (!empty($tripTrack) && isset($tripTrack[0]['vehicle_code'])) {
+            $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $tripTrack[0]['vehicle_code']])->one();
+        }
         return $this->render('_map', [
                     'tripTrack' => $tripTrack,
+                    'parsingNo' => $parsingNo,
         ]);
     }
 

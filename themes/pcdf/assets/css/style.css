@@ -5939,53 +5939,7 @@ tr.highlightRow {
     color: #607188;
 }
 .custom-radio-class {
-    margin-top: 2px !important;
-}
-.order-status {
-    text-align: left;
-    position: relative;
-    width: 70%;
-    margin: auto;
-    margin-top: 15px;
-    margin-bottom: 50px;
-}
-.order-status::before {
-    content: "";
-    position: absolute;
-    left: 8px;
-    top: 20px;
-    width: 2px;
-    height: -webkit-fill-available;
-    background: #00A3DE;
-}
-.status-item {
-    display: flex;
-    margin-bottom: 20px;
-}
-.order-status .fa-circle {
-    color: #00A3DE;
-    margin-right: 15px;
-    font-size: 22px;
-}
-.mt-5{
-    margin-top: 5px;
-}
-.image_sec{
-    width: 70%;
-    margin: auto;
-}
-.image{
-    width: 100%;
-    border-radius: 10px;
-    margin-top: 10px;
-}                             
-.line-break {
-    line-break: anywhere;
-}
-.emptymsg{
-    text-align: center;
-    padding: 10px;
-    border: 1px solid #4c87d975;
+    margin-top: -3px !important;
 }
 .fa-truck{
     font-size: 30px;
@@ -6000,3 +5954,80 @@ tr.highlightRow {
 .pt19 {
     padding-top: 19px !important;
 }
+
+.trip-map-container {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    background: #fff;
+}
+
+.trip-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.trip-code {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.trip-timeline {
+    display: flex;
+    padding: 20px 0;
+    overflow-x: auto;
+}
+
+.step {
+    min-width: 170px;
+    padding: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.step-up {
+    border-bottom: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) inset;
+}
+
+.step-down {
+    border: 1px solid;
+    border-bottom: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.step-content p {
+    font-size: 12px;
+    line-break: anywhere;
+}
+
+.emptymsg {
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #4c87d975;
+    background: white;
+    margin-top: 20px;
+}
+
+.image_sec{
+    width: 25%;
+    margin: auto;
+}
+
+.image{
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}  
+
+.step-content h5{
+    margin-bottom: 5px;
+}
+
