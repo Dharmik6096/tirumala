@@ -6,6 +6,7 @@ use app\controllers\ChildController;
 use app\modules\document\models\TblAttachment;
 use app\modules\feedback\models\TblMppSurvey;
 use app\modules\feedback\models\TblMppSurveyCompetitorsSearch;
+use app\modules\feedback\models\TblMppSurveyGeneralInfo;
 use app\modules\feedback\models\TblMppSurveyProbableMembersSearch;
 use app\modules\feedback\models\TblMppSurveyProbableSahayakSearch;
 use app\modules\feedback\models\TblMppSurveySearch;
@@ -27,6 +28,7 @@ class TblMppSurveyController extends ChildController
 
     public function actionView($id) {
         $this->model = $this->findModel($id);
+        $generalInfoModel = TblMppSurveyGeneralInfo::findOne(['mpp_survey_id' => $id]) ?: new TblMppSurveyGeneralInfo();
         $searchModel = new TblMppSurveyCompetitorsSearch();
         $params = Yii::$app->request->queryParams;
         $searchModel->mpp_survey_id = $id;
@@ -43,6 +45,7 @@ class TblMppSurveyController extends ChildController
         ]);
         return $this->render('view', [
             'model' => $this->model,
+            'generalInfoModel' => $generalInfoModel,
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'sahayakDataProvider' => $sahayakDataProvider,
