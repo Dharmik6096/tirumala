@@ -116,15 +116,15 @@ $form = ActiveForm::begin([
                         <?= $form->field($txn_model, 'source_org_type')->textInput() ?>
                     </div>
                     <div class="col-sm-2 type_hide disabled">
-                        <?= $form->field($txn_model, 'source_org_code')->hiddenInput()->label(FALSE) ?>
                         <?= $form->field($txn_model, 'source')->textInput() ?>
+                        <?= $form->field($txn_model, 'source_org_code')->hiddenInput()->label(FALSE) ?>
                     </div>
                     <div class="col-sm-2 type_hide disabled">
                         <?= $form->field($txn_model, 'destination_type')->textInput() ?>
                     </div>
                     <div class="col-sm-2 type_hide disabled">
-                        <?= $form->field($txn_model, 'destination_code')->hiddenInput()->label(FALSE) ?>
                         <?= $form->field($txn_model, 'destination')->textInput() ?>
+                        <?= $form->field($txn_model, 'destination_code')->hiddenInput()->label(FALSE) ?>
                     </div>
                     <div class="col-sm-1"> 
                         <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
