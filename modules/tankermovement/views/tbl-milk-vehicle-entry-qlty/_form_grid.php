@@ -52,8 +52,8 @@ $grid_option = [
             $tripCode = $model->trip_code;
             $tripData = $model->getTripData($model->trip_code);
             $class = (($tripData > 0) && ($model->status == 'pending' || $model->status == 'done')) ? '' : 'disabled';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->milk_vehicle_entry_qlty_code, 'data-name' => $name, 'trip-code' => $tripCode];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/tankermovement/tbl-milk-vehicle-entry-qlty/update', 'id' => $model->milk_vehicle_entry_qlty_code], $options);
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->milk_vehicle_entry_qlty_code, 'data-name' => $name, 'trip-code' => $tripCode];
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/tankermovement/tbl-milk-vehicle-entry-qlty/update', 'id' => $model->milk_vehicle_entry_qlty_code], $options);
         }
     ]
 ];
