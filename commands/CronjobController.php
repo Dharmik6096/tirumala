@@ -90,7 +90,7 @@ class CronjobController extends \yii\console\Controller {
         //   var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Start');
         $header = [
             'mime' => '	application/vnd.ms-excel',
-            'extension' => 'xls',
+            'extension' => 'xlsx',
             'writer' => 'Excel2007',
         ];
         $objPHPExcel = new PHPExcel();
@@ -144,7 +144,7 @@ class CronjobController extends \yii\console\Controller {
         //  $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title;
         $fileName = $labelT . '.' . $header['extension'];
-
+     
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
         $objWriter->save($this->report_path . $fileName);
 

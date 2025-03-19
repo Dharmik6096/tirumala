@@ -4374,7 +4374,7 @@ class ReportsController extends \app\controllers\ChildController {
         } else {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
-                'extension' => 'xls',
+                'extension' => 'xlsx',
                 'writer' => 'Excel2007',
             ];
 
