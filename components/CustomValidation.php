@@ -1160,6 +1160,20 @@ class CustomValidation extends Component {
                             }, 'skipOnEmpty' => false],
                     ],
                 ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                        [['is_verify', 'is_aadhar_verify'], function ($attribute, $params, $validator) {
+                            if ($this->$attribute == 0) {
+                                $this->addError($attribute, $this->getAttributeLabel($attribute).' field must be checked.');
+                            }
+                        }, 'on' => ['update_provisional_member', 'createProvisionalMember']],
+                        [['is_operator_aggre'], function ($attribute, $params, $validator) {
+                            if ($this->$attribute == 0) {
+                                $this->addError($attribute, $this->getAttributeLabel($attribute).' field must be checked.');
+                            }
+                        }, 'on' => ['MemberDocument', 'MemberApprove']]
+                    ]
+                ],
             ],
         ];
     }
