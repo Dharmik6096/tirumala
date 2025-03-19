@@ -221,4 +221,106 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         return Json::encode($record);
     }
 
+    public function actionUpdate($id) {
+        $model = $this->findModel($id);
+        $searchModel = new TblMilkVehicleEntryQltySearch();
+        $searchModel->trip_code = $model->trip_code;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
+        $config = new TblConfig();
+        $config->config_for = 'PLANT';
+        $config->process_name = 'PLANT_RECEIPT';
+        $config->config_type = 'CONTROL';
+        $config_list = [];
+        if ($model && !empty($model->plant_code)) {
+            $config_list = $config->getOrgConfigList($config->config_for, $model->plant_code);
+        }
+        $config_mapping = new TblConfigTxnResult();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
+
+        return $this->render('update', [
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'config' => $config_mapping,
+                    'config_list' => $config_list,
+                    'configTxnData' => $configTxnData
+        ]);
+    }
+
+    public function actionQltyUpdate() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $model = new TblMilkVehicleEntryQlty();
+        $model->milk_vehicle_entry_qlty_code = Yii::$app->request->post()['milk_vehicle_entry_qlty_code'];
+        $res = [];
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $saveModel = [];
+            $deleteModel = [];
+            $milkVehicleEntryQltyData = $this->findModel($model->milk_vehicle_entry_qlty_code);
+
+            $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $model->milk_vehicle_entry_qlty_code, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
+            foreach ($configTxnData as $key => $data) {
+                $configTxnHistoryModel = new TblConfigTxnResultHistory();
+                Yii::$app->operation->history($data, $configTxnHistoryModel, UPDATE);
+                $deleteModel[] = $data;
+                $saveModel[] = $configTxnHistoryModel;
+            }
+            $config_data = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
+
+            $cnt = 1;
+            foreach ($config_data as $data) {
+                $config_model = new TblConfigTxnResult();
+                $config_model->attributes = $milkVehicleEntryQltyData->attributes;
+                $config_model->attributes = $data;
+                $config_model->config_for = 'PLANT_RECEIPT';
+                $config_model->ref_table = 'tbl_milk_vehicle_entry_qlty';
+                $config_model->ref_code = $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code;
+                $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
+                $saveModel[] = $config_model;
+                $cnt++;
+            }
+
+            $historyModel = new TblMilkVehicleEntryQltyHistory();
+            Yii::$app->operation->history($milkVehicleEntryQltyData, $historyModel, UPDATE);
+            $saveModel[] = $historyModel;
+            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'] as $attr) {
+                $milkVehicleEntryQltyData->$attr = $model->$attr;
+            }
+            $milkVehicleEntryQltyData->status = 'done';
+            $milkVehicleEntryQltyData->status_datetime = date('Y-m-d H:i:s');
+
+            $saveModel[] = $milkVehicleEntryQltyData;
+            $query = $model->find()->where(['!=', 'status', 'discarded'])->andWhere(['trip_code' => $milkVehicleEntryQltyData->trip_code])->andWhere(['not in', 'milk_vehicle_entry_qlty_code', $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code]);
+            $totalCount = $query->count();
+            $doneCount = $query->andWhere(['status' => 'done'])->count();
+            $vehicleTripData = NULL;
+            if ($totalCount == $doneCount) {
+                $tripModel = new TblVehicleTrip();
+                $vehicleTripData = $tripModel->find()->where(['trip_code' => $milkVehicleEntryQltyData->trip_code, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->one();
+                $vehicleTriphistoryModel = new TblVehicleTripHistory();
+                Yii::$app->operation->history($vehicleTripData, $vehicleTriphistoryModel, UPDATE);
+                $saveModel[] = $vehicleTriphistoryModel;
+                $vehicleTripData->trip_sub_status = 'plant_lot_quality_done';
+                $vehicleTripData->sub_status_time = date('Y-m-d H:i:s');
+                $saveModel[] = $vehicleTripData;
+            }
+            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Tanker Milk Lot Quality', 'edit']);
+            if ($transaction == 'customRedirect') {
+                $plantData = $milkVehicleEntryQltyData->plantCode;
+                $remarks = '';
+                if (!empty($plantData)) {
+                    $remarks = $plantData->ref_code . '-' . $plantData->name;
+                }
+                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
+                return $this->redirect(['index']);
+            } else {
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $res = ['status' => 'error', 'msg' => $msg];
+            }
+        } else {
+            $res = ['status' => 'error', 'msg' => $model->getErrors()];
+        }
+
+        return Json::encode($res);
+    }
+
 }
