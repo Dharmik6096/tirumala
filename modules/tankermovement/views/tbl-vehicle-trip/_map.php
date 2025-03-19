@@ -6,7 +6,7 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
     <h4>Trip Code: <?= !empty($tripTrack[0]->trip_code) ? $tripTrack[0]->trip_code : '' ?></h4>
     <h4>Parsing No: <?= !empty($parsingNo->parsing_no) ? $parsingNo->parsing_no : '' ?></h4>
     <div class="image_sec">
-        <img src="themes\pcdf\assets\images\milk_truck.jpg" alt="Food Icon" width="80" class="image">
+        <img src="themes\emilk\assets\images\milk_truck.jpg" alt="Food Icon" width="80" class="image">
     </div>
     <?php if (!empty($tripTrack)) { ?>
         <div class="trip-timeline">
