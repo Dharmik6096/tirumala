@@ -122,36 +122,38 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $master[] = $model;
 
                     if ($model->oldAttributes['allow_app_login'] == 1 && $model->allow_app_login == 1) {
-                        if ($model->oldAttributes['mobile_no'] != $model->mobile_no) {
-                            $contactModel = new TblContactDetails();
-                            $contactModel->mobile_no = $model->oldAttributes['mobile_no'];
-                            $contactModelData = $contactModel->getContactDetailsRecord();
-                            if (!empty($contactModelData)) {
-                                $contactModelData->is_active = 0;
-                                $contactModel = $contactModelData;
-                            }
-                            $master[] = $contactModel;
-
-                            $contNewModel = new TblContactDetails();
-                            $contNewModel->mobile_no = $model->mobile_no;
-                            $newModelData = $contNewModel->getContactDetailsRecord();
-                            if (!empty($newModelData)) {
-                                $contNewModel = $newModelData;
-                            } else {
-                                $contNewModel->firstname = $model->name;
-                                $contNewModel->setModel('user', $model->id, 0);
-                            }
-                            $contNewModel->department = $model->department;
-                            $master[] = $contNewModel;
-
-                            $appOrgModel = new TblAppOrganizationMapping();
-                            $appOrgModel->mobile_no = $model->oldAttributes['mobile_no'];
-                            $appOrgModel->detail_code = $contNewModel->detail_code;
-                            $orgModelData = $appOrgModel->getAppOrgData();
-                            if (!empty($orgModelData)) {
-                                foreach ($orgModelData as $org) {
-                                    $org->mobile_no = $model->mobile_no;
-                                    $master[] = $org;
+                        if ($model->oldAttributes['mobile_no'] != $model->mobile_no || $model->oldAttributes['login_type'] != $model->login_type) {
+                            if($model->oldAttributes['mobile_no'] != $model->mobile_no){
+                                $contactModel = new TblContactDetails();
+                                $contactModel->mobile_no = $model->oldAttributes['mobile_no'];
+                                $contactModelData = $contactModel->getContactDetailsRecord();
+                                if (!empty($contactModelData)) {
+                                    $contactModelData->is_active = 0;
+                                    $contactModel = $contactModelData;
+                                }
+                                $master[] = $contactModel;
+    
+                                $contNewModel = new TblContactDetails();
+                                $contNewModel->mobile_no = $model->mobile_no;
+                                $newModelData = $contNewModel->getContactDetailsRecord();
+                                if (!empty($newModelData)) {
+                                    $contNewModel = $newModelData;
+                                } else {
+                                    $contNewModel->firstname = $model->name;
+                                    $contNewModel->setModel('user', $model->id, 0);
+                                }
+                                $contNewModel->department = $model->department;
+                                $master[] = $contNewModel;
+    
+                                $appOrgModel = new TblAppOrganizationMapping();
+                                $appOrgModel->mobile_no = $model->oldAttributes['mobile_no'];
+                                $appOrgModel->detail_code = $contNewModel->detail_code;
+                                $orgModelData = $appOrgModel->getAppOrgData();
+                                if (!empty($orgModelData)) {
+                                    foreach ($orgModelData as $org) {
+                                        $org->mobile_no = $model->mobile_no;
+                                        $master[] = $org;
+                                    }
                                 }
                             }
                             $appModel = new TblEiplAppLogin();

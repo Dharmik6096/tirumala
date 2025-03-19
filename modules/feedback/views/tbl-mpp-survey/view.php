@@ -243,6 +243,182 @@ $this->title = Yii::$app->label->title('view', 'MPP Survey');
             ?>
         </div>
     </div>
+
+    <h4 class="theme-box-heading mt25">
+        <?= Html::encode(Yii::$app->label->title('view', 'MPP Survey General Info')) ?>
+    </h4>
+
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $generalInfoModelAttributes = [
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'no_male',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'no_female',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'gender_total',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'total_voters',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'total_family',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'total_family_engageding_dairy_business',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'name_of_visiting_officer',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'number_of_visiting_officer',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'pradhan_name',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'pradhan_number',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'power_status',
+                            'value' => isset($generalInfoModel->power_status) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$generalInfoModel->power_status] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'post_office',
+                            'value' => isset($generalInfoModel->post_office) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$generalInfoModel->post_office] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'health_center',
+                            'value' => isset($generalInfoModel->health_center) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$generalInfoModel->health_center] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'artificial_insemination_center',
+                            'value' => isset($generalInfoModel->artificial_insemination_center) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$generalInfoModel->artificial_insemination_center] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'animal_health_center',
+                            'value' => isset($generalInfoModel->animal_health_center) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$generalInfoModel->animal_health_center] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'status_of_advance_amount_in_thevillage',
+                            'value' => isset($generalInfoModel->status_of_advance_amount_in_thevillage) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$generalInfoModel->status_of_advance_amount_in_thevillage] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'status_of_education_invillage',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'main_crops_of_thevillage',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'green_foddercrops',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'irrigation_facility',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'cowmilkvolume',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'buffmilkvolume',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'totalmilkvolume',
+                            'valueColOptions' => ['style' => 'width:100%'],
+                        ],
+                    ],
+                ],
+            ];
+
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $generalInfoModel,
+                'attributes' => $generalInfoModelAttributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+            ]);
+            ?>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
