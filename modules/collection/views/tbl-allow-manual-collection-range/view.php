@@ -43,10 +43,12 @@ $approval_detail = $model->collectionApproval;
                     [
                     'columns' => [
                             ['attribute' => 'dcs_code',
+                            'label' => Yii::t('app', 'DCS').' Ref Code',
                             'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             ['attribute' => 'dcs_code',
+                            'label' => Yii::t('app', 'DCS').' Name',
                             'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
@@ -83,9 +85,9 @@ $approval_detail = $model->collectionApproval;
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             ['attribute' => 'table_name',
-                            'value' => isset($model->table_name) ? Yii::$app->dropdown->getRecords('table_name')['data'][$model->table_name] : '',
+                            'value' => isset($model->table_name) && isset(Yii::$app->dropdown->getRecords('table_name')['data'][$model->table_name]) ? Yii::$app->dropdown->getRecords('table_name')['data'][$model->table_name]: '',
                             'valueColOptions' => ['style' => 'width:30%']
-                        ],
+                        ],        
                     ],
                 ],
                     [
@@ -139,11 +141,9 @@ $approval_detail = $model->collectionApproval;
                 ],
                     [
                     'columns' => [
-                            [
                                 ['attribute' => 'action_perform',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
                     ],
                 ],
             ];
@@ -223,5 +223,20 @@ $approval_detail = $model->collectionApproval;
                 </div>       
             </div>
         <?php } ?>
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading accordion" data-toggle="collapse" data-target="#master_attendance_grid" aria-expanded="true" aria-controls="attendance_grid">
+                    Manual Collection Request Attachment
+                </h4>
+            </div>
+            <div class="col-sm-12 collapse in" id="master_attendance_grid">
+                <?=
+                $this->render('_attachment_list', [
+                    'dataProviderOther' => $dataProviderOther,
+                    'attachment' => $attachment,
+                ])
+                ?>
+            </div>
+        </div>
     </div>
 </div>
