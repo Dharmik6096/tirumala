@@ -13,14 +13,14 @@ use app\modules\payment\models\TblPaymentCycleApplicability;
  */
 class TblProductSaleSearch extends TblProductSale {
 
-    public $from_date, $to_date, $ref_code;
+    public $from_date, $to_date;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date', 'ref_code'], 'safe'],
+            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
             [['is_installment', 'no_of_installment'], 'integer'],
             [['plant_code', 'union_code', 'bmc_code', 'mcc_plant_code', 'from_date', 'to_date','dcs_code'], 'required', 'on' => ['memberBulkDelete']],
@@ -96,12 +96,11 @@ class TblProductSaleSearch extends TblProductSale {
             $query->andFilterWhere(['tbl_product_sale.payment_mode' => (int) $this->payment_mode]);
         }
         $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name], ['like', 'tbl_member.member_name', $this->customer_name]]);
-
+        $query->andFilterWhere(['or', ['like', 'dcs.ref_code', $this->dcs_code], ['like', 'tbl_dcs.ref_code', $this->dcs_code]]);
         $query->andFilterWhere(['like', 'tbl_product_sale.product_sale_code', $this->product_sale_code])
                 ->andFilterWhere(['like', 'tbl_product_sale.customer_type', $this->customer_type])
                 ->andFilterWhere(['like', 'tbl_product_sale.customer_code', $this->customer_code])
-                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code])
-                ->andFilterWhere(['like', 'dcs.ref_code', $this->dcs_code]);
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
 
         return $dataProvider;
     }
