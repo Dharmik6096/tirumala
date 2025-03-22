@@ -113,8 +113,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $this->model->bmc_code = NULL;
                         $this->model->mcc_plant_code = NULL;
                     }
-                } else {
-                    
                 }
             }
             if (!$is_valid_trip) {
