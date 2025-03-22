@@ -26,6 +26,12 @@ $attribute = [
         ['attribute' => 'customer_name', 'label' => Yii::t('app', 'name'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type) : '';
         }, 'vAlign' => 'middle'],
+        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS') . ' ' . Yii::t('app', 'Ref Code'),  'value' => function($model) {
+            return isset($model->customer_type) ? (strtolower($model->customer_type) == 'member' ? Yii::$app->general->getforeignkey($model->mainDcsCode, 'ref_code') : (strtolower($model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code') : '')) : '';
+        }, 'vAlign' => 'middle', 'filter' => true],
+        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS') . ' ' . Yii::t('app', 'Name'), 'value' => function($model) {
+            return isset($model->customer_type) ? (strtolower($model->customer_type) == 'member' ? Yii::$app->general->getforeignkey($model->mainDcsCode, 'dcs_name') : (strtolower($model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '')) : '';
+        }, 'vAlign' => 'middle', 'filter' => false],
 //        ['attribute' => 'member_code', 'value' => function($model) {
 //            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
 //        }],
