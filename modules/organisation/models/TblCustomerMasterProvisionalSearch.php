@@ -164,10 +164,26 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
             $approvedProvisionalMembers = array_filter($provisionalMembers, function($member) {
                 return strtolower($member->provisional_status) == 'approve';
             });
+            $inprogressProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'inprogress';
+            });
+            $pendingProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'pending';
+            });
+            $registeredProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'register';
+            });
+            $rejectedProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'reject';
+            });
             $results[] = [
                 'process_name' =>  Yii::t('app', 'Provisional Member') ,
                 'table_name' => 'tbl_member_provisional',
                 'approved_count' => count($approvedProvisionalMembers),
+                'inprogress_count' => count($inprogressProvisionalMembers),
+                'pending_count' => count($pendingProvisionalMembers),
+                'registered_count' => count($registeredProvisionalMembers),
+                'rejected_count' => count($rejectedProvisionalMembers),
                 'total_count' => count($provisionalMembers),
             ];
 
@@ -179,10 +195,26 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
             $approvedProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
                 return strtolower($society->status) == 'approve';
             });
+            $inprogressProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'inprogress';
+            });
+            $pendingProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'pending';
+            });
+            $registerProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'register';
+            });
+            $rejectedProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'reject';
+            });
             $results[] = [
                 'process_name' => Yii::t('app', 'Provisional Society'),
                 'table_name' => 'tbl_dcs_provisional',
                 'approved_count' => count($approvedProvisionalSocieties),
+                'inprogress_count' => count($inprogressProvisionalSocieties),
+                'pending_count' => count($pendingProvisionalSocieties),
+                'registered_count' => count($registerProvisionalSocieties),
+                'rejected_count' => count($rejectedProvisionalSocieties),
                 'total_count' => count($provisionalSocieties),
             ];
 
@@ -194,10 +226,26 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
             $approvedProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
                 return strtolower($vendor->state_code) == 'approve';
             });
+            $inprogressProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'inprogress';
+            });
+            $pendingProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'pending';
+            });
+            $registerProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'register';
+            });
+            $rejectedProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'reject';
+            });
             $results[] = [
                 'process_name' => Yii::t('app', 'Provisional Vendor/Customer'),
                 'table_name' => 'tbl_customer_master_provisional',
                 'approved_count' => count($approvedProvisionalVendors),
+                'inprogress_count' => count($inprogressProvisionalVendors),
+                'pending_count' => count($pendingProvisionalVendors),
+                'registered_count' => count($registerProvisionalVendors),
+                'rejected_count' => count($rejectedProvisionalVendors),
                 'total_count' => count($provisionalVendors),
             ];
         }
