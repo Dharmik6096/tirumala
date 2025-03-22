@@ -243,15 +243,17 @@ class RequestMasterController extends MasterController {
         $union = !empty($orgCodes['union'][0]) ? $orgCodes['union'][0] : '';
         $org_type = !empty($orgCodes['organization_type']) ? $orgCodes['organization_type'] : '';
         $org_code = !empty($orgCodes['organization_code']) ? $orgCodes['organization_code'] : '';
-        $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
-        $model_data = $orgDetail['model_data'];
         if (!empty($union)) {
             $animalType = [];
             $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
-            if (!empty($model_data) && ($org_type == 'DCS' || $org_type == 'BMC')) {
+            if (!empty($org_code) && (count($org_code) == 1) && ($org_type == 'DCS' || $org_type == 'BMC')) {
                 if ($org_type == 'DCS') {
+                    $model_data = new TblDcs();
+                    $model_data->dcs_code = $org_code[0];
                     $MappedMilkType = $model_data->tblDcsMilkType;
                 } else if ($org_type == 'BMC') {
+                    $model_data = new TblDcsBmc();
+                    $model_data->bmc_code = $org_code[0];
                     $MappedMilkType = $model_data->tblBmcMilkType;
                 }
                 foreach ($MappedMilkType as $milktype) {
@@ -311,20 +313,6 @@ class RequestMasterController extends MasterController {
         }
         $this->response->setData($res_data);
         return $this->response;
-    }
-
-    public function getOrgDetail($type, $code) {
-        $model_data = [];
-        if ($type == 'DCS') {
-            $model = new TblDcs();
-            $model->dcs_code = $code;
-            $model_data = $model->getData();
-        } else if ($type == 'BMC') {
-            $model = new TblDcsBmc();
-            $model->bmc_code = $code;
-            $model_data = $model->singleBmcData();
-        }
-        return ['model_data' => $model_data];
     }
 
 }
