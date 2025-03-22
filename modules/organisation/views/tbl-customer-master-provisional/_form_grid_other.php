@@ -7,6 +7,10 @@ $attribute = [
     ['attribute' => 'process_name', 'filter' => false, 'visible' => true],
     ['attribute' => 'total_count', 'filter' => false, 'visible' => true],
     ['attribute' => 'approved_count', 'filter' => false, 'visible' => true],
+    ['attribute' => 'inprogress_count', 'filter' => false, 'visible' => true],
+    ['attribute' => 'pending_count', 'filter' => false, 'visible' => true],
+    ['attribute' => 'registered_count', 'filter' => false, 'visible' => true],
+    ['attribute' => 'rejected_count', 'filter' => false, 'visible' => true],
 ];
 
 
