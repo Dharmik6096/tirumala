@@ -11,6 +11,8 @@ use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\configuration\models\TblUnionRatechartRange;
 use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
 
 class RequestMasterController extends MasterController {
 
@@ -239,34 +241,67 @@ class RequestMasterController extends MasterController {
         $data = Yii::$app->request->getRawBody();
         $orgCodes = $this->getOrgCodes();
         $union = !empty($orgCodes['union'][0]) ? $orgCodes['union'][0] : '';
-
+        $org_type = !empty($orgCodes['organization_type']) ? $orgCodes['organization_type'] : '';
+        $org_code = !empty($orgCodes['organization_code']) ? $orgCodes['organization_code'] : '';
+        $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+        $model_data = $orgDetail['model_data'];
         if (!empty($union)) {
             $animalType = [];
             $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
-            $rateChart = new TblUnionRatechartRange();
-            $rate_chart_range = $rateChart->rateChart($union);
-            foreach ($rate_chart_range as $rate_chart) {
-                if (!empty($rate_chart)) {
-                    $min_fat = $rate_chart['min_fat'];
-                    $max_fat = $rate_chart['max_fat'];
-                    $min_snf = $rate_chart['min_snf'];
-                    $max_snf = $rate_chart['max_snf'];
-                    $min_clr = $rate_chart['min_clr'];
-                    $max_clr = $rate_chart['max_clr'];
+            if (!empty($model_data) && ($org_type == 'DCS' || $org_type == 'BMC')) {
+                if ($org_type == 'DCS') {
+                    $MappedMilkType = $model_data->tblDcsMilkType;
+                } else if ($org_type == 'BMC') {
+                    $MappedMilkType = $model_data->tblBmcMilkType;
                 }
-                $animalType = [
-                    'milk_type_code' => !empty($rate_chart['animal_type_code']) ? $rate_chart['animal_type_code'] : '',
-                    'milk_type_name' => !empty($rate_chart['animal_type_name']) ? $rate_chart['animal_type_name'] : '',
-                    'min_fat' => $min_fat,
-                    'max_fat' => $max_fat,
-                    'min_snf' => $min_snf,
-                    'max_snf' => $max_snf,
-                    'min_clr' => $min_clr,
-                    'max_clr' => $max_clr
-                ];
-                $res_data[strtolower($rate_chart['config_for'])]['collectionConfig']['allowedMilkType'][] = $animalType;
+                foreach ($MappedMilkType as $milktype) {
+                    $milktype->app_type = ($org_type == 'DCS') ? 'VLC' : 'BMC';
+                    $rate_range = $milktype->rateChartRange;
+                    if (!empty($rate_range)) {
+                        $min_fat = $rate_range->min_fat;
+                        $max_fat = $rate_range->max_fat;
+                        $min_snf = $rate_range->min_snf;
+                        $max_snf = $rate_range->max_snf;
+                        $min_clr = $rate_range->min_clr;
+                        $max_clr = $rate_range->max_clr;
+                    }
+                    $animalType = [
+                        'milk_type_code' => $milktype->milk_type_code,
+                        'milk_type_name' => $milktype->milkTypeCode->animal_type_name,
+                        'min_fat' => $min_fat,
+                        'max_fat' => $max_fat,
+                        'min_snf' => $min_snf,
+                        'max_snf' => $max_snf,
+                        'min_clr' => $min_clr,
+                        'max_clr' => $max_clr
+                    ];
+                    $res_data[strtolower($milktype['app_type'])]['collectionConfig']['allowedMilkType'][] = $animalType;
+                }
+            } else {
+                $rateChart = new TblUnionRatechartRange();
+                $rate_chart_range = $rateChart->rateChart($union);
+                foreach ($rate_chart_range as $rate_chart) {
+                    if (!empty($rate_chart)) {
+                        $min_fat = $rate_chart['min_fat'];
+                        $max_fat = $rate_chart['max_fat'];
+                        $min_snf = $rate_chart['min_snf'];
+                        $max_snf = $rate_chart['max_snf'];
+                        $min_clr = $rate_chart['min_clr'];
+                        $max_clr = $rate_chart['max_clr'];
+                    }
+                    $animalType = [
+                        'milk_type_code' => !empty($rate_chart['animal_type_code']) ? $rate_chart['animal_type_code'] : '',
+                        'milk_type_name' => !empty($rate_chart['animal_type_name']) ? $rate_chart['animal_type_name'] : '',
+                        'min_fat' => $min_fat,
+                        'max_fat' => $max_fat,
+                        'min_snf' => $min_snf,
+                        'max_snf' => $max_snf,
+                        'min_clr' => $min_clr,
+                        'max_clr' => $max_clr
+                    ];
+                    $res_data[strtolower($rate_chart['config_for'])]['collectionConfig']['allowedMilkType'][] = $animalType;
+                }
             }
-
             $model = new TblUnionConfigResult();
             $model->union_code = $union;
             $model->config_for = ['VLC', 'BMC'];
@@ -276,6 +311,20 @@ class RequestMasterController extends MasterController {
         }
         $this->response->setData($res_data);
         return $this->response;
+    }
+
+    public function getOrgDetail($type, $code) {
+        $model_data = [];
+        if ($type == 'DCS') {
+            $model = new TblDcs();
+            $model->dcs_code = $code;
+            $model_data = $model->getData();
+        } else if ($type == 'BMC') {
+            $model = new TblDcsBmc();
+            $model->bmc_code = $code;
+            $model_data = $model->singleBmcData();
+        }
+        return ['model_data' => $model_data];
     }
 
 }
