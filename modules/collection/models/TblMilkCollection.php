@@ -529,8 +529,8 @@ class TblMilkCollection extends \app\models\ChildModel {
         $oldMilktype = $this->oldAttributes['milk_type_code'];
         if (!empty($this->oldAttributes) && ($this->fat != $this->oldAttributes['fat'] || $this->snf != $this->oldAttributes['snf'] || $this->qty != $this->oldAttributes['qty'] || $this->milk_type_code != $this->oldAttributes['milk_type_code'] || $this->milk_quality_type_code != $this->oldAttributes['milk_quality_type_code'])) {
             $existTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'old_milk_type_code' => $this->oldAttributes['milk_type_code'], 'shift_code' => $this->shift_code, 'old_qty' => $this->oldAttributes['qty'], 'old_fat' => $this->oldAttributes['fat'], 'old_snf' => $this->oldAttributes['snf'], 'table_name' => 'tbl_milk_collection', 'old_milk_quality_type_code' => $this->oldAttributes['milk_quality_type_code']])->one();
-            if ($flag == 1 && !empty($existTableData)) {
-                $this->addError($attribute, "Record is Already Exist For Approval");
+            if (($flag == 1 || $flag == 2) && !empty($existTableData)) {
+                $this->addError($attribute, "Record is Already Exist For Approval.");
             }
             $this->milkTypeWiseUnique($ApprovalModel, $this, TRUE);
             $this->milkTypeWiseUnique($this, $this, FALSE, TRUE);
@@ -674,7 +674,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             }
             $returnModel = $returnModel->one();
         }
-        if (($approval && $flag == 1 && !empty($returnModel))) {
+        if (($approval && ($flag == 1 || $flag == 2) && !empty($returnModel))) {
             $modelData->addError('milk_type_code', "Record is Already Exist In Approval.");
             return FALSE;
         }
@@ -1063,6 +1063,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 }
                 $collmodel = new TblMilkCollection();
                 $collmodel->attributes = $existingData->attributes;
+                $collmodel->oldattributes = $existingData->oldattributes;
                 $collmodel->scenario = 'ho_sync_update';
                 if (!$collmodel->validate()) {
                     $childModel[0]->addErrors($collmodel->errors);
