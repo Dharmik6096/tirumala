@@ -1985,6 +1985,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VspTransitRecovery';
         return $this->actionIndex();
     }
+    
+    public function actionComplainActivityList() {
+        $this->report = 'ComplainActivityList';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -4287,6 +4292,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_vsp_transit_recovery',
                 'scenario' => 'VspTransitRecovery',
                 'title' => '921 - TS Recovery Report',
+                'bkg_export' => TRUE,
+            ],
+            'ComplainActivityList' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_complain_activity_list',
+                'scenario' => 'ComplainActivityList',
+                'title' => 'Complain Activity Report',
                 'bkg_export' => TRUE,
             ],
         ];
