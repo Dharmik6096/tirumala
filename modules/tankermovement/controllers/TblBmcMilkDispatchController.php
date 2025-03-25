@@ -26,6 +26,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
 use yii\data\ArrayDataProvider;
 use app\modules\tankermovement\models\TblBmcDispatchInspection;
 use app\modules\tankermovement\models\TblPartyMaster;
+use app\modules\tankermovement\models\TblVehicleTripTracking;
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
@@ -212,6 +213,16 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 if ($transaction != 'customRedirect' && $new_rec) {
                     $model->bmc_milk_dispatch_code = '';
                 } else if ($transaction == 'customRedirect') {
+                    if($new_rec){
+                        $response = Yii::$app->general->getColumnName($model->source_org_type);
+                        $remarks = $model->remarks;
+                        if (!empty($response['rel'])) {
+                            $sourceData = $model->{$response['rel'] . 'Source'};
+                            $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                        }
+                        $tripModel->trip_sub_status = 'bmc_dispatch';
+                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                    }
                     return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
                 }
             }
