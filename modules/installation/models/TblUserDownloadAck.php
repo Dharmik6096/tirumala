@@ -147,7 +147,7 @@ class TblUserDownloadAck extends \app\models\ChildModel {
 
     public function getExistDataAck($org_type, $check_device_id = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'download_pending' => 1]);
-        if ($check_device_id && $org_type != 'VLC') {
+        if ($check_device_id) {
             $query->andWhere(['device_id' => $this->device_id]);
         }
         if (strtoupper($org_type == 'MCC')) {
