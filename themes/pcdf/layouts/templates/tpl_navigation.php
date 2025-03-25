@@ -1009,6 +1009,7 @@ echo GhostMenu::widget([
                     'items' => [
                             ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                             ['label' => Yii::t('app', 'User Task Activity MIS'), 'url' => ['/misreports/reports/field-staff-activity']],
+                            ['label' => Yii::t('app', 'Complain Activity Report'), 'url' => ['/misreports/reports/complain-activity-list']],
                     ]
                 ],
                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],

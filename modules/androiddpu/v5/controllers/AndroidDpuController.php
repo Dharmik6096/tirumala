@@ -193,17 +193,16 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
             //CHECK MAIN USER EXIST
             $username = ($org_type == 'PLANT') ? [$orgCode . '98', $orgCode . '99'] : [$orgCode, $orgCode . '01'];
             $user = $androidUsr->getMainExistData($org_type, $ackModel, $username);
-            if (!empty($user)) {
-                if (!empty($ActiveUser)) {
-                    foreach ($ActiveUser as $usrData) {
-                        $usrAckModel = new TblUserDownloadAck();
-                        $usrAckModel->attributes = $ackModel->attributes;
-                        $usrAckModel->user_code = $usrData->user_code;
-                        $usrAckModel->download_pending = 1;
-                        $saveModel[] = $usrAckModel;
-                    }
-                }
-            } else {
+
+            foreach ($ActiveUser as $usrData) {
+                $usrAckModel = new TblUserDownloadAck();
+                $usrAckModel->attributes = $ackModel->attributes;
+                $usrAckModel->user_code = $usrData->user_code;
+                $usrAckModel->download_pending = 1;
+                $saveModel[] = $usrAckModel;
+            }
+
+            if (empty($user)) {
                 $sendNotificaton = TRUE;
                 //SUPERVISOR USER
                 $androidUsr = new TblUserAndroid();
