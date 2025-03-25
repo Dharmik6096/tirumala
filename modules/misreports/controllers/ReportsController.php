@@ -1985,7 +1985,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'AreMemberBankPayment';
         return $this->actionIndex();
     }
-    
+
     public function actionVspTransitRecovery() {
         $this->report = 'VspTransitRecovery';
         return $this->actionIndex();
@@ -4234,7 +4234,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'AreSocietyWiseCda' => [
-                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status', 
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_are_cda_date_shift',
                 'scenario' => 'AreSocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
@@ -4250,7 +4250,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'AreSocietyWiseCdaConsolidated' => [
-                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status', 
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_are_cda_consolidated',
                 'scenario' => 'AreSocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
@@ -4258,14 +4258,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'AreVendorPayment' => [
-                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift', 
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_are_vendor_payment',
                 'scenario' => 'AreVendorPayment',
                 'title' => '602 - Vendor Payment',
                 'bkg_export' => TRUE,
             ],
             'AreMemberPaymentDcsWise' => [
-                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift', 
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_are_member_billing_dcs_wise',
                 'scenario' => 'AreMemberPaymentDcsWise',
                 'title' => '603 - Member Payment',
@@ -4273,7 +4273,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'AreMemberPaymentMemberWise' => [
-                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift', 
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_are_member_billing_member_wise',
                 'scenario' => 'AreMemberPaymentDcsWise',
                 'title' => '603 - Member Payment',

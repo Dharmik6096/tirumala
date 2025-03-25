@@ -573,7 +573,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                         'old_fat' => $this->oldAttributes['fat'],
                         'old_snf' => $this->oldAttributes['snf']
                     ])->one();
-            if ($flag == 1 && !empty($existTableData)) {
+            if (($flag == 1 || $flag == 2 ) && !empty($existTableData)) {
                 $this->addError($attribute, "Record is Already Exist For Approval");
             }
             if (!empty($this->oldAttributes) && ($this->customer_code != $this->oldAttributes['customer_code'] || $this->fat != $this->oldAttributes['fat'] || $this->snf != $this->oldAttributes['snf'] || $this->qty != $this->oldAttributes['qty'] || $this->milk_type_code != $this->oldAttributes['milk_type_code'] || $this->milk_quality_type_code != $this->oldAttributes['milk_quality_type_code'] || $this->no_of_can != $this->oldAttributes['no_of_can'])) {
@@ -625,8 +625,8 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
         if (empty($modelData->getErrors())) {
-// $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
-            $flag = Yii::$app->general->getUnionConfigResult($modelData->union_code, 'collection_approval');
+            $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
+//            $flag = Yii::$app->general->getUnionConfigResult($modelData->union_code, 'collection_approval');
             if (strtolower($modelData->customer_type) == 'dcs') {
                 $modelData->dcs_code = !empty($modelData->dcs_code) ? $modelData->dcs_code : $modelData->customer_code;
                 $xclol = Yii::$app->general->getforeignkey($modelData->dcsCode, 'x_col1');
@@ -687,7 +687,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                     $returnModel->andWhere(['!=', 'milk_type_code', $oldMilktype]);
                 }
                 $returnModel = $returnModel->one();
-                if (($approval && $flag == 1 && !empty($returnModel)) || (!$approval && !empty($returnModel))) {
+                if (($approval && ($flag == 1 || $flag == 2 ) && !empty($returnModel)) || (!$approval && !empty($returnModel))) {
                     $modelData->addError('milk_type_code', "Milk Type Must Not Same.");
                     return FALSE;
                 }
@@ -749,7 +749,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }
                 $returnModel = $returnModel->one();
             }
-            if (($approval && $flag == 1 && !empty($returnModel))) {
+            if (($approval && ($flag == 1 || $flag == 2) && !empty($returnModel))) {
                 $modelData->addError('milk_type_code', "Record is Already Exist In Approval.");
                 return FALSE;
             }
@@ -881,6 +881,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }
                 $collmodel = new TblBmcCollection();
                 $collmodel->attributes = $existingData->attributes;
+                $collmodel->oldattributes = $existingData->oldattributes;
                 $collmodel->scenario = 'ho_sync_update';
                 if (!$collmodel->validate()) {
                     $childModel[0]->addErrors($collmodel->errors);

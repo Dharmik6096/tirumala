@@ -41,6 +41,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     $action = Yii::$app->request->post('TblCollectionDataAlias')['action_perform'];
                     $operation = Yii::$app->request->post('TblCollectionDataAlias')['operation'];
                     $existData = $this->findModel($value);
+                    $approval_status = $existData->approval_status;
                     $status = '';
                     ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'MilkCollection' : '';
                     if ($operation == 'approve') {
@@ -113,6 +114,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             }
                         }
                         $existData->error_desc = implode(', ', $errorMsg);
+                        $existData->approval_status = $approval_status;
                         $existData->scenario = 'approve';
                         $saveModel[] = $existData;
                     }
@@ -172,6 +174,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     $action = Yii::$app->request->post('TblCollectionDataAlias')['action_perform'];
                     $operation = Yii::$app->request->post('TblCollectionDataAlias')['operation'];
                     $existData = $this->findModel($value);
+                    $approval_status = $existData->approval_status;
                     $status = '';
                     ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'BmcCollection' : '';
                     if ($operation == 'approve') {
@@ -255,6 +258,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             }
                         }
                         $existData->error_desc = implode(', ', $errorMsg);
+                        $existData->approval_status = $approval_status;
                         $existData->scenario = 'approve';
                         $saveModel[] = $existData;
                     }
@@ -437,7 +441,6 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
             $approvalModel->ApprovalList($approvalModel, $saveModel, $status);
         }
     }
-
 
     public function actionQtyImportApproval() {
         if (Yii::$app->request->post()) {
