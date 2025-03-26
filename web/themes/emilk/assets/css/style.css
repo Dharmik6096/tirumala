@@ -2728,6 +2728,7 @@ div.crystalstyle{
     border-radius: 0px;
     padding: 4px;
     /* max-width: 280px !important; */
+    margin: 0px;
 }
 .panel .panel-body .multiple select{
     height: auto !important;
