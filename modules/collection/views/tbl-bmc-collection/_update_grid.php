@@ -167,7 +167,7 @@ $form = ActiveForm::begin([
         'showPageSummary' => false,
     ];
 
-    Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
+    Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false, [], [], true, [], true);
     ?>
 </div>
 <div class="panel-footer" >
