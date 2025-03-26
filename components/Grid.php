@@ -30,7 +30,7 @@ class Grid extends Widget {
         return $this->render('grid', ['id' => $this->id, 'url' => $this->url]);
     }
 
-    public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true, $removeExportType = [], $exportEvents = [], $fixed_header = true, $rowOptions = []) {
+    public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true, $removeExportType = [], $exportEvents = [], $fixed_header = true, $rowOptions = [], $ignoreDynagrid = false) {
         $table_name = '';
         if (!isset($searchModel->grid_filter) || $searchModel->grid_filter) {
             echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
@@ -258,7 +258,7 @@ class Grid extends Widget {
                         ['content' =>
                         Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
                     ],
-                        ['content' => '{dynagrid}'],
+                    ['content' => (!empty($ignoreDynagrid)) ? '' : '{dynagrid}'],
                     //  '{export}',
                     $fullExportMenu
                 ],
