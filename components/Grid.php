@@ -258,7 +258,7 @@ class Grid extends Widget {
                         ['content' =>
                         Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
                     ],
-                    ['content' => (!empty($ignoreDynagrid)) ? '' : '{dynagrid}'],
+                    ['content' => $ignoreDynagrid ? '' : '{dynagrid}'],
                     //  '{export}',
                     $fullExportMenu
                 ],
