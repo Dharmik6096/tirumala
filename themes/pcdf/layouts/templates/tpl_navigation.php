@@ -40,6 +40,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Master <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                 //                ['label' => Yii::t('app', 'PCDF Info'), 'url' => ['/organisation/tbl-federations/view', 'id' => Yii::$app->session->get('Federations')], 'active' => ($cntrl == 'tbl-federations')],
                     ['label' => Yii::t('app', 'Union'), 'url' => $url_action, 'active' => ($cntrl == 'tbl-unions')],
@@ -106,6 +107,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Transporter <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => Yii::t('app', 'Transporter'), 'url' => ['/transporter/tbl-transporter/index'], 'active' => ($cntrl == 'tbl-transporter')],
                     ['label' => Yii::t('app', 'Vehicle Master'), 'url' => ['/transporter/tbl-vehicle-master/index'], 'active' => ($cntrl == 'tbl-vehicle-master')],
@@ -130,6 +132,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
@@ -168,8 +171,8 @@ echo GhostMenu::widget([
                     ['label' => 'Shift Lock ', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock'), 'visible' => User::canRoute(['/collection/tbl-mcc-shift-lock/index']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
                     ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => User::canRoute(['/collection/tbl-mcc-shift-lock/index-other']) ? ($eiplCode == 'MMD' ? FALSE : TRUE) : FALSE],
                     ['label' => Yii::t('app', 'Shift Lock (Member Data)'), 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
-                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
-                    ['label' => 'Milk Transfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
+                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index')],
+                    ['label' => 'Milk Transfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index')],
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
@@ -226,6 +229,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Rate <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => 'Rate Formula', 'url' => ['/dcsoperation/formula-master/index'], 'active' => ($cntrl == 'formula-master')],
                     ['label' => 'Milk Purchase Rate', 'url' => ['/dcsoperation/tbl-purchase-rate/index'], 'active' => ($cntrl == 'tbl-purchase-rate')],
@@ -251,6 +255,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Product <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => 'Product Group', 'url' => ['/product/tbl-product-group/index'], 'active' => ($cntrl == 'tbl-product-group')],
                     ['label' => 'Product', 'url' => ['/product/tbl-product/index'], 'active' => ($cntrl == 'tbl-product')],
@@ -268,7 +273,7 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_left'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => $withoutDispatchGrn],
+                            ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => (User::canRoute(['/product/tbl-plant-dispatch/index']) && $withoutDispatchGrn)],
                             ['label' => Yii::t('app', 'GRN'), 'url' => ['/product/tbl-grn/index'], 'active' => ($cntrl == 'tbl-grn')],
                             ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
                             ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking')],
@@ -296,6 +301,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Payment <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                 ['label' => Yii::t('app', 'Payment Cycle'), 'url' => ['/payment/tbl-payment-cycle/index'], 'active' => ($cntrl == 'tbl-dcs-payment-cycle')],
                 ['label' => Yii::t('app', 'Member Payment Restrict'), 'url' => ['/payment/tbl-member-payment-restrict/index'], 'active' => ($cntrl == 'tbl-member-payment-restrict' && $action == 'index')],
@@ -320,6 +326,7 @@ echo GhostMenu::widget([
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Staff<b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => Yii::t('app', 'Designation'), 'url' => ['/globalmaster/tbl-designation/index'], 'active' => ($cntrl == 'tbl-designation')],
                     ['label' => Yii::t('app', 'Staff Leave Master'), 'url' => ['/staffmanagement/tbl-staff-leave-master/index'], 'active' => ($cntrl == 'tbl-staff-leave-master')],
@@ -334,6 +341,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Billing<b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => Yii::t('app', 'Formula Master'), 'url' => ['/vsp/tbl-general-formula/index'], 'active' => ($cntrl == 'tbl-general-formula')],
                     ['label' => Yii::t('app', 'Bill Head Master'), 'url' => ['/vsp/tbl-bill-head/index'], 'active' => ($cntrl == 'tbl-bill-head')],
@@ -362,6 +370,7 @@ echo GhostMenu::widget([
         //            [
         //            'options' => ['class' => 'dropdown'],
         //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports <b class="caret"></b></a>',
+        //            'visible' => TRUE,
         //            'items' => [
         //                    [
         //                    'options' => ['class' => 'dropdown-submenu'],
@@ -533,12 +542,12 @@ echo GhostMenu::widget([
         //                            ['label' => '701-' . Yii::t('app', 'Staff Salary'), 'url' => ['/jasperreports/default/staff-salary']],
         //                    ]
         //                ],
-        //                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
         //            ],
         //        ],
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t("app", "Reports - New") . ' <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     [
                     'options' => ['class' => 'dropdown-submenu'],
@@ -661,7 +670,6 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'BMC Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary-rahema']],
                             ]
                         ],
-                            ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                     ]
                 ],
                     [
@@ -763,7 +771,6 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'MPG Bill Statement'), 'url' => ['/jasperreports/default/mpg-bill-statement']],
                                     ]
                                 ],
-                                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
                             ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
@@ -869,7 +876,6 @@ echo GhostMenu::widget([
                                 ],
                                     ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
                                     ['label' => Yii::t('app', 'Eipl Installed Users Details'), 'url' => ['/misreports/reports/eipl-installed-users-details']],
-                                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
                             [
@@ -1012,14 +1018,13 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Complain Activity Report'), 'url' => ['/misreports/reports/complain-activity-list']],
                     ]
                 ],
-                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >System <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
-                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                     [
                     'options' => ['class' => 'dropdown-submenu mtp10'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Authorization <b class="caret"></b></a>',
@@ -1268,6 +1273,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown user'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" ><i class="fa fa-user"></i> <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => (Yii::$app->session->get('UserName') != NULL && isset(explode('#', Yii::$app->session->get('UserName'))[1])) ? "<span class='user'><b>" . Yii::t('app', 'User: ') . "</b>" . explode('#', Yii::$app->session->get('UserName'))[1] . "</span>" : ''],
                     ['label' => "<span class='user'><b>" . Yii::t('app', 'Org.Type: ') . "</b>" . Yii::t('app', Yii::$app->session->get('organizations_type')) . "</span>"],

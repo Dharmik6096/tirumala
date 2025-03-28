@@ -224,7 +224,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                     ->andFilterWhere(['=', 'union_code', $this->union_code])
                     ->all();
             $approvedProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
-                return strtolower($vendor->state_code) == 'approve';
+                return strtolower($vendor->status) == 'approve';
             });
             $inprogressProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
                 return strtolower($vendor->status) == 'inprogress';
