@@ -70,6 +70,18 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Lot Quality');
                     [
                     'columns' => [
                             [
+                            'attribute' => 'acidity',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'mbrt',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ]
+                ],
+                    [
+                    'columns' => [
+                            [
                             'attribute' => 'fat',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
@@ -118,19 +130,7 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Lot Quality');
                     [
                     'columns' => [
                             [
-                            'attribute' => 'mbrt',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                            [
                             'attribute' => 'temp',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ]
-                    ]
-                ],
-                    [
-                    'columns' => [
-                            [
-                            'attribute' => 'acidity',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [

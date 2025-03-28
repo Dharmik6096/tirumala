@@ -12,6 +12,8 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
         }, 'visible' => true, 'filter' => FALSE],
         ['attribute' => 'chamber_no', 'label' => Yii::t('app', 'Com No.'), 'filter' => false],
+        ['attribute' => 'acidity', 'filter' => false],
+        ['attribute' => 'mbrt', 'filter' => false],
         ['attribute' => 'arrival_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->arrival_datetime);
         }, 'filter' => false],
@@ -31,9 +33,7 @@ $attribute = [
         ['attribute' => 'protein', 'filter' => false],
         ['attribute' => 'lactose', 'filter' => false],
         ['attribute' => 'freezing_point', 'filter' => false],
-        ['attribute' => 'mbrt', 'filter' => false],
         ['attribute' => 'temp', 'filter' => false],
-        ['attribute' => 'acidity', 'filter' => false],
 ];
 foreach ($config_list as $config) {
     $attribute[] = [
