@@ -252,12 +252,6 @@ class TblDcsController extends ChildController {
                                     array_push($orgMap, $modelNew);
                                 }
                             }
-                            if (strtolower($vendorModel->vendor_code) == 'eipl') {
-                                $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
-                                if (!file_exists($path) || !is_dir($path)) {
-                                    FileHelper::createDirectory($path);
-                                }
-                            }
                             $this->generalModel->saveTransaction($orgMap, ['society', 'create']);
                         }
                     }
@@ -422,12 +416,6 @@ class TblDcsController extends ChildController {
                             $modelNew->is_active = $user->is_active;
                             Yii::$app->operation->defaults($modelNew, INSERT);
                             array_push($mappingList, $modelNew);
-                        }
-                    }
-                    if (strtolower($vendorModel->vendor_code) == 'eipl') {
-                        $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
-                        if (!file_exists($path) || !is_dir($path)) {
-                            FileHelper::createDirectory($path);
                         }
                     }
                 }

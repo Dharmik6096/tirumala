@@ -103,7 +103,7 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
     }
 
     public function getCustomerType() {
-        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_type']);
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_type', 'union_code' => 'union_code']);
     }
 
     public function getBmcCode() {

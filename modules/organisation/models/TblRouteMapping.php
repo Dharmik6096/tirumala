@@ -424,7 +424,7 @@ class TblRouteMapping extends \app\models\ChildModel {
     }
 
     public function getActiveBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'to_dest', 'union_code' => 'union_code'])->andOnCondition(['is_active' => 1]);
+        return $this->hasOne(TblDcsBmc::className(), ['union_code' => 'union_code'])->andOnCondition(['or',['bmc_code' => $this->to_dest],['ref_code' => $this->to_dest]])->andOnCondition(['is_active' => 1]);
     }
 
     public function importData($attribute, $params) {
@@ -435,6 +435,9 @@ class TblRouteMapping extends \app\models\ChildModel {
             $mcc = Yii::$app->general->getforeignkey($this->activeMccCode, 'mcc_plant_code');
             $bmc = Yii::$app->general->getforeignkey($this->activeBmcCode, 'bmc_code');
             $this->to_type = strtolower($this->to_type);
+            if($this->to_type == 'bmc' && !empty($bmc)){
+                $this->to_dest = $bmc;
+            }
             $type_value = ['bmc', 'mcc', 'plant'];
             if (!in_array(strtolower($this->to_type), $type_value)) {
                 $this->addError($attribute, "Please Enter Valid To Type");
