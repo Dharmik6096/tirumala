@@ -20,7 +20,7 @@ use app\modules\document\controllers\TblAttachmentController;
  */
 class TblVehicleMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['depend-vehicles'];
+    public $freeAccessActions = ['depend-vehicles', 'get-chamber-list'];
 
     /**
      * Lists all TblVehicleMaster models.
@@ -248,6 +248,21 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         $module_name = 'tbl_vehicle_master';
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('vehicle', $id, $model, $module_code, $module_name);
+    }
+
+    public function actionGetChamberList(){
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $this->model = new TblVehicleMaster();
+                $data = $this->model->getChamberList($parents[0], $parents[1]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+            }
+        }
+        return Json::encode(['output' => $out, 'selected' => '']);
     }
 
 }

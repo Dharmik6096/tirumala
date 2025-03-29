@@ -69,7 +69,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
         return [
                 [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code'], 'safe'],
                 [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
-                [['fat', 'snf', 'chamber_no'], 'required'],
+                [['chamber_no', 'acidity', 'mbrt'], 'required'],
                 [['originating_type'], 'integer'],
                 [['union_code'], 'string', 'max' => 3],
                 [['plant_code'], 'string', 'max' => 6],

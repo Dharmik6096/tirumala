@@ -133,9 +133,8 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
                     </div>
                     <div class="col-sm-1"> 
-                        <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
+                        <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblmilkvehicleentry-union_code,tblmilkvehicleentry-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
                     </div>
-
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'gross_weight')->textInput() ?>
                     </div>
@@ -148,7 +147,6 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1">
                         <?= $form->field($txn_model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
                     </div>
-
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'chamber_quantity')->textInput() ?>
                     </div>

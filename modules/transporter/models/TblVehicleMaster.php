@@ -10,6 +10,8 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblFuelTypeMaster;
 use app\modules\transporter\models\TblBillingType;
+use yii\base\UserException;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_vehicle_master".
@@ -347,6 +349,16 @@ class TblVehicleMaster extends \app\models\ChildModel {
             $this->union_code = Yii::$app->general->getforeignkey($this->transporter, 'union_code');
             $this->parsing_no = strtoupper($this->parsing_no);
         }
+    }
+
+    public function getChamberList($unionCode, $vehicleCode) {
+        $noOfCompartment = $this->find()->select('no_of_compartment')->where(['union_code' => $unionCode, 'vehicle_code' => $vehicleCode])->scalar();
+        if (!empty($noOfCompartment)) {
+            return ArrayHelper::map(array_map(function ($comp) {
+                return ['id' => $comp, 'value' => $comp];
+            }, range(1, $noOfCompartment)), 'id', 'value');
+        }
+        return [];
     }
 
 }
