@@ -66,7 +66,7 @@ class TblPermanentHoldAmountController extends \app\controllers\ChildController 
             $param[] = $searchModel['dcs_code'];
             $param[] = date('Y-m-d', strtotime($searchModel['from_date']));
             $param[] = date('Y-m-d', strtotime($searchModel['to_date']));
-            \Yii::$app->general->getSpData('sp_verify_bank_detail_for_release_member_payment', $param);
+            \Yii::$app->general->getSpData('sp_member_payment_verify_bank_detail', $param);
         }        
         $dataProvider = $searchModel->search([], true);
         $searchModel->grid_filter = false;
