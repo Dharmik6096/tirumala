@@ -3,6 +3,7 @@
 namespace app\modules\transporter\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_vehicle_compartment_detail".
@@ -80,6 +81,17 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
         } else {
             $this->addError('vehicle_code', Yii::t('app/validation', Yii::t('app', 'Vehicle Code') . ' is invalid'));
         }
+    }
+
+    public function getChamberList($vehicleCode) {
+        $vehicleCompartmentDetailModel = new TblVehicleCompartmentDetail();
+        $compartmentNoCount = $vehicleCompartmentDetailModel->find()->select('vehicle_code')->where(['vehicle_code' => $vehicleCode])->count();
+        if ($compartmentNoCount > 0) {
+            return ArrayHelper::map(array_map(function ($comp) {
+                return ['id' => $comp, 'value' => $comp];
+            }, range(1, $compartmentNoCount)), 'id', 'value');
+        }
+        return [];
     }
 
 }

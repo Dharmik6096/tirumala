@@ -259,7 +259,7 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
-                $this->model = new TblVehicleMaster();
+                $this->model = new TblVehicleCompartmentDetail();
                 $data = $this->model->getChamberList($parents[0]);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);

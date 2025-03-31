@@ -52,7 +52,7 @@ class TblVehicleCompartmentDetailSearch extends TblVehicleCompartmentDetail {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'vehicle_compartment_detail_code' => $this->vehicle_compartment_detail_code,
+            'vehicle_code' => $this->vehicle_code,
         ]);
 
         return $dataProvider;

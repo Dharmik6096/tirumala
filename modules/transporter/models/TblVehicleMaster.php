@@ -7,7 +7,6 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblCapacity;
 use app\modules\organisation\models\TblVehicleType;
 use app\modules\syncutility\models\TblSentbox;
-use app\modules\tankermovement\models\TblVehicleCompartmentDetail;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblFuelTypeMaster;
 use app\modules\transporter\models\TblBillingType;
@@ -350,17 +349,6 @@ class TblVehicleMaster extends \app\models\ChildModel {
             $this->union_code = Yii::$app->general->getforeignkey($this->transporter, 'union_code');
             $this->parsing_no = strtoupper($this->parsing_no);
         }
-    }
-
-    public function getChamberList($vehicleCode) {
-        $vehicleCompartmentDetailModel = new TblVehicleCompartmentDetail();
-        $compartmentNoCount = $vehicleCompartmentDetailModel->find()->select('vehicle_code')->where(['vehicle_code' => $vehicleCode])->count();
-        if ($compartmentNoCount > 0) {
-            return ArrayHelper::map(array_map(function ($comp) {
-                return ['id' => $comp, 'value' => $comp];
-            }, range(1, $compartmentNoCount)), 'id', 'value');
-        }
-        return [];
     }
 
 }

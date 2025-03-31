@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\tankermovement\models\TblQtyDiffType;
 use app\modules\organisation\models\TblPlant;
+use app\modules\transporter\models\TblVehicleCompartmentDetail;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch_txn".
