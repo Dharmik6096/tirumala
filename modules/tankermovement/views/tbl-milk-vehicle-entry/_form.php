@@ -295,6 +295,7 @@ endif;
 $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL') == 1 ? TRUE : FALSE;
 $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
 $script = "
+    var org_code = '';
     var qltyParamsReadOnly = false;
     $('#dispatch-detail').css('display', 'none');
     $('#milk-receipt-transaction').css('display', 'none');
@@ -633,13 +634,24 @@ $script = "
                 success: function(data) {
                    var obj = $.parseJSON(data);
                     if (obj.status == 'success') {
-                        var sourceOrgTypeUpper = obj.data.source_org_type.toUpperCase();
-                        $('#tblmilkvehicleentry-dispatch_from').val(sourceOrgTypeUpper).trigger('change');
-                        $('#tblmilkvehicleentry-dispatch_from_code').on('depdrop.afterChange', function() {
-                                $('#tblmilkvehicleentry-dispatch_from_code').val(obj.data.source_org_code);
-                                $('#tblmilkvehicleentry-dispatch_from_code').trigger('change');
-                                $('#tblmilkvehicleentry-dispatch_from_code').trigger('select2:select');
-                        });
+                        var sourceOrgTypeUpper = '';
+                        if(obj.data != null && obj.data.source_org_type != '' && obj.data.source_org_type != null && obj.data.source_org_type != undefined){
+                            sourceOrgTypeUpper = obj.data.source_org_type.toUpperCase();
+                            org_code = obj.data.source_org_code;
+                        }
+                            $('#tblmilkvehicleentry-dispatch_from').val(sourceOrgTypeUpper);
+                            $('#tblmilkvehicleentry-dispatch_from').trigger('change');
+                            $('#tblmilkvehicleentry-dispatch_from').trigger('select2:select');
+                            var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
+                            if(dispatch_from != '') {
+                                $('#tblmilkvehicleentry-dispatch_from_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                                    setTimeout(function() {
+                                        $('#tblmilkvehicleentry-dispatch_from_code').val(org_code);
+                                        $('#tblmilkvehicleentry-dispatch_from_code').trigger('change');
+                                        $('#tblmilkvehicleentry-dispatch_from_code').trigger('select2:select');
+                                    }, 1000);
+                                });
+                            }
                     }
                 },
                   error: function(data) {  
