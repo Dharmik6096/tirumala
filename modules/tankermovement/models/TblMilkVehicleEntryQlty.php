@@ -137,23 +137,14 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getMilkVehicleEntryQlty() {
-        $configMappingData = [];
-        $configCode = TblConfig::find()->select(['config_code'])->where(['config_key' => 'plant_lot_creation_interval', 'process_name' => 'PLANT_RECEIPT_CONFIG', 'config_for' => 'PLANT'])->scalar();
-        if (!empty($configCode)) {
-            $configMappingModel = new TblConfigMapping();
-            $configMappingModel->org_type = 'PLANT';
-            $configMappingModel->org_code = $this->plant_code;
-            $configMappingModel->config_code = $configCode;
-            $configMappingData = $configMappingModel->ExistMappedControl;
-        }
-
-        if (!empty($configMappingData) && (int) $configMappingData->config_result > 0) {
+        $plantLotCreationInterval = (int) Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'plant_lot_creation_interval', $this->plant_code, 'PLANT','PLANT_RECEIPT_CONFIG');
+        $plantLotCreationInterval = $plantLotCreationInterval ?: 0;
+        if ($plantLotCreationInterval > 0) {
             $records = $this->find()
                     ->where(['trip_code' => $this->trip_code, 'union_code' => $this->union_code])
                     ->andWhere(['!=', 'status', 'discarded'])
                     ->all();
             if (!empty($records)) {
-                $plantLotCreationInterval = (int) $configMappingData->config_result;
                 $totalRecords = count($records);
                 $doneRecordsCount = 0;
                 $maxLotDatetime = NULL;
