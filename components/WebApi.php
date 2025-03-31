@@ -54,6 +54,8 @@ class WebApi {
 //    }
 
     public function PHPCURL() {
+        $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
         $url = $this->serverUrl . $this->apiurl;
         $data = $this->body;
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
@@ -67,16 +69,16 @@ class WebApi {
         if ($this->return_actual) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         }  // Skip SSL Verification
-        curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
+        curl_setopt($ch, CURLOPT_CAINFO, 'C:\Everest\Apache2454\conf\sapcerts\cacert.pem');
         $result = curl_exec($ch);
         curl_close($ch);
         $res = json_decode($result);
-        $log_model = new TblPortalDataPostLog();
         $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
         $log_model->vendor_code = $this->vendor_code;
         $log_model->url = $url;
         $log_model->request = $data;
         $log_model->response = $result;
+        $log_model->updated_at = date('Y-m-d H:i:s');
         $log_model->save();
         if ($this->return_actual) {
             return $result;
