@@ -72,6 +72,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $this->model->type = !empty($type) ? $type : 'normal';
         $bmc_array = [];
         if ($this->model->load(Yii::$app->request->post())) {
+            $is_auto_trip = $this->model->is_auto_trip;
             if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
                 $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
                 $bmc_detail = explode(':::', $bmc_string);
@@ -91,7 +92,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
             $bmc_array = $this->model->bmc_code;
             $is_valid_trip = FALSE;
-            if (count($bmc_array) > 2) {
+            if (count($bmc_array) > 2 || $is_auto_trip) {
                 $sl_detail = explode('#', $bmc_array[0]);
                 $sl_code = $sl_detail[0];
                 $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
@@ -100,7 +101,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $el_code = $el_detail[0];
                 $el_type = !empty($el_detail[1]) ? $el_detail[1] : 'bmc';
 
-                $is_valid_trip = ($sl_type == 'plant' && $el_type == 'plant') ? TRUE : FALSE;
+                $is_valid_trip = ($sl_type == 'plant' && ($is_auto_trip || $el_type == 'plant')) ? TRUE : FALSE;
                 if ($this->model->validate() && $is_valid_trip) {
                     $this->model->plant_code = $sl_code;
                     $fl_detail = explode('#', $bmc_array[1]);
@@ -134,15 +135,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         if (!empty($save_model) && $this->model->fl_type == 'plant') {
                             $save_model[0]->plant_code = $this->model->fl_code;
                         }
-                        // $lastIndex = count($bmc_array) - 2;
                         foreach ($bmc_array as $key => $bmc) {
                             $trip_detai = new TblVehicleTripDetail();
-                            if ($key == 0) {
+                            if ($key == 0 || ($is_auto_trip && $key == count($bmc_array) - 1)) {
                                 continue;
                             }
-                            // if ($lastIndex == $key) {
-                            //     $trip_detai->is_last_destination = 1;
-                            // }
                             $sloc_detail = explode('#', $bmc);
                             if (!empty($bmc_array[$key + 1])) {
                                 $dloc_detail = explode('#', $bmc_array[$key + 1]);

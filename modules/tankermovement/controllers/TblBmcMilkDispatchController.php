@@ -100,6 +100,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->bmc_code = $model->bmc_code;
             $txn_model->union_code = $model->union_code;
             $txn_model->bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
+            $txn_model->trip_code = $model->trip_code;
+            $txn_model->vehicle_code = $model->vehicle_code;
             $txn_model->scenario = 'create';
             if ($txn_model->validate()) {
                 $saveModel = [];
@@ -640,6 +642,19 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     'model' => $model,
                     'txn_model' => $txn_model,
         ]);
+    }
+
+    public function actionChamberCapacityDetails() {
+        $bmcMilkDispatchTxn = new TblBmcMilkDispatchTxn();
+        $bmcMilkDispatchTxn->trip_code = \Yii::$app->request->post()['trip_code'];
+        $bmcMilkDispatchTxn->vehicle_code = \Yii::$app->request->post()['vehicle_code'];
+        $compartmentWiseDispatchData = $bmcMilkDispatchTxn->getCompartmentWiseDispatchData();
+        if (!empty($compartmentWiseDispatchData)) {
+            $response = ['status' => 'success', 'chamber_wise_data' => $compartmentWiseDispatchData, 'msg' => 'Chamber Capacity Not Found'];
+        } else {
+            $response = ['status' => 'error', 'msg' => 'Chamber Capacity Not Found'];
+        }
+        return Json::encode($response);
     }
 
 }

@@ -133,7 +133,7 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
                     </div>
                     <div class="col-sm-1"> 
-                        <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblmilkvehicleentry-union_code,tblmilkvehicleentry-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+                        <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblmilkvehicleentry-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'gross_weight')->textInput() ?>
@@ -616,8 +616,13 @@ $script = "
     $(document).on('change','#tblmilkvehicleentrytransaction-gross_weight,#tblmilkvehicleentrytransaction-tare_weight', function() {
         var gross_weight=$('#tblmilkvehicleentrytransaction-gross_weight').val() || 0;
         var tare_weight=$('#tblmilkvehicleentrytransaction-tare_weight').val() || 0;
-
         var qty = parseFloat(gross_weight) - parseFloat(tare_weight);
+        if (parseFloat(gross_weight) < parseFloat(tare_weight)) {
+            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>tare weight should not be more than gross weight</span></div></div>\");
+            $('#tblmilkvehicleentrytransaction-tare_weight').val('');
+            $('#tblmilkvehicleentrytransaction-chamber_quantity').val('');
+            return false;
+        }
         if (!isNaN(qty)) {
             qty = Math.max(0, qty);
         } else {
