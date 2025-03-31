@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblCapacity;
 use app\modules\organisation\models\TblVehicleType;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\tankermovement\models\TblVehicleCompartmentDetail;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblFuelTypeMaster;
 use app\modules\transporter\models\TblBillingType;
@@ -351,12 +352,13 @@ class TblVehicleMaster extends \app\models\ChildModel {
         }
     }
 
-    public function getChamberList($unionCode, $vehicleCode) {
-        $noOfCompartment = $this->find()->select('no_of_compartment')->where(['union_code' => $unionCode, 'vehicle_code' => $vehicleCode])->scalar();
-        if (!empty($noOfCompartment)) {
+    public function getChamberList($vehicleCode) {
+        $vehicleCompartmentDetailModel = new TblVehicleCompartmentDetail();
+        $compartmentNoCount = $vehicleCompartmentDetailModel->find()->select('vehicle_code')->where(['vehicle_code' => $vehicleCode])->count();
+        if ($compartmentNoCount > 0) {
             return ArrayHelper::map(array_map(function ($comp) {
                 return ['id' => $comp, 'value' => $comp];
-            }, range(1, $noOfCompartment)), 'id', 'value');
+            }, range(1, $compartmentNoCount)), 'id', 'value');
         }
         return [];
     }

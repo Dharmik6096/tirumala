@@ -133,7 +133,7 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
                     </div>
                     <div class="col-sm-1"> 
-                        <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblmilkvehicleentry-union_code,tblmilkvehicleentry-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+                        <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblmilkvehicleentry-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'gross_weight')->textInput() ?>
