@@ -86,7 +86,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
         </div>
         <div class="col-sm-1">
-            <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+            <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
@@ -224,6 +224,50 @@ $(document).ready(function(){
     if(bmc_milk_dispatch_code!=''){
         $('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
     }
+    $(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code', function() {
+        var trip_code = $('#tblbmcmilkdispatch-trip_code').val();
+        var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
+        if(setData(trip_code) && setData(vehicle_code)){
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['chamber-capacity-details']) . "',
+                    data: {'trip_code' : trip_code,'vehicle_code':vehicle_code}, 
+                    success: function(data) {
+                        var obj1 = $.parseJSON(data);
+                        if(obj1.status == 'success'){
+                            $(document).off('change', '#tblbmcmilkdispatchtxn-chamber_no, #tblbmcmilkdispatchtxn-dispatch_qty').on('change', '#tblbmcmilkdispatchtxn-chamber_no, #tblbmcmilkdispatchtxn-dispatch_qty', function () {
+                                var chamber_no = $('#tblbmcmilkdispatchtxn-chamber_no').val();
+                                var dispatch_qty = parseFloat($('#tblbmcmilkdispatchtxn-dispatch_qty').val()) || 0;
+                                if (setData(chamber_no) && setData(dispatch_qty)) {
+                                    if(obj1.chamber_wise_data.hasOwnProperty(chamber_no)){
+                                        var total_qty = parseFloat(obj1.chamber_wise_data[chamber_no]['total_qty']) || 0;
+                                        var capacity = parseFloat(obj1.chamber_wise_data[chamber_no]['capacity']) || 0;
+                                        if ((total_qty + dispatch_qty) > capacity) {
+                                            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Dispatch quantity exceeds chamber capacity \"+capacity+\"</span></div></div>\");
+                                            $('#tblbmcmilkdispatchtxn-dispatch_qty').val('');
+                                        }   
+                                    } else {
+                                        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                                    }
+                                } 
+                            });
+                        } else {
+                            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                        }
+                    },
+                });
+            } else {
+                $('#tblbmcmilkdispatchtxn-dispatch_qty').val('');
+            }             
+    });
+
+    function setData(field = ''){
+    if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+        return true;
+    } else {
+        return false;
+    }
+} 
 });
 ";
 
