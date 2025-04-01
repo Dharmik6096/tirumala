@@ -82,7 +82,7 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['member']],
-                        [['rate_wharehouse'], 'required', 'on' => ['product_sale_rate_gyan']],
+                            [['rate_wharehouse'], 'required', 'on' => ['product_sale_rate_gyan']],
                     ],
                 ],
                 'TblBankDetails' => [
@@ -92,7 +92,12 @@ class CustomValidation extends Component {
                 ],
                 'TblProductSaleRate' => [
                     'default' => [
-                        [['rate_wharehouse'], 'required'],
+                            [['rate_wharehouse'], 'required'],
+                    ],
+                ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
                     ],
                 ],
             ],
@@ -147,6 +152,9 @@ class CustomValidation extends Component {
                 ],
                 'TblBankDetails' => [
                         [['bank_account_no'], 'CheckDuplicate'],
+                ],
+                'TblUserAndroid' => [
+                        [['email'], 'email'],
                 ],
             ],
             'NIFPL' => [
@@ -222,6 +230,11 @@ class CustomValidation extends Component {
                             }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync']],
                     ],
                 ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
+                    ],
+                ],
             ],
             'MURALYA' => [
                 'TblBankDetails' => [
@@ -241,6 +254,11 @@ class CustomValidation extends Component {
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
                                 return $model->is_active;
                             }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+                    ],
+                ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
                     ],
                 ],
             ],
@@ -263,6 +281,11 @@ class CustomValidation extends Component {
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
                                 return $model->is_active;
                             }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+                    ],
+                ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
                     ],
                 ],
             ],
@@ -326,6 +349,11 @@ class CustomValidation extends Component {
 //                        }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification']],
                     ],
                 ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
+                    ],
+                ],
             ],
             'PRABHAT' => [
                 'BackGroundDataImport' => [
@@ -354,6 +382,11 @@ class CustomValidation extends Component {
 //                        [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
 //                                return $model->is_active;
 //                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+                    ],
+                ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
                     ],
                 ],
             ],
@@ -424,6 +457,11 @@ class CustomValidation extends Component {
                             [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
 //                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                         [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                    ],
+                ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
                     ],
                 ],
             ],
