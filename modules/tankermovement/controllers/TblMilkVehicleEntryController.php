@@ -187,13 +187,13 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 }
                 $this->model->vehicle_entry_date = !empty($this->model->vehicle_entry_date) ? date('Y-m-d', strtotime($this->model->vehicle_entry_date)) : '';
                 if (empty($masterPost['milk_vehicle_entry_code'])) {
-                    $this->model->gross_weight = $txn_model->gross_weight;   
+                    $this->model->gross_weight = $txn_model->gross_weight;
                 }
                 $this->model->tare_weight = $txn_model->tare_weight;
                 $this->model->tare_weight_time = $txn_model->tare_weight_time;
                 $this->model->qty = number_format((float) $this->model->gross_weight - (float) $this->model->tare_weight, 2, '.', '');
-                $txn_model->tare_weight_time = date('Y-m-d').' '.$txn_model->tare_weight_time;
-                $txn_model->gross_weight_time =  date('Y-m-d').' '.$txn_model->gross_weight_time;
+                $txn_model->tare_weight_time = date('Y-m-d') . ' ' . $txn_model->tare_weight_time;
+                $txn_model->gross_weight_time = date('Y-m-d') . ' ' . $txn_model->gross_weight_time;
                 $modelSave[] = $this->model;
 
                 $txn_model->vehicle_entry_chamber_date = $this->model->vehicle_entry_date;
@@ -207,7 +207,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     if ($transaction == 'customRedirect') {
                         $response = Yii::$app->general->getColumnName($this->model->receipt_at);
                         $remarks = '';
-                        if(!empty($response['rel'])){
+                        if (!empty($response['rel'])) {
                             $destData = $this->model->{$response['rel'] . 'Dest'};
                             $remarks = $destData->{$response['ref_code']} . '-' . $destData->{$response['name']};
                         }
@@ -237,11 +237,19 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     }
 
     public function setCode($model) {
-        if (!empty($_SESSION['BMC'])) {
-            $bmcs = explode(',', $_SESSION['BMC']);
-            if (count($bmcs) == 1) {
-                $model->receipt_at = 'BMC';
-                $this->model->receipt_at_code = $bmcs[0];
+        if (!empty($_SESSION['UserType'])) {
+            if (($_SESSION['UserType'] == 6) && !empty($_SESSION['BMC'])) {
+                $bmcs = explode(',', $_SESSION['BMC']);
+                if (count($bmcs) == 1) {
+                    $model->receipt_at = 'BMC';
+                    $this->model->receipt_at_code = $bmcs[0];
+                }
+            } else if (($_SESSION['UserType'] == 4) && !empty($_SESSION['Plant'])) {
+                $plants = explode(',', $_SESSION['Plant']);
+                if (count($plants) == 1) {
+                    $model->receipt_at = 'PLANT';
+                    $model->receipt_at_code = $plants[0];
+                }
             }
         }
     }
@@ -583,12 +591,23 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $milkVehicleEntryQltyData = $milkVehicleEntryQlty->getMilkVehicleEntryQlty();
         if ($milkVehicleEntryQltyData['success']) {
             $response = ['status' => 'success', 'record_data' => $milkVehicleEntryQltyData['record_data']];
-        } else if($milkVehicleEntryQltyData['validation']) {
+        } else if ($milkVehicleEntryQltyData['validation']) {
             $response = ['status' => 'error', 'msg' => 'Quality not Done or exceeded time limit for selected trip.', 'validation' => TRUE];
         } else {
             $response = ['status' => 'error', 'validation' => FALSE];
         }
         return Json::encode($response);
+    }
+
+    public function actionVehicleTripDetail() {
+        $trip_code = $_REQUEST['trip_code'];
+        $tripDetailData = TblVehicleTripDetail::find()->select(['source_org_type', 'source_org_code'])
+                ->where(['trip_code' => $trip_code])->andWhere(['!=', 'is_last_destination', 1])
+                ->orderBy(['vehicle_trip_detail_code' => SORT_DESC])
+                ->one();
+        $record = ['status' => 'success', 'data' => $tripDetailData];
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }
