@@ -153,7 +153,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                             if (!empty($packet_config)) {
                                 if (!isset($packet_config['savelog'])) {
                                     try {
-                                        $data_array = self::PacketData($packet, $packet_config);
+                                        $data_array = $this->PacketData($packet, $packet_config);
                                         $model->attributes = $data_array;
                                         $model->dcs_code = $model->vlccid;
                                         $model->main_table = 1;
@@ -173,7 +173,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                                     }
                                 } else {
                                     unset($packet_config['savelog']);
-                                    $data_array = self::PacketData($packet, $packet_config);
+                                    $data_array = $this->PacketData($packet, $packet_config);
                                     $attributes = array_merge($attributes, $data_array);
                                     continue;
                                 }
