@@ -1285,7 +1285,7 @@ class DropDown extends Component {
             'bank_type' => [
                 'name' => 'bank_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
+                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC'), 'BOM' => Yii::t('app', 'BOM')],
                 'client_wise_rmv' => [
                     'ABT' => ['AU', 'Federal', 'IOB', 'NEFT']
                 ]
