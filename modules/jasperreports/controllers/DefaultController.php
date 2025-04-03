@@ -572,7 +572,8 @@ class DefaultController extends \app\controllers\ChildController {
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
                     header('Content-Description: File Transfer');
-                    header('Content-Disposition: attachment; filename=' . $this->report . '.' . $this->type);
+                    $filename = !empty($this->data['filename']) ? $this->data['filename'] : $this->report;
+                    header('Content-Disposition: attachment; filename=' . $filename . '.' . $this->type);
                     header('Content-Transfer-Encoding: binary');
                     header('Content-Length: ' . strlen($this->output));
                     header('Content-Type: application/' . $this->type);
@@ -1064,6 +1065,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPaymentVrs',
                 'title' => 'Member Payment',
                 'bkg_export' => TRUE,
+                'filename' => 'MemberPayment',
             ],
             'VspPaymentVrs' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',

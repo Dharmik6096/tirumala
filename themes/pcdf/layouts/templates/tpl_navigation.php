@@ -577,6 +577,7 @@ echo GhostMenu::widget([
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
+                    'visible' => TRUE,
                     'items' => [
                             [
                             'options' => ['class' => 'dropdown-submenu'],
@@ -742,6 +743,7 @@ echo GhostMenu::widget([
                             [
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Bills') . '<b class="caret"></b></a>',
+                            'visible' => TRUE,
                             'items' => [
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
