@@ -26,7 +26,6 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
 use yii\data\ArrayDataProvider;
 use app\modules\tankermovement\models\TblBmcDispatchInspection;
 use app\modules\tankermovement\models\TblPartyMaster;
-use app\modules\tankermovement\models\TblVehicleTripTracking;
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
@@ -79,7 +78,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($id = '') {
+    public function actionCreate($id = '', $tripGenerateBtn = FALSE) {
         $model = new TblBmcMilkDispatch();
         if ($id != '') {
             $model = $this->findModel($id);
@@ -143,13 +142,15 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $new_vehicle_trip_detail_code = $tripModel->vehicle_trip_code . 'T' . $updated_numeric_part;
 
                         $auto_trip_detail = new TblVehicleTripDetail();
+                        $auto_trip_detail->scenario = 'autoTrip';
                         $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
                         $auto_trip_detail->vehicle_trip_code = $tripModel->vehicle_trip_code;
                         $auto_trip_detail->vehicle_code = $tripModel->vehicle_code;
                         $auto_trip_detail->trip_code = $tripModel->trip_code;
                         $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-                        $auto_trip_detail->destination_code = $model->destination_code;
-                        $auto_trip_detail->destination_type = strtolower($model->destination_type);
+                        $auto_trip_detail->destination_code = $model->is_last_destination == 1 ? null : $model->destination_code;
+                        $auto_trip_detail->destination_type = $model->is_last_destination == 1 ? null : strtolower($model->destination_type);
+                        $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
                         $auto_trip_detail->source_org_code = $exist_auto_trip_detail->destination_code;
                         $auto_trip_detail->source_org_type = $exist_auto_trip_detail->destination_type;
                         $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
@@ -232,6 +233,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         return $this->render('create', [
                     'model' => $model,
                     'txn_model' => $txn_model,
+                    'tripGenerateBtn' => $tripGenerateBtn
         ]);
     }
 
@@ -654,6 +656,21 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         } else {
             $response = ['status' => 'error', 'msg' => 'Chamber Capacity Not Found'];
         }
+        return Json::encode($response);
+    }
+
+    public function actionVehicleTripDetail() {
+        $vehicleTripDetail = new TblVehicleTripDetail();
+        $vehicleTripDetail->trip_code = \Yii::$app->request->post()['trip_code'];
+        $vehicleTripDetail->source_org_code = \Yii::$app->request->post()['source_org_code'];
+        $vehicleTripDetail->source_org_type = \Yii::$app->request->post()['source_org_type'];
+        $data = $vehicleTripDetail->gettripDetails();
+        if(!empty($data)){
+            $response = ['status' => 'success', 'data' => $data] ;
+        } else {
+            $response = ['status' => 'error', 'data' => []];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
 

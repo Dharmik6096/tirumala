@@ -334,9 +334,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
                 $tripCode = isset($parents[3]) ? $parents[3] : '';
+                $type = isset($parents[4]) ? $parents[4] : '';
+                $tankerMovementWithTripSubStatus = isset($parents[5]) ? $parents[5] : '';
 
                 $trip = new TblVehicleTripDetail();
-                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);
+                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode, $type, $tankerMovementWithTripSubStatus);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
