@@ -15,6 +15,7 @@ use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
+use app\modules\tankermovement\models\TblVehicleTripDetailHistory;
 use app\modules\tankermovement\models\TblVehicleTripHistory;
 use app\modules\transporter\models\TblVehicleMaster;
 use yii\helpers\ArrayHelper;
@@ -443,4 +444,118 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function actionUpdate($id) {
+
+        $this->model = TblVehicleTrip::find()
+            ->with(['vehicleCode.transporter', 'vehicleTripDetailCode'])
+            ->where(['vehicle_trip_code' => $id])
+            ->one();
+
+        if (!empty($this->model)) {
+            $this->model->transporter_code = !empty($this->model->vehicleCode) ? $this->model->vehicleCode->transporter->transporter_code : '';
+        }
+
+
+        $type = Yii::$app->request->get('type');
+        $this->model->type = !empty($type) ? $type : 'normal';
+        $vehicleTripDetails = $this->model->vehicleTripDetailCode ?? [];
+        $sourceBmc = array_map(function($item) {
+            return ($item->source_org_type != 'bmc') ? $item->source_org_code . '#' . strtolower($item->source_org_type) : $item->source_org_code;
+        }, $vehicleTripDetails);
+
+        $destBmc = array_map(function($item) {
+            return ($item->destination_type != 'bmc') ? $item->destination_code . '#' . strtolower($item->destination_type) : $item->destination_code;
+        }, $vehicleTripDetails);
+        $this->model->bmc_code = array_values(array_unique(array_merge($sourceBmc, $destBmc)));
+        $saveModel = [];
+        $deleteModel = [];
+        $this->viewFile = 'update';
+
+        if (Yii::$app->request->post()) {
+            $this->model->load(Yii::$app->request->post());
+            if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
+                $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
+                $bmc_detail = explode(':::', $bmc_string);
+                unset($bmc_detail[count($bmc_detail) - 1]);
+                foreach ($bmc_detail as $k => $v) {
+                    $bmc_index = explode('~~~', $v);
+                    $bmc_array[$bmc_index[0]] = $bmc_index[1];
+                }
+                ksort($bmc_array);
+                $bmc_array_sort = [];
+                foreach ($bmc_array as $a) {
+                    $bmc_array_sort[] = $a;
+                }
+                $this->model->bmc_code = $bmc_array_sort;
+            } else {
+                $this->model->bmc_code = NULL;
+            }
+            $bmc_array = $this->model->bmc_code;
+            $validate = true;
+
+            if ($this->model->validate()) {
+                $deleteDetails = TblVehicleTripDetail::find()
+                    ->where(['trip_code' => $this->model->trip_code, 'arrival_time' => null, 'departure_time' => null])
+                    ->all();
+
+                if(!empty($deleteDetails)){
+                    foreach($deleteDetails as $delete){
+                        $historyModel = new TblVehicleTripDetailHistory();
+                        Yii::$app->operation->history($delete, $historyModel, DELETE);
+                        $saveModel[] = $historyModel;
+                        $deleteModel[] = $delete;
+                    }
+                }
+                $lastArrivalDetail = TblVehicleTripDetail::find()
+                    ->where(['trip_code' => $this->model->trip_code])
+                    ->andWhere(['departure_time' => null])
+                    ->andWhere(['is not', 'arrival_time', null])
+                    ->one();
+                $historyModel = new TblVehicleTripDetailHistory();
+                Yii::$app->operation->history($lastArrivalDetail, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+
+                foreach ($bmc_array as $key => $bmc) {
+                    $trip_detail =  new TblVehicleTripDetail();
+                    if ($key == count($bmc_array) - 1) {
+                        continue;
+                    }
+                    $sloc_detail = explode('#', $bmc);
+                    $dloc_detail = explode('#', $bmc_array[$key + 1]);
+                    if($key == 0){
+                        $lastArrivalDetail->destination_code = $sloc_detail[0];
+                        $lastArrivalDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                        $saveModel[] = $lastArrivalDetail;
+                    }
+                    $trip_detail->destination_code = $dloc_detail[0];
+                    $trip_detail->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
+                    $trip_detail->source_org_code = $sloc_detail[0];
+                    $trip_detail->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+            
+                    $trip_detail->originating_org_code = $this->model->union_code;
+                    $trip_detail->vehicle_trip_code = $this->model->vehicle_trip_code;
+                    $trip_detail->vehicle_code = $this->model->vehicle_code;
+                    $trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                    $trip_detail->trip_code = $this->model->trip_code;
+                    $trip_detail->vehicle_trip_detail_code = $trip_detail->vehicle_trip_code . 'T' . ($key + 2);
+                    $trip_detail->scenario = 'on_crete_trip';
+                    $saveModel[] = $trip_detail;
+                    if (!$trip_detail->validate()) {
+                        $validate = FALSE;
+                        $errors = $trip_detail->getErrors();
+                        if (isset($errors['destination_code'])) {
+                            $this->model->addError('bmc_code', $errors['destination_code'][0]);
+                        }
+                    }
+                }
+                if ($validate) {
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Dispatch Stock', 'edit']);
+                    if ($transaction !== FALSE) {
+                        return $this->{$transaction}();
+                    }
+                }
+            }
+        }
+        return $this->customRender();
+    }
 }

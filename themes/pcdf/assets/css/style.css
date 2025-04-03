@@ -6044,3 +6044,14 @@ tr.highlightRow {
 .collapsible-btn:hover {
     background-color: #00a3dee0;
 }
+
+.dispatch-box {
+    border: 1px solid #ccc;
+    padding: 0px 10px;
+    font-size: 11px;
+    line-height: 2;
+}
+
+.dispatch-box p {
+    margin: 0;
+}

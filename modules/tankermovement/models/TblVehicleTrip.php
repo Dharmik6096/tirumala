@@ -308,4 +308,12 @@ class TblVehicleTrip extends \app\models\ChildModel {
         }
     }
 
+    public function getVehicleTripDetailCode() {
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['arrival_time' => null]);
+    }
+
+    public function getTakenTripDetailCode() {
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null]);
+    }
+
 }
