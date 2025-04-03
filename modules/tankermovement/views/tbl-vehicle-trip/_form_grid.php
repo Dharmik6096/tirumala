@@ -115,7 +115,7 @@ $grid_option = [
     'actions' => [
         'view' => TRUE,
         'update' => function ($url, $model) {
-            $class = ($model->trip_status != 'closed' && $model->is_auto_trip == 0) ? '' : 'link-disable';
+            $class = ($model->trip_status != 'closed' && $model->is_auto_trip == 1) ? '' : 'link-disable';
             $options = [
                 'class' => 'edit-trip ' . $class,
                 'title' => Yii::t('app', 'Edit Trip Detail'),
