@@ -7,24 +7,27 @@ use yii\web\View;
 <div class="attachment">
     <h2 class="attachment_head">Attachments</h2>
     <div class="attachment_section">
-<?php if (!empty($attachments)): ?>
+        <?php if (!empty($attachments)): ?>
             <div id="image-gallery">
-            <?php foreach ($attachments as $attachment): ?>
+                <?php foreach ($attachments as $attachment): ?>
                     <?php
                     $attachmentPath = $attachment->attachment;
                     $extension = pathinfo($attachmentPath, PATHINFO_EXTENSION);
+                    $docName = Yii::$app->general->getforeignkey($attachment->docId, 'doc_name');
                     ?>
                     <?php if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])): ?>
-                        <div class="image_section">
-                            <img src="<?= $attachmentPath ?>" class="image-viewer" alt="Attachment" 
-                                 style="max-width:100%; height:auto; cursor:pointer;">
+                        <div class="inline_block">
+                            <p class="dashboard_filter_form"><?= $docName ?></p>
+                            <div class="image_section">
+                                <img src="<?= $attachmentPath ?>" class="image-viewer" alt="<?php echo $docName; ?>" style="max-width:100%; height:auto; cursor:pointer;">
+                            </div>
                         </div>
-        <?php else: ?>
+                    <?php else: ?>
                         <p>Attachment is not an image.</p>
                     <?php endif; ?>
                 <?php endforeach; ?>
             </div>
-            <?php else: ?>
+        <?php else: ?>
             <p>No Attachment</p>
         <?php endif; ?>
     </div>
@@ -50,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
             rotateRight: 1,
             flipHorizontal: 1,
             flipVertical: 1
-        },
+        },  
         hidden: function () {
             document.body.classList.remove('viewer-blur');
         },
