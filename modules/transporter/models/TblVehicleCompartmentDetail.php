@@ -84,7 +84,7 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
     }
 
     public function getChamberList() {
-        $compartmentNoCount = $this->find()->select('vehicle_code')->where(['vehicle_code' => $this->vehicle_code])->count();
+        $compartmentNoCount = $this->find()->select('vehicle_code')->where(['vehicle_code' => (int) $this->vehicle_code])->count();
         if ($compartmentNoCount > 0) {
             return ArrayHelper::map(array_map(function ($comp) {
                 return ['id' => $comp, 'value' => $comp];

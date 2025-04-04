@@ -55,7 +55,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['source_org_code', 'source_org_type'], 'required'],
-                [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out']],
+                [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out', 'autoTrip']],
                 [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks'], 'safe'],
                 [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination'], 'safe'],
                 [['travel_km', 'originating_type', 'is_active'], 'safe'],
@@ -197,7 +197,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return $sentbox;
     }
 
-    public function getOpenTripList($bmc_code, $vehicle_code, $transaction_date, $tripCode = '') {
+    public function getOpenTripList($bmc_code, $vehicle_code, $transaction_date, $tripCode = '', $type = '', $tankerMovementWithTripSubStatus = '') {
         $transaction_date = date('Y-m-d', strtotime($transaction_date));
         $query = TblVehicleTripDetail::find()
                 ->select(['tbl_vehicle_trip.trip_code'])
@@ -213,6 +213,11 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $to_date = !empty($tripCode) ? date('Y-m-d', strtotime($tripCode)) : $transaction_date;
             $query->andWhere(['>=', 'tbl_vehicle_trip.transaction_date', $transaction_date]);
             $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $to_date]);
+        } else if (!empty($type) && $tankerMovementWithTripSubStatus && $tripCode != 'alltrip'){
+            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open'],'tbl_vehicle_trip_detail.source_org_type' => $type,'tbl_vehicle_trip_detail.source_org_code' => $bmc_code])
+                    ->andWhere(['IS', 'departure_time', null])
+                    // ->andWhere(['IS NOT', 'arrival_time', null]);
+                    ->andWhere([$type == 'plant' ? 'IS' : 'IS NOT', 'arrival_time', null]);
         } else {
             if ($tripCode != 'alltrip') {
                 $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']]);
@@ -258,4 +263,16 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return ArrayHelper::map($data, 'trip_code', 'trip_code');
     }
 
+    public function gettripDetails() {
+        return $this->find()->alias('td')
+                    ->select(['td.destination_type','td.destination_code','t.is_auto_trip','td.is_last_destination'])
+                    ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
+                    ->where(['td.trip_code' => $this->trip_code,'td.source_org_type' => $this->source_org_type,'td.source_org_code' => $this->source_org_code])
+                    ->andWhere(['IS NOT', 'td.arrival_time', null])
+                    ->andWhere(['IS', 'td.departure_time', null])
+                    ->orderBy(['td.created_at' => SORT_ASC])
+                    ->asArray()
+                    ->one();
+    }
+    
 }

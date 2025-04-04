@@ -112,7 +112,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             'remarks' => Yii::t('app', 'Remarks'),
             'gross_weight' => Yii::t('app', 'Gross Wt.'),
             'tare_weight' => Yii::t('app', 'Tare Wt.'),
-            'is_last_destination' => Yii::t('app', 'Last Dest. ?'),
+            'is_last_destination' => Yii::t('app', 'Is Last Destination'),
             'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),

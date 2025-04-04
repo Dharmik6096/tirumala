@@ -9,6 +9,7 @@ use yii\widgets\MaskedInput;
 $disabled = empty($model->bmc_milk_dispatch_code) ? '' : 'disabled';
 $bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
 $readonly = empty($model->bmc_milk_dispatch_code) ? FALSE : TRUE;
+$tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -59,7 +60,9 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2 filldata">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
-                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
+                <?= Html::hiddenInput('type', 'bmc', ['id' => 'type']); ?>
+                <?= Html::hiddenInput('tankerMovementWithTripSubStatus', $tankerMovementWithTripSubStatus, ['id' => 'tankerMovementWithTripSubStatus']); ?>
+                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
             </div>
             <div id="addTripButtonDiv" class="col-sm-4 addTripButtonDiv">
                 <button id="addTripButton" class="btn btn-primary">Generate Trip</button>
@@ -76,10 +79,9 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
-            <!--        <div class="col-sm-2 mt15">
-            <?php //$form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();    
-            ?>
-                    </div>-->
+            <div class="col-sm-2 mt15" id="is-last-destination-container">
+                <?= $form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
             </div>
@@ -207,18 +209,19 @@ $form = ActiveForm::begin([
 </div>
 <div id='trip_auto_generate_data'></div>
 <?php
-$tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
 $script = "
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
+var tripGenerateBtn = `$tripGenerateBtn`;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
+    $('#is-last-destination-container').hide();
     $('#tblbmcmilkdispatch-trip_code').on('change',function() {
         $('#addTripButtonDiv').hide();
         var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
         var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
         var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
         if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
-            if (!tankerMovementWithTripSubStatus) {
+            if (!tankerMovementWithTripSubStatus || tripGenerateBtn) {
                 $('#addTripButtonDiv').show();   
             }
         } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
@@ -338,6 +341,37 @@ $(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-ve
             $('#tblbmcmilkdispatchtxn-dispatch_qty').val('');
         }             
     });
+
+$(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
+    var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
+    var trip_code = $('#tblbmcmilkdispatch-trip_code').val();     
+    var source_org_type = 'bmc';     
+    if(setData(trip_code) && setData(source_org_code)){
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['vehicle-trip-detail']) . "',
+            data: {'source_org_code' : source_org_code,'trip_code':trip_code,'source_org_type':source_org_type}, 
+            success: function(data) {
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success') {
+                    if (obj.data.is_auto_trip == 0 && obj.data.is_last_destination == 0) {
+                        var destType = obj.data.destination_type.toUpperCase();
+                        $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select').prop('disabled', true);
+                        $('#tblbmcmilkdispatch-destination_code').on('depdrop.afterChange', function() {
+                            setTimeout(function() {
+                                $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select').prop('disabled', true);
+                            }, 1000);
+                        });
+                    } else if (obj.data.is_auto_trip == 1) {
+                        $('#is-last-destination-container').show();
+                    } else {
+                        $('#is-last-destination-container').hide();
+                    }
+                }
+            }
+        });
+    }
+});
 
 function setData(field = ''){
     if(field != '' && field != null && field != undefined && field != 'Loading ...'){
