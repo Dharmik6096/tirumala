@@ -1,9 +1,16 @@
 <?php
 
 use yii\web\View;
+
+$this->registerCssFile(Yii::getAlias('@webroot') . '/themes/pcdf/assets/css/viewer.min.css', [
+    'depends' => [\yii\web\JqueryAsset::class],
+]);
+
+$this->registerJsFile(Yii::getAlias('@webroot') . '/themes/pcdf/assets/js/viewer.min.js', [
+    'depends' => [\yii\web\JqueryAsset::class],
+    'position' => \yii\web\View::POS_END,
+]);
 ?>
-<link rel = "stylesheet" href = "themes/pcdf/assets/css/viewer.min.css">
-<script src = "themes/pcdf/assets/js/viewer.min.js"></script>
 <div class="attachment">
     <h2 class="attachment_head">Attachments</h2>
     <div class="attachment_section">
