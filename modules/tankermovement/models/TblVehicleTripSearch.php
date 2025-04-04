@@ -19,7 +19,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no'], 'safe'],
+                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code'], 'safe'],
                 [['is_active'], 'integer'],
         ];
     }
@@ -77,6 +77,8 @@ class TblVehicleTripSearch extends TblVehicleTrip {
         $query->andFilterWhere(['=', 't.transaction_date', !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : NULL]);
         $query->andFilterWhere([
             't.is_active' => $this->is_active,
+            'tbl_transporter.transporter_code' => $this->transporter_code,
+            't.vehicle_code' => $this->vehicle_code,
         ]);
         $query->andFilterWhere(['like', 't.trip_code', $this->trip_code])
                 ->andFilterWhere(['like', 't.grn_no', $this->grn_no])

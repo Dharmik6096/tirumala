@@ -6,7 +6,8 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Tanker Milk Dispat
 
 $this->params['menu'][] = Yii::$app->controls->add('BMC Milk Dispatch');
 $this->params['menu'][] = Yii::$app->controls->add('PLANT Milk Dispatch', 'create-plant-dispatch');
-$this->params['menu'][] = Yii::$app->controls->add('Milk Transfer', ['/tankermovement/tbl-bmc-milk-dispatch/create', 'tripGenerateBtn' => TRUE]);
+$this->params['menu'][] = Yii::$app->controls->add('Milk Transfer(BMC)', ['/tankermovement/tbl-bmc-milk-dispatch/create', 'tripGenerateBtn' => TRUE]);
+$this->params['menu'][] = Yii::$app->controls->add('Milk Transfer(PLANT)', ['/tankermovement/tbl-bmc-milk-dispatch/create-plant-dispatch', 'tripGenerateBtn' => TRUE]);
 $this->params['menu'][] = GhostHtml::a('<i class="fa fa-pencil"></i>' . Yii::t('app', 'Edit Trip Detail'), ['/tankermovement/tbl-bmc-milk-dispatch/edit-trip-detail'], ['class' => 'btn btn-danger btn-block']);
 $this->params['menu'][] = Yii::$app->controls->import('bmc-disptach-trip-update', $this, 'Update Trip Code');
 ?>

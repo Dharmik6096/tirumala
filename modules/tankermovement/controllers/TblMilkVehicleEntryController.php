@@ -603,7 +603,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $trip_code = $_REQUEST['trip_code'];
         $tripDetailData = TblVehicleTripDetail::find()->select(['source_org_type', 'source_org_code'])
                 ->where(['trip_code' => $trip_code])->andWhere(['!=', 'is_last_destination', 1])
-                ->orderBy(['vehicle_trip_detail_code' => SORT_DESC])
+                ->orderBy(['created_at' => SORT_ASC])
                 ->one();
         $record = ['status' => 'success', 'data' => $tripDetailData];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);

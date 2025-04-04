@@ -221,7 +221,7 @@ $(document).ready(function(){
         var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
         var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
         if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
-            if (!tankerMovementWithTripSubStatus || tripGenerateBtn) {
+            if (tripGenerateBtn) {
                 $('#addTripButtonDiv').show();   
             }
         } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
@@ -345,21 +345,21 @@ $(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-ve
 $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
     var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
     var trip_code = $('#tblbmcmilkdispatch-trip_code').val();     
-    var source_org_type = 'bmc';     
+    var source_org_type = 'bmc';  
     if(setData(trip_code) && setData(source_org_code)){
         $.ajax({
             type: 'post',
             url: '" . Url::to(['vehicle-trip-detail']) . "',
-            data: {'source_org_code' : source_org_code,'trip_code':trip_code,'source_org_type':source_org_type}, 
+            data: {'source_org_code' : source_org_code,'trip_code':trip_code,'source_org_type':source_org_type,'tankerMovementWithTripSubStatus':tankerMovementWithTripSubStatus}, 
             success: function(data) {
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success') {
                     if (obj.data.is_auto_trip == 0 && obj.data.is_last_destination == 0) {
                         var destType = obj.data.destination_type.toUpperCase();
-                        $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select').prop('disabled', true);
+                        $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select').prop('disabled', tankerMovementWithTripSubStatus);
                         $('#tblbmcmilkdispatch-destination_code').on('depdrop.afterChange', function() {
                             setTimeout(function() {
-                                $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select').prop('disabled', true);
+                                $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select').prop('disabled', tankerMovementWithTripSubStatus);
                             }, 1000);
                         });
                     } else if (obj.data.is_auto_trip == 1) {

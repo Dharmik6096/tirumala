@@ -216,9 +216,8 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $to_date]);
         } else if (!empty($type) && $tankerMovementWithTripSubStatus && $tripCode != 'alltrip'){
             $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open'],'tbl_vehicle_trip_detail.source_org_type' => $type,'tbl_vehicle_trip_detail.source_org_code' => $bmc_code])
-                    ->andWhere(['IS', 'departure_time', null])
-                    // ->andWhere(['IS NOT', 'arrival_time', null]);
-                    ->andWhere([$type == 'plant' ? 'IS' : 'IS NOT', 'arrival_time', null]);
+                    ->andWhere(['IS NOT', 'arrival_time', null])
+                    ->andWhere(['IS', 'departure_time', null]);;
         } else {
             if ($tripCode != 'alltrip') {
                 $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']]);
@@ -264,14 +263,16 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return ArrayHelper::map($data, 'trip_code', 'trip_code');
     }
 
-    public function gettripDetails() {
-        return $this->find()->alias('td')
+    public function gettripDetails($tankerMovementWithTripSubStatus) {
+        $query = $this->find()->alias('td')
                     ->select(['td.destination_type','td.destination_code','t.is_auto_trip','td.is_last_destination'])
                     ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
-                    ->where(['td.trip_code' => $this->trip_code,'td.source_org_type' => $this->source_org_type,'td.source_org_code' => $this->source_org_code])
-                    ->andWhere(['IS NOT', 'td.arrival_time', null])
-                    ->andWhere(['IS', 'td.departure_time', null])
-                    ->orderBy(['td.created_at' => SORT_ASC])
+                    ->where(['td.trip_code' => $this->trip_code,'td.source_org_type' => $this->source_org_type,'td.source_org_code' => $this->source_org_code]);
+                    if($tankerMovementWithTripSubStatus){
+                        $query->andWhere(['IS NOT', 'td.arrival_time', null])
+                            ->andWhere(['IS', 'td.departure_time', null]);
+                    }
+                    $query->orderBy(['td.created_at' => SORT_ASC])
                     ->asArray()
                     ->one();
     }
