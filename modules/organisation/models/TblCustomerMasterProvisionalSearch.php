@@ -75,6 +75,12 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
         if (!$pending_approval) {
             $query->andFilterWhere(['tbl_customer_master_provisional.status' => $this->status]);
         }
+
+        $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'cast(tbl_customer_master_provisional.created_at as date)', $this->from_date]);
+
+        $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'cast(tbl_customer_master_provisional.created_at as date)', $this->to_date]);
         
         // grid filtering conditions
         $query->andFilterWhere([
