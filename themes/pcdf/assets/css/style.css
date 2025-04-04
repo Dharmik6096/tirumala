@@ -5893,7 +5893,7 @@ tr.highlightRow {
     border-radius: 5px;
     width: 200px;
     align-items: center;
-    display: flex;
+    display: inline-block;
 }
 .feedback_image{
     border: 1px solid #cfcfcf;

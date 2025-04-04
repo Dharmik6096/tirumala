@@ -86,30 +86,11 @@ $this->title = Yii::$app->label->title('view', 'VCG MRG Member');
                 'vAlign' => 'top',
             ]);
             ?>
-            <div class="attachment">
-                <h2 class="attachment_head">Attachments</h2>
-                <div class="attachment_section">
-                    <?php
-                    $attachments = $model->attachmentCode;
-                    if (!empty($attachments)) {
-                        foreach ($attachments as $attachment) {
-                            $attachmentPath = $attachment->attachment;
-                            $extension = pathinfo($attachmentPath, PATHINFO_EXTENSION);
-                            if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
-                                echo '<div class="image_section">' . Html::img($attachmentPath, [
-                                    'alt' => 'Attachment',
-                                    'style' => 'max-width:100%; height:auto;',
-                                ]) . '</div>';
-                            } else {
-                                echo 'Attachment is not an image.';
-                            }
-                        }
-                    } else {
-                        echo 'No Attachment';
-                    }
-                    ?>
-                </div>
-            </div>
         </div>
+        <?=
+        $this->render('..\..\..\document\views\tbl-attachment\_attachment.php', [
+            'attachments' => $attachments
+        ]);
+        ?>
     </div>
 </div>
