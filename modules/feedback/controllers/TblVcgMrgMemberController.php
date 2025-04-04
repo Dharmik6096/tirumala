@@ -9,6 +9,7 @@ use app\modules\feedback\models\TblVCGMRGMemberHistory;
 use app\modules\feedback\models\TblVCGMRGMemberSearch;
 use yii\web\NotFoundHttpException;
 use yii\base\Model;
+use app\modules\document\models\TblAttachment;
 
 /**
  * TblVcgMrgMemberController implements the CRUD actions for TblVCGMRGMember model.
@@ -48,8 +49,12 @@ class TblVcgMrgMemberController extends ChildController {
     }
 
     public function actionViewMember($id) {
+        $attachmentModel = new TblAttachment();
+        $attachmentModel->module_code = $id;
+        $attachments = $attachmentModel->attachmentCode;
         return $this->render('view_member', [
                     'model' => $this->findModel($id),
+                    'attachments' => $attachments
         ]);
     }
 
