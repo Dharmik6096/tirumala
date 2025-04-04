@@ -95,6 +95,7 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                     ],
                 ],
                 'TblBranch' => [
@@ -129,6 +130,30 @@ class CustomValidation extends Component {
                 'TblProductSaleRate' => [
                     'default' => [
                             [['rate_wharehouse'], 'required'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
@@ -196,6 +221,7 @@ class CustomValidation extends Component {
                         [['adhar_no'], function ($attribute, $params) {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
                         }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                        [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                 ],
                 'TblBranch' => [
                         [['hamlet_code', 'pincode'], 'required'],
@@ -267,6 +293,26 @@ class CustomValidation extends Component {
                         [['adhar_no'], function ($attribute, $params) {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
                         }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                        [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                            return ($model->is_verify == 1);
+                        }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                        [['adhar_no'], 'required', 'when' => function ($model) {
+                            return ($model->is_aadhar_verify == 1);
+                        }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                        [['mobile_no'], 'required', 'when' => function ($model) {
+                            return ($model->is_contact_verified == 1);
+                        }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                        [['email'], 'required', 'when' => function ($model) {
+                            return ($model->is_email_verify == 1);
+                        }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                 ],
                 'TblCustomerMaster' => [
                         [['aadhaar_no'], function ($attribute, $params) {
@@ -348,12 +394,37 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                     ]
                 ],
                 'BackGroundDataImport' => [],
                 'TblBankDetails' => [
                     'default' => [
                             [['bank_account_no'], 'CheckDuplicate'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
@@ -380,6 +451,31 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
@@ -406,6 +502,31 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
@@ -433,6 +554,31 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
@@ -497,6 +643,7 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                     ],
                 ],
                 'TblDcsProvisional' => [
@@ -518,6 +665,26 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ]
                 ],
             ],
@@ -550,6 +717,7 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                     ],
                 ],
                 'TblDcsProvisional' => [
@@ -571,6 +739,26 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ]
                 ],
             ],
@@ -587,6 +775,11 @@ class CustomValidation extends Component {
                             [['dcs_code_ex'], 'required'],
                     ],
                 ],
+                'TblMember' => [
+                    'default' => [
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
                 'TblMemberProvisional' => [
                     'default' => [
                             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
@@ -594,6 +787,26 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ]
                 ],
             ],
@@ -679,8 +892,42 @@ class CustomValidation extends Component {
                             }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                     ],
                 ],
+                'TblMember' => [
+                    'default' => [
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                    ],
+                ],
             ],
             'VRS_NEWASA' => [
+                'TblMember' => [
+                    'default' => [
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
                 'TblMemberProvisional' => [
                     'default' => [
                             [['adhar_no'], 'required'],
@@ -689,10 +936,35 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
             'VRS_GLT' => [
+                'TblMember' => [
+                    'default' => [
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
                 'TblMemberProvisional' => [
                     'default' => [
                             [['adhar_no'], 'required'],
@@ -701,10 +973,35 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
             'VRS_MLP' => [
+                'TblMember' => [
+                    'default' => [
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
                 'TblMemberProvisional' => [
                     'default' => [
                             [['adhar_no'], 'required'],
@@ -713,10 +1010,35 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
             'VRS_SBD' => [
+                'TblMember' => [
+                    'default' => [
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
                 'TblMemberProvisional' => [
                     'default' => [
                             [['adhar_no'], 'required'],
@@ -725,6 +1047,26 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
@@ -817,6 +1159,7 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                     ],
                 ],
                 'TblTransporter' => [
@@ -864,6 +1207,26 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
                 'TblCustomerMaster' => [
@@ -980,6 +1343,7 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                     ],
                 ],
                 'TblTransporter' => [
@@ -1027,6 +1391,26 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
                 'TblCustomerMaster' => [
@@ -1093,6 +1477,31 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
@@ -1114,6 +1523,31 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
                     ],
                 ],
             ],
@@ -1145,6 +1579,7 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                     ],
                 ],
                 'TblBranch' => [
@@ -1162,27 +1597,76 @@ class CustomValidation extends Component {
                 ],
                 'TblMemberProvisional' => [
                     'default' => [
-                        [['is_verify', 'is_aadhar_verify'], function ($attribute, $params, $validator) {
-                            if ($this->$attribute == 0) {
-                                $this->addError($attribute, $this->getAttributeLabel($attribute).' field must be checked.');
-                            }
-                        }, 'on' => ['update_provisional_member', 'createProvisionalMember']],
-                        [['is_operator_aggre'], function ($attribute, $params, $validator) {
-                            if ($this->$attribute == 0) {
-                                $this->addError($attribute, $this->getAttributeLabel($attribute).' field must be checked.');
-                            }
-                        }, 'on' => ['MemberDocument', 'MemberApprove']]
+                            [['is_verify', 'is_aadhar_verify'], function ($attribute, $params, $validator) {
+                                if ($this->$attribute == 0) {
+                                    $this->addError($attribute, $this->getAttributeLabel($attribute) . ' field must be checked.');
+                                }
+                            }, 'on' => ['update_provisional_member', 'createProvisionalMember']],
+                            [['is_operator_aggre'], function ($attribute, $params, $validator) {
+                                if ($this->$attribute == 0) {
+                                    $this->addError($attribute, $this->getAttributeLabel($attribute) . ' field must be checked.');
+                                }
+                            }, 'on' => ['MemberDocument', 'MemberApprove']],
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
                     ]
                 ],
             ],
             'DODLA' => [
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validVehicleNumber($this, $attribute, $params);
-                        }, 'except' => ['activation']],
-                        [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
-                        [['no_of_compartment'], 'required'],
+                            [['parsing_no'], function ($attribute, $params) {
+                                Yii::$app->general->validVehicleNumber($this, $attribute, $params);
+                            }, 'except' => ['activation']],
+                            [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
+                            [['no_of_compartment'], 'required'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['adhar_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_aadhar_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'required', 'when' => function ($model) {
+                                return ($model->is_contact_verified == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                            [['email'], 'required', 'when' => function ($model) {
+                                return ($model->is_email_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_email_verify').prop('checked') == true; 
+                             }", 'on' => ['createProvisionalMember']],
+                    ],
+                ],
+                'TblMember' => [
+                    'default' => [
+                            [['beneficiary_name'], 'required', 'on' => 'bank_selected'],
                     ],
                 ],
             ],
