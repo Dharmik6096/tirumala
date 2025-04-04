@@ -2,11 +2,11 @@
 
 use yii\web\View;
 
-$this->registerCssFile(Yii::getAlias('@web') . '/themes/pcdf/assets/css/viewer.min.css', [
+$this->registerCssFile(Yii::getAlias('@web') . '/themes/emilk/assets/css/viewer.min.css', [
     'depends' => [\yii\web\JqueryAsset::class],
 ]);
 
-$this->registerJsFile(Yii::getAlias('@web') . '/themes/pcdf/assets/js/viewer.min.js', [
+$this->registerJsFile(Yii::getAlias('@web') . '/themes/emilk/assets/js/viewer.min.js', [
     'depends' => [\yii\web\JqueryAsset::class],
     'position' => \yii\web\View::POS_END,
 ]);

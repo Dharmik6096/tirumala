@@ -5734,3 +5734,7 @@ h4{
 .step-content h5{
     margin-bottom: 5px;
 }
+
+.inline_block {
+    display: inline-block;
+}

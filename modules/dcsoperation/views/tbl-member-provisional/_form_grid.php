@@ -217,7 +217,7 @@ $grid_option = [
         },
         'delete' => ['option' => 'member_name,provisional_member_code,tbl-member-provisional/delete,checkDelete()'],
         'view_attachment' => function($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Attachment'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-bs-placement' => 'top', 'title' => 'View Attachment'];
             return Html::a('<i class="fa fa-paperclip"></i>', ['view-attachment', 'id' => $model->provisional_member_code], $options);
         },
     ]
