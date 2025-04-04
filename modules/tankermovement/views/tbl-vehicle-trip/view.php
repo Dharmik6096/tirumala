@@ -260,14 +260,16 @@ $is_button_visible = true;
                     ],
                     ['attribute' => 'out_remarks', 'label' => (Yii::t('app', 'GateOut Remarks')),],
                 ];
+                $cnt = 0;
                 $grid_option = [
                     'id' => 'trip-detail-list',
                     'attributes' => $attribute,
                     'active_column' => FALSE,
                     'default_sorting' => FALSE,
                     'actions' => [
-                        'gate-in' => function ($url, $model) use (&$is_button_visible) {
-                            if (substr($model->vehicle_trip_detail_code, -2) == 'T1') {
+                        'gate-in' => function ($url, $model, $key) use (&$is_button_visible, &$cnt) {
+                            if ($cnt == 0) {
+                                $cnt++;
                                 return '';
                             }
                             $class = 'link-disable';

@@ -93,7 +93,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
             $bmc_array = $this->model->bmc_code;
             $is_valid_trip = FALSE;
-            if (count($bmc_array) > 2 || $is_auto_trip) {
+            if (count($bmc_array) > 2) {
                 $sl_detail = explode('#', $bmc_array[0]);
                 $sl_code = $sl_detail[0];
                 $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
@@ -117,7 +117,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     }
                 }
             }
-            if (!$is_valid_trip) {
+            if (!$is_valid_trip && !$is_auto_trip) {
                 Yii::$app->getSession()->setFlash('success', [
                     'type' => 'error',
                     'message' => 'Vehicle Trip Must be Start and End at Plant.'
@@ -138,7 +138,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         }
                         foreach ($bmc_array as $key => $bmc) {
                             $trip_detai = new TblVehicleTripDetail();
-                            if ($key == 0 || ($is_auto_trip && $key == count($bmc_array) - 1)) {
+                            if ($key == 0) {
                                 continue;
                             }
                             $sloc_detail = explode('#', $bmc);
@@ -147,7 +147,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                 $trip_detai->destination_code = $dloc_detail[0];
                                 $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
                             } else {
-                                $trip_detai->is_last_destination = 1;
+                                if(!$is_auto_trip) {
+                                    $trip_detai->is_last_destination = 1;
+                                }
                             }
 
                             $trip_detai->source_org_code = $sloc_detail[0];
@@ -381,7 +383,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $remarks = $tripDetail->in_remarks;
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
-                if (substr($vehicle_trip_detail_code, -2) == 'T1' && !empty($tripDetail->departure_time)) {
+                if (empty($tripDetail->arrival_time) && !empty($tripDetail->departure_time)) {
                     $tripDetail->arrival_time = $tripDetail->departure_time;
                 }
                 $remarks = $tripDetail->out_remarks;
@@ -511,24 +513,30 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     ->andWhere(['departure_time' => null])
                     ->andWhere(['is not', 'arrival_time', null])
                     ->one();
-                $historyModel = new TblVehicleTripDetailHistory();
-                Yii::$app->operation->history($lastArrivalDetail, $historyModel, UPDATE);
-                $saveModel[] = $historyModel;
 
+                if(!empty($lastArrivalDetail)){
+                    $historyModel = new TblVehicleTripDetailHistory();
+                    Yii::$app->operation->history($lastArrivalDetail, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                }
+                $detailModel = new TblVehicleTripDetail();
+                $maxNumber = $detailModel->getMaxCode($this->model->vehicle_trip_code);
                 foreach ($bmc_array as $key => $bmc) {
                     $trip_detail =  new TblVehicleTripDetail();
-                    if ($key == count($bmc_array) - 1) {
-                        continue;
-                    }
+
                     $sloc_detail = explode('#', $bmc);
-                    $dloc_detail = explode('#', $bmc_array[$key + 1]);
-                    if($key == 0){
+                    if (!empty($bmc_array[$key + 1])) {
+                        $dloc_detail = explode('#', $bmc_array[$key + 1]);
+                        $trip_detail->destination_code = $dloc_detail[0];
+                        $trip_detail->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
+                    }
+
+                    if($key == 0 && !empty($lastArrivalDetail)){
                         $lastArrivalDetail->destination_code = $sloc_detail[0];
                         $lastArrivalDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
                         $saveModel[] = $lastArrivalDetail;
                     }
-                    $trip_detail->destination_code = $dloc_detail[0];
-                    $trip_detail->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
+
                     $trip_detail->source_org_code = $sloc_detail[0];
                     $trip_detail->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
             
@@ -537,7 +545,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $trip_detail->vehicle_code = $this->model->vehicle_code;
                     $trip_detail->transaction_datetime = date('Y-m-d H:i:s');
                     $trip_detail->trip_code = $this->model->trip_code;
-                    $trip_detail->vehicle_trip_detail_code = $trip_detail->vehicle_trip_code . 'T' . ($key + 2);
+                    $trip_detail->vehicle_trip_detail_code = $trip_detail->vehicle_trip_code . 'T' . $maxNumber;
                     $trip_detail->scenario = 'on_crete_trip';
                     $saveModel[] = $trip_detail;
                     if (!$trip_detail->validate()) {
@@ -547,6 +555,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             $this->model->addError('bmc_code', $errors['destination_code'][0]);
                         }
                     }
+                    $maxNumber++;
                 }
                 if ($validate) {
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Dispatch Stock', 'edit']);

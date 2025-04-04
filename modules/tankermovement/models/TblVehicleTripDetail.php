@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\syncutility\models\TblSentbox;
 use yii\base\UserException;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -273,6 +274,19 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                     ->orderBy(['td.created_at' => SORT_ASC])
                     ->asArray()
                     ->one();
+    }
+
+    public function getMaxCode($vehicleTripCode){
+        $prefixToRemove = $vehicleTripCode . 'T';
+        $prefixLength = strlen($prefixToRemove);
+        $maxCode = $this->find()
+            ->select([
+                'max_number' => new Expression("MAX(CAST(SUBSTRING(vehicle_trip_detail_code, {$prefixLength} + 1, LEN(vehicle_trip_detail_code)) AS INT))"),
+            ])
+            ->where(['like', 'vehicle_trip_detail_code', $prefixToRemove . '%', false])
+            ->andWhere(new Expression("LEN(vehicle_trip_detail_code) > {$prefixLength}"))
+            ->scalar();
+        return $maxCode + 1;
     }
     
 }

@@ -40,7 +40,7 @@ class TblVehicleTripDetailSearch extends TblVehicleTripDetail {
      */
     public function search($params) {
         $query = TblVehicleTripDetail::find()->where(['vehicle_trip_code' => $this->vehicle_trip_code]);
-        $query->orderBy(['vehicle_trip_detail_code' => SORT_ASC]);
+        $query->orderBy(['created_at' => SORT_ASC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
