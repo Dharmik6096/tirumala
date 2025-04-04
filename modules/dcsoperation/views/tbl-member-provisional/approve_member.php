@@ -99,7 +99,12 @@ $approval_detail = $member_provisional->memberPrivisionalApproval;
                         <thead>
                             <tr>
                                 <th width='60%'><?= Yii::t('app', 'Document Name') ?></th>
-                                <th width='40%'><?= Yii::t('app', '') ?></th>
+                                <td width='40%'>
+                                    <?php
+                                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View All Attachments', 'target' => '_blank'];
+                                    echo Html::a('<i class="fa fa-eye"></i>', ['view-attachment', 'id' => $model->memberProvisional->provisional_member_code], $options)
+                                    ?>
+                                </td>
                             </tr>
                         </thead>
                         <?php foreach ($documents as $doc) { ?>

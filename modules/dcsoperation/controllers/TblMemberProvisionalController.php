@@ -119,6 +119,16 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function actionViewAttachment($id) {
+        $attachmentModel = new TblAttachment();
+        $attachmentModel->module_code = $id;
+        $attachmentModel->module_name = 'tbl_member_provisional';
+        $attachments = $attachmentModel->attachmentCode;
+        return $this->render('view_attachment', [
+                    'attachments' => $attachments
+        ]);
+    }
+
     /**
      * Creates a new TblMemberProvisional model.
      * If creation is successful, the browser will be redirected to the 'view' page.

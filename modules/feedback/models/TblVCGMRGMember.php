@@ -116,9 +116,4 @@ class TblVCGMRGMember extends ChildModel {
         return $this->updateAll(['status' => $operation], ['VCG_MRG_member_id' => $codes]);
     }
 
-    public function getAttachmentCode() {
-        $this->VCG_MRG_member_id = (string) $this->VCG_MRG_member_id;
-        return $this->hasMany(TblAttachment::className(), ['module_code' => 'VCG_MRG_member_id']);
-    }
-
 }
