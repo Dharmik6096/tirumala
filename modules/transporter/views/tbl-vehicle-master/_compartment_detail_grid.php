@@ -6,7 +6,7 @@ $attribute = [
 ];
 
 $grid_option = [
-    'id' => 'plant-dock-list',
+    'id' => 'compartment-detail-list',
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [

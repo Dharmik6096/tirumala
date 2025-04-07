@@ -73,6 +73,9 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
+            <div class="col-sm-2 mt15" id="is-last-destination-container">
+                <?= $form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
             </div>
@@ -172,15 +175,17 @@ $form = ActiveForm::begin([
 <?php
 $script = "
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
+var tripGenerateBtn = `$tripGenerateBtn`;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
+    $('#is-last-destination-container').hide();
     $('#tblbmcmilkdispatch-trip_code').on('change',function() {
         $('#addTripButtonDiv').hide();
         var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
         var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
         var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
         if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
-            if (!tankerMovementWithTripSubStatus) {
+             if (tripGenerateBtn) {
                 $('#addTripButtonDiv').show();   
             } 
         } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
@@ -283,6 +288,10 @@ $(document).ready(function(){
                                     $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select').prop('disabled', true);
                                 }, 1000);
                             });
+                        } else if (obj.data.is_auto_trip == 1) {
+                            $('#is-last-destination-container').show();
+                        } else {
+                            $('#is-last-destination-container').hide();
                         }
                     }  
                 }

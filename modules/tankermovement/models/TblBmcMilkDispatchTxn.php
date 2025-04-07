@@ -243,7 +243,8 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 } else {
                     $flush_limit = (float) Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'bmc_dispatch_flush_limit',$this->bmc_code, 'BMC','BMC_DISPATCH_CONFIG');
                     $flush_limit = $flush_limit ?: 0; 
-                    $act_milk = ($this->opening_bal + $this->purchase_qty);
+                    $bmcDispatchFlushWithStock = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'bmc_dispatch_flush_with_stock', 'PORTAL') == 1 ? TRUE : FALSE;
+                    $act_milk = $bmcDispatchFlushWithStock ? ($this->opening_bal + $this->purchase_qty) : $this->purchase_qty;
                     $dispatch_milk = ($this->current_dispatch_qty + $this->dispatch_qty);
                     $allow_flush = ($act_milk * $flush_limit) / 100;
                     $total_flush = $this->balance_qty + $this->qty_diff;
@@ -280,6 +281,8 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             if ($totalDispatchQty > $capacityLimit) {
                 $this->addError('dispatch_qty', Yii::t('app/validation', "Total dispatched quantity exceeds allowed capacity of $capacityLimit."));
             }
+        } else {
+            $this->addError('dispatch_qty', Yii::t('app/validation', "Chamber Capacity Not Found"));
         }
     }
 
