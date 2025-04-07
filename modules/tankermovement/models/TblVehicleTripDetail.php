@@ -264,7 +264,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
     }
 
     public function getTripDetails($tankerMovementWithTripSubStatus) {
-        $query = $this->find()->alias('td')->select(['td.destination_type','td.destination_code','t.is_auto_trip','td.is_last_destination'])
+        $query = $this->find()->alias('td')->select(['td.destination_type','td.destination_code','t.is_auto_trip','td.is_last_destination', 'td.arrival_time'])
                     ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
                     ->where(['td.trip_code' => $this->trip_code,'td.source_org_type' => $this->source_org_type,'td.source_org_code' => $this->source_org_code]);
 
