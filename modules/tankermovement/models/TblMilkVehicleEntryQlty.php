@@ -137,8 +137,8 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getMilkVehicleEntryQlty() {
-        $plantLotCreationInterval = (int) Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'plant_lot_creation_interval', $this->plant_code, 'PLANT','PLANT_RECEIPT_CONFIG');
-        $plantLotCreationInterval = $plantLotCreationInterval ?: 0;
+        $plantLotCreationInterval = Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'plant_lot_creation_interval', $this->plant_code, 'PLANT','PLANT_RECEIPT_CONFIG');
+        $plantLotCreationInterval = is_numeric($plantLotCreationInterval) ? (int) $plantLotCreationInterval : 0;
         if ($plantLotCreationInterval > 0) {
             $records = $this->find()
                     ->where(['trip_code' => $this->trip_code, 'union_code' => $this->union_code])
