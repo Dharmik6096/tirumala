@@ -4,6 +4,8 @@ namespace app\modules\transporter\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\base\UserException;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_vehicle_compartment_detail".
@@ -39,7 +41,7 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vehicle_code', 'compartment_no', 'capacity', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['vehicle_code', 'compartment_no', 'capacity', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code'], 'safe'],
             [['vehicle_code'], 'required', 'on' => 'importCsv'],
             [['vehicle_code'], 'importData'],
             [['vehicle_code'], 'unique', 'targetAttribute' => ['vehicle_code', 'compartment_no'], 'message' => 'The combination of Vehicle Code and Compartment No has already been taken.'],
@@ -91,6 +93,32 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
             }, range(1, $compartmentNoCount)), 'id', 'value');
         }
         return [];
+    }
+
+    public function getVehicleCode() {
+        return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

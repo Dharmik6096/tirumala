@@ -14,7 +14,7 @@ class TblVehicleCompartmentDetailSearch extends TblVehicleCompartmentDetail {
      */
     public function rules() {
         return [
-                [['vehicle_code', 'compartment_no', 'capacity', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['vehicle_code', 'compartment_no', 'capacity', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code'], 'safe'],
         ];
     }
 

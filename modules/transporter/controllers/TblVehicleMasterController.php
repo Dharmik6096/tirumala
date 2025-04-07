@@ -276,6 +276,7 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $comp_detail_model->load(Yii::$app->request->post());
             $comp_detail_model->vehicle_code = $model->vehicle_code;
+            $comp_detail_model->union_code = $model->union_code;
             if ($comp_detail_model->validate() && empty($comp_detail_model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction([$comp_detail_model], ['Compartment', 'create']);
                 if ($transaction == 'customRedirect') {

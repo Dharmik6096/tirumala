@@ -600,11 +600,9 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     }
 
     public function actionVehicleTripDetail() {
-        $trip_code = $_REQUEST['trip_code'];
-        $tripDetailData = TblVehicleTripDetail::find()->select(['source_org_type', 'source_org_code'])
-                ->where(['trip_code' => $trip_code])->andWhere(['!=', 'is_last_destination', 1])
-                ->orderBy(['created_at' => SORT_ASC])
-                ->one();
+        $vehicleTripDetailModel = new TblVehicleTripDetail();
+        $vehicleTripDetailModel->trip_code = $_REQUEST['trip_code'];
+        $tripDetailData = $vehicleTripDetailModel->getLastTripData();
         $record = ['status' => 'success', 'data' => $tripDetailData];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
