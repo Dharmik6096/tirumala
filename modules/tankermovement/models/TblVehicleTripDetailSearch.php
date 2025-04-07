@@ -17,7 +17,7 @@ class TblVehicleTripDetailSearch extends TblVehicleTripDetail {
      */
     public function rules() {
         return [
-                [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'transaction_datetime', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'arrival_time', 'departure_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'transaction_datetime', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'arrival_time', 'departure_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'sequence_no'], 'safe'],
                 [['is_last_destination', 'originating_type'], 'integer'],
                 [['travel_km'], 'number'],
         ];
