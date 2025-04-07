@@ -602,7 +602,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionVehicleTripDetail() {
         $vehicleTripDetailModel = new TblVehicleTripDetail();
         $vehicleTripDetailModel->trip_code = $_REQUEST['trip_code'];
-        $tripDetailData = $vehicleTripDetailModel->getLastTripData();
+        $tripDetailData = $vehicleTripDetailModel->getTripData();
         $record = ['status' => 'success', 'data' => $tripDetailData];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);

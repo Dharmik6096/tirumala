@@ -292,7 +292,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return $maxCode + 1;
     }
 
-    public function getLastTripData() {
+    public function getTripData() {
         return $this->find()
             ->select(['source_org_type', 'source_org_code'])
             ->where(['trip_code' => $this->trip_code])->andWhere(['!=', 'is_last_destination', 1])

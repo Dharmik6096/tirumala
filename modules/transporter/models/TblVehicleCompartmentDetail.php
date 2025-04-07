@@ -95,10 +95,6 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
         return [];
     }
 
-    public function getVehicleCode() {
-        return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
-    }
-
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
