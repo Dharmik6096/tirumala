@@ -71,9 +71,6 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'vehicle_in_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'vehicle_out_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
-            </div>
-            <div class="col-sm-2">
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'destination_type'); ?>
             </div>
             <div class="col-sm-2">
@@ -367,6 +364,15 @@ $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip
                     } else {
                         $('#is-last-destination-container').hide();
                     }
+                    if (setData(obj.data.arrival_time)) {
+                        let arrivalTime = obj.data.arrival_time;
+                        let timeOnly = arrivalTime.slice(11, 16); 
+                        $('#tblbmcmilkdispatch-vehicle_in_time').val(timeOnly).prop('disabled', true);
+                    } else {
+                        $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('disabled', false);
+                    }
+                } else {
+                    $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('disabled', false);
                 }
             }
         });

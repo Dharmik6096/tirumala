@@ -186,14 +186,16 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $last_trip = TblVehicleTripDetail::find()
                     ->where(['vehicle_code' => $this->vehicle_code, 'trip_code' => $model->trip_code])
                     //->andWhere(['<=', 'CAST(transaction_datetime as date)', $this->transaction_date])
-                    ->orderBy(['transaction_datetime' => SORT_DESC])
+                    ->orderBy(['sequence_no' => SORT_DESC])
                     ->one();
             if (!empty($last_trip)) {
                 $trip_detai->source_org_code = $last_trip->destination_code;
                 $trip_detai->source_org_type = $last_trip->destination_type;
+                $trip_detai->sequence_no = $last_trip->sequence_no + 1;
             } else {
                 $trip_detai->source_org_code = $model->plant_code;
                 $trip_detai->source_org_type = 'plant';
+                $trip_detai->sequence_no = 1;
             }
             $trip_detai->originating_org_code = $this->union_code;
             $trip_detai->destination_code = !empty($this->fl_code) ? $this->fl_code : $this->bmc_code;
@@ -202,7 +204,8 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $trip_detai->vehicle_code = $model->vehicle_code;
             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
             $trip_detai->trip_code = $model->trip_code;
-            // $trip_detai->arrival_time = date('Y-m-d H:i:s');
+            $trip_detai->departure_time = date('Y-m-d H:i:s');
+            $trip_detai->arrival_time = date('Y-m-d H:i:s', strtotime($trip_detai->departure_time) - 1);
             if (empty($vehicle_trip_detail_code)) {
                 $vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . (((int) substr($last_trip->vehicle_trip_detail_code, strlen($trip_detai->vehicle_trip_code) + 1)) + 1);
             }
@@ -215,6 +218,25 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 }
             }
             $save_model[] = $trip_detai;
+
+            $numeric_part = intval(substr($trip_detai->vehicle_trip_detail_code, -1));
+            $updated_numeric_part = $numeric_part + 1;
+            $new_vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . $updated_numeric_part;
+            $auto_trip_detail = new TblVehicleTripDetail();
+            $auto_trip_detail->scenario = 'autoTrip';
+            $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
+            $auto_trip_detail->vehicle_trip_code = $trip_detai->vehicle_trip_code;
+            $auto_trip_detail->vehicle_code = $trip_detai->vehicle_code;
+            $auto_trip_detail->trip_code = $trip_detai->trip_code;
+            $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+            $auto_trip_detail->destination_code = NULL;
+            $auto_trip_detail->destination_type = NULL;
+            $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
+            $auto_trip_detail->source_org_code = $trip_detai->destination_code;
+            $auto_trip_detail->source_org_type = $trip_detai->destination_type;
+            $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
+            $auto_trip_detail->sequence_no = $trip_detai->sequence_no + 1;
+            $save_model[] = $auto_trip_detail;
         }
         $api_response = [];
         //if ($model->trip_mode == 'online') {

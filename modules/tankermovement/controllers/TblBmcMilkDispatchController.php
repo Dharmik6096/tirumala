@@ -26,6 +26,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
 use yii\data\ArrayDataProvider;
 use app\modules\tankermovement\models\TblBmcDispatchInspection;
 use app\modules\tankermovement\models\TblPartyMaster;
+use app\components\ActiveForm;  
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
@@ -119,7 +120,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $tripModel->trip_code = $model->trip_code;
                     $tripModel = $tripModel->getTripData();
                     if (!empty($tripModel)) {
-                        $tripModel->trip_status = 'open';
+                        $tripModel->trip_status = $model->is_last_destination == 1 ? 'tankerfull' : 'open';
                         $saveModel[] = $tripModel;
                     }
                     $tripModel->scenario = 'closetrip';
@@ -318,16 +319,21 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 $save_model[] = $config_model;
                 $cnt++;
             }
-            $transaction = $this->generalModel->saveTransaction($save_model, ['Trip', 'create']);
-            if ($transaction == 'customRedirect') {
-                $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                $record = ['status' => 'success', 'msg' => $msg];
+            if ($this->model->validate()) {
+                $transaction = $this->generalModel->saveTransaction($save_model, ['Trip', 'create']);
+                if ($transaction == 'customRedirect') {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode($record);
             } else {
-                $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                $record = ['status' => 'error', 'msg' => $msg];
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
             }
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return Json::encode($record);
         }
     }
 
@@ -567,12 +573,12 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model->driver_name = $model->vehicleCode->driver_name;
                     $model->driver_contact_no = $model->vehicleCode->driver_contact_no;
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;
-                    $model->vehicle_out_time = $model->transaction_date . ' ' . $model->vehicle_out_time;
+                    $model->vehicle_out_time = $model->transaction_date . ' ' . date('H:i:s');
                     $tripModel = new TblVehicleTrip();
                     $tripModel->trip_code = $model->trip_code;
                     $tripModel = $tripModel->getTripData();
                     if (!empty($tripModel)) {
-                        $tripModel->trip_status = 'open';
+                        $tripModel->trip_status = $model->is_last_destination == 1 ? 'tankerfull' : 'open';
                         $saveModel[] = $tripModel;
                     }
                     $tripModel->scenario = 'closetrip';
@@ -682,9 +688,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $tankerMovementWithTripSubStatus = \Yii::$app->request->post()['tankerMovementWithTripSubStatus'];
         $data = $vehicleTripDetail->getTripDetails($tankerMovementWithTripSubStatus);
         if(!empty($data)){
-            $response = ['status' => 'success', 'data' => $data] ;
+            $response = ['status' => 'success', 'data' => $data, 'currentTime' => date('H:i')] ;
         } else {
-            $response = ['status' => 'error', 'data' => []];
+            $response = ['status' => 'error', 'data' => [], 'currentTime' => date('H:i')];
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);

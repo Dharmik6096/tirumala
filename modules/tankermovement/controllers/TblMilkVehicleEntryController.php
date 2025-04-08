@@ -101,6 +101,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $modelSave = [];
         $txn_model = new TblMilkVehicleEntryTransaction();
+        $txn_model->gross_weight_time = date('H:i');
         $bmc_user = (!empty($_SESSION['BMC']) && count(explode(',', $_SESSION['BMC'])) == 1) ? 'BMC' : '';
         $this->setCode($this->model);
         if (Yii::$app->request->post()) {
