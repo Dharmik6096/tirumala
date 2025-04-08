@@ -38,12 +38,6 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
             </div>
-            <div class="col-sm-1">
-                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
-            </div>
             <div class="col-sm-2 ReceiptDatetime">
                 <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
@@ -61,6 +55,12 @@ $form = ActiveForm::begin([
                 <?= Html::hiddenInput('trip_type', 'receipt', ['id' => 'trip_type']); ?>
                 <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentry-vehicle_code,tblmilkvehicleentry-receipt_datetime,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
             </div>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+            </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?> 
             </div>
@@ -74,7 +74,7 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'qty')->textInput(['readonly' => 'readonly']) ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99','options' => ['readonly' => true]]); ?>
+                <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99', 'options' => ['readonly' => true]]); ?>
             </div>
         </div>
         <div class="col-lg-12">
@@ -133,9 +133,8 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
                     </div>
                     <div class="col-sm-1"> 
-                        <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
+                        <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblmilkvehicleentry-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
                     </div>
-
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'gross_weight')->textInput() ?>
                     </div>
@@ -148,7 +147,6 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1">
                         <?= $form->field($txn_model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
                     </div>
-
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'chamber_quantity')->textInput() ?>
                     </div>
@@ -297,6 +295,7 @@ endif;
 $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL') == 1 ? TRUE : FALSE;
 $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
 $script = "
+    var org_code = '';
     var qltyParamsReadOnly = false;
     $('#dispatch-detail').css('display', 'none');
     $('#milk-receipt-transaction').css('display', 'none');
@@ -448,7 +447,7 @@ $script = "
         } 
     });
     
-    
+
      $(document).on('change','.filldata', function() {
         var trip_code = $('#tblmilkvehicleentry-trip_code').val();
        if(setData(trip_code)){
@@ -470,7 +469,7 @@ $script = "
     }
     
  function BindData(trip_code){
-         $.ajax({
+        $.ajax({
                 type: 'get',
                 url: '" . Url::to(['dispatch-detail']) . "',
                 data: {'trip_code' : trip_code},             
@@ -497,7 +496,7 @@ $script = "
                     $('#transactions-from input').prop('readonly', true);                                                         
                   }
                 }
-            });           
+            });     
     }
     
     function GetVehicle(trip_code){
@@ -556,7 +555,7 @@ $script = "
                 });
     }
     
-
+    
     $(document).on('click','.edit-record',function(e){
         var id= $(this).attr('data-val');
         var name = $(this).attr('data-name');
@@ -617,8 +616,13 @@ $script = "
     $(document).on('change','#tblmilkvehicleentrytransaction-gross_weight,#tblmilkvehicleentrytransaction-tare_weight', function() {
         var gross_weight=$('#tblmilkvehicleentrytransaction-gross_weight').val() || 0;
         var tare_weight=$('#tblmilkvehicleentrytransaction-tare_weight').val() || 0;
-
         var qty = parseFloat(gross_weight) - parseFloat(tare_weight);
+        if (parseFloat(gross_weight) < parseFloat(tare_weight)) {
+            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>tare weight should not be more than gross weight</span></div></div>\");
+            $('#tblmilkvehicleentrytransaction-tare_weight').val('');
+            $('#tblmilkvehicleentrytransaction-chamber_quantity').val('');
+            return false;
+        }
         if (!isNaN(qty)) {
             qty = Math.max(0, qty);
         } else {
@@ -627,6 +631,43 @@ $script = "
         $('#tblmilkvehicleentrytransaction-chamber_quantity').val((qty).toFixed(2));
     });
     
+        function SourceData(trip_code){
+            $.ajax({
+                type: 'get',
+                url: '" . Url::to(['vehicle-trip-detail']) . "',
+                data: {'trip_code' : trip_code},             
+                success: function(data) {
+                   var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        var sourceOrgTypeUpper = '';
+                        if(obj.data != null && obj.data.source_org_type != '' && obj.data.source_org_type != null && obj.data.source_org_type != undefined){
+                            sourceOrgTypeUpper = obj.data.source_org_type.toUpperCase();
+                            org_code = obj.data.source_org_code;
+                        }
+                            $('#tblmilkvehicleentry-dispatch_from').val(sourceOrgTypeUpper);
+                            $('#tblmilkvehicleentry-dispatch_from').trigger('change');
+                            $('#tblmilkvehicleentry-dispatch_from').trigger('select2:select');
+                            var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
+                            if(dispatch_from != '') {
+                                $('#tblmilkvehicleentry-dispatch_from_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                                    setTimeout(function() {
+                                        $('#tblmilkvehicleentry-dispatch_from_code').val(org_code);
+                                        $('#tblmilkvehicleentry-dispatch_from_code').trigger('change');
+                                        $('#tblmilkvehicleentry-dispatch_from_code').trigger('select2:select');
+                                    }, 1000);
+                                });
+                            }
+                    }
+                },
+                  error: function(data) {  
+                }
+            });
+    }
+    $(document).on('change','#tblmilkvehicleentry-trip_code', function() {
+        var trip_code = $('#tblmilkvehicleentry-trip_code').val();
+        SourceData(trip_code);
+    });
+   
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

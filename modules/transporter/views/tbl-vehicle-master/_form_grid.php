@@ -60,10 +60,6 @@ $attribute = [
             return Yii::$app->general->getStaticDropdownVal('billing_method', $model, 'billing_method');
         },
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('billing_method', $searchModel, 'billing_method')],
-        ['attribute' => 'no_of_compartment',
-            'value' => function($model) {
-                return Yii::$app->general->getStaticDropdownVal('chamber_no', $model, 'no_of_compartment');
-            }],
 ];
 
 $grid_option = [
@@ -110,6 +106,10 @@ $grid_option = [
             $url = ['/transporter/tbl-vehicle-master/vehicle-document-upload', 'id' => $id];
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Document Upload', 'data-val' => $model->vehicle_code];
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
+        },
+        'compartment-detail' => function ($url, $model) {
+            $options = ['data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Compartment'];
+            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/transporter/tbl-vehicle-master/compartment-detail', 'id' => $model->vehicle_code], $options);
         },
     ]
 ];

@@ -3062,9 +3062,9 @@ div.crystalstyle {
     /* max-width: 280px !important; */
 }
 
-.panel .panel-body .multiple select {
+/*.panel .panel-body .multiple select {
     height: auto !important;
-}
+}*/
 
 .radio-list input[type="radio"] {
     height: 10px !important;
@@ -3370,7 +3370,7 @@ input[type="checkbox"] {
 }
 
 select[multiple] {
-    max-height: 77px !important;
+    /*max-height: 77px !important;*/
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 11px !important;
@@ -6031,3 +6031,27 @@ tr.highlightRow {
     margin-bottom: 5px;
 }
 
+.collapsible-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: none;
+    background-color: #00A3DE;
+    color: white;
+    font-size: 18px;
+    margin-right: 10px;
+}
+.collapsible-btn:hover {
+    background-color: #00a3dee0;
+}
+
+.dispatch-box {
+    border: 1px solid #ccc;
+    padding: 0px 10px;
+    font-size: 11px;
+    line-height: 2;
+}
+
+.dispatch-box p {
+    margin: 0;
+}

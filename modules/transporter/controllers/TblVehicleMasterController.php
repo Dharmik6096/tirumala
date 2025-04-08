@@ -14,13 +14,17 @@ use yii\web\Response;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblVehicleWiseQtyFlag;
 use app\modules\document\controllers\TblAttachmentController;
+use app\modules\transporter\models\TblVehicleCompartmentDetail;
+use app\modules\transporter\models\TblVehicleCompartmentDetailSearch;
+use app\modules\transporter\models\TblVehicleCompartmentDetailHistory;
+use yii\helpers\Url;
 
 /**
  * TblVehicleMasterController implements the CRUD actions for TblVehicleMaster model.
  */
 class TblVehicleMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['depend-vehicles'];
+    public $freeAccessActions = ['depend-vehicles', 'get-chamber-list'];
 
     /**
      * Lists all TblVehicleMaster models.
@@ -248,6 +252,74 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         $module_name = 'tbl_vehicle_master';
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('vehicle', $id, $model, $module_code, $module_name);
+    }
+
+    public function actionGetChamberList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $this->model = new TblVehicleCompartmentDetail();
+                $this->model->vehicle_code = $parents[0];
+                $data = $this->model->getChamberList();
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+            }
+        }
+        return Json::encode(['output' => $out, 'selected' => '']);
+    }
+
+    public function actionCompartmentDetail($id) {
+        $model = $this->findModel($id);
+        $comp_detail_model = new TblVehicleCompartmentDetail();
+        if (Yii::$app->request->post()) {
+            $comp_detail_model->load(Yii::$app->request->post());
+            $comp_detail_model->vehicle_code = $model->vehicle_code;
+            $comp_detail_model->union_code = $model->union_code;
+            if ($comp_detail_model->validate() && empty($comp_detail_model->getErrors())) {
+                $transaction = $this->generalModel->saveTransaction([$comp_detail_model], ['Compartment', 'create']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(Url::previous());
+                }
+            }
+        }
+        $detailsearchModel = new TblVehicleCompartmentDetailSearch();
+        $detailsearchModel->vehicle_code = $id;
+        $detaildataProvider = $detailsearchModel->search(Yii::$app->request->queryParams);
+        return Yii::$app->controller->render('compartment_detail', [
+                    'model' => $model,
+                    'comp_detail_model' => $comp_detail_model,
+                    'detailsearchModel' => $detailsearchModel,
+                    'detaildataProvider' => $detaildataProvider,
+        ]);
+    }
+
+    public function actionDeleteCompartment() {
+        $comp_detail_model = TblVehicleCompartmentDetail::find()->where(['vehicle_compartment_detail_code' => Yii::$app->request->post('id')])->one();
+        $deleteModel = [];
+        $saveModel = [];
+        $historyModel = new TblVehicleCompartmentDetailHistory();
+        Yii::$app->operation->history($comp_detail_model, $historyModel, DELETE);
+        $deleteModel[] = $comp_detail_model;
+        $saveModel[] = $historyModel;
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['', 'delete']);
+        if ($transaction == 'customRedirect') {
+            return $this->redirect(Url::previous());
+        }
+    }
+
+    public function actionGetVehicleTranspoter() {
+        $status = 'error';
+        $vehicleData = [];
+        $postData = Yii::$app->request->post();
+        if (!empty($postData['vehicle_code'])) {
+            $vehicleData = TblVehicleMaster::find()->select(['transporter_code'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $status = 'success';
+        }
+        $record = ['status' => $status, 'data' => $vehicleData];
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

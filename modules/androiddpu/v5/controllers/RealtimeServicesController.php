@@ -60,8 +60,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $type = $data['organization_type'];
                 if (strtoupper($type) == 'PLANT') {
                     $tripData = [];
-                    $tripList = new TblVehicleTripDetail();
-                    $tripList = $tripList->getOpenTripList('receipt', $content['vehicle_code'], $content['transaction_date']);
+                    $tripModel = new TblVehicleTripDetail();
+                    $tripList = $tripModel->getOpenTripList('receipt', $content['vehicle_code'], $content['transaction_date']);
                     foreach ($tripList as $k => $trip_code) {
                         $tripArray = [];
                         $tripArray['trip_code'] = $trip_code;
@@ -75,6 +75,15 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                         } else {
                             $tripArray['msg'] = '';
                         }
+                        $dispatchFrom = $dispatchFromCode = '';
+                        $tripModel->trip_code = $trip_code;
+                        $dispatch = $tripModel->getTripData();
+                        if (!empty($dispatch)) {
+                            $dispatchFrom = strtoupper($dispatch->source_org_type);
+                            $dispatchFromCode = $dispatch->source_org_code;
+                        }
+                        $tripArray['dispatchFrom'] = $dispatchFrom;
+                        $tripArray['dispatchFromCode'] = $dispatchFromCode;
                         $tripData[] = $tripArray;
                     }
                     $res_data = $tripData;

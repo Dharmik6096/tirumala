@@ -114,6 +114,25 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'view' => TRUE,
+        'update' => function ($url, $model) {
+            $class = ($model->trip_status != 'closed' && $model->is_auto_trip == 1) ? '' : 'link-disable';
+            $options = [
+                'class' => 'edit-trip ' . $class,
+                'title' => Yii::t('app', 'Edit Trip Detail'),
+                'data-toggle' => 'tooltip',
+                'data-placement' => 'top',
+            ];
+
+            $updatedUrl = Url::to(['/tankermovement/tbl-vehicle-trip/update', 'id' => $model->vehicle_trip_code]);
+            if ($model->trip_for == 'salesparty') {
+                $updatedUrl = Url::to([
+                    '/tankermovement/tbl-vehicle-trip/update',
+                    'id' => $model->vehicle_trip_code,
+                    'type' => 'party'
+                ]);
+            }
+            return Html::a('<i class="fa fa-pencil"></i>', $updatedUrl, $options);
+        },
         'generate-challan' => function ($url, $model) {
             $disable = ($model->trip_status == 'open') ? FALSE : TRUE;
             $disable = ($model->is_active == 1) ? $disable : TRUE;

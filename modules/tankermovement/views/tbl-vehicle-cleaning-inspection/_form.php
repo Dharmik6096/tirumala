@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use app\components\ActiveForm;
 use yii\web\View;
+use yii\helpers\Url;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -19,10 +20,10 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
     </div>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehiclecleaninginspection-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_code')); ?>
+        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
     </div>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehiclecleaninginspection-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehiclecleaninginspection-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_code')); ?>
     </div>
     <div class="col-sm-2">
         <?= Html::hiddenInput('trip_process', 'cleaning_inspection', ['id' => 'trip_process']); ?>
@@ -66,7 +67,12 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+<<<<<<< HEAD
 $(document).ready(function() {
+=======
+   $(document).ready(function() {
+    $('.field-tblvehiclecleaninginspection-transporter_code').addClass('disabled no_pointer');
+>>>>>>> origin/eipl_dev_a
     function setDefaultTripCode() {
         var tripDropdown = $('#tblvehiclecleaninginspection-trip_code');
         var options = tripDropdown.find('option');
@@ -76,11 +82,44 @@ $(document).ready(function() {
         }
     }
     $('#tblvehiclecleaninginspection-vehicle_code').on('change', function() {
+<<<<<<< HEAD
         $('#tblvehiclecleaninginspection-trip_code').on('depdrop:afterChange', function(event, id, value) {
+=======
+        var vehicle_code = $(this).val();
+        if(setData(vehicle_code)){
+            setTranspoter(vehicle_code);
+        }
+        $('#tblvehiclecleaninginspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
+>>>>>>> origin/eipl_dev_a
             setDefaultTripCode();
         });
     });
-  
+    
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    
+    function setTranspoter(vehicle_code){
+        if(vehicle_code != ''){
+            $.ajax({
+                type: 'post',
+                url: '" . Url::to(['/transporter/tbl-vehicle-master/get-vehicle-transpoter']) . "', 
+                data:{'vehicle_code':vehicle_code},
+                success: function(data) {
+                    var obj1 = $.parseJSON(data);
+                    if(obj1.status == 'success'){
+                        if(setData(obj1.data)){
+                            $('#tblvehiclecleaninginspection-transporter_code').val(obj1.data.transporter_code).trigger('change').trigger('select2:select');
+                        }
+                    }
+                }
+            });
+        }
+    }
 });
 
 ";

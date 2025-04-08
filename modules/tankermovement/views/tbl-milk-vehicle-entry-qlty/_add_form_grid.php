@@ -23,6 +23,8 @@ $attribute = [
         ['attribute' => 'status_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->status_datetime);
         }, 'filter' => false],
+        ['attribute' => 'acidity', 'filter' => false],
+        ['attribute' => 'mbrt', 'filter' => false],
         ['attribute' => 'fat', 'filter' => false],
         ['attribute' => 'snf', 'filter' => false],
         ['attribute' => 'clr', 'filter' => false],
@@ -31,9 +33,7 @@ $attribute = [
         ['attribute' => 'protein', 'filter' => false],
         ['attribute' => 'lactose', 'filter' => false],
         ['attribute' => 'freezing_point', 'filter' => false],
-        ['attribute' => 'mbrt', 'filter' => false],
         ['attribute' => 'temp', 'filter' => false],
-        ['attribute' => 'acidity', 'filter' => false],
 ];
 foreach ($config_list as $config) {
     $attribute[] = [

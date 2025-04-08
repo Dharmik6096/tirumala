@@ -1,15 +1,13 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'PLANT Milk Dispatch');
+$this->title = Yii::$app->label->title('create', 'Vehicle Trip');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
     <div class="panel-body">
         <?=
-        $this->render('_form_plant', [
+        $this->render('_update_form', [
             'model' => $model,
-            'txn_model' => $txn_model,
             'type' => 'create',
-            'tripGenerateBtn' => $tripGenerateBtn
         ])
         ?>
     </div>
