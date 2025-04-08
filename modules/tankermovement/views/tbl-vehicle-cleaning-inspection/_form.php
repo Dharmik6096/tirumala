@@ -67,12 +67,9 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-<<<<<<< HEAD
-$(document).ready(function() {
-=======
    $(document).ready(function() {
     $('.field-tblvehiclecleaninginspection-transporter_code').addClass('disabled no_pointer');
->>>>>>> origin/eipl_dev_a
+    
     function setDefaultTripCode() {
         var tripDropdown = $('#tblvehiclecleaninginspection-trip_code');
         var options = tripDropdown.find('option');
@@ -82,15 +79,11 @@ $(document).ready(function() {
         }
     }
     $('#tblvehiclecleaninginspection-vehicle_code').on('change', function() {
-<<<<<<< HEAD
-        $('#tblvehiclecleaninginspection-trip_code').on('depdrop:afterChange', function(event, id, value) {
-=======
         var vehicle_code = $(this).val();
         if(setData(vehicle_code)){
             setTranspoter(vehicle_code);
         }
         $('#tblvehiclecleaninginspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
->>>>>>> origin/eipl_dev_a
             setDefaultTripCode();
         });
     });

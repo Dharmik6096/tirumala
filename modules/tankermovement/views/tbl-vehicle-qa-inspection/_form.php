@@ -91,15 +91,11 @@ $script = "
         }
     }
     $('#tblvehicleqainspection-vehicle_code').on('change', function() {
-<<<<<<< HEAD
-        $('#tblvehicleqainspection-trip_code').on('depdrop:afterChange', function(event, id, value) {
-=======
         var vehicle_code = $(this).val();
         if(setData(vehicle_code)){
             setTranspoter(vehicle_code);
         }
         $('#tblvehicleqainspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
->>>>>>> origin/eipl_dev_a
             setDefaultTripCode();
          });
     });
