@@ -55,15 +55,17 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['source_org_code', 'source_org_type'], 'required'],
-                [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out', 'autoTrip']],
-                [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks'], 'safe'],
-                [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination', 'sequence_no'], 'safe'],
-                [['travel_km', 'originating_type', 'is_active'], 'safe'],
-                [['is_last_destination'], 'default', 'value' => 0],
-                [['is_active'], 'default', 'value' => 1],
-                [['arrival_time'], 'required', 'on' => ['gate-in']],
-                [['departure_time'], 'required', 'on' => ['gate-out']],
+            [['source_org_code', 'source_org_type'], 'required'],
+            [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out', 'autoTrip']],
+            [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks'], 'safe'],
+            [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination', 'sequence_no'], 'safe'],
+            [['travel_km', 'originating_type', 'is_active'], 'safe'],
+            [['is_last_destination'], 'default', 'value' => 0],
+            [['is_active'], 'default', 'value' => 1],
+            [['arrival_time'], 'required', 'on' => ['gate-in']],
+            [['departure_time'], 'required', 'on' => ['gate-out']],
+            [['arrival_time'], 'validateArrival'],
+            [['departure_time'], 'validateDeparture'],
                 //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }
@@ -214,10 +216,11 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $to_date = !empty($tripCode) ? date('Y-m-d', strtotime($tripCode)) : $transaction_date;
             $query->andWhere(['>=', 'tbl_vehicle_trip.transaction_date', $transaction_date]);
             $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $to_date]);
-        } else if (!empty($type) && $tankerMovementWithTripSubStatus && $tripCode != 'alltrip'){
-            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open'],'tbl_vehicle_trip_detail.source_org_type' => $type,'tbl_vehicle_trip_detail.source_org_code' => $bmc_code])
+        } else if (!empty($type) && $tankerMovementWithTripSubStatus && $tripCode != 'alltrip') {
+            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open'], 'tbl_vehicle_trip_detail.source_org_type' => $type, 'tbl_vehicle_trip_detail.source_org_code' => $bmc_code])
                     ->andWhere(['IS NOT', 'arrival_time', null])
-                    ->andWhere(['IS', 'departure_time', null]);;
+                    ->andWhere(['IS', 'departure_time', null]);
+            ;
         } else {
             if ($tripCode != 'alltrip') {
                 $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']]);
@@ -264,40 +267,56 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
     }
 
     public function getTripDetails($tankerMovementWithTripSubStatus) {
-        $query = $this->find()->alias('td')->select(['td.destination_type','td.destination_code','t.is_auto_trip','td.is_last_destination', 'td.arrival_time'])
-                    ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
-                    ->where(['td.trip_code' => $this->trip_code,'td.source_org_type' => $this->source_org_type,'td.source_org_code' => $this->source_org_code]);
+        $query = $this->find()->alias('td')->select(['td.destination_type', 'td.destination_code', 't.is_auto_trip', 'td.is_last_destination', 'td.arrival_time'])
+                ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
+                ->where(['td.trip_code' => $this->trip_code, 'td.source_org_type' => $this->source_org_type, 'td.source_org_code' => $this->source_org_code]);
 
         if ($tankerMovementWithTripSubStatus) {
             $query->andWhere(['IS NOT', 'td.arrival_time', null])
-                ->andWhere(['IS', 'td.departure_time', null]);
+                    ->andWhere(['IS', 'td.departure_time', null]);
         }
 
         return $query->orderBy(['td.sequence_no' => SORT_ASC])
-                    ->asArray()
-                    ->one();
+                        ->asArray()
+                        ->one();
     }
 
-
-    public function getMaxCode($vehicleTripCode){
+    public function getMaxCode($vehicleTripCode) {
         $prefixToRemove = $vehicleTripCode . 'T';
         $prefixLength = strlen($prefixToRemove);
         $maxCode = $this->find()
-            ->select([
-                'max_number' => new Expression("MAX(CAST(SUBSTRING(vehicle_trip_detail_code, {$prefixLength} + 1, LEN(vehicle_trip_detail_code)) AS INT))"),
-            ])
-            ->where(['like', 'vehicle_trip_detail_code', $prefixToRemove . '%', false])
-            ->andWhere(new Expression("LEN(vehicle_trip_detail_code) > {$prefixLength}"))
-            ->scalar();
+                ->select([
+                    'max_number' => new Expression("MAX(CAST(SUBSTRING(vehicle_trip_detail_code, {$prefixLength} + 1, LEN(vehicle_trip_detail_code)) AS INT))"),
+                ])
+                ->where(['like', 'vehicle_trip_detail_code', $prefixToRemove . '%', false])
+                ->andWhere(new Expression("LEN(vehicle_trip_detail_code) > {$prefixLength}"))
+                ->scalar();
         return $maxCode + 1;
     }
 
     public function getTripData() {
         return $this->find()
-            ->select(['source_org_type', 'source_org_code'])
-            ->where(['trip_code' => $this->trip_code])->andWhere(['!=', 'is_last_destination', 1])
-            ->orderBy(['sequence_no' => SORT_DESC])
-            ->one();
+                        ->select(['source_org_type', 'source_org_code'])
+                        ->where(['trip_code' => $this->trip_code])->andWhere(['!=', 'is_last_destination', 1])
+                        ->orderBy(['sequence_no' => SORT_DESC])
+                        ->one();
     }
-    
+
+    public function validateArrival($attribute, $params) {
+        $prevTrip = self::find()
+                ->where(['<', 'sequence_no', $this->sequence_no])
+                ->andWhere(['vehicle_trip_code' => $this->vehicle_trip_code])
+                ->orderBy(['sequence_no' => SORT_DESC])
+                ->one();
+        if ($prevTrip && !empty($prevTrip->departure_time) && strtotime($this->arrival_time) <= strtotime($prevTrip->departure_time)) {
+            $this->addError($attribute, 'Arrival time must be greater than previous departure time.');
+        }
+    }
+
+    public function validateDeparture($attribute, $params) {
+        if (!empty($this->arrival_time) && strtotime($this->departure_time) <= strtotime($this->arrival_time)) {
+            $this->addError($attribute, 'Departure time must be greater than Arrival time.');
+        }
+    }
+
 }

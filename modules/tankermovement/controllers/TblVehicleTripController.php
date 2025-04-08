@@ -387,7 +387,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
                 if (empty($tripDetail->arrival_time) && !empty($tripDetail->departure_time)) {
-                    $tripDetail->arrival_time = $tripDetail->departure_time;
+                    $tripDetail->arrival_time = date('Y-m-d H:i:s', strtotime($tripDetail->departure_time) - 1);
                 }
                 $remarks = $tripDetail->out_remarks;
                 $trip->trip_sub_status = 'gate_out';
