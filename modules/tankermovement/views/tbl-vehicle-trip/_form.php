@@ -10,12 +10,12 @@ $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(exp
 ?>
 <?php
 $form = ActiveForm::begin([
-    'id' => 'vehicle-trip-form',
-    'validateOnBlur' => FALSE,
-    'validateOnChange' => FALSE,
-    'enableClientValidation' => true,
-    'validateOnSubmit' => true,
-]);
+            'id' => 'vehicle-trip-form',
+            'validateOnBlur' => FALSE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
 
@@ -28,15 +28,16 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', FALSE, FALSE); ?>
     </div>
     <div class="col-sm-2">
-        <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletrip-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
+        <?php
+        if ($tankerMovementWithTripSubStatus) {
+            echo Yii::$app->dropdown->vehicleQaInspectionList($model, $form, 'tblvehicletrip-union_code', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE);
+        } else {
+            echo Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'));
+        }
+        ?>
     </div>
     <div class="col-sm-2">
-        <?php
-        if($tankerMovementWithTripSubStatus) {
-            echo Yii::$app->dropdown->vehicleQaInspectionList($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-transporter_code', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE);
-        } else {
-            echo Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletrip-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE);
-        } ?>
+        <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletrip-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'driver_name')->textInput() ?>
@@ -54,20 +55,20 @@ $form = ActiveForm::begin([
     <div class="col-sm-12 megaSizeDualList">
         <?php
         echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12'], 'labelOptions' => ['label' => Yii::t('app', 'PLANT/BMC*')]])
-            ->widget(DualListbox::className(), [
-                'items' => [],
-                'options' => [
-                    'multiple' => true,
-                    'size' => 20
-                ],
-                'clientOptions' => [
-                    'moveOnSelect' => FALSE,
-                    'selectedListLabel' => FALSE,
-                    'nonSelectedListLabel' => FALSE,
-                    'filterPlaceHolder' => '',
-                    'sortByInputOrder' => TRUE,
-                ],
-            ]);
+                ->widget(DualListbox::className(), [
+                    'items' => [],
+                    'options' => [
+                        'multiple' => true,
+                        'size' => 20
+                    ],
+                    'clientOptions' => [
+                        'moveOnSelect' => FALSE,
+                        'selectedListLabel' => FALSE,
+                        'nonSelectedListLabel' => FALSE,
+                        'filterPlaceHolder' => '',
+                        'sortByInputOrder' => TRUE,
+                    ],
+        ]);
         echo Html::hiddenInput('selected_bmc_seq', '', ['id' => 'selected_bmc_seq']);
         ?>
     </div>
@@ -85,6 +86,11 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
+    
+$(document).ready(function() {
+    $('.field-tblvehicletrip-transporter_code').addClass('disabled no_pointer');
+});
+
 $('#tblvehicletrip-plant_code').on('change',function(){
     var plant_code = $('#tblvehicletrip-plant_code').val(); 
     var union_code = $('#tblvehicletrip-union_code').val();
@@ -145,7 +151,7 @@ $('#vehicle-trip-form').submit(function(e) {
 });
 $('#tblvehicletrip-vehicle_code').on('change', function(){
     var vehicle_code = $(this).val();
-    if(vehicle_code != ''){
+     if(setData(vehicle_code)){
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-vehicle-detail']) . "',    
@@ -157,12 +163,21 @@ $('#tblvehicletrip-vehicle_code').on('change', function(){
                     if(response != '' && response != null){
                         $('#tblvehicletrip-driver_name').val(response.driver_name);
                         $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);
+                        $('#tblvehicletrip-transporter_code').val(response.transporter_code).trigger('change').trigger('select2:select');
                     }
                 }
             }
         });
     }
 });
+
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }
 ";
 $script .= "$('#tblvehicletrip-bmc_code').change(function () {
 var mccarray =  $('#tblvehicletrip-bmc_code option:selected');

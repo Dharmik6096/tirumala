@@ -123,7 +123,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     'message' => 'Vehicle Trip Must be Start and End at Plant.'
                 ]);
             }
-            if(empty($this->model->getErrors())){
+            if (empty($this->model->getErrors())) {
                 $this->model->trip_mode = 'offline';
                 $this->model->trip_for = ($type == 'party') ? 'salesparty' : 'bmcdispatch';
                 $this->model->trip_sub_status = 'generated';
@@ -148,7 +148,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                 $trip_detai->destination_code = $dloc_detail[0];
                                 $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
                             } else {
-                                if(!$is_auto_trip) {
+                                if (!$is_auto_trip) {
                                     $trip_detai->is_last_destination = 1;
                                 }
                             }
@@ -359,7 +359,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $vehicleData = [];
         $postData = Yii::$app->request->post();
         if (!empty($postData['vehicle_code'])) {
-            $vehicleData = TblVehicleMaster::find()->select(['driver_name', 'driver_contact_no'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $vehicleData = TblVehicleMaster::find()->select(['driver_name', 'driver_contact_no', 'transporter_code'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
             $status = 'success';
         }
         $record = ['status' => $status, 'data' => $vehicleData];
@@ -452,9 +452,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
 
         $this->model = TblVehicleTrip::find()
-            ->with(['vehicleCode.transporter', 'vehicleTripDetailCode'])
-            ->where(['vehicle_trip_code' => $id])
-            ->one();
+                ->with(['vehicleCode.transporter', 'vehicleTripDetailCode'])
+                ->where(['vehicle_trip_code' => $id])
+                ->one();
 
         if (!empty($this->model)) {
             $this->model->transporter_code = !empty($this->model->vehicleCode) ? $this->model->vehicleCode->transporter->transporter_code : '';
@@ -500,11 +500,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
             if ($this->model->validate()) {
                 $deleteDetails = TblVehicleTripDetail::find()
-                    ->where(['trip_code' => $this->model->trip_code, 'arrival_time' => null, 'departure_time' => null])
-                    ->all();
+                        ->where(['trip_code' => $this->model->trip_code, 'arrival_time' => null, 'departure_time' => null])
+                        ->all();
 
-                if(!empty($deleteDetails)){
-                    foreach($deleteDetails as $delete){
+                if (!empty($deleteDetails)) {
+                    foreach ($deleteDetails as $delete) {
                         $historyModel = new TblVehicleTripDetailHistory();
                         Yii::$app->operation->history($delete, $historyModel, DELETE);
                         $saveModel[] = $historyModel;
@@ -512,12 +512,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     }
                 }
                 $lastArrivalDetail = TblVehicleTripDetail::find()
-                    ->where(['trip_code' => $this->model->trip_code])
-                    ->andWhere(['departure_time' => null])
-                    ->andWhere(['is not', 'arrival_time', null])
-                    ->one();
+                        ->where(['trip_code' => $this->model->trip_code])
+                        ->andWhere(['departure_time' => null])
+                        ->andWhere(['is not', 'arrival_time', null])
+                        ->one();
 
-                if(!empty($lastArrivalDetail)){
+                if (!empty($lastArrivalDetail)) {
                     $historyModel = new TblVehicleTripDetailHistory();
                     Yii::$app->operation->history($lastArrivalDetail, $historyModel, UPDATE);
                     $saveModel[] = $historyModel;
@@ -525,11 +525,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 } else {
                     $lastDetail = TblVehicleTripDetail::find()
                             ->where(['trip_code' => $this->model->trip_code])
-                            ->andWhere(['is not','departure_time', null])
+                            ->andWhere(['is not', 'departure_time', null])
                             ->andWhere(['is not', 'arrival_time', null])
                             ->one();
-                    if(!empty($lastDetail)){
-                        $sequance_no = $lastDetail->sequance_no + 1;   
+                    if (!empty($lastDetail)) {
+                        $sequance_no = $lastDetail->sequance_no + 1;
                     } else {
                         $sequance_no = 1;
                     }
@@ -537,7 +537,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $detailModel = new TblVehicleTripDetail();
                 $maxNumber = $detailModel->getMaxCode($this->model->vehicle_trip_code);
                 foreach ($bmc_array as $key => $bmc) {
-                    $trip_detail =  new TblVehicleTripDetail();
+                    $trip_detail = new TblVehicleTripDetail();
 
                     $sloc_detail = explode('#', $bmc);
                     if (!empty($bmc_array[$key + 1])) {
@@ -546,7 +546,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $trip_detail->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
                     }
 
-                    if($key == 0 && !empty($lastArrivalDetail)){
+                    if ($key == 0 && !empty($lastArrivalDetail)) {
                         $lastArrivalDetail->destination_code = $sloc_detail[0];
                         $lastArrivalDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
                         $saveModel[] = $lastArrivalDetail;
@@ -554,7 +554,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
                     $trip_detail->source_org_code = $sloc_detail[0];
                     $trip_detail->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
-            
+
                     $trip_detail->originating_org_code = $this->model->union_code;
                     $trip_detail->vehicle_trip_code = $this->model->vehicle_trip_code;
                     $trip_detail->vehicle_code = $this->model->vehicle_code;
@@ -584,4 +584,5 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
         return $this->customRender();
     }
+
 }

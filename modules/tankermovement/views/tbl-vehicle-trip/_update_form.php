@@ -11,12 +11,12 @@ $readonly = TRUE;
 ?>
 <?php
 $form = ActiveForm::begin([
-    'id' => 'vehicle-trip-form',
-    'validateOnBlur' => FALSE,
-    'validateOnChange' => FALSE,
-    'enableClientValidation' => true,
-    'validateOnSubmit' => true,
-]);
+            'id' => 'vehicle-trip-form',
+            'validateOnBlur' => FALSE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
 
@@ -30,10 +30,10 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', FALSE, FALSE, $readonly); ?>
     </div>
     <div class="col-sm-2">
-        <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletrip-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter', '', $readonly); ?>
+        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
     </div>
     <div class="col-sm-2">
-        <?php echo Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletrip-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletrip-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter', '', $readonly); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'driver_name')->textInput(['readonly' => $readonly]) ?>
@@ -51,16 +51,17 @@ $form = ActiveForm::begin([
         <label class="control-label">Dispatch already taken</label>
         <div class="dispatch-box">
             <?php
-            if(!empty($model->takenTripDetailCode)) {
-                foreach($model->takenTripDetailCode as $key => $value) { 
+            if (!empty($model->takenTripDetailCode)) {
+                foreach ($model->takenTripDetailCode as $key => $value) {
                     $name = '';
                     $response = Yii::$app->general->getColumnName($value->source_org_type);
                     if (!empty($response['rel'])) {
                         $sourceData = $value->{$response['rel'] . 'Source'};
-                        $name = $sourceData->{$response['name']} . ' - '. $sourceData->{$response['ref_code']};
-                    } ?>
+                        $name = $sourceData->{$response['name']} . ' - ' . $sourceData->{$response['ref_code']};
+                    }
+                    ?>
                     <p><?php echo $name . ' - ' . strtoupper($value->source_org_type); ?></p>
-                <?php
+                    <?php
                 }
             }
             ?>
@@ -70,21 +71,21 @@ $form = ActiveForm::begin([
     <div class="col-sm-12 megaSizeDualList">
         <?php
         echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12'], 'labelOptions' => ['label' => Yii::t('app', 'PLANT/BMC*')]])
-            ->widget(DualListbox::className(), [
-                'items' => [],
-                'options' => [
-                    'multiple' => true,
-                    'size' => 20
-                ],
-                'clientOptions' => [
-                    'moveOnSelect' => FALSE,
-                    'selectedListLabel' => FALSE,
-                    'nonSelectedListLabel' => FALSE,
-                    'filterPlaceHolder' => '',
-                    'sortByInputOrder' => TRUE,
-                    'selected' => $model->bmc_code, 
-                ],
-            ]);
+                ->widget(DualListbox::className(), [
+                    'items' => [],
+                    'options' => [
+                        'multiple' => true,
+                        'size' => 20
+                    ],
+                    'clientOptions' => [
+                        'moveOnSelect' => FALSE,
+                        'selectedListLabel' => FALSE,
+                        'nonSelectedListLabel' => FALSE,
+                        'filterPlaceHolder' => '',
+                        'sortByInputOrder' => TRUE,
+                        'selected' => $model->bmc_code,
+                    ],
+        ]);
         echo Html::hiddenInput('selected_bmc_seq', '', ['id' => 'selected_bmc_seq']);
         ?>
     </div>
@@ -103,6 +104,10 @@ $form = ActiveForm::begin([
 $bmcArray = json_encode($model->bmc_code);
 $script = "
 var selectedBmcCodes = JSON.parse('$bmcArray');
+    
+$(document).ready(function() {
+    $('.field-tblvehicletrip-transporter_code').addClass('disabled no_pointer');
+});
 
 // Handle change event for plant code
 $('#tblvehicletrip-plant_code').on('change', function() {
@@ -169,7 +174,7 @@ $('#vehicle-trip-form').submit(function(e) {
 // Vehicle code change handling
 $('#tblvehicletrip-vehicle_code').on('change', function() {
     var vehicle_code = $(this).val();
-    if (vehicle_code != '') {
+    if(setData(vehicle_code)){
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-vehicle-detail']) . "',
@@ -181,6 +186,7 @@ $('#tblvehicletrip-vehicle_code').on('change', function() {
                     if (response) {
                         $('#tblvehicletrip-driver_name').val(response.driver_name);
                         $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);
+                        $('#tblvehicletrip-transporter_code').val(response.transporter_code).trigger('change').trigger('select2:select');
                     }
                 }
             }
@@ -188,6 +194,13 @@ $('#tblvehicletrip-vehicle_code').on('change', function() {
     }
 });
 
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }
 // Handle change event for the dual listbox (adjusting sort index on move)
 $('#tblvehicletrip-bmc_code').change(function() {
     var selectedOptions = $('#tblvehicletrip-bmc_code option:selected');

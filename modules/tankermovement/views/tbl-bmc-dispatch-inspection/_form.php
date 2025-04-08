@@ -8,7 +8,6 @@ use yii\helpers\Url;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -33,7 +32,7 @@ $form = ActiveForm::begin([
         </div>
     <?php endif; ?>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcdispatchinspection-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', TRUE); ?>
+        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), TRUE); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'inspection_date', '', TRUE, FALSE, TRUE); ?>
