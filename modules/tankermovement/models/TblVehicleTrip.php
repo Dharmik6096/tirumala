@@ -109,6 +109,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             'sub_status_time' => Yii::t('app', 'Sub Status Time'),
             'driver_name' => Yii::t('app', 'Driver Name'),
             'mobile_no' => Yii::t('app', 'Mobile No'),
+            'is_auto_trip' => Yii::t('app', 'Is Partial Trip?'),
         ];
     }
 

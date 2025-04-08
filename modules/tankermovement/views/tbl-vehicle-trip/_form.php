@@ -46,7 +46,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'mobile_no')->textInput() ?>
     </div>
     <div class="col-sm-2 mt10">
-        <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox()->label('Is Partial Trip?'); ?>
+          <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_auto_trip'); ?>
     </div>
     <div class="col-sm-6">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true); ?>

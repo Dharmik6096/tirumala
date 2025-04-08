@@ -71,7 +71,7 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2 mt15" id="is-last-destination-container">
-                <?= $form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_last_destination'); ?>
             </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
