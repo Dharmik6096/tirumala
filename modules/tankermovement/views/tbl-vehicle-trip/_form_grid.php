@@ -131,7 +131,7 @@ $grid_option = [
                     'type' => 'party'
                 ]);
             }
-            return Html::a('<i class="fa fa-pencil"></i>', $updatedUrl, $options);
+            return Html::a('<i class="fa fa-pencil-alt"></i>', $updatedUrl, $options);
         },
         'generate-challan' => function ($url, $model) {
             $disable = ($model->trip_status == 'open') ? FALSE : TRUE;
