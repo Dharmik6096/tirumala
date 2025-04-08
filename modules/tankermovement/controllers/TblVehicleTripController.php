@@ -129,6 +129,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $this->model->trip_sub_status = 'generated';
                 $this->model->sub_status_time = date('Y-m-d H:i:s');
                 if ($is_valid_trip) {
+                    $sequence_no = 1;
                     $result = $this->model->setModel();
                     if ($result[0]) {
                         $validate = TRUE;
@@ -136,12 +137,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         if (!empty($save_model) && $this->model->fl_type == 'plant') {
                             $save_model[0]->plant_code = $this->model->fl_code;
                         }
-                        $sequance_no = 1;
                         foreach ($bmc_array as $key => $bmc) {
                             $trip_detai = new TblVehicleTripDetail();
                             if ($key == 0) {
                                 continue;
                             }
+                            $sequence_no++;
                             $sloc_detail = explode('#', $bmc);
                             if (!empty($bmc_array[$key + 1])) {
                                 $dloc_detail = explode('#', $bmc_array[$key + 1]);
@@ -162,8 +163,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
                             $trip_detai->trip_code = $this->model->trip_code;
                             $trip_detai->vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . ($key + 2);
-                            $trip_detai->sequance_no = $sequance_no;
-                            $sequance_no++;
+                            $trip_detai->sequence_no = $sequence_no;
                             $trip_detai->scenario = 'on_crete_trip';
                             if (!$trip_detai->validate()) {
                                 $validate = FALSE;
@@ -521,7 +521,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $historyModel = new TblVehicleTripDetailHistory();
                     Yii::$app->operation->history($lastArrivalDetail, $historyModel, UPDATE);
                     $saveModel[] = $historyModel;
-                    $sequance_no = $lastArrivalDetail->sequance_no + 1;
+                    $sequence_no = $lastArrivalDetail->sequence_no + 1;
                 } else {
                     $lastDetail = TblVehicleTripDetail::find()
                             ->where(['trip_code' => $this->model->trip_code])
@@ -529,9 +529,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             ->andWhere(['is not', 'arrival_time', null])
                             ->one();
                     if (!empty($lastDetail)) {
-                        $sequance_no = $lastDetail->sequance_no + 1;
+                        $sequence_no = $lastDetail->sequence_no + 1;
                     } else {
-                        $sequance_no = 1;
+                        $sequence_no = 1;
                     }
                 }
                 $detailModel = new TblVehicleTripDetail();
@@ -561,8 +561,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $trip_detail->transaction_datetime = date('Y-m-d H:i:s');
                     $trip_detail->trip_code = $this->model->trip_code;
                     $trip_detail->vehicle_trip_detail_code = $trip_detail->vehicle_trip_code . 'T' . $maxNumber;
-                    $trip_detail->sequance_no = $sequance_no;
-                    $sequance_no++;
+                    $trip_detail->sequence_no = $sequence_no;
+                    $sequence_no++;
                     $trip_detail->scenario = 'on_crete_trip';
                     $saveModel[] = $trip_detail;
                     if (!$trip_detail->validate()) {
