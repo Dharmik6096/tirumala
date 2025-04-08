@@ -47,10 +47,10 @@ $this->title = Yii::t('app', $title);
                         $label = Yii::t('app', ucfirst($field));
                         ?>
                         <div class="col-sm-12 <?= $hiddenClass ?>">
-                            <button type="button" class="collapsible-btn" data-toggle="collapse" data-target="#<?= $collapseId ?>">
+                            <button type="button" class="collapsible-btn" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
                                 -
                             </button><label><?= $label ?></label>
-                            <div id="<?= $collapseId ?>" class="collapse in">
+                            <div id="<?= $collapseId ?>" class="collapse show">
                                 <?=
                                 $form->field($model, $field, [
                                     'options' => ['class' => 'form-group col-sm-12'],
@@ -374,7 +374,7 @@ function adjustDualListboxHeight(increase = false) {
 
     $(document).on('click', '.collapsible-btn', function() {
         let \$button = $(this);
-        let target = \$button.attr('data-target');
+        let target = \$button.attr('data-bs-target');
        $(target).off('shown.bs.collapse').on('shown.bs.collapse', function () {
         \$button.text('-');
         adjustDualListboxHeight(true);
