@@ -282,8 +282,11 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         // add conditions that should always apply here
 
         $query->joinWith(['mccPlantCode.plantCode']);
+        $flag = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL');
+        if (in_array($flag, [1, 2])) {
+            $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.bmc_code = tbl_bmc_collection.bmc_code and tbl_collection_data_alias.customer_code = tbl_bmc_collection.customer_code and tbl_collection_data_alias.customer_type = tbl_bmc_collection.customer_type and tbl_collection_data_alias.old_milk_type_code = tbl_bmc_collection.milk_type_code and tbl_collection_data_alias.old_milk_quality_type_code = tbl_bmc_collection.milk_quality_type_code and tbl_collection_data_alias.shift_code = tbl_bmc_collection.shift_code and tbl_collection_data_alias.date_time_of_collection = tbl_bmc_collection.date_time_of_collection and tbl_collection_data_alias.table_name = 'tbl_bmc_collection' and action_perform = 'DELETE'");
+        }
         $query->join('LEFT JOIN', 'tbl_mcc_shift_lock', 'tbl_mcc_shift_lock.mcc_plant_code = tbl_bmc_collection.mcc_plant_code and CAST(tbl_mcc_shift_lock.date_time_of_collection as date) = CAST(tbl_bmc_collection.date_time_of_collection as date) and tbl_mcc_shift_lock.shift_code = tbl_bmc_collection.shift_code and tbl_mcc_shift_lock.bmc_lock = 1');
-        $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.bmc_code = tbl_bmc_collection.bmc_code and tbl_collection_data_alias.customer_code = tbl_bmc_collection.customer_code and tbl_collection_data_alias.customer_type = tbl_bmc_collection.customer_type and tbl_collection_data_alias.old_milk_type_code = tbl_bmc_collection.milk_type_code and tbl_collection_data_alias.old_milk_quality_type_code = tbl_bmc_collection.milk_quality_type_code and tbl_collection_data_alias.shift_code = tbl_bmc_collection.shift_code and tbl_collection_data_alias.date_time_of_collection = tbl_bmc_collection.date_time_of_collection and tbl_collection_data_alias.table_name = 'tbl_bmc_collection' and action_perform = 'DELETE'");
 
         $query->andWhere([
             'tbl_bmc_collection.bmc_code' => $this->bmc_code]);
@@ -311,8 +314,9 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         }
 
         $query->andFilterWhere(['tbl_bmc_collection.dcs_code' => $this->dcs_code]);
-
-        $query->andWhere(['or', ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.customer_code', NULL], ['is', 'tbl_collection_data_alias.customer_type', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
+        if (in_array($flag, [1, 2])) {
+            $query->andWhere(['or', ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.customer_code', NULL], ['is', 'tbl_collection_data_alias.customer_type', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
+        }
 //        $query->andwhere(['tbl_collection_data_alias.action_perform' => 'DELETE', 'tbl_collection_data_alias.table_name' => 'collectionvillage']);
         $query->andWhere(['or', ['is', 'tbl_mcc_shift_lock.mcc_plant_code', NULL], ['is', 'tbl_mcc_shift_lock.shift_code', NULL], ['is', 'tbl_mcc_shift_lock.date_time_of_collection', NULL]]);
 

@@ -80,7 +80,7 @@ use app\modules\general\models\TblApprovalStagesDetail;
  */
 class TblMilkCollection extends \app\models\ChildModel {
 
-    public $collection_date, $member, $dcs_name, $org_type;
+    public $collection_date, $member, $dcs_name, $org_type, $collection_data_alias_code;
 
     /**
      * @inheritdoc
@@ -114,7 +114,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
             //[['sms_status'],'default','n'],
 //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long', 'is_sms_sent', 'dcs_name', 'org_type'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long', 'is_sms_sent', 'dcs_name', 'org_type', 'collection_data_alias_code'], 'safe'],
                 [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms', 'androidsync', 'androidsync_coll']],
                 [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync', 'importCsv', 'androidsync_coll']],
                 [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
@@ -175,6 +175,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create', 'ho_sync_update']],
                 [['rtpl'], 'validateRtpl', 'on' => ['ho_sync_create', 'ho_sync_update']],
+                [['member_code'], 'validateDelete', 'on' => ['ho_sync_delete']],
         ];
     }
 
@@ -1336,6 +1337,15 @@ class TblMilkCollection extends \app\models\ChildModel {
         $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($this->union_code, 'qty_wise_collection', 'VLC');
         if ($qtyWiseCollConfig != 1 && empty($this->rtpl)) {
             $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' can not blank.'));
+        }
+    }
+
+    public function validateDelete($attribute) {
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $ApprovalModel = new TblCollectionDataAlias();
+        $existTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection', 'milk_quality_type_code' => $this->milk_quality_type_code, 'action_perform' => 'DELETE'])->one();
+        if (($flag == 1 || $flag == 2) && !empty($existTableData)) {
+            $this->addError($attribute, "Record is Already Exist For Approval.");
         }
     }
 
