@@ -548,6 +548,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $model = $this->findModel($id);
         } else {
             $model->scenario = 'createPlantDispatch';
+            Yii::$app->general->setCode($model);
         }
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
