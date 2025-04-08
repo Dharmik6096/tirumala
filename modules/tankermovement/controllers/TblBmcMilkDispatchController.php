@@ -293,6 +293,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $this->model->trip_for = 'bmcdispatch';
             $this->model->is_active = '1';
             $this->model->is_auto_trip = '1';
+            $this->model->generateAutoTrip = TRUE;
             $result = $this->model->setModel();
             $save_model = $result[1];
 

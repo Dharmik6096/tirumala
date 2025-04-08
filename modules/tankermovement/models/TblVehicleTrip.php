@@ -42,6 +42,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
 
     public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $filter_plant_code;
     public $fl_type, $fl_code, $type;
+    public $generateAutoTrip = FALSE;
 
     /**
      * @inheritdoc
@@ -57,7 +58,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return [
                 [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
                 [['trip_for'], 'default', 'value' => 'bmcdispatch'],
                 [['trip_mode'], 'default', 'value' => 'online'],
@@ -204,8 +205,10 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $trip_detai->vehicle_code = $model->vehicle_code;
             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
             $trip_detai->trip_code = $model->trip_code;
-            $trip_detai->departure_time = date('Y-m-d H:i:s');
-            $trip_detai->arrival_time = date('Y-m-d H:i:s', strtotime($trip_detai->departure_time) - 1);
+            if($this->generateAutoTrip){
+                $trip_detai->departure_time = date('Y-m-d H:i:s');
+                $trip_detai->arrival_time = date('Y-m-d H:i:s', strtotime($trip_detai->departure_time) - 1);
+            }
             if (empty($vehicle_trip_detail_code)) {
                 $vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . (((int) substr($last_trip->vehicle_trip_detail_code, strlen($trip_detai->vehicle_trip_code) + 1)) + 1);
             }
@@ -218,25 +221,26 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 }
             }
             $save_model[] = $trip_detai;
-
-            $numeric_part = intval(substr($trip_detai->vehicle_trip_detail_code, -1));
-            $updated_numeric_part = $numeric_part + 1;
-            $new_vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . $updated_numeric_part;
-            $auto_trip_detail = new TblVehicleTripDetail();
-            $auto_trip_detail->scenario = 'autoTrip';
-            $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
-            $auto_trip_detail->vehicle_trip_code = $trip_detai->vehicle_trip_code;
-            $auto_trip_detail->vehicle_code = $trip_detai->vehicle_code;
-            $auto_trip_detail->trip_code = $trip_detai->trip_code;
-            $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-            $auto_trip_detail->destination_code = NULL;
-            $auto_trip_detail->destination_type = NULL;
-            $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
-            $auto_trip_detail->source_org_code = $trip_detai->destination_code;
-            $auto_trip_detail->source_org_type = $trip_detai->destination_type;
-            $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
-            $auto_trip_detail->sequence_no = $trip_detai->sequence_no + 1;
-            $save_model[] = $auto_trip_detail;
+            if($this->generateAutoTrip){
+                $numeric_part = intval(substr($trip_detai->vehicle_trip_detail_code, -1));
+                $updated_numeric_part = $numeric_part + 1;
+                $new_vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . $updated_numeric_part;
+                $auto_trip_detail = new TblVehicleTripDetail();
+                $auto_trip_detail->scenario = 'autoTrip';
+                $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
+                $auto_trip_detail->vehicle_trip_code = $trip_detai->vehicle_trip_code;
+                $auto_trip_detail->vehicle_code = $trip_detai->vehicle_code;
+                $auto_trip_detail->trip_code = $trip_detai->trip_code;
+                $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                $auto_trip_detail->destination_code = NULL;
+                $auto_trip_detail->destination_type = NULL;
+                $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
+                $auto_trip_detail->source_org_code = $trip_detai->destination_code;
+                $auto_trip_detail->source_org_type = $trip_detai->destination_type;
+                $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
+                $auto_trip_detail->sequence_no = $trip_detai->sequence_no + 1;
+                $save_model[] = $auto_trip_detail;
+            }
         }
         $api_response = [];
         //if ($model->trip_mode == 'online') {
