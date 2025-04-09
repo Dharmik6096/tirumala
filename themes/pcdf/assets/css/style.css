@@ -6069,3 +6069,7 @@ tr.highlightRow {
     width: fit-content;
     box-shadow: inset 0px 2px 3px 0px rgba(208, 206, 206, 0.69);
 }
+
+.mt-2 {
+    margin-top: 12px;
+}

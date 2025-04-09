@@ -194,14 +194,17 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                     $sourceData = $save_model[1]->{$response['rel'] . 'Source'};
                                     $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
                                 }
-                                $tripModel = clone $save_model[0];
-                                if (!empty($qaRecords)) {
-                                    $tripModel->sub_status_time = $qaRecords[0]->transaction_datetime;
-                                    $tripModel->trip_sub_status = 'quality_checked';
-                                }
-                                Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
-                                Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
                                 $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
+                                if ($tankerMovementWithTripSubStatus) {
+                                    $tripModel = clone $save_model[0];
+                                    if (!empty($qaRecords)) {
+                                        $tripModel->sub_status_time = $qaRecords[0]->transaction_datetime;
+                                        $tripModel->trip_sub_status = 'quality_checked';
+                                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                                    }
+                                }
+                                Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
+
                                 if (!$tankerMovementWithTripSubStatus && $result[2]['inspection_require']) {
                                     return $this->redirect([
                                                 '/tankermovement/tbl-bmc-dispatch-inspection/create',
