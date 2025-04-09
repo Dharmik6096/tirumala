@@ -4,19 +4,20 @@ use yii\helpers\Html;
 use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
-use softark\duallistbox\DualListbox;
+use yii\widgets\ListView;
+use yii\jui\Sortable;
 
 $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL');
 $readonly = TRUE;
 ?>
 <?php
 $form = ActiveForm::begin([
-            'id' => 'vehicle-trip-form',
-            'validateOnBlur' => FALSE,
-            'validateOnChange' => FALSE,
-            'enableClientValidation' => true,
-            'validateOnSubmit' => true,
-        ]);
+    'id' => 'vehicle-trip-form',
+    'validateOnBlur' => FALSE,
+    'validateOnChange' => FALSE,
+    'enableClientValidation' => true,
+    'validateOnSubmit' => true,
+]);
 ?>
 <?php echo $form->errorSummary($model); ?>
 
@@ -30,7 +31,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', FALSE, FALSE, $readonly); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
+        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
     </div>
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletrip-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter', '', $readonly); ?>
@@ -51,44 +52,66 @@ $form = ActiveForm::begin([
         <label class="control-label">Dispatch already taken</label>
         <div class="dispatch-box">
             <?php
-            if (!empty($model->takenTripDetailCode)) {
-                foreach ($model->takenTripDetailCode as $key => $value) {
+            if(!empty($model->takenTripDetailCode)) {
+                foreach($model->takenTripDetailCode as $key => $value) { 
                     $name = '';
                     $response = Yii::$app->general->getColumnName($value->source_org_type);
                     if (!empty($response['rel'])) {
                         $sourceData = $value->{$response['rel'] . 'Source'};
-                        $name = $sourceData->{$response['name']} . ' - ' . $sourceData->{$response['ref_code']};
-                    }
-                    ?>
+                        $name = $sourceData->{$response['name']} . ' - '. $sourceData->{$response['ref_code']};
+                    } ?>
                     <p><?php echo $name . ' - ' . strtoupper($value->source_org_type); ?></p>
-                    <?php
+                <?php
                 }
             }
             ?>
         </div>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-12 megaSizeDualList">
-        <?php
-        echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12'], 'labelOptions' => ['label' => Yii::t('app', 'PLANT/BMC*')]])
-                ->widget(DualListbox::className(), [
-                    'items' => [],
-                    'options' => [
-                        'multiple' => true,
-                        'size' => 20
-                    ],
-                    'clientOptions' => [
-                        'moveOnSelect' => FALSE,
-                        'selectedListLabel' => FALSE,
-                        'nonSelectedListLabel' => FALSE,
-                        'filterPlaceHolder' => '',
-                        'sortByInputOrder' => TRUE,
-                        'selected' => $model->bmc_code,
-                    ],
-        ]);
-        echo Html::hiddenInput('selected_bmc_seq', '', ['id' => 'selected_bmc_seq']);
-        ?>
+
+    <div class="col-sm-6">
+        <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?></label>
+        <div class="well box-well">
+            <?= Sortable::widget([
+                'id' => 'available-bmc-list',
+                'items' => [],
+                'options' => ['class' => 'list-group', 'style' => 'min-height: 370px;'],
+                'itemOptions' => ['class' => 'list-group-item'],
+                'clientOptions' => [
+                    'connectWith' => '#selected-bmc-list',
+                    'update' => new \yii\web\JsExpression(
+                        'function(event, ui) {
+                            updateSelectedBmcCodes();
+                        }'
+                    ),
+                ],
+            ]); ?>
+        </div>
     </div>
+    <div class="col-sm-6">
+        <label class="control-label"></label>
+        <div class="well box-well">
+            <?= Sortable::widget([
+                'id' => 'selected-bmc-list',
+                'items' => $model->bmc_code ? array_map(function($code) {
+                    return "<li class='list-group-item' data-code='{$code}'>" . Html::encode($code) . "</li>";
+                }, $model->bmc_code) : [],
+                'options' => ['class' => 'list-group', 'style' => 'min-height: 370px;'],
+                'itemOptions' => ['class' => 'list-group-item'],
+                'clientOptions' => [
+                    'connectWith' => '#available-bmc-list',
+                    'update' => new \yii\web\JsExpression(
+                        'function(event, ui) {
+                            updateSelectedBmcCodes();
+                        }'
+                    ),
+                ],
+            ]); ?>
+            <div id="bmc-code-container"></div>
+            <?= Html::hiddenInput('selected_bmc_seq', '', ['id' => 'selected_bmc_seq']); ?>
+        </div>
+    </div>
+
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -103,78 +126,69 @@ $form = ActiveForm::begin([
 <?php
 $bmcArray = json_encode($model->bmc_code);
 $script = "
-var selectedBmcCodes = JSON.parse('$bmcArray');
-    
+var selectedBmcCodesInitial = $bmcArray;
 $(document).ready(function() {
     $('.field-tblvehicletrip-transporter_code').addClass('disabled no_pointer');
+    $('#tblvehicletrip-vehicle_code').trigger('change');
 });
+function updateSelectedBmcCodes() {
+    var selectedCodes = $('#selected-bmc-list li').map(function() {
+        return $(this).data('code');
+    }).get();
+    $('#bmc-code-container').empty();
+    $.each(selectedCodes, function(index, code) {
+        $('#bmc-code-container').append('<input type=\"hidden\" name=\"TblVehicleTrip[bmc_code][]\" value=\"' + code + '\">');
+    });
+    var selectedBmcSeq = selectedCodes.map((code, index) => index + '~~~' + code).join(':::');
+    $('#selected_bmc_seq').val(selectedBmcSeq);
+}
 
-// Handle change event for plant code
+function populateBmcLists(data) {
+    $('#available-bmc-list').empty();
+    $('#selected-bmc-list').empty();
+    var selectedBmcSet = new Set(selectedBmcCodesInitial);    
+    $.each(data, function(code, name) {
+        var listItem = '<li class=\"list-group-item\" data-code=\"' + code + '\">' + name + '</li>';
+        if (selectedBmcSet.has(code)) {
+            $('#selected-bmc-list').append(listItem);
+        } else {
+            $('#available-bmc-list').append(listItem);
+        }
+    });
+    updateHiddenInputs();
+}
+
+function updateHiddenInputs() {
+    var currentSelectedCodes = $('#selected-bmc-list li').map(function() {
+        return $(this).data('code');
+    }).get();
+    $('#tblvehicletrip-bmc_code').val(currentSelectedCodes.join(','));
+    $('#selected_bmc_seq').val(currentSelectedCodes.join(':::'));
+}
+
 $('#tblvehicletrip-plant_code').on('change', function() {
     var plant_code = $(this).val();
     var union_code = $('#tblvehicletrip-union_code').val();
     var action_type = $('#type').val();
-
     $.ajax({
         type: 'post',
         url: '" . Url::to(['/organisation/tbl-dcs-bmc/get-plant-bmc-with-party']) . "',
         data: 'union_code='+union_code+'&plant_code='+plant_code+'&action_type='+action_type,
         success: function(data) {
-            console.log(data);
             var obj1 = $.parseJSON(data);
             if (obj1.status == 'success') {
-                var selectedBmcSet = new Set(selectedBmcCodes);
-                var options = '';
-                var newOptions = [];
-
-                $('#tblvehicletrip-bmc_code').empty();
-
-                $.each(selectedBmcCodes, function(index, code) {
-                    if (obj1.data.hasOwnProperty(code)) {
-                        newOptions.push({ code: code, name: obj1.data[code], sortIndex: index, selected: true });
-                    }
-                });
-
-                $.each(obj1.data, function(code, name) {
-                    if (!selectedBmcSet.has(code)) {
-                        newOptions.push({ code: code, name: name, sortIndex: Object.keys(obj1.data).indexOf(code), selected: false });
-                    }
-                });
-
-                newOptions.sort(function(a, b) {
-                    return a.sortIndex - b.sortIndex;
-                });
-
-                $.each(newOptions, function(index, option) {
-                    var selectedAttr = option.selected ? 'selected' : '';
-                    $('#tblvehicletrip-bmc_code').append('<option value=\"' + option.code + '\" data-sortindex=\"' + option.sortIndex + '\" ' + selectedAttr + '>' + option.name + '</option>');
-                });
-                
-                $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);
+                populateBmcLists(obj1.data);
+            } else {
+                $('#available-bmc-list, #selected-bmc-list').empty();
+                $('#tblvehicletrip-bmc_code, #selected_bmc_seq').val('');
             }
         }
     });
 });
 
-// Handle form submission
-$('#vehicle-trip-form').submit(function(e) {
-    var bmcarray = '';
-    $('#tblvehicletrip-bmc_code option:selected').each(function() {
-        var sortIndex = $(this).data('sortindex');
-        var value = $(this).val();
-        if (typeof sortIndex !== 'undefined') {
-            bmcarray += sortIndex + '~~~' + value + ':::';
-        } else {
-            bmcarray += value + ':::';
-        }
-    });
-    $('#selected_bmc_seq').val(bmcarray);
-});
-
-// Vehicle code change handling
 $('#tblvehicletrip-vehicle_code').on('change', function() {
     var vehicle_code = $(this).val();
-    if(setData(vehicle_code)){
+    if (setData(vehicle_code)) {
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-vehicle-detail']) . "',
@@ -185,40 +199,69 @@ $('#tblvehicletrip-vehicle_code').on('change', function() {
                     var response = obj1.data;
                     if (response) {
                         $('#tblvehicletrip-driver_name').val(response.driver_name);
-                        $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);
+                        $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);                        	
                         $('#tblvehicletrip-transporter_code').val(response.transporter_code).trigger('change').trigger('select2:select');
                     }
                 }
             }
         });
+    } else {
+        $('#tblvehicletrip-driver_name, #tblvehicletrip-mobile_no').val('');
     }
 });
 
-    function setData(field = ''){
-        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
-            return true;
-        }else {
-            return false;
-        }
+function setData(field = ''){
+    if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+        return true;
+    }else {
+        return false;
     }
-// Handle change event for the dual listbox (adjusting sort index on move)
-$('#tblvehicletrip-bmc_code').change(function() {
-    var selectedOptions = $('#tblvehicletrip-bmc_code option:selected');
-    selectedOptions.each(function(index) {
-        $(this).attr('data-sortindex', index);
+}
+
+$(document).ready(function() {
+    $('.move-right').on('click', function() {
+        $('#available-bmc-list li.selected').each(function() {
+            $('#selected-bmc-list').append($(this).removeClass('selected'));
+            updateSelectedBmcCodes();
+        });
     });
-    $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);
+
+    $('.move-left').on('click', function() {
+        $('#selected-bmc-list li.selected').each(function() {
+            $('#available-bmc-list').append($(this).removeClass('selected'));
+            updateSelectedBmcCodes();
+        });
+    });
+
+    $('#available-bmc-list, #selected-bmc-list').on('click', 'li', function() {
+        $(this).toggleClass('selected');
+    });
 });
 
-$('#tblvehicletrip-bmc_code').bootstrapDualListbox({
-    moveOnSelect: FALSE,
-    selectedListLabel: FALSE,
-    nonSelectedListLabel: FALSE,
-    filterPlaceHolder: '',
-    sortByInputOrder: TRUE,
-    selected: selectedBmcCodes
+$(document).ready(function() {
+    if ($('#tblvehicletrip-plant_code').val()) {
+        $('#tblvehicletrip-plant_code').trigger('change');
+    } else {
+        var initialData = {};
+        $.each(selectedBmcCodesInitial, function(index, code) {
+            initialData[code] = code; // You might need to fetch actual names if available on load
+        });
+        populateBmcLists(initialData);
+    }
+
+    $('#vehicle-trip-form').on('beforeSubmit', function () {
+        updateSelectedBmcCodes();
+        return true;
+    });
+
+    $('#available-bmc-list, #selected-bmc-list').sortable({
+        connectWith: '#available-bmc-list, #selected-bmc-list',
+        update: function(event, ui) {
+            updateSelectedBmcCodes();
+        }
+    });
 });
 ";
 
-$this->registerJs($script, View::POS_END, 'vehicle-trip-bmc-list');
+$this->registerJs($script, View::POS_END, 'vehicle-trip-sortable-bmc-list');
 ?>

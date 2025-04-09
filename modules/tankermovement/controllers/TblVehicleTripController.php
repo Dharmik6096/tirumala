@@ -493,7 +493,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
                 $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
                 $bmc_detail = explode(':::', $bmc_string);
-                unset($bmc_detail[count($bmc_detail) - 1]);
                 foreach ($bmc_detail as $k => $v) {
                     $bmc_index = explode('~~~', $v);
                     $bmc_array[$bmc_index[0]] = $bmc_index[1];
