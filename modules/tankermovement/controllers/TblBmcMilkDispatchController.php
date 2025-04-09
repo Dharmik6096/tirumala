@@ -112,9 +112,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model->originating_org_code = $model->union_code;
                     $model->bmc_milk_dispatch_code = Yii::$app->general->getUuid();
                     $model->challan_no = $model->getChallanNo(); //$model->trip_code . '/' . $model->bmc_code . '/1';
-                    $driverDetail = $model->vehicleCode;
-                    $model->driver_name = $driverDetail->driver_name;
-                    $model->driver_contact_no = $driverDetail->driver_contact_no;
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;
                     $model->vehicle_out_time = $model->transaction_date . ' ' . $model->vehicle_out_time;
                     $tripModel = new TblVehicleTrip();
@@ -122,6 +119,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $tripModel = $tripModel->getTripData();
                     if (!empty($tripModel)) {
                         $tripModel->trip_status = $model->is_last_destination == 1 ? 'tankerfull' : 'open';
+                        $model->driver_name = $tripModel->driver_name;
+                        $model->driver_contact_no = $tripModel->driver_contact_no;
                         $saveModel[] = $tripModel;
                     }
                     $tripModel->scenario = 'closetrip';
@@ -572,9 +571,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model->originating_org_code = $model->union_code;
                     $model->bmc_milk_dispatch_code = Yii::$app->general->getUuid();
                     $model->challan_no = $model->getChallanNo(); //$model->trip_code . '/' . $model->plant_code . '/1';
-                    $driverDetail = $model->vehicleCode;
-                    $model->driver_name = $driverDetail->driver_name;
-                    $model->driver_contact_no = $driverDetail->driver_contact_no;
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;
                     $model->vehicle_out_time = $model->transaction_date . ' ' . date('H:i:s');
                     $tripModel = new TblVehicleTrip();
@@ -582,6 +578,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $tripModel = $tripModel->getTripData();
                     if (!empty($tripModel)) {
                         $tripModel->trip_status = $model->is_last_destination == 1 ? 'tankerfull' : 'open';
+                        $model->driver_name = $tripModel->driver_name;
+                        $model->driver_contact_no = $tripModel->driver_contact_no;
                         $saveModel[] = $tripModel;
                     }
                     $tripModel->scenario = 'closetrip';
