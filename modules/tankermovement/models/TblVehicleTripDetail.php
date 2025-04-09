@@ -64,8 +64,8 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             [['is_active'], 'default', 'value' => 1],
             [['arrival_time'], 'required', 'on' => ['gate-in']],
             [['departure_time'], 'required', 'on' => ['gate-out']],
-            [['arrival_time'], 'validateArrival'],
-            [['departure_time'], 'validateDeparture'],
+            [['arrival_time'], 'validateArrival', 'on' => ['gate-in']],
+            [['departure_time'], 'validateDeparture', 'on' => ['gate-out']],
                 //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }
