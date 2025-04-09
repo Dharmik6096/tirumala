@@ -41,11 +41,10 @@ class AppAsset extends AssetBundle {
         'themes/emilk/assets/js/style.js',
         'themes/emilk/assets/js/jquery.CongelarFilaColumna.js',
         'themes/emilk/assets/js/html2excel.js',
-        // 'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
-        // 'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
-        // 'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
-        // 'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js'
-        
+        'themes/emilk/assets/js/core.min.js',
+        'themes/emilk/assets/js/widget.min.js',
+        'themes/emilk/assets/js/mouse.min.js',
+        'themes/emilk/assets/js/sortable.min.js',        
     ];
     public $depends = [
         'yii\web\YiiAsset',

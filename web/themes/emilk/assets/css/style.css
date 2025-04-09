@@ -5752,3 +5752,28 @@ h4{
 .collapsible-btn:hover {
     background-color: #00a3dee0;
 }
+
+.dispatch-box {
+    border: 1px solid #ccc;
+    padding: 0px 10px;
+    font-size: 11px;
+    line-height: 2;
+}
+
+.dispatch-box p {
+    margin: 0;
+}
+
+.box-well {
+    padding: 0px;
+    background-color: #fff;
+}
+
+.box-well .list-group-item, .box-well .list-group-item:last-child, .box-well .list-group-item:first-child{
+    border-width: 1px !important;
+    padding: 4px;
+    font-size: 11px;
+    margin: 5px;
+    width: fit-content;
+    box-shadow: inset 0px 2px 3px 0px rgba(208, 206, 206, 0.69);
+}
