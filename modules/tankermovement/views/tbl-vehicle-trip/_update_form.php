@@ -110,6 +110,19 @@ $form = ActiveForm::begin([
 
 <?php ActiveForm::end(); ?>
 <?php
+$jsFiles = [
+    'core.min.js',
+    'widget.min.js',
+    'mouse.min.js',
+    'sortable.min.js',
+];
+
+foreach ($jsFiles as $file) {
+    $this->registerJsFile(Yii::getAlias('@web') . "/themes/emilk/assets/js/{$file}", [
+        'depends' => [\yii\web\JqueryAsset::class],
+        'position' => \yii\web\View::POS_END,
+    ]);
+}
 $bmcArray = json_encode($model->bmc_code);
 $script = "
 var selectedBmcCodesInitial = $bmcArray;

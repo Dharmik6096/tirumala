@@ -5767,6 +5767,9 @@ h4{
 .box-well {
     padding: 0px;
     background-color: #fff;
+    height: 370px;
+    overflow: auto;
+    border: 1px solid #ccc;
 }
 
 .box-well .list-group-item, .box-well .list-group-item:last-child, .box-well .list-group-item:first-child{
@@ -5774,6 +5777,6 @@ h4{
     padding: 4px;
     font-size: 11px;
     margin: 5px;
-    width: fit-content;
+    width: 325px;
     box-shadow: inset 0px 2px 3px 0px rgba(208, 206, 206, 0.69);
 }
