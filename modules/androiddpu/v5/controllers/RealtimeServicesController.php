@@ -222,6 +222,10 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                         }
                     }
                 }
+                if (!empty($trip_data)) {
+                    $trip_data["fromDate"] = $from_datetime;
+                    $trip_data["toDate"] = $to_datetime;
+                }
                 $response_data['stockDetail'] = $stock_data;
                 $response_data['tripDetail'] = $trip_data;
                 $response_data['dispatchDetail'] = $dispatch_data;
