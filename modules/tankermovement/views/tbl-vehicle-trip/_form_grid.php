@@ -126,7 +126,7 @@ $grid_option = [
             $updatedUrl = Url::to(['/tankermovement/tbl-vehicle-trip/update', 'id' => $model->vehicle_trip_code]);
             if ($model->trip_for == 'salesparty') {
                 $updatedUrl = Url::to([
-                    '/tankermovement/tbl-vehicle-trip/update',
+                    '/tankermovement/tbl-vehicle-trip/update-with-party',
                     'id' => $model->vehicle_trip_code,
                     'type' => 'party'
                 ]);

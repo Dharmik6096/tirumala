@@ -17,6 +17,7 @@ $form = ActiveForm::begin([
     'validateOnChange' => FALSE,
     'enableClientValidation' => true,
     'validateOnSubmit' => true,
+    'action' => Url::to(array_merge(['update'], Yii::$app->request->get())),
 ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
