@@ -185,7 +185,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                                 $trip_data['destination_code'] = $tripDetail['destination_code'];
                                 $trip_data['is_auto_trip'] = $tripDetail['is_auto_trip'];
                                 $trip_data['is_last_destination'] = $tripDetail['is_last_destination'];
-                                $trip_data['arrival_time'] = $tripDetail['arrival_time'];
+                                $trip_data['arrival_time'] = date('Y-m-d H:i:s', strtotime($tripDetail['arrival_time']));
                                 $trip_data['vehicle_trip_detail_code'] = $tripDetail['vehicle_trip_detail_code'];
                                 $bmcDispatch = new TblBmcMilkDispatchTxn();
                                 $bmcDispatch->trip_code = $tripData->trip_code;
