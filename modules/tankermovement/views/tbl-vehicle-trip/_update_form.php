@@ -69,7 +69,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
 
-    <div class="col-sm-6">
+    <div class="col-sm-6 mt-2">
         <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?></label>
         <div class="well box-well">
             <?= Sortable::widget([
@@ -80,8 +80,8 @@ $form = ActiveForm::begin([
             ]); ?>
         </div>
     </div>
-    <div class="col-sm-6">
-        <label class="control-label"></label>
+    <div class="col-sm-6 mt-2">
+        <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?> Seleted</label>
         <div class="well box-well">
             <?= Sortable::widget([
                 'type' => Sortable::TYPE_LIST,

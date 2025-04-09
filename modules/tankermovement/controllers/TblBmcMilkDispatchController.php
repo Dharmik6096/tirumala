@@ -294,9 +294,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $this->model->trip_for = 'bmcdispatch';
             $this->model->is_active = '1';
             $this->model->generateAutoTrip = TRUE;
-            $driverDetail = $this->model->vehicleCode;
-            $this->model->driver_name = $driverDetail->driver_name;
-            $this->model->mobile_no = $driverDetail->driver_contact_no;
             $result = $this->model->setModel();
             $save_model = $result[1];
 
