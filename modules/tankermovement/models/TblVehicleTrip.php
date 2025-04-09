@@ -181,6 +181,11 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $this->trip_code = $this->generateTripCode();
             $vehicle_trip_detail_code = $this->vehicle_trip_code . 'T1';
             $model = $this;
+            $this->trip_sub_status = 'generated';
+            $this->sub_status_time = date('Y-m-d H:i:s');
+            if ($this->generateAutoTrip) {
+                $this->is_auto_trip = 1;
+            }
             $save_model[] = $this;
         }
         if ($validate) {
@@ -206,7 +211,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $trip_detai->vehicle_code = $model->vehicle_code;
             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
             $trip_detai->trip_code = $model->trip_code;
-            if($this->generateAutoTrip){
+            if ($this->generateAutoTrip) {
                 $trip_detai->departure_time = date('Y-m-d H:i:s');
                 $trip_detai->arrival_time = date('Y-m-d H:i:s', strtotime($trip_detai->departure_time) - 1);
             }
@@ -214,15 +219,17 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 $vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . (((int) substr($last_trip->vehicle_trip_detail_code, strlen($trip_detai->vehicle_trip_code) + 1)) + 1);
             }
             $trip_detai->vehicle_trip_detail_code = $vehicle_trip_detail_code;
-            if (!$trip_detai->validate()) {
-                $validate = FALSE;
-                $errors = $trip_detai->getErrors();
-                if (isset($errors['destination_code'])) {
-                    $this->addError('bmc_code', $errors['destination_code'][0]);
+            if (!$this->generateAutoTrip) {
+                if (!$trip_detai->validate()) {
+                    $validate = FALSE;
+                    $errors = $trip_detai->getErrors();
+                    if (isset($errors['destination_code'])) {
+                        $this->addError('bmc_code', $errors['destination_code'][0]);
+                    }
                 }
             }
             $save_model[] = $trip_detai;
-            if($this->generateAutoTrip){
+            if ($this->generateAutoTrip) {
                 $numeric_part = intval(substr($trip_detai->vehicle_trip_detail_code, -1));
                 $updated_numeric_part = $numeric_part + 1;
                 $new_vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . $updated_numeric_part;
@@ -238,8 +245,9 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
                 $auto_trip_detail->source_org_code = $trip_detai->destination_code;
                 $auto_trip_detail->source_org_type = $trip_detai->destination_type;
-                $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
+                $auto_trip_detail->arrival_time = date('Y-m-d H:i:s', strtotime($trip_detai->departure_time) + 1);
                 $auto_trip_detail->sequence_no = $trip_detai->sequence_no + 1;
+                $auto_trip_detail->originating_org_code = $this->union_code;
                 $save_model[] = $auto_trip_detail;
             }
         }
@@ -257,7 +265,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $bmc_plant_code = !empty($this->fl_code) ? $this->fl_code : $this->bmc_code;
         $primaryKey = 'trip_code';
         $prefix = substr($this->vehicleCode->parsing_no, -4) . substr($bmc_plant_code, -2);
-        $prefix = str_replace("-","0",$prefix);
+        $prefix = str_replace("-", "0", $prefix);
         $len = strlen($prefix);
         $val = $this->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])

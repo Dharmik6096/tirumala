@@ -55,17 +55,17 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['source_org_code', 'source_org_type'], 'required'],
-            [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out', 'autoTrip']],
-            [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks'], 'safe'],
-            [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination', 'sequence_no'], 'safe'],
-            [['travel_km', 'originating_type', 'is_active'], 'safe'],
-            [['is_last_destination'], 'default', 'value' => 0],
-            [['is_active'], 'default', 'value' => 1],
-            [['arrival_time'], 'required', 'on' => ['gate-in']],
-            [['departure_time'], 'required', 'on' => ['gate-out']],
-            [['arrival_time'], 'validateArrival', 'on' => ['gate-in']],
-            [['departure_time'], 'validateDeparture', 'on' => ['gate-out']],
+                [['source_org_code', 'source_org_type'], 'required'],
+                [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out', 'autoTrip']],
+                [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks'], 'safe'],
+                [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination', 'sequence_no'], 'safe'],
+                [['travel_km', 'originating_type', 'is_active'], 'safe'],
+                [['is_last_destination'], 'default', 'value' => 0],
+                [['is_active'], 'default', 'value' => 1],
+                [['arrival_time'], 'required', 'on' => ['gate-in']],
+                [['departure_time'], 'required', 'on' => ['gate-out']],
+                [['arrival_time'], 'validateArrival'],
+                [['departure_time'], 'validateDeparture'],
                 //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }
@@ -267,9 +267,10 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
     }
 
     public function getTripDetails($tankerMovementWithTripSubStatus) {
-        $query = $this->find()->alias('td')->select(['td.destination_type', 'td.destination_code', 't.is_auto_trip', 'td.is_last_destination', 'td.arrival_time'])
+        $query = $this->find()->alias('td')->select(['td.destination_type', 'td.destination_code', 't.is_auto_trip', 'td.is_last_destination', 'td.arrival_time', 'td.vehicle_trip_detail_code'])
                 ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
-                ->where(['td.trip_code' => $this->trip_code, 'td.source_org_type' => $this->source_org_type, 'td.source_org_code' => $this->source_org_code]);
+                ->where(['td.trip_code' => $this->trip_code, 'td.source_org_type' => $this->source_org_type, 'td.source_org_code' => $this->source_org_code])
+                ->andWhere(['IS', 'td.challan_no', NULL]);
 
         if ($tankerMovementWithTripSubStatus) {
             $query->andWhere(['IS NOT', 'td.arrival_time', null])

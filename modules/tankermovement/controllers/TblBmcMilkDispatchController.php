@@ -112,8 +112,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model->originating_org_code = $model->union_code;
                     $model->bmc_milk_dispatch_code = Yii::$app->general->getUuid();
                     $model->challan_no = $model->getChallanNo(); //$model->trip_code . '/' . $model->bmc_code . '/1';
-                    $model->driver_name = $model->vehicleCode->driver_name;
-                    $model->driver_contact_no = $model->vehicleCode->driver_contact_no;
+                    $driverDetail = $model->vehicleCode;
+                    $model->driver_name = $driverDetail->driver_name;
+                    $model->driver_contact_no = $driverDetail->driver_contact_no;
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;
                     $model->vehicle_out_time = $model->transaction_date . ' ' . $model->vehicle_out_time;
                     $tripModel = new TblVehicleTrip();
@@ -292,8 +293,10 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $this->model->trip_status = 'generated';
             $this->model->trip_for = 'bmcdispatch';
             $this->model->is_active = '1';
-            $this->model->is_auto_trip = '1';
             $this->model->generateAutoTrip = TRUE;
+            $driverDetail = $this->model->vehicleCode;
+            $this->model->driver_name = $driverDetail->driver_name;
+            $this->model->mobile_no = $driverDetail->driver_contact_no;
             $result = $this->model->setModel();
             $save_model = $result[1];
 
@@ -572,8 +575,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model->originating_org_code = $model->union_code;
                     $model->bmc_milk_dispatch_code = Yii::$app->general->getUuid();
                     $model->challan_no = $model->getChallanNo(); //$model->trip_code . '/' . $model->plant_code . '/1';
-                    $model->driver_name = $model->vehicleCode->driver_name;
-                    $model->driver_contact_no = $model->vehicleCode->driver_contact_no;
+                    $driverDetail = $model->vehicleCode;
+                    $model->driver_name = $driverDetail->driver_name;
+                    $model->driver_contact_no = $driverDetail->driver_contact_no;
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;
                     $model->vehicle_out_time = $model->transaction_date . ' ' . date('H:i:s');
                     $tripModel = new TblVehicleTrip();

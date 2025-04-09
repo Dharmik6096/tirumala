@@ -5,7 +5,7 @@ use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use yii\widgets\ListView;
-use yii\jui\Sortable;
+use kartik\sortable\Sortable;
 
 $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL');
 $readonly = TRUE;
@@ -73,18 +73,10 @@ $form = ActiveForm::begin([
         <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?></label>
         <div class="well box-well">
             <?= Sortable::widget([
-                'id' => 'available-bmc-list',
+                'type' => Sortable::TYPE_LIST,
                 'items' => [],
-                'options' => ['class' => 'list-group', 'style' => 'min-height: 370px;'],
+                'options' => ['id' => 'available-bmc-list', 'class' => 'list-group', 'style' => 'min-height: 370px;'],
                 'itemOptions' => ['class' => 'list-group-item'],
-                'clientOptions' => [
-                    'connectWith' => '#selected-bmc-list',
-                    'update' => new \yii\web\JsExpression(
-                        'function(event, ui) {
-                            updateSelectedBmcCodes();
-                        }'
-                    ),
-                ],
             ]); ?>
         </div>
     </div>
@@ -92,21 +84,14 @@ $form = ActiveForm::begin([
         <label class="control-label"></label>
         <div class="well box-well">
             <?= Sortable::widget([
-                'id' => 'selected-bmc-list',
+                'type' => Sortable::TYPE_LIST,
                 'items' => $model->bmc_code ? array_map(function($code) {
-                    return "<li class='list-group-item' data-code='{$code}'>" . Html::encode($code) . "</li>";
+                    return ['content' => Html::encode($code), 'options' => ['data-code' => $code]];
                 }, $model->bmc_code) : [],
-                'options' => ['class' => 'list-group', 'style' => 'min-height: 370px;'],
+                'options' => ['id' => 'selected-bmc-list', 'class' => 'list-group', 'style' => 'min-height: 370px;'],
                 'itemOptions' => ['class' => 'list-group-item'],
-                'clientOptions' => [
-                    'connectWith' => '#available-bmc-list',
-                    'update' => new \yii\web\JsExpression(
-                        'function(event, ui) {
-                            updateSelectedBmcCodes();
-                        }'
-                    ),
-                ],
             ]); ?>
+
             <div id="bmc-code-container"></div>
             <?= Html::hiddenInput('selected_bmc_seq', '', ['id' => 'selected_bmc_seq']); ?>
         </div>
@@ -217,26 +202,6 @@ function setData(field = ''){
         return false;
     }
 }
-
-$(document).ready(function() {
-    $('.move-right').on('click', function() {
-        $('#available-bmc-list li.selected').each(function() {
-            $('#selected-bmc-list').append($(this).removeClass('selected'));
-            updateSelectedBmcCodes();
-        });
-    });
-
-    $('.move-left').on('click', function() {
-        $('#selected-bmc-list li.selected').each(function() {
-            $('#available-bmc-list').append($(this).removeClass('selected'));
-            updateSelectedBmcCodes();
-        });
-    });
-
-    $('#available-bmc-list, #selected-bmc-list').on('click', 'li', function() {
-        $(this).toggleClass('selected');
-    });
-});
 
 $(document).ready(function() {
     if ($('#tblvehicletrip-plant_code').val()) {
