@@ -595,7 +595,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $maxNumber++;
                 }
                 if ($validate) {
-                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Dispatch Stock', 'edit']);
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
                     if ($transaction !== FALSE) {
                         return $this->{$transaction}();
                     }

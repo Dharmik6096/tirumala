@@ -106,6 +106,12 @@ $attribute = [
     ['attribute' => 'trip_mode'],
     ['attribute' => 'trip_status'],
     ['attribute' => 'trip_sub_status'],
+    ['attribute' => 'is_auto_trip', 'label' => Yii::t('app', 'Is Partial Trip?'), 
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_auto_trip'),
+        'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_auto_trip');
+        }
+    ],
 ];
 
 $grid_option = [
