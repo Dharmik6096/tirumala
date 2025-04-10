@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_vehicle_trip".
@@ -354,8 +355,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null]);
     }
 
-    public function addTripRoute($challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination = 0) {
-        $saveModel = [];
+    public function addTripRoute(&$saveModel, &$deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination = 0) {
         $trip_detail = TblVehicleTripDetail::find()
                         ->where(['trip_code' => $this->trip_code])
                         ->andWhere(['lower(source_org_type)' => $source_org_type, 'source_org_code' => $source_org_code])
@@ -375,6 +375,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
                     $new_vehicle_trip_detail_code = $this->vehicle_trip_code . 'T' . $updated_numeric_part;
 
                     $auto_trip_detail = new TblVehicleTripDetail();
+                    $auto_trip_detail->scenario = 'autoTrip';
                     $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
                     $auto_trip_detail->vehicle_trip_code = $this->vehicle_trip_code;
                     $auto_trip_detail->vehicle_code = $this->vehicle_code;
@@ -387,25 +388,39 @@ class TblVehicleTrip extends \app\models\ChildModel {
                     $saveModel[] = $auto_trip_detail;
                 } else if ($is_last_destination == 1) {
                     $exist_next_trip_detail = TblVehicleTripDetail::find()
-                            ->where(['vehicle_trip_code' => $this->vehicle_trip_code], ['sequence_no' => $trip_detail->sequence_no + 1])
-                            ->andWhere(['lower(source_org_type)' => strtolower($trip_detail->destination_type), 'source_org_code' => $trip_detail->destination_code])
+                            ->where(['vehicle_trip_code' => $this->vehicle_trip_code, 'sequence_no' => $trip_detail->sequence_no + 1, 'source_org_code' => $trip_detail->destination_code])
+                            ->andWhere(['lower(source_org_type)' => strtolower($trip_detail->destination_type)])
                             ->one();
+                    $exist_next_trip_detail->scenario = 'autoTrip';
+
                     if (!empty($exist_next_trip_detail)) {
-
-                        // add history for existing record
-
+                        $historyModel = new TblVehicleTripDetailHistory();
+                        Yii::$app->operation->history($exist_next_trip_detail, $historyModel, UPDATE);
+                        $saveModel[] = $historyModel;
 
                         $exist_next_trip_detail->is_last_destination = 1;
                         $exist_next_trip_detail->destination_type = $exist_next_trip_detail->destination_code = NULL;
                         $saveModel[] = $exist_next_trip_detail;
 
-                        // delete all other after recodr by sschecking dispatch not done after this seq.
+                        $delete_next_all_trip_details = TblVehicleTripDetail::find()
+                                ->where(['vehicle_trip_code' => $this->vehicle_trip_code])
+                                ->andWhere(['>', 'sequence_no', $exist_next_trip_detail->sequence_no])
+                                ->andWhere(['IS', 'challan_no', NULL])
+                                ->all();
+
+                        if (!empty($delete_next_all_trip_details)) {
+                            foreach ($delete_next_all_trip_details as $next_trip_detail) {
+                                $vehicleTripDetailHistoryModel = new TblVehicleTripDetailHistory();
+                                Yii::$app->operation->history($next_trip_detail, $vehicleTripDetailHistoryModel, DELETE);
+                                $saveModel[] = $vehicleTripDetailHistoryModel;
+                                $deleteModel[] = $next_trip_detail;
+                            }
+                        }
                     }
                 }
             }
             $saveModel[] = $trip_detail;
         }
-        return $saveModel;
     }
 
 }

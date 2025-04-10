@@ -10,6 +10,7 @@ use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
+use app\modules\tankermovement\models\TblBmcMilkDispatch;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -130,7 +131,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
     }
 
     public function actionGenerateTrip() {
-        $response_data = $trip_data = $stock_data = $dispatch_data = [];
+        $response_data = $stock_data = $dispatch_data = [];
+        $trip_data = NULL;
         $data = $this->post_data;
         if ($data['organization_type'] == 'BMC') {
             $model = new TblVehicleTrip();
@@ -233,6 +235,48 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
         }
         $this->response['data'] = $response_data;
 
+        return $this->response;
+    }
+
+    public function actionUpdateTripStatus() {
+        $res_data = [];
+        $res_data['message'] = 'Trip Not Updated.';
+        $saveModel = [];
+        $deleteModel = [];
+        $data = $this->post_data;
+        if ($data['organization_type'] == 'BMC') {
+            $postData = $data['content'];
+            $tripModel = new TblVehicleTrip();
+            $tripModel->attributes = $postData;
+            $tripModel = $tripModel->getTripData();
+            if (!empty($tripModel)) {
+                $challan_no = $postData['challan_no'];
+                $source_org_type = 'bmc';
+                $source_org_code = $data['organization_code'];
+                $destination_type = $postData['destination_type'];
+                $destination_code = $postData['destination_code'];
+                $is_last_destination = $postData['is_last_destination'];
+                $remarks = !empty($postData['remarks']) ? $postData['remarks'] : 'AMCS Dispatch';
+                $tripModel->trip_status = $is_last_destination == 1 ? 'tankerfull' : 'open';
+                $saveModel[] = $tripModel;
+                $tripModel->addTripRoute($saveModel, $deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination);
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    $res_data['message'] = 'Trip Updated Successfully.';
+                    $response = Yii::$app->general->getColumnName('bmc');
+                    if (!empty($response['rel'])) {
+                        $model = new TblBmcMilkDispatch();
+                        $model->source_org_code = $source_org_code;
+                        $sourceData = $model->{$response['rel'] . 'Source'};
+                        $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                    }
+                    $tripModel->trip_sub_status = 'bmc_dispatch';
+                    $tripModel->sub_status_time = date('Y-m-d H:i:s');
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                }
+            }
+        }
+        $this->response['data'] = $res_data;
         return $this->response;
     }
 

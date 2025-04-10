@@ -105,6 +105,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->scenario = 'create';
             if ($txn_model->validate()) {
                 $saveModel = [];
+                $deleteModel = [];
                 $new_rec = FALSE;
 
                 if (empty($model->bmc_milk_dispatch_code)) {
@@ -122,48 +123,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
-                    }
-                    $tripModel->scenario = 'closetrip';
-                    $trip_detail = TblVehicleTripDetail::find()
-                                    ->where(['trip_code' => $model->trip_code])
-                                    ->andWhere(['lower(source_org_type)' => 'bmc', 'source_org_code' => $model->bmc_code])
-                                    ->andWhere(['IS', 'challan_no', NULL])
-                                    ->andWhere(['!=', 'vehicle_trip_detail_code', new \yii\db\Expression("CONCAT(vehicle_trip_code,'T1')")])
-                                    ->orderBy(['sequence_no' => SORT_ASC])->one();
-
-                    if (!empty($trip_detail) && $tripModel->is_auto_trip == 0) {
-                        $trip_detail->challan_no = $model->challan_no;
-                        $saveModel[] = $trip_detail;
-                    } else if (!empty($trip_detail) && $tripModel->is_auto_trip == 1) {
-                        $exist_auto_trip_detail = TblVehicleTripDetail::find()
-                                        ->where(['vehicle_trip_code' => $tripModel->vehicle_trip_code])
-                                        ->orderBy(['sequence_no' => SORT_DESC])->one();
-
-                        $exist_auto_trip_detail->destination_type = $model->destination_type;
-                        $exist_auto_trip_detail->destination_code = $model->destination_code;
-                        $exist_auto_trip_detail->challan_no = $model->challan_no;
-                        $saveModel[] = $exist_auto_trip_detail;
-
-                        $numeric_part = intval(substr($exist_auto_trip_detail->vehicle_trip_detail_code, -1));
-                        $updated_numeric_part = $numeric_part + 1;
-                        $new_vehicle_trip_detail_code = $tripModel->vehicle_trip_code . 'T' . $updated_numeric_part;
-
-                        $auto_trip_detail = new TblVehicleTripDetail();
-                        $auto_trip_detail->scenario = 'autoTrip';
-                        $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
-                        $auto_trip_detail->vehicle_trip_code = $tripModel->vehicle_trip_code;
-                        $auto_trip_detail->vehicle_code = $tripModel->vehicle_code;
-                        $auto_trip_detail->trip_code = $tripModel->trip_code;
-                        $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-                        $auto_trip_detail->destination_code = $model->is_last_destination == 1 ? null : $model->destination_code;
-                        $auto_trip_detail->destination_type = $model->is_last_destination == 1 ? null : strtolower($model->destination_type);
-                        $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
-                        $auto_trip_detail->source_org_code = $model->destination_code;
-                        $auto_trip_detail->source_org_type = $model->destination_type;
-                        $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
-                        $auto_trip_detail->challan_no = $model->challan_no;
-                        $auto_trip_detail->sequence_no = $exist_auto_trip_detail->sequence_no + 1;
-                        $saveModel[] = $auto_trip_detail;
+                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'bmc', $model->bmc_code, $model->destination_type, $model->destination_code, $model->is_last_destination);
                     }
                     $saveModel[] = $model;
                 }
@@ -220,7 +180,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['BMC Milk Dispatch', 'create']);
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
                 if ($transaction != 'customRedirect' && $new_rec) {
                     $model->bmc_milk_dispatch_code = '';
                 } else if ($transaction == 'customRedirect') {
@@ -564,6 +524,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->scenario = 'createPlantDispatch';
             if ($txn_model->validate()) {
                 $saveModel = [];
+                $deleteModel = [];
                 $new_rec = FALSE;
 
                 if (empty($model->bmc_milk_dispatch_code)) {
@@ -581,11 +542,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
-
-                        $tripRoute = $tripModel->addTripRoute();
-                        foreach ($tripRoute as $route) {
-                            $saveModel[] = $route;
-                        }
+                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'plant', $model->plant_code, $model->destination_type, $model->destination_code, $model->is_last_destination);
                     }
                     $tripModel->scenario = 'closetrip';
                     $saveModel[] = $model;
@@ -619,7 +576,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['PLANT Milk Dispatch', 'create']);
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['PLANT Milk Dispatch', 'create']);
                 if ($transaction != 'customRedirect' && $new_rec) {
                     $model->bmc_milk_dispatch_code = '';
                 } else if ($transaction == 'customRedirect') {
