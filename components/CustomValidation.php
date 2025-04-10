@@ -516,6 +516,15 @@ class CustomValidation extends Component {
                             [['dcs_code_ex'], 'required'],
                     ],
                 ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
+                            [['adhar_no'], function ($attribute, $params) {
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                    ]
+                ],
             ],
             'PRABHAT' => [
                 'BackGroundDataImport' => [
