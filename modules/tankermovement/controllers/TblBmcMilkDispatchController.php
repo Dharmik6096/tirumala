@@ -581,12 +581,13 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
+
+                        $tripRoute = $tripModel->addTripRoute();
+                        foreach ($tripRoute as $route) {
+                            $saveModel[] = $route;
+                        }
                     }
                     $tripModel->scenario = 'closetrip';
-                    $tripRoute = $tripModel->addTripRoute();
-                    foreach ($tripRoute as $route) {
-                        $saveModel[] = $route;
-                    }
                     $saveModel[] = $model;
                 }
                 $txn_model->attributes = $model->attributes;
