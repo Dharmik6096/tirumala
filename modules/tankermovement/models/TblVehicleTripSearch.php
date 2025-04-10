@@ -64,7 +64,11 @@ class TblVehicleTripSearch extends TblVehicleTrip {
 
         $this->load($params);
         $query->joinWith(['vehicleCode', 'vehicleCode.transporter', 'bmcMilkDispatchCode', 'bmcMilkDispatchCode.bmcMilkDispatchTxnCode']);
-        Yii::$app->general->filterByOrg($query, $this, 't', 't', 't');
+        if (Yii::$app->session->get('Unions') !== '')
+                    $query->andFilterWhere(['t.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        if (!empty($model->f_union_code))
+            $query->andFilterWhere(['t.union_code' => $this->f_union_code]);
+        // Yii::$app->general->filterByOrg($query, $this, 't', 't', 't');
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
