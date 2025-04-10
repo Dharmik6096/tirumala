@@ -192,6 +192,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
                 [['bmc_code'], 'convertedAmount'],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create', 'ho_sync_update']],
+                [['milk_type_code'], 'validateDelete', 'on' => ['ho_sync_delete']],
         ];
     }
 
@@ -1218,6 +1219,16 @@ class TblBmcCollection extends \app\models\ChildModel {
         if (!empty($resdata['msg'])) {
             $this->addError('milk_type_code', $resdata['msg']);
             return FALSE;
+        }
+    }
+
+    public function validateDelete($attribute) {
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $ApprovalModel = new TblCollectionDataAlias();
+        $existTableData = $ApprovalModel->find()->where(['customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'bmc_code' => $this->bmc_code, 'route_code' => $this->route_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_bmc_collection', 'milk_quality_type_code' => $this->milk_quality_type_code, 'action_perform' => 'DELETE'])->one();
+
+        if (($flag == 1 || $flag == 2) && !empty($existTableData)) {
+            $this->addError($attribute, "Record is Already Exist For Approval.");
         }
     }
 
