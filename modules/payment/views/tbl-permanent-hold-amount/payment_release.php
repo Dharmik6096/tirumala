@@ -1,5 +1,7 @@
 <?php
+
 use yii\web\View;
+
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Release Hold Amount  (Member) '));
 ?>
 
@@ -12,8 +14,8 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Release Hold Amoun
         <div class="clearfix"></div>
         <?=
         $this->render('_release_grid', [
-        'dataProvider' => $dataProvider,
-        'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ])
         ?>
     </div>
@@ -54,9 +56,16 @@ $(document).ready(function() {
         if(holdAmount == '' || isNaN(holdAmount)){
             holdAmount = 0;
         }
+        if (releaseAmount == 0) {
+            parent.find('.release-amount').val(holdAmount);
+            parent.find('.pending-hold-amount').text(0);
+            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Release amount must be greater than 0.</span></div></div>\");
+            return false;
+        }
         amount = holdAmount - releaseAmount;
         if(amount < 0){
-            parent.find('.release-amount').val(0);
+            parent.find('.release-amount').val(holdAmount);
+            parent.find('.pending-hold-amount').text(0);
             bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Release amount should not be greater than the hold amount.</span></div></div>\");
             return false;
         }
