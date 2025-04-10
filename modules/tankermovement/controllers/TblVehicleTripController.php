@@ -110,7 +110,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $this->model->fl_type = !empty($fl_detail[1]) ? $fl_detail[1] : 'bmc';
                     if ($this->model->fl_type == 'bmc') {
                         $this->model->bmc_code = $this->model->fl_code;
-                        $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+                        $this->model->mcc_plant_code = $this->model->bmcCode->mcc_plant_code;
                     } else {
                         $this->model->bmc_code = NULL;
                         $this->model->mcc_plant_code = NULL;
