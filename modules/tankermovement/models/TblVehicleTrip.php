@@ -57,15 +57,15 @@ class TblVehicleTrip extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip']],
-            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip'], 'safe'],
-            [['trip_status'], 'default', 'value' => 'generated'],
-            [['trip_for'], 'default', 'value' => 'bmcdispatch'],
-            [['trip_mode'], 'default', 'value' => 'online'],
-            [['is_active'], 'default', 'value' => 1],
-            [['is_auto_trip'], 'default', 'value' => 0],
-            [['vehicle_code'], 'checkVehicleStatus', 'on' => ['createTrip', 'autogeneratetrip']],
+                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip']],
+                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip'], 'safe'],
+                [['trip_status'], 'default', 'value' => 'generated'],
+                [['trip_for'], 'default', 'value' => 'bmcdispatch'],
+                [['trip_mode'], 'default', 'value' => 'online'],
+                [['is_active'], 'default', 'value' => 1],
+                [['is_auto_trip'], 'default', 'value' => 0],
+                [['vehicle_code'], 'checkVehicleStatus', 'on' => ['createTrip', 'autogeneratetrip']],
         ];
     }
 
@@ -404,6 +404,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
                         $delete_next_all_trip_details = TblVehicleTripDetail::find()
                                 ->where(['vehicle_trip_code' => $this->vehicle_trip_code])
                                 ->andWhere(['>', 'sequence_no', $exist_next_trip_detail->sequence_no])
+                                ->andWhere(['IS', 'challan_no', NULL])
                                 ->all();
 
                         if (!empty($delete_next_all_trip_details)) {

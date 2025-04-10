@@ -242,6 +242,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
         $res_data = [];
         $res_data['message'] = 'Trip Not Updated.';
         $saveModel = [];
+        $deleteModel = [];
         $data = $this->post_data;
         if ($data['organization_type'] == 'BMC') {
             $postData = $data['content'];
@@ -258,12 +259,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $remarks = !empty($postData['remarks']) ? $postData['remarks'] : 'AMCS Dispatch';
                 $tripModel->trip_status = $is_last_destination == 1 ? 'tankerfull' : 'open';
                 $saveModel[] = $tripModel;
-                $tripRoute = $tripModel->addTripRoute($challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination);
-                foreach ($tripRoute as $route) {
-                    $saveModel[] = $route;
-                }
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle Trip', 'edit']);
-                $transaction = 'customRedirect';
+                $tripModel->addTripRoute($saveModel, $deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination);
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
                 if ($transaction == 'customRedirect') {
                     $res_data['message'] = 'Trip Updated Successfully.';
                     $response = Yii::$app->general->getColumnName('bmc');
