@@ -153,6 +153,9 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => true],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE],
                 [['ts_code_m', 'ts_code_e'], 'number', 'max' => 10],
+                [['pan_no'], function ($attribute, $params) {
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
         ];
     }
 
