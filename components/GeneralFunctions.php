@@ -2917,11 +2917,12 @@ class GeneralFunctions extends Component {
     }
 
     public function setVehicleTripTrackingDetail($trip, $remarks = '') {
-        if(!empty($trip)) {
+        if (!empty($trip)) {
             $tripTrackingModel = new TblVehicleTripTracking();
             $tripTrackingModel->attributes = $trip->attributes;
             $tripTrackingModel->trip_date = $trip->transaction_date;
             $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
+            $tripTrackingModel->created_at = $tripTrackingModel->updated_at = $tripTrackingModel->created_by = $tripTrackingModel->updated_by = $tripTrackingModel->originating_type = $tripTrackingModel->originating_org_code = $tripTrackingModel->originating_org_type = '';
             $tripTrackingModel->save(TRUE, FALSE);
         }
     }
@@ -2946,4 +2947,5 @@ class GeneralFunctions extends Component {
         }
         return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
+
 }
