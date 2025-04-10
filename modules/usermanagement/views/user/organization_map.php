@@ -41,15 +41,27 @@ $this->title = Yii::t('app', $title);
                         'route' => ['data' => $route['data']],
                         'dcs' => ['data' => $dcs['data']],
                     ];
+                    ?>
+                    <div class="row collapse-toggle-buttons margin-bottom-10">
+                        <?php
+                        foreach ($dualListBoxes as $field => $options):
+                            $collapseId = "collapse-" . $field;
+                            $label = Yii::t('app', ucfirst($field));
+                            $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'hidden' : '';
+                            ?>
+                            <div class="btn-group margin-right-5 <?= $hiddenClass ?>">
+                                <button type="button" class="collapsible-btn btn btn-default" data-toggle="collapse" data-target="#<?= $collapseId ?>">- <?= $label ?></button>
+                                
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php
                     foreach ($dualListBoxes as $field => $options):
                         $collapseId = "collapse-" . $field;
                         $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'hidden' : '';
                         $label = Yii::t('app', ucfirst($field));
                         ?>
                         <div class="col-sm-12 <?= $hiddenClass ?>">
-                            <button type="button" class="collapsible-btn" data-toggle="collapse" data-target="#<?= $collapseId ?>">
-                                -
-                            </button><label><?= $label ?></label>
                             <div id="<?= $collapseId ?>" class="collapse in">
                                 <?=
                                 $form->field($model, $field, [
@@ -375,14 +387,15 @@ function adjustDualListboxHeight(increase = false) {
     $(document).on('click', '.collapsible-btn', function() {
         let \$button = $(this);
         let target = \$button.attr('data-target');
+        let label = \$button.text().substring(1);
        $(target).off('shown.bs.collapse').on('shown.bs.collapse', function () {
-        \$button.text('-');
+        \$button.text('-' + label);
         adjustDualListboxHeight(true);
        
     });
 
     $(target).off('hidden.bs.collapse').on('hidden.bs.collapse', function () {
-       \$button.text('+');
+       \$button.text('+' + label);
       adjustDualListboxHeight(false); 
    });
 });
