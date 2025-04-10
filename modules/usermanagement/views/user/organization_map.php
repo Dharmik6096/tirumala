@@ -42,25 +42,15 @@ $this->title = Yii::t('app', $title);
                         'dcs' => ['data' => $dcs['data']],
                     ];
                     ?>
-                    <div class="row collapse-toggle-buttons margin-bottom-10">
-                        <?php
-                        foreach ($dualListBoxes as $field => $options):
-                            $collapseId = "collapse-" . $field;
-                            $label = Yii::t('app', ucfirst($field));
-                            $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'd-none' : '';
-                            ?>
-                            <div class="d-contents btn-group margin-right-5 <?= $hiddenClass ?>">
-                                <button type="button" class="collapsible-btn" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">- <?= $label ?></button>
-                                
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
                     <?php
                     foreach ($dualListBoxes as $field => $options):
                         $collapseId = "collapse-" . $field;
                         $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'd-none' : '';
-                        $label = Yii::t('app', ucfirst($field));
+                        $label = $model->getAttributeLabel($field);
                         ?>
+                        <div class="d-contents btn-group margin-right-5 <?= $hiddenClass ?>">
+                            <button type="button" class="collapsible-btn" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">- <?= $label ?></button>
+                        </div>
                         <div class="col-sm-12 <?= $hiddenClass ?>">
                             <div id="<?= $collapseId ?>" class="collapse show">
                                 <?=

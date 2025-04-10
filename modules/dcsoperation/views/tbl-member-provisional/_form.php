@@ -217,6 +217,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                                                                        ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -291,7 +292,11 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                                                                        ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'beneficiary_name')->textInput() ?>
         </div>
         <div class="col-sm-2 icon-set">
             <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['panCard']) ?>
