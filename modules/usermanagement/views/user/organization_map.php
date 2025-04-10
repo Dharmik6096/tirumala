@@ -41,15 +41,27 @@ $this->title = Yii::t('app', $title);
                         'route' => ['data' => $route['data']],
                         'dcs' => ['data' => $dcs['data']],
                     ];
+                    ?>
+                    <div class="row collapse-toggle-buttons margin-bottom-10">
+                        <?php
+                        foreach ($dualListBoxes as $field => $options):
+                            $collapseId = "collapse-" . $field;
+                            $label = Yii::t('app', ucfirst($field));
+                            $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'd-none' : '';
+                            ?>
+                            <div class="d-contents btn-group margin-right-5 <?= $hiddenClass ?>">
+                                <button type="button" class="collapsible-btn" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">- <?= $label ?></button>
+                                
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php
                     foreach ($dualListBoxes as $field => $options):
                         $collapseId = "collapse-" . $field;
-                        $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'hidden' : '';
+                        $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'd-none' : '';
                         $label = Yii::t('app', ucfirst($field));
                         ?>
                         <div class="col-sm-12 <?= $hiddenClass ?>">
-                            <button type="button" class="collapsible-btn" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
-                                -
-                            </button><label><?= $label ?></label>
                             <div id="<?= $collapseId ?>" class="collapse show">
                                 <?=
                                 $form->field($model, $field, [
@@ -375,14 +387,15 @@ function adjustDualListboxHeight(increase = false) {
     $(document).on('click', '.collapsible-btn', function() {
         let \$button = $(this);
         let target = \$button.attr('data-bs-target');
+        let label = \$button.text().substring(1);
        $(target).off('shown.bs.collapse').on('shown.bs.collapse', function () {
-        \$button.text('-');
+        \$button.text('-' + label);
         adjustDualListboxHeight(true);
        
     });
 
     $(target).off('hidden.bs.collapse').on('hidden.bs.collapse', function () {
-       \$button.text('+');
+       \$button.text('+' + label);
       adjustDualListboxHeight(false); 
    });
 });

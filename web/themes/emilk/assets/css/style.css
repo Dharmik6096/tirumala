@@ -5740,14 +5740,11 @@ h4{
 }
 
 .collapsible-btn {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
+    font-size: 13px !important;
+    margin-right: 10px;
     border: none;
     background-color: #00A3DE;
     color: white;
-    font-size: 18px;
-    margin-right: 10px;
 }
 .collapsible-btn:hover {
     background-color: #00a3dee0;

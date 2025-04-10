@@ -6032,13 +6032,7 @@ tr.highlightRow {
 }
 
 .collapsible-btn {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    border: none;
-    background-color: #00A3DE;
-    color: white;
-    font-size: 18px;
+    font-size: 13px !important;
     margin-right: 10px;
 }
 .collapsible-btn:hover {
