@@ -353,4 +353,58 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null]);
     }
 
+    public function addTripRoute($challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination = 0) {
+        $saveModel = [];
+        $trip_detail = TblVehicleTripDetail::find()
+                        ->where(['trip_code' => $this->trip_code])
+                        ->andWhere(['lower(source_org_type)' => $source_org_type, 'source_org_code' => $source_org_code])
+                        ->andWhere(['IS', 'challan_no', NULL])
+                        ->andWhere(['!=', 'vehicle_trip_detail_code', new \yii\db\Expression("CONCAT(vehicle_trip_code,'T1')")])
+                        ->orderBy(['sequence_no' => SORT_ASC])->one();
+
+        if (!empty($trip_detail)) {
+            $trip_detail->challan_no = $challan_no;
+            if ($this->is_auto_trip == 1) {
+                if (empty($trip_detail->destination_code)) {
+                    $trip_detail->destination_type = $destination_type;
+                    $trip_detail->destination_code = $destination_code;
+
+                    $numeric_part = intval(substr($trip_detail->vehicle_trip_detail_code, -1));
+                    $updated_numeric_part = $numeric_part + 1;
+                    $new_vehicle_trip_detail_code = $this->vehicle_trip_code . 'T' . $updated_numeric_part;
+
+                    $auto_trip_detail = new TblVehicleTripDetail();
+                    $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
+                    $auto_trip_detail->vehicle_trip_code = $this->vehicle_trip_code;
+                    $auto_trip_detail->vehicle_code = $this->vehicle_code;
+                    $auto_trip_detail->trip_code = $this->trip_code;
+                    $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                    $auto_trip_detail->source_org_code = $destination_code;
+                    $auto_trip_detail->source_org_type = $destination_type;
+                    $auto_trip_detail->is_last_destination = (int) $is_last_destination;
+                    $auto_trip_detail->sequence_no = $trip_detail->sequence_no + 1;
+                    $saveModel[] = $auto_trip_detail;
+                } else if ($is_last_destination == 1) {
+                    $exist_next_trip_detail = TblVehicleTripDetail::find()
+                            ->where(['vehicle_trip_code' => $this->vehicle_trip_code], ['sequence_no' => $trip_detail->sequence_no + 1])
+                            ->andWhere(['lower(source_org_type)' => strtolower($trip_detail->destination_type), 'source_org_code' => $trip_detail->destination_code])
+                            ->one();
+                    if (!empty($exist_next_trip_detail)) {
+
+                        // add history for existing record
+
+
+                        $exist_next_trip_detail->is_last_destination = 1;
+                        $exist_next_trip_detail->destination_type = $exist_next_trip_detail->destination_code = NULL;
+                        $saveModel[] = $exist_next_trip_detail;
+
+                        // delete all other after recodr by sschecking dispatch not done after this seq.
+                    }
+                }
+            }
+            $saveModel[] = $trip_detail;
+        }
+        return $saveModel;
+    }
+
 }

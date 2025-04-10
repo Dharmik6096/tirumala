@@ -26,7 +26,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
 use yii\data\ArrayDataProvider;
 use app\modules\tankermovement\models\TblBmcDispatchInspection;
 use app\modules\tankermovement\models\TblPartyMaster;
-use app\components\ActiveForm;  
+use app\components\ActiveForm;
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
@@ -138,7 +138,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $exist_auto_trip_detail = TblVehicleTripDetail::find()
                                         ->where(['vehicle_trip_code' => $tripModel->vehicle_trip_code])
                                         ->orderBy(['sequence_no' => SORT_DESC])->one();
-                                        
+
                         $exist_auto_trip_detail->destination_type = $model->destination_type;
                         $exist_auto_trip_detail->destination_code = $model->destination_code;
                         $exist_auto_trip_detail->challan_no = $model->challan_no;
@@ -224,7 +224,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 if ($transaction != 'customRedirect' && $new_rec) {
                     $model->bmc_milk_dispatch_code = '';
                 } else if ($transaction == 'customRedirect') {
-                    if($new_rec){
+                    if ($new_rec) {
                         $response = Yii::$app->general->getColumnName($model->source_org_type);
                         $remarks = $model->remarks;
                         if (!empty($response['rel'])) {
@@ -583,83 +583,10 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $saveModel[] = $tripModel;
                     }
                     $tripModel->scenario = 'closetrip';
-                    $trip_detail = TblVehicleTripDetail::find()
-                                    ->where(['trip_code' => $model->trip_code])
-                                    ->andWhere(['lower(source_org_type)' => 'plant', 'source_org_code' => $model->plant_code])
-                                    ->andWhere(['IS', 'challan_no', NULL])
-                                    ->andWhere(['!=', 'vehicle_trip_detail_code', new \yii\db\Expression("CONCAT(vehicle_trip_code,'T1')")])
-                                    ->orderBy(['sequence_no' => SORT_ASC])->one();
-
-                    if (!empty($tripModel)) {
-                        $trip_detail->challan_no = $model->challan_no;
-                        $exist_next_trip_detail = TblVehicleTripDetail::find()
-                                        ->where(['vehicle_trip_code' => $tripModel->vehicle_trip_code], ['sequence_no' => $trip_detail->sequence_no + 1])
-                                        ->one();
-
-                        if($tripModel->is_auto_trip == 1 && !empty($exist_next_trip_detail) && empty($exist_next_trip_detail->destination_code) && $model->is_last_destination){
-                            $exist_next_trip_detail->destination_type = $model->destination_type;
-                            $exist_next_trip_detail->destination_code = $model->destination_code;
-                            $exist_next_trip_detail->challan_no = $model->challan_no;
-                            $exist_next_trip_detail->is_last_destination = 1;
-                            $saveModel[] = $exist_next_trip_detail;
-                        } else if (empty($exist_next_trip_detail) && $tripModel->is_auto_trip == 1){
-                            $exist_auto_trip_detail = TblVehicleTripDetail::find()
-                                ->where(['vehicle_trip_code' => $tripModel->vehicle_trip_code])
-                                ->orderBy(['sequence_no' => SORT_DESC])->one();
-
-                            $numeric_part = intval(substr($exist_auto_trip_detail->vehicle_trip_detail_code, -1));
-                            $updated_numeric_part = $numeric_part + 1;
-                            $new_vehicle_trip_detail_code = $tripModel->vehicle_trip_code . 'T' . $updated_numeric_part;
-
-                            $auto_trip_detail = new TblVehicleTripDetail();
-                            $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
-                            $auto_trip_detail->vehicle_trip_code = $tripModel->vehicle_trip_code;
-                            $auto_trip_detail->vehicle_code = $tripModel->vehicle_code;
-                            $auto_trip_detail->trip_code = $tripModel->trip_code;
-                            $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-                            $auto_trip_detail->destination_code = $model->is_last_destination == 0 ? null : $model->destination_code;
-                            $auto_trip_detail->destination_type = $model->is_last_destination == 0 ? null : strtolower($model->destination_type);
-                            $auto_trip_detail->source_org_code = $model->destination_code;
-                            $auto_trip_detail->source_org_type = $model->destination_type;
-                            $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
-                            $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
-                            $auto_trip_detail->challan_no = $model->challan_no;
-                            $auto_trip_detail->sequence_no = $exist_auto_trip_detail->sequence_no + 1;
-                            $saveModel[] = $auto_trip_detail;
-                        }
-                        $saveModel[] = $trip_detail;
+                    $tripRoute = $tripModel->addTripRoute();
+                    foreach ($tripRoute as $route) {
+                        $saveModel[] = $route;
                     }
-                    
-                    // if ($tripModel->is_auto_trip == 1) {
-                    //     $exist_auto_trip_detail = TblVehicleTripDetail::find()
-                    //                     ->where(['vehicle_trip_code' => $tripModel->vehicle_trip_code])
-                    //                     ->orderBy(['sequence_no' => SORT_DESC])->one();
-
-                    //     $exist_auto_trip_detail->destination_type = $model->destination_type;
-                    //     $exist_auto_trip_detail->destination_code = $model->destination_code;
-                    //     $exist_auto_trip_detail->challan_no = $model->challan_no;
-                    //     $saveModel[] = $exist_auto_trip_detail;
-
-                    //     $numeric_part = intval(substr($exist_auto_trip_detail->vehicle_trip_detail_code, -1));
-                    //     $updated_numeric_part = $numeric_part + 1;
-                    //     $new_vehicle_trip_detail_code = $tripModel->vehicle_trip_code . 'T' . $updated_numeric_part;
-
-                    //     $auto_trip_detail = new TblVehicleTripDetail();
-                    //     $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
-                    //     $auto_trip_detail->vehicle_trip_code = $tripModel->vehicle_trip_code;
-                    //     $auto_trip_detail->vehicle_code = $tripModel->vehicle_code;
-                    //     $auto_trip_detail->trip_code = $tripModel->trip_code;
-                    //     $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-                    //     $auto_trip_detail->destination_code = $model->is_last_destination == 1 ? null : $model->destination_code;
-                    //     $auto_trip_detail->destination_type = $model->is_last_destination == 1 ? null : strtolower($model->destination_type);
-                    //     $auto_trip_detail->source_org_code = $model->destination_code;
-                    //     $auto_trip_detail->source_org_type = $model->destination_type;
-                    //     $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
-                    //     $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
-                    //     $auto_trip_detail->challan_no = $model->challan_no;
-                    //     $auto_trip_detail->sequence_no = $exist_auto_trip_detail->sequence_no + 1;
-                    //     $saveModel[] = $auto_trip_detail;
-                    // }
                     $saveModel[] = $model;
                 }
                 $txn_model->attributes = $model->attributes;
@@ -726,8 +653,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $vehicleTripDetail->source_org_type = \Yii::$app->request->post()['source_org_type'];
         $tankerMovementWithTripSubStatus = \Yii::$app->request->post()['tankerMovementWithTripSubStatus'];
         $data = $vehicleTripDetail->getTripDetails($tankerMovementWithTripSubStatus);
-        if(!empty($data)){
-            $response = ['status' => 'success', 'data' => $data, 'currentTime' => date('H:i')] ;
+        if (!empty($data)) {
+            $response = ['status' => 'success', 'data' => $data, 'currentTime' => date('H:i')];
         } else {
             $response = ['status' => 'error', 'data' => [], 'currentTime' => date('H:i')];
         }
