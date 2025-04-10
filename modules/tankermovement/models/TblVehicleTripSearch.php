@@ -19,7 +19,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip'], 'safe'],
+                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'safe'],
                 [['is_active'], 'integer'],
         ];
     }
@@ -64,11 +64,35 @@ class TblVehicleTripSearch extends TblVehicleTrip {
 
         $this->load($params);
         $query->joinWith(['vehicleCode', 'vehicleCode.transporter', 'bmcMilkDispatchCode', 'bmcMilkDispatchCode.bmcMilkDispatchTxnCode']);
-        if (Yii::$app->session->get('Unions') !== '')
-                    $query->andFilterWhere(['t.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-        if (!empty($model->f_union_code))
-            $query->andFilterWhere(['t.union_code' => $this->f_union_code]);
-        // Yii::$app->general->filterByOrg($query, $this, 't', 't', 't');
+        
+        $allowedPlants = explode(',', Yii::$app->session->get('Plant'));
+        $allowedBmcs = explode(',', Yii::$app->session->get('BMC'));
+        $allowedUnions = explode(',', Yii::$app->session->get('Unions'));
+        $userType = Yii::$app->session->get('UserType');
+        $isSearch = !empty($this->f_plant_code) || !empty($this->f_bmc_code);
+
+        $plants = $isSearch ? $this->f_plant_code : $allowedPlants;
+        $bmcs = $isSearch ? $this->f_bmc_code : $allowedBmcs;
+        $unions = $isSearch ? $this->f_union_code : $allowedUnions;
+
+        $conditions = ['or'];
+        if (!$isSearch && in_array($userType, ['3', '4', '6'])) {
+            $conditions[] = ['and', ['in', 'source_org_code', $bmcs], ['source_org_type' => 'bmc']];
+            $conditions[] = ['and', ['in', 'source_org_code', $plants], ['source_org_type' => 'plant']];
+        } elseif ($isSearch && empty($this->f_bmc_code)) {
+            $conditions[] = ['and', ['in', 'source_org_code', $plants], ['source_org_type' => 'plant']];
+        } else {
+            $conditions[] = ['and', ['in', 'source_org_code', $bmcs], ['source_org_type' => 'bmc']];
+        }
+        $conditions[] = ['source_org_type' => 'party'];
+
+        $subQuery = TblVehicleTripDetail::find()
+            ->select(new \yii\db\Expression(1))
+            ->where('tbl_vehicle_trip_detail.vehicle_trip_code = t.vehicle_trip_code')
+            ->andWhere(['t.union_code' => $unions])
+            ->andWhere($conditions);
+
+        $query->andWhere(['exists', $subQuery]);
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -83,7 +107,6 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             't.is_active' => $this->is_active,
             'tbl_transporter.transporter_code' => $this->transporter_code,
             't.vehicle_code' => $this->vehicle_code,
-            't.is_auto_trip' => $this->is_auto_trip,
         ]);
         $query->andFilterWhere(['like', 't.trip_code', $this->trip_code])
                 ->andFilterWhere(['like', 't.grn_no', $this->grn_no])
