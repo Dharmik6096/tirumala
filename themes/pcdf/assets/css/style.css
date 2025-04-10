@@ -6043,6 +6043,10 @@ tr.highlightRow {
 .collapsible-btn {
     font-size: 13px !important;
     margin-right: 10px;
+    border: none;
+    background-color: #00A3DE;
+    color: white;
+    padding: 5px 10px 5px 5px;
 }
 .collapsible-btn:hover {
     background-color: #00a3dee0;

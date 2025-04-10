@@ -46,11 +46,11 @@ $this->title = Yii::t('app', $title);
                         <?php
                         foreach ($dualListBoxes as $field => $options):
                             $collapseId = "collapse-" . $field;
-                            $label = Yii::t('app', ucfirst($field));
+                            $label = $model->getAttributeLabel($field);
                             $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'hidden' : '';
                             ?>
                             <div class="btn-group margin-right-5 <?= $hiddenClass ?>">
-                                <button type="button" class="collapsible-btn btn btn-default" data-toggle="collapse" data-target="#<?= $collapseId ?>">- <?= $label ?></button>
+                                <button type="button" class="collapsible-btn" data-toggle="collapse" data-target="#<?= $collapseId ?>">- <?= $label ?></button>
                                 
                             </div>
                         <?php endforeach; ?>
@@ -59,7 +59,6 @@ $this->title = Yii::t('app', $title);
                     foreach ($dualListBoxes as $field => $options):
                         $collapseId = "collapse-" . $field;
                         $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'hidden' : '';
-                        $label = Yii::t('app', ucfirst($field));
                         ?>
                         <div class="col-sm-12 <?= $hiddenClass ?>">
                             <div id="<?= $collapseId ?>" class="collapse in">
