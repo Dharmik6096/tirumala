@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\tankermovement\models\TblVehicleTrip;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * TblVehicleTripSearch represents the model behind the search form about `app\modules\tankermovement\models\TblVehicleTrip`.
@@ -64,35 +65,33 @@ class TblVehicleTripSearch extends TblVehicleTrip {
 
         $this->load($params);
         $query->joinWith(['vehicleCode', 'vehicleCode.transporter', 'bmcMilkDispatchCode', 'bmcMilkDispatchCode.bmcMilkDispatchTxnCode']);
-        
-        $allowedPlants = explode(',', Yii::$app->session->get('Plant'));
-        $allowedBmcs = explode(',', Yii::$app->session->get('BMC'));
-        $allowedUnions = explode(',', Yii::$app->session->get('Unions'));
-        $userType = Yii::$app->session->get('UserType');
-        $isSearch = !empty($this->f_plant_code) || !empty($this->f_bmc_code);
 
-        $plants = $isSearch ? $this->f_plant_code : $allowedPlants;
-        $bmcs = $isSearch ? $this->f_bmc_code : $allowedBmcs;
-        $unions = $isSearch ? $this->f_union_code : $allowedUnions;
+        $plants = !empty($this->f_plant_code) ? $this->f_plant_code : (!empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : '');
+        $mccs = !empty($this->f_mcc_code) ? $this->f_mcc_code : (!empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : '');
+        $bmcs = !empty($this->f_bmc_code) ? $this->f_bmc_code : (!empty(Yii::$app->session->get('BMC')) ? explode(',', Yii::$app->session->get('BMC')) : '');
 
-        $conditions = ['or'];
-        if (!$isSearch && in_array($userType, ['3', '4', '6'])) {
-            $conditions[] = ['and', ['in', 'source_org_code', $bmcs], ['source_org_type' => 'bmc']];
-            $conditions[] = ['and', ['in', 'source_org_code', $plants], ['source_org_type' => 'plant']];
-        } elseif ($isSearch && empty($this->f_bmc_code)) {
-            $conditions[] = ['and', ['in', 'source_org_code', $plants], ['source_org_type' => 'plant']];
-        } else {
-            $conditions[] = ['and', ['in', 'source_org_code', $bmcs], ['source_org_type' => 'bmc']];
+        if (!empty($bmcs) || !empty($mccs) || !empty($plants)) {
+            $conditions = ['or'];
+            if (!empty($bmcs)) {
+                $conditions[] = ['and', ['in', 'source_org_code', $bmcs], ['source_org_type' => 'bmc']];
+            } else if (!empty($mccs)) {
+                $bmcData = TblDcsBmc::find()->select('bmc_code')->where(['mcc_plant_code' => $mccs])->column();
+                $conditions[] = ['and', ['in', 'source_org_code', $bmcData], ['source_org_type' => 'bmc']];
+            } else if (!empty($plants)) {
+                $conditions[] = ['and', ['in', 'source_org_code', $plants], ['source_org_type' => 'plant']];
+            }
+
+            $subQuery = TblVehicleTripDetail::find()
+                    ->select(new \yii\db\Expression(1))
+                    ->where('tbl_vehicle_trip_detail.vehicle_trip_code = t.vehicle_trip_code')
+                    ->andWhere($conditions);
+
+            $query->andWhere(['exists', $subQuery]);
         }
-        $conditions[] = ['source_org_type' => 'party'];
-
-        $subQuery = TblVehicleTripDetail::find()
-            ->select(new \yii\db\Expression(1))
-            ->where('tbl_vehicle_trip_detail.vehicle_trip_code = t.vehicle_trip_code')
-            ->andWhere(['t.union_code' => $unions])
-            ->andWhere($conditions);
-
-        $query->andWhere(['exists', $subQuery]);
+        if (Yii::$app->session->get('Unions') !== '') {
+            $query->andFilterWhere(['t.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
+        $query->andFilterWhere(['t.union_code' => $this->f_union_code]);
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -102,6 +101,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $query->andFilterWhere(['<=', 't.transaction_date', $to_date]);
         }
+
         $query->andFilterWhere(['=', 't.transaction_date', !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : NULL]);
         $query->andFilterWhere([
             't.is_active' => $this->is_active,
