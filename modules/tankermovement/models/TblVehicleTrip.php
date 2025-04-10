@@ -184,7 +184,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $this->sub_status_time = date('Y-m-d H:i:s');
             if ($this->generateAutoTrip) {
                 $this->is_auto_trip = 1;
-                $driverDetail = $this->model->vehicleCode;
+                $driverDetail = $this->vehicleCode;
                 $this->driver_name = $driverDetail->driver_name;
                 $this->mobile_no = $driverDetail->driver_contact_no;
             }

@@ -367,12 +367,12 @@ $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip
                     if (setData(obj.data.arrival_time)) {
                         let arrivalTime = obj.data.arrival_time;
                         let timeOnly = arrivalTime.slice(11, 16); 
-                        $('#tblbmcmilkdispatch-vehicle_in_time').val(timeOnly).prop('disabled', true);
+                        $('#tblbmcmilkdispatch-vehicle_in_time').val(timeOnly).prop('readonly', true);
                     } else {
-                        $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('disabled', false);
+                        $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('readonly', false);
                     }
                 } else {
-                    $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('disabled', false);
+                    $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('readonly', false);
                 }
             }
         });
