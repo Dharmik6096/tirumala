@@ -5167,6 +5167,15 @@ tr.highlightRow {
     pointer-events: none;
 }
 
+.no_pointer_disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.no_pointer_disabled .select2-selection {
+    background-color: #eee;
+}
+
 .dropdown-menu > li:hover > .dropdown-submenu {
     display: block;
 }
