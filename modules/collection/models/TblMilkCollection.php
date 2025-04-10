@@ -175,6 +175,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['antibiotic_sms_sent', 'water', 'is_sms_sent'], 'default', 'value' => '0', 'on' => ['ho_sync_create']],
                 [['milk_type_code'], 'validateMilkType', 'on' => ['ho_sync_create', 'ho_sync_update']],
                 [['rtpl'], 'validateRtpl', 'on' => ['ho_sync_create', 'ho_sync_update']],
+                [['member_code'], 'validateDelete', 'on' => ['ho_sync_delete']],
         ];
     }
 
@@ -1336,6 +1337,15 @@ class TblMilkCollection extends \app\models\ChildModel {
         $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($this->union_code, 'qty_wise_collection', 'VLC');
         if ($qtyWiseCollConfig != 1 && empty($this->rtpl)) {
             $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' can not blank.'));
+        }
+    }
+
+    public function validateDelete($attribute) {
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $ApprovalModel = new TblCollectionDataAlias();
+        $existTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection', 'milk_quality_type_code' => $this->milk_quality_type_code, 'action_perform' => 'DELETE'])->one();
+        if (($flag == 1 || $flag == 2) && !empty($existTableData)) {
+            $this->addError($attribute, "Record is Already Exist For Approval.");
         }
     }
 
