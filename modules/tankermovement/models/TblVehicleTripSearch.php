@@ -19,7 +19,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date'], 'safe'],
+                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'f_union_code'], 'safe'],
                 [['is_active'], 'integer'],
         ];
     }
@@ -64,7 +64,11 @@ class TblVehicleTripSearch extends TblVehicleTrip {
 
         $this->load($params);
         $query->joinWith(['vehicleCode', 'vehicleCode.transporter', 'bmcMilkDispatchCode', 'bmcMilkDispatchCode.bmcMilkDispatchTxnCode']);
-        Yii::$app->general->filterByOrg($query, $this, 't', 't', 't');
+        if (Yii::$app->session->get('Unions') !== '')
+                    $query->andFilterWhere(['t.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        if (!empty($model->f_union_code))
+            $query->andFilterWhere(['t.union_code' => $this->f_union_code]);
+        // Yii::$app->general->filterByOrg($query, $this, 't', 't', 't');
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
