@@ -263,8 +263,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         $query = TblMilkCollection::find();
 
         // add conditions that should always apply here
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
-        if ($flag == 1) {
+        $flag = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL');
+        if (in_array($flag, [1, 2])) {
             // $query->joinWith(['approvalData']);
             $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.member_code = tbl_milk_collection.member_code and tbl_collection_data_alias.date_time_of_collection = tbl_milk_collection.date_time_of_collection and tbl_collection_data_alias.shift_code = tbl_milk_collection.shift_code and tbl_collection_data_alias.old_milk_type_code = tbl_milk_collection.milk_type_code and tbl_collection_data_alias.amount = tbl_milk_collection.amount and tbl_collection_data_alias.table_name = 'tbl_milk_collection' and tbl_collection_data_alias.action_perform = 'DELETE'");
         }
@@ -301,7 +301,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
         $query->andFilterWhere(['tbl_milk_collection.member_code' => $this->member_code])
                 ->andFilterWhere(['tbl_milk_collection.dcs_code' => $this->dcs_code]);
-        if ($flag == 1) {
+        if (in_array($flag, [1, 2])) {
             $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
         }
         $query->andWhere(['or', ['is', 'tbl_mcc_shift_lock.mcc_plant_code', NULL], ['is', 'tbl_mcc_shift_lock.shift_code', NULL], ['is', 'tbl_mcc_shift_lock.date_time_of_collection', NULL]]);

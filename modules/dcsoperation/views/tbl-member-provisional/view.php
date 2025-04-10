@@ -493,7 +493,15 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             'attribute' => 'is_approved',
                             'format' => 'html',
                             'value' => $model->is_approved == 1 ? 'Approved' : 'Pending',
-                            'valueColOptions' => ['style' => 'width:80%'],
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'beneficiary_name',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
