@@ -293,6 +293,9 @@ if ($model->isNewRecord) {
         <div class="col-sm-2">
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+        </div>
         <div class="col-sm-2 icon-set">
             <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['panCard']) ?>
             <?= $form->field($model, 'pan_no')->textInput() ?>
