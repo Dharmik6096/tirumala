@@ -110,7 +110,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $this->model->fl_type = !empty($fl_detail[1]) ? $fl_detail[1] : 'bmc';
                     if ($this->model->fl_type == 'bmc') {
                         $this->model->bmc_code = $this->model->fl_code;
-                        $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+                        $this->model->mcc_plant_code = $this->model->bmcCode->mcc_plant_code;
                     } else {
                         $this->model->bmc_code = NULL;
                         $this->model->mcc_plant_code = NULL;
@@ -219,6 +219,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     }
                 }
             }
+        }
+        if(empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1){
+            $this->model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0];
+        }
+        if(empty($bmc_array)){
+            $bmc_array[] = $this->model->plant_code.'#plant';
         }
         $this->model->bmc_code = $bmc_array;
         return $this->customRender();

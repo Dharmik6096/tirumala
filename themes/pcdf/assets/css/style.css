@@ -5599,6 +5599,15 @@ tr.highlightRow {
     pointer-events: none;
 }
 
+.no_pointer_disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.no_pointer_disabled .select2-selection {
+    background-color: #eee;
+}
+
 .days-container {
     display: flex;
 }
@@ -6032,14 +6041,12 @@ tr.highlightRow {
 }
 
 .collapsible-btn {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
+    font-size: 13px !important;
+    margin-right: 10px;
     border: none;
     background-color: #00A3DE;
     color: white;
-    font-size: 18px;
-    margin-right: 10px;
+    padding: 5px 10px 5px 5px;
 }
 .collapsible-btn:hover {
     background-color: #00a3dee0;

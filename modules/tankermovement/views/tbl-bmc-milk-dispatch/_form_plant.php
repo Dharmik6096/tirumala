@@ -279,10 +279,12 @@ $(document).ready(function(){
                     if (obj.status == 'success') {
                         if (obj.data.is_auto_trip == 0 && obj.data.is_last_destination == 0) {
                             var destType = obj.data.destination_type.toUpperCase();
-                            $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select').prop('disabled', true);
+                            $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select');
+                            $('.field-tblbmcmilkdispatch-destination_type').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
                             $('#tblbmcmilkdispatch-destination_code').on('depdrop.afterChange', function() {
                                 setTimeout(function() {
-                                    $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select').prop('disabled', true);
+                                    $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
+                                    $('.field-tblbmcmilkdispatch-destination_code').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
                                 }, 1000);
                             });
                         } else if (obj.data.is_auto_trip == 1) {
@@ -293,12 +295,12 @@ $(document).ready(function(){
                         if (setData(obj.data.arrival_time)) {
                             let arrivalTime = obj.data.arrival_time;
                             let timeOnly = arrivalTime.slice(11, 16); 
-                            $('#tblbmcmilkdispatch-vehicle_in_time').val(timeOnly).prop('disabled', true);
+                            $('#tblbmcmilkdispatch-vehicle_in_time').val(timeOnly).prop('readonly', true);
                         } else {
-                            $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('disabled', false);
+                            $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('readonly', false);
                         }
                     } else {
-                        $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('disabled', false);
+                        $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('readonly', false);
                     }  
                 }
             });

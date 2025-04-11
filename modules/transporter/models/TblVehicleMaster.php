@@ -82,10 +82,6 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 [['transporter_code'], 'fieldValidate', 'on' => 'importCsv'],
                 [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'parsing_no', 'billing_method', 'vehicle_use_type'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
                 [['parsing_no', 'driver_name', 'transporter_code', 'wef_date', 'billing_method'], 'required', 'on' => 'importCsv'],
-                [['no_of_compartment'], 'default', 'value' => 1],
-                [['no_of_compartment'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'chamber_no');
-                }, 'on' => 'importCsv'],
                 [['vehicle_type_code', 'fuel_type_code', 'capacity_code'], 'required', 'except' => ['activation']],
 //                [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required', 'except' => ['activation']],
 //                [['union_code'], 'required', 'except' => ['importCsv', 'activation']],
