@@ -220,6 +220,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 }
             }
         }
+        if(empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1){
+            $this->model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0];
+        }
+        if(empty($bmc_array)){
+            $bmc_array[] = $this->model->plant_code.'#plant';
+        }
         $this->model->bmc_code = $bmc_array;
         return $this->customRender();
     }
