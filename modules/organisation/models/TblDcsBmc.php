@@ -20,6 +20,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\installation\models\TblAndroidInstallation;
 use app\modules\organisation\models\TblChannelMaster;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_dcs_bmc".
@@ -71,7 +72,17 @@ class TblDcsBmc extends \app\models\ChildModel {
                 [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
                 [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
                 [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type', 'fssi', 'bmc_short_name'], 'safe'],
+                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type', 'fssi', 'bmc_short_name', 'fssi_expiry_date'], 'safe'],
+                [['fssi_expiry_date'], 'required', 'when' => function ($model) {
+                        return !empty($model->fssi);
+                    }, 'whenClient' => "function (attribute, value) {return $('#tbldcsbmc-fssi').val() !== '';
+                    }"],
+                [['fssi_expiry_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['fssi_expiry_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['fssi_expiry_date'], 'convertDate', 'on' => ['importCsv']],
+                [['fssi_expiry_date'], 'validateDate', 'when' => function ($model) {
+                        return !empty($model->fssi);
+                    }, 'on' => ['importCsv']],
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
@@ -161,6 +172,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             'address' => Yii::t('app', 'Address'),
             'aadhaar_no' => Yii::t('app', 'Aadhaar No'),
             'fssi' => Yii::t('app', 'FSSAI'),
+            'fssi_expiry_date' => Yii::t('app', 'FSSAI Expiry Date'),
             'bmc_short_name' => Yii::t('app', 'Bmc Short Name'),
         ];
     }
@@ -559,6 +571,29 @@ class TblDcsBmc extends \app\models\ChildModel {
             $query->andFilterWhere(['is_mcc' => 1]);
         }
         return $query->all();
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->fssi_expiry_date = Yii::$app->controls->view_date($this->fssi_expiry_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->fssi_expiry_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->fssi_expiry_date = !empty($this->fssi_expiry_date) ? Yii::$app->controls->view_date($this->fssi_expiry_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function validateDate($attribute, $params) {
+        if (empty($this->getErrors())) {
+            if ($this->$attribute < date('Y-m-d')) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' Must Not Allow Past Date.'));
+                return false;
+            }
+        }
     }
 
 }

@@ -198,6 +198,9 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'fssi_expiry_date', '', FALSE, date('Y-m-d')); ?>
+        </div>
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', $model->getAttributeLabel('gender')); ?>
         </div>
         <div class="col-sm-2">
@@ -243,7 +246,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Address Details</h4>
         </div>
         <!--    <div class="col-sm-2">
-                <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+                <?php // $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
             </div>-->
         <div class="col-sm-2">
             <div class="col-sm-12">
@@ -316,7 +319,7 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'email')->textInput() ?>
             </div>
             <!--<div class="col-sm-2">
-                <? = $form->field($model, 'local_contact_person')->textInput() ?>
+                <?php // $form->field($model, 'local_contact_person')->textInput() ?>
             </div>-->
             <div class="col-sm-2">
                 <?= $form->field($model, 'local_firstname')->textInput() ?>
