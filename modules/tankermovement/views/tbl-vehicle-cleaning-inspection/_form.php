@@ -68,9 +68,6 @@ $form = ActiveForm::begin([
 <?php
 $script = "
    $(document).ready(function() {
-   
- 
-
     $('.field-tblvehiclecleaninginspection-transporter_code').addClass('disabled no_pointer');
     function setDefaultTripCode() {
         var tripDropdown = $('#tblvehiclecleaninginspection-trip_code');
