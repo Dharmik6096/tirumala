@@ -244,7 +244,6 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                     $flush_limit = (float) Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'bmc_dispatch_flush_limit',$this->bmc_code, 'BMC','BMC_DISPATCH_CONFIG');
                     $flush_limit = $flush_limit ?: 0; 
                     $bmcDispatchFlushWithStock = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'bmc_dispatch_flush_with_stock', 'BMC') == 1 ? TRUE : FALSE;
-                    $act_milk = $bmcDispatchFlushWithStock ? ($this->opening_bal + $this->purchase_qty) : $this->purchase_qty;
                     $stock_model = new TblBmcDispatchStock();
                     $stock_model->bmc_code = $this->bmc_code;
                     $stock_model->to_date = $this->to_datetime;
