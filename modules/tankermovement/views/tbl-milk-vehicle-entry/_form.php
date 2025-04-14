@@ -13,7 +13,6 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 $disabled = empty($model->milk_vehicle_entry_code) ? '' : 'disabled';
 $milk_vehicle_entry_code = $model->milk_vehicle_entry_code;
 $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL') == 1 ? TRUE : FALSE;
-
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -46,7 +45,7 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'receipt_shift_code'); ?>
             </div>
-            <?php if(!$tripMandateOnReceipt) {?>
+            <?php if (!$tripMandateOnReceipt) { ?>
                 <div class="col-sm-1">
                     <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
                 </div>
@@ -65,7 +64,7 @@ $form = ActiveForm::begin([
                 <?= Html::hiddenInput('trip_type', 'receipt', ['id' => 'trip_type']); ?>
                 <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentry-vehicle_code,tblmilkvehicleentry-receipt_datetime,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
             </div>
-            <?php if($tripMandateOnReceipt) {?>
+            <?php if ($tripMandateOnReceipt) { ?>
                 <div class="col-sm-1">
                     <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
                 </div>
@@ -642,7 +641,7 @@ $script = "
         $('#tblmilkvehicleentrytransaction-chamber_quantity').val((qty).toFixed(2));
     });
     
-        function SourceData(trip_code){
+       function SourceData(trip_code){
             $.ajax({
                 type: 'get',
                 url: '" . Url::to(['vehicle-trip-detail']) . "',
@@ -650,24 +649,14 @@ $script = "
                 success: function(data) {
                    var obj = $.parseJSON(data);
                     if (obj.status == 'success') {
-                        var sourceOrgTypeUpper = '';
-                        if(obj.data != null && obj.data.source_org_type != '' && obj.data.source_org_type != null && obj.data.source_org_type != undefined){
-                            sourceOrgTypeUpper = obj.data.source_org_type.toUpperCase();
-                            org_code = obj.data.source_org_code;
-                        }
-                            $('#tblmilkvehicleentry-dispatch_from').val(sourceOrgTypeUpper);
-                            $('#tblmilkvehicleentry-dispatch_from').trigger('change');
-                            $('#tblmilkvehicleentry-dispatch_from').trigger('select2:select');
+                        var sourceOrgTypeUpper = obj.data.source_org_type.toUpperCase();
+                            $('#tblmilkvehicleentry-dispatch_from').val(sourceOrgTypeUpper).trigger('change').trigger('select2:select');
                             var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
-                            if(dispatch_from != '') {
-                                $('#tblmilkvehicleentry-dispatch_from_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                                    setTimeout(function() {
-                                        $('#tblmilkvehicleentry-dispatch_from_code').val(org_code);
-                                        $('#tblmilkvehicleentry-dispatch_from_code').trigger('change');
-                                        $('#tblmilkvehicleentry-dispatch_from_code').trigger('select2:select');
-                                    }, 1000);
-                                });
-                            }
+                            $('#tblmilkvehicleentry-dispatch_from_code').on('depdrop.afterChange', function(e) {
+                            setTimeout(function() {
+                                $('#tblmilkvehicleentry-dispatch_from_code').val(obj.data.source_org_code).trigger('change').trigger('select2:select');
+                            }, 1000);
+                        });
                     }
                 },
                   error: function(data) {  
@@ -676,7 +665,11 @@ $script = "
     }
     $(document).on('change','#tblmilkvehicleentry-trip_code', function() {
         var trip_code = $('#tblmilkvehicleentry-trip_code').val();
-        SourceData(trip_code);
+        $('#tblmilkvehicleentry-dispatch_from').val(null).trigger('change');
+        $('#tblmilkvehicleentry-dispatch_from_code').val(null).trigger('change');
+        if (trip_code) {
+            SourceData(trip_code);
+        }
     });
    
 ";
