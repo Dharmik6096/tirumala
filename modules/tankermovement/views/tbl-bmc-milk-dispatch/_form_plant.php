@@ -27,7 +27,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">PLANT Milk Dispatch Detail</h4>
         </div>
-        <div class="row col-md-12 micro_form <?= $disabled ?> padding-bottom-20">
+        <div class="row col-md-12 <?= $disabled ?> padding-bottom-20">
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
