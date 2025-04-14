@@ -108,7 +108,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
         'compartment-detail' => function ($url, $model) {
-            $options = ['data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Compartment'];
+            $options = ['data-val' => $model->vehicle_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Vehicle Compartment'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/transporter/tbl-vehicle-master/compartment-detail', 'id' => $model->vehicle_code], $options);
         },
     ]
