@@ -12,6 +12,8 @@ use yii\web\JsExpression;
 $readonly = $type == 'create' ? FALSE : TRUE;
 $disabled = empty($model->milk_vehicle_entry_code) ? '' : 'disabled';
 $milk_vehicle_entry_code = $model->milk_vehicle_entry_code;
+$tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL') == 1 ? TRUE : FALSE;
+
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -47,6 +49,14 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 disabled vehicle_code_hide"> 
                 <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblmilkvehicleentry-union_code', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, false); ?>
             </div>
+            <php if(!$tripMandateOnReceipt) {?>
+                <div class="col-sm-1">
+                    <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+                </div>
+            <php } ?>
             <div class="col-sm-2 tanker_no_hide"> 
                 <?= $form->field($model, 'tanker_no')->textInput() ?>
             </div>
@@ -55,12 +65,14 @@ $form = ActiveForm::begin([
                 <?= Html::hiddenInput('trip_type', 'receipt', ['id' => 'trip_type']); ?>
                 <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentry-vehicle_code,tblmilkvehicleentry-receipt_datetime,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
             </div>
-            <div class="col-sm-1">
-                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
-            </div>
+            <php if($tripMandateOnReceipt) {?>
+                <div class="col-sm-1">
+                    <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+                </div>
+            <php } ?>
             <div class="col-sm-2">
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?> 
             </div>
@@ -292,7 +304,6 @@ endif;
 ?>
 
 <?php
-$tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL') == 1 ? TRUE : FALSE;
 $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
 $script = "
     var org_code = '';
@@ -328,8 +339,8 @@ $script = "
         var EntryType = document.querySelector('.col-sm-1.entry_type');
         var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
         var tankerMovementWithTripSubStatus = '" . $tankerMovementWithTripSubStatus . "';
-        if (setData(receipt_at) && setData(dispatch_from)) {
-            if (dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
+        if (setData(receipt_at)) {
+            if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
                $('#dispatch-detail').css('display', 'none');
