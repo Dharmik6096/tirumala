@@ -245,6 +245,18 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                     $flush_limit = $flush_limit ?: 0; 
                     $bmcDispatchFlushWithStock = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'bmc_dispatch_flush_with_stock', 'BMC') == 1 ? TRUE : FALSE;
                     $act_milk = $bmcDispatchFlushWithStock ? ($this->opening_bal + $this->purchase_qty) : $this->purchase_qty;
+                    $stock_model = new TblBmcDispatchStock();
+                    $stock_model->bmc_code = $this->bmc_code;
+                    $stock_model->to_date = $this->to_datetime;
+                    $stock_model->milk_type_code = $this->milk_type_code;
+                    $stock_model->bmc_silos_info_code = $this->bmc_silos_info_code;
+                    $stock_model->milk_quality_type_code = $this->milk_quality_type_code;
+                    $stock_data = $stock_model->getStockEntry();
+                    if(!empty($stock_data)){
+                        $act_milk = $bmcDispatchFlushWithStock ? ($stock_data->opening_bal + $stock_data->purchase_qty) : $stock_data->purchase_qty;
+                    } else {
+                        $act_milk = $bmcDispatchFlushWithStock ? ($this->opening_bal + $this->purchase_qty) : $this->purchase_qty;
+                    }
                     $dispatch_milk = ($this->current_dispatch_qty + $this->dispatch_qty);
                     $allow_flush = ($act_milk * $flush_limit) / 100;
                     $total_flush = $this->balance_qty + $this->qty_diff;

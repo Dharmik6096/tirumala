@@ -268,7 +268,11 @@ $(document).ready(function(){
     $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
         var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
         var trip_code = $('#tblbmcmilkdispatch-trip_code').val();     
-        var source_org_type = 'bmc';     
+        var source_org_type = 'bmc';
+        $('#tblbmcmilkdispatch-destination_type').val(null).trigger('change');
+        $('#tblbmcmilkdispatch-destination_code').val(null).trigger('change');
+        $('.field-tblbmcmilkdispatch-destination_type').removeClass('no_pointer_disabled');
+        $('.field-tblbmcmilkdispatch-destination_code').removeClass('no_pointer_disabled');
         if(setData(trip_code) && setData(source_org_code)){
             $.ajax({
                 type: 'post',
@@ -281,7 +285,7 @@ $(document).ready(function(){
                             var destType = obj.data.destination_type.toUpperCase();
                             $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select');
                             $('.field-tblbmcmilkdispatch-destination_type').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
-                            $('#tblbmcmilkdispatch-destination_code').on('depdrop.afterChange', function() {
+                            $('#tblbmcmilkdispatch-destination_code').one('depdrop.afterChange', function() {
                                 setTimeout(function() {
                                     $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
                                     $('.field-tblbmcmilkdispatch-destination_code').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
