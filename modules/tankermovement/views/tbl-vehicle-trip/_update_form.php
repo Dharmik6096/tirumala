@@ -149,9 +149,22 @@ function populateBmcLists(data) {
     $.each(data, function(code, name) {
         var listItem = '<li class=\"list-group-item\" data-code=\"' + code + '\">' + name + '</li>';
         if (selectedBmcSet.has(code)) {
-            $('#selected-bmc-list').append(listItem);
+            // $('#selected-bmc-list').append(listItem);
         } else {
             $('#available-bmc-list').append(listItem);
+        }
+    });
+    $.each(data, function(code, name) {
+        var listItem = '<li class=\"list-group-item\" data-code=\"' + code + '\">' + name + '</li>';
+        if (selectedBmcSet.has(code)) {
+            $('#available-bmc-list').append(listItem);
+        }
+    });
+    $.each(selectedBmcCodesInitial, function(_, code) {
+        if (data.hasOwnProperty(code)) {
+            var name = data[code];
+            var listItem = '<li class=\"list-group-item\" data-code=\"' + code + '\">' + name + '</li>';
+            $('#selected-bmc-list').append(listItem);
         }
     });
     updateHiddenInputs();
@@ -235,7 +248,28 @@ $(document).ready(function() {
 
     $('#available-bmc-list, #selected-bmc-list').sortable({
         connectWith: '#available-bmc-list, #selected-bmc-list',
-        update: function(event, ui) {
+        update: function (event, ui) {
+            var item = ui.item;
+            var code = item.data('code');
+
+            if (item.closest('#available-bmc-list').length) {
+                var existingItem = $('#available-bmc-list li').filter(function () {
+                    return $(this).data('code') === code;
+                });
+
+                if (existingItem.length === 0) {
+                    var listItem = '<li class=\"list-group-item\" data-code=\"' + code + '\">' + item.text() + '</li>';
+                    $('#available-bmc-list').append(listItem);
+                }
+
+                var selectedItems = $('#selected-bmc-list li').filter(function () {
+                    return $(this).data('code') === code;
+                });
+
+                if (selectedItems.length > 1) {
+                    selectedItems.slice(1).remove();
+                }
+            }
             updateSelectedBmcCodes();
         }
     });
