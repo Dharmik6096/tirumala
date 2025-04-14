@@ -124,6 +124,12 @@ $script = "
             });
         }
     }
+    
+    $('.apply-shortcut[type=\"reset\"]').on('click', function () {
+        $('#tblvehicleqainspection-vehicle_code').val('').trigger('change');
+        $('#tblvehicleqainspection-transporter_code').val('').trigger('change');
+        $('#tblvehicleqainspection-trip_code').val('').trigger('change');
+    });
 });
 
 ";

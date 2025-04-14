@@ -68,6 +68,9 @@ $form = ActiveForm::begin([
 <?php
 $script = "
    $(document).ready(function() {
+   
+ 
+
     $('.field-tblvehiclecleaninginspection-transporter_code').addClass('disabled no_pointer');
     function setDefaultTripCode() {
         var tripDropdown = $('#tblvehiclecleaninginspection-trip_code');
@@ -81,6 +84,8 @@ $script = "
         var vehicle_code = $(this).val();
         if(setData(vehicle_code)){
             setTranspoter(vehicle_code);
+        }else{
+            $('#tblvehiclecleaninginspection-transporter_code').val('').trigger('change').trigger('select2:select');
         }
         $('#tblvehiclecleaninginspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
             setDefaultTripCode();
@@ -112,6 +117,12 @@ $script = "
             });
         }
     }
+    
+    $('.apply-shortcut[type=\"reset\"]').on('click', function () {
+        $('#tblvehiclecleaninginspection-vehicle_code').val('').trigger('change');
+        $('#tblvehiclecleaninginspection-transporter_code').val('').trigger('change');
+        $('#tblvehiclecleaninginspection-trip_code').val('').trigger('change');
+    });
 });
 
 ";
