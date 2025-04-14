@@ -93,7 +93,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
             $bmc_array = $this->model->bmc_code;
             $is_valid_trip = FALSE;
-            if (count($bmc_array) > 2) {
+            if (count($bmc_array) > 2 || ($is_auto_trip && count($bmc_array) > 1)) {
                 $sl_detail = explode('#', $bmc_array[0]);
                 $sl_code = $sl_detail[0];
                 $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
@@ -120,7 +120,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             if (!$is_valid_trip && !$is_auto_trip) {
                 Yii::$app->getSession()->setFlash('success', [
                     'type' => 'error',
-                    'message' => 'Vehicle Trip Must be Start and End at Plant.'
+                    'message' => 'Vehicle trip must be start and end at plant and you must select at least one more location.'
+                ]);
+            } else if (!$is_valid_trip && $is_auto_trip) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Vehicle trip must start at a plant and you must select at least one more location.'
                 ]);
             }
             if (empty($this->model->getErrors())) {
@@ -225,6 +230,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
         if(empty($bmc_array)){
             $bmc_array[] = $this->model->plant_code.'#plant';
+            $this->model->is_auto_trip = 1;
         }
         $this->model->bmc_code = $bmc_array;
         return $this->customRender();

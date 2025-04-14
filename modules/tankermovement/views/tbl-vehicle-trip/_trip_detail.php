@@ -9,7 +9,9 @@ $minDate = $trip->transaction_date;
 $response = Yii::$app->general->getColumnName($tripDetail->source_org_type);
 $sourceData = $tripDetail->{$response['rel'] . 'Source'};
 $sourceValue = !empty($sourceData) ? $sourceData->{$response['name']} . '-' . strtoupper($tripDetail->source_org_type) : '';
-$sourceCode = !empty($sourceData) ? $sourceData->{$response['ref_code']}: '';
+$sourceCode = !empty($sourceData) ? $sourceData->{$response['ref_code']} : '';
+$client_code = Yii::$app->session->get('eiplCode') == 'DODLA';
+$currentDateTime = date('Y-m-d\TH:i:s');
 ?>
 <div class="modal modal-default fade" id="TripDetailModal" role="dialog">
     <div class="modal-dialog">
@@ -34,8 +36,13 @@ $sourceCode = !empty($sourceData) ? $sourceData->{$response['ref_code']}: '';
                         if ($actionType == 'gate-in') {
                             $column_name = 'arrival_time';
                         }
+                        $fieldOptions = ['type' => 'datetime-local', 'class' => 'first-input form-control', 'min' => date('Y-m-d\TH:i', strtotime($minDate))];
+                        if ($client_code) {
+                            $fieldOptions['value'] = $currentDateTime;
+                            $fieldOptions['readonly'] = true;
+                        }
                         ?>
-                        <?= $form->field($tripDetail, $column_name)->textInput(['type' => 'datetime-local', 'min' => date('Y-m-d\TH:i', strtotime($minDate)), 'class' => 'first-input form-control']) ?>
+                        <?= $form->field($tripDetail, $column_name)->textInput($fieldOptions) ?>
                     </div>
                     <div class="col-sm-6">
                         <?php
