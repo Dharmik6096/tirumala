@@ -94,7 +94,10 @@ $script = "
         var vehicle_code = $(this).val();
         if(setData(vehicle_code)){
             setTranspoter(vehicle_code);
+        }else{
+            $('#tblvehicleqainspection-transporter_code').val('').trigger('change').trigger('select2:select');
         }
+
         $('#tblvehicleqainspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
             setDefaultTripCode();
          });
@@ -124,6 +127,12 @@ $script = "
             });
         }
     }
+    
+    $('.apply-shortcut[type=\"reset\"]').on('click', function () {
+        $('#tblvehicleqainspection-vehicle_code').val('').trigger('change');
+        $('#tblvehicleqainspection-transporter_code').val('').trigger('change');
+        $('#tblvehicleqainspection-trip_code').val('').trigger('change');
+    });
 });
 
 ";
