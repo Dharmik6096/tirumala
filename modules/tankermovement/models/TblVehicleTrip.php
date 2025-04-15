@@ -311,28 +311,6 @@ class TblVehicleTrip extends \app\models\ChildModel {
                         ->where(['trip_code' => $this->trip_code, 'lower(trip_status)' => ['closed']])->one();
     }
 
-    public function afterSave($insert, $changedAttributes) {
-        $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '', FALSE);
-        foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                }
-            }
-        }
-    }
-
-    public function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
-    }
-
     public function checkVehicleStatus($attribute, $params) {
         if ($this->hasErrors()) {
             return;
