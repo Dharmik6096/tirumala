@@ -225,12 +225,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 }
             }
         }
+        if(empty($bmc_array)){
+            $this->model->is_auto_trip = 1;
+        }
         if(empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1){
             $this->model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0];
-        }
-        if(empty($bmc_array)){
             $bmc_array[] = $this->model->plant_code.'#plant';
-            $this->model->is_auto_trip = 1;
         }
         $this->model->bmc_code = $bmc_array;
         return $this->customRender();
@@ -494,23 +494,15 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
             return null;
         }, $vehicleTripDetails);
-
-        $destBmc = array_map(function($item) {
-            if (!empty($item->destination_code) && !empty($item->destination_type)) {
-                return ($item->destination_type != 'bmc') 
-                    ? $item->destination_code . '#' . strtolower($item->destination_type) 
-                    : $item->destination_code;
-            }
-            return null;
-        }, $vehicleTripDetails);
-
-        $this->model->bmc_code = array_values(array_unique(array_merge($sourceBmc, $destBmc)));
+        $this->model->bmc_code = array_values($sourceBmc);
         $saveModel = [];
         $deleteModel = [];
         $this->viewFile = 'update';
 
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
+            $tripDetailData = TblVehicleTripDetail::find()->where(['vehicle_trip_code' => $this->model->vehicle_trip_code])->andWhere(['IS NOT', 'arrival_time', null])->one();
+            $is_auto_trip = $this->model->is_auto_trip;
             if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
                 $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
                 $bmc_detail = explode(':::', $bmc_string);
@@ -530,7 +522,31 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $bmc_array = $this->model->bmc_code;
             $validate = true;
 
-            if ($this->model->validate()) {
+            $is_valid_trip = FALSE;
+            if (!empty($tripDetailData) || count($bmc_array) > 2 || ($is_auto_trip && count($bmc_array) > 1)) {
+                $sl_detail = explode('#', $bmc_array[0]);
+                $sl_code = $sl_detail[0];
+                $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
+
+                $el_detail = explode('#', $bmc_array[count($bmc_array) - 1]);
+                $el_code = $el_detail[0];
+                $el_type = !empty($el_detail[1]) ? $el_detail[1] : 'bmc';
+
+                $is_valid_trip = ((!empty($tripDetailData) || $sl_type == 'plant') && ($is_auto_trip || $el_type == 'plant')) ? TRUE : FALSE;
+            }
+            if (!$is_valid_trip && !$is_auto_trip) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Vehicle trip must be start and end at plant and you must select at least one more location.'
+                ]);
+            } else if (!$is_valid_trip && $is_auto_trip) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Vehicle trip must start at a plant and you must select at least one more location.'
+                ]);
+            }
+
+            if ($is_valid_trip && $this->model->validate()) {
                 $deleteDetails = TblVehicleTripDetail::find()
                         ->where(['trip_code' => $this->model->trip_code, 'arrival_time' => null, 'departure_time' => null])
                         ->all();
@@ -576,6 +592,10 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $dloc_detail = explode('#', $bmc_array[$key + 1]);
                         $trip_detail->destination_code = $dloc_detail[0];
                         $trip_detail->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
+                    } else {
+                        if (!$is_auto_trip) {
+                            $trip_detail->is_last_destination = 1;
+                        }
                     }
 
                     if ($key == 0 && !empty($lastArrivalDetail)) {
@@ -642,16 +662,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             return null;
         }, $vehicleTripDetails);
 
-        $destBmc = array_map(function($item) {
-            if (!empty($item->destination_code) && !empty($item->destination_type)) {
-                return ($item->destination_type != 'bmc') 
-                    ? $item->destination_code . '#' . strtolower($item->destination_type) 
-                    : $item->destination_code;
-            }
-            return null;
-        }, $vehicleTripDetails);
-
-        $this->model->bmc_code = array_values(array_unique(array_merge($sourceBmc, $destBmc)));
+        $this->model->bmc_code = array_values($sourceBmc);
         $this->viewFile = 'update';
         return $this->customRender();
     }
