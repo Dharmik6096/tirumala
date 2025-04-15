@@ -107,4 +107,15 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
         }
     }
 
+    public function afterDelete() {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', FALSE, 2);
+            $sentbox = new TblSentbox();
+            $sentbox->source_org_id = $this->union_code;
+            if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
+    }
+
 }
