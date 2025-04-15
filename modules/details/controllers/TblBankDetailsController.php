@@ -170,6 +170,7 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $historyModel = new TblBankDetailsHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->scenario = 'deactivate';
         $this->model->is_active = 0;
         $this->model->is_verified = 0;
         $this->model->is_default = 0;

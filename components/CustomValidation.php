@@ -1155,7 +1155,7 @@ class CustomValidation extends Component {
             'ABT' => [
                 'TblBankDetails' => [
                     'default' => [
-                            [['bank_account_no'], 'CheckDuplicate'],
+                            [['bank_account_no'], 'CheckDuplicate', 'except' => ['deactivate']],
                     ],
                 ],
                 'TblMember' => [
