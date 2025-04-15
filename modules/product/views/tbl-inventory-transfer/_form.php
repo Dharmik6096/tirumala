@@ -107,10 +107,10 @@ var userType = '$userType';
        var f_mcc =$('#tblinventorytransfer-from_mcc_plant_code').val();
        var f_bmc =$('#tblinventorytransfer-from_bmc_code').val();
        var f_dcs =$('#tblinventorytransfer-from_dcs_code').val();
-        if(type =='BMC'){
+        if(type =='BMC' && setData(f_bmc)){
             $('#f_code').val(f_bmc);
              $('#f_code').trigger('change');
-        }else if(type =='DCS'){
+        }else if(type =='DCS' && setData(f_dcs)){
             $('#f_code').val(f_dcs);
              $('#f_code').trigger('change');
         }
@@ -229,9 +229,9 @@ var userType = '$userType';
        var t_bmc =$('#tblinventorytransfer-to_bmc_code').val();
        var t_dcs =$('#tblinventorytransfer-to_dcs_code').val();
       
-        if(t_type =='BMC'){
+        if(t_type =='BMC' && setData(t_bmc)){
             $('#t_code').val(t_bmc);
-        }else if(t_type =='DCS'){
+        }else if(t_type =='DCS' && setData(t_dcs)){
             $('#t_code').val(t_dcs);
         }
     }

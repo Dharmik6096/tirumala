@@ -5,33 +5,48 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use softark\duallistbox\DualListbox;
+
+$tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL');
 ?>
 <?php
 $form = ActiveForm::begin([
-    'id' => 'vehicle-trip-form',
-    'validateOnBlur' => FALSE,
-    'validateOnChange' => FALSE,
-    'enableClientValidation' => true,
-    'validateOnSubmit' => true,
-]);
+            'id' => 'vehicle-trip-form',
+            'validateOnBlur' => FALSE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
 
 <div class="row">
+    <?= Html::activeHiddenInput($model, 'type', ['id' => 'type']) ?>
+    <div class="col-sm-2" id="union">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
+    </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', FALSE, FALSE); ?>
     </div>
-
-
+    <div class="col-sm-2">
+        <?php
+        if ($tankerMovementWithTripSubStatus) {
+            echo Yii::$app->dropdown->vehicleQaInspectionList($model, $form, 'tblvehicletrip-union_code', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE);
+        } else {
+            echo Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'));
+        }
+        ?>
+    </div>
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletrip-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
     </div>
-
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletrip-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
+        <?= $form->field($model, 'driver_name')->textInput() ?>
     </div>
-    <div class="col-sm-2" id="union">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'mobile_no')->textInput() ?>
+    </div>
+    <div class="col-sm-2 mt10">
+        <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox()->label('Is Partial Trip?'); ?>
     </div>
     <div class="col-sm-6">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true); ?>
@@ -40,20 +55,20 @@ $form = ActiveForm::begin([
     <div class="col-sm-12 megaSizeDualList">
         <?php
         echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12'], 'labelOptions' => ['label' => Yii::t('app', 'PLANT/BMC*')]])
-            ->widget(DualListbox::className(), [
-                'items' => [],
-                'options' => [
-                    'multiple' => true,
-                    'size' => 20
-                ],
-                'clientOptions' => [
-                    'moveOnSelect' => FALSE,
-                    'selectedListLabel' => FALSE,
-                    'nonSelectedListLabel' => FALSE,
-                    'filterPlaceHolder' => '',
-                    'sortByInputOrder' => TRUE,
-                ],
-            ]);
+                ->widget(DualListbox::className(), [
+                    'items' => [],
+                    'options' => [
+                        'multiple' => true,
+                        'size' => 20
+                    ],
+                    'clientOptions' => [
+                        'moveOnSelect' => FALSE,
+                        'selectedListLabel' => FALSE,
+                        'nonSelectedListLabel' => FALSE,
+                        'filterPlaceHolder' => '',
+                        'sortByInputOrder' => TRUE,
+                    ],
+        ]);
         echo Html::hiddenInput('selected_bmc_seq', '', ['id' => 'selected_bmc_seq']);
         ?>
     </div>
@@ -70,13 +85,22 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 
 <?php
+$bmcArray = json_encode($model->bmc_code);
 $script = "
+var selectedBmcCodesInitial = $bmcArray;
+var isLoadPage = true;
+$(document).ready(function() {
+    $('.field-tblvehicletrip-transporter_code').addClass('disabled no_pointer');
+});
+
 $('#tblvehicletrip-plant_code').on('change',function(){
     var plant_code = $('#tblvehicletrip-plant_code').val(); 
+    var union_code = $('#tblvehicletrip-union_code').val();
+    var action_type = $('#type').val();
     $.ajax({
         type: 'post',
         url: '" . Url::to(['/organisation/tbl-dcs-bmc/get-plant-bmc']) . "',    
-        data: 'plant_code='+plant_code,
+        data: 'union_code='+union_code+'&plant_code='+plant_code+'&action_type='+action_type,
         success: function(data) {
             var obj1 = $.parseJSON(data);
             if (obj1.status == 'success') {                          
@@ -84,37 +108,48 @@ $('#tblvehicletrip-plant_code').on('change',function(){
                 var selarray =  mccarray.map(function () {
                     return this.value;
                 }).get();
-            $('#tblvehicletrip-bmc_code option').remove();                              
-            var options='';  
+                $('#tblvehicletrip-bmc_code option').remove();                              
+                var options='';  
 
-            $.each(plant_code, function(index, plant_code) {
-                options += '<option value=\"' + plant_code + '-plant' + '\">' + $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text() + ' - PLANT</option>';
-            });          
-            $.each(obj1.data, function(index, value) {
+                $.each(plant_code, function(index, plant_code) {
+                    // options += '<option value=\"' + plant_code + '#plant' + '\">' + $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text() + ' - PLANT</option>';
+                    var uniquePlantValue = plant_code + '#plant';
+                    var plantText = $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text();
+                    options += '<option value=\"' + uniquePlantValue + '\" data-sortindex=\"' + index + '\">' + plantText + ' - PLANT</option>';
+                });          
+                $.each(obj1.data, function(index, value) {
                     if(jQuery.inArray(index,selarray) == -1){   
                         options += '<option value=\"'+index+'\">'+value+'</option>';  
                     }
-            });  
-            var bmc_array = [];
-            var bmc_array_nonsel = {};
-            mccarray.each(function(){
-                var val = $(this).attr('value');
-                var txt = $(this).text();
-                var dataindex = $(this).attr('data-sortindex');
-                bmc_array[dataindex]= val + '~~~' + txt ;
-                bmc_array_nonsel[val]=txt;
-            });   
-            $.each(bmc_array_nonsel, function(index, value) {
-                options += '<option value=\"'+index+'\">'+value+'</option>'; 
-            });            
-            $.each(bmc_array, function(index, value) {
-                if(value!=''){
-                    var valtxt=value.split('~~~')
-                    options += '<option value=\"'+valtxt[0]+'\"  data-sortindex=\"'+index+'\" selected>'+valtxt[1]+'</option>';
+                });  
+                var bmc_array = [];
+                var bmc_array_nonsel = {};
+                mccarray.each(function(){
+                    var val = $(this).attr('value');
+                    var txt = $(this).text();
+                    var dataindex = $(this).attr('data-sortindex');
+                    bmc_array[dataindex]= val + '~~~' + txt ;
+                    bmc_array_nonsel[val]=txt;
+                });   
+                $.each(bmc_array_nonsel, function(index, value) {
+                    options += '<option value=\"'+index+'\">'+value+'</option>'; 
+                });            
+                $.each(bmc_array, function(index, value) {
+                    if(value!=''){
+                        var valtxt=value.split('~~~')
+                        options += '<option value=\"'+valtxt[0]+'\"  data-sortindex=\"'+index+'\" selected>'+valtxt[1]+'</option>';
+                    }
+                });
+                $('#tblvehicletrip-bmc_code').html(options);
+                $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true); 
+                if (typeof selectedBmcCodesInitial !== 'undefined' && selectedBmcCodesInitial.length > 0 && isLoadPage) {
+                    $('#tblvehicletrip-bmc_code option').each(function() {
+                        if (selectedBmcCodesInitial.includes($(this).val())) {
+                            $(this).prop('selected', true);
+                        }
+                    });
+                    $('#tblvehicletrip-bmc_code').trigger('change'); 
                 }
-            });          
-            $('#tblvehicletrip-bmc_code').html(options);
-            $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true); 
             }
         }
     });           
@@ -122,26 +157,55 @@ $('#tblvehicletrip-plant_code').on('change',function(){
 $('#vehicle-trip-form').submit(function(e) {
     var bmcarray = '';                                      
     var options = $('#tblvehicletrip-bmc_code option:selected');
-    options.each(function(){
-        bmcarray += $(this).attr('data-sortindex')+'~~~'+$(this).attr('value')+':::';
+    options.each(function(index){
+        bmcarray += index+'~~~'+$(this).attr('value')+':::';
     });
     $('#selected_bmc_seq').val(bmcarray);      
 });
+$('#tblvehicletrip-vehicle_code').on('change', function(){
+    var vehicle_code = $(this).val();
+     if(setData(vehicle_code)){
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['get-vehicle-detail']) . "',    
+            data: 'vehicle_code='+vehicle_code,
+            success: function(data) {
+                var obj1 = $.parseJSON(data);
+                if(obj1.status == 'success'){
+                    var response = obj1.data;
+                    if(response != '' && response != null){
+                        $('#tblvehicletrip-driver_name').val(response.driver_name);
+                        $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);
+                        $('#tblvehicletrip-transporter_code').val(response.transporter_code).trigger('change').trigger('select2:select');
+                    }
+                }
+            }
+        });
+    }
+});
+
+function setData(field = ''){
+    if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+        return true;
+    }else {
+        return false;
+    }
+}
 ";
 $script .= "$('#tblvehicletrip-bmc_code').change(function () {
 var mccarray =  $('#tblvehicletrip-bmc_code option:selected');
 var nonselarray =  $('#tblvehicletrip-bmc_code option:not(:selected)').map(function () {return this.value;}).get();                        
 var bmc_array_sel = {};
     mccarray.each(function(){
-                var val = $(this).attr('value');
-                        var txt = $(this).text();
-                        bmc_array_sel[val]=txt;
-                    });   
+        var val = $(this).attr('value');
+        var txt = $(this).text();
+        bmc_array_sel[val]=txt;
+    });
     $.each(bmc_array_sel, function(index, value) {
-            if(jQuery.inArray(index,nonselarray) == -1){
-                $('#tblvehicletrip-bmc_code').append($('<option></option>').attr('value', index).text(value)); 
-            }
-            nonselarray.push(index);
+        if(jQuery.inArray(index,nonselarray) == -1){
+            $('#tblvehicletrip-bmc_code').append($('<option></option>').attr('value', index).text(value)); 
+        }
+        nonselarray.push(index);
     });  
     $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);      
 });

@@ -86,7 +86,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
 //                [['union_code'], 'required', 'except' => ['importCsv', 'activation']],
             [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['activation']],
                 [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'is_active'], 'integer', 'except' => ['activation']],
-                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code', 'billing_method', 'billing_type_code', 'vehicle_use_type', 'billing_with_capacity', 'flag_wef_date', 'billing_qty_flag'], 'safe'],
+                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code', 'billing_method', 'billing_type_code', 'vehicle_use_type', 'billing_with_capacity', 'flag_wef_date', 'billing_qty_flag', 'no_of_compartment'], 'safe'],
                 [['rent', 'average'], 'number', 'min' => 1],
                 [['driver_contact_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
@@ -164,6 +164,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
             'vehicle_use_type' => Yii::t('app', 'Used for'),
             'billing_with_capacity' => Yii::t('app', 'Billing With Capacity ?'),
             'parsing_no' => Yii::t('app', 'Parsing No'),
+            'no_of_compartment' => Yii::t('app', 'No Of Compartment'),
         ];
     }
 

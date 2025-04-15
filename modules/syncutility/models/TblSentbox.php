@@ -258,7 +258,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
 
     public function entry($model, $operation, $sentModel) {
         $microtime = date("Y-m-d H:i:s.") . gettimeofday()["usec"];
-        if (strpos($model->tableName(), 'local') || $model->tableName() == 'tbl_message_property') {
+        if ((strpos($model->tableName(), 'local') || $model->tableName() == 'tbl_message_property') && $model->tableName() != 'tbl_local_milk_sale_rate') {
             $sentModel->language_code = $model->language_code;
         }
         //        $sentModel->uuid = $this->getUUID();

@@ -23,17 +23,11 @@ $this->title = Yii::t('app',Yii::$app->label->title('view', 'local milk sale rat
                     'attributes' => [
                         'local_sale_rate_code',
                         'rate',
-//                        [
-//                            'attribute' => 'sale_grade',
-//                            'format' => 'html',
-//                            'value' => $model->sale_grade==1?'Low':'High'
-//                        ],
                         [
                             'attribute' => 'wef_date',
                             'format' => 'html',
                             'value' => Yii::$app->controls->view_date($model->wef_date)
                         ],
-                        'milkType.animal_type_name',
                         'dcsCode.dcs_name',
                         'subCenterCode.sub_center_name',
                         [

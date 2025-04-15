@@ -1,0 +1,233 @@
+<?php
+
+use yii\helpers\Html;
+use app\components\ActiveForm;
+use yii\web\View;
+use yii\helpers\Url;
+use yii\widgets\ListView;
+use kartik\sortable\Sortable;
+
+$tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL');
+$readonly = TRUE;
+?>
+<?php
+$form = ActiveForm::begin([
+    'id' => 'vehicle-trip-form',
+    'validateOnBlur' => FALSE,
+    'validateOnChange' => FALSE,
+    'enableClientValidation' => true,
+    'validateOnSubmit' => true,
+    'action' => Url::to(array_merge(['update'], Yii::$app->request->get())),
+]);
+?>
+<?php echo $form->errorSummary($model); ?>
+
+<div class="row">
+    <?= Html::activeHiddenInput($model, 'type', ['id' => 'type']) ?>
+    <?= Html::activeHiddenInput($model, 'trip_code') ?>
+    <div class="col-sm-2" id="union">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE, $readonly); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', FALSE, FALSE, $readonly); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
+    </div>
+    <div class="col-sm-2">
+        <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletrip-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter', '', $readonly); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'driver_name')->textInput(['readonly' => $readonly]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'mobile_no')->textInput(['readonly' => $readonly]) ?>
+    </div>
+    <div class="col-sm-2 mt10">
+        <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['disabled' => $readonly])->label('Is Partial Trip?'); ?>
+    </div>
+    <div class="col-sm-6">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true); ?>
+    </div>
+    <div class="col-sm-6">
+        <label class="control-label">Dispatch already taken</label>
+        <div class="dispatch-box">
+            <?php
+            if(!empty($model->takenTripDetailCode)) {
+                foreach($model->takenTripDetailCode as $key => $value) { 
+                    $name = '';
+                    $response = Yii::$app->general->getColumnName($value->source_org_type);
+                    if (!empty($response['rel'])) {
+                        $sourceData = $value->{$response['rel'] . 'Source'};
+                        $name = $sourceData->{$response['name']} . ' - '. $sourceData->{$response['ref_code']};
+                    } ?>
+                    <p><?php echo $name . ' - ' . strtoupper($value->source_org_type); ?></p>
+                <?php
+                }
+            }
+            ?>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="col-sm-6 mt-2">
+        <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?></label>
+        <div class="well box-well">
+            <?= Sortable::widget([
+                'type' => Sortable::TYPE_LIST,
+                'items' => [],
+                'options' => ['id' => 'available-bmc-list', 'class' => 'list-group', 'style' => 'min-height: 370px;'],
+                'itemOptions' => ['class' => 'list-group-item'],
+            ]); ?>
+        </div>
+    </div>
+    <div class="col-sm-6 mt-2">
+        <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?> Seleted</label>
+        <div class="well box-well">
+            <?= Sortable::widget([
+                'type' => Sortable::TYPE_LIST,
+                'items' => $model->bmc_code ? array_map(function($code) {
+                    return ['content' => Html::encode($code), 'options' => ['data-code' => $code]];
+                }, $model->bmc_code) : [],
+                'options' => ['id' => 'selected-bmc-list', 'class' => 'list-group', 'style' => 'min-height: 370px;'],
+                'itemOptions' => ['class' => 'list-group-item'],
+            ]); ?>
+
+            <div id="bmc-code-container"></div>
+            <?= Html::hiddenInput('selected_bmc_seq', '', ['id' => 'selected_bmc_seq']); ?>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
+</div>
+
+<?php ActiveForm::end(); ?>
+<?php
+$bmcArray = json_encode($model->bmc_code);
+$script = "
+var selectedBmcCodesInitial = $bmcArray;
+$(document).ready(function() {
+    $('.field-tblvehicletrip-transporter_code').addClass('disabled no_pointer');
+    $('#tblvehicletrip-vehicle_code').trigger('change');
+});
+function updateSelectedBmcCodes() {
+    var selectedCodes = $('#selected-bmc-list li').map(function() {
+        return $(this).data('code');
+    }).get();
+    $('#bmc-code-container').empty();
+    $.each(selectedCodes, function(index, code) {
+        $('#bmc-code-container').append('<input type=\"hidden\" name=\"TblVehicleTrip[bmc_code][]\" value=\"' + code + '\">');
+    });
+    var selectedBmcSeq = selectedCodes.map((code, index) => index + '~~~' + code).join(':::');
+    $('#selected_bmc_seq').val(selectedBmcSeq);
+}
+
+function populateBmcLists(data) {
+    $('#available-bmc-list').empty();
+    $('#selected-bmc-list').empty();
+    var selectedBmcSet = new Set(selectedBmcCodesInitial);    
+    $.each(data, function(code, name) {
+        var listItem = '<li class=\"list-group-item\" data-code=\"' + code + '\">' + name + '</li>';
+        if (selectedBmcSet.has(code)) {
+            $('#selected-bmc-list').append(listItem);
+        } else {
+            $('#available-bmc-list').append(listItem);
+        }
+    });
+    updateHiddenInputs();
+}
+
+function updateHiddenInputs() {
+    var currentSelectedCodes = $('#selected-bmc-list li').map(function() {
+        return $(this).data('code');
+    }).get();
+    $('#tblvehicletrip-bmc_code').val(currentSelectedCodes.join(','));
+    $('#selected_bmc_seq').val(currentSelectedCodes.join(':::'));
+}
+
+$('#tblvehicletrip-plant_code').on('change', function() {
+    var plant_code = $(this).val();
+    var union_code = $('#tblvehicletrip-union_code').val();
+    var action_type = $('#type').val();
+    $.ajax({
+        type: 'post',
+        url: '" . Url::to(['/organisation/tbl-dcs-bmc/get-plant-bmc-with-party']) . "',
+        data: 'union_code='+union_code+'&plant_code='+plant_code+'&action_type='+action_type,
+        success: function(data) {
+            var obj1 = $.parseJSON(data);
+            if (obj1.status == 'success') {
+                populateBmcLists(obj1.data);
+            } else {
+                $('#available-bmc-list, #selected-bmc-list').empty();
+                $('#tblvehicletrip-bmc_code, #selected_bmc_seq').val('');
+            }
+        }
+    });
+});
+
+$('#tblvehicletrip-vehicle_code').on('change', function() {
+    var vehicle_code = $(this).val();
+    if (setData(vehicle_code)) {
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['get-vehicle-detail']) . "',
+            data: { vehicle_code: vehicle_code },
+            success: function(data) {
+                var obj1 = $.parseJSON(data);
+                if (obj1.status == 'success') {
+                    var response = obj1.data;
+                    if (response) {
+                        $('#tblvehicletrip-driver_name').val(response.driver_name);
+                        $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);                        	
+                        $('#tblvehicletrip-transporter_code').val(response.transporter_code).trigger('change').trigger('select2:select');
+                    }
+                }
+            }
+        });
+    } else {
+        $('#tblvehicletrip-driver_name, #tblvehicletrip-mobile_no').val('');
+    }
+});
+
+function setData(field = ''){
+    if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+        return true;
+    }else {
+        return false;
+    }
+}
+
+$(document).ready(function() {
+    if ($('#tblvehicletrip-plant_code').val()) {
+        $('#tblvehicletrip-plant_code').trigger('change');
+    } else {
+        var initialData = {};
+        $.each(selectedBmcCodesInitial, function(index, code) {
+            initialData[code] = code; // You might need to fetch actual names if available on load
+        });
+        populateBmcLists(initialData);
+    }
+
+    $('#vehicle-trip-form').on('beforeSubmit', function () {
+        updateSelectedBmcCodes();
+        return true;
+    });
+
+    $('#available-bmc-list, #selected-bmc-list').sortable({
+        connectWith: '#available-bmc-list, #selected-bmc-list',
+        update: function(event, ui) {
+            updateSelectedBmcCodes();
+        }
+    });
+});
+";
+
+$this->registerJs($script, View::POS_END, 'vehicle-trip-sortable-bmc-list');
+?>

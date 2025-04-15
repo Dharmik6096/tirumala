@@ -23,6 +23,7 @@ use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\organisation\models\TblCustomerMasterProvisionalHistory;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\document\controllers\TblAttachmentController;
+use app\modules\general\models\TblProcessApprovalSearch;
 
 /**
  * TblCustomerMasterProvisionalController implements the CRUD actions for TblCustomerMasterProvisional model.
@@ -61,12 +62,20 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         $dataProviderOther = new ActiveDataProvider([
             'query' => $attachment->find()->where(['module_code' => (string) $id, 'module_name' => 'tbl_customer_master_provisional']),
         ]);
+
+        $processApprovalModel = new TblProcessApprovalSearch();
+        $processApprovalModel->process_name = 'tbl_customer_master_provisional';
+        $processApprovalModel->process_code = $id;
+        $processApprovalDataProvider = $processApprovalModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'dataProviderOther' => $dataProviderOther,
-                    'attachment' => $attachment
+                    'attachment' => $attachment,
+                    'processApprovalModel' => $processApprovalModel,
+	                'processApprovalDataProvider' => $processApprovalDataProvider
         ]);
     }
 

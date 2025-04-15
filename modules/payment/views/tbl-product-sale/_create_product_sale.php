@@ -64,8 +64,11 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                     ?>
                     <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblproductsale-bmc_code', 'customer_type', TRUE, FALSE);   ?>
                 </div>
-                <div class="col-sm-2">
-                    <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', true); ?>
+                <div class="col-sm-2 no_pointer">
+                    <?php
+                        $model->invoice_date = !empty($model->invoice_date) ? $model->invoice_date : date('d-m-Y');
+                        echo Yii::$app->controls->date($model, $form, 'invoice_date', '', true, date('d-m-Y'));
+                    ?>
                 </div>
                 <div class="clearfix"></div>
                 <?php
@@ -264,6 +267,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
 <?php
 $script = "
     var batchNoWiseRate = $('#batch_no_wise_rate').val();
+    $('#tblproductsale-invoice_date').prop('readonly', true);
     $(document).on('change','#tblproductsale-invoice_date',function(){
         if(batchNoWiseRate == 'FALSE') {
             setRate();

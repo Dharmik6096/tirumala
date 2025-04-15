@@ -163,5 +163,13 @@ class TblAttachment extends \app\models\ChildModel {
         else
             return false;
     }
+    
+    public function getAttachmentCode() {
+        $query = $this->find()->where(['module_code' => (string) $this->module_code]);
+        if (!empty($this->module_name)) {
+            $query->andWhere(['module_name' => $this->module_name]);
+        }
+        return $query->all();
+    }
 
 }

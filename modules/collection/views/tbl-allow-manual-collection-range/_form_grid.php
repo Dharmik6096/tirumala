@@ -73,6 +73,7 @@ $attribute = [
         }],
         ['attribute' => 'remark', 'filter' => false],
         ['attribute' => 'originating_org_type', 'filter' => false],
+        ['attribute' => 'action_perform', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('action_perform', $searchModel, 'action_perform'),],
 ];
 
 $grid_option = [

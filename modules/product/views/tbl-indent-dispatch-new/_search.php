@@ -33,14 +33,20 @@ use yii\web\View;
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblindentmastersearch-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
             </div>
             <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdownStatic('indent_customer_type', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Customer Type'), false) ?>
+            </div> 
+            <div class="col-sm-4 hide_section">
                 <?= Yii::$app->dropdown->all_routes($model, $form, 'tblindentmastersearch-plant_code,tblindentmastersearch-mcc_plant_code,tblindentmastersearch-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4 hide_section">
                 <?= Yii::$app->dropdown->route_dcs($model, $form, 'tblindentmastersearch-route_code', 'dcs_code', Yii::t('app', 'DCS'), false, false); ?>
+            </div>
+            <div class="col-sm-4 hide_section">
+                <?= Yii::$app->dropdown->customer_code($model, $form, 'tblindentmastersearch-bmc_code,tblindentmastersearch-customer_type', 'customer_code', Yii::t('app', 'Customer'), FALSE); ?>
             </div>
             <?php
             if(!$isIndentApprovalCreditLimitCheck){ ?>
-                <div class="col-sm-4">
+                <div class="col-sm-4 hide_section">
                     <?= Yii::$app->dropdown->dropdownStatic('indent_group_by', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Group By'), false, 'group_by') ?>
                 </div>
             <?php
@@ -89,3 +95,26 @@ use yii\web\View;
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+<?php
+$script = '
+    $(document).ready(function() {
+        $(".hide_section").hide();
+        hideShowManage();
+        $("#tblindentmastersearch-customer_type").on("change", function() {
+            hideShowManage();
+        });
+    });
+    function hideShowManage() {
+        $(".hide_section").hide();
+        var customerType = $("#tblindentmastersearch-customer_type").val();
+        if(customerType == "BULKVEN"){
+            $(".field-tblindentmastersearch-customer_code").parent("div").show();
+            $("#tblindentmastersearch-group_by").val("0").trigger("change");
+        } else if(customerType == "DCS") {
+            $(".field-tblindentmastersearch-dcs_code").parent("div").show();
+            $(".field-tblindentmastersearch-group_by").parent("div").show();
+            $(".field-tblindentmastersearch-route_code").parent("div").show();
+        }
+    }
+';
++$this->registerJs($script, View::POS_END, 'indent-dispatch-new-serach');

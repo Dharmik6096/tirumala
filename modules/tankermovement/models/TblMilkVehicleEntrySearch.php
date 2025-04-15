@@ -20,7 +20,7 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code', 'f_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks'], 'safe'],
+                [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code', 'f_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'dock_no'], 'safe'],
                 [['gross_weight', 'tare_weight'], 'number'],
                 [['originating_type'], 'integer'],
                 [['from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'changeTrip'],
@@ -84,7 +84,8 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
                 ->andFilterWhere(['like', 'tbl_bmc_collection.customer_code', $this->customer_code])
                 ->andFilterWhere(['like', 'vehicle_entry_date', (!empty($this->vehicle_entry_date)) ? date('Y-m-d', strtotime($this->vehicle_entry_date)) : ''])
-                ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
+                ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code])
+                ->andFilterWhere(['like', 'tbl_milk_vehicle_entry.dock_no', $this->dock_no]);
 
 
         return $dataProvider;

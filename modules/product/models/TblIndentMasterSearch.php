@@ -25,6 +25,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
             [['originating_type'], 'integer'],
             [['indent_type', 'warehouse_code', 'product_group_code'], 'safe'],
             [['from_date', 'to_date', 'group_by', 'payment_cycle_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type'], 'required', 'on' => ['indentApprove', 'indentApproveNew']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['indentApprove', 'indentApproveNew']],
             [['payment_cycle_code'], 'required', 'on' => ['indentApproveNew']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'searchdispatch'],
@@ -129,15 +130,17 @@ class TblIndentMasterSearch extends TblIndentMaster {
                 'plant_code' => '',
                 'mcc_plant_code' => '',
                 'bmc_code' => '',
-                'dcs_code' => '',
+                'customer_code' => '',
                 'user_code' => \Yii::$app->user->identity->user_code,
                 'from_date' => '',
                 'to_date' => '',
+                'customer_type' => '',
             ];
 
             $sp_params = array_merge($sp_params, $params['TblIndentMasterSearch']);
-            unset($sp_params['group_by']);
-            unset($sp_params['payment_cycle_code']);
+            if($sp_params['customer_type'] == 'DCS'){
+                $sp_params['customer_code'] = $sp_params['dcs_code'];
+            }
 //            if (empty($this->bmc_code)) {
 //                $this->bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
 //            }
@@ -153,6 +156,9 @@ class TblIndentMasterSearch extends TblIndentMaster {
             $sp_params['user_code'] = Yii::$app->session->get('UserCode');
             $sp_params['from_date'] = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
             $sp_params['to_date'] = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            unset($sp_params['dcs_code']);
+            unset($sp_params['group_by']);
+            unset($sp_params['payment_cycle_code']);
             $output = \Yii::$app->general->getSpData($sp, $sp_params);
         }
         $dataProvider = new ArrayDataProvider();
@@ -277,8 +283,22 @@ class TblIndentMasterSearch extends TblIndentMaster {
 
     public function indentdispatchothernewsearch($params) {
         $this->load($params);
-        $select = ['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)', 'tbl_indent_master.status_date', 'tbl_indent_master.is_close'];
-        $group_by = ['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date', 'tbl_indent_master.is_close'];
+        $customer_code = '';
+        $code = '';
+        if($this->customer_type == 'BULKVEN'){
+            $this->dcs_code = '';
+            $this->route_code = '';
+            $customer_code = ['BULKVEN'];
+            $code = 'customer_code';
+        }
+        if($this->customer_type == 'DCS'){
+            $this->customer_code = '';
+            $customer_code = ['DCS','MEMBER'];
+            $code = 'member_code';
+        }
+        $select = ['tbl_indent_master.indent_code', 'tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)),0)', 'tbl_indent_master.status_date', 'tbl_indent_master.is_close', 'tbl_indent_master.customer_type', 'tbl_indent_master.'.$code.' AS code'];
+        $group_by = ['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'tbl_indent_master.indent_code', 'tbl_indent_master.status_date', 'tbl_indent_master.is_close', 'tbl_indent_master.customer_type', 'tbl_indent_master.'.$code];
+
         if (!empty($this->group_by)) {
             $select = ['tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.member_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)), 0)', 'approve_qty' => 'ISNULL(SUM(ISNULL(approve_qty, 0)), 0)'];
             $group_by = ['tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.member_code'];
@@ -307,8 +327,13 @@ class TblIndentMasterSearch extends TblIndentMaster {
 
         $query->andFilterWhere([
             'tbl_dcs.route_code' => $this->route_code,
-            'tbl_indent_master.dcs_code' => $this->dcs_code
+            'tbl_indent_master.dcs_code' => $this->dcs_code,
+            'tbl_indent_master.customer_code' => $this->customer_code
         ]);
+
+        if(!empty($customer_code)){
+            $query->andFilterWhere(['tbl_indent_master.customer_type' => $customer_code]);
+        }
 
         if (!$this->validate()) {
             return $dataProvider;

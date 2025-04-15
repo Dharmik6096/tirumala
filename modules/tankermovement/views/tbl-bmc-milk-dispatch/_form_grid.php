@@ -109,13 +109,13 @@ $attribute = [
         'attribute' => 'from_date',
         'value' => function ($model) {
             return Yii::$app->controls->view_date($model->from_date);
-        }
+        }, 'filter' => false
     ],
         [
         'attribute' => 'from_shift_code',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->fromShiftCode, 'shift');
-        }
+        }, 'filter' => false
     ],
     // ['attribute' => 'qty', 'label' => 'QTY',
     //     'value' => function($model) {
@@ -141,13 +141,13 @@ $attribute = [
         'attribute' => 'to_date',
         'value' => function ($model) {
             return Yii::$app->controls->view_date($model->to_date);
-        }
+        }, 'filter' => false
     ],
         [
         'attribute' => 'to_shift_code',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->toShiftCode, 'shift');
-        }
+        }, 'filter' => false
     ],
         [
         'attribute' => 'parsing_no',

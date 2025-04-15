@@ -30,6 +30,9 @@ class HttpRequest extends \yii\base\Component {
 
         $this->req_url = Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
         $post_data = Json::decode(Yii::$app->request->getRawBody());
+        if (empty($post_data)) {
+            $post_data = !empty(Yii::$app->request->post()['requestData']) ? Json::decode(Yii::$app->request->post()['requestData']) : [];
+        }
         $request = $this->camelCaseToUnderscore($post_data);
 //        $request['dcs_code'] = $request['identity_code'];
         if (!empty($request['type']) && in_array($request['type'], [5])) {

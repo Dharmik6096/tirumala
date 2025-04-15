@@ -234,7 +234,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'disburse_party_payment',
                 ],
                 'primary_tpt_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
                     'sp_name' => 'sp_tpt_primary_payment_vrs_newasa',
                 ],
             ],
@@ -268,7 +268,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'disburse_party_payment',
                 ],
                 'primary_tpt_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
                     'sp_name' => 'sp_tpt_primary_payment_vrs_newasa',
                 ],
             ],
@@ -302,7 +302,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'disburse_party_payment',
                 ],
                 'primary_tpt_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
                     'sp_name' => 'sp_tpt_primary_payment_vrs_newasa',
                 ],
             ],
@@ -336,7 +336,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'disburse_party_payment',
                 ],
                 'primary_tpt_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
                     'sp_name' => 'sp_tpt_primary_payment_vrs_newasa',
                 ],
             ],
@@ -362,6 +362,22 @@ class ClientPaymentConfig extends Component {
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
                     'sp_name' => 'sp_vsp_payment_swarn_milk',
+                ],
+            ],
+            'SHUDDH' => [
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_shuddh',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_shuddh',
+                ],
+            ],
+            'PARAM' => [
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_param',
                 ],
             ],
         ];

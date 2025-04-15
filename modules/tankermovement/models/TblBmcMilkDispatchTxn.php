@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\tankermovement\models\TblQtyDiffType;
 use app\modules\organisation\models\TblPlant;
+use app\modules\transporter\models\TblVehicleCompartmentDetail;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch_txn".
@@ -72,7 +73,7 @@ use app\modules\organisation\models\TblPlant;
  */
 class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty, $source_type, $source_code;
+    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty, $source_type, $source_code, $trip_code, $vehicle_code;
 
     /**
      * @inheritdoc
@@ -90,7 +91,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'milk_analyser_type_code', 'ws_code', 'adt_param', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type'], 'integer'],
             [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'number'],
-            [['qty_time', 'qlty_time', 'created_at', 'updated_at'], 'safe'],
+            [['qty_time', 'qlty_time', 'created_at', 'updated_at', 'trip_code', 'vehicle_code'], 'safe'],
             [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'milk_quality_type_code', 'bmc_silos_info_code', 'chamber_no', 'bmc_milk_dispatch_code'], 'message' => Yii::t('app/validation', 'Chamber Entry for selected milk and silo has been already taken.'), 'on' => 'create'],
         //     [['milk_type_code'], function ($attribute, $params) {
         //     Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_dispatch_rate_required', 1);
@@ -100,6 +101,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['milk_type_code'], 'ValidateData', 'on' => 'create'],
             [['union_code'], 'required', 'except' => ['androidsync']],
             [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'water', 'temperature', 'chamber_no'], 'required', 'on' => 'createPlantDispatch'],
+            [['dispatch_qty'], 'ValidateCapacity', 'on' => ['createPlantDispatch', 'create']],
         ];
     }
 
@@ -239,8 +241,21 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 if ($this->qty_diff != $balance) {
                     $this->addError('qty_diff', Yii::t('app/validation', 'Diff. Qty must be ' . $balance . '.'));
                 } else {
-                    $flush_limit = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['bmc_dispatch_flush_limit']) ? (float) Yii::$app->session->get('unionConfig')[$this->union_code]['bmc_dispatch_flush_limit'] : 0;
-                    $act_milk = ($this->opening_bal + $this->purchase_qty);
+                    $flush_limit = (float) Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'bmc_dispatch_flush_limit',$this->bmc_code, 'BMC','BMC_DISPATCH_CONFIG');
+                    $flush_limit = $flush_limit ?: 0; 
+                    $bmcDispatchFlushWithStock = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'bmc_dispatch_flush_with_stock', 'BMC') == 1 ? TRUE : FALSE;
+                    $stock_model = new TblBmcDispatchStock();
+                    $stock_model->bmc_code = $this->bmc_code;
+                    $stock_model->to_date = $this->to_datetime;
+                    $stock_model->milk_type_code = $this->milk_type_code;
+                    $stock_model->bmc_silos_info_code = $this->bmc_silos_info_code;
+                    $stock_model->milk_quality_type_code = $this->milk_quality_type_code;
+                    $stock_data = $stock_model->getStockEntry();
+                    if(!empty($stock_data)){
+                        $act_milk = $bmcDispatchFlushWithStock ? ($stock_data->opening_bal + $stock_data->purchase_qty) : $stock_data->purchase_qty;
+                    } else {
+                        $act_milk = $bmcDispatchFlushWithStock ? ($this->opening_bal + $this->purchase_qty) : $this->purchase_qty;
+                    }
                     $dispatch_milk = ($this->current_dispatch_qty + $this->dispatch_qty);
                     $allow_flush = ($act_milk * $flush_limit) / 100;
                     $total_flush = $this->balance_qty + $this->qty_diff;
@@ -262,6 +277,58 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
     public function getPlantCode() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function ValidateCapacity() {
+        $capacityLimit = TblVehicleCompartmentDetail::find()->select('capacity')->where(['vehicle_code' => $this->vehicle_code, 'compartment_no' => $this->chamber_no])->scalar();
+        if (!empty($capacityLimit)) {
+            $existingDispatchQty = TblBmcMilkDispatchtxn::find()
+                    ->where(['bmc_milk_dispatch_code' => TblBmcMilkDispatch::find()->select('bmc_milk_dispatch_code')->where(['trip_code' => $this->trip_code])->column(), 'chamber_no' => $this->chamber_no])
+                    ->sum('dispatch_qty');
+
+            $existingDispatchQty = $existingDispatchQty ?: 0;
+            $totalDispatchQty = $this->dispatch_qty + $existingDispatchQty;
+
+            if ($totalDispatchQty > $capacityLimit) {
+                $this->addError('dispatch_qty', Yii::t('app/validation', "Total dispatched quantity exceeds allowed capacity of $capacityLimit."));
+            }
+        } else {
+            $this->addError('dispatch_qty', Yii::t('app/validation', "Chamber Capacity Not Found"));
+        }
+    }
+
+    public function getCompartmentWiseDispatchData() {
+        $dispatchData = TblBmcMilkDispatchtxn::find()
+            ->select(['chamber_no', 'SUM(dispatch_qty) as total_qty'])
+            ->where(['bmc_milk_dispatch_code' => TblBmcMilkDispatch::find()
+                ->select('bmc_milk_dispatch_code')
+                ->where(['trip_code' => $this->trip_code])
+            ])
+            ->groupBy('chamber_no')
+            ->asArray()
+            ->all();
+    
+        $chamberWiseQty = [];
+        foreach ($dispatchData as $data) {
+            $chamberWiseQty[$data['chamber_no']] = $data['total_qty'];
+        }
+    
+        $compartmentCapacities = TblVehicleCompartmentDetail::find()
+            ->select(['compartment_no', 'capacity'])
+            ->where(['vehicle_code' => $this->vehicle_code])
+            ->asArray()
+            ->all();
+    
+        $result = [];
+        foreach ($compartmentCapacities as $compartment) {
+            $compartmentNo = $compartment['compartment_no'];
+            $result[$compartmentNo] = [
+                'total_qty' => isset($chamberWiseQty[$compartmentNo]) ? $chamberWiseQty[$compartmentNo] : 0,
+                'capacity' => $compartment['capacity']
+            ];
+        }
+            
+        return $result;
     }
 
 }

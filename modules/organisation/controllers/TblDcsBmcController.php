@@ -30,6 +30,8 @@ use app\modules\document\controllers\TblAttachmentController;
 use app\modules\organisation\models\TblBmcChillerInfo;
 use app\modules\organisation\models\TblBmcChillerInfoSearch;
 use app\modules\organisation\models\TblBmcChillerInfoHistory;
+use app\modules\organisation\models\TblPlant;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 /**
  * TblDcsBmcController implements the CRUD actions for TblDcsBmc model.
@@ -536,7 +538,38 @@ class TblDcsBmcController extends \app\controllers\ChildController
             $model = new TblDcsBmc();
             $plantList = $model->getBMCList([], 'TRUE', false, false, [], $plant, 'BMC');
         }
-        return Json::encode(['status' => 'success', 'data' => $plantList]);
+        $partyList = [];
+        if (!empty($_POST['action_type']) && $_POST['action_type'] == 'party' && !empty($_POST['union_code'])) {
+            $union_code = $_POST['union_code'];
+            $model = new TblPartyMaster();
+            $partyList = $model->getUnionPartyList($union_code);
+        }
+        $result = $plantList + $partyList;
+        return Json::encode(['status' => 'success', 'data' => $result]);
+    }
+
+    public function actionGetPlantBmcWithParty()
+    {
+        $plantList = [];
+        if (!empty($_POST['plant_code'])) {
+            $plant = explode(',', $_POST['plant_code']);
+            $model = new TblPlant();
+            $plantList = $model->getPlantData($plant);
+        }
+        $bmcList = [];
+        if (!empty($_POST['plant_code'])) {
+            $plant = explode(',', $_POST['plant_code']);
+            $model = new TblDcsBmc();
+            $bmcList = $model->getBMCList([], 'TRUE', false, false, [], $plant, 'BMC');
+        }
+        $partyList = [];
+        if (!empty($_POST['action_type']) && $_POST['action_type'] == 'party' && !empty($_POST['union_code'])) {
+            $union_code = $_POST['union_code'];
+            $model = new TblPartyMaster();
+            $partyList = $model->getUnionPartyList($union_code);
+        }
+        $result = $plantList + $bmcList + $partyList;
+        return Json::encode(['status' => 'success', 'data' => $result]);
     }
 
     public function actionUnionBmcList()

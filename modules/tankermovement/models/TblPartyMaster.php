@@ -12,6 +12,7 @@ use app\modules\geo\models\TblSubDistricts;
 use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_party_master".
@@ -66,7 +67,7 @@ class TblPartyMaster extends \app\models\ChildModel {
     public function rules() {
         $main_rules = [
                 [['union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'], 'required'],
-                [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'sap_vendor_code'], 'safe'],
+                [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'sap_vendor_code', 'is_sales_office'], 'safe'],
                 [['owner_email'], 'email'],
                 [['is_active'], 'default', 'value' => 1],
                 [['pan_no'], function ($attribute, $params) {
@@ -84,7 +85,7 @@ class TblPartyMaster extends \app\models\ChildModel {
                         $this->addError($attribute, $error);
                 },],
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            ];
+        ];
         $client_rules = Yii::$app->customvalidation->getRules('TblPartyMaster', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
@@ -130,6 +131,7 @@ class TblPartyMaster extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'sap_vendor_code' => Yii::t('app', 'Sap Vendor Code'),
+            'is_sales_office' => Yii::t('app', 'Is Sales Office'),
         ];
     }
 
@@ -173,6 +175,34 @@ class TblPartyMaster extends \app\models\ChildModel {
 
     public function getHamletCode() {
         return $this->hasOne(TblHamlets::className(), ['hamlet_code' => 'hamlet_code']);
+    }
+
+    public function getUnionPartyList($unionCode) {
+        $partyList = $this->find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])
+                        ->where(['is_active' => 1, 'union_code' => $unionCode])->asArray()->all();
+        return ArrayHelper::map($partyList, 'party_master_code', 'party_name');
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', false, 1);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
