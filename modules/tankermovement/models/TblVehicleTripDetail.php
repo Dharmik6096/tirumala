@@ -176,30 +176,6 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                 ->one();
     }
 
-    public function afterSave($insert, $changedAttributes) {
-        if (strtolower($this->source_org_type) == 'bmc') {
-            $sentboxArray = [];
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->source_org_code, '', '', FALSE);
-            foreach ($sentboxArray as $sent) {
-                $flag = ((isset($this->operation) && $this->operation == true) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
-                $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                    if (!($sentbox->setSentbox($this, $flag))) {
-                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                    }
-                }
-            }
-        }
-    }
-
-    public function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->originating_org_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
-    }
-
     public function getOpenTripList($bmc_code, $vehicle_code, $transaction_date, $tripCode = '', $type = '', $tankerMovementWithTripSubStatus = '') {
         $transaction_date = date('Y-m-d', strtotime($transaction_date));
         $query = TblVehicleTripDetail::find()
