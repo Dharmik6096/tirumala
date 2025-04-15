@@ -106,6 +106,12 @@ $attribute = [
     ['attribute' => 'trip_mode'],
     ['attribute' => 'trip_status'],
     ['attribute' => 'trip_sub_status'],
+    ['attribute' => 'is_auto_trip', 'label' => Yii::t('app', 'Is Partial Trip?'), 
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_auto_trip'),
+        'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_auto_trip');
+        }
+    ],
 ];
 
 $grid_option = [
@@ -114,6 +120,25 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'view' => TRUE,
+        'update' => function ($url, $model) {
+            $class = ($model->trip_status != 'closed') ? '' : 'link-disable';
+            $options = [
+                'class' => 'edit-trip ' . $class,
+                'title' => Yii::t('app', 'Edit Trip Detail'),
+                'data-toggle' => 'tooltip',
+                'data-placement' => 'top',
+            ];
+
+            $updatedUrl = Url::to(['/tankermovement/tbl-vehicle-trip/update', 'id' => $model->vehicle_trip_code]);
+            if ($model->trip_for == 'salesparty') {
+                $updatedUrl = Url::to([
+                    '/tankermovement/tbl-vehicle-trip/update-with-party',
+                    'id' => $model->vehicle_trip_code,
+                    'type' => 'party'
+                ]);
+            }
+            return Html::a('<i class="fa fa-pencil"></i>', $updatedUrl, $options);
+        },
         'generate-challan' => function ($url, $model) {
             $disable = ($model->trip_status == 'open') ? FALSE : TRUE;
             $disable = ($model->is_active == 1) ? $disable : TRUE;

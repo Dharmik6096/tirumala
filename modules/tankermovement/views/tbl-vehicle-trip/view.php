@@ -260,32 +260,54 @@ $is_button_visible = true;
                     ],
                     ['attribute' => 'out_remarks', 'label' => (Yii::t('app', 'GateOut Remarks')),],
                 ];
+                $cnt = 0;
+                $ctnDep = 0;
+                $allowedPlants = explode(',', Yii::$app->session->get('Plant'));
+                $allowedBmcs = explode(',', Yii::$app->session->get('BMC'));
+                $userType = Yii::$app->session->get('UserType');
                 $grid_option = [
                     'id' => 'trip-detail-list',
                     'attributes' => $attribute,
                     'active_column' => FALSE,
                     'default_sorting' => FALSE,
                     'actions' => [
-                        'gate-in' => function ($url, $model) use (&$is_button_visible) {
-                            if (substr($model->vehicle_trip_detail_code, -2) == 'T1') {
+                        'gate-in' => function ($url, $model, $key) use (&$is_button_visible, &$cnt, &$allowedPlants, &$allowedBmcs, &$userType) {
+                            $type = strtolower($model->source_org_type);
+                            $RLS = ($type == 'plant' && $userType == 4 && in_array($model->source_org_code, $allowedPlants)) ||
+                                    ($type == 'bmc' && $userType == 6 && in_array($model->source_org_code, $allowedBmcs)) ||
+                                    ($type == 'party' && in_array($userType, [3, 4]));
+                            if ($cnt == 0) {
+                                $cnt++;
                                 return '';
                             }
                             $class = 'link-disable';
-                            if ($is_button_visible && empty($model->arrival_time)) {
+                            if ($is_button_visible && empty($model->arrival_time) && $RLS) {
                                 $is_button_visible = false;
                                 $class = '';
                             }
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate In', 'class' => 'gate-in-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-in',];
                             return Html::a('<i class="fa fa-sign-in"></i>', '#', $options);
                         },
-                        'gate-out' => function ($url, $model) use (&$is_button_visible) {
+                        'gate-out' => function ($url, $model) use (&$is_button_visible, &$ctnDep, &$allowedPlants, &$allowedBmcs, &$userType) {
+                            $type = strtolower($model->source_org_type);
+                            $RLS = ($type == 'plant' && $userType == 4 && in_array($model->source_org_code, $allowedPlants)) ||
+                                    ($type == 'bmc' && $userType == 6 && in_array($model->source_org_code, $allowedBmcs)) ||
+                                    ($type == 'party' && in_array($userType, [3, 4]));
                             if ($model->is_last_destination == 1) {
                                 return '';
                             }
                             $class = 'link-disable';
+                            if ($ctnDep == 0) {
+                                if (empty($model->departure_time) && $RLS) {
+                                    $class = '';
+                                }
+                                $ctnDep++;
+                            }
                             if ($is_button_visible && empty($model->departure_time)) {
+                                if (!empty($model->challan_no) && $RLS) {
+                                    $class = '';
+                                }
                                 $is_button_visible = false;
-                                $class = '';
                             }
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate Out', 'class' => 'gate-out-btn ' . $class, 'data-vehicle_trip_detail_code' => $model->vehicle_trip_detail_code, 'data-flag' => 'gate-out',];
                             return Html::a('<i class="fa fa-sign-out"></i>', '#', $options);

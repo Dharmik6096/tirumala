@@ -28,6 +28,12 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->dropdown->depend_dropdown('chamber_no', $model, $form, 'tblmilkvehicleentryqltysearch-trip_code,tblmilkvehicleentryqlty-status', 'form-group col-sm-4', $model->getAttributeLabel('chamber_no'), '', FALSE); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
+                    <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1 number-validate">
                     <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
@@ -52,13 +58,7 @@ $form = ActiveForm::begin([
                     <?= $form->field($model, 'freezing_point')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-                </div>
-                <div class="col-sm-1 number-validate">
                     <?= $form->field($model, 'temp')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-                </div>
-                <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <?php
                 $index = 1;

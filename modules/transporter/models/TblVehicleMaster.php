@@ -10,6 +10,7 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblFuelTypeMaster;
 use app\modules\transporter\models\TblBillingType;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_vehicle_master".
@@ -80,10 +81,6 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 [['transporter_code'], 'fieldValidate', 'on' => 'importCsv'],
                 [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'parsing_no', 'billing_method', 'vehicle_use_type'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
                 [['parsing_no', 'driver_name', 'transporter_code', 'wef_date', 'billing_method'], 'required', 'on' => 'importCsv'],
-                [['no_of_compartment'], 'default', 'value' => 1],
-                [['no_of_compartment'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'chamber_no');
-                }, 'on' => 'importCsv'],
                 [['vehicle_type_code', 'fuel_type_code', 'capacity_code'], 'required', 'except' => ['activation']],
 //                [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required', 'except' => ['activation']],
 //                [['union_code'], 'required', 'except' => ['importCsv', 'activation']],
@@ -301,25 +298,15 @@ class TblVehicleMaster extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
-        foreach ($sentboxArray as $sent) {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
             $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                }
+            $sentbox = new TblSentbox();
+            $sentbox->source_org_id = $this->union_code;
+            if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
             }
         }
-    }
-
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
     }
 
     public function convertDateDot() {

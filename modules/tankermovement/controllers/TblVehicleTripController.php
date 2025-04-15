@@ -15,6 +15,7 @@ use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
+use app\modules\tankermovement\models\TblVehicleTripDetailHistory;
 use app\modules\tankermovement\models\TblVehicleTripHistory;
 use app\modules\transporter\models\TblVehicleMaster;
 use yii\helpers\ArrayHelper;
@@ -72,6 +73,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $this->model->type = !empty($type) ? $type : 'normal';
         $bmc_array = [];
         if ($this->model->load(Yii::$app->request->post())) {
+            $is_auto_trip = $this->model->is_auto_trip;
             if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
                 $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
                 $bmc_detail = explode(':::', $bmc_string);
@@ -91,7 +93,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
             $bmc_array = $this->model->bmc_code;
             $is_valid_trip = FALSE;
-            if (count($bmc_array) > 2) {
+            if (count($bmc_array) > 2 || ($is_auto_trip && count($bmc_array) > 1)) {
                 $sl_detail = explode('#', $bmc_array[0]);
                 $sl_code = $sl_detail[0];
                 $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
@@ -100,7 +102,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $el_code = $el_detail[0];
                 $el_type = !empty($el_detail[1]) ? $el_detail[1] : 'bmc';
 
-                $is_valid_trip = ($sl_type == 'plant' && $el_type == 'plant') ? TRUE : FALSE;
+                $is_valid_trip = ($sl_type == 'plant' && ($is_auto_trip || $el_type == 'plant')) ? TRUE : FALSE;
                 if ($this->model->validate() && $is_valid_trip) {
                     $this->model->plant_code = $sl_code;
                     $fl_detail = explode('#', $bmc_array[1]);
@@ -108,25 +110,31 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $this->model->fl_type = !empty($fl_detail[1]) ? $fl_detail[1] : 'bmc';
                     if ($this->model->fl_type == 'bmc') {
                         $this->model->bmc_code = $this->model->fl_code;
-                        $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+                        $this->model->mcc_plant_code = $this->model->bmcCode->mcc_plant_code;
                     } else {
                         $this->model->bmc_code = NULL;
                         $this->model->mcc_plant_code = NULL;
                     }
                 }
             }
-            if (!$is_valid_trip) {
+            if (!$is_valid_trip && !$is_auto_trip) {
                 Yii::$app->getSession()->setFlash('success', [
                     'type' => 'error',
-                    'message' => 'Vehicle Trip Must be Start and End at Plant.'
+                    'message' => 'Vehicle trip must be start and end at plant and you must select at least one more location.'
+                ]);
+            } else if (!$is_valid_trip && $is_auto_trip) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Vehicle trip must start at a plant and you must select at least one more location.'
                 ]);
             }
-            if(empty($this->model->getErrors())){
+            if (empty($this->model->getErrors())) {
                 $this->model->trip_mode = 'offline';
                 $this->model->trip_for = ($type == 'party') ? 'salesparty' : 'bmcdispatch';
                 $this->model->trip_sub_status = 'generated';
                 $this->model->sub_status_time = date('Y-m-d H:i:s');
                 if ($is_valid_trip) {
+                    $sequence_no = 1;
                     $result = $this->model->setModel();
                     if ($result[0]) {
                         $validate = TRUE;
@@ -134,22 +142,21 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         if (!empty($save_model) && $this->model->fl_type == 'plant') {
                             $save_model[0]->plant_code = $this->model->fl_code;
                         }
-                        // $lastIndex = count($bmc_array) - 2;
                         foreach ($bmc_array as $key => $bmc) {
                             $trip_detai = new TblVehicleTripDetail();
                             if ($key == 0) {
                                 continue;
                             }
-                            // if ($lastIndex == $key) {
-                            //     $trip_detai->is_last_destination = 1;
-                            // }
+                            $sequence_no++;
                             $sloc_detail = explode('#', $bmc);
                             if (!empty($bmc_array[$key + 1])) {
                                 $dloc_detail = explode('#', $bmc_array[$key + 1]);
                                 $trip_detai->destination_code = $dloc_detail[0];
                                 $trip_detai->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
                             } else {
-                                $trip_detai->is_last_destination = 1;
+                                if (!$is_auto_trip) {
+                                    $trip_detai->is_last_destination = 1;
+                                }
                             }
 
                             $trip_detai->source_org_code = $sloc_detail[0];
@@ -161,6 +168,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
                             $trip_detai->trip_code = $this->model->trip_code;
                             $trip_detai->vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . ($key + 2);
+                            $trip_detai->sequence_no = $sequence_no;
                             $trip_detai->scenario = 'on_crete_trip';
                             if (!$trip_detai->validate()) {
                                 $validate = FALSE;
@@ -191,8 +199,17 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                     $sourceData = $save_model[1]->{$response['rel'] . 'Source'};
                                     $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
                                 }
-                                Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
                                 $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
+                                if ($tankerMovementWithTripSubStatus) {
+                                    $tripModel = clone $save_model[0];
+                                    if (!empty($qaRecords)) {
+                                        $tripModel->sub_status_time = $qaRecords[0]->transaction_datetime;
+                                        $tripModel->trip_sub_status = 'quality_checked';
+                                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                                    }
+                                }
+                                Yii::$app->general->setVehicleTripTrackingDetail($save_model[0], $remarks);
+
                                 if (!$tankerMovementWithTripSubStatus && $result[2]['inspection_require']) {
                                     return $this->redirect([
                                                 '/tankermovement/tbl-bmc-dispatch-inspection/create',
@@ -207,6 +224,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     }
                 }
             }
+        }
+        if(empty($bmc_array)){
+            $this->model->is_auto_trip = 1;
+        }
+        if(empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1){
+            $this->model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0];
+            $bmc_array[] = $this->model->plant_code.'#plant';
         }
         $this->model->bmc_code = $bmc_array;
         return $this->customRender();
@@ -337,9 +361,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
                 $tripCode = isset($parents[3]) ? $parents[3] : '';
+                $type = isset($parents[4]) ? $parents[4] : '';
+                $tankerMovementWithTripSubStatus = isset($parents[5]) ? $parents[5] : '';
 
                 $trip = new TblVehicleTripDetail();
-                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);
+                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode, $type, $tankerMovementWithTripSubStatus);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -354,7 +380,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $vehicleData = [];
         $postData = Yii::$app->request->post();
         if (!empty($postData['vehicle_code'])) {
-            $vehicleData = TblVehicleMaster::find()->select(['driver_name', 'driver_contact_no'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $vehicleData = TblVehicleMaster::find()->select(['driver_name', 'driver_contact_no', 'transporter_code'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
             $status = 'success';
         }
         $record = ['status' => $status, 'data' => $vehicleData];
@@ -381,8 +407,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $remarks = $tripDetail->in_remarks;
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
-                if (substr($vehicle_trip_detail_code, -2) == 'T1' && !empty($tripDetail->departure_time)) {
-                    $tripDetail->arrival_time = $tripDetail->departure_time;
+                if (empty($tripDetail->arrival_time) && !empty($tripDetail->departure_time)) {
+                    $tripDetail->arrival_time = date('Y-m-d H:i:s', strtotime($tripDetail->departure_time) - 1);
                 }
                 $remarks = $tripDetail->out_remarks;
                 $trip->trip_sub_status = 'gate_out';
@@ -442,6 +468,203 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     'tripTrack' => $tripTrack,
                     'parsingNo' => $parsingNo,
         ]);
+    }
+
+    public function actionUpdate($id) {
+
+        $this->model = TblVehicleTrip::find()
+                ->with(['vehicleCode.transporter', 'vehicleTripDetailCode'])
+                ->where(['vehicle_trip_code' => $id])
+                ->one();
+
+        if (!empty($this->model)) {
+            $this->model->transporter_code = !empty($this->model->vehicleCode) ? $this->model->vehicleCode->transporter->transporter_code : '';
+        }
+
+
+        $type = Yii::$app->request->get('type');
+        $this->model->type = !empty($type) ? $type : 'normal';
+        $vehicleTripDetails = $this->model->vehicleTripDetailCode ?? [];
+
+        $sourceBmc = array_map(function($item) {
+            if (!empty($item->source_org_code) && !empty($item->source_org_type)) {
+                return ($item->source_org_type != 'bmc') 
+                    ? $item->source_org_code . '#' . strtolower($item->source_org_type) 
+                    : $item->source_org_code;
+            }
+            return null;
+        }, $vehicleTripDetails);
+        $this->model->bmc_code = array_values($sourceBmc);
+        $saveModel = [];
+        $deleteModel = [];
+        $this->viewFile = 'update';
+
+        if (Yii::$app->request->post()) {
+            $this->model->load(Yii::$app->request->post());
+            $tripDetailData = TblVehicleTripDetail::find()->where(['vehicle_trip_code' => $this->model->vehicle_trip_code])->andWhere(['IS NOT', 'arrival_time', null])->one();
+            $is_auto_trip = $this->model->is_auto_trip;
+            if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
+                $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
+                $bmc_detail = explode(':::', $bmc_string);
+                foreach ($bmc_detail as $k => $v) {
+                    $bmc_index = explode('~~~', $v);
+                    $bmc_array[$bmc_index[0]] = $bmc_index[1];
+                }
+                ksort($bmc_array);
+                $bmc_array_sort = [];
+                foreach ($bmc_array as $a) {
+                    $bmc_array_sort[] = $a;
+                }
+                $this->model->bmc_code = $bmc_array_sort;
+            } else {
+                $this->model->bmc_code = NULL;
+            }
+            $bmc_array = $this->model->bmc_code;
+            $validate = true;
+
+            $is_valid_trip = FALSE;
+            if (!empty($tripDetailData) || count($bmc_array) > 2 || ($is_auto_trip && count($bmc_array) > 1)) {
+                $sl_detail = explode('#', $bmc_array[0]);
+                $sl_code = $sl_detail[0];
+                $sl_type = !empty($sl_detail[1]) ? $sl_detail[1] : 'bmc';
+
+                $el_detail = explode('#', $bmc_array[count($bmc_array) - 1]);
+                $el_code = $el_detail[0];
+                $el_type = !empty($el_detail[1]) ? $el_detail[1] : 'bmc';
+
+                $is_valid_trip = ((!empty($tripDetailData) || $sl_type == 'plant') && ($is_auto_trip || $el_type == 'plant')) ? TRUE : FALSE;
+            }
+            if (!$is_valid_trip && !$is_auto_trip) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Vehicle trip must be start and end at plant and you must select at least one more location.'
+                ]);
+            } else if (!$is_valid_trip && $is_auto_trip) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Vehicle trip must start at a plant and you must select at least one more location.'
+                ]);
+            }
+
+            if ($is_valid_trip && $this->model->validate()) {
+                $deleteDetails = TblVehicleTripDetail::find()
+                        ->where(['trip_code' => $this->model->trip_code, 'arrival_time' => null, 'departure_time' => null])
+                        ->all();
+
+                if (!empty($deleteDetails)) {
+                    foreach ($deleteDetails as $delete) {
+                        $historyModel = new TblVehicleTripDetailHistory();
+                        Yii::$app->operation->history($delete, $historyModel, DELETE);
+                        $saveModel[] = $historyModel;
+                        $deleteModel[] = $delete;
+                    }
+                }
+                $lastArrivalDetail = TblVehicleTripDetail::find()
+                        ->where(['trip_code' => $this->model->trip_code])
+                        ->andWhere(['departure_time' => null])
+                        ->andWhere(['is not', 'arrival_time', null])
+                        ->one();
+
+                if (!empty($lastArrivalDetail)) {
+                    $historyModel = new TblVehicleTripDetailHistory();
+                    Yii::$app->operation->history($lastArrivalDetail, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                    $sequence_no = $lastArrivalDetail->sequence_no + 1;
+                } else {
+                    $lastDetail = TblVehicleTripDetail::find()
+                            ->where(['trip_code' => $this->model->trip_code])
+                            ->andWhere(['is not', 'departure_time', null])
+                            ->andWhere(['is not', 'arrival_time', null])
+                            ->one();
+                    if (!empty($lastDetail)) {
+                        $sequence_no = $lastDetail->sequence_no + 1;
+                    } else {
+                        $sequence_no = 1;
+                    }
+                }
+                $detailModel = new TblVehicleTripDetail();
+                $maxNumber = $detailModel->getMaxCode($this->model->vehicle_trip_code);
+                foreach ($bmc_array as $key => $bmc) {
+                    $trip_detail = new TblVehicleTripDetail();
+
+                    $sloc_detail = explode('#', $bmc);
+                    if (!empty($bmc_array[$key + 1])) {
+                        $dloc_detail = explode('#', $bmc_array[$key + 1]);
+                        $trip_detail->destination_code = $dloc_detail[0];
+                        $trip_detail->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
+                    } else {
+                        if (!$is_auto_trip) {
+                            $trip_detail->is_last_destination = 1;
+                        }
+                    }
+
+                    if ($key == 0 && !empty($lastArrivalDetail)) {
+                        $lastArrivalDetail->destination_code = $sloc_detail[0];
+                        $lastArrivalDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                        $saveModel[] = $lastArrivalDetail;
+                    }
+
+                    $trip_detail->source_org_code = $sloc_detail[0];
+                    $trip_detail->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+
+                    $trip_detail->originating_org_code = $this->model->union_code;
+                    $trip_detail->vehicle_trip_code = $this->model->vehicle_trip_code;
+                    $trip_detail->vehicle_code = $this->model->vehicle_code;
+                    $trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                    $trip_detail->trip_code = $this->model->trip_code;
+                    $trip_detail->vehicle_trip_detail_code = $trip_detail->vehicle_trip_code . 'T' . $maxNumber;
+                    $trip_detail->sequence_no = $sequence_no;
+                    $sequence_no++;
+                    $trip_detail->scenario = 'on_crete_trip';
+                    $saveModel[] = $trip_detail;
+                    if (!$trip_detail->validate()) {
+                        $validate = FALSE;
+                        $errors = $trip_detail->getErrors();
+                        if (isset($errors['destination_code'])) {
+                            $this->model->addError('bmc_code', $errors['destination_code'][0]);
+                        }
+                    }
+                    $maxNumber++;
+                }
+                if ($validate) {
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
+                    if ($transaction !== FALSE) {
+                        return $this->{$transaction}();
+                    }
+                }
+            }
+        }
+        return $this->customRender();
+    }
+
+    public function actionUpdateWithParty($id) {
+
+        $this->model = TblVehicleTrip::find()
+                ->with(['vehicleCode.transporter', 'vehicleTripDetailCode'])
+                ->where(['vehicle_trip_code' => $id])
+                ->one();
+
+        if (!empty($this->model)) {
+            $this->model->transporter_code = !empty($this->model->vehicleCode) ? $this->model->vehicleCode->transporter->transporter_code : '';
+        }
+
+
+        $type = Yii::$app->request->get('type');
+        $this->model->type = !empty($type) ? $type : 'normal';
+        $vehicleTripDetails = $this->model->vehicleTripDetailCode ?? [];
+
+        $sourceBmc = array_map(function($item) {
+            if (!empty($item->source_org_code) && !empty($item->source_org_type)) {
+                return ($item->source_org_type != 'bmc') 
+                    ? $item->source_org_code . '#' . strtolower($item->source_org_type) 
+                    : $item->source_org_code;
+            }
+            return null;
+        }, $vehicleTripDetails);
+
+        $this->model->bmc_code = array_values($sourceBmc);
+        $this->viewFile = 'update';
+        return $this->customRender();
     }
 
 }
