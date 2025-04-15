@@ -343,8 +343,6 @@ $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip
     var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
     var trip_code = $('#tblbmcmilkdispatch-trip_code').val();     
     var source_org_type = 'bmc';
-    $('#tblbmcmilkdispatch-destination_type').val(null).trigger('change');
-    $('#tblbmcmilkdispatch-destination_code').val(null).trigger('change');
     $('.field-tblbmcmilkdispatch-destination_type').removeClass('no_pointer_disabled');
     $('.field-tblbmcmilkdispatch-destination_code').removeClass('no_pointer_disabled');
     if(setData(trip_code) && setData(source_org_code)){
