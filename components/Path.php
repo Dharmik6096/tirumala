@@ -92,7 +92,7 @@ class Path extends Component {
         '\\app\modules\assetmanagement\models\\' => ['TblAssetDetail', 'TblStoreLocation', 'TblAssetGroup', 'TblAssetMaster', 'TblAssetMasterHistory', 'TblAssetGroupHistory', 'TblAssetDetailHistory', 'TblStoreLocationHistory', 'TblStoreLocationType', 'TblAssetTransaction', 'TblAssetTransactionHistory', 'TblAssetSet', 'TblAssetSetHistory', 'TblAssetBom', 'TblAssetBomHistory', 'TblAssetBomSearch', 'TblAssetDetailBom', 'TblAssetDetailBomHistory', 'TblAssetDetailBomSearch', 'TblAssetVerificationData', 'TblAssetVerificationDataHistory', 'TblAssetVerificationDataSearch'],
         '\\app\modules\complaint\models\\' => ['TblComplainProduct', 'TblComplainEscalation', 'TblComplainEscalationTxn', 'TblComplainType', 'TblComplain', 'TblComplainActivity', 'TblComplainProblem', 'TblComplainSpare', 'TblComplainEscalationTxnDetail'],
         '\\app\modules\import\models\\' => ['BackGroundDataImport'],
-        '\\app\modules\bkgprocess\models\\' => ['TblDataExchangeConfig'],
+        '\\app\modules\bkgprocess\models\\' => ['TblDataExchangeConfig', 'TblDataExchangeLock'],
         '\\app\modules\dynamicreport\models\\' => ['TblReportList'],
         '\\app\modules\welfarescheme\models\\' => ['TblSchemeApplication', 'TblSchemeApplicationApproval', 'TblSchemeApplicationDisbursement', 'TblSchemeApplicationDocuments', 'TblSchemeApprovalStages', 'TblSchemeCriteria', 'TblSchemeDocumentMapping', 'TblDocumentMasterInfo', 'TblSchemeMaster'],
         '\\webvimark\modules\UserManagement\models\\' => ['User'],
