@@ -123,15 +123,18 @@ $('#tblvehicletrip-plant_code').on('change',function(){
                 });
                 $('#tblvehicletrip-bmc_code').html(options);
                 $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);
-                if(selectedBmcCodesInitial.length > 0 && isLoadPage){
+                if (selectedBmcCodesInitial.length > 0 && isLoadPage) {
                     setTimeout(
                         function() {
                             var dualListBoxContainer = $('#tblvehicletrip-bmc_code').bootstrapDualListbox('getContainer');
                             var sourceSelect = dualListBoxContainer.find('.box1 select');
-                            $.each(selectedBmcCodesInitial, function(index, value) {
-                                sourceSelect.find('option[value=\"' + value + '\"]').prop('selected', true);
+                            $.each(selectedBmcCodesInitial, function(index, valueToSelect) {
+                                var optionToMove = sourceSelect.find('option:not(:selected)[value=\"' + valueToSelect + '\"]').first();
+                                if (optionToMove.length > 0) {
+                                    optionToMove.prop('selected', true);
+                                    dualListBoxContainer.find('.box1 .move').trigger('click');
+                                }
                             });
-                            dualListBoxContainer.find('.box1 .move').trigger('click');
                             isLoadPage = false;
                         },
                         500
@@ -141,13 +144,43 @@ $('#tblvehicletrip-plant_code').on('change',function(){
         }
     });           
 });
+// $('#vehicle-trip-form').submit(function(e) {
+//     var bmcarray = '';                                      
+//     var options = $('#tblvehicletrip-bmc_code option:selected');
+//     console.log(options);
+//     options.each(function(index){
+//         bmcarray += index+'~~~'+$(this).attr('value')+':::';
+//     });
+//     $('#selected_bmc_seq').val(bmcarray);      
+// });
 $('#vehicle-trip-form').submit(function(e) {
-    var bmcarray = '';                                      
-    var options = $('#tblvehicletrip-bmc_code option:selected');
-    options.each(function(index){
-        bmcarray += index+'~~~'+$(this).attr('value')+':::';
+    var bmcarray = '';
+    var dualListBoxContainer = $('.bootstrap-duallistbox-container');
+    var selectedOptions = dualListBoxContainer.find('.box2 select option');
+
+    var sortedOptions = selectedOptions.sort(function(a, b) {
+        var indexA = $(a).attr('data-sortindex');
+        var indexB = $(b).attr('data-sortindex');
+
+        var numA = indexA ? parseInt(indexA, 10) : Number.MAX_SAFE_INTEGER;
+        var numB = indexB ? parseInt(indexB, 10) : Number.MAX_SAFE_INTEGER;
+
+        if (isNaN(numA) && isNaN(numB)) {
+            return 0;
+        }
+        if (isNaN(numA)) {
+            return 1;
+        }
+        if (isNaN(numB)) {
+            return -1;
+        }
+
+        return numA - numB;
     });
-    $('#selected_bmc_seq').val(bmcarray);      
+    sortedOptions.each(function(index) {
+        bmcarray += index + '~~~' + $(this).attr('value') + ':::';
+    });
+    $('#selected_bmc_seq').val(bmcarray);
 });
 $('#tblvehicletrip-vehicle_code').on('change', function(){
     var vehicle_code = $(this).val();
