@@ -235,29 +235,43 @@ $(document).ready(function() {
 
     $('#available-bmc-list, #selected-bmc-list').sortable({
         connectWith: '#available-bmc-list, #selected-bmc-list',
+        helper: 'clone',
         update: function (event, ui) {
             var item = ui.item;
             var code = item.data('code');
-
-            if (item.closest('#available-bmc-list').length) {
-                var existingItem = $('#available-bmc-list li').filter(function () {
-                    return $(this).data('code') === code;
-                });
-
-                if (existingItem.length === 0) {
-                    var listItem = '<li class=\"list-group-item\" data-code=\"' + code + '\">' + item.text() + '</li>';
-                    $('#available-bmc-list').append(listItem);
-                }
-
+            if (item.closest('#selected-bmc-list').length) {
                 var selectedItems = $('#selected-bmc-list li').filter(function () {
                     return $(this).data('code') === code;
                 });
-
-                if (selectedItems.length > 1) {
-                    selectedItems.slice(1).remove();
+                if (item.parent().is('#available-bmc-list')) {
+                    item.remove();
+                }
+            }
+            if (item.closest('#available-bmc-list').length) {
+                var alreadyExists = $('#available-bmc-list li').filter(function () {
+                    return $(this).data('code') === code;
+                });
+                if (alreadyExists.length === 0) {
+                    var listItem = $('<li class=\"list-group-item\" data-code=\"' + code + '\">' + item.text() + '</li>');
+                    $('#available-bmc-list').append(listItem);
+                } else {
+                    item.remove(); // prevent duplicate in available
                 }
             }
             updateSelectedBmcCodes();
+        },
+        receive: function (event, ui) {
+            if ($(this).attr('id') === 'selected-bmc-list') {
+                var code = ui.item.data('code');
+                var existsInAvailable = $('#available-bmc-list li').filter(function () {
+                    return $(this).data('code') === code;
+                });
+                if (existsInAvailable.length === 0) {
+                    var original = ui.item.clone();
+                    original.removeClass(\"ui-sortable-helper\"); // just in case
+                    $('#available-bmc-list').append(original);
+                }
+            }
         }
     });
 });
