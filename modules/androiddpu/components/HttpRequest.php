@@ -20,7 +20,7 @@ class HttpRequest extends \yii\base\Component {
     public $device_id;
     public $content = [];
     public $req_url;
-    public $is_free = ['android-dpu/register', 'android-dpu/verification', 'realtime-services/dpu-product-stock', 'esp-app/register', 'esp-app/verification', 'android-dpu/send-otp', 'android-dpu/change-password'];
+    public $is_free = ['android-dpu/register', 'android-dpu/verification', 'realtime-services/dpu-product-stock', 'esp-app/register', 'esp-app/verification', 'android-dpu/send-otp', 'android-dpu/change-password','app-activation/register', 'app-activation/verification'];
     public $request;
     public $allow_call = FALSE;
     public $action_url;

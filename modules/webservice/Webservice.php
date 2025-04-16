@@ -45,6 +45,9 @@ class Webservice extends \yii\base\Module {
             'dataexchange' => [
                 'class' => 'app\modules\webservice\dataexchange\dataexchange',
             ],
+            'exchangeutility' => [
+                'class' => 'app\modules\webservice\exchangeutility\exchangeUtility',
+            ],
         ];
     }
 
