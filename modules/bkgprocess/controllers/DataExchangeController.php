@@ -142,7 +142,7 @@ class DataExchangeController extends ChildController {
                     $status = ($itemData[$key] == 'S') ? 2 : 3;
                 }
             }
-            $sp_res_param = array_merge([$whereKey], $resParams, [$status]);
+            $sp_res_param = array_merge([$whereKey], [$status], $resParams);
             \Yii::$app->general->getSpData($sp_name . '_updatelist', $sp_res_param, true);
         }
     }
