@@ -357,7 +357,7 @@ $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip
                         var destType = obj.data.destination_type.toUpperCase();
                         $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select');
                         $('.field-tblbmcmilkdispatch-destination_type').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
-                        $('#tblbmcmilkdispatch-destination_code').one('depdrop.afterChange', function() {
+                        $('#tblbmcmilkdispatch-destination_code').one('depdrop:afterChange', function() {
                             setTimeout(function() {
                                 $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
                                 $('.field-tblbmcmilkdispatch-destination_code').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);

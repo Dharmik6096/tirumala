@@ -652,7 +652,7 @@ $script = "
                         var sourceOrgTypeUpper = obj.data.source_org_type.toUpperCase();
                             $('#tblmilkvehicleentry-dispatch_from').val(sourceOrgTypeUpper).trigger('change').trigger('select2:select');
                             var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
-                            $('#tblmilkvehicleentry-dispatch_from_code').on('depdrop.afterChange', function(e) {
+                            $('#tblmilkvehicleentry-dispatch_from_code').on('depdrop:afterChange', function(e) {
                             setTimeout(function() {
                                 $('#tblmilkvehicleentry-dispatch_from_code').val(obj.data.source_org_code).trigger('change').trigger('select2:select');
                             }, 1000);
