@@ -634,6 +634,16 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 }
             }
         }
+        $combined_array = [$this->model->plant_code];
+        foreach ($this->model->bmc_code as $code) {
+            if (strpos($code, '#plant') !== false) {
+                $plant_code_from_bmc = str_replace('#plant', '', $code);
+                if($this->model->plant_code != $plant_code_from_bmc){
+                    $combined_array[] = $plant_code_from_bmc;
+                }
+            }
+        }
+        $this->model->plant_code = $combined_array;
         return $this->customRender();
     }
 
