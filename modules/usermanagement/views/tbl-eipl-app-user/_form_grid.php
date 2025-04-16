@@ -29,7 +29,7 @@ $grid_option = [
         'delete_user' => function ($url, $model) {
             $disable = $model->is_active == 1 ? '' : 'link-disable';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'data-val' => $model->eipl_app_user_code, 'data-name' => $model->name, 'class' => 'deact-user ' . $disable];
-            return GhostHtml::a_alert('<i class="fa fa-trash"></i>', ['/usermanagement/tbl-eipl-app-user/deactivate-user'], $options);
+            return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/usermanagement/tbl-eipl-app-user/deactivate-user'], $options);
         },
         'org-map' => function ($url, $model) {
             $disable = '';
