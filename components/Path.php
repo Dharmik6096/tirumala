@@ -101,6 +101,7 @@ class Path extends Component {
         '\\app\modules\webservice\eipl\models\\' =>
             ['TblEiplAppLogin'],
         '\\app\modules\feedback\models\\' => ['TblNonMemberHouseHoldVisit', 'TblNonMemberHouseHoldCurrentPouring', 'TblNonMemberHouseHoldVisitHistory', 'TblMppSurveyGeneralInfo', 'TblMppSurveyGeneralInfoSearch'],
+        '\\app\modules\usermanagement\models\\' => ['TblEiplAppUser', 'TblEiplAppUserHistory', 'TblEiplUserOrganizationMapping'],
     ];
 
     public function get($model) {
