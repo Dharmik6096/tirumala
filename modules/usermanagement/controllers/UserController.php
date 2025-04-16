@@ -158,10 +158,12 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             }
                             $appModel = new TblEiplAppLogin();
                             $appModel->mobile_no = $model->oldAttributes['mobile_no'];
-                            $appModelData = $appModel->getAppLogin($id);
-                            if (!empty($appModelData)) {
-                                $appModelData->is_active = 0;
-                                $master[] = $appModelData;
+                            $appModelList = $appModel->getAppLogin($id);
+                            if (!empty($appModelList)) {
+                                foreach ($appModelList as $appModelData) {
+                                    $appModelData->is_active = 0;
+                                    $master[] = $appModelData;
+                                }
                             }
                             $tempModel = new TblEiplAppLoginTemp();
                             $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
@@ -195,12 +197,13 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         }
                         $appModel = new TblEiplAppLogin();
                         $appModel->mobile_no = $model->oldAttributes['mobile_no'];
-                        $appModelData = $appModel->getAppLogin($id);
-                        if (!empty($appModelData)) {
-                            $appModelData->is_active = 0;
-                            $master[] = $appModelData;
+                        $appModelList = $appModel->getAppLogin($id);
+                        if (!empty($appModelList)) {
+                            foreach ($appModelList as $appModelData) {
+                                $appModelData->is_active = 0;
+                                $master[] = $appModelData;
+                            }
                         }
-
                         $tempModel = new TblEiplAppLoginTemp();
                         $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
                         $tempModelData = $tempModel->getAppTempLogin($id);
@@ -261,12 +264,13 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
 
                             $appModel = new TblEiplAppLogin();
                             $appModel->mobile_no = $model->oldAttributes['mobile_no'];
-                            $appModelData = $appModel->getAppLogin($id);
-                            if (!empty($appModelData)) {
-                                $appModelData->department = $model->department;
-                                $master[] = $appModelData;
+                            $appModelList = $appModel->getAppLogin($id);
+                            if (!empty($appModelList)) {
+                                foreach ($appModelList as $appModelData) {
+                                    $appModelData->department = $model->department;
+                                    $master[] = $appModelData;
+                                }
                             }
-
                             $tempModel = new TblEiplAppLoginTemp();
                             $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
                             $tempModelData = $tempModel->getAppTempLogin($id);
@@ -340,10 +344,12 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         $saveModel[] = $contactdetail;
                         $appModel = new TblEiplAppLogin();
                         $appModel->mobile_no = $contactdetail->mobile_no;
-                        $appModelData = $appModel->getAppLogin($model->id);
-                        if (!empty($appModelData)) {
-                            $appModelData->is_active = 0;
-                            $saveModel[] = $appModelData;
+                        $appModelList = $appModel->getAppLogin($model->id);
+                        if (!empty($appModelList)) {
+                            foreach ($appModelList as $appModelData) {
+                                $appModelData->is_active = 0;
+                                $saveModel[] = $appModelData;
+                            }
                         }
                         $tempModel = new TblEiplAppLoginTemp();
                         $tempModel->mobile_no = $contactdetail->mobile_no;
