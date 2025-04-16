@@ -45,7 +45,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput() ?>
     </div>
-    <div class="col-sm-2 mt10">
+    <div class="col-sm-2 mt10 mt-4">
           <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_auto_trip'); ?>
     </div>
     <div class="col-sm-6">
@@ -74,7 +74,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <div class="form-group">
+        <div class="form-group mt-2">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
