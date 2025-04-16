@@ -283,7 +283,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                         ->where(['or',
                                 ['mobile_no' => $encryptedmobile],
                                 ['mobile_no' => $this->mobile_no]
-                        ])->andWhere(['master_code' => $user])->one();
+                        ])->andWhere(['master_code' => $user])->all();
     }
 
     public function getAppDetail($data) {
@@ -292,7 +292,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                         ->where(['or',
                                 ['mobile_no' => $encryptedmobile],
                                 ['mobile_no' => $data->mobile_no]
-                        ])->andWhere(['master_code' => $data->id, 'login_type' => $data->login_type])->one();
+                        ])->andWhere(['master_code' => $data->id, 'login_type' => $data->login_type])->all();
     }
 
 }
