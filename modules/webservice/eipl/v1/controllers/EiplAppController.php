@@ -23,9 +23,20 @@ class EiplAppController extends MasterController {
         $modelSave = [];
         $model = new TblEiplAppLogin();
         $model->attributes = Yii::$app->request->getRawBody();
-        $model->app_type = 1;
+        $model->app_type = empty($model->app_type) ? 1 : $model->app_type;
         $detail = $model->MobileNoDetail();
-        if (!empty($detail)) {
+        //login_type = MEMBER,DCS,BMC,MCC,PLANT,UNION,ROUTE,DRIVER
+        if (!empty($model->login_type)) {
+            $isValid = FALSE;
+            foreach ($detail as $key => $subArr) {
+                if ($model->login_type == $detail[$key]['login_type']) {
+                    $isValid = TRUE;
+                }
+            }
+        } else {
+            $isValid = TRUE;
+        }
+        if ($isValid && !empty($detail)) {
             $temp_model = new TblEiplAppLoginTemp();
             $temp_model->attributes = $model->attributes;
             $temp_model->union_code = $detail[0]['union_code'];
@@ -73,7 +84,7 @@ class EiplAppController extends MasterController {
         $content = Yii::$app->request->getRawBody();
         $temp_model = new TblEiplAppLoginTemp();
         $temp_model->setAttributes($content);
-        $temp_model->app_type = 1;
+        $temp_model->app_type = empty($temp_model->app_type) ? 1 : $temp_model->app_type;
         $temp_model = $temp_model->activationInfo();
         if (!empty($temp_model)) {
             $model = new TblEiplAppLogin();
@@ -151,7 +162,7 @@ class EiplAppController extends MasterController {
             }
             $model = new TblEiplAppLogin();
             $model->mobile_no = Yii::$app->eiplapp->identity->mobile_no;
-            $model->app_type = 1;
+            $model->app_type = empty(Yii::$app->eiplapp->identity->app_type) ? 1 : Yii::$app->eiplapp->identity->app_type;
             $model->module_code = $identity->module_code;
             if ($identity->login_type == 'MEMBER') {
                 $query = $model->memberMobileDetail();
