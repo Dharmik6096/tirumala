@@ -112,64 +112,75 @@ $('#tblvehicletrip-plant_code').on('change',function(){
                 var options='';  
 
                 $.each(plant_code, function(index, plant_code) {
-                    // options += '<option value=\"' + plant_code + '#plant' + '\">' + $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text() + ' - PLANT</option>';
                     var uniquePlantValue = plant_code + '#plant';
                     var plantText = $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text();
-                    options += '<option value=\"' + uniquePlantValue + '\" data-sortindex=\"' + index + '\">' + plantText + ' - PLANT</option>';
+                    options += '<option value=\"' + uniquePlantValue + '\">' + plantText + ' - PLANT</option>';
                 });          
                 $.each(obj1.data, function(index, value) {
                     if(jQuery.inArray(index,selarray) == -1){   
                         options += '<option value=\"'+index+'\">'+value+'</option>';  
                     }
-                });  
-                var bmc_array = [];
-                var bmc_array_nonsel = {};
-                mccarray.each(function(){
-                    var val = $(this).attr('value');
-                    var txt = $(this).text();
-                    var dataindex = $(this).attr('data-sortindex');
-                    bmc_array[dataindex]= val + '~~~' + txt ;
-                    bmc_array_nonsel[val]=txt;
-                });   
-                $.each(bmc_array_nonsel, function(index, value) {
-                    options += '<option value=\"'+index+'\">'+value+'</option>'; 
-                });            
-                $.each(bmc_array, function(index, value) {
-                    if(value!=''){
-                        var valtxt=value.split('~~~')
-                        options += '<option value=\"'+valtxt[0]+'\"  data-sortindex=\"'+index+'\" selected>'+valtxt[1]+'</option>';
-                    }
                 });
-                if(isLoadPage && selectedBmcCodesInitial.length > 0){
-                    $.each(selectedBmcCodesInitial, function(index, value) {
-                        $.each(plant_code, function(index, plant_code) {
-                            var uniquePlantValue = plant_code + '#plant';
-                            if(value == uniquePlantValue){
-                                var plantText = $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text();
-                                options += '<option value=\"' + uniquePlantValue + '\" data-sortindex=\"' + index + '\" selected>' + plantText + ' - PLANT</option>';
-                            }
-                        }); 
-                        $.each(obj1.data, function(index1, value1) {
-                            if(value == index1){
-                                options += '<option value=\"'+index1+'\"  data-sortindex=\"'+index+'\" selected>'+value1+'</option>';
-                            }
-                        });
-                    });
-                    isLoadPage = false;
-                }
                 $('#tblvehicletrip-bmc_code').html(options);
                 $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);
+                if (selectedBmcCodesInitial.length > 0 && isLoadPage) {
+                    setTimeout(
+                        function() {
+                            var dualListBoxContainer = $('#tblvehicletrip-bmc_code').bootstrapDualListbox('getContainer');
+                            var sourceSelect = dualListBoxContainer.find('.box1 select');
+                            $.each(selectedBmcCodesInitial, function(index, valueToSelect) {
+                                var optionToMove = sourceSelect.find('option:not(:selected)[value=\"' + valueToSelect + '\"]').first();
+                                if (optionToMove.length > 0) {
+                                    optionToMove.prop('selected', true);
+                                    dualListBoxContainer.find('.box1 .move').trigger('click');
+                                }
+                            });
+                            isLoadPage = false;
+                        },
+                        500
+                    );
+                }
             }
         }
     });           
 });
+// $('#vehicle-trip-form').submit(function(e) {
+//     var bmcarray = '';                                      
+//     var options = $('#tblvehicletrip-bmc_code option:selected');
+//     console.log(options);
+//     options.each(function(index){
+//         bmcarray += index+'~~~'+$(this).attr('value')+':::';
+//     });
+//     $('#selected_bmc_seq').val(bmcarray);      
+// });
 $('#vehicle-trip-form').submit(function(e) {
-    var bmcarray = '';                                      
-    var options = $('#tblvehicletrip-bmc_code option:selected');
-    options.each(function(index){
-        bmcarray += index+'~~~'+$(this).attr('value')+':::';
+    var bmcarray = '';
+    var dualListBoxContainer = $('.bootstrap-duallistbox-container');
+    var selectedOptions = dualListBoxContainer.find('.box2 select option');
+
+    var sortedOptions = selectedOptions.sort(function(a, b) {
+        var indexA = $(a).attr('data-sortindex');
+        var indexB = $(b).attr('data-sortindex');
+
+        var numA = indexA ? parseInt(indexA, 10) : Number.MAX_SAFE_INTEGER;
+        var numB = indexB ? parseInt(indexB, 10) : Number.MAX_SAFE_INTEGER;
+
+        if (isNaN(numA) && isNaN(numB)) {
+            return 0;
+        }
+        if (isNaN(numA)) {
+            return 1;
+        }
+        if (isNaN(numB)) {
+            return -1;
+        }
+
+        return numA - numB;
     });
-    $('#selected_bmc_seq').val(bmcarray);      
+    sortedOptions.each(function(index) {
+        bmcarray += index + '~~~' + $(this).attr('value') + ':::';
+    });
+    $('#selected_bmc_seq').val(bmcarray);
 });
 $('#tblvehicletrip-vehicle_code').on('change', function(){
     var vehicle_code = $(this).val();
@@ -216,8 +227,8 @@ $('#tblvehicletrip-bmc_code').change(function () {
             $('#tblvehicletrip-bmc_code').append($('<option></option>').attr('value', index).text(value)); 
         }
         nonselarray.push(index);
-    });  
-    $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);      
+    });
+    $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);
 });
 ";
 
