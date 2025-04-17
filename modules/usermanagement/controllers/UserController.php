@@ -167,7 +167,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             }
                             $tempModel = new TblEiplAppLoginTemp();
                             $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
-                            $tempModelData = $tempModel->getAppTempLogin($id);
+                            $tempModelData = $tempModel->getAppTempLogin();
                             if (!empty($tempModelData)) {
                                 foreach ($tempModelData as $temp) {
                                     $delete[] = $temp;
@@ -206,7 +206,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         }
                         $tempModel = new TblEiplAppLoginTemp();
                         $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
-                        $tempModelData = $tempModel->getAppTempLogin($id);
+                        $tempModelData = $tempModel->getAppTempLogin();
                         if (!empty($tempModelData)) {
                             foreach ($tempModelData as $temp) {
                                 $delete[] = $temp;
@@ -273,7 +273,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             }
                             $tempModel = new TblEiplAppLoginTemp();
                             $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
-                            $tempModelData = $tempModel->getAppTempLogin($id);
+                            $tempModelData = $tempModel->getAppTempLogin();
                             if (!empty($tempModelData)) {
                                 foreach ($tempModelData as $temp) {
                                     $temp->department = $model->department;
@@ -353,7 +353,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         }
                         $tempModel = new TblEiplAppLoginTemp();
                         $tempModel->mobile_no = $contactdetail->mobile_no;
-                        $tempModelData = $tempModel->getAppTempLogin($model->id);
+                        $tempModelData = $tempModel->getAppTempLogin();
                         if (!empty($tempModelData)) {
                             foreach ($tempModelData as $temp) {
                                 $delete[] = $temp;
