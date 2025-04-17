@@ -61,6 +61,7 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
             $this->model->to_date = $this->model->to_date . ' ' . \Yii::$app->general->getshift($this->model->to_shift_code);
             $this->model->from_date = ($this->model->from_date) ? Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) : '';
             $this->model->from_date = $this->model->from_date . ' ' . \Yii::$app->general->getshift($this->model->from_shift_code);
+            $this->model->x_col1 = Yii::$app->general->getUuid();
             $this->model->type = 'physical';
             $this->model->scenario = 'create';
 
