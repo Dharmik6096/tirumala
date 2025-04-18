@@ -115,6 +115,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model->challan_no = $model->getChallanNo(); //$model->trip_code . '/' . $model->bmc_code . '/1';
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;
                     $model->vehicle_out_time = $model->transaction_date . ' ' . $model->vehicle_out_time;
+                    $model->x_col1 = Yii::$app->general->getUuid();
                     $tripModel = new TblVehicleTrip();
                     $tripModel->trip_code = $model->trip_code;
                     $tripModel = $tripModel->getTripData();
@@ -128,6 +129,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $model;
                 }
                 $txn_model->attributes = $model->attributes;
+                $txn_model->x_col1 = Yii::$app->general->getUuid();
                 $txn_model->bmc_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($txn_model, $model->bmc_milk_dispatch_code);
                 $txn_model->qty_mode = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'dispatch_qty_mode', 'BMC');
                 $conversion_const = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'ltr_to_kg_constant', 'BMC');
@@ -153,6 +155,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $stock_model->balance_qty = $txn_model->balance_qty;
                     $stock_model->closing_bal = $stock_data->closing_bal + $txn_model->dispatch_qty;
                 } else {
+                    $stock_model->x_col1 = Yii::$app->general->getUuid();
                     $stock_model->bmc_dispatch_stock_code = Yii::$app->general->getPrimaryCode($stock_model);
                     $stock_model->purchase_qty = $txn_model->purchase_qty;
                     $stock_model->opening_bal = $txn_model->opening_bal;

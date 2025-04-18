@@ -193,7 +193,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Shift Lock'), 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => User::canRoute(['/collection/tbl-mcc-shift-lock/index-other']) ? (($eiplCode == 'MMD') ? FALSE : TRUE) : FALSE],
                     ['label' => Yii::t('app', 'Shift Lock (Member Data)'), 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
                     ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index')],
-                    ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index')],
+                    ['label' => 'Milk Transfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index')],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
@@ -1109,6 +1109,7 @@ echo GhostMenu::widget([
                     'template' => '<a  class="dropdown-toggle" href="#">Authorization <b class="caret"></b></a>',
                     'items' => [
                             ['label' => 'User', 'url' => ['/user-management/user/index'], 'active' => ($cntrl == 'user'),],
+                            ['label' => 'Application User', 'url' => ['/usermanagement/tbl-eipl-app-user/index'], 'active' => ($cntrl == 'tbl-eipl-app-user'),],
                             ['label' => 'Role', 'url' => ['/user-management/role/index'], 'active' => ($cntrl == 'role'),],
                         //                ['label' => 'Set Originating Location', 'url' => ['/user-management/permission/set-originate-action'], 'active' => ($cntrl == 'permission'),],
                         ['label' => 'Permission', 'url' => ['/user-management/permission/index'], 'active' => ($cntrl == 'permission'),],

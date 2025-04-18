@@ -1032,6 +1032,7 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Authorization <b class="caret"></b></a>',
                     'items' => [
                             ['label' => 'User', 'url' => ['/user-management/user/index'], 'active' => ($cntrl == 'user'),],
+                            ['label' => 'Application User', 'url' => ['/usermanagement/tbl-eipl-app-user/index'], 'active' => ($cntrl == 'tbl-eipl-app-user'),],
                             ['label' => 'Role', 'url' => ['/user-management/role/index'], 'active' => ($cntrl == 'role'),],
                         //                ['label' => 'Set Originating Location', 'url' => ['/user-management/permission/set-originate-action'], 'active' => ($cntrl == 'permission'),],
                         ['label' => 'Permission', 'url' => ['/user-management/permission/index'], 'active' => ($cntrl == 'permission'),],

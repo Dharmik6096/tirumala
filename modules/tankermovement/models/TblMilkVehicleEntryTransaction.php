@@ -76,6 +76,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
             [['fat', 'snf', 'water', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'default', 'value' => '0'],
             [['status', 'cron_pick_datetime','pick_datetime','response_datetime','response_msg', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'safe'],
             [['status'], 'default', 'value' => 0],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -116,6 +117,11 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
 
