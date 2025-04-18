@@ -797,6 +797,14 @@ class V1 extends \yii\base\Module {
                 'param' => 'organization_type#organization_code',
                 'sp' => 'sp_app_eipl_v1_siloinfo_master',
             ],
+            'trip-master/list' => [
+                'param' => 'plant#bmc#login_type#mobile_no',
+                'sp' => 'sp_app_eipl_v1_trip_list',
+            ],
+            'trip-detail/list' => [
+                'param' => 'vehicle_trip_code',
+                'sp' => 'sp_app_eipl_v1_trip_detail_list',
+            ],
         ];
         return $label;
     }
