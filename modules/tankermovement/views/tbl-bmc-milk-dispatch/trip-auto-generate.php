@@ -111,8 +111,8 @@ $this->title = Yii::t('app', 'Create Trip');
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     $.each(data, function(key, val) {
-                                                                        if(key=="msg" && key != null){   
-                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        if(key != null && val !== "error"){   
+                                                                            $(".error-summary ul").append("<li>"+val+"</li>");
                                                                         }
                                                                     });
                                                                     $(".error-summary").show();                                                                   

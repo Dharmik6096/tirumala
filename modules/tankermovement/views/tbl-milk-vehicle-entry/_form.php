@@ -12,6 +12,7 @@ use yii\web\JsExpression;
 $readonly = $type == 'create' ? FALSE : TRUE;
 $disabled = empty($model->milk_vehicle_entry_code) ? '' : 'disabled';
 $milk_vehicle_entry_code = $model->milk_vehicle_entry_code;
+$tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL') == 1 ? TRUE : FALSE;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -38,29 +39,39 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
             </div>
-            <div class="col-sm-1">
-                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
-            </div>
             <div class="col-sm-2 ReceiptDatetime">
                 <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'receipt_shift_code'); ?>
             </div>
-            <div class="col-sm-2 disabled vehicle_code_hide"> 
-                <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblmilkvehicleentry-union_code', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, false); ?>
-            </div>
+            <?php if (!$tripMandateOnReceipt) { ?>
+                <div class="col-sm-1">
+                    <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+                </div>
+            <?php } ?>
             <div class="col-sm-2 tanker_no_hide"> 
                 <?= $form->field($model, 'tanker_no')->textInput() ?>
+            </div>
+            <div class="col-sm-2 disabled vehicle_code_hide"> 
+                <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblmilkvehicleentry-union_code', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, false); ?>
             </div>
             <div class="col-sm-2 filldata trip-code-hide">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
                 <?= Html::hiddenInput('trip_type', 'receipt', ['id' => 'trip_type']); ?>
                 <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentry-vehicle_code,tblmilkvehicleentry-receipt_datetime,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
             </div>
+            <?php if ($tripMandateOnReceipt) { ?>
+                <div class="col-sm-1">
+                    <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+                </div>
+            <?php } ?>
             <div class="col-sm-2">
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?> 
             </div>
@@ -74,7 +85,7 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'qty')->textInput(['readonly' => 'readonly']) ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99','options' => ['readonly' => true]]); ?>
+                <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99', 'options' => ['readonly' => true]]); ?>
             </div>
         </div>
         <div class="col-lg-12">
@@ -133,9 +144,8 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
                     </div>
                     <div class="col-sm-1"> 
-                        <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
+                        <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblmilkvehicleentry-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
                     </div>
-
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'gross_weight')->textInput() ?>
                     </div>
@@ -148,7 +158,6 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1">
                         <?= $form->field($txn_model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
                     </div>
-
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'chamber_quantity')->textInput() ?>
                     </div>
@@ -234,7 +243,10 @@ $form = ActiveForm::begin([
                                                                         $("#tblmilkvehicleentrytransaction-challan_no").change();
                                                                         $("#tblmilkvehicleentrytransaction-milk_type_code").change();
                                                                         $("#tblmilkvehicleentrytransaction-milk_quality_type_code").change();
-                                                                        $("#tblmilkvehicleentrytransaction-chamber_no").change();                                                                                                                                       
+                                                                        $("#tblmilkvehicleentrytransaction-chamber_no").change();
+                                                                        if($("#tblmilkvehicleentry-receipt_at").val() == "PLANT"){
+                                                                            tripSubStatus();
+                                                                        }   
                                                                         $(".panel-body").scrollTop(0);                                                                    
                                                                         bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>");
                                                                     }else{                                                             
@@ -294,9 +306,9 @@ endif;
 ?>
 
 <?php
-$tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL') == 1 ? TRUE : FALSE;
 $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
 $script = "
+    var org_code = '';
     var qltyParamsReadOnly = false;
     $('#dispatch-detail').css('display', 'none');
     $('#milk-receipt-transaction').css('display', 'none');
@@ -329,8 +341,8 @@ $script = "
         var EntryType = document.querySelector('.col-sm-1.entry_type');
         var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
         var tankerMovementWithTripSubStatus = '" . $tankerMovementWithTripSubStatus . "';
-        if (setData(receipt_at) && setData(dispatch_from)) {
-            if (dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
+        if (setData(receipt_at)) {
+            if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
                $('#dispatch-detail').css('display', 'none');
@@ -350,68 +362,7 @@ $script = "
                 $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
 
                 $(document).off('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code')
-                           .on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code', function() {
-                        var trip_code = $('#tblmilkvehicleentry-trip_code').val();
-                        var union_code = $('#tblmilkvehicleentry-union_code').val();  
-                        var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();  
-                        if(setData(trip_code) && setData(union_code) && setData(receiptAtCode)){
-                            if(tankerMovementWithTripSubStatus){
-                                 qltyParamsReadOnly = false;
-                                 $.ajax({
-                                    type: 'post',
-                                    url: '" . Url::to(['trip-sub-status']) . "',
-                                    data: {'trip_code' : trip_code,'union_code':union_code,'receipt_at_code' : receiptAtCode}, 
-                                    success: function(data) {
-                                        var obj1 = $.parseJSON(data);
-                                        if(obj1.status == 'success'){
-                                            $('#dispatch-detail').css('display', 'block');
-                                            $('#milk-receipt-transaction').css('display', 'block');
-                                            $('#milk-receipt-transaction-detail').css('display', 'block');
-                                            // $(document).on('change','#tblmilkvehicleentrytransaction-chamber_no', function() {
-                                                    // var chamber_no = $('#tblmilkvehicleentrytransaction-chamber_no').val();
-                                                    // if (setData(chamber_no) && obj1.record_data.hasOwnProperty(chamber_no) ) {
-                                                    //     $('#tblmilkvehicleentrytransaction-fat').val(obj1.record_data[chamber_no].fat);
-                                                    //     $('#tblmilkvehicleentrytransaction-snf').val(obj1.record_data[chamber_no].snf);
-                                                    //     $('#tblmilkvehicleentrytransaction-clr').val(obj1.record_data[chamber_no].clr);
-                                                    //     $('#tblmilkvehicleentrytransaction-water').val(obj1.record_data[chamber_no].water);
-                                                    //     $('#tblmilkvehicleentrytransaction-temp').val(obj1.record_data[chamber_no].temp);
-                                                    //     $('#tblmilkvehicleentrytransaction-protein').val(obj1.record_data[chamber_no].protein);
-                                                    //     $('#tblmilkvehicleentrytransaction-density').val(obj1.record_data[chamber_no].density);
-                                                    //     $('#tblmilkvehicleentrytransaction-lactose').val(obj1.record_data[chamber_no].lactose);
-                                                    //     $('#tblmilkvehicleentrytransaction-freezing_point').val(obj1.record_data[chamber_no].freezing_point);
-                                                    //     $('#tblmilkvehicleentrytransaction-mbrt').val(obj1.record_data[chamber_no].mbrt);
-                                                    //     $('#tblmilkvehicleentrytransaction-acidity').val(obj1.record_data[chamber_no].acidity);
-                                                    // } else {
-                                                           $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('0').prop('readonly', true);
-                                                           $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('1');
-                                                           qltyParamsReadOnly = true;
-                                                    // }
-                                            // });
-                                        } else if(obj1.validation){
-                                            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                                        } else {
-                                            $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
-                                            $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('0');
-                                            $('#dispatch-detail').css('display', 'block');
-                                            $('#milk-receipt-transaction').css('display', 'block');
-                                            $('#milk-receipt-transaction-detail').css('display', 'block');
-                                        }
-                                    },
-                                });
-                            } else {
-                                $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
-                                $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('0');
-                                $('#dispatch-detail').css('display', 'block');
-                                $('#milk-receipt-transaction').css('display', 'block');
-                                $('#milk-receipt-transaction-detail').css('display', 'block');
-                            }
-                        } else {
-                            $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
-                            $('#dispatch-detail').css('display', 'none');
-                            $('#milk-receipt-transaction').css('display', 'none');
-                            $('#milk-receipt-transaction-detail').css('display', 'none');
-                        }
-                });
+                            .on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code', tripSubStatus);
             } else {
                 $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
                 $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('0');
@@ -421,6 +372,70 @@ $script = "
             }
         }
     });
+    
+    function tripSubStatus() {
+        var trip_code = $('#tblmilkvehicleentry-trip_code').val();
+        var union_code = $('#tblmilkvehicleentry-union_code').val();  
+        var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();  
+        var tankerMovementWithTripSubStatus = '" . $tankerMovementWithTripSubStatus . "';
+        if(setData(trip_code) && setData(union_code) && setData(receiptAtCode)){
+            if(tankerMovementWithTripSubStatus){
+                    qltyParamsReadOnly = false;
+                    $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['trip-sub-status']) . "',
+                    data: {'trip_code' : trip_code,'union_code':union_code,'receipt_at_code' : receiptAtCode}, 
+                    success: function(data) {
+                        var obj1 = $.parseJSON(data);
+                        if(obj1.status == 'success'){
+                            $('#dispatch-detail').css('display', 'block');
+                            $('#milk-receipt-transaction').css('display', 'block');
+                            $('#milk-receipt-transaction-detail').css('display', 'block');
+                            // $(document).on('change','#tblmilkvehicleentrytransaction-chamber_no', function() {
+                                    // var chamber_no = $('#tblmilkvehicleentrytransaction-chamber_no').val();
+                                    // if (setData(chamber_no) && obj1.record_data.hasOwnProperty(chamber_no) ) {
+                                    //     $('#tblmilkvehicleentrytransaction-fat').val(obj1.record_data[chamber_no].fat);
+                                    //     $('#tblmilkvehicleentrytransaction-snf').val(obj1.record_data[chamber_no].snf);
+                                    //     $('#tblmilkvehicleentrytransaction-clr').val(obj1.record_data[chamber_no].clr);
+                                    //     $('#tblmilkvehicleentrytransaction-water').val(obj1.record_data[chamber_no].water);
+                                    //     $('#tblmilkvehicleentrytransaction-temp').val(obj1.record_data[chamber_no].temp);
+                                    //     $('#tblmilkvehicleentrytransaction-protein').val(obj1.record_data[chamber_no].protein);
+                                    //     $('#tblmilkvehicleentrytransaction-density').val(obj1.record_data[chamber_no].density);
+                                    //     $('#tblmilkvehicleentrytransaction-lactose').val(obj1.record_data[chamber_no].lactose);
+                                    //     $('#tblmilkvehicleentrytransaction-freezing_point').val(obj1.record_data[chamber_no].freezing_point);
+                                    //     $('#tblmilkvehicleentrytransaction-mbrt').val(obj1.record_data[chamber_no].mbrt);
+                                    //     $('#tblmilkvehicleentrytransaction-acidity').val(obj1.record_data[chamber_no].acidity);
+                                    // } else {
+                                            $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('0').prop('readonly', true);
+                                            $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('1');
+                                            qltyParamsReadOnly = true;
+                                    // }
+                            // });
+                        } else if(obj1.validation){
+                            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                        } else {
+                            $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
+                            $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('0');
+                            $('#dispatch-detail').css('display', 'block');
+                            $('#milk-receipt-transaction').css('display', 'block');
+                            $('#milk-receipt-transaction-detail').css('display', 'block');
+                        }
+                    },
+                });
+            } else {
+                $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
+                $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('0');
+                $('#dispatch-detail').css('display', 'block');
+                $('#milk-receipt-transaction').css('display', 'block');
+                $('#milk-receipt-transaction-detail').css('display', 'block');
+            }
+        } else {
+            $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
+            $('#dispatch-detail').css('display', 'none');
+            $('#milk-receipt-transaction').css('display', 'none');
+            $('#milk-receipt-transaction-detail').css('display', 'none');
+        }
+    }
     
     $('.type_hide').hide();
     $(document).on('change','#tblmilkvehicleentrytransaction-entry_type', function() {
@@ -448,7 +463,7 @@ $script = "
         } 
     });
     
-    
+
      $(document).on('change','.filldata', function() {
         var trip_code = $('#tblmilkvehicleentry-trip_code').val();
        if(setData(trip_code)){
@@ -470,7 +485,7 @@ $script = "
     }
     
  function BindData(trip_code){
-         $.ajax({
+        $.ajax({
                 type: 'get',
                 url: '" . Url::to(['dispatch-detail']) . "',
                 data: {'trip_code' : trip_code},             
@@ -497,7 +512,7 @@ $script = "
                     $('#transactions-from input').prop('readonly', true);                                                         
                   }
                 }
-            });           
+            });     
     }
     
     function GetVehicle(trip_code){
@@ -556,7 +571,7 @@ $script = "
                 });
     }
     
-
+    
     $(document).on('click','.edit-record',function(e){
         var id= $(this).attr('data-val');
         var name = $(this).attr('data-name');
@@ -617,8 +632,13 @@ $script = "
     $(document).on('change','#tblmilkvehicleentrytransaction-gross_weight,#tblmilkvehicleentrytransaction-tare_weight', function() {
         var gross_weight=$('#tblmilkvehicleentrytransaction-gross_weight').val() || 0;
         var tare_weight=$('#tblmilkvehicleentrytransaction-tare_weight').val() || 0;
-
         var qty = parseFloat(gross_weight) - parseFloat(tare_weight);
+        if (parseFloat(gross_weight) < parseFloat(tare_weight)) {
+            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>tare weight should not be more than gross weight</span></div></div>\");
+            $('#tblmilkvehicleentrytransaction-tare_weight').val('');
+            $('#tblmilkvehicleentrytransaction-chamber_quantity').val('');
+            return false;
+        }
         if (!isNaN(qty)) {
             qty = Math.max(0, qty);
         } else {
@@ -627,6 +647,37 @@ $script = "
         $('#tblmilkvehicleentrytransaction-chamber_quantity').val((qty).toFixed(2));
     });
     
+       function SourceData(trip_code){
+            $.ajax({
+                type: 'get',
+                url: '" . Url::to(['vehicle-trip-detail']) . "',
+                data: {'trip_code' : trip_code},             
+                success: function(data) {
+                   var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        var sourceOrgTypeUpper = obj.data.source_org_type.toUpperCase();
+                            $('#tblmilkvehicleentry-dispatch_from').val(sourceOrgTypeUpper).trigger('change').trigger('select2:select');
+                            var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
+                            $('#tblmilkvehicleentry-dispatch_from_code').on('depdrop:afterChange', function(e) {
+                            setTimeout(function() {
+                                $('#tblmilkvehicleentry-dispatch_from_code').val(obj.data.source_org_code).trigger('change').trigger('select2:select');
+                            }, 1000);
+                        });
+                    }
+                },
+                  error: function(data) {  
+                }
+            });
+    }
+    $(document).on('change','#tblmilkvehicleentry-trip_code', function() {
+        var trip_code = $('#tblmilkvehicleentry-trip_code').val();
+        $('#tblmilkvehicleentry-dispatch_from').val(null).trigger('change');
+        $('#tblmilkvehicleentry-dispatch_from_code').val(null).trigger('change');
+        if (trip_code) {
+            SourceData(trip_code);
+        }
+    });
+   
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

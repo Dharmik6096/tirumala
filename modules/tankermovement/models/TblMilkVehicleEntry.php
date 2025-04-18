@@ -90,6 +90,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false,],
                 [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true, 'except' => ['androidsync']],
                 [['approval_status'], 'default', 'value' => 'Pending', 'on' => ['androidsync']],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -133,6 +134,11 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             'pick_datetime' => Yii::t('app', 'Pick Datetime'),
             'response_datetime' => Yii::t('app', 'Response Datetime'),
             'response_msg' => Yii::t('app', 'Response Msg'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
 

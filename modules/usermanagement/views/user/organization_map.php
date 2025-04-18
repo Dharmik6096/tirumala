@@ -30,81 +30,54 @@ $this->title = Yii::t('app', $title);
             </div>
             <?= $form->errorSummary($model); ?>
             <div class="col-md-12">
-                <div class="row multiple">
+                <div class="row multiple" id ="hieghtAdjust" data-pluseheigt = "120" data-minuse = "120">
                     <?php
-                    echo $form->field($model, 'federation', ['options' => ['class' => 'form-group col-sm-12 hidden',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $federations['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-
-                    echo $form->field($model, 'union', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $unions['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-
-                    echo $form->field($model, 'plant', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $plant['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'mcc', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $mcc['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'bmc', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $bmc['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'route', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $route['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'dcs', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $dcs['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
+                    $dualListBoxes = [
+                        'federation' => ['data' => $federations['data'], 'hidden' => true],
+                        'union' => ['data' => $unions['data']],
+                        'plant' => ['data' => $plant['data']],
+                        'mcc' => ['data' => $mcc['data']],
+                        'bmc' => ['data' => $bmc['data']],
+                        'route' => ['data' => $route['data']],
+                        'dcs' => ['data' => $dcs['data']],
+                    ];
                     ?>
+                    <div class="row collapse-toggle-buttons margin-bottom-10">
+                        <?php
+                        foreach ($dualListBoxes as $field => $options):
+                            $collapseId = "collapse-" . $field;
+                            $label = $model->getAttributeLabel($field);
+                            $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'd-none' : '';
+                            ?>
+                            <div class="d-contents btn-group margin-right-5 <?= $hiddenClass ?>">
+                                <button type="button" class="collapsible-btn" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">- <?= $label ?></button>
+                                
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php
+                    foreach ($dualListBoxes as $field => $options):
+                        $collapseId = "collapse-" . $field;
+                        $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'd-none' : '';
+                        ?>
+                        <div class="col-sm-12 <?= $hiddenClass ?>">
+                            <div id="<?= $collapseId ?>" class="collapse show">
+                                <?=
+                                $form->field($model, $field, [
+                                    'options' => ['class' => 'form-group col-sm-12'],
+                                ])->widget(DualListbox::className(), [
+                                    'items' => $options['data'],
+                                    'clientOptions' => [
+                                        'moveOnSelect' => FALSE,
+                                        'selectedListLabel' => FALSE,
+                                        'nonSelectedListLabel' => FALSE,
+                                        'filterPlaceHolder' => '',
+                                    ],
+                                ])
+                                ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                     <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
                     <div class="clearfix"></div>
                     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -389,6 +362,42 @@ $script = "
             }  
     }    
 
+function adjustDualListboxHeight(increase = false) {
+        var currentPluseHeight = $('#hieghtAdjust').data('pluseheigt');
+        var currentMinuesHeight = $('#hieghtAdjust').data('minuse');
+        
+        var changesHeight = Math.min(currentPluseHeight + 50, 370);
+        var changeMinHeight = Math.max(currentMinuesHeight - 50, 120);
+ 
+        $('.bootstrap-duallistbox-container select[multiple]').each(function () {
+            const newHeight = increase ? changeMinHeight : changesHeight;
+            $(this).css('height', newHeight + 'px');
+        });
+        
+        if(increase){
+            $('#hieghtAdjust').data('minuse', changeMinHeight);
+            $('#hieghtAdjust').data('pluseheigt', changeMinHeight);
+        }else{
+            $('#hieghtAdjust').data('pluseheigt', changesHeight);
+            $('#hieghtAdjust').data('minuse', changesHeight);
+        }
+    }
+
+    $(document).on('click', '.collapsible-btn', function() {
+        let \$button = $(this);
+        let target = \$button.attr('data-bs-target');
+        let label = \$button.text().substring(1);
+       $(target).off('shown.bs.collapse').on('shown.bs.collapse', function () {
+        \$button.text('-' + label);
+        adjustDualListboxHeight(true);
+       
+    });
+
+    $(target).off('hidden.bs.collapse').on('hidden.bs.collapse', function () {
+       \$button.text('+' + label);
+      adjustDualListboxHeight(false); 
+   });
+});
 ";
 $this->registerJs($script, View::POS_END, 'user-org-map-list');
 ?>

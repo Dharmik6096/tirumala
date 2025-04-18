@@ -112,6 +112,7 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $model->trip_code = $postData['trip'];
         $model->union_code = $postData['union'];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->x_col1 = Yii::$app->general->getUuid();
             $saveModel[] = $model;
             $config_data = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
             $cnt = 1;

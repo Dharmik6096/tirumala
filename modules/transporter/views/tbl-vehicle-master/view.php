@@ -147,15 +147,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ],
                     [
-                        'columns' => [
-                            [
-                                'attribute' => 'no_of_compartment',
-                                'value' => Yii::$app->general->getStaticDropdownVal('chamber_no', $model, 'no_of_compartment'),
-                                'valueColOptions' => ['style' => 'width:80%']
-                            ],
-                        ],
-                    ],
-                    [
                         'group' => true,
                         'label' => 'Driver Details',
                         'rowOptions' => ['class' => 'bg-default']

@@ -62,6 +62,7 @@ class TblMilkVehicleEntryHistory extends \yii\db\ActiveRecord {
                 [['union_code'], 'safe'],
                 [['plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
                 [['originating_org_code', 'originating_org_type', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'dock_no'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -99,6 +100,11 @@ class TblMilkVehicleEntryHistory extends \yii\db\ActiveRecord {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'party_master_code' => Yii::t('app', 'Party Master Code'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
 

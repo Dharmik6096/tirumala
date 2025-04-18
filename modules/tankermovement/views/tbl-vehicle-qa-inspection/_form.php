@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use app\components\ActiveForm;
 use yii\web\View;
+use yii\helpers\Url;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -19,10 +20,10 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
     </div>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicleqainspection-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_code')); ?>
+        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
     </div>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicleqainspection-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicleqainspection-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_code')); ?>
     </div>
     <div class="col-sm-2">
         <?= Html::hiddenInput('trip_process', 'qa_inspection', ['id' => 'trip_process']); ?>
@@ -67,6 +68,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "
    $(document).ready(function() {
+    $('.field-tblvehicleqainspection-transporter_code').addClass('disabled no_pointer');
     function autoSelectFields() {
             $('#tblvehicleqainspection-trip_code').trigger('change');
             $('#tblvehicleqainspection-trip_code').trigger('select2:select');
@@ -89,11 +91,48 @@ $script = "
         }
     }
     $('#tblvehicleqainspection-vehicle_code').on('change', function() {
-        $('#tblvehicleqainspection-trip_code').on('depdrop:afterChange', function(event, id, value) {
+        var vehicle_code = $(this).val();
+        if(setData(vehicle_code)){
+            setTranspoter(vehicle_code);
+        }else{
+            $('#tblvehicleqainspection-transporter_code').val('').trigger('change').trigger('select2:select');
+        }
+
+        $('#tblvehicleqainspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
             setDefaultTripCode();
          });
     });
   
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    function setTranspoter(vehicle_code){
+        if(vehicle_code != ''){
+            $.ajax({
+                type: 'post',
+                url: '" . Url::to(['/transporter/tbl-vehicle-master/get-vehicle-transpoter']) . "', 
+                data:{'vehicle_code':vehicle_code},
+                success: function(data) {
+                    var obj1 = $.parseJSON(data);
+                    if(obj1.status == 'success'){
+                        if(setData(obj1.data)){
+                            $('#tblvehicleqainspection-transporter_code').val(obj1.data.transporter_code).trigger('change').trigger('select2:select');
+                        }
+                    }
+                }
+            });
+        }
+    }
+    
+    $('.apply-shortcut[type=\"reset\"]').on('click', function () {
+        $('#tblvehicleqainspection-vehicle_code').val('').trigger('change');
+        $('#tblvehicleqainspection-transporter_code').val('').trigger('change');
+        $('#tblvehicleqainspection-trip_code').val('').trigger('change');
+    });
 });
 
 ";

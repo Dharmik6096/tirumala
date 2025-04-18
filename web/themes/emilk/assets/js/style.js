@@ -270,5 +270,22 @@
     $(document).on('ready pjax:success', function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
+
+    $('.check_length_with_mex').bind("keyup", function (e) {
+        var this_id = $(this).attr('id');
+        var filter = /^\d*(?:\.\d{1,2})?$/;
+        var mob_num = $(e.target).val();
+        if (filter.test(mob_num)) {
+            if (mob_num.length < 10) {
+                $('.field-' + this_id + ' .help-block').attr('title', $('.field-' + this_id + ' label').text() + ' must contain exactly 10 digits').text($('.field-' + this_id + ' label').text() + ' must contain minimum 10 digits');
+            } else if (mob_num.length > 16) {
+                $('.field-' + this_id + ' .help-block').attr('title', $('.field-' + this_id + ' label').text() + ' must contain exactly 10 digits').text($('.field-' + this_id + ' label').text() + ' must contain maximum 16 digits');
+            } else {
+                $('.field-' + this_id + ' .help-block').attr('title', '').text('');
+            }
+        } else {
+            $('.field-' + this_id + ' .help-block').attr('title', $('.field-' + this_id + ' label').text() + ' is not valid').text($('.field-' + this_id + ' label').text() + ' is not valid');
+        }
+    });
 })(jQuery);
 

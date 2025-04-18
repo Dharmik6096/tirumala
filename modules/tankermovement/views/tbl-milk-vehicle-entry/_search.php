@@ -37,7 +37,7 @@ $depend = 'tblmilkvehicleentrysearch';
     </div> 
     <div class="clearfix"></div>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, $depend . '-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
+        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
     </div>
     <div class="col-sm-2">
         <?= Html::hiddenInput('trip_type', 'alltrip', ['id' => 'trip_type']); ?>
