@@ -10,23 +10,23 @@ use yii\web\View;
 <?php
 
 $attribute = [
-        ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
-        ['attribute' => 'transporter_code'],
-        ['attribute' => 'transporter_name'],
-        ['attribute' => 'local_name', 'filter' => false],
-        ['attribute' => 'registration_no', 'visible' => false, 'filter' => false],
-        ['attribute' => 'address', 'value' => 'address', 'visible' => false, 'filter' => false],
-        ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => false],
-        ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'visible' => false, 'filter' => false],
-        ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name', 'visible' => false, 'filter' => false],
-        ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'visible' => false, 'filter' => false],
-        ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => false],
-        ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
-        ['attribute' => 'phone_no', 'visible' => false],
-        ['attribute' => 'contact_person', 'value' => function($model) {
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'transporter_code'],
+    ['attribute' => 'transporter_name'],
+    ['attribute' => 'local_name', 'filter' => false],
+    ['attribute' => 'registration_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'address', 'value' => 'address', 'visible' => false, 'filter' => false],
+    ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
+    ['attribute' => 'phone_no', 'visible' => false],
+    ['attribute' => 'contact_person', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->defaultContactDetail, 'firstname');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'mobile_no', 'value' => function($model) {
+    ['attribute' => 'mobile_no', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->defaultContactDetail, 'mobile_no');
         }, 'visible' => true, 'filter' => false],
 //    ['attribute' => 'contact_person', 'filter' => false],
@@ -35,27 +35,47 @@ $attribute = [
     ['attribute' => 'email', 'visible' => false, 'filter' => false],
 //    ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'visible' => false, 'filter' => false],
 //    ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'bank_code', 'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->defaultBankDetail, ['bankCode'], 'bank_name');
-        }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'branch_code', 'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->defaultBankDetail, ['branchCode'], 'branch_name');
-        }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
-        ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
-        ['attribute' => 'gstin', 'visible' => false, 'filter' => false],
-        ['attribute' => 'tds_per', 'visible' => false, 'filter' => false],
-        ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
-        ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
-        ['attribute' => 'agreement_no', 'visible' => false, 'filter' => false],
-        ['attribute' => 'declaration', 'visible' => false, 'filter' => false],
-        ['attribute' => 'security_cheque_no', 'visible' => false, 'filter' => false],
-        ['attribute' => 'security_amount', 'format' => Yii::$app->general->CurrencyFormat(), 'visible' => false, 'filter' => false],
-        ['attribute' => 'vendor_code'],
-        ['attribute' => 'billing_type_code', 'value' => function($model) {
+    ['label' => 'Bank', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->transporter_code, 'transporter');
+            isset($detail->bankCode) ? $detail = $detail->bankCode->bank_name : $detail = '';
+            return $detail;
+        }
+    ],
+    ['label' => 'Branch', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->transporter_code, 'transporter');
+            isset($detail->branchCode) ? $detail = $detail->branchCode->branch_name : $detail = '';
+            return $detail;
+        }
+    ],
+//        ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'bank_account_no', 'label' => 'Bank Account No',
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->transporter_code, 'transporter');
+            isset($detail->bank_account_no) ? $detail = $detail->bank_account_no : $detail = '';
+            return $detail;
+        }, 'visible' => false],
+    ['label' => 'IFSC', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->transporter_code, 'transporter');
+            isset($detail->ifsc) ? $detail = $detail->ifsc : $detail = '';
+            return $detail;
+        }
+    ],
+    ['attribute' => 'gstin', 'visible' => false, 'filter' => false],
+    ['attribute' => 'tds_per', 'visible' => false, 'filter' => false],
+    ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'agreement_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'declaration', 'visible' => false, 'filter' => false],
+    ['attribute' => 'security_cheque_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'security_amount', 'format' => Yii::$app->general->CurrencyFormat(), 'visible' => false, 'filter' => false],
+    ['attribute' => 'vendor_code'],
+    ['attribute' => 'billing_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->billingType, 'billing_type');
         }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilter('billing_type_code', $searchModel, 'billing_type_code', Yii::t('app', 'Select'))],
-        [
+    [
         'attribute' => 'agreement_from_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -65,7 +85,7 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->agreement_from_date);
         }, 'visible' => false],
-        [
+    [
         'attribute' => 'agreement_to_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

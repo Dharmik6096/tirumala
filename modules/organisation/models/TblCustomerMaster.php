@@ -70,7 +70,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $main_rules = [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
                 [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc'], 'safe'],
+                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc', 'pan_no'], 'safe'],
                 [['route'], 'required', 'on' => ['importCsv']],
                 [['is_active', 'animal_type_code'], 'integer'],
                 [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix'], 'safe'],
@@ -135,7 +135,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv', 'createFront']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping']],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
-                [['ts_code_m', 'ts_code_e'], 'number']
+                [['ts_code_m', 'ts_code_e'], 'number'],
+                [['pan_no'], function ($attribute, $params) {
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblCustomerMaster', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
