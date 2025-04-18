@@ -289,6 +289,10 @@ class TblUserOrganizationMapping extends ChildModel
             $sel = explode(',', Yii::$app->session->get('Unions'));
             $query->andWhere(['union_code' => $sel]);
         }
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $sel = explode(',', Yii::$app->session->get('Dcs'));
+            $query->andWhere(['dcs_code' => $sel]);
+        }
         if ($BMCArray !== 0) {
             $query->andWhere(['bmc_code' => $BMCArray]);
         }
@@ -305,6 +309,10 @@ class TblUserOrganizationMapping extends ChildModel
         if (!empty(Yii::$app->session->get('Unions'))) {
             $sel = explode(',', Yii::$app->session->get('Unions'));
             $query->andWhere(['union_code' => $sel]);
+        }
+        if (!empty(Yii::$app->session->get('BMC'))) {
+            $sel = explode(',', Yii::$app->session->get('BMC'));
+            $query->andWhere(['bmc_code' => $sel]);
         }
         $selected = [];
         if ($MCCArray !== 0) {
@@ -334,6 +342,10 @@ class TblUserOrganizationMapping extends ChildModel
             $sel = explode(',', Yii::$app->session->get('Unions'));
             $query->andWhere(['union_code' => $sel]);
         }
+        if (!empty(Yii::$app->session->get('MCC'))) {
+            $sel = explode(',', Yii::$app->session->get('MCC'));
+            $query->andWhere(['mcc_plant_code' => $sel]);
+        }
         $selected = [];
         if ($plantArray !== 0) {
             $query->andWhere(['plant_code' => array_keys($plantArray)]);
@@ -360,6 +372,10 @@ class TblUserOrganizationMapping extends ChildModel
         if (!empty(Yii::$app->session->get('Unions'))) {
             $sel = explode(',', Yii::$app->session->get('Unions'));
             $query->andWhere(['union_code' => $sel]);
+        }
+        if (!empty(Yii::$app->session->get('Plant'))) {
+            $sel = explode(',', Yii::$app->session->get('Plant'));
+            $query->andWhere(['plant_code' => $sel]);
         }
         $selected = [];
         if ($unionArray !== 0) {
