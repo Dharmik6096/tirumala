@@ -123,6 +123,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 if (!empty($masterPost['milk_vehicle_entry_code'])) {
                     $this->model->load(Yii::$app->request->post());
                 } else {
+                    $this->model->x_col1 = Yii::$app->general->getUuid();
                     $this->model->originating_org_code = $this->model->union_code;
                     $this->model->milk_vehicle_entry_code = Yii::$app->general->getPrimaryCode($this->model);
                     $this->model->grn_no = Yii::$app->session->get('financialYear') . '/' . $this->model->trip_code . '/1';
@@ -168,6 +169,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     }
                     $update = TRUE;
                 } else {
+                    $txn_model->x_col1 = Yii::$app->general->getUuid();
                     $txn_model->milk_vehicle_entry_transaction_code = Yii::$app->general->getTransactionCode($txn_model, $this->model->milk_vehicle_entry_code);
                     $txn_model->milk_vehicle_entry_code = $this->model->milk_vehicle_entry_code;
                     $txn_model->grn_no = $this->model->grn_no;

@@ -65,6 +65,7 @@ class TblMilkVehicleEntryTransactionHistory extends \yii\db\ActiveRecord
             [['chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'integer'],
             [['status','cron_pick_datetime','pick_datetime','response_datetime','response_msg'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -110,6 +111,11 @@ class TblMilkVehicleEntryTransactionHistory extends \yii\db\ActiveRecord
             'history_created_at' => Yii::t('app', 'History Created At'),
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
 }

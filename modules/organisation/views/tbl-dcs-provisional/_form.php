@@ -302,7 +302,6 @@ $form = ActiveForm::begin([
         </div> -->
 
         <div class="clearfix"></div>
-        <?php if ($type == 'create') { ?>
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                 <h4 class="theme-box-heading">Contact Details</h4>
             </div>
@@ -364,7 +363,6 @@ $form = ActiveForm::begin([
             <!--<div class="col-sm-2">
             <?= $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
             </div>-->
-        <?php } ?>
         <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
         <!--</div>-->
         <div class="col-sm-2 mt10">
