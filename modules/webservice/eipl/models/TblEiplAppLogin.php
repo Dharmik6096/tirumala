@@ -296,4 +296,26 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                         ])->andWhere(['master_code' => $data->id, 'login_type' => $data->login_type])->all();
     }
 
+    public function DriverMobileNoDetail() {
+        $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
+        $contactDetail = TblVehicleTrip::find()
+                ->select(['master_type' => new Expression("'trip'"),
+                    'master_code' => 'trip_code',
+                    'module_type' => new Expression("'TblVehicleTrip'"),
+                    'module_code' => 'trip_code',
+                    'login_type' => new Expression("'DRIVER'"),
+                    'department' => new Expression("'DRIVER'"),
+                    'module_name' => 'driver_name',
+                    'union_code' => 'union_code',
+                ])
+                ->where(['between', 'transaction_date', date('Y-m-d', strtotime('-1 day')), date('Y-m-d')])
+                ->andWhere(['!=', 'trip_status', 'closed'])
+                ->andWhere(['!=', "ISNULL(mobile_no,'')", ''])
+                ->andWhere(['or',
+                ['mobile_no' => $encryptedmobile],
+                ['mobile_no' => $this->mobile_no]
+        ]);
+        return $contactDetail;
+    }
+
 }
