@@ -1,11 +1,13 @@
 <?php
 
-namespace app\modules\bkgprocess\models;
+namespace app\modules\clienterp\models;
 
+use app\modules\dcsoperation\models\TblMemberProvisional;
+use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetails;
 use Yii;
 
 /**
- * This is the model class for table "tbl_data_exchange_lock".
+ * This is the model class for table "tbl_data_exchange_log".
  *
  * @property integer $data_exchange_lock_code
  * @property string $process_name
@@ -20,6 +22,8 @@ use Yii;
  * @property string $resp_param_2
  * @property string $resp_param_3
  * @property string $resp_param_4
+ * @property string $resp_param_5
+ * @property string $resp_param_6
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -28,13 +32,13 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblDataExchangeLock extends \app\models\ChildModel {
+class TblDataExchangeLog extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_data_exchange_lock';
+        return 'tbl_data_exchange_log';
     }
 
     /**
@@ -42,7 +46,7 @@ class TblDataExchangeLock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['update_key', 'data_post_status', 'originating_type', 'process_name', 'process_code', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'resp_status', 'resp_desc', 'resp_msg', 'resp_param_1', 'resp_param_2', 'resp_param_3', 'resp_param_4'], 'safe'],
+                [['update_key', 'data_post_status', 'originating_type', 'process_name', 'process_code', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'resp_status', 'resp_desc', 'resp_msg', 'resp_param_1', 'resp_param_2', 'resp_param_3', 'resp_param_4', 'resp_param_5', 'resp_param_6'], 'safe'],
         ];
     }
 
@@ -64,6 +68,8 @@ class TblDataExchangeLock extends \app\models\ChildModel {
             'resp_param_2' => Yii::t('app', 'Resp Param 2'),
             'resp_param_3' => Yii::t('app', 'Resp Param 3'),
             'resp_param_4' => Yii::t('app', 'Resp Param 4'),
+            'resp_param_5' => Yii::t('app', 'Resp Param 5'),
+            'resp_param_6' => Yii::t('app', 'Resp Param 6'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -72,6 +78,15 @@ class TblDataExchangeLock extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getMemberProvisionalFamilyDetailCode(){
+        return $this->hasOne(TblMemberProvisionalFamilyDetails::className(), ['CAST(member_provisional_family_detail_code AS varchar)' => 'process_code']);
+    }
+
+    public function getmemberProvisionalCode(){
+        return $this->hasOne(TblMemberProvisional::className(), ['provisional_member_code' => 'process_code']);
+
     }
 
 }
