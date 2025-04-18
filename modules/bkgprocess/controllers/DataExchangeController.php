@@ -9,13 +9,14 @@ use yii\helpers\Url;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\bkgprocess\models\TblDataExchangeConfig;
 use app\components\WebApi;
-use app\modules\bkgprocess\models\TblDataExchangeLock;
+use app\modules\clienterp\models\TblDataExchangeLog;
 use DOMDocument;
 
 class DataExchangeController extends ChildController {
 
     public $freeAccessActions = ['data-exchange'];
     public $errorPath = '';
+    private $toEncrypt = ['Mdob', 'Ndob', 'Adharno'];
 
     public function init() {
         parent::init();
@@ -46,7 +47,6 @@ class DataExchangeController extends ChildController {
             $sp_param = [];
             $sp_param[] = $value['union_code'];
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-
             if (!empty($output)) {
                 $currentDate = strtotime(date('Y-m-d H:i:s'));
                 $futureDate = $currentDate + (60 * $value['interval']);
@@ -62,7 +62,7 @@ class DataExchangeController extends ChildController {
                 $json_array_key = $value['json_key'] ?? '';
                 $apiType = strtoupper($value['api_type']);
                 if ($apiType == 'XML') {
-                    $postData = $this->generateSoapXml($output);
+                    $postData = $this->generateSoapXml($output, $value);
                 } else {
                     $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
 
@@ -143,11 +143,15 @@ class DataExchangeController extends ChildController {
                 }
             }
             $sp_res_param = array_merge([$whereKey], [$status], $resParams);
-            \Yii::$app->general->getSpData($sp_name . '_updatelist', $sp_res_param, true);
+            \Yii::$app->general->getSpData('sp_data_exchange_log_update', $sp_res_param, true);
         }
     }
 
-    private function generateSoapXml($data) {
+    private function generateSoapXml($data, $value) {
+        $tags = !empty($value['json_key']) ? explode(',',$value['json_key']) : [];
+        if (empty($tags)) {
+            return '';
+        }
         $doc = new DOMDocument('1.0', 'UTF-8');
         $doc->formatOutput = true;
         $envelope = $doc->createElementNS(Yii::$app->params['data_exchange_url'], 'soap:Envelope');
@@ -158,13 +162,19 @@ class DataExchangeController extends ChildController {
         $envelope->appendChild($header);
         $body = $doc->createElement('soap:Body');
         $envelope->appendChild($body);
-        $functionNode = $doc->createElement('urn:ZfmPbiFamilyDetails');
-        $body->appendChild($functionNode);
-        $gtFamilymem = $doc->createElement('GtFamilymem');
-        $functionNode->appendChild($gtFamilymem);
-
+        
+        $parent = $body;
+        $no_of_tags = count($tags) - 1;
+        foreach ($tags as $key => $tagName) {
+            if($key != $no_of_tags){
+                $element = $doc->createElement($tagName);
+                $parent->appendChild($element);
+                $parent = $element;
+            }
+        }
+        $lastTag = end($tags);
         foreach ($data as $itemData) {
-            $lock = new TblDataExchangeLock();
+            $lock = new TblDataExchangeLog();
             $lock->process_name = $itemData['process_name'];
             $lock->process_code = $itemData['process_code'];
             $lock->update_key = $itemData['eiplCode'];
@@ -177,15 +187,21 @@ class DataExchangeController extends ChildController {
                 $decryptedDob = Yii::$app->general->decryptData($itemData['Fdob']);
                 $itemData['Fdob'] = $decryptedDob !== false ? $decryptedDob : $itemData['Fdob'];
             }
-            $item = $doc->createElement('item');
+            $item = $doc->createElement($lastTag);
             foreach ($itemData as $key => $value) {
-                $child = $doc->createElement($key, htmlspecialchars($value));
+                if(!empty($value) && in_array($key,$this->toEncrypt)){
+                    $decryptedData = Yii::$app->general->decryptData($value);
+                    $value = $decryptedData !== false ? $decryptedData : $value;
+                }
+                $child = $doc->createElement($key);
+                $child->appendChild($doc->createTextNode($value ?? ''));
                 $item->appendChild($child);
             }
 
-            $gtFamilymem->appendChild($item);
+            $parent->appendChild($item);
         }
-        return $doc->saveXML();
+        $xml = $doc->saveXML();
+        return $xml;
     }
 
 }

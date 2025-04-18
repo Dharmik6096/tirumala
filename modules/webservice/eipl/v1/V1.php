@@ -805,6 +805,14 @@ class V1 extends \yii\base\Module {
                 'param' => 'vehicle_trip_code',
                 'sp' => 'sp_app_eipl_v1_trip_detail_list',
             ],
+            'trip-check-in-out' => [
+                'main_table' => 'TblVehicleTrip',
+                'save_child' => true
+            ],
+            'trip-gate-in-out' => [
+                'main_table' => 'TblVehicleTripDetail',
+                'save_child' => true
+            ],
         ];
         return $label;
     }
