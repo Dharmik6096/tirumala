@@ -112,10 +112,11 @@ class RequestMasterController extends MasterController {
                     }
                 }
                 $saveModel = $opType == 'DELETE' ? false : true;
+            } else {
+                $model->originating_org_type = 'MOBILE';
+                $model->originating_type = 0;
+                $model->created_by = !empty(Yii::$app->eiplapp->identity['module_code']) ? Yii::$app->eiplapp->identity['module_code'] : '';
             }
-            $model->originating_org_type = 'MOBILE';
-            $model->originating_type = 0;
-            $model->created_by = !empty(Yii::$app->eiplapp->identity['module_code']) ? Yii::$app->eiplapp->identity['module_code'] : '';
             if (isset($moduleDetails['multi_auto_increment_key']) && $moduleDetails['multi_auto_increment_key']) {
                 $childModel = [];
                 $deleteModel = [];
