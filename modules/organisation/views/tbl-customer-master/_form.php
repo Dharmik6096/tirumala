@@ -108,6 +108,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">  
             <?= $form->field($model, 'distance_from_mcc')->textInput() ?>
         </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
+        </div>
         <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
             <div class="col-sm-4">
@@ -227,6 +230,11 @@ $script = "
                 });
             }
     };
+    $('#tblcustomermaster-pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+        return val.toUpperCase();
+    });
+   });
 
 
 ";
