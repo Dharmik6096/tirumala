@@ -16,6 +16,7 @@ $config = [
         'session' => ['name' => 'eiplportal'],
         'cache' => ['class' => 'yii\caching\FileCache'],
         'general' => ['class' => 'app\components\GeneralFunctions'],
+        'default' => ['class' => 'app\components\DefaultValue'],
         'dropdown' => ['class' => 'app\components\DropDown'],
         'label' => ['class' => 'app\components\GeneralLabels'],
         'grid' => ['class' => 'app\components\Grid'],
