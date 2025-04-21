@@ -295,7 +295,6 @@ class DropDown extends Component {
         $script = "$(document).ready(function() {
             var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
             var fieldName = '" . strtolower($name) . "';
-            console.log('plantCode');
             $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                 var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                 var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
@@ -321,7 +320,6 @@ class DropDown extends Component {
         $script = "$(document).ready(function() {
             var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
             var fieldName = '" . strtolower($name) . "';
-            console.log('plantCode');
             $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                 var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                 var mcc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
