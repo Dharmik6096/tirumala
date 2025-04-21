@@ -575,6 +575,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             ->where(['trip_code' => $this->model->trip_code])
                             ->andWhere(['is not', 'departure_time', null])
                             ->andWhere(['is not', 'arrival_time', null])
+                            ->orderBy(['sequence_no' => SORT_DESC])
                             ->one();
                     if (!empty($lastDetail)) {
                         $sequence_no = $lastDetail->sequence_no + 1;
