@@ -11,7 +11,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Data Exchange Logs
             echo $this->render('_form_grid', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
-            ]); 
+            ]);
             ?>
         </div>
     </div>
