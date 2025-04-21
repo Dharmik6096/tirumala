@@ -11,6 +11,8 @@ use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
+use app\modules\tankermovement\models\TblBmcMilkDispatch;
+use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
 use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
@@ -564,7 +566,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         ->andWhere(['departure_time' => null])
                         ->andWhere(['is not', 'arrival_time', null])
                         ->one();
-
+                $lastDetail = '';
                 if (!empty($lastArrivalDetail)) {
                     $historyModel = new TblVehicleTripDetailHistory();
                     Yii::$app->operation->history($lastArrivalDetail, $historyModel, UPDATE);
@@ -578,6 +580,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             ->orderBy(['sequence_no' => SORT_DESC])
                             ->one();
                     if (!empty($lastDetail)) {
+                        $historyModel = new TblVehicleTripDetailHistory();
+                        Yii::$app->operation->history($lastDetail, $historyModel, UPDATE);
+                        $saveModel[] = $historyModel;
                         $sequence_no = $lastDetail->sequence_no + 1;
                     } else {
                         $sequence_no = 1;
@@ -603,6 +608,23 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $lastArrivalDetail->destination_code = $sloc_detail[0];
                         $lastArrivalDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
                         $saveModel[] = $lastArrivalDetail;
+                    } else if($key == 0 && !empty($lastDetail)) {
+                        $bmcMilkDispatchData = TblBmcMilkDispatch::find()
+                            ->where(['trip_code' => $this->model->trip_code, 'source_org_code' => $lastDetail->source_org_code, 'source_org_type' => $lastDetail->source_org_type, 'destination_code' => $lastDetail->destination_code, 'destination_type' => $lastDetail->destination_type])
+                            ->orderBy(['created_at' => SORT_DESC])
+                            ->one();
+                        if(!empty($bmcMilkDispatchData)){
+                            $historyModel = new TblBmcMilkDispatchHistory();
+                            Yii::$app->operation->history($bmcMilkDispatchData, $historyModel, UPDATE);
+                            $saveModel[] = $historyModel;
+                            $bmcMilkDispatchData->destination_code = $sloc_detail[0];
+                            $bmcMilkDispatchData->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                            $bmcMilkDispatchData->is_last_destination = $lastDetail->is_last_destination;
+                            $saveModel[] = $bmcMilkDispatchData;
+                        }
+                        $lastDetail->destination_code = $sloc_detail[0];
+                        $lastDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                        $saveModel[] = $lastDetail;
                     }
 
                     $trip_detail->source_org_code = $sloc_detail[0];

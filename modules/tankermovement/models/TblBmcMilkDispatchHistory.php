@@ -77,7 +77,7 @@ class TblBmcMilkDispatchHistory extends \yii\db\ActiveRecord {
                 [['plant_code', 'mcc_plant_code'], 'safe'],
                 [['bmc_code'], 'safe'],
                 [['created_by', 'updated_by', 'history_created_by'], 'safe'],
-                [['operation_type'], 'safe'],
+                [['operation_type', 'source_org_code', 'source_org_type'], 'safe'],
         ];
     }
 
