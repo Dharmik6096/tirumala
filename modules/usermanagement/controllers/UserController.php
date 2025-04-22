@@ -473,7 +473,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
     }
     
-    public function actionOrganizationMapNew($id) {
+    public function actionOrganizationMap($id) {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
         $model->user_id = $id;
@@ -582,6 +582,32 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             return $this->redirect(['index']);
         }
         return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
+    }
+    
+    private function addUserOrganizationMapping($data, $type, $userId, $active) {
+        $userModel = new User();
+        $users = $userModel->findByRole(['EIPL']);
+        $users = \yii\helpers\ArrayHelper::getColumn($users, 'id');
+        $is_eipl = in_array($userId, $users);
+        foreach ($data as $value) {
+            $modelNew = new TblUserOrganizationMapping();
+            // $modelNew->id = $modelNew->getCode();
+            $modelNew->organization_code = $value;
+            $modelNew->organization_type = $type;
+            $modelNew->user_id = $userId;
+            $modelNew->is_active = $active;
+            Yii::$app->operation->defaults($modelNew, INSERT);
+            //$roles=Yii::$app->authManager->getRolesByUser('00000000000035');
+
+            if ($modelNew->save()) {
+                if ($is_eipl && $modelNew->organization_type == 'DCS') {
+                    $path = Yii::$app->params['eiplDirPath'] . $modelNew->organization_code . '/';
+                    if (!file_exists($path) || !is_dir($path)) {
+                        FileHelper::createDirectory($path);
+                    }
+                }
+            }
+        }
     }
 
     public function setHtmlContent($OTP, &$htmlContent, &$message, $username) {
