@@ -11,6 +11,7 @@ use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblFuelTypeMaster;
 use app\modules\transporter\models\TblBillingType;
 use yii\base\UserException;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_vehicle_master".
@@ -334,6 +335,28 @@ class TblVehicleMaster extends \app\models\ChildModel {
             $this->union_code = Yii::$app->general->getforeignkey($this->transporter, 'union_code');
             $this->parsing_no = strtoupper($this->parsing_no);
         }
+    }
+
+    public function getVehicleMaster($unionCode, $type, $code, $milkReceipt, $transaction_date) {
+        $query = $this->find()
+                ->select(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])
+                ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
+                ->innerJoin('tbl_vehicle_trip_detail', 'tbl_vehicle_trip_detail.trip_code = tbl_vehicle_trip.trip_code')
+                ->where(['tbl_vehicle_master.union_code' => $unionCode, 'tbl_vehicle_trip_detail.source_org_type' => $type, 'tbl_vehicle_trip_detail.source_org_code' => $code]);
+
+        if ($milkReceipt) {
+            $query->andWhere(['tbl_vehicle_master.vehicle_use_type' => [1, 2], 'tbl_vehicle_trip.trip_sub_status' => 'gate_in'])
+                    ->andWhere(['NOT', ['tbl_vehicle_trip.trip_status' => 'closed']]);
+        } else {
+            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']])
+                    ->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $transaction_date])
+                    ->andWhere(['IS NOT', 'arrival_time', null])
+                    ->andWhere(['IS', 'departure_time', null]);
+        }
+        $data = $query->groupBy(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])->all();
+        return ArrayHelper::map($data, 'vehicle_code', function($value) {
+                    return $value->parsing_no;
+                });
     }
 
 }

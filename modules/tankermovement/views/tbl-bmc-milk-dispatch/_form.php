@@ -52,15 +52,24 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
             </div>
-            <div class="col-sm-2 filldata">
-                <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
-            </div>
-            <div class="col-sm-2 filldata" id='transactionDate'>
-                <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
-            </div>
+            <?= Html::hiddenInput('type', 'bmc', ['id' => 'type']); ?>
+            <?php if (!$tripGenerateBtn) { ?>
+                <div class="col-sm-2 filldata" id='transactionDate'>
+                    <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                </div>
+                <div class="col-sm-2 disabled vehicle_code_hide"> 
+                    <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-union_code,type,tblbmcmilkdispatch-bmc_code,,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, $readonly); ?>
+                </div>
+            <?php } else { ?>
+                <div class="col-sm-2 filldata">
+                    <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
+                </div>
+                <div class="col-sm-2 filldata" id='transactionDate'>
+                    <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                </div>
+            <?php } ?>
             <div class="col-sm-2 filldata">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
-                <?= Html::hiddenInput('type', 'bmc', ['id' => 'type']); ?>
                 <?= Html::hiddenInput('tankerMovementWithTripSubStatus', $tankerMovementWithTripSubStatus, ['id' => 'tankerMovementWithTripSubStatus']); ?>
                 <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
             </div>
@@ -74,7 +83,8 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'destination_type'); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
+                <?= Html::hiddenInput('tankerMovement', 'falseBmcRLS', ['id' => 'tankerMovement']); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code,tankerMovement', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2 mt15" id="is-last-destination-container">
                 <?= $form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>

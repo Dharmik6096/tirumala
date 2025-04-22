@@ -322,4 +322,24 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
+    public function actionVehicleOpenList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
+                $milkReceipt = !empty($parents[3]) && ($parents[3] == 'receipt') ? TRUE : FALSE;
+                $unionCode = $parents[0];
+                $transaction_date = (isset($parents[4]) && !empty($parents[4])) ? date('Y-m-d', strtotime($parents[4])) : date('Y-m-d');
+                $vehicleTripDetailModel = new TblVehicleMaster();
+                $list = $vehicleTripDetailModel->getVehicleMaster($unionCode, $parents[1], $parents[2], $milkReceipt, $transaction_date);
+                foreach ($list as $key => $r) {
+                    $out[] = array('id' => $key,
+                        'name' => $r);
+                }
+                return Json::encode(['output' => $out]);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => []]);
+    }
+
 }
