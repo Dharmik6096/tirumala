@@ -51,8 +51,8 @@ $form = ActiveForm::begin([
                 <div class="col-sm-2 filldata" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
-                <div class="col-sm-2 disabled vehicle_code_hide"> 
-                    <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-union_code,type,tblbmcmilkdispatch-plant_code,,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, $readonly); ?>
+                <div class="col-sm-2 filldata"> 
+                    <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-union_code,type,tblbmcmilkdispatch-plant_code,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
                 </div>
             <?php } else { ?>
                 <div class="col-sm-2 filldata">

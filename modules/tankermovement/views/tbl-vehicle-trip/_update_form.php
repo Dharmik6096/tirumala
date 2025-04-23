@@ -73,6 +73,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-6 mt-2">
         <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?></label>
         <div class="well box-well">
+            <input type="text" class="form-control mb-2" id="search-available-bmc" placeholder="Search Available BMC...">
             <?= Sortable::widget([
                 'type' => Sortable::TYPE_LIST,
                 'items' => [],
@@ -84,6 +85,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-6 mt-2">
         <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?> Seleted</label>
         <div class="well box-well">
+            <input type="text" class="form-control mb-2" id="search-selected-bmc" placeholder="Search Selected BMC...">
             <?= Sortable::widget([
                 'type' => Sortable::TYPE_LIST,
                 'items' => $model->bmc_code ? array_map(function($code) {
@@ -275,6 +277,23 @@ $(document).ready(function() {
         }
     });
 });
+
+$('#search-available-bmc').on('keyup', function () {
+    var search = $(this).val().toLowerCase();
+    $('#available-bmc-list li').each(function () {
+        var text = $(this).text().toLowerCase();
+        $(this).toggle(text.includes(search));
+    });
+});
+
+$('#search-selected-bmc').on('keyup', function () {
+    var search = $(this).val().toLowerCase();
+    $('#selected-bmc-list li').each(function () {
+        var text = $(this).text().toLowerCase();
+        $(this).toggle(text.includes(search));
+    });
+});
+
 ";
 
 $this->registerJs($script, View::POS_END, 'vehicle-trip-sortable-bmc-list');

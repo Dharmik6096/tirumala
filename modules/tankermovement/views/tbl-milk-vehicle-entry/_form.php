@@ -59,7 +59,7 @@ $form = ActiveForm::begin([
             </div>
             <?= Html::hiddenInput('trip_type', 'receipt', ['id' => 'trip_type']); ?>
             <div class="col-sm-2 disabled vehicle_code_hide"> 
-                <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblmilkvehicleentry-union_code,tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-receipt_at_code,trip_type', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, $readonly); ?>
+                <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblmilkvehicleentry-union_code,tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-receipt_at_code,trip_type', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
             </div>
             <div class="col-sm-2 filldata trip-code-hide">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
