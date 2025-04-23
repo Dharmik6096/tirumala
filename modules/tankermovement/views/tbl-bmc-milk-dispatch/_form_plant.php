@@ -78,7 +78,7 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2">
                 <?= Html::hiddenInput('tankerMovement', 'falseBmcRLS', ['id' => 'tankerMovement']); ?>
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,,tankerMovement', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,NULL,tankerMovement', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2 mt15" id="is-last-destination-container">
                 <?= $form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
