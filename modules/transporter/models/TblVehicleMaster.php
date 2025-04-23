@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblCapacity;
 use app\modules\organisation\models\TblVehicleType;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblFuelTypeMaster;
 use app\modules\transporter\models\TblBillingType;
@@ -299,14 +300,23 @@ class TblVehicleMaster extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
             $sentbox = new TblSentbox();
             $sentbox->source_org_id = $this->union_code;
             if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
                 throw new UserException("SentBox Entry is not created so transaction is rollback!");
             }
+        }
+        $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
+        if ($tankerMovementWithTripSubStatus && $flag === 'INSERT' && in_array($this->vehicle_use_type, [1, 2])) {
+            $vehicleQaInspection = new TblVehicleQaInspection();
+            $vehicleQaInspection->attributes = $this->attributes;
+            $vehicleQaInspection->status = 'pending';
+            $vehicleQaInspection->trip_code = $vehicleQaInspection->remarks = '';
+            $vehicleQaInspection->transaction_datetime = $this->created_at;
+            $vehicleQaInspection->save(TRUE, FALSE);
         }
     }
 
@@ -342,7 +352,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 ->select(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])
                 ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
                 ->innerJoin('tbl_vehicle_trip_detail', 'tbl_vehicle_trip_detail.trip_code = tbl_vehicle_trip.trip_code')
-                ->where(['tbl_vehicle_master.union_code' => $unionCode, 'tbl_vehicle_trip_detail.source_org_type' => $type, 'tbl_vehicle_trip_detail.source_org_code' => $code, 'tbl_vehicle_master.vehicle_use_type' => [1, 2]])
+                ->where(['tbl_vehicle_master.union_code' => $unionCode, 'LOWER(tbl_vehicle_trip_detail.source_org_type)' => strtolower($type), 'tbl_vehicle_trip_detail.source_org_code' => $code, 'tbl_vehicle_master.vehicle_use_type' => [1, 2]])
                 ->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $transaction_date])
                 ->andWhere(['IS NOT', 'arrival_time', null])
                 ->andWhere(['IS', 'departure_time', null]);
