@@ -126,7 +126,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
 
                     if ($model->oldAttributes['allow_app_login'] == 1 && $model->allow_app_login == 1) {
                         if ($model->oldAttributes['mobile_no'] != $model->mobile_no || $model->oldAttributes['login_type'] != $model->login_type) {
-                            if($model->oldAttributes['mobile_no'] != $model->mobile_no){
+                            if ($model->oldAttributes['mobile_no'] != $model->mobile_no) {
                                 $contactModel = new TblContactDetails();
                                 $contactModel->mobile_no = $model->oldAttributes['mobile_no'];
                                 $contactModelData = $contactModel->getContactDetailsRecord();
@@ -135,7 +135,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                                     $contactModel = $contactModelData;
                                 }
                                 $master[] = $contactModel;
-    
+
                                 $contNewModel = new TblContactDetails();
                                 $contNewModel->mobile_no = $model->mobile_no;
                                 $newModelData = $contNewModel->getContactDetailsRecord();
@@ -147,7 +147,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                                 }
                                 $contNewModel->department = $model->department;
                                 $master[] = $contNewModel;
-    
+
                                 $appOrgModel = new TblAppOrganizationMapping();
                                 $appOrgModel->mobile_no = $model->oldAttributes['mobile_no'];
                                 $appOrgModel->detail_code = $contNewModel->detail_code;
@@ -364,173 +364,6 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return Json::encode(['output' => $out, 'selected' => '']);
     }
 
-    public function actionOrganizationMap($id) {
-        $user = User::findOne($id);
-        $model = new TblUserOrganizationMapping();
-        $model->scenario = 'organizationMapping';
-        if (Yii::$app->session->get('organizations_type') == 'UNION') {
-            $model->scenario = 'organizationMappingUnion';
-        }
-        $modelData = $model->getUserOrgs($id);
-        $app_organization = [];
-        $app_org_array = false;
-        if ($user->allow_app_login == 1 && !empty($user->mobile_no)) {
-            $contactModel = new TblContactDetails();
-            $contactModel->mobile_no = $user->mobile_no;
-            $values = $contactModel->getContactDetailsOrg();
-            $app_organization = $model->getOrganizationsArray($id, '', $values);
-            $app_org_array = true;
-        }
-        $stickeyOrgArray = [];
-        $stickeyOrgArray['union'] = [];
-        $stickeyOrgArray['plant'] = [];
-        $stickeyOrgArray['mcc'] = [];
-        $stickeyOrgArray['bmc'] = [];
-        $stickeyOrgArray['dcs'] = [];
-        $stickeyOrgArray['route'] = [];
-        if ($app_org_array) {
-            $stickeyOrgArray['union'] = !empty($app_organization['union']['selectedArray']) ? $app_organization['union']['selectedArray'] : [];
-            $stickeyOrgArray['plant'] = !empty($app_organization['plant']['selectedArray']) ? $app_organization['plant']['selectedArray'] : [];
-            $stickeyOrgArray['mcc'] = !empty($app_organization['mcc']['selectedArray']) ? $app_organization['mcc']['selectedArray'] : [];
-            $stickeyOrgArray['bmc'] = !empty($app_organization['bmc']['selectedArray']) ? $app_organization['bmc']['selectedArray'] : [];
-            $stickeyOrgArray['dcs'] = !empty($app_organization['dcs']['selectedArray']) ? $app_organization['dcs']['selectedArray'] : [];
-            $stickeyOrgArray['route'] = !empty($app_organization['route']['selectedArray']) ? $app_organization['route']['selectedArray'] : [];
-        }
-        if (empty($modelData) && !empty($app_organization)) {
-            $organization = $app_organization;
-        } else {
-            $organization = $model->getOrganizationsArray($id, $user->user_type_id);
-        }
-        $federations = $organization['federation'];
-        $unions = $organization['union'];
-        $plant = $organization['plant'];
-        $mcc = $organization['mcc'];
-        $bmc = $organization['bmc'];
-        $dcs = $organization['dcs'];
-        $route = $organization['route'];
-        $model->route = $route['selectedArray'];
-        $model->dcs = $dcs['selectedArray'];
-        $model->bmc = $bmc['selectedArray'];
-        $model->mcc = $mcc['selectedArray'];
-        $model->plant = $plant['selectedArray'];
-        $model->union = $unions['selectedArray'];
-        $model->federation = ['01'];
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $setAppOrgMap = false;
-            $contactModel = new TblContactDetails();
-            if ($user->allow_app_login == 1 && !empty($user->mobile_no)) {
-                $contactModel->mobile_no = $user->mobile_no;
-                $contactModelData = $contactModel->getContactDetailsRecord();
-                if (!empty($contactModelData)) {
-                    $contactModel = $contactModelData;
-                } else {
-                    $contactModel->firstname = $user->name;
-                    $contactModel->setModel('user', $user->id, 0);
-                }
-                $contactModel->department = $user->department;
-                $contactModel->save();
-                TblAppOrganizationMapping::deleteAll(['detail_code' => $contactModel->detail_code]);
-                $setAppOrgMap = true;
-            }
-
-            TblUserOrganizationMapping::deleteAll(['user_id' => $id]);
-            switch ($_POST['user_type']) {
-                case 7:
-                    $this->addUserOrganizationMapping($model->dcs, 'DCS', $id, $user->is_active);
-                    $setAppOrgMap ? $this->setAppOrgMapping($model->dcs, 'DCS', $contactModel) : '';
-                    $type = 'BMC';
-                    $org_id = $model->bmc;
-                    break;
-                case 6:
-                    $this->addUserOrganizationMapping($model->bmc, 'BMC', $id, $user->is_active);
-                    $setAppOrgMap ? $this->setAppOrgMapping($model->bmc, 'BMC', $contactModel) : '';
-                    $type = 'BMC';
-                    $org_id = $model->bmc;
-                    break;
-                case 5:
-                    $this->addUserOrganizationMapping($model->mcc, 'MCC', $id, $user->is_active);
-                    $setAppOrgMap ? $this->setAppOrgMapping($model->mcc, 'MCC', $contactModel) : '';
-                    $type = 'MCC';
-                    $org_id = $model->mcc;
-                    break;
-                case 4:
-                    $this->addUserOrganizationMapping($model->plant, 'PLANT', $id, $user->is_active);
-                    $setAppOrgMap ? $this->setAppOrgMapping($model->plant, 'PLANT', $contactModel) : '';
-                    $type = 'PLANT';
-                    $org_id = $model->plant;
-                    break;
-                case 3:
-                    $this->addUserOrganizationMapping($model->union, 'UNION', $id, $user->is_active);
-                    $setAppOrgMap ? $this->setAppOrgMapping($model->union, 'UNION', $contactModel) : '';
-                    break;
-                case 2:
-                    $this->addUserOrganizationMapping($model->federation, 'FEDERATION', $id, $user->is_active);
-                    $setAppOrgMap ? $this->setAppOrgMapping($model->federation, 'FEDERATION', $contactModel) : '';
-                    break;
-            }
-            $user->user_type_id = $_POST['user_type'];
-            $user->save(false);
-            Yii::$app->display->message(true, 'user', 'edit');
-            return $this->redirect(['index']);
-        }
-        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
-    }
-
-    private function addUserOrganizationMapping($data, $type, $userId, $active) {
-        $userModel = new User();
-        $users = $userModel->findByRole(['EIPL']);
-        $users = \yii\helpers\ArrayHelper::getColumn($users, 'id');
-        $is_eipl = in_array($userId, $users);
-        foreach ($data as $value) {
-            $modelNew = new TblUserOrganizationMapping();
-            $modelNew->organization_code = $value;
-            $modelNew->organization_type = $type;
-            $modelNew->user_id = $userId;
-            $modelNew->is_active = $active;
-            Yii::$app->operation->defaults($modelNew, INSERT);
-            if ($modelNew->save()) {
-                if ($is_eipl && $modelNew->organization_type == 'DCS') {
-                    $path = Yii::$app->params['eiplDirPath'] . $modelNew->organization_code . '/';
-                    if (!file_exists($path) || !is_dir($path)) {
-                        FileHelper::createDirectory($path);
-                    }
-                }
-            }
-        }
-    }
-
-    /* public function actionOrganizationMap($id){
-
-      $model = User::findOne($id);
-      $organizationModel = new \app\models\TblUserOrganizationMapping();
-      $data = $organizationModel->getOrganization($id,$model->user_type_id);
-      $model->organizations=$data['selected'];
-
-      $userType = \app\models\TblUserTypes::findOne($model->user_type_id);
-      $model->user_type_id = $model->user_type_id.'-'.$userType->user_type;
-
-      if ( $model->load(Yii::$app->request->post())  )
-      {
-      if(!empty($model->organizations)){
-      \app\models\TblUserOrganizationMapping::deleteAll(['user_id'=>$id]);
-      foreach ($model->organizations as $row){
-
-      $modelNew = new TblUserOrganizationMapping();
-      $modelNew->organization_code = $row;
-      $modelNew->organization_type = $userType->user_type;
-      $modelNew->user_id = $id;
-      $modelNew->is_active=$_POST['User']['is_active'];
-      Yii::$app->operation->defaults($modelNew, INSERT);
-      $modelNew->save();
-      }
-      Yii::$app->display->message(true, 'user','edit');
-      return $this->redirect(['index']);
-      }
-      }
-
-      return $this->renderIsAjax('organization_map',['model'=>$model,'values'=>$data['value'],'selected'=>$data['selected']]);
-      } */
-
     public function setAppOrgMapping($org_codes, $org_type, $contactModel) {
         foreach ($org_codes as $org_code) {
             $appOrgMapModel = new TblAppOrganizationMapping();
@@ -702,8 +535,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
         return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
     }
-    
-    public function actionOrganizationMapNew($id) {
+
+    public function actionOrganizationMap($id) {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
         $model->user_id = $id;
@@ -812,6 +645,18 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             return $this->redirect(['index']);
         }
         return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
+    }
+
+    private function addUserOrganizationMapping($data, $type, $userId, $active) {
+        foreach ($data as $value) {
+            $modelNew = new TblUserOrganizationMapping();
+            $modelNew->organization_code = $value;
+            $modelNew->organization_type = $type;
+            $modelNew->user_id = $userId;
+            $modelNew->is_active = $active;
+            Yii::$app->operation->defaults($modelNew, INSERT);
+            $modelNew->save(TRUE, FALSE);
+        }
     }
 
     public function setHtmlContent($OTP, &$htmlContent, &$message, $username) {
