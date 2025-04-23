@@ -28,7 +28,7 @@ $grid_option = [
         'update' => function ($url, $model) {
             $disable = $model->is_active == 1 ? '' : 'link-disable';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Update', 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/usermanagement/tbl-eipl-app-user/update', 'id' => $model->eipl_app_user_code], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/usermanagement/tbl-eipl-app-user/update', 'id' => $model->eipl_app_user_code], $options);
         },
         'delete_user' => function ($url, $model) {
             $disable = $model->is_active == 1 ? '' : 'link-disable';

@@ -101,7 +101,7 @@ class AppActivationController extends \app\modules\webservice\exchangeutility\v1
                     $fileName = $file . '.db';
                     $id_model->db_path = '/installation-identity/' . $file . '.db';
                     $FolderPath = Yii::$app->basePath . '/installation-identity/';
-                    $DestFolderPath = Yii::$app->basePath . '/installation-identity/';
+                    $DestFolderPath = Yii::$app->basePath . '/web/installation-identity/';
                     //                $zipfolder = Yii::$app->basePath . '/installation-identity/' . $file;
                     if (!is_dir($FolderPath)) {
                         $oldmask = umask(0);
