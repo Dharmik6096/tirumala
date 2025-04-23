@@ -25,14 +25,18 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => TRUE,
     'actions' => [
-        'update' => true,
+        'update' => function ($url, $model) {
+            $disable = $model->is_active == 1 ? '' : 'link-disable';
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Update', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/usermanagement/tbl-eipl-app-user/update', 'id' => $model->eipl_app_user_code], $options);
+        },
         'delete_user' => function ($url, $model) {
             $disable = $model->is_active == 1 ? '' : 'link-disable';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'data-val' => $model->eipl_app_user_code, 'data-name' => $model->name, 'class' => 'deact-user ' . $disable];
             return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/usermanagement/tbl-eipl-app-user/deactivate-user'], $options);
         },
         'org-map' => function ($url, $model) {
-            $disable = '';
+            $disable = $model->is_active == 1 ? '' : 'link-disable';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Organization', 'class' => $disable];
             return Html::a('<i class="fa fa-link"></i>', ['/usermanagement/tbl-eipl-app-user/organization-map', 'id' => $model->eipl_app_user_code], $options);
         },
