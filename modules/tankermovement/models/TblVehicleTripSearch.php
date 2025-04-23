@@ -56,7 +56,6 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             'kg_fat' => "sum({fn truncate (tbl_bmc_milk_dispatch_txn.dispatch_qty*tbl_bmc_milk_dispatch_txn.fat/100,2)})",
             'kg_snf' => "sum({fn truncate (tbl_bmc_milk_dispatch_txn.dispatch_qty*tbl_bmc_milk_dispatch_txn.snf/100,2)})",
         ]);
-        $query->andWhere(['not', ['t.trip_status' => 'closed']]);
 
         // add conditions that should always apply here
 
@@ -101,6 +100,9 @@ class TblVehicleTripSearch extends TblVehicleTrip {
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $query->andFilterWhere(['<=', 't.transaction_date', $to_date]);
+        }
+        if(empty($this->trip_status)){
+            $query->andWhere(['not', ['t.trip_status' => 'closed']]);
         }
 
         $query->andFilterWhere(['=', 't.transaction_date', !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : NULL]);

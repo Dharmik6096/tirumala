@@ -39,7 +39,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
     public function actionIndex() {
         $searchModel = new TblVehicleTripSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $searchModel->trip_status = !empty($searchModel->trip_status) ? $searchModel->trip_status : 'open';
 
         return $this->render('index', [
                     'searchModel' => $searchModel,

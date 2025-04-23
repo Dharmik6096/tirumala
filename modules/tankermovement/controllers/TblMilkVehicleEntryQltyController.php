@@ -27,7 +27,6 @@ class TblMilkVehicleEntryQltyController extends ChildController {
      */
     public function actionIndex() {
         $searchModel = new TblMilkVehicleEntryQltySearch();
-        $searchModel->status = 'pending';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $config = new TblConfig();
         $config->config_for = 'PLANT';

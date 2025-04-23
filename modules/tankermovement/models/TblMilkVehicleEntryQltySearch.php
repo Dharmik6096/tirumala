@@ -66,6 +66,9 @@ class TblMilkVehicleEntryQltySearch extends TblMilkVehicleEntryQlty {
             $query->where('0=1');
             return $dataProvider;
         }
+        if(empty($this->status)){
+            $query->andWhere(['not', ['status' => 'pending']]);
+        }
 
         // grid filtering conditions
         $query->andFilterWhere([
