@@ -104,9 +104,9 @@ $attribute = [
     ['attribute' => 'rejected_count'],
     ['attribute' => 'grn_no'],
     ['attribute' => 'trip_mode'],
-    ['attribute' => 'trip_status'],
+    ['attribute' => 'trip_status', 'filter' => false],
     ['attribute' => 'trip_sub_status'],
-    ['attribute' => 'is_auto_trip', 'label' => Yii::t('app', 'Is Partial Trip?'), 
+    ['attribute' => 'is_auto_trip', 'label' => Yii::t('app', 'Is Partial Trip?'),
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_auto_trip'),
         'value' => function ($model) {
             return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_auto_trip');
@@ -132,9 +132,9 @@ $grid_option = [
             $updatedUrl = Url::to(['/tankermovement/tbl-vehicle-trip/update', 'id' => $model->vehicle_trip_code]);
             if ($model->trip_for == 'salesparty') {
                 $updatedUrl = Url::to([
-                    '/tankermovement/tbl-vehicle-trip/update-with-party',
-                    'id' => $model->vehicle_trip_code,
-                    'type' => 'party'
+                            '/tankermovement/tbl-vehicle-trip/update-with-party',
+                            'id' => $model->vehicle_trip_code,
+                            'type' => 'party'
                 ]);
             }
             return Html::a('<i class="fa fa-pencil"></i>', $updatedUrl, $options);
@@ -152,8 +152,8 @@ $grid_option = [
                 return GhostHtml::a(
                                 '<i class="fa fa-cog"></i>',
                                 [
-                                    '/tankermovement/tbl-vehicle-trip/generate-challan',
-                                    'id' => $model->vehicle_trip_code
+                            '/tankermovement/tbl-vehicle-trip/generate-challan',
+                            'id' => $model->vehicle_trip_code
                                 ],
                                 $options
                 );

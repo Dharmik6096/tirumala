@@ -2027,6 +2027,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['DCS' => Yii::t('app', 'DCS'), 'BULKVEN' => Yii::t('app', 'Customer')],
             ],
+            'trip_status' => [
+                'name' => 'trip_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['tankerfull' => Yii::t('app', 'Tankerfull'), 'open' => Yii::t('app', 'Open'), 'generated' => Yii::t('app', 'Generated'), 'closed' => Yii::t('app', 'Closed')],
+            ],
+            'lot_quality_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['discarded' => Yii::t('app', 'Discarded'), 'done' => Yii::t('app', 'Done'), 'pending' => Yii::t('app', 'Pending')],
+            ],
         ];
         return $records[$l];
     }

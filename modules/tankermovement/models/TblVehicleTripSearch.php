@@ -20,8 +20,8 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'safe'],
-                [['is_active'], 'integer'],
+            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'safe'],
+            [['is_active'], 'integer'],
         ];
     }
 
@@ -56,6 +56,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             'kg_fat' => "sum({fn truncate (tbl_bmc_milk_dispatch_txn.dispatch_qty*tbl_bmc_milk_dispatch_txn.fat/100,2)})",
             'kg_snf' => "sum({fn truncate (tbl_bmc_milk_dispatch_txn.dispatch_qty*tbl_bmc_milk_dispatch_txn.snf/100,2)})",
         ]);
+        $query->andWhere(['not', ['t.trip_status' => 'closed']]);
 
         // add conditions that should always apply here
 
@@ -108,10 +109,10 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             'tbl_transporter.transporter_code' => $this->transporter_code,
             't.vehicle_code' => $this->vehicle_code,
             't.is_auto_trip' => $this->is_auto_trip,
+            't.trip_status' => $this->trip_status,
         ]);
         $query->andFilterWhere(['like', 't.trip_code', $this->trip_code])
                 ->andFilterWhere(['like', 't.grn_no', $this->grn_no])
-                ->andFilterWhere(['like', 't.trip_status', $this->trip_status])
                 ->andFilterWhere(['like', 't.trip_sub_status', $this->trip_sub_status])
                 ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode]);
         $query->groupBy(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',

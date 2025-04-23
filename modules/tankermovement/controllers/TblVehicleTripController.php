@@ -39,6 +39,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
     public function actionIndex() {
         $searchModel = new TblVehicleTripSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel->trip_status = !empty($searchModel->trip_status) ? $searchModel->trip_status : 'open';
 
         return $this->render('index', [
                     'searchModel' => $searchModel,
@@ -227,12 +228,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 }
             }
         }
-        if(empty($bmc_array)){
+        if (empty($bmc_array)) {
             $this->model->is_auto_trip = 1;
         }
-        if(empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1){
+        if (empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1) {
             $this->model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0];
-            $bmc_array[] = $this->model->plant_code.'#plant';
+            $bmc_array[] = $this->model->plant_code . '#plant';
         }
         $this->model->bmc_code = $bmc_array;
         return $this->customRender();
@@ -490,9 +491,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
         $sourceBmc = array_map(function($item) {
             if (!empty($item->source_org_code) && !empty($item->source_org_type)) {
-                return ($item->source_org_type != 'bmc') 
-                    ? $item->source_org_code . '#' . strtolower($item->source_org_type) 
-                    : $item->source_org_code;
+                return ($item->source_org_type != 'bmc') ? $item->source_org_code . '#' . strtolower($item->source_org_type) : $item->source_org_code;
             }
             return null;
         }, $vehicleTripDetails);
@@ -608,12 +607,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $lastArrivalDetail->destination_code = $sloc_detail[0];
                         $lastArrivalDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
                         $saveModel[] = $lastArrivalDetail;
-                    } else if($key == 0 && !empty($lastDetail)) {
+                    } else if ($key == 0 && !empty($lastDetail)) {
                         $bmcMilkDispatchData = TblBmcMilkDispatch::find()
-                            ->where(['trip_code' => $this->model->trip_code, 'source_org_code' => $lastDetail->source_org_code, 'source_org_type' => $lastDetail->source_org_type, 'destination_code' => $lastDetail->destination_code, 'destination_type' => $lastDetail->destination_type])
-                            ->orderBy(['created_at' => SORT_DESC])
-                            ->one();
-                        if(!empty($bmcMilkDispatchData)){
+                                ->where(['trip_code' => $this->model->trip_code, 'source_org_code' => $lastDetail->source_org_code, 'source_org_type' => $lastDetail->source_org_type, 'destination_code' => $lastDetail->destination_code, 'destination_type' => $lastDetail->destination_type])
+                                ->orderBy(['created_at' => SORT_DESC])
+                                ->one();
+                        if (!empty($bmcMilkDispatchData)) {
                             $historyModel = new TblBmcMilkDispatchHistory();
                             Yii::$app->operation->history($bmcMilkDispatchData, $historyModel, UPDATE);
                             $saveModel[] = $historyModel;
@@ -661,7 +660,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         foreach ($this->model->bmc_code as $code) {
             if (strpos($code, '#plant') !== false) {
                 $plant_code_from_bmc = str_replace('#plant', '', $code);
-                if($this->model->plant_code != $plant_code_from_bmc){
+                if ($this->model->plant_code != $plant_code_from_bmc) {
                     $combined_array[] = $plant_code_from_bmc;
                 }
             }
@@ -688,9 +687,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
         $sourceBmc = array_map(function($item) {
             if (!empty($item->source_org_code) && !empty($item->source_org_type)) {
-                return ($item->source_org_type != 'bmc') 
-                    ? $item->source_org_code . '#' . strtolower($item->source_org_type) 
-                    : $item->source_org_code;
+                return ($item->source_org_type != 'bmc') ? $item->source_org_code . '#' . strtolower($item->source_org_type) : $item->source_org_code;
             }
             return null;
         }, $vehicleTripDetails);

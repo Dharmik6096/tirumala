@@ -333,7 +333,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name', 'trip_status'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
@@ -362,6 +362,14 @@ if (!empty($filter_data)) {
                                         ?>
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, ''); ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('status'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdownStatic('lot_quality_status', $model, $form, ''); ?>
                                         </div>
                                     <?php } ?>
                                     <?php
