@@ -11,6 +11,8 @@ use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
+use app\modules\tankermovement\models\TblBmcMilkDispatch;
+use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
 use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
@@ -225,12 +227,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 }
             }
         }
-        if(empty($bmc_array)){
+        if (empty($bmc_array)) {
             $this->model->is_auto_trip = 1;
         }
-        if(empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1){
+        if (empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1) {
             $this->model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0];
-            $bmc_array[] = $this->model->plant_code.'#plant';
+            $bmc_array[] = $this->model->plant_code . '#plant';
         }
         $this->model->bmc_code = $bmc_array;
         return $this->customRender();
@@ -449,6 +451,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $parents[2] = isset($parents[2]) ? $parents[2] : '';
                 }
                 $data = $trip->getOpenTripDetailList($parents[0], $parents[1], $parents[2]);
+                $data= ArrayHelper::map($data, 'trip_code', 'trip_code');
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -488,9 +491,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
         $sourceBmc = array_map(function($item) {
             if (!empty($item->source_org_code) && !empty($item->source_org_type)) {
-                return ($item->source_org_type != 'bmc') 
-                    ? $item->source_org_code . '#' . strtolower($item->source_org_type) 
-                    : $item->source_org_code;
+                return ($item->source_org_type != 'bmc') ? $item->source_org_code . '#' . strtolower($item->source_org_type) : $item->source_org_code;
             }
             return null;
         }, $vehicleTripDetails);
@@ -564,7 +565,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         ->andWhere(['departure_time' => null])
                         ->andWhere(['is not', 'arrival_time', null])
                         ->one();
-
+                $lastDetail = '';
                 if (!empty($lastArrivalDetail)) {
                     $historyModel = new TblVehicleTripDetailHistory();
                     Yii::$app->operation->history($lastArrivalDetail, $historyModel, UPDATE);
@@ -575,8 +576,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             ->where(['trip_code' => $this->model->trip_code])
                             ->andWhere(['is not', 'departure_time', null])
                             ->andWhere(['is not', 'arrival_time', null])
+                            ->orderBy(['sequence_no' => SORT_DESC])
                             ->one();
                     if (!empty($lastDetail)) {
+                        $historyModel = new TblVehicleTripDetailHistory();
+                        Yii::$app->operation->history($lastDetail, $historyModel, UPDATE);
+                        $saveModel[] = $historyModel;
                         $sequence_no = $lastDetail->sequence_no + 1;
                     } else {
                         $sequence_no = 1;
@@ -602,6 +607,23 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $lastArrivalDetail->destination_code = $sloc_detail[0];
                         $lastArrivalDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
                         $saveModel[] = $lastArrivalDetail;
+                    } else if ($key == 0 && !empty($lastDetail)) {
+                        $bmcMilkDispatchData = TblBmcMilkDispatch::find()
+                                ->where(['trip_code' => $this->model->trip_code, 'source_org_code' => $lastDetail->source_org_code, 'source_org_type' => $lastDetail->source_org_type, 'destination_code' => $lastDetail->destination_code, 'destination_type' => $lastDetail->destination_type])
+                                ->orderBy(['created_at' => SORT_DESC])
+                                ->one();
+                        if (!empty($bmcMilkDispatchData)) {
+                            $historyModel = new TblBmcMilkDispatchHistory();
+                            Yii::$app->operation->history($bmcMilkDispatchData, $historyModel, UPDATE);
+                            $saveModel[] = $historyModel;
+                            $bmcMilkDispatchData->destination_code = $sloc_detail[0];
+                            $bmcMilkDispatchData->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                            $bmcMilkDispatchData->is_last_destination = $lastDetail->is_last_destination;
+                            $saveModel[] = $bmcMilkDispatchData;
+                        }
+                        $lastDetail->destination_code = $sloc_detail[0];
+                        $lastDetail->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                        $saveModel[] = $lastDetail;
                     }
 
                     $trip_detail->source_org_code = $sloc_detail[0];
@@ -638,7 +660,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         foreach ($this->model->bmc_code as $code) {
             if (strpos($code, '#plant') !== false) {
                 $plant_code_from_bmc = str_replace('#plant', '', $code);
-                if($this->model->plant_code != $plant_code_from_bmc){
+                if ($this->model->plant_code != $plant_code_from_bmc) {
                     $combined_array[] = $plant_code_from_bmc;
                 }
             }
@@ -665,9 +687,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
         $sourceBmc = array_map(function($item) {
             if (!empty($item->source_org_code) && !empty($item->source_org_type)) {
-                return ($item->source_org_type != 'bmc') 
-                    ? $item->source_org_code . '#' . strtolower($item->source_org_type) 
-                    : $item->source_org_code;
+                return ($item->source_org_type != 'bmc') ? $item->source_org_code . '#' . strtolower($item->source_org_type) : $item->source_org_code;
             }
             return null;
         }, $vehicleTripDetails);

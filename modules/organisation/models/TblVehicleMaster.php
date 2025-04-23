@@ -131,16 +131,4 @@ class TblVehicleMaster extends \yii\db\ActiveRecord {
         return $this->hasOne(TblVehicleType::className(), ['vehicle_type_code' => 'vehicle_type_code']);
     }
 
-    public function getVehicleMaster($unionCode) {
-        $query = $this->find()
-                ->where(['tbl_vehicle_master.union_code' => $unionCode, 'tbl_vehicle_master.vehicle_use_type' => [1, 2]])
-                ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
-                ->andWhere(['NOT', ['tbl_vehicle_trip.trip_status' => 'closed']]);
-        $data = $query->all();
-        $data = ArrayHelper::map($data, 'vehicle_code', function($value) {
-                    return $value->parsing_no;
-                });
-        return $data;
-    }
-
 }

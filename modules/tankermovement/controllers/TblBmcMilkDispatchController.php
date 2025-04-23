@@ -86,6 +86,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         } else {
             $model->scenario = 'create';
             Yii::$app->general->setCode($model);
+            $model->transaction_date = date('Y-m-d');
             $this->setFromDate($model);
         }
         $txn_model = new TblBmcMilkDispatchTxn();
@@ -397,8 +398,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1])) {
                 if (strtolower($parents[0]) == 'bmc') {
+                    $RLS = (isset($parents[3]) && !empty($parents[3])) ? 'FALSE' : 'TRUE';
                     $model = new TblDcsBmc();
-                    $data = $model->getBMCList('');
+                    $data = $model->getBMCList('', $RLS);
                 } else if (strtolower($parents[0]) == 'plant') {
                     $model = new TblPlant();
                     $data = $model->getPlantList($parents[1]);
@@ -512,6 +514,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         } else {
             $model->scenario = 'createPlantDispatch';
             Yii::$app->general->setCode($model);
+            $model->transaction_date = date('Y-m-d');
         }
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {

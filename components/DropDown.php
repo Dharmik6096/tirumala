@@ -629,7 +629,7 @@ class DropDown extends Component {
 
     public function vehicleMasterOpen($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-vehicle-master/vehicle-open-list', Yii::t('app', 'Select Vehicle'), $multiple, $extra_param, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/vehicle-open-list', Yii::t('app', 'Select Vehicle'), $multiple, $extra_param, $readonly);
     }
 
     public function datewise_transporter_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
@@ -819,7 +819,7 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
@@ -861,6 +861,9 @@ class DropDown extends Component {
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
                         'initialize' => true,
+                        'ajaxSettings' => [
+                            'async' => $async,
+                        ],
                     ],
                     'options' => [
                         'readonly' => $readonly,
@@ -2064,6 +2067,16 @@ class DropDown extends Component {
                 'name' => 'customer_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['DCS' => Yii::t('app', 'DCS'), 'BULKVEN' => Yii::t('app', 'Customer')],
+            ],
+            'trip_status' => [
+                'name' => 'trip_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['tankerfull' => Yii::t('app', 'Tankerfull'), 'open' => Yii::t('app', 'Open'), 'generated' => Yii::t('app', 'Generated'), 'closed' => Yii::t('app', 'Closed')],
+            ],
+            'lot_quality_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['discarded' => Yii::t('app', 'Discarded'), 'done' => Yii::t('app', 'Done'), 'pending' => Yii::t('app', 'Pending')],
             ],
         ];
         return $records[$l];
