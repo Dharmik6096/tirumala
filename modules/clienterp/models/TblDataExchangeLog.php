@@ -55,7 +55,7 @@ class TblDataExchangeLog extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'data_exchange_lock_code' => Yii::t('app', 'Data Exchange Lock Code'),
+            'data_exchange_log_code' => Yii::t('app', 'Data Exchange Lock Code'),
             'process_name' => Yii::t('app', 'Process Name'),
             'process_code' => Yii::t('app', 'Process Code'),
             'data_post_status' => Yii::t('app', 'Data Post Status'),
@@ -80,13 +80,12 @@ class TblDataExchangeLog extends \app\models\ChildModel {
         ];
     }
 
-    public function getMemberProvisionalFamilyDetailCode(){
+    public function getMemberProvisionalFamilyDetailCode() {
         return $this->hasOne(TblMemberProvisionalFamilyDetails::className(), ['CAST(member_provisional_family_detail_code AS varchar)' => 'process_code']);
     }
 
-    public function getmemberProvisionalCode(){
+    public function getmemberProvisionalCode() {
         return $this->hasOne(TblMemberProvisional::className(), ['provisional_member_code' => 'process_code']);
-
     }
 
 }

@@ -11,12 +11,13 @@ use app\modules\bkgprocess\models\TblDataExchangeConfig;
 use app\components\WebApi;
 use app\modules\clienterp\models\TblDataExchangeLog;
 use DOMDocument;
+use SoapClient;
 
 class DataExchangeController extends ChildController {
 
     public $freeAccessActions = ['data-exchange'];
     public $errorPath = '';
-    private $toEncrypt = ['Mdob', 'Ndob', 'Adharno'];
+    private $toEncrypt = ['Mdob', 'Ndob', 'Adharno', 'Fdob'];
 
     public function init() {
         parent::init();
@@ -63,6 +64,8 @@ class DataExchangeController extends ChildController {
                 $apiType = strtoupper($value['api_type']);
                 if ($apiType == 'XML') {
                     $postData = $this->generateSoapXml($output, $value);
+                    $api = new SoapClient($value['request_url'], ['trace' => true, 'exceptions' => true, 'cache_wsdl' => WSDL_CACHE_MEMORY]);
+                    $response = $api->__doRequest($postData, $value['request_url'], '', 1);
                 } else {
                     $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
 
@@ -80,14 +83,16 @@ class DataExchangeController extends ChildController {
                         $postData = $body;
                     }
                     $postData = json_encode($postData);
-                }
-                $api = new WebApi();
-                $api->serverUrl = $value['request_url'];
-                $api->authentication = FALSE;
-                $api->vendor_code = !empty($body['code']) ? $body['code'] : '';
-                $api->body = $postData;
 
-                $response = $api->ExchangeData();
+                    $api = new WebApi();
+                    $api->serverUrl = $value['request_url'];
+                    $api->authentication = FALSE;
+                    $api->vendor_code = !empty($body['code']) ? $body['code'] : '';
+                    $api->body = $postData;
+
+                    $response = $api->ExchangeData();
+                }
+
                 if ($value['api_type'] == 'XML' && !empty($response)) {
                     $this->processXmlResponse($response, $sp_name, $value);
                 } else {
@@ -148,7 +153,7 @@ class DataExchangeController extends ChildController {
     }
 
     private function generateSoapXml($data, $value) {
-        $tags = !empty($value['json_key']) ? explode(',',$value['json_key']) : [];
+        $tags = !empty($value['json_key']) ? explode(',', $value['json_key']) : [];
         if (empty($tags)) {
             return '';
         }
@@ -162,11 +167,11 @@ class DataExchangeController extends ChildController {
         $envelope->appendChild($header);
         $body = $doc->createElement('soap:Body');
         $envelope->appendChild($body);
-        
+
         $parent = $body;
         $no_of_tags = count($tags) - 1;
         foreach ($tags as $key => $tagName) {
-            if($key != $no_of_tags){
+            if ($key != $no_of_tags) {
                 $element = $doc->createElement($tagName);
                 $parent->appendChild($element);
                 $parent = $element;
@@ -183,13 +188,9 @@ class DataExchangeController extends ChildController {
             $lock->save();
             unset($itemData['eiplCode'], $itemData['process_name'], $itemData['process_code']);
 
-            if (!empty($itemData['Fdob'])) {
-                $decryptedDob = Yii::$app->general->decryptData($itemData['Fdob']);
-                $itemData['Fdob'] = $decryptedDob !== false ? $decryptedDob : $itemData['Fdob'];
-            }
             $item = $doc->createElement($lastTag);
             foreach ($itemData as $key => $value) {
-                if(!empty($value) && in_array($key,$this->toEncrypt)){
+                if (!empty($value) && in_array($key, $this->toEncrypt)) {
                     $decryptedData = Yii::$app->general->decryptData($value);
                     $value = $decryptedData !== false ? $decryptedData : $value;
                 }

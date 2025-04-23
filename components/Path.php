@@ -102,6 +102,7 @@ class Path extends Component {
             ['TblEiplAppLogin'],
         '\\app\modules\feedback\models\\' => ['TblNonMemberHouseHoldVisit', 'TblNonMemberHouseHoldCurrentPouring', 'TblNonMemberHouseHoldVisitHistory', 'TblMppSurveyGeneralInfo', 'TblMppSurveyGeneralInfoSearch'],
         '\\app\modules\usermanagement\models\\' => ['TblEiplAppUser', 'TblEiplAppUserHistory', 'TblEiplUserOrganizationMapping'],
+        '\\app\modules\clienterp\models\\' => ['TblDataExchangeLog', 'TblDataExchangeLogHistory'],
     ];
 
     public function get($model) {
