@@ -309,7 +309,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 throw new UserException("SentBox Entry is not created so transaction is rollback!");
             }
         }
-        $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL');
+        $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
         if ($tankerMovementWithTripSubStatus && $flag === 'INSERT' && in_array($this->vehicle_use_type, [1, 2])) {
             $vehicleQaInspection = new TblVehicleQaInspection();
             $vehicleQaInspection->attributes = $this->attributes;
