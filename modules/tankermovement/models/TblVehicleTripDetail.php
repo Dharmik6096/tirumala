@@ -209,11 +209,12 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return ArrayHelper::map($data, 'trip_code', 'trip_code');
     }
 
-    public function getOpenTripDetailList($union_code, $trip_process, $vehicle_code = '') {
+    public function getOpenTripDetailList($union_code, $trip_process, $vehicle_code = '', $plants = '') {
         $query = TblVehicleTripDetail::find()->alias('vtd')
-                ->select(['vt.trip_code'])
+                ->select(['vt.trip_code', 'vt.vehicle_code', 'v.parsing_no'])
                 ->distinct()
-                ->joinWith(['tripCode vt'])
+                ->innerJoin('tbl_vehicle_trip as vt', 'vt.trip_code = vtd.trip_code')
+                ->innerJoin('tbl_vehicle_master as v', 'v.vehicle_code = vt.vehicle_code')
                 ->where(['vt.union_code' => $union_code, 'vt.is_active' => 1]);
 
         if ($trip_process == 'milk_entry_qlty') {
@@ -227,7 +228,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $subStatus = $trip_process == 'cleaning_inspection' ? 'cleaning_pending' : 'qa_pending';
             $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => $subStatus]);
         } else if ($trip_process == 'milk_entry_qlty_merge') {
-            $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
+            $plants = empty($plants) ? (!empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL) : $plants;
             $query->andWhere(['vt.trip_status' => ['closed']]);
             $query->andWhere(['BETWEEN', 'vt.transaction_date', date('Y-m-d', strtotime('-2 days')), date('Y-m-d')]);
             if (!empty($plants)) {
@@ -238,8 +239,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         if (!empty($vehicle_code)) {
             $query->andWhere(['vt.vehicle_code' => $vehicle_code]);
         }
-        $data = $query->all();
-        return ArrayHelper::map($data, 'trip_code', 'trip_code');
+        return $query->asArray()->all();
     }
 
     public function getTripDetails($tankerMovementWithTripSubStatus) {

@@ -11,6 +11,7 @@ use app\modules\tankermovement\models\TblVehicleTripDetail;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
+use app\modules\transporter\models\TblVehicleMaster;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -276,6 +277,48 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 }
             }
         }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionTripVehicleList() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code']) && !empty($content['process_type'])) {
+                $milkReceipt = ($content['process_type'] == 'receipt') ? TRUE : FALSE;
+                $tripmodel = new TblVehicleTrip();
+                if ($data['organization_type'] == 'PLANT') {
+                    $tripmodel->plant_code = $data['organization_code'];
+                    $unionDetail = $tripmodel->plantCode;
+                } else {
+                    $tripmodel->bmc_code = $data['organization_code'];
+                    $unionDetail = $tripmodel->bmcCode;
+                }
+                if (!empty($unionDetail)) {
+                    $model = new TblVehicleMaster();
+                    $res_data = $model->getVehicleMaster($unionDetail->union_code, $data['organization_type'], $data['organization_code'], $milkReceipt, date('Y-m-d'));
+                }
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionQltyTripList() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['organization_type']) && !empty($data['organization_code']) && $data['organization_type'] == 'PLANT') {
+            $tripmodel = new TblVehicleTrip();
+            $tripmodel->plant_code = $data['organization_code'];
+            $unionDetail = $tripmodel->plantCode;
+            if (!empty($unionDetail)) {
+                $model = new TblVehicleTripDetail();
+                $res_data = $model->getOpenTripDetailList($unionDetail->union_code, 'milk_entry_qlty_merge', '', $data['organization_code']);
+            }
+        }
+
         $this->response['data'] = $res_data;
         return $this->response;
     }
