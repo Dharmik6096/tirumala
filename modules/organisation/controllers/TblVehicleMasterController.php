@@ -149,20 +149,4 @@ class TblVehicleMasterController extends \app\controllers\ChildController
         $this->model->expiry_date = ($this->model->expiry_date == '') ? null : Yii::$app->formatter->asDate($this->model->expiry_date, DATE_FORMAT);        
     }
 
-    public function actionVehicleOpenList() {
-        $out = null;
-        if (isset($_POST['depdrop_parents'])) {
-            $value = $_POST['depdrop_parents'];
-            $unionCode = $value[0];
-            $vehicleMasterModel = new TblVehicleMaster();
-            $list = $vehicleMasterModel->getVehicleMaster($unionCode);
-            foreach ($list as $key => $r) {
-                $out[] = array('id' => $key,
-                    'name' => $r);
-            }
-            return Json::encode(['output' => $out]);
-        }
-        return Json::encode(['output' => '', 'selected' => $selected]);
-    }
-
 }
