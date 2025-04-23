@@ -298,7 +298,13 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 }
                 if (!empty($unionDetail)) {
                     $model = new TblVehicleMaster();
-                    $res_data = $model->getVehicleMaster($unionDetail->union_code, $data['organization_type'], $data['organization_code'], $milkReceipt, date('Y-m-d'));
+                    $data = $model->getVehicleMaster($unionDetail->union_code, $data['organization_type'], $data['organization_code'], $milkReceipt, date('Y-m-d'));
+                    foreach ($data as $v => $p) {
+                        $res_data[] = [
+                            'vehicle_code' => $v,
+                            'parsing_no' => $p
+                        ];
+                    }
                 }
             }
         }
