@@ -89,7 +89,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -2115,6 +2115,8 @@ class SiteController extends Controller {
                             ->all();
                     if (!empty($modelDataAll)) {
                         foreach ($modelDataAll as $modelData) {
+                            $encrypt = $modelData->encryptModel($modelData->attributes);
+                            $modelData->setAttributes($encrypt);
                             $union_code = '';
                             $plant_code = '';
                             $mcc_plant_code = '';
