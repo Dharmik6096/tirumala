@@ -40,6 +40,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Master <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                 //                ['label' => Yii::t('app', 'PCDF Info'), 'url' => ['/organisation/tbl-federations/view', 'id' => Yii::$app->session->get('Federations')], 'active' => ($cntrl == 'tbl-federations')],
                     ['label' => Yii::t('app', 'Union'), 'url' => $url_action, 'active' => ($cntrl == 'tbl-unions')],
@@ -123,6 +124,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Transporter <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => Yii::t('app', 'Transporter'), 'url' => ['/transporter/tbl-transporter/index'], 'active' => ($cntrl == 'tbl-transporter')],
                     ['label' => Yii::t('app', 'Vehicle Master'), 'url' => ['/transporter/tbl-vehicle-master/index'], 'active' => ($cntrl == 'tbl-vehicle-master')],
@@ -147,6 +149,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
@@ -185,19 +188,31 @@ echo GhostMenu::widget([
                     ['label' => 'Shift Lock ', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock'), 'visible' => User::canRoute(['/collection/tbl-mcc-shift-lock/index']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
                     ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => User::canRoute(['/collection/tbl-mcc-shift-lock/index-other']) ? ($eiplCode == 'MMD' ? FALSE : TRUE) : FALSE],
                     ['label' => Yii::t('app', 'Shift Lock (Member Data)'), 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
-                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
-                    ['label' => 'Milk Transfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
+                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index')],
+                    ['label' => 'Milk Transfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index')],
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
                     'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Weigh Bridge') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'Material Master', 'url' => ['/tankermovement/tbl-material-master/index'], 'active' => ($cntrl == 'tbl-material-master')],
+                                    ['label' => 'Raw Material Receipt', 'url' => ['/tankermovement/tbl-raw-fg-material-receipt/index'], 'active' => ($cntrl == 'tbl-raw-fg-material-receipt')],
+                            ]
+                        ],
                             ['label' => 'Tanker Rate', 'url' => ['/tankermovement/tbl-tanker-rate/index'], 'active' => ($cntrl == 'tbl-tanker-rate')],
                             ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
                             ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
                             ['label' => 'Inspection Detail', 'url' => ['/tankermovement/tbl-bmc-dispatch-inspection/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-inspection')],
                             ['label' => Yii::t('app', 'Milk Dispatch'), 'url' => ['/tankermovement/tbl-bmc-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-milk-dispatch')],
                             ['label' => 'Sample Bottle Testing', 'url' => ['/tankermovement/tbl-sample-bottle-testing/index'], 'active' => ($cntrl == 'tbl-sample-bottle-testing')],
+                            ['label' => Yii::t('app', 'Tanker Milk Lot Quality'), 'url' => ['/tankermovement/tbl-milk-vehicle-entry-qlty/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry-qlty' && $action == 'index')],
                             ['label' => 'Milk Receipt', 'url' => ['/tankermovement/tbl-milk-vehicle-entry/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry')],
+                            ['label' => Yii::t('app', 'Tanker Milk Quality'), 'url' => ['/tankermovement/tbl-milk-vehicle-entry-qlty-merge/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry-qlty-merge' && $action == 'index')],
+                            ['label' => 'Vehicle Cleaning Detail', 'url' => ['/tankermovement/tbl-vehicle-cleaning-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-cleaning-inspection')],
+                            ['label' => 'Vehicle QA Inspection Detail', 'url' => ['/tankermovement/tbl-vehicle-qa-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-qa-inspection')],
                             ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
                             ['label' => 'Payment Head', 'url' => ['/tankermovement/tbl-payment-head/index'], 'active' => ($cntrl == 'tbl-payment-head')],
                             ['label' => 'Payment Head Transaction', 'url' => ['/tankermovement/tbl-payment-head-transaction/index'], 'active' => ($cntrl == 'tbl-payment-head-transaction')],
@@ -233,6 +248,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Rate <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => 'Rate Formula', 'url' => ['/dcsoperation/formula-master/index'], 'active' => ($cntrl == 'formula-master')],
                     ['label' => 'Milk Purchase Rate', 'url' => ['/dcsoperation/tbl-purchase-rate/index'], 'active' => ($cntrl == 'tbl-purchase-rate')],
@@ -258,6 +274,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Product <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => 'Product Group', 'url' => ['/product/tbl-product-group/index'], 'active' => ($cntrl == 'tbl-product-group')],
                     ['label' => 'Product', 'url' => ['/product/tbl-product/index'], 'active' => ($cntrl == 'tbl-product')],
@@ -276,7 +293,7 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_left'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => $withoutDispatchGrn],
+                            ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => (User::canRoute(['/product/tbl-plant-dispatch/index']) && $withoutDispatchGrn)],
                             ['label' => Yii::t('app', 'GRN'), 'url' => ['/product/tbl-grn/index'], 'active' => ($cntrl == 'tbl-grn')],
                             ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
                             ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking')],
@@ -304,12 +321,15 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Payment <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => Yii::t('app', 'Payment Cycle'), 'url' => ['/payment/tbl-payment-cycle/index'], 'active' => ($cntrl == 'tbl-dcs-payment-cycle')],
                     ['label' => Yii::t('app', 'Member Payment Restrict'), 'url' => ['/payment/tbl-member-payment-restrict/index'], 'active' => ($cntrl == 'tbl-member-payment-restrict' && $action == 'index')],
                     ['label' => Yii::t('app', 'DCS Wise Billing Config'), 'url' => ['/payment/tbl-vsp-payment-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-config' && $action == 'index')],
+                    ['label' => Yii::t('app', 'Release Hold Amount (Member)'), 'url' => ['/payment/tbl-permanent-hold-amount/index'], 'active' => ($cntrl == 'tbl-permanent-hold-amount' && $action == 'index')],
                     ['label' => Yii::t('app', 'Member Payment'), 'url' => ['/payment/tbl-member-payment/index'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'index')],
                     ['label' => Yii::t('app', 'Vendor Payment'), 'url' => ['/payment/tbl-vsp-payment/index'], 'active' => ($cntrl == 'tbl-vsp-payment' && $action == 'index')],
+                    ['label' => Yii::t('app', 'Reject Reinitiate Payment'), 'url' => ['/payment/tbl-payment-transaction/reject-reinitiate'], 'active' => ($cntrl == 'tbl-payment-transaction' && $action == 'reject-reinitiate')],
                     ['label' => Yii::t('app', 'Payment Disburse Approval'), 'url' => ['/payment/tbl-payment-transaction-approval/index'], 'active' => ($cntrl == 'tbl-payment-transaction-approval' && $action == 'index')],
                     ['label' => Yii::t('app', 'Transporter Payment Process'), 'url' => ['/payment/tbl-transporter-payment/index'], 'active' => ($cntrl == 'tbl-transporter-payment')],
                     ['label' => Yii::t('app', 'Payment Data[Thirumala]'), 'url' => ['/misreports/default/farmer-payment-report'], 'active' => ($cntrl == 'default' && $action == 'farmer-payment-report')],
@@ -326,6 +346,7 @@ echo GhostMenu::widget([
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Staff<b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => Yii::t('app', 'Designation'), 'url' => ['/globalmaster/tbl-designation/index'], 'active' => ($cntrl == 'tbl-designation')],
                     ['label' => Yii::t('app', 'Staff Leave Master'), 'url' => ['/staffmanagement/tbl-staff-leave-master/index'], 'active' => ($cntrl == 'tbl-staff-leave-master')],
@@ -340,6 +361,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Billing<b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => Yii::t('app', 'Formula Master'), 'url' => ['/vsp/tbl-general-formula/index'], 'active' => ($cntrl == 'tbl-general-formula')],
                     ['label' => Yii::t('app', 'Bill Head Master'), 'url' => ['/vsp/tbl-bill-head/index'], 'active' => ($cntrl == 'tbl-bill-head')],
@@ -368,6 +390,7 @@ echo GhostMenu::widget([
         //            [
         //            'options' => ['class' => 'dropdown'],
         //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports <b class="caret"></b></a>',
+        //            'visible' => TRUE,
         //            'items' => [
         //                    [
         //                    'options' => ['class' => 'dropdown-submenu'],
@@ -539,12 +562,12 @@ echo GhostMenu::widget([
         //                            ['label' => '701-' . Yii::t('app', 'Staff Salary'), 'url' => ['/jasperreports/default/staff-salary']],
         //                    ]
         //                ],
-        //                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
         //            ],
         //        ],
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t("app", "Reports - New") . ' <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     [
                     'options' => ['class' => 'dropdown-submenu'],
@@ -574,6 +597,7 @@ echo GhostMenu::widget([
                     [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
+                    'visible' => TRUE,
                     'items' => [
                             [
                             'options' => ['class' => 'dropdown-submenu'],
@@ -609,6 +633,7 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Product Sale Invoice For Member'), 'url' => ['/jasperreports/default/product-sale-invoice-for-member']],
                                             ['label' => Yii::t('app', 'Product Sale Invoice For Customer'), 'url' => ['/jasperreports/default/product-sale-invoice-for-customer']],
                                             ['label' => Yii::t('app', 'Product Sale Summary'), 'url' => ['/jasperreports/default/product-sale-summary']],
+                                            ['label' => Yii::t('app', 'Total sale invoice'), 'url' => ['/jasperreports/default/product-sale-invoice']],
                                     ]
                                 ],
                             ]
@@ -625,33 +650,33 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'BMC Weight Data List'), 'url' => ['/misreports/reports/weight-collection-list']],
                                     ]
                                 ],
-                                ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
-                                ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary']],
-                                ['label' => '203 -' . Yii::t('app', 'Company Collection Detail'), 'url' => ['/misreports/reports/union-coll-date-shift-wise-summary']],
-                                ['label' => '204 -' . Yii::t('app', 'Company Wise Collection Vs Dispatch'), 'url' => ['/misreports/reports/union-wise-coll-vs-dispatch']],
-                                ['label' => '205 -' . Yii::t('app', 'Company Wise Collection Vs Receipt'), 'url' => ['/misreports/reports/union-wise-coll-vs-recipt']],
-                                ['label' => '206 -' . Yii::t('app', 'Company Wise Dispatch Vs Receipt'), 'url' => ['/misreports/reports/union-wise-dispatch-vs-recipt']],
-                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA Format 1'), 'url' => ['/misreports/reports/society-wise-cda'], 'visible' => User::canRoute(['/misreports/reports/society-wise-cda']) ? (($eiplCode == 'GYAN' || $eiplCode == 'MURALYA') ? FALSE : TRUE) : FALSE],
-                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA Format 2'), 'url' => ['/misreports/reports/society-wise-cda-format'], 'visible' => User::canRoute(['/misreports/reports/society-wise-cda-format']) ? (($eiplCode == 'GYAN' || $eiplCode == 'MURALYA') ? FALSE : TRUE) : FALSE],
-                                ['label' => '207 -' . Yii::t('app', 'Society Wise Variance'), 'url' => ['/misreports/reports/society-wise-cda-two'], 'visible' => User::canRoute(['/misreports/reports/society-wise-cda-two']) ? (($eiplCode == 'GYAN' || $eiplCode == 'MURALYA') ? TRUE : FALSE) : FALSE],
-                                ['label' => '208 -' . Yii::t('app', 'BMC Autmation Report'), 'url' => ['/misreports/reports/bmc-automation-report']],
-                                ['label' => '209-' . Yii::t('app', 'Route Wise Collection'), 'url' => ['/misreports/reports/route-wise-collection']],
-                                ['label' => '210-' . Yii::t('app', 'Route Wise Collection Summary'), 'url' => ['/misreports/reports/route-wise-collection-summary']],
-                                ['label' => '211-' . Yii::t('app', 'Vendor Wise Collection Summary'), 'url' => ['/misreports/reports/vendor-wise-collection-summary']],
-                                ['label' => '212 -' . Yii::t('app', 'BMC Collection Data'), 'url' => ['/misreports/reports/bmc-collection-data']],
-                                ['label' => '213 -' . Yii::t('app', 'Day Wise Qty'), 'url' => ['/misreports/reports/day-wise-qty']],
-                                ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report']],
-                                ['label' => '215 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
-                                ['label' => '216 -' . Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
-                                ['label' => '217 -' . Yii::t('app', 'Society Composite Vs Actual Report'), 'url' => ['/misreports/reports/society-composite-vs-actual'], 'visible' => User::canRoute(['/misreports/reports/society-composite-vs-actual']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
-                                ['label' => '218 -' . Yii::t('app', 'BMC Collection Report For SAP'), 'url' => ['/misreports/reports/rmrd-milk-collection-for-sap']],
-                                ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation']],
-                                ['label' => '220 -' . Yii::t('app', 'Route Wise Reconciliation'), 'url' => ['/misreports/reports/route-wise-reconciliation']],
-                                ['label' => '221 -' . Yii::t('app', 'RMRD Data Export'), 'url' => ['/misreports/reports/rmrd-data-export']],
-                                ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
-                                ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
-                                ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
-                                ['label' => '225 -' . Yii::t('app', 'Route Wise Difference'), 'url' => ['/misreports/reports/root-wise-difference']],
+                                    ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
+                                    ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary']],
+                                    ['label' => '203 -' . Yii::t('app', 'Company Collection Detail'), 'url' => ['/misreports/reports/union-coll-date-shift-wise-summary']],
+                                    ['label' => '204 -' . Yii::t('app', 'Company Wise Collection Vs Dispatch'), 'url' => ['/misreports/reports/union-wise-coll-vs-dispatch']],
+                                    ['label' => '205 -' . Yii::t('app', 'Company Wise Collection Vs Receipt'), 'url' => ['/misreports/reports/union-wise-coll-vs-recipt']],
+                                    ['label' => '206 -' . Yii::t('app', 'Company Wise Dispatch Vs Receipt'), 'url' => ['/misreports/reports/union-wise-dispatch-vs-recipt']],
+                                    ['label' => '207 -' . Yii::t('app', 'Society Wise CDA Format 1'), 'url' => ['/misreports/reports/society-wise-cda'], 'visible' => User::canRoute(['/misreports/reports/society-wise-cda']) ? (($eiplCode == 'GYAN' || $eiplCode == 'MURALYA') ? FALSE : TRUE) : FALSE],
+                                    ['label' => '207 -' . Yii::t('app', 'Society Wise CDA Format 2'), 'url' => ['/misreports/reports/society-wise-cda-format'], 'visible' => User::canRoute(['/misreports/reports/society-wise-cda-format']) ? (($eiplCode == 'GYAN' || $eiplCode == 'MURALYA') ? FALSE : TRUE) : FALSE],
+                                    ['label' => '207 -' . Yii::t('app', 'Society Wise Variance'), 'url' => ['/misreports/reports/society-wise-cda-two'], 'visible' => User::canRoute(['/misreports/reports/society-wise-cda-two']) ? (($eiplCode == 'GYAN' || $eiplCode == 'MURALYA') ? TRUE : FALSE) : FALSE],
+                                    ['label' => '208 -' . Yii::t('app', 'BMC Autmation Report'), 'url' => ['/misreports/reports/bmc-automation-report']],
+                                    ['label' => '209-' . Yii::t('app', 'Route Wise Collection'), 'url' => ['/misreports/reports/route-wise-collection']],
+                                    ['label' => '210-' . Yii::t('app', 'Route Wise Collection Summary'), 'url' => ['/misreports/reports/route-wise-collection-summary']],
+                                    ['label' => '211-' . Yii::t('app', 'Vendor Wise Collection Summary'), 'url' => ['/misreports/reports/vendor-wise-collection-summary']],
+                                    ['label' => '212 -' . Yii::t('app', 'BMC Collection Data'), 'url' => ['/misreports/reports/bmc-collection-data']],
+                                    ['label' => '213 -' . Yii::t('app', 'Day Wise Qty'), 'url' => ['/misreports/reports/day-wise-qty']],
+                                    ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report']],
+                                    ['label' => '215 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
+                                    ['label' => '216 -' . Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
+                                    ['label' => '217 -' . Yii::t('app', 'Society Composite Vs Actual Report'), 'url' => ['/misreports/reports/society-composite-vs-actual'], 'visible' => User::canRoute(['/misreports/reports/society-composite-vs-actual']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
+                                    ['label' => '218 -' . Yii::t('app', 'BMC Collection Report For SAP'), 'url' => ['/misreports/reports/rmrd-milk-collection-for-sap']],
+                                    ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation']],
+                                    ['label' => '220 -' . Yii::t('app', 'Route Wise Reconciliation'), 'url' => ['/misreports/reports/route-wise-reconciliation']],
+                                    ['label' => '221 -' . Yii::t('app', 'RMRD Data Export'), 'url' => ['/misreports/reports/rmrd-data-export']],
+                                    ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
+                                    ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
+                                    ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
+                                    ['label' => '225 -' . Yii::t('app', 'Route Wise Difference'), 'url' => ['/misreports/reports/root-wise-difference']],
                             ]
                         ],
                             [
@@ -666,7 +691,6 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'BMC Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary-rahema']],
                             ]
                         ],
-                            ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                     ]
                 ],
                     [
@@ -729,6 +753,7 @@ echo GhostMenu::widget([
                             ['label' => '510 -' . Yii::t('app', 'Bill Head Detail'), 'url' => ['/misreports/reports/bill-head-detail']],
                             ['label' => '511 -' . Yii::t('app', 'Chilling Bill'), 'url' => ['/jasperreports/default/mcc-chilling-bill']],
                             ['label' => '512 -' . Yii::t('app', 'Chilling Bill Invoice'), 'url' => ['/jasperreports/default/mcc-chilling-bill-invoice']],
+                            ['label' => '513 -' . Yii::t('app', 'TP Bill'), 'url' => ['/jasperreports/default/party-payment-bill']],
                     ]
                 ],
                     [
@@ -738,6 +763,7 @@ echo GhostMenu::widget([
                             [
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Bills') . '<b class="caret"></b></a>',
+                            'visible' => TRUE,
                             'items' => [
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
@@ -755,6 +781,7 @@ echo GhostMenu::widget([
                                     'items' => [
                                             ['label' => Yii::t('app', 'Format 1'), 'url' => ['/jasperreports/default/member-payment-vrs']],
                                             ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/member-payment-nawasa']],
+                                            ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/shift-wise-bill']],
                                     ]
                                 ],
                                     [
@@ -763,50 +790,50 @@ echo GhostMenu::widget([
                                     'items' => [
                                             ['label' => Yii::t('app', 'Remuneration Bill Format 1'), 'url' => ['/jasperreports/default/vsp-payment-online-vrs']],
                                             ['label' => Yii::t('app', 'Remuneration Bill Format 2'), 'url' => ['/jasperreports/default/vsp-payment-online-nawasa']],
+                                            ['label' => Yii::t('app', 'MPG Bill Statement'), 'url' => ['/jasperreports/default/mpg-bill-statement']],
                                     ]
                                 ],
-                                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
-                        ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
-                        ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment']],
-                        ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/reports/member-payment']],
-                        ['label' => '604-' . Yii::t('app', 'Vendor Milk Payment'), 'url' => ['/jasperreports/default/vendor-milk-payment']],
-                        ['label' => '605-' . Yii::t('app', 'Member Milk Payment'), 'url' => ['/jasperreports/default/member-milk-payment']],
-                        ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/reports/vendor-bank-payment']],
-                        ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/reports/member-bank-payment']],
-                        ['label' => '608-' . Yii::t('app', 'Member Outstanding Detail'), 'url' => ['/misreports/reports/member-outstanding-detail']],
-                        ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill']) ? (($eiplCode == 'SHIVPRASAD') ? FALSE : TRUE) : FALSE],
-                        ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-shiv-prasad'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-shiv-prasad']) ? (($eiplCode == 'SHIVPRASAD') ? TRUE : FALSE) : FALSE],
-                        ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill'], 'visible' => User::canRoute(['/jasperreports/default/member-milk-bill']) ? (($eiplCode == 'SHIVPRASAD') ? FALSE : TRUE) : FALSE],
-                        ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill-shiv-prasad'], 'visible' => User::canRoute(['/jasperreports/default/member-milk-bill-shiv-prasad']) ? (($eiplCode == 'SHIVPRASAD') ? TRUE : FALSE) : FALSE],
-                        ['label' => '611-' . Yii::t('app', 'Member Payment(Drafted)'), 'url' => ['/misreports/reports/member-payment-drafted']],
-                        ['label' => '612-' . Yii::t('app', 'Vendor Bill'), 'url' => ['/jasperreports/default/vendor-bill'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill']) ? (($eiplCode == 'MMD') ? FALSE : TRUE) : FALSE],
-                        ['label' => '612-' . Yii::t('app', 'Member and Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-bill-mmd'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill-mmd']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
-                        ['label' => '613-' . Yii::t('app', 'Payment Abstract'), 'url' => ['/misreports/reports/payment-abstract']],
-                        ['label' => '614-' . Yii::t('app', 'CC Incharge Remuneration'), 'url' => ['/jasperreports/default/incharge-remuneration']],
-                        ['label' => '615-' . Yii::t('app', 'Member Bill Abstract'), 'url' => ['/jasperreports/default/member-bill-abstract']],
-                        ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-varddan'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-varddan']) ? (($eiplCode == 'SNMILK' || $eiplCode == 'JGF' || $eiplCode == 'ANIG') ? FALSE : TRUE) : FALSE],
-                        ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-snmilk'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-snmilk']) ? (($eiplCode == 'SNMILK') ? TRUE : FALSE) : FALSE],
-                        ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-jgf'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-jgf']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
-                        ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-anig'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-anig']) ? (($eiplCode == 'ANIG') ? TRUE : FALSE) : FALSE],
-                        ['label' => '617-' . Yii::t('app', 'CC Milk Payment'), 'url' => ['/misreports/reports/cc-milk-payment']],
-                        ['label' => '618-' . Yii::t('app', 'Farmer And Farm Payment'), 'url' => ['/misreports/reports/farmer-farm-payment']],
-                        ['label' => '619-' . Yii::t('app', 'Recover From Other Member'), 'url' => ['/misreports/reports/recovery-from-other-member']],
-                        ['label' => '620-' . Yii::t('app', 'Recovery From Different Vendor'), 'url' => ['/misreports/reports/recovery-from-different-vendor']],
-                        ['label' => '621-' . Yii::t('app', 'Payment Difference'), 'url' => ['/misreports/reports/payment-difference']],
-                        ['label' => '623-' . Yii::t('app', 'MPG Payment Bill Statement'), 'url' => ['/misreports/reports/mpg-payment-bill-statement']],
-                        ['label' => '624-' . Yii::t('app', 'Member Payment Bank Format'), 'url' => ['/misreports/reports/member-payment-bank-format']],
-                        ['label' => '625-' . Yii::t('app', 'Bonus Report'), 'url' => ['/misreports/reports/bonus-report']],
-                        ['label' => '626-' . Yii::t('app', 'Milk Shortage Recovery'), 'url' => ['/misreports/reports/milk-shortage-recovery']],
-                        ['label' => '627-' . Yii::t('app', 'Payment Summary'), 'url' => ['/jasperreports/default/payment-summary']],
-                        ['label' => '628-' . Yii::t('app', 'Purchase Summary'), 'url' => ['/misreports/reports/purchase-summary']],
-                        ['label' => '629-' . Yii::t('app', 'Purchase Summary Format 2'), 'url' => ['/misreports/reports/purchase-summary-format']],
-                        ['label' => '630-' . Yii::t('app', 'Payment summary'), 'url' => ['/misreports/reports/payment-summary']],
-                        ['label' => '631-' . Yii::t('app', 'Vendor Payment Format 2'), 'url' => ['/misreports/reports/vendor-payment-format']],
-                        ['label' => '632-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-sbd']],
-                        ['label' => '633-' . Yii::t('app', 'Member and Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-bill-elanad'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill-elanad']) ? (($eiplCode == 'ELANAD') ? TRUE : FALSE) : FALSE],
-                        ['label' => '634-' . Yii::t('app', 'Bank Advice'), 'url' => ['/jasperreports/default/bank-advice']],
+                            ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
+                            ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment']],
+                            ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/reports/member-payment']],
+                            ['label' => '604-' . Yii::t('app', 'Vendor Milk Payment'), 'url' => ['/jasperreports/default/vendor-milk-payment']],
+                            ['label' => '605-' . Yii::t('app', 'Member Milk Payment'), 'url' => ['/jasperreports/default/member-milk-payment']],
+                            ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/reports/vendor-bank-payment']],
+                            ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/reports/member-bank-payment']],
+                            ['label' => '608-' . Yii::t('app', 'Member Outstanding Detail'), 'url' => ['/misreports/reports/member-outstanding-detail']],
+                            ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill']) ? (($eiplCode == 'SHIVPRASAD') ? FALSE : TRUE) : FALSE],
+                            ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-shiv-prasad'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-shiv-prasad']) ? (($eiplCode == 'SHIVPRASAD') ? TRUE : FALSE) : FALSE],
+                            ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill'], 'visible' => User::canRoute(['/jasperreports/default/member-milk-bill']) ? (($eiplCode == 'SHIVPRASAD') ? FALSE : TRUE) : FALSE],
+                            ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill-shiv-prasad'], 'visible' => User::canRoute(['/jasperreports/default/member-milk-bill-shiv-prasad']) ? (($eiplCode == 'SHIVPRASAD') ? TRUE : FALSE) : FALSE],
+                            ['label' => '611-' . Yii::t('app', 'Member Payment(Drafted)'), 'url' => ['/misreports/reports/member-payment-drafted']],
+                            ['label' => '612-' . Yii::t('app', 'Vendor Bill'), 'url' => ['/jasperreports/default/vendor-bill'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill']) ? (($eiplCode == 'MMD') ? FALSE : TRUE) : FALSE],
+                            ['label' => '612-' . Yii::t('app', 'Member and Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-bill-mmd'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill-mmd']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
+                            ['label' => '613-' . Yii::t('app', 'Payment Abstract'), 'url' => ['/misreports/reports/payment-abstract']],
+                            ['label' => '614-' . Yii::t('app', 'CC Incharge Remuneration'), 'url' => ['/jasperreports/default/incharge-remuneration']],
+                            ['label' => '615-' . Yii::t('app', 'Member Bill Abstract'), 'url' => ['/jasperreports/default/member-bill-abstract']],
+                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-varddan'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-varddan']) ? (($eiplCode == 'SNMILK' || $eiplCode == 'JGF' || $eiplCode == 'ANIG') ? FALSE : TRUE) : FALSE],
+                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-snmilk'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-snmilk']) ? (($eiplCode == 'SNMILK') ? TRUE : FALSE) : FALSE],
+                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-jgf'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-jgf']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
+                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-anig'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-anig']) ? (($eiplCode == 'ANIG') ? TRUE : FALSE) : FALSE],
+                            ['label' => '617-' . Yii::t('app', 'CC Milk Payment'), 'url' => ['/misreports/reports/cc-milk-payment']],
+                            ['label' => '618-' . Yii::t('app', 'Farmer And Farm Payment'), 'url' => ['/misreports/reports/farmer-farm-payment']],
+                            ['label' => '619-' . Yii::t('app', 'Recover From Other Member'), 'url' => ['/misreports/reports/recovery-from-other-member']],
+                            ['label' => '620-' . Yii::t('app', 'Recovery From Different Vendor'), 'url' => ['/misreports/reports/recovery-from-different-vendor']],
+                            ['label' => '621-' . Yii::t('app', 'Payment Difference'), 'url' => ['/misreports/reports/payment-difference']],
+                            ['label' => '623-' . Yii::t('app', 'MPG Payment Bill Statement'), 'url' => ['/misreports/reports/mpg-payment-bill-statement']],
+                            ['label' => '624-' . Yii::t('app', 'Member Payment Bank Format'), 'url' => ['/misreports/reports/member-payment-bank-format']],
+                            ['label' => '625-' . Yii::t('app', 'Bonus Report'), 'url' => ['/misreports/reports/bonus-report']],
+                            ['label' => '626-' . Yii::t('app', 'Milk Shortage Recovery'), 'url' => ['/misreports/reports/milk-shortage-recovery']],
+                            ['label' => '627-' . Yii::t('app', 'Payment Summary'), 'url' => ['/jasperreports/default/payment-summary']],
+                            ['label' => '628-' . Yii::t('app', 'Purchase Summary'), 'url' => ['/misreports/reports/purchase-summary']],
+                            ['label' => '629-' . Yii::t('app', 'Purchase Summary Format 2'), 'url' => ['/misreports/reports/purchase-summary-format']],
+                            ['label' => '630-' . Yii::t('app', 'Payment summary'), 'url' => ['/misreports/reports/payment-summary']],
+                            ['label' => '631-' . Yii::t('app', 'Vendor Payment Format 2'), 'url' => ['/misreports/reports/vendor-payment-format']],
+                            ['label' => '632-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-sbd']],
+                            ['label' => '633-' . Yii::t('app', 'Member and Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-bill-elanad'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill-elanad']) ? (($eiplCode == 'ELANAD') ? TRUE : FALSE) : FALSE],
+                            ['label' => '634-' . Yii::t('app', 'Bank Advice'), 'url' => ['/jasperreports/default/bank-advice']],
                     ]
                 ],
                     [
@@ -852,13 +879,25 @@ echo GhostMenu::widget([
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
                                     'items' => [
+                                            ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/are-bmc-collection-shift-report']],
+                                            ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/are-bmc-coll-date-shift-wise-summary']],
+                                            ['label' => '207 -' . Yii::t('app', 'Society Wise CDA Format 1'), 'url' => ['/misreports/reports/are-society-wise-cda']],
                                             ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report-region']],
                                             ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation-region']],
                                     ]
                                 ],
+                                    [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                            ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/reports/are-vendor-payment']],
+                                            ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/reports/are-member-payment']],
+                                            ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/reports/are-vendor-bank-payment']],
+                                            ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/reports/are-member-bank-payment']],
+                                    ]
+                                ],
                                     ['label' => Yii::t('app', 'Region-wise User Attendance Report'), 'url' => ['/misreports/reports/region-wise-user-attendance-report']],
                                     ['label' => Yii::t('app', 'Eipl Installed Users Details'), 'url' => ['/misreports/reports/eipl-installed-users-details']],
-                                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                             ]
                         ],
                             [
@@ -894,6 +933,7 @@ echo GhostMenu::widget([
                             ['label' => '918-' . Yii::t('app', 'Asset Details Report'), 'url' => ['/misreports/reports/asset-details-report']],
                             ['label' => '919-' . Yii::t('app', 'User Organization Mapping Report'), 'url' => ['/misreports/reports/user-organization-mapping-report']],
                             ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
+                            ['label' => '921-' . Yii::t('app', 'TS Recovery Report'), 'url' => ['/misreports/reports/vsp-transit-recovery']],
                     ]
                 ],
                     [
@@ -974,8 +1014,9 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Transport') . ' <b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'TP Cost Detail'), 'url' => ['/misreports/reports/tp-cost-detail']],
-                            ['label' => Yii::t('app', 'TP Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
+                            ['label' => Yii::t('app', 'TPT Cost Detail'), 'url' => ['/misreports/reports/tp-cost-detail']],
+                            ['label' => Yii::t('app', 'TPT Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
+                            ['label' => Yii::t('app', 'TPT Bill'), 'url' => ['/jasperreports/default/primary-transporter-monthly-bill']],
                     ]
                 ],
                     [
@@ -996,21 +1037,22 @@ echo GhostMenu::widget([
                     'items' => [
                             ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                             ['label' => Yii::t('app', 'User Task Activity MIS'), 'url' => ['/misreports/reports/field-staff-activity']],
+                            ['label' => Yii::t('app', 'Complain Activity Report'), 'url' => ['/misreports/reports/complain-activity-list']],
                     ]
                 ],
-                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],
             [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >System <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
-                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                     [
                     'options' => ['class' => 'dropdown-submenu mtp10'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Authorization <b class="caret"></b></a>',
                     'items' => [
                             ['label' => 'User', 'url' => ['/user-management/user/index'], 'active' => ($cntrl == 'user'),],
+                            ['label' => 'Application User', 'url' => ['/usermanagement/tbl-eipl-app-user/index'], 'active' => ($cntrl == 'tbl-eipl-app-user'),],
                             ['label' => 'Role', 'url' => ['/user-management/role/index'], 'active' => ($cntrl == 'role'),],
                         //                ['label' => 'Set Originating Location', 'url' => ['/user-management/permission/set-originate-action'], 'active' => ($cntrl == 'permission'),],
                         ['label' => 'Permission', 'url' => ['/user-management/permission/index'], 'active' => ($cntrl == 'permission'),],
@@ -1266,6 +1308,7 @@ echo GhostMenu::widget([
             [
             'options' => ['class' => 'dropdown user'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" ><i class="fa fa-user"></i> <b class="caret"></b></a>',
+            'visible' => TRUE,
             'items' => [
                     ['label' => (Yii::$app->session->get('UserName') != NULL && isset(explode('#', Yii::$app->session->get('UserName'))[1])) ? "<span class='user'><b>" . Yii::t('app', 'User: ') . "</b>" . explode('#', Yii::$app->session->get('UserName'))[1] . "</span>" : ''],
                     ['label' => "<span class='user'><b>" . Yii::t('app', 'Org.Type: ') . "</b>" . Yii::t('app', Yii::$app->session->get('organizations_type')) . "</span>"],

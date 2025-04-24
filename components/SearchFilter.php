@@ -187,7 +187,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
             'TblVehicleTripSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'trip_status', 'from_date', 'to_date'],
             ],
             'TblBmcMilkDispatchSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
@@ -486,7 +486,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
             'TblCustomerMasterProvisionalSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code', 'from_date', 'to_date'],
                 'action' => ['index', 'pending-customer-approval']
             ],
             'TblReportTxnLogSearch' => [
@@ -543,6 +543,9 @@ class SearchFilter {
             ],
             'TblMilkCollectionSpecialCodeSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
+            'TblPermanentHoldAmountSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
             ],
             'TblWeightScaleCalibrationSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
@@ -624,6 +627,24 @@ class SearchFilter {
             ],
             'TblForceSyncRequestSearch' => [
                 'filter' => ['from_date', 'from_shift', 'to_date', 'to_shift', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblMilkVehicleEntryQltySearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'vehicle_code:union_vehicle', 'status:lot_quality_status', 'from_date', 'to_date'],
+            ],
+            'TblVehicleCleaningInspectionSearch' => [
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+            ],
+            'TblVehicleQaInspectionSearch' => [
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+            ],
+            'TblMaterialMasterSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblRawFgMaterialReceiptSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'from_date', 'to_date'],
+            ],
+            'TblMilkVehicleEntryQltyMergeSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'vehicle_code:union_vehicle', 'from_date', 'to_date'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

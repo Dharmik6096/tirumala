@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\globalmaster\models\TblUnits;
 use yii\helpers\ArrayHelper;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_product_group".

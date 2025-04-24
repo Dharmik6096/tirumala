@@ -73,7 +73,7 @@ class TblLocalMilkSaleRateSearch extends TblLocalMilkSaleRate {
 
         if ((!empty($this->wef_date))) {
             $wef_date = date('Y-m-d', strtotime($this->wef_date));
-            $query->andFilterWhere(['like', 'CAST(wef_date AS DATE)', $wef_date]);
+            $query->andFilterWhere(['wef_date' => $wef_date]);
         }
 
         $query->andFilterWhere(['like', 'tbl_local_milk_sale_rate.local_milk_sale_rate_code', $this->local_milk_sale_rate_code]);

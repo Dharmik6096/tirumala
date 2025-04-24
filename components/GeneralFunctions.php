@@ -58,6 +58,8 @@ use app\modules\product\models\TblDispatchCenterApplicability;
 use app\modules\product\models\TblProduct;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
+use app\modules\tankermovement\models\TblVehicleTrip;
+use app\modules\tankermovement\models\TblVehicleTripTracking;
 use Exception;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use PHPExcel;
@@ -832,7 +834,7 @@ class GeneralFunctions extends Component {
     }
 
     public function base64url_decode($data) {
-        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess', 'dataexchange', 'clienterp'])) {
+        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess', 'dataexchange', 'clienterp', 'privacy-policy'])) {
             return $data;
         }
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
@@ -1041,7 +1043,8 @@ class GeneralFunctions extends Component {
         Yii::$app->{$db}->password = $connection->db_password;
     }
 
-    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '', $appendVlc = true) {
+    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '', $appendVlc = true, $plantFilter = 0) {
+        //$plantFilter (0-noimpact/1-onlyforplant/2-includeplant)
         $sentboxArray = [];
         $mcc = [];
         $bmc = [];
@@ -1062,6 +1065,16 @@ class GeneralFunctions extends Component {
             foreach ($plants as $pl) {
                 $plant[] = (string) $pl;
             }
+        }
+        if ($plantFilter == 1) {
+            $plant = array_unique($plant);
+            foreach ($plant as $key => $plantCode) {
+                $array = [];
+                $array['code'] = $plantCode;
+                $array['type'] = 'PLANT';
+                $sentboxArray[] = $array;
+            }
+            return $sentboxArray;
         }
         if (!empty($plant)) {
             $model = new TblMccPlant();
@@ -1147,6 +1160,32 @@ class GeneralFunctions extends Component {
             $array['type'] = 'VLC';
             $sentboxArray[] = $array;
         }
+
+        /* include plant for sentbox */
+        if ($plantFilter == 2) {
+            if (empty($union_code)) {
+                foreach ($bmc as $key => $bmcCode) {
+                    $model = new TblDcsBmc();
+                    $model->bmc_code = $bmcCode;
+                    $modelData = $model->getDcsBmcData('bmc_code');
+                    $union_code = !empty($modelData) ? $modelData->union_code : '';
+                    break;
+                }
+                $model = new TblPlant();
+                $model->union_code = $union_code;
+                $modelData = $model->getPlantRecords();
+                $plant = array_keys($modelData);
+            }
+            $plant = array_unique($plant);
+            foreach ($plant as $key => $plantCode) {
+                $array = [];
+                $array['code'] = $plantCode;
+                $array['type'] = 'PLANT';
+                $sentboxArray[] = $array;
+            }
+        }
+        /* include plant for sentbox */
+
         return $sentboxArray;
     }
 
@@ -1222,7 +1261,8 @@ class GeneralFunctions extends Component {
     }
 
     public function getDestRelation($type = '') {
-        switch (strtolower($type)) {
+        $type = !empty($type) ? strtolower($type) : '';
+        switch ($type) {
             case '2' :
                 $rel = 'plantCode';
                 break;
@@ -2946,6 +2986,38 @@ class GeneralFunctions extends Component {
                         ->where(['tbl_dispatch_center_applicability.applicable_code' => $applicable_code, 'tbl_dispatch_center_applicability.applicable_for' => $for, 'tbl_product.product_code' => $product_code])
                         ->asArray()
                         ->one();
+    }
+
+    public function setVehicleTripTrackingDetail($trip, $remarks = '') {
+        if (!empty($trip)) {
+            $tripTrackingModel = new TblVehicleTripTracking();
+            $tripTrackingModel->attributes = $trip->attributes;
+            $tripTrackingModel->trip_date = $trip->transaction_date;
+            $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
+            $tripTrackingModel->created_at = $tripTrackingModel->updated_at = $tripTrackingModel->created_by = $tripTrackingModel->updated_by = $tripTrackingModel->originating_type = $tripTrackingModel->originating_org_code = $tripTrackingModel->originating_org_type = '';
+            $tripTrackingModel->save(TRUE, FALSE);
+        }
+    }
+
+    public function getColumnName($type) {
+        $rel = $this->getDestRelation($type);
+        $type = !empty($type) ? strtolower($type) : '';
+        $ref_code = 'ref_code';
+        $name = 'name';
+        if ($type == 'plant') {
+            $name = 'name';
+            $ref_code = 'ref_code';
+        } else if ($type == 'bmc') {
+            $name = 'bmc_name';
+            $ref_code = 'ref_code';
+        } elseif ($type == 'vendor') {
+            $name = 'customer_name';
+            $ref_code = 'ref_code';
+        } elseif ($type == 'party') {
+            $name = 'party_name';
+            $ref_code = 'sap_vendor_code';
+        }
+        return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
 
 }

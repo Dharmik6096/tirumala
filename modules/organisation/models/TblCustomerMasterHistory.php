@@ -54,7 +54,7 @@ class TblCustomerMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['customer_code', 'customer_code_ex', 'sap_vendor_code', 'ts_code_m', 'ts_code_e'], 'safe'],
+                [['customer_code', 'customer_code_ex', 'sap_vendor_code', 'ts_code_m', 'ts_code_e', 'pan_no'], 'safe'],
                 [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['is_active', 'originating_type'], 'safe'],
                 [['created_at', 'updated_at', 'history_created_at', 'route_code'], 'safe'],

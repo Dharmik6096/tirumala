@@ -107,6 +107,10 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->vehicle_code];
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
+        'compartment-detail' => function ($url, $model) {
+            $options = ['data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Compartment'];
+            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/transporter/tbl-vehicle-master/compartment-detail', 'id' => $model->vehicle_code], $options);
+        },
     ]
 ];
 

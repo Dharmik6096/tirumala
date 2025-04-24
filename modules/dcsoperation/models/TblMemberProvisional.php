@@ -228,7 +228,30 @@ class TblMemberProvisional extends ChildModel {
                 [['provisional_from'], 'default', 'value' => 'collection'],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
                 [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
-                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import']],
+                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import'], 'except' => ['createProvisionalMember', 'MemberDocument']],
+                [['beneficiary_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateBeneficiary($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'on' => ['createProvisionalMember']],
+                [['bank_account_no', 'bank_code', 'branch_code'], 'required', 'when' => function ($model) {
+                    return ($model->is_verify == 1);
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                }", 'on' => ['createProvisionalMember']],
+                [['adhar_no'], 'required', 'when' => function ($model) {
+                    return ($model->is_aadhar_verify == 1);
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tblmemberprovisional-is_aadhar_verify').prop('checked') == true;
+                }", 'on' => ['createProvisionalMember']],
+                [['mobile_no'], 'required', 'when' => function ($model) {
+                    return ($model->is_contact_verified == 1);
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tblmemberprovisional-is_contact_verified').prop('checked') == true;
+                }", 'on' => ['createProvisionalMember']],
+                [['email'], 'required', 'when' => function ($model) {
+                    return ($model->is_email_verify == 1);
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
+                }", 'on' => ['createProvisionalMember']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -454,6 +477,10 @@ class TblMemberProvisional extends ChildModel {
 
     public function getRelationship() {
         return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'nominee_relation']);
+    }
+
+    public function getApplicantRelationship() {
+        return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'applicant_relation']);
     }
 
     public function getTblDcsBmc() {
@@ -810,6 +837,7 @@ class TblMemberProvisional extends ChildModel {
         }
         $tblMember->scenario = 'ApprovalMember';
         $tblMember->attributes = $memberModel->attributes;
+        $tblMember->is_verified = $memberModel->is_verify;
         $tblMember->member_code = ($memberModel->provisional_from == 'mobile_update') ? $memberCode : $tblMember->getCode();
         if ($tblMember->validate()) {
             $model_save[] = $tblMember;

@@ -95,17 +95,17 @@ $script = "
     $(document).on('change', '#tblbmccollection-mcc_plant_code', function() {  
        gridChange();
     });
-    $(document).on('change', '#tblbmccollection-bmc_code', function() { 
-         gridChange();
+    $(document).on('change', '#tblbmccollection-bmc_code', function() {
+        gridChange();
         $('#tblbmccollection-bmc_silos_info_code').val('');
         $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
-         var bmc = $('#tblbmccollection-bmc_code').val();
+        var bmc = $('#tblbmccollection-bmc_code').val();
         if(setData(bmc)){
-        $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            $('#tblbmccollection-bmc_silos_info_code').val($('#tblbmccollection-bmc_silos_info_code option:nth-child(2)').val());
-            $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
-        });
-        } 
+            $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                $('#tblbmccollection-bmc_silos_info_code').val($('#tblbmccollection-bmc_silos_info_code option:nth-child(2)').val());
+                $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
+            });
+        }
     });
     
     $(document).on('change', '#tblbmccollection-date_time_of_collection', function() {  

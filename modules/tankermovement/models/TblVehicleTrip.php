@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_vehicle_trip".
@@ -41,7 +42,8 @@ use app\modules\syncutility\models\TblSentbox;
 class TblVehicleTrip extends \app\models\ChildModel {
 
     public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $filter_plant_code;
-    public $fl_type, $fl_code;
+    public $fl_type, $fl_code, $type;
+    public $generateAutoTrip = FALSE;
 
     /**
      * @inheritdoc
@@ -57,7 +59,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return [
                 [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
                 [['trip_for'], 'default', 'value' => 'bmcdispatch'],
                 [['trip_mode'], 'default', 'value' => 'online'],
@@ -104,6 +106,10 @@ class TblVehicleTrip extends \app\models\ChildModel {
             'kg_snf' => Yii::t('app', 'SNFKg'),
             'total_qty' => Yii::t('app', 'Total Qty'),
             'rejected_count' => Yii::t('app', 'Rejected Sample'),
+            'trip_sub_status' => Yii::t('app', 'Trip Sub Status'),
+            'sub_status_time' => Yii::t('app', 'Sub Status Time'),
+            'driver_name' => Yii::t('app', 'Driver Name'),
+            'mobile_no' => Yii::t('app', 'Mobile No'),
         ];
     }
 
@@ -175,6 +181,14 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $this->trip_code = $this->generateTripCode();
             $vehicle_trip_detail_code = $this->vehicle_trip_code . 'T1';
             $model = $this;
+            $this->trip_sub_status = 'generated';
+            $this->sub_status_time = date('Y-m-d H:i:s');
+            if ($this->generateAutoTrip) {
+                $this->is_auto_trip = 1;
+                $driverDetail = $this->vehicleCode;
+                $this->driver_name = $driverDetail->driver_name;
+                $this->mobile_no = $driverDetail->driver_contact_no;
+            }
             $save_model[] = $this;
         }
         if ($validate) {
@@ -182,14 +196,16 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $last_trip = TblVehicleTripDetail::find()
                     ->where(['vehicle_code' => $this->vehicle_code, 'trip_code' => $model->trip_code])
                     //->andWhere(['<=', 'CAST(transaction_datetime as date)', $this->transaction_date])
-                    ->orderBy(['transaction_datetime' => SORT_DESC])
+                    ->orderBy(['sequence_no' => SORT_DESC])
                     ->one();
             if (!empty($last_trip)) {
                 $trip_detai->source_org_code = $last_trip->destination_code;
                 $trip_detai->source_org_type = $last_trip->destination_type;
+                $trip_detai->sequence_no = $last_trip->sequence_no + 1;
             } else {
                 $trip_detai->source_org_code = $model->plant_code;
                 $trip_detai->source_org_type = 'plant';
+                $trip_detai->sequence_no = 1;
             }
             $trip_detai->originating_org_code = $this->union_code;
             $trip_detai->destination_code = !empty($this->fl_code) ? $this->fl_code : $this->bmc_code;
@@ -198,19 +214,45 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $trip_detai->vehicle_code = $model->vehicle_code;
             $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
             $trip_detai->trip_code = $model->trip_code;
-            $trip_detai->arrival_time = date('Y-m-d H:i:s');
+            if ($this->generateAutoTrip) {
+                $trip_detai->departure_time = date('Y-m-d H:i:s');
+                $trip_detai->arrival_time = date('Y-m-d H:i:s', strtotime($trip_detai->departure_time) - 1);
+            }
             if (empty($vehicle_trip_detail_code)) {
                 $vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . (((int) substr($last_trip->vehicle_trip_detail_code, strlen($trip_detai->vehicle_trip_code) + 1)) + 1);
             }
             $trip_detai->vehicle_trip_detail_code = $vehicle_trip_detail_code;
-            if (!$trip_detai->validate()) {
-                $validate = FALSE;
-                $errors = $trip_detai->getErrors();
-                if (isset($errors['destination_code'])) {
-                    $this->addError('bmc_code', $errors['destination_code'][0]);
+            if (!$this->generateAutoTrip) {
+                if (!$trip_detai->validate()) {
+                    $validate = FALSE;
+                    $errors = $trip_detai->getErrors();
+                    if (isset($errors['destination_code'])) {
+                        $this->addError('bmc_code', $errors['destination_code'][0]);
+                    }
                 }
             }
             $save_model[] = $trip_detai;
+            if ($this->generateAutoTrip) {
+                $numeric_part = intval(substr($trip_detai->vehicle_trip_detail_code, -1));
+                $updated_numeric_part = $numeric_part + 1;
+                $new_vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . $updated_numeric_part;
+                $auto_trip_detail = new TblVehicleTripDetail();
+                $auto_trip_detail->scenario = 'autoTrip';
+                $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
+                $auto_trip_detail->vehicle_trip_code = $trip_detai->vehicle_trip_code;
+                $auto_trip_detail->vehicle_code = $trip_detai->vehicle_code;
+                $auto_trip_detail->trip_code = $trip_detai->trip_code;
+                $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                $auto_trip_detail->destination_code = NULL;
+                $auto_trip_detail->destination_type = NULL;
+                $auto_trip_detail->is_last_destination = (int) $model->is_last_destination;
+                $auto_trip_detail->source_org_code = $trip_detai->destination_code;
+                $auto_trip_detail->source_org_type = $trip_detai->destination_type;
+                $auto_trip_detail->arrival_time = date('Y-m-d H:i:s', strtotime($trip_detai->departure_time) + 1);
+                $auto_trip_detail->sequence_no = $trip_detai->sequence_no + 1;
+                $auto_trip_detail->originating_org_code = $this->union_code;
+                $save_model[] = $auto_trip_detail;
+            }
         }
         $api_response = [];
         //if ($model->trip_mode == 'online') {
@@ -226,6 +268,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $bmc_plant_code = !empty($this->fl_code) ? $this->fl_code : $this->bmc_code;
         $primaryKey = 'trip_code';
         $prefix = substr($this->vehicleCode->parsing_no, -4) . substr($bmc_plant_code, -2);
+        $prefix = str_replace("-", "0", $prefix);
         $len = strlen($prefix);
         $val = $this->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
@@ -263,31 +306,9 @@ class TblVehicleTrip extends \app\models\ChildModel {
                         ->where(['trip_code' => $this->trip_code, 'lower(trip_status)' => ['tankerfull', 'open', 'generated']])->one();
     }
 
-    public function getClosedtripData(){
+    public function getClosedtripData() {
         return $this->find()
                         ->where(['trip_code' => $this->trip_code, 'lower(trip_status)' => ['closed']])->one();
-    }
-
-    public function afterSave($insert, $changedAttributes) {
-        $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '', FALSE);
-        foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                }
-            }
-        }
-    }
-
-    public function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
     }
 
     public function checkVehicleStatus($attribute, $params) {
@@ -300,6 +321,82 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 ->one();
         if ($existingTrip) {
             $this->addError($attribute, 'A trip for this vehicle already exists and is not closed.');
+        }
+    }
+
+    public function getVehicleTripDetailCode() {
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['arrival_time' => null])->orderBy('sequence_no');
+    }
+
+    public function getTakenTripDetailCode() {
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null]);
+    }
+
+    public function addTripRoute(&$saveModel, &$deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination = 0) {
+        $trip_detail = TblVehicleTripDetail::find()
+                        ->where(['trip_code' => $this->trip_code])
+                        ->andWhere(['lower(source_org_type)' => $source_org_type, 'source_org_code' => $source_org_code])
+                        ->andWhere(['IS', 'challan_no', NULL])
+                        ->andWhere(['!=', 'vehicle_trip_detail_code', new \yii\db\Expression("CONCAT(vehicle_trip_code,'T1')")])
+                        ->orderBy(['sequence_no' => SORT_ASC])->one();
+
+        if (!empty($trip_detail)) {
+            $trip_detail->challan_no = $challan_no;
+            if ($this->is_auto_trip == 1) {
+                if (empty($trip_detail->destination_code)) {
+                    $trip_detail->destination_type = $destination_type;
+                    $trip_detail->destination_code = $destination_code;
+
+                    $numeric_part = intval(substr($trip_detail->vehicle_trip_detail_code, -1));
+                    $updated_numeric_part = $numeric_part + 1;
+                    $new_vehicle_trip_detail_code = $this->vehicle_trip_code . 'T' . $updated_numeric_part;
+
+                    $auto_trip_detail = new TblVehicleTripDetail();
+                    $auto_trip_detail->scenario = 'autoTrip';
+                    $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
+                    $auto_trip_detail->vehicle_trip_code = $this->vehicle_trip_code;
+                    $auto_trip_detail->vehicle_code = $this->vehicle_code;
+                    $auto_trip_detail->trip_code = $this->trip_code;
+                    $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                    $auto_trip_detail->source_org_code = $destination_code;
+                    $auto_trip_detail->source_org_type = $destination_type;
+                    $auto_trip_detail->is_last_destination = (int) $is_last_destination;
+                    $auto_trip_detail->sequence_no = $trip_detail->sequence_no + 1;
+                    $saveModel[] = $auto_trip_detail;
+                } else if ($is_last_destination == 1) {
+                    $exist_next_trip_detail = TblVehicleTripDetail::find()
+                            ->where(['vehicle_trip_code' => $this->vehicle_trip_code, 'sequence_no' => $trip_detail->sequence_no + 1, 'source_org_code' => $trip_detail->destination_code])
+                            ->andWhere(['lower(source_org_type)' => strtolower($trip_detail->destination_type)])
+                            ->one();
+                    $exist_next_trip_detail->scenario = 'autoTrip';
+
+                    if (!empty($exist_next_trip_detail)) {
+                        $historyModel = new TblVehicleTripDetailHistory();
+                        Yii::$app->operation->history($exist_next_trip_detail, $historyModel, UPDATE);
+                        $saveModel[] = $historyModel;
+
+                        $exist_next_trip_detail->is_last_destination = 1;
+                        $exist_next_trip_detail->destination_type = $exist_next_trip_detail->destination_code = NULL;
+                        $saveModel[] = $exist_next_trip_detail;
+
+                        $delete_next_all_trip_details = TblVehicleTripDetail::find()
+                                ->where(['vehicle_trip_code' => $this->vehicle_trip_code])
+                                ->andWhere(['>', 'sequence_no', $exist_next_trip_detail->sequence_no])
+                                ->andWhere(['IS', 'challan_no', NULL])
+                                ->all();
+
+                        if (!empty($delete_next_all_trip_details)) {
+                            foreach ($delete_next_all_trip_details as $next_trip_detail) {
+                                $vehicleTripDetailHistoryModel = new TblVehicleTripDetailHistory();
+                                Yii::$app->operation->history($next_trip_detail, $vehicleTripDetailHistoryModel, DELETE);
+                                $saveModel[] = $vehicleTripDetailHistoryModel;
+                                $deleteModel[] = $next_trip_detail;
+                            }
+                        }
+                    }
+                }
+            }
+            $saveModel[] = $trip_detail;
         }
     }
 

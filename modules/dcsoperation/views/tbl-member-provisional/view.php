@@ -249,7 +249,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                         ],
                             [
                             'attribute' => 'applicant_relation',
-                            'value' => !empty($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'value' => Yii::$app->general->getforeignkey($model->applicantRelationship, 'relationship'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -493,7 +493,15 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             'attribute' => 'is_approved',
                             'format' => 'html',
                             'value' => $model->is_approved == 1 ? 'Approved' : 'Pending',
-                            'valueColOptions' => ['style' => 'width:80%'],
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'beneficiary_name',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
@@ -644,6 +652,21 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                 $this->render('_share_grid', [
                     'shareMemberModel' => $shareMemberModel,
                     'shareDataProvider' => $shareDataProvider,
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Previous Approval Detail</h4>
+            </div>
+            <div class="col-sm-12">
+                <?=
+                $this->render('_process_approval_grid', [
+                    'processApprovalModel' => $processApprovalModel,
+                    'processApprovalDataProvider' => $processApprovalDataProvider,
                 ])
                 ?>
             </div>

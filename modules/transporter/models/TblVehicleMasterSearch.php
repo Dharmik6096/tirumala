@@ -22,7 +22,7 @@ class TblVehicleMasterSearch extends TblVehicleMaster {
     public function rules() {
         return [
                 [['vehicle_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'wef_date', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'expiry_date', 'average', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'fuel_type_code', 'parsing_no', 'vendor_code', 'billing_method', 'from_date', 'to_date'], 'safe'],
-                [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'rent', 'is_active', 'billing_type_code', 'vehicle_use_type', 'billing_with_capacity'], 'safe'],
+                [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'rent', 'is_active', 'billing_type_code', 'vehicle_use_type', 'billing_with_capacity', 'no_of_compartment'], 'safe'],
                 [['union_code', 'plant_code', 'transporter_code', 'wef_date', 'shift_code', 'bmc_code'], 'required', 'on' => 'km_info_create']
         ];
     }

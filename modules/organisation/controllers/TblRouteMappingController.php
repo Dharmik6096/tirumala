@@ -299,9 +299,10 @@ class TblRouteMappingController extends \app\controllers\ChildController {
             $dest[$value['code'] . '-' . $value['tname']] = $value['ref_code'] . ' - ' . $value['name'] . ' - ' . Yii::t('app', $value['tname']);
         }
         if (Yii::$app->request->post()) {
-            $route_code = Yii::$app->request->post('TblRouteMappingSources')['route_code'];
-            $from_dest = Yii::$app->request->post('TblRouteMappingSources')['from_dest'];
-            $user_code = Yii::$app->request->post('TblRouteMappingSources')['user_code'];
+            $routeData = !empty(Yii::$app->request->post('TblRouteMappingSources')) ? Yii::$app->request->post('TblRouteMappingSources') : [];
+            $route_code = !empty($routeData['route_code']) ? $routeData['route_code'] : null;
+            $from_dest = !empty($routeData['from_dest']) ? $routeData['from_dest'] : null;
+            $user_code = !empty($routeData['user_code']) ? $routeData['user_code']: null;
             if (empty($from_dest)) {
                 $model->addError('route_code', 'Please select at least one Source.');
             } else {

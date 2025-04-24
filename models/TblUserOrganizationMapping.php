@@ -492,7 +492,7 @@ class TblUserOrganizationMapping extends ChildModel {
         if (!empty($this->user_id)) {
             $login_type = Yii::$app->general->getforeignkey($this->userMaster, 'login_type');
             if (!empty($login_type)) {
-                if ($login_type == 'vsp') {
+                if ($login_type == 'vsp' || $login_type == 'route_supervisor') {
                     if ((empty($this->dcs)) || count($this->dcs) != 1) {
                         $msg = empty($this->dcs) ? Yii::t('app', 'DCS') . ' cannot be blank.' : 'Allow to Map single ' . Yii::t('app', 'DCS');
                         $this->addError('dcs', Yii::t('app/validation', $msg));

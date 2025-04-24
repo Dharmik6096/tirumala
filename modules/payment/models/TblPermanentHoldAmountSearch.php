@@ -1,0 +1,110 @@
+<?php
+
+namespace app\modules\payment\models;
+
+use Yii;
+use yii\base\Model;
+use yii\data\ActiveDataProvider;
+use app\modules\payment\models\TblPermanentHoldAmount;
+
+/**
+ * This is the model class for table "tbl_permanent_hold_amount".
+ *
+ * @property integer $permanent_hold_amount_code
+ * @property string $union_code
+ * @property string $plant_code
+ * @property string $mcc_plant_code
+ * @property string $bmc_code
+ * @property string $dcs_code
+ * @property string $customer_type
+ * @property string $customer_code
+ * @property string $transaction_date
+ * @property integer $payment_cycle_code
+ * @property string $hold_amount
+ * @property string $release_date
+ * @property string $release_by
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
+ * @property string $originating_org_code
+ * @property string $originating_org_type
+ * @property integer $originating_type
+ */
+class TblPermanentHoldAmountSearch extends TblPermanentHoldAmount
+{
+    public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code, $f_dcs_code;
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'release_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['transaction_date', 'created_at', 'updated_at'], 'safe'],
+            [['payment_cycle_code', 'originating_type'], 'safe'],
+            [['actual_hold_amount','hold_amount','release_date'], 'safe'],
+            [['customer_type', 'customer_code'], 'safe'],
+            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code','f_dcs_code'],'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'],'required','on'=>'releasepayment'],
+            [['bank_code','branch_code','bank_account_no','ifsc','bank_name','branch_name','beneficiary_name','is_verified','from_date','to_date', 'release_amount'], 'safe'],
+        ];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function scenarios() {
+        // bypass scenarios() implementation in the parent class
+        return Model::scenarios();
+    }
+    
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function search($params, $release = false) {
+        $query = TblPermanentHoldAmount::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        $this->load($params);
+        $query->joinWith(['dcsCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_permanent_hold_amount', 'tbl_permanent_hold_amount', 'tbl_permanent_hold_amount');
+        if (!$this->validate()) {
+             $query->where('0=1');
+            return $dataProvider;
+        }
+        if($release){
+            $query->where(['tbl_permanent_hold_amount.is_verified' => 1]);
+            $query->andwhere(['>','tbl_permanent_hold_amount.hold_amount', 0]);
+        }
+
+        $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'cast(tbl_permanent_hold_amount.from_date as date)', $this->from_date]);
+
+        $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'cast(tbl_permanent_hold_amount.to_date as date)', $this->to_date]);
+
+        $query->andFilterWhere(['tbl_permanent_hold_amount.union_code' => $this->union_code])
+                ->andFilterWhere(['tbl_permanent_hold_amount.plant_code' => $this->plant_code])
+                ->andFilterWhere(['tbl_permanent_hold_amount.mcc_plant_code' => $this->mcc_plant_code])
+                ->andFilterWhere(['tbl_permanent_hold_amount.bmc_code' => $this->bmc_code])
+                ->andFilterWhere(['tbl_permanent_hold_amount.dcs_code' => $this->dcs_code]);
+
+        $query->andFilterWhere(['like', 'tbl_permanent_hold_amount.hold_amount', $this->hold_amount])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.bank_code', $this->bank_code])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.bank_name', $this->bank_name])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.branch_code', $this->branch_code])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.branch_name', $this->branch_name])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.ifsc', $this->ifsc])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.beneficiary_name', $this->beneficiary_name])
+                ->andFilterWhere(['like', 'tbl_permanent_hold_amount.is_verified', $this->is_verified]);
+        
+        return $dataProvider;
+    }
+}

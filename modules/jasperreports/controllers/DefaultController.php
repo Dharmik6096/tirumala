@@ -442,22 +442,22 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VendorBillElanad';
         return $this->actionIndex();
     }
-    
+
     public function actionMppSurvey() {
         $this->report = 'MppSurvey';
         return $this->actionIndex();
     }
-    
+
     public function actionVcgMeeting() {
         $this->report = 'VcgMeeting';
         return $this->actionIndex();
     }
-    
+
     public function actionMccChillingBill() {
         $this->report = 'MccChillingBill';
         return $this->actionIndex();
     }
-    
+
     public function actionMccChillingBillInvoice() {
         $this->report = 'MccChillingBillInvoice';
         return $this->actionIndex();
@@ -477,9 +477,34 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VspPaymentOnlineNawasa';
         return $this->actionIndex();
     }
-    
+
     public function actionBankAdvice() {
         $this->report = 'BankAdvice';
+        return $this->actionIndex();
+    }
+
+    public function actionMpgBillStatement() {
+        $this->report = 'MpgBillStatement';
+        return $this->actionIndex();
+    }
+
+    public function actionProductSaleInvoice() {
+        $this->report = 'ProductSaleInvoice';
+        return $this->actionIndex();
+    }
+
+    public function actionPrimaryTransporterMonthlyBill() {
+        $this->report = 'PrimaryTransporterMonthlyBill';
+        return $this->actionIndex();
+    }
+
+    public function actionPartyPaymentBill() {
+        $this->report = 'PartyPaymentBill';
+        return $this->actionIndex();
+    }
+
+    public function actionShiftWiseBill() {
+        $this->report = 'ShiftWiseBill';
         return $this->actionIndex();
     }
 
@@ -533,6 +558,10 @@ class DefaultController extends \app\controllers\ChildController {
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
             $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
+            if (isset(Yii::$app->params['language_mapping']) && isset(Yii::$app->params['language_mapping'][$controls['locale']])) {
+                $controls['locale'] = Yii::$app->params['language_mapping'][$controls['locale']];
+                $controls['REPORT_LOCALE'] = $controls['locale'] . '_IN';
+            }
             $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
@@ -543,7 +572,8 @@ class DefaultController extends \app\controllers\ChildController {
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
                     header('Content-Description: File Transfer');
-                    header('Content-Disposition: attachment; filename=' . $this->report . '.' . $this->type);
+                    $filename = !empty($this->data['filename']) ? $this->data['filename'] : $this->report;
+                    header('Content-Disposition: attachment; filename=' . $filename . '.' . $this->type);
                     header('Content-Transfer-Encoding: binary');
                     header('Content-Length: ' . strlen($this->output));
                     header('Content-Type: application/' . $this->type);
@@ -1035,6 +1065,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPaymentVrs',
                 'title' => 'Member Payment',
                 'bkg_export' => TRUE,
+                'filename' => 'MemberPayment',
             ],
             'VspPaymentVrs' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
@@ -1127,7 +1158,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'Member Payment',
             ],
             'VspPaymentNawasa' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_payment_cycle_code:default:dcs',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
                 'path' => 'vsp/VSPPaymentNawasa',
                 'scenario' => 'VSPPaymentNawasa',
                 'title' => 'Vsp Payment',
@@ -1143,6 +1174,41 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/BankAdvice',
                 'scenario' => 'BankAdvice',
                 'title' => '634 - Bank Advice',
+                'bkg_export' => TRUE,
+            ],
+            'MpgBillStatement' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/MPGBillStatement',
+                'scenario' => 'MpgBillStatement',
+                'title' => 'MPG Bill Statement',
+                'bkg_export' => TRUE,
+            ],
+            'ProductSaleInvoice' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/ProductSaleInvoice',
+                'scenario' => 'ProductSaleInvoice',
+                'title' => 'Total Sale Invoice',
+                'bkg_export' => TRUE,
+            ],
+            'PrimaryTransporterMonthlyBill' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_transporter_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/PrimaryTransporterMonthlyBill',
+                'scenario' => 'PrimaryTransporterMonthlyBill',
+                'title' => 'TPT Bill',
+                'bkg_export' => TRUE,
+            ],
+            'PartyPaymentBill' => [
+                'param' => 'p_union_code,p_party_master_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/PartyPaymentBill',
+                'scenario' => 'PartyPaymentBill',
+                'title' => 'TP Bill',
+                'bkg_export' => TRUE,
+            ],
+            'ShiftWiseBill' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:union_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_lang_code,locale,digit_config',
+                'path' => ['ELANAD' => 'vsp/ShiftWiseBill'],
+                'scenario' => 'ShiftWiseBill',
+                'title' => 'Shift Wise Bill',
                 'bkg_export' => TRUE,
             ],
         ];

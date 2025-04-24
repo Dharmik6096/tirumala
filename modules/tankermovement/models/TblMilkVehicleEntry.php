@@ -60,9 +60,10 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code'], 'required', 'except' => ['androidsync', 'importCsv']], [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'process_approval_code', 'remarks'], 'safe'],
-                [['gross_weight', 'tare_weight'], 'number'],
+                [['union_code', 'receipt_at', 'arrival_time', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code'], 'required', 'except' => ['androidsync', 'importCsv']],
+                [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'process_approval_code', 'remarks', 'dock_no'], 'safe'],
+                [['qty', 'gross_weight', 'tare_weight'], 'number'],
                 [['originating_type'], 'integer'],
                 [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
                     return $model->receipt_at == 'VENDOR';
@@ -73,19 +74,23 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
                 [['tare_weight_time'], 'validateTime', 'except' => ['androidsync', 'importCsv']],
                 [['plant_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
                 [['trip_code'], 'required', 'when' => function ($model) {
-                    return !($model->dispatch_from == 'PARTY');
-                }],
+                    $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL');
+                    return !($model->dispatch_from == 'PARTY') || $tripMandateOnReceipt == '1';
+                }, 'except' => ['androidsync']],
                 [['receipt_at'], 'AddBmcCode'],
                 [['tanker_no'], 'required', 'when' => function ($model) {
-                    return $model->dispatch_from == 'PARTY';
-                }],
+                    $tripMandateOnReceipt = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'trip_mandate_on_receipt', 'PORTAL');
+                    return $model->dispatch_from == 'PARTY' && $tripMandateOnReceipt != '1';
+                }, 'except' => ['androidsync']],
                 [['vehicle_code'], 'required', 'when' => function ($model) {
                     return !($model->dispatch_from == 'PARTY');
-                }, 'message' => 'Trip Code is required for the selected Source & Destination.'],
+                }, 'message' => 'Trip Code is required for the selected Source & Destination.', 'except' => ['androidsync']],
                 [['tanker_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
-                [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true],
+                [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true, 'except' => ['androidsync']],
+                [['approval_status'], 'default', 'value' => 'Pending', 'on' => ['androidsync']],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -129,6 +134,11 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             'pick_datetime' => Yii::t('app', 'Pick Datetime'),
             'response_datetime' => Yii::t('app', 'Response Datetime'),
             'response_msg' => Yii::t('app', 'Response Msg'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
 
@@ -310,7 +320,8 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         $this->receipt_datetime = date('Y-m-d', strtotime($this->receipt_datetime)) . ' ' . \Yii::$app->general->getshift($this->receipt_shift_code) . '.000000';
         $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
         if (!empty($stock_date) && $this->receipt_at == 'BMC') {
-            $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
+            //$dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
+            $dispatch_date = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date)));
             $dispatch_date .= '.000000';
             if ($this->receipt_datetime < $dispatch_date) {
                 $this->addError($attribute, Yii::t('app/validation', 'Receipt Datetime & shift must be greater than last stock entry.'));
@@ -319,4 +330,5 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         }
         return TRUE;
     }
+
 }

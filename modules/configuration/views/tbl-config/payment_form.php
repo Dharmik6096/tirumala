@@ -24,7 +24,6 @@ $defaultToggle = true;
                             'id' => 'userUpdatePsd',
                             'options' => [],
                             'validateOnBlur' => FALSE,
-                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
@@ -41,16 +40,17 @@ $defaultToggle = true;
                         </div>
                         <div class="col-sm-3">
                             <?= Html::hiddenInput('input', 1, ['id' => 'input']); ?>
-                            <?= Yii::$app->dropdown->processName($model, $form, 'tblconfig-config_for,input', 'process_name', $model->getAttributeLabel('process_name')); ?>
+                            <?= Html::hiddenInput('config_param', $config_param, ['id' => 'config_param']); ?>
+                            <?= Yii::$app->dropdown->processName($model, $form, 'config_param,input', 'process_name', $model->getAttributeLabel('process_name')); ?>
                         </div>
                         <div class="clearfix"></div>
                         <div class="col-sm-3">
                             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblconfig-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-3 mcc_error plant_hide">
                             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblconfig-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
                         </div>
-                        <div class="col-sm-3 bmc_class">
+                        <div class="col-sm-3 bmc_class bmc_error plant_hide">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblconfig-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
                         </div>
 
@@ -81,18 +81,38 @@ $script = "
     });
    
      function ViewTransaction(){
-     var confor = $('#tblconfig-config_for').val();
-     var union_code = $('#tblconfig-union_code').val();
-     var plant = $('#tblconfig-plant_code').val();
-     var mcc = $('#tblconfig-mcc_plant_code').val();
-     var bmc = $('#tblconfig-bmc_code').val();
-     var process = $('#tblconfig-process_name').val();
-        if(confor != '' && union_code!='' && plant !='' && mcc !='' && bmc !='' && process !=''){  
+        var union_code = $('#tblconfig-union_code').val();
+        var plant = $('#tblconfig-plant_code').val();
+        var mcc = $('#tblconfig-mcc_plant_code').val();
+        var bmc = $('#tblconfig-bmc_code').val();
+        var processName = $('#tblconfig-process_name').val();
+        var process = '';
+        var configFor = '';
+        if (processName && processName.includes('##')) {
+            var process_config = processName.split('##');
+            process = process_config[0];
+            configFor = process_config[1];
+        } 
+        $('.mcc_error').find('.help-block').remove();
+        $('.bmc_error').find('.help-block').remove();
+        
+        if (configFor == 'BMC') {
+            if (mcc == '' || bmc == '') {
+                if (mcc == '') {
+                    $('.mcc_error').append('<div class=\"help-block\">MCC Plant Code cannot be blank.</div>');
+                }
+                if (bmc == '') {
+                    $('.bmc_error').append('<div class=\"help-block\">BMC Code cannot be blank.</div>');
+                }
+                return; 
+            }
+        }
+        if(union_code!='' && plant !='' && process !=''){  
          $('#transaction_view').show(); 
         $.ajax({
                 type: 'get',
                 url: '" . Url::to(['payment-config-data']) . "',
-                data: {'config_for' : confor,'union_code':union_code,'plant':plant,'mcc':mcc,'bmc':bmc,'process':process},
+                data: {'config_for' : configFor,'union_code':union_code,'plant':plant,'mcc':mcc,'bmc':bmc,'process':process},
                 beforeSend:function(data) {
                 $('#loadercontent').show();
                 $('#pageloader').show();
@@ -115,7 +135,32 @@ $script = "
         $('#transaction_view').hide(); 
         }
     }
+    
+
+    $(document).ready(function() {
     $('#configSetModal').modal('toggle');
+
+    $('#tblconfig-process_name').on('change',function(){
+        var process_name = $(this).val();
+        var configFor = process_name.split('##')[1];
+        hideHierarchy(configFor);
+    });
+    
+    var initialProcessName = $('#tblconfig-process_name').val();
+    var initialConfigFor = initialProcessName.split('##')[1];
+    hideHierarchy(initialConfigFor);
+        
+    function hideHierarchy(configFor) {
+        $('.plant_hide').hide();
+        if (configFor == 'PLANT') {
+            $('.plant_hide').hide();
+            $('#tblconfig-mcc_plant_code').val('');
+            $('#tblconfig-bmc_code').val('');
+        } else {
+            $('.plant_hide').show();
+        }
+    }  
+    });
 ";
 
 $this->registerJs($script, View::POS_END, 'panel-before-hide');

@@ -171,6 +171,10 @@ if (!empty($filter_data)) {
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, $field_class . '-transporter_code', 'form-group col-sm-3'); ?>
                                             </div>
+                                        <?php } else if (isset($value_array[1]) && $value_array[1] == 'union_vehicle') { ?>
+                                            <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, $field_class . '-f_union_code', 'form-group col-sm-3'); ?>
+                                            </div>
                                         <?php } else { ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code'); ?>
@@ -329,11 +333,12 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name', 'trip_status', 'status'))) {
+                                        $flag  = isset($value_array[1]) ? $value_array[1] : $value;
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic(($value == 'transfer_types') ? 'transfer_type' : $value, $model, $form, 'form-group', false, false, $value, false); ?>
+                                            <?= Yii::$app->dropdown->dropdownStatic(($flag == 'transfer_types') ? 'transfer_type' : $flag, $model, $form, 'form-group', false, false, $value, false); ?>
                                         </div>
                                     <?php } ?>
                                     <?php

@@ -55,13 +55,11 @@ class TblLocalMilkSale extends \app\models\ChildModel {
         return [
             [['datetime_of_sale', 'milk_type_code', 'milk_class', 'shift_code', 'qty', 'qty_mode', 'converted_qty', 'converted_qty_mode', 'rate', 'discount', 'amount', 'credit', 'coupon', 'cash', 'member_code', 'payment_mode', 'union_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'consumer_code', 'consumer_type'], 'safe'],
             [['union_code'], 'required', 'on' => ['androidsync']],
-            [['local_milk_sale_code'], 'required'],
             [['amount', 'discount', 'rate'], 'number'],
             [['payment_mode'], 'integer'],
-            [['local_milk_sale_code'], 'string', 'max' => 20],
-            [['member_code'], 'string', 'max' => 11],
+            [['member_code'], 'string', 'max' => 20],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['dcs_code'], 'string', 'max' => 9],
+            [['dcs_code'], 'string', 'max' => 12],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
         ];

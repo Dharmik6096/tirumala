@@ -62,7 +62,7 @@ class TblVehicleTripHistory extends \yii\db\ActiveRecord {
                 [['plant_code', 'mcc_plant_code'], 'safe'],
                 [['bmc_code'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_active'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no'], 'safe'],
         ];
     }
 
@@ -99,6 +99,10 @@ class TblVehicleTripHistory extends \yii\db\ActiveRecord {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'trip_sub_status' => Yii::t('app', 'Trip Sub Status'),
+            'sub_status_time' => Yii::t('app', 'Sub Status Time'),
+            'driver_name' => Yii::t('app', 'Driver Name'),
+            'mobile_no' => Yii::t('app', 'Mobile No'),
         ];
     }
 

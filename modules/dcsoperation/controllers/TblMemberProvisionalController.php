@@ -44,6 +44,7 @@ use app\modules\dcsoperation\models\TblMemberProvisionalAnimalDetailsSearch;
 use app\modules\dcsoperation\models\TblMemberShareDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberFamilyDetailsHistory;
+use app\modules\general\models\TblProcessApprovalSearch;
 use Exception;
 
 /**
@@ -60,7 +61,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     public function actionIndex() {
         $searchModel = new TblMemberProvisionalSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        Url::remember(Yii::$app->request->url, 'member-provisional-index');
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
@@ -96,6 +97,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $shareMemberModel->provisional_member_code = $id;
         $shareDataProvider = $shareMemberModel->search(Yii::$app->request->queryParams);
 
+        $processApprovalModel = new TblProcessApprovalSearch();
+        $processApprovalModel->process_name = 'member';
+        $processApprovalModel->process_code = $id;
+        $processApprovalDataProvider = $processApprovalModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $this->model,
                     'dataProvider' => $dataProvider,
@@ -108,6 +114,18 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     'animalDataProvider' => $animalDataProvider,
                     'shareMemberModel' => $shareMemberModel,
                     'shareDataProvider' => $shareDataProvider,
+                    'processApprovalModel' => $processApprovalModel,
+                    'processApprovalDataProvider' => $processApprovalDataProvider
+        ]);
+    }
+
+    public function actionViewAttachment($id) {
+        $attachmentModel = new TblAttachment();
+        $attachmentModel->module_code = $id;
+        $attachmentModel->module_name = 'tbl_member_provisional';
+        $attachments = $attachmentModel->attachmentCode;
+        return $this->render('view_attachment', [
+                    'attachments' => $attachments
         ]);
     }
 
@@ -123,6 +141,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $validate = 1;
         if (isset($this->model->scenarios()[Yii::$app->session['eiplCode']])) {
             $this->model->scenario = Yii::$app->session['eiplCode'];
+        } else {
+            $this->model->scenario = 'createProvisionalMember';
         }
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->is_approved = 0;
@@ -331,6 +351,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             if (strtolower($model->provisional_status) == 'approve') {
                                 $model->member_status = 1; //Created
                             }
+                            $model->scenario = 'MemberDocument';
                             $save_model[] = $model;
                         } else {
                             if (Yii::$app->request->post('request_button') === 'approve') {
@@ -352,43 +373,56 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                     }
                                 }
                             } else {
+                                $model->scenario = 'MemberDocument';
                                 $model->is_approved = 0;
                                 $model->provisional_status = 'Pending';
                                 $save_model[] = $model;
                             }
                         }
-                        if (empty($member_error)) {
-                            $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
-                            if ($transaction == 'customRedirect') {
-                                if (strtolower($model->provisional_status) == 'approve') {
-                                    $baseDir = Yii::getAlias('@webroot') . '/' . Yii::$app->params['document_upload'];
-                                    $memberDir = $baseDir . 'member';
-                                    $proMemberDir = $baseDir . 'provisional_member';
-                                    if (!empty($unlink_files)) {
-                                        foreach ($unlink_files as $file) {
-                                            if (file_exists($memberDir . '/' . $file)) {
-                                                unlink($memberDir . '/' . $file);
+                        if ($model->validate()) {
+                            if (empty($member_error)) {
+                                $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
+                                if ($transaction == 'customRedirect') {
+                                    if (strtolower($model->provisional_status) == 'approve') {
+                                        $baseDir = Yii::getAlias('@webroot') . '/' . Yii::$app->params['document_upload'];
+                                        $memberDir = $baseDir . 'member';
+                                        $proMemberDir = $baseDir . 'provisional_member';
+                                        if (!empty($unlink_files)) {
+                                            foreach ($unlink_files as $file) {
+                                                if (file_exists($memberDir . '/' . $file)) {
+                                                    unlink($memberDir . '/' . $file);
+                                                }
+                                            }
+                                        }
+                                        for ($i = 0; $i < count($all_doc); $i++) {
+                                            $fileName = basename($memberdoc[$i]);
+                                            $file = $memberDir . '/' . $fileName;
+                                            $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
+                                            if ($upload) {
+                                                if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
+                                                    unlink($proMemberDir . '/' . $all_doc[$i]);
+                                                }
                                             }
                                         }
                                     }
-                                    for ($i = 0; $i < count($all_doc); $i++) {
-                                        $fileName = basename($memberdoc[$i]);
-                                        $file = $memberDir . '/' . $fileName;
-                                        $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
-                                        if ($upload) {
-                                            if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
-                                                unlink($proMemberDir . '/' . $all_doc[$i]);
-                                            }
-                                        }
-                                    }
+                                    $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                                } else {
+                                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                                    $record = ['status' => 'error', 'msg' => $msg];
                                 }
-                                $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                                $searchUrl = Url::previous('member-provisional-index');
+                                $record = ['status' => 'success', 'msg' => $this->redirect($searchUrl ? $searchUrl : ['index'])];
                             } else {
-                                $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                                $record = ['status' => 'error', 'msg' => $msg];
+                                $record = ['status' => 'error', 'msg' => $member_error . ' in Member'];
                             }
                         } else {
-                            $record = ['status' => 'error', 'msg' => $member_error . ' in Member'];
+                            $member_massege = '';
+                            if (!empty($model->getErrors())) {
+                                foreach ($model->getErrors() as $m) {
+                                    $member_massege = $member_massege . $m[0] . '<br>';
+                                }
+                            }
+                            $record = ['status' => 'error', 'msg' => $member_massege];
                         }
                     } else {
                         $record = ['status' => 'error', 'msg' => 'Documnet already available for ' . $msg];
@@ -511,6 +545,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 }
                 $tblMember->scenario = 'ApprovalMember';
                 $tblMember->attributes = $memberModel->attributes;
+                $tblMember->is_verified = $memberModel->is_verify;
                 $tblMember->member_code = ($memberModel->provisional_from == 'mobile_update') ? $memberCode : $tblMember->getCode();
                 $historyModel = new TblMemberProvisionalHistory();
                 Yii::$app->operation->history($memberModel, $historyModel, UPDATE);

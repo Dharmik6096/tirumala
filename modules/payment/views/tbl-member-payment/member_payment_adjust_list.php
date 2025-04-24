@@ -19,6 +19,8 @@ $config = (isset(Yii::$app->session->get('unionConfig')[$aliasModel->union_code]
 $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['milk_short_recovery_member']) ? Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['milk_short_recovery_member'] : 0;
 $urlForPost = ['member-payment-adjust', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code];
 
+$member_payment_hold_type = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_payment_hold_type', 'PORTAL') > 0 ? true : false;
+
 $shortage_info = '';
 $shortage_pending_info = '';
 $shortage_amount = 0;
@@ -93,6 +95,9 @@ $tot_amt = array_sum(array_map(function ($array) {
                                 <th><?= Yii::t('app', 'Previous Hold(+)') ?></th>
                                 <th><?= Yii::t('app', 'Previous Due(-)') ?></th>
                                 <th><?= Yii::t('app', 'Final Pay') ?></th>
+                                <?php if ($member_payment_hold_type) { ?>
+                                    <th><?= Yii::t('app', 'Hold Type') ?></th>
+                                <?php } ?>
                                 <th><?= Yii::t('app', 'Hold Amount(-)') ?></th>
                                 <th><?= Yii::t('app', 'Additional Pay(+)') ?></th>
                                 <?php if ($milk_short_recovery_member == '1') { ?>
@@ -149,6 +154,25 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td><?= $m['previous_hold'] ?></td>
                                     <td><?= $m['previous_due'] ?></td>
                                     <td class='final-amount'><?= $m['net_payable'] ?></td>
+                                    <?php
+                                    if($member_payment_hold_type){ ?>
+                                        <td class="no_padding_input hide_help_block">
+                                            <?php 
+                                                $holdTypeData = Yii::$app->dropdown->getRecords('hold_type')['data'];
+                                                echo $form->field($model, 'hold_type', ['options' => ['class' => 'hold-type']])->dropDownList(
+                                                    $holdTypeData,
+                                                    [
+                                                        'prompt' => Yii::t('app', 'Select'),
+                                                        'class' => 'hold_type form-control',
+                                                        'id' => 'tblmemberpaymentalias-hold_type-' . $index,
+                                                        'name' => 'TblMemberPaymentAlias[hold_type][' . $index . ']',
+                                                        'options' => [$m['hold_type'] => ['Selected' => true]]
+                                                    ]
+                                                )->label(false); 
+                                            ?>
+                                        </td>
+                                    <?php
+                                    } ?>
                                     <td class="no_padding_input hide_help_block">
                                         <?php
                                         echo Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $m['member_payment_alias_code']]);
@@ -262,10 +286,12 @@ $tot_amt = array_sum(array_map(function ($array) {
                         'beforeSend' => new JsExpression('function(data){
                                             $(".process_lock_flag_member").val("Process");
                                             var negativeVal = "No";
+                                            var permanentAndPossitiveValue = "No";
                                             $(".final-amount").each(function() {
                                                 var parent = $(this).parents("tr");
                                                 var final = parseFloat(parent.find(".final-amount").text());
                                                 var netPay = parseFloat(parent.find(".net-amount").val());
+                                                var holdType = parent.find(".hold_type").val();
                                                 if(final == "" ||  isNaN(final)){
                                                     final=0;
                                                 }
@@ -274,12 +300,18 @@ $tot_amt = array_sum(array_map(function ($array) {
                                                         negativeVal = "Yes";
                                                     }
 //                                                }
+                                                if(holdType == "permanent" && netPay > 0){
+                                                    permanentAndPossitiveValue = "Yes";
+                                                }
                                             });
                                             var message = "' . $message . '";
                                             var negativeCount = ' . $negativeValCount . ';
                                             var dispMessage = "";
                                             if(negativeCount > 0 || negativeVal == "Yes") {
                                                 dispMessage = dispMessage+"' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+                                            }
+                                            if(permanentAndPossitiveValue == "Yes") {
+                                                dispMessage = dispMessage+"<br>Net Payable value must be zero for all users when Hold Type is Permanent";
                                             }
                                             if(milk_short_recovery_member == 1){
                                                 var pending_shortage = parseFloat(0.00);
@@ -362,24 +394,17 @@ $tot_amt = array_sum(array_map(function ($array) {
 $script = "
 var milk_short_recovery_member = $milk_short_recovery_member;
 function SumAmount()
- {
+{
     var total = parseFloat(0.00);
-    $('.adjust-amount').each(function() {
-        var adjust =  parseFloat($(this).val());
-        if(adjust != '' &&  !isNaN(adjust)){
-            total = total + adjust;  
+    $('.net-amount').each(function() {
+        var netAmount =  parseFloat($(this).val());
+        if(netAmount != '' &&  !isNaN(netAmount)){
+            total = total + netAmount;  
         }
-    }).get();
-    $('.hold-amount').each(function() {
-        var hold =  parseFloat($(this).val());
-        if(hold != '' &&  !isNaN(hold)){
-            total = total - hold;  
-        }
-    }).get();
+    });
     if(milk_short_recovery_member == 1){
         shortageRecovery();
     }
-    total=$tot_amt+total;
     $('#total-payment').html('Total Payable :: '+total.toFixed(2));
 }
 
@@ -410,7 +435,8 @@ function SumAmountold()
     }).get();
     total=$tot_amt+total;
     $('#total-payment').html('Total Payable :: '+total.toFixed(2));
-} 
+}
+
 // $('.kv-panel-before').hide();
  
 

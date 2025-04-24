@@ -40,10 +40,9 @@ $attribute = [
         'value' => function ($model) {
             $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
             $sourceCode = !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code;
-            $rel = Yii::$app->general->getDestRelation($sourceType);
-            $att = strtolower($sourceType) == 'bmc' ? 'bmc_name' : (strtolower($sourceType) == 'vendor' ? 'customer_name' : (strtolower($sourceType) == 'party' ? 'party_name' : 'name'));
-            if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->$rel, $att) . '-' . $sourceCode;
+            $response = Yii::$app->general->getColumnName($sourceType);
+            if (!empty($response['rel']))
+                return Yii::$app->general->getforeignkey($model->{$response['rel']}, $response['name']) . '-' . $sourceCode;
         }, 'vAlign' => 'middle', 'filter' => false
     ],
     [
@@ -59,9 +58,9 @@ $attribute = [
         'label' => (Yii::t('app', 'Source Ref.Code')),
         'value' => function ($model) {
             $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
-            $rel = Yii::$app->general->getDestRelation($sourceType);
-            if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->$rel, 'ref_code');
+            $response = Yii::$app->general->getColumnName($sourceType);
+            if (!empty($response['rel']))
+                return Yii::$app->general->getforeignkey($model->{$response['rel']}, $response['ref_code']);
         }, 'vAlign' => 'middle'
     ],
     [
@@ -105,7 +104,14 @@ $attribute = [
     ['attribute' => 'rejected_count'],
     ['attribute' => 'grn_no'],
     ['attribute' => 'trip_mode'],
-    ['attribute' => 'trip_status'],
+    ['attribute' => 'trip_status', 'filter' => false],
+    ['attribute' => 'trip_sub_status'],
+    ['attribute' => 'is_auto_trip', 'label' => Yii::t('app', 'Is Partial Trip?'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_auto_trip'),
+        'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_auto_trip');
+        }
+    ],
 ];
 
 $grid_option = [
@@ -114,6 +120,25 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'view' => TRUE,
+        'update' => function ($url, $model) {
+            $class = ($model->trip_status != 'closed') ? '' : 'link-disable';
+            $options = [
+                'class' => 'edit-trip ' . $class,
+                'title' => Yii::t('app', 'Edit Trip Detail'),
+                'data-toggle' => 'tooltip',
+                'data-placement' => 'top',
+            ];
+
+            $updatedUrl = Url::to(['/tankermovement/tbl-vehicle-trip/update', 'id' => $model->vehicle_trip_code]);
+            if ($model->trip_for == 'salesparty') {
+                $updatedUrl = Url::to([
+                            '/tankermovement/tbl-vehicle-trip/update-with-party',
+                            'id' => $model->vehicle_trip_code,
+                            'type' => 'party'
+                ]);
+            }
+            return Html::a('<i class="fa fa-pencil"></i>', $updatedUrl, $options);
+        },
         'generate-challan' => function ($url, $model) {
             $disable = ($model->trip_status == 'open') ? FALSE : TRUE;
             $disable = ($model->is_active == 1) ? $disable : TRUE;
@@ -127,8 +152,8 @@ $grid_option = [
                 return GhostHtml::a(
                                 '<i class="fa fa-cog"></i>',
                                 [
-                                    '/tankermovement/tbl-vehicle-trip/generate-challan',
-                                    'id' => $model->vehicle_trip_code
+                            '/tankermovement/tbl-vehicle-trip/generate-challan',
+                            'id' => $model->vehicle_trip_code
                                 ],
                                 $options
                 );
@@ -164,6 +189,14 @@ $grid_option = [
                 $options = ['title' => Yii::t('app', 'In-Active Trip'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'In-Active Trip'), 'class' => 'inactive-trip', 'data-val' => $model->vehicle_trip_code, 'data-name' => $model->trip_code];
                 return GhostHtml::a_alert('<i class="fa fa-ban"></i>', ['/tankermovement/tbl-vehicle-trip/inactive-trip', 'id' => $model->vehicle_trip_code], $options);
             }
+        },
+        'inspection' => function ($url, $model) {
+            $disabled = ($model->trip_status == 'closed' && $model->trip_sub_status == 'qa_pending') ? '' : 'disabled';
+            return GhostHtml::a('<i class="glyphicon glyphicon-plus"></i>', ['/tankermovement/tbl-vehicle-qa-inspection/create', 'tripcode' => $model->trip_code], ['class' => $disabled]);
+        },
+        'map' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Map', 'data-val' => $model->trip_code];
+            return GhostHtml::a('<i class="fa fa-map-marker"></i>', ['/tankermovement/tbl-vehicle-trip/map', 'trip_code' => $model->trip_code], $options);
         },
     ]
 ];

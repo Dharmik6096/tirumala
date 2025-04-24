@@ -326,7 +326,7 @@ $defaultToggle = true;
                                             <?php
                                         }
                                         if (in_array($value, array('p_provisional_member_code', 'p_mpp_survey_id', 'p_VCG_M_Id'))) {
-                                            if(Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['code'])){
+                                            if (Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['code'])) {
                                                 $model->{$value} = Yii::$app->request->queryParams['code'];
                                             }
                                             echo Html::activeHiddenInput($model, $value);
@@ -364,6 +364,20 @@ $defaultToggle = true;
                                             if (in_array($value, array('p_billing_for'))) {
                                                 echo Yii::$app->dropdown->dropdownStatic('billing_for', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value), false, $value, false);
                                             }
+                                            if (in_array($value, array('p_transporter_code'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->all_route_transporter($model, $form, 'reportsmodel-p_plant_code,reportsmodel-p_mcc_code,reportsmodel-p_bmc_code', 'p_transporter_code', $model->getAttributeLabel('Transporter'), FALSE, '', FALSE, TRUE); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                            if (in_array($value, array('p_party_master_code'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->dropdown('party_master', $model, $form, '', 'Party', FALSE, 'p_party_master_code'); ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
@@ -375,7 +389,7 @@ $defaultToggle = true;
                                         echo Html::activeHiddenInput($model, 'p_route_name');
                                         $model->p_report_name = Html::encode($this->title);
                                         echo Html::activeHiddenInput($model, 'p_report_name');
-                                        
+
                                         echo Html::activeHiddenInput($model, 'locale');
                                         echo Html::activeHiddenInput($model, 'digit_config');
                                         ?>
@@ -399,7 +413,7 @@ $defaultToggle = true;
                                         <?php
                                         if (isset($data['tcpdf']) && $data['tcpdf']) {
                                             $client_code = \Yii::$app->session->get('eiplCode');
-                                            $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] :'pdf';
+                                            $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] : 'pdf';
                                             $iconClass = ' fa fa-file-pdf-o ';
                                             if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
                                                 $titleTcpdf = 'Milktype Wise Bill';

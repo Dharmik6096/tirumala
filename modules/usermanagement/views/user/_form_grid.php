@@ -56,7 +56,7 @@ $attribute = [
     [
         'attribute' => 'email',
         'format' => 'raw',
-        'visible' => User::hasPermission('viewUserEmail'),
+        'visible' => true,
     ],
         [
         'attribute' => 'mobile_no',
