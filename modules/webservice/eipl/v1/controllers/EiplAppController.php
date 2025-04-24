@@ -23,9 +23,24 @@ class EiplAppController extends MasterController {
         $modelSave = [];
         $model = new TblEiplAppLogin();
         $model->attributes = Yii::$app->request->getRawBody();
-        $model->app_type = 1;
-        $detail = $model->MobileNoDetail();
-        if (!empty($detail)) {
+        $model->app_type = empty($model->app_type) ? 1 : $model->app_type;
+        if ($model->login_type == 'DRIVER') {
+            $detail = $model->DriverMobileNoDetail()->asArray()->all();
+        } else {
+            $detail = $model->MobileNoDetail();
+        }
+        //login_type = MEMBER,DCS,BMC,MCC,PLANT,UNION,ROUTE,DRIVER
+        if (!empty($model->login_type)) {
+            $isValid = FALSE;
+            foreach ($detail as $key => $subArr) {
+                if ($model->login_type == $detail[$key]['login_type']) {
+                    $isValid = TRUE;
+                }
+            }
+        } else {
+            $isValid = TRUE;
+        }
+        if ($isValid && !empty($detail)) {
             $temp_model = new TblEiplAppLoginTemp();
             $temp_model->attributes = $model->attributes;
             $temp_model->union_code = $detail[0]['union_code'];
@@ -73,7 +88,7 @@ class EiplAppController extends MasterController {
         $content = Yii::$app->request->getRawBody();
         $temp_model = new TblEiplAppLoginTemp();
         $temp_model->setAttributes($content);
-        $temp_model->app_type = 1;
+        $temp_model->app_type = empty($temp_model->app_type) ? 1 : $temp_model->app_type;
         $temp_model = $temp_model->activationInfo();
         if (!empty($temp_model)) {
             $model = new TblEiplAppLogin();
@@ -81,11 +96,13 @@ class EiplAppController extends MasterController {
             $model->setAttributes($content);
             if ($model->login_type == 'MEMBER') {
                 $query = $model->memberMobileDetail();
+            } elseif ($model->login_type == 'DRIVER') {
+                $query = $model->DriverMobileNoDetail();
             } else {
                 $query = $model->orgMobileDetail();
             }
             $detail = $query->asArray()->all();
-            if (!empty($detail) && count($detail) == 1) {
+            if (!empty($detail) && (count($detail) == 1 || $model->login_type == 'DRIVER')) {
                 $exist = $model->getLogin();
                 if (!empty($exist)) {
                     if ($exist->is_block == 1) {
@@ -151,102 +168,108 @@ class EiplAppController extends MasterController {
             }
             $model = new TblEiplAppLogin();
             $model->mobile_no = Yii::$app->eiplapp->identity->mobile_no;
-            $model->app_type = 1;
+            $model->app_type = empty(Yii::$app->eiplapp->identity->app_type) ? 1 : Yii::$app->eiplapp->identity->app_type;
             $model->module_code = $identity->module_code;
             if ($identity->login_type == 'MEMBER') {
                 $query = $model->memberMobileDetail();
+            } elseif ($identity->login_type == 'DRIVER') {
+                $query = $model->DriverMobileNoDetail();
             } else {
                 $query = $model->orgMobileDetail();
             }
             $detail = $query->asArray()->all();
-            if (!empty($detail) && count($detail) == 1) {
+            if (!empty($detail) && (count($detail) == 1 || $identity->login_type == 'DRIVER')) {
                 $identity->attributes = $detail[0];
                 $content = Yii::$app->request->getRawBody();
                 $identity->version_no = !empty($content['version_no']) ? $content['version_no'] : $identity->version_no;
-                if ($identity->login_type != 'MEMBER' && !empty($identity->loginOrg)) {
-                    $identity->login_type = $identity->loginOrg[0]->organization_type;
+                if ($identity->login_type != 'DRIVER') {
+                    if ($identity->login_type != 'MEMBER' && !empty($identity->loginOrg)) {
+                        $identity->login_type = $identity->loginOrg[0]->organization_type;
+                    }
                 }
                 $transaction = $this->generalModel->saveTransaction([$identity], ['app login', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    $masterCode = [];
-                    if ($identity->login_type != 'MEMBER' && !empty(Yii::$app->eiplapp->identity->loginOrg)) {
-                        // if (empty($identity->master_code)) {
-                        $appOrgMap = new TblAppOrganizationMapping();
-                        $appOrgMap->mobile_no = $identity->mobile_no;
-                        $masterCode = $appOrgMap->getData();
-                    } else {
-                        $masterCode[] = $identity->master_code;
-                    }
-                    $masterType = $identity->login_type;
-                    $union_url = 'union/master';
-                    $plant_url = 'plant/master';
-                    $mcc_url = 'mcc/master';
-                    $bmc_url = 'bmc/master';
-                    $dcs_url = 'dcs/master';
-                    $member_url = 'member/master';
-                    $route_url = 'route/master';
-                    switch ($masterType) {
-                        case 'UNION':
-                            $union = $this->getOrgInfo($masterCode, $masterType, $union_url);
-                            break;
-                        case 'PLANT':
-                            $plant = $this->getOrgInfo($masterCode, $masterType, $plant_url);
-                            $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
-                            $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
-                            break;
-                        case 'MCC':
-                            $mcc = $this->getOrgInfo($masterCode, $masterType, $mcc_url);
-                            $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
-                            $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
-                            $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
-                            $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
-                            break;
-                        case 'BMC':
-                            $bmc = $this->getOrgInfo($masterCode, $masterType, $bmc_url);
-                            $mccCode = ArrayHelper::map($bmc, 'mcc_plant_code', 'mcc_plant_code');
-                            $mcc = $this->getOrgInfo($mccCode, 'MCC', $mcc_url);
-                            $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
-                            $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
-                            $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
-                            $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
-                            break;
-                        case 'ROUTE':
-                            $route = $this->getOrgInfo($masterCode, $masterType, $route_url);
-                            $routeCode = ArrayHelper::map($route, 'route_code', 'route_code');
-                            $dcs = $this->getOrgInfo($routeCode, 'ROUTE', $dcs_url);
-                            $bmcCode = ArrayHelper::map($dcs, 'bmc_code', 'bmc_code');
-                            $bmc = $this->getOrgInfo($bmcCode, 'BMC', $bmc_url);
-                            $mccCode = ArrayHelper::map($bmc, 'mcc_plant_code', 'mcc_plant_code');
-                            $mcc = $this->getOrgInfo($mccCode, 'MCC', $mcc_url);
-                            $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
-                            $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
-                            $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
-                            $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
-                            break;
-                        case 'DCS':
-                            $dcs = $this->getOrgInfo($masterCode, $masterType, $dcs_url);
-                            $bmcCode = ArrayHelper::map($dcs, 'bmc_code', 'bmc_code');
-                            $bmc = $this->getOrgInfo($bmcCode, 'BMC', $bmc_url);
-                            $mccCode = ArrayHelper::map($bmc, 'mcc_plant_code', 'mcc_plant_code');
-                            $mcc = $this->getOrgInfo($mccCode, 'MCC', $mcc_url);
-                            $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
-                            $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
-                            $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
-                            $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
-                            break;
-                        case 'MEMBER':
-                            $member = $this->getOrgInfo($masterCode, $masterType, $member_url);
-                            $dcsCode = ArrayHelper::map($member, 'dcs_code', 'dcs_code');
-                            $dcs = $this->getOrgInfo($dcsCode, 'DCS', $dcs_url);
-                            $bmcCode = ArrayHelper::map($dcs, 'bmc_code', 'bmc_code');
-                            $bmc = $this->getOrgInfo($bmcCode, 'BMC', $bmc_url);
-                            $mccCode = ArrayHelper::map($bmc, 'mcc_plant_code', 'mcc_plant_code');
-                            $mcc = $this->getOrgInfo($mccCode, 'MCC', $mcc_url);
-                            $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
-                            $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
-                            $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
-                            $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
-                            break;
+                    if ($model->login_type != 'DRIVER') {
+                        $masterCode = [];
+                        if ($identity->login_type != 'MEMBER' && !empty(Yii::$app->eiplapp->identity->loginOrg)) {
+                            // if (empty($identity->master_code)) {
+                            $appOrgMap = new TblAppOrganizationMapping();
+                            $appOrgMap->mobile_no = $identity->mobile_no;
+                            $masterCode = $appOrgMap->getData();
+                        } else {
+                            $masterCode[] = $identity->master_code;
+                        }
+                        $masterType = $identity->login_type;
+                        $union_url = 'union/master';
+                        $plant_url = 'plant/master';
+                        $mcc_url = 'mcc/master';
+                        $bmc_url = 'bmc/master';
+                        $dcs_url = 'dcs/master';
+                        $member_url = 'member/master';
+                        $route_url = 'route/master';
+                        switch ($masterType) {
+                            case 'UNION':
+                                $union = $this->getOrgInfo($masterCode, $masterType, $union_url);
+                                break;
+                            case 'PLANT':
+                                $plant = $this->getOrgInfo($masterCode, $masterType, $plant_url);
+                                $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
+                                $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
+                                break;
+                            case 'MCC':
+                                $mcc = $this->getOrgInfo($masterCode, $masterType, $mcc_url);
+                                $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
+                                $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
+                                $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
+                                $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
+                                break;
+                            case 'BMC':
+                                $bmc = $this->getOrgInfo($masterCode, $masterType, $bmc_url);
+                                $mccCode = ArrayHelper::map($bmc, 'mcc_plant_code', 'mcc_plant_code');
+                                $mcc = $this->getOrgInfo($mccCode, 'MCC', $mcc_url);
+                                $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
+                                $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
+                                $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
+                                $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
+                                break;
+                            case 'ROUTE':
+                                $route = $this->getOrgInfo($masterCode, $masterType, $route_url);
+                                $routeCode = ArrayHelper::map($route, 'route_code', 'route_code');
+                                $dcs = $this->getOrgInfo($routeCode, 'ROUTE', $dcs_url);
+                                $bmcCode = ArrayHelper::map($dcs, 'bmc_code', 'bmc_code');
+                                $bmc = $this->getOrgInfo($bmcCode, 'BMC', $bmc_url);
+                                $mccCode = ArrayHelper::map($bmc, 'mcc_plant_code', 'mcc_plant_code');
+                                $mcc = $this->getOrgInfo($mccCode, 'MCC', $mcc_url);
+                                $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
+                                $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
+                                $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
+                                $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
+                                break;
+                            case 'DCS':
+                                $dcs = $this->getOrgInfo($masterCode, $masterType, $dcs_url);
+                                $bmcCode = ArrayHelper::map($dcs, 'bmc_code', 'bmc_code');
+                                $bmc = $this->getOrgInfo($bmcCode, 'BMC', $bmc_url);
+                                $mccCode = ArrayHelper::map($bmc, 'mcc_plant_code', 'mcc_plant_code');
+                                $mcc = $this->getOrgInfo($mccCode, 'MCC', $mcc_url);
+                                $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
+                                $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
+                                $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
+                                $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
+                                break;
+                            case 'MEMBER':
+                                $member = $this->getOrgInfo($masterCode, $masterType, $member_url);
+                                $dcsCode = ArrayHelper::map($member, 'dcs_code', 'dcs_code');
+                                $dcs = $this->getOrgInfo($dcsCode, 'DCS', $dcs_url);
+                                $bmcCode = ArrayHelper::map($dcs, 'bmc_code', 'bmc_code');
+                                $bmc = $this->getOrgInfo($bmcCode, 'BMC', $bmc_url);
+                                $mccCode = ArrayHelper::map($bmc, 'mcc_plant_code', 'mcc_plant_code');
+                                $mcc = $this->getOrgInfo($mccCode, 'MCC', $mcc_url);
+                                $plantCode = ArrayHelper::map($mcc, 'plant_code', 'plant_code');
+                                $plant = $this->getOrgInfo($plantCode, 'PLANT', $plant_url);
+                                $unionCode = ArrayHelper::map($plant, 'union_code', 'union_code');
+                                $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
+                                break;
+                        }
                     }
 
 //            $schedulerModel = new TblUserAppScheduler();
@@ -261,10 +284,14 @@ class EiplAppController extends MasterController {
 //                $eveningEndTime = $schedulerModelData->e_end_time;
 //            }
                     $profile_data = [];
-                    $profile_data['name'] = (strtoupper($identity->login_type) == 'MEMBER') ? Yii::$app->general->getforeignkey($identity->masterDetail, 'member_name') : (Yii::$app->general->getforeignkey($identity->masterDetail, 'firstname') . ' ' . Yii::$app->general->getforeignkey($identity->masterDetail, 'lastname') . ' ' . Yii::$app->general->getforeignkey($identity->masterDetail, 'surname'));
+                    if ($identity->login_type == 'DRIVER') {
+                        $profile_data['name'] = $detail[0]['module_name'];
+                    } else {
+                        $profile_data['name'] = (strtoupper($identity->login_type) == 'MEMBER') ? Yii::$app->general->getforeignkey($identity->masterDetail, 'member_name') : (Yii::$app->general->getforeignkey($identity->masterDetail, 'firstname') . ' ' . Yii::$app->general->getforeignkey($identity->masterDetail, 'lastname') . ' ' . Yii::$app->general->getforeignkey($identity->masterDetail, 'surname'));
+                    }
                     $profile_data['user_type'] = $identity->login_type;
                     $profile_data['mobile_no'] = $identity->mobile_no;
-                    $profile_data['email'] = Yii::$app->general->getforeignkey($identity->masterDetail, 'email');
+                    $profile_data['email'] = ($identity->login_type != 'DRIVER') ? Yii::$app->general->getforeignkey($identity->masterDetail, 'email') : '';
 //                    $profile_data['department'] = Yii::$app->general->getforeignkey($identity->departmentCode, 'department');
                     $company_detail = [];
                     $company_detail['union'] = count($union) == 1 ? stripcslashes($union[0]['union_name'] . '\n' . $union[0]['union_code']) : '';

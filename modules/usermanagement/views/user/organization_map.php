@@ -180,7 +180,7 @@ $script = "
             $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/organisation/tbl-plant/get-union-plant']) . "',    
-                        data: 'union='+union+'&RLS=FALSE',
+                        data: 'union='+union+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -221,7 +221,7 @@ $script = "
             $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/organisation/tbl-mcc-plant/get-plant-mcc']) . "',    
-                        data: 'plant='+plant+'&RLS=FALSE',
+                        data: 'plant='+plant+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -260,7 +260,7 @@ $script = "
             $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/organisation/tbl-dcs-bmc/get-mcc-bmc']) . "',    
-                        data: 'mcc='+mcc+'&RLS=FALSE',
+                        data: 'mcc='+mcc+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -309,7 +309,7 @@ $script = "
             $.ajax({
              type: 'post',
                         url: '" . Url::to(['/organisation/tbl-dcs/get-bmc-dcs']) . "',    
-                        data: 'bmc='+bmc+'&route='+route+'&RLS=FALSE',
+                        data: 'bmc='+bmc+'&route='+route+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -351,7 +351,7 @@ $script = "
             $.ajax({
              type: 'post',
                         url: '" . Url::to(['/organisation/tbl-route-mapping/get-bmc-route']) . "',    
-                        data: 'bmc='+bmc+'&mcc='+mcc+'&plant='+plant+'&RLS=FALSE',
+                        data: 'bmc='+bmc+'&mcc='+mcc+'&plant='+plant+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -389,13 +389,13 @@ $script = "
             if(count > 0 && selectedDcs != 0){
                 $('#user_type').val(7);
                 if(routeCount == selectedRoute && selectedDcs == count){
-                    $('#user_type').val(6);
+                    $('#user_type').val(7);
                 }else if(routeCount == selectedRoute && selectedDcs != count){
                     $('#user_type').val(7);
                 }else if(selectedRoute != 0 && routeCount != selectedRoute && selectedDcs == count){
                     $('#user_type').val(7);
                 }else             
-                if(selectedDcs==count){
+                if(routeCount==selectedRoute){
                     $('#user_type').val(6);
                 }
             }else{
@@ -403,22 +403,22 @@ $script = "
                 var count = $('#tbluserorganizationmapping-bmc option').length;
                 if(count > 0 && selectedBmc != 0){
                    $('#user_type').val(6);
-                   if(selectedBmc==count) 
-                   $('#user_type').val(5);
+//                   if(selectedBmc==count) 
+//                   $('#user_type').val(5);
                 }else{
                     var selectedMcc =  $('#tbluserorganizationmapping-mcc :selected').length;
                     var count = $('#tbluserorganizationmapping-mcc option').length;
                     if(count > 0 && selectedMcc != 0){
                        $('#user_type').val(5);
-                       if(selectedMcc==count)  
-                       $('#user_type').val(4);
+//                       if(selectedMcc==count)  
+//                       $('#user_type').val(4);
                     }  else {
                         var selectedPlant =  $('#tbluserorganizationmapping-plant :selected').length;
                         var count = $('#tbluserorganizationmapping-plant option').length;
                         if(count > 0 && selectedPlant != 0){
                            $('#user_type').val(4);
-                           if(selectedPlant==count) 
-                           $('#user_type').val(3);
+//                           if(selectedPlant==count) 
+//                           $('#user_type').val(3);
                         } else {
                             var selectedUnion =  $('#tbluserorganizationmapping-union :selected').length;
                             var count = $('#tbluserorganizationmapping-union option').length;             
