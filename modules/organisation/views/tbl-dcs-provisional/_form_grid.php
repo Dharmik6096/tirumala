@@ -61,6 +61,10 @@ $attribute = [
         ['attribute' => 'secretory_info', 'visible' => false, 'filter' => false],
         ['attribute' => 'gst_no', 'visible' => false, 'filter' => false],
         ['attribute' => 'fssi', 'visible' => false, 'filter' => false],
+        ['attribute' => 'fssi_expiry_date', 'filter' => false,
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->fssi_expiry_date);
+        }, 'filter' => false],
         ['attribute' => 'address', 'value' => 'address', 'visible' => false, 'filter' => false],
         ['attribute' => 'local_address', 'visible' => false, 'filter' => false],
         ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => false],

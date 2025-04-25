@@ -34,8 +34,11 @@ $attribute = [
         ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
         ['attribute' => 'gst_no', 'visible' => false, 'filter' => false],
         ['attribute' => 'fssi', 'visible' => false, 'filter' => false],
-        [
-        'attribute' => 'valid_from',
+        ['attribute' => 'fssi_expiry_date', 'filter' => false,
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->fssi_expiry_date);
+        }, 'filter' => false],
+        ['attribute' => 'valid_from',
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->valid_from);
         }, 'visible' => false, 'filter' => false],

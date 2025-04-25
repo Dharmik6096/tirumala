@@ -153,6 +153,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'fssi_expiry_date', '', FALSE, date('Y-m-d')); ?>
+        </div>
         <div class="col-sm-2 mt15">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>

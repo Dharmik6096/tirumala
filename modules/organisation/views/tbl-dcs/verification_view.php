@@ -16,7 +16,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                 <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'Verification Details'); ?> (<?= $code ?>-<?= $name ?>)</h4>
             </div>
-            <div class="modal-body">            
+            <div class="modal-body">
                 <div class="panel-body">
                     <div class="panel-subheading">
                         <div class="form-grid">
@@ -78,48 +78,65 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                                     'valueColOptions' => ['style' => 'width:30%'],
                                                 ],
                                                 [
-                                                    'attribute' => 'address',
+                                                    'attribute' => 'fssi_expiry_date',
+                                                    'value' => Yii::$app->controls->view_date($model->fssi_expiry_date),
                                                     'valueColOptions' => ['style' => 'width:30%'],
                                                 ],
+
                                             ],
                                         ],
                                         [
                                             'columns' => [
                                                 [
+                                                    'attribute' => 'address',
+                                                    'valueColOptions' => ['style' => 'width:30%'],
+                                                ],
+                                                [
                                                     'attribute' => 'local_address',
                                                     'valueColOptions' => ['style' => 'width:30%'],
                                                 ],
+
+                                            ],
+                                        ],
+                                        [
+                                            'columns' => [
                                                 [
                                                     'attribute' => 'state_code',
                                                     'value' => Yii::$app->general->getforeignkey($model->stateCode, 'state_name'),
                                                     'valueColOptions' => ['style' => 'width:30%'],
                                                 ],
-                                            ],
-                                        ],
-                                        [
-                                            'columns' => [
                                                 [
                                                     'attribute' => 'district_code',
                                                     'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
                                                     'valueColOptions' => ['style' => 'width:30%'],
                                                 ],
+
+                                            ],
+                                        ],
+                                        [
+                                            'columns' => [
                                                 [
                                                     'attribute' => 'sub_district_code',
                                                     'value' => Yii::$app->general->getforeignkey($model->subDistrictCode, 'sub_district_name'),
                                                     'valueColOptions' => ['style' => 'width:30%'],
                                                 ],
-                                            ],
-                                        ],
-                                        [
-                                            'columns' => [
                                                 [
                                                     'attribute' => 'block_code',
                                                     'value' => Yii::$app->general->getforeignkey($model->blockCode, 'block_name'),
                                                     'valueColOptions' => ['style' => 'width:30%'],
                                                 ],
+                                            ],
+                                        ],
+                                        [
+                                            'columns' => [
                                                 [
                                                     'attribute' => 'village_code',
                                                     'value' => Yii::$app->general->getforeignkey($model->villageCode, 'village_name'),
+                                                    'valueColOptions' => ['style' => 'width:30%'],
+                                                ],
+                                                [
+                                                    'attribute' => 'hamlet_code',
+                                                    'value' => Yii::$app->general->getforeignkey($model->hamletCode, 'hamlet_name'),
                                                     'valueColOptions' => ['style' => 'width:30%'],
                                                 ],
                                             ],
@@ -127,19 +144,14 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                         [
                                             'columns' => [
                                                 [
-                                                    'attribute' => 'hamlet_code',
-                                                    'value' => Yii::$app->general->getforeignkey($model->hamletCode, 'hamlet_name'),
-                                                    'valueColOptions' => ['style' => 'width:30%'],
-                                                ],
-                                                [
                                                     'attribute' => 'pincode',
-                                                    'valueColOptions' => ['style' => 'width:30%'],
+                                                    'valueColOptions' => ['style' => 'width:80%'],
                                                 ],
                                             ],
                                         ],
                                     ];
 
-// View file rendering the widget
+                                    // View file rendering the widget
                                     echo DetailView::widget([
                                         'model' => $model,
                                         'attributes' => $attributes,
@@ -149,7 +161,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                         'responsive' => true,
                                         'hAlign' => 'left',
                                         'vAlign' => 'top',
-                                        'deleteOptions' => [// your ajax delete parameters
+                                        'deleteOptions' => [ // your ajax delete parameters
                                             'params' => ['id' => 1000, 'kvdelete' => true],
                                         ],
                                         'container' => ['id' => 'kv-demo'],
@@ -369,10 +381,10 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                         ],
                                         [
                                             'columns' => [
-//                        [
-//                            'attribute' => 'land_class',
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
+                                                //                        [
+                                                //                            'attribute' => 'land_class',
+                                                //                            'valueColOptions' => ['style' => 'width:30%']
+                                                //                        ],
                                                 [
                                                     'attribute' => 'total_land',
                                                     'valueColOptions' => ['style' => 'width:80%']
@@ -488,7 +500,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                         ],
                                     ];
 
-// View file rendering the widget
+                                    // View file rendering the widget
                                     echo DetailView::widget([
                                         'model' => $model,
                                         'attributes' => $attributes,
@@ -498,7 +510,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                         'responsive' => true,
                                         'hAlign' => 'left',
                                         'vAlign' => 'top',
-                                        'deleteOptions' => [// your ajax delete parameters
+                                        'deleteOptions' => [ // your ajax delete parameters
                                             'params' => ['id' => 1000, 'kvdelete' => true],
                                         ],
                                         'container' => ['id' => 'kv-demo'],
@@ -635,7 +647,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                         ],
                                     ];
 
-// View file rendering the widget
+                                    // View file rendering the widget
                                     echo DetailView::widget([
                                         'model' => $model,
                                         'attributes' => $attributes,
@@ -645,7 +657,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                         'responsive' => true,
                                         'hAlign' => 'left',
                                         'vAlign' => 'top',
-                                        'deleteOptions' => [// your ajax delete parameters
+                                        'deleteOptions' => [ // your ajax delete parameters
                                             'params' => ['id' => 1000, 'kvdelete' => true],
                                         ],
                                         'container' => ['id' => 'kv-demo'],
@@ -654,12 +666,9 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
                                 ?>
                             </div>
                         </div>
-                    </div> 
-
+                    </div>
                 </div>
                 </br>
-
-
             </div>
         </div>
     </div>
