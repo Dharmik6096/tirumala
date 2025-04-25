@@ -39,6 +39,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE); ?>
     </div>
+    <div class="col-sm-2 mt10 hide">
+        <?= $form->field($model, 'is_revoke', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
     <div class="col-sm-12 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
@@ -66,8 +69,12 @@ $script = "
                 url:'" . Url::to(['get-from-to-date']) . "',
                 data: {'dcs_code':dcs_code,'insurance_master_code':insurance_master_code},
                 success: function(data) {   
-                      var obj = $.parseJSON(data);
-                      if (obj.status == 'success') {
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        $('.field-tblinsurancedetailsummary-is_revoke').parent().addClass('hide');
+                        if(obj.data_status == 'PARTIAL_FINALIZE'){
+                            $('.field-tblinsurancedetailsummary-is_revoke').parent().removeClass('hide');
+                        }
                         $('#tblinsurancedetailsummary-from_date').kvDatepicker({
                             format: 'dd-mm-yyyy',
                             autoclose: true
@@ -76,11 +83,10 @@ $script = "
                             format: 'dd-mm-yyyy',
                             autoclose: true
                         }).kvDatepicker('update', obj.to_date);
-                      }
-                      else {
+                    } else {
                         $('#tblinsurancedetailsummary-from_date').val(''); 
                         $('#tblinsurancedetailsummary-to_date').val(''); 
-                      }
+                    }
                 },
                 error:function(data){
                     $('#tblinsurancedetailsummary-from_date').val('');

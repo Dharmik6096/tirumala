@@ -1925,6 +1925,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionInsuranceSummaryDcsWise() {
+        $this->report = 'InsuranceSummaryDcsWise';
+        return $this->actionIndex();
+    }
+
     public function actionTpCostDetail() {
         $this->report = 'TpCostDetail';
         return $this->actionIndex();
@@ -4196,12 +4201,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Insurance Detail',
             ],
             'InsuranceDetailReconciliation' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,insurance_master_code,operation_type',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,insurance_master_code,p_organization_type:static:originating_org_type,operation_type',
                 'sp_name' => 'mis_insurance_detail_reconciliation',
                 'to_decrypt' => ['current_adhar_no', 'current_dob', 'previous_adhar_no', 'previous_dob', 'adhar_no', 'dob', 'nominee_adhar_no'],
                 'mask_data' => ['current_adhar_no', 'previous_adhar_no', 'adhar_no', 'nominee_adhar_no'],
                 'scenario' => 'InsuranceDetailReconciliation',
                 'title' => 'Insurance Detail Change Log',
+            ],
+            'InsuranceSummaryDcsWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,insurance_master_code',
+                'sp_name' => 'mis_insurance_summary_dcs_wise',
+                'to_decrypt' => ['current_adhar_no', 'current_dob', 'previous_adhar_no', 'previous_dob'],
+                'mask_data' => ['current_adhar_no', 'previous_adhar_no'],
+                'scenario' => 'InsuranceSummaryDcsWise',
+                'title' => 'Insurance Summary DCS Wise',
             ],
             'TpCostDetail' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',

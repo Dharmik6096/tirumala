@@ -33,7 +33,7 @@ use yii\helpers\ArrayHelper;
 class TblInsuranceDetailSummary extends ChildModel {
 
     public $is_sentbox = TRUE;
-    public $operation;
+    public $operation, $is_revoke;
 
     /**
      * @inheritdoc
@@ -48,12 +48,13 @@ class TblInsuranceDetailSummary extends ChildModel {
     public function rules() {
         return [
             [['insurance_master_code', 'dcs_code', 'from_date', 'to_date', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_name'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_name', 'is_revoke'], 'safe'],
             [['insurance_master_code', 'dcs_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'to_date', 'from_date'], 'required', 'on' => ['extend_date']],
             [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'insurance_master_code'], 'message' => Yii::t('app/validation', 'The combination of {attribute} And Insurance Master Code has already been taken.'), 'except' => ['extend_date', 'publish_finalize_summary']],
             [['insurance_master_code'], 'checkDetail', 'on' => ['extend_date']],
             [['to_date'], 'convertDate', 'on' => ['extend_date']],
             [['to_date'], 'validateToDate', 'on' => ['extend_date']],
+            [['insurance_master_code'], 'safe', 'on' => ['androidsync']],
         ];
     }
 
@@ -132,8 +133,9 @@ class TblInsuranceDetailSummary extends ChildModel {
     }
 
     public function getBMCDCSList($insuranceCode, $bmcCode, $date) {
+        $status = ['PUBLISH', 'PARTIAL_FINALIZE'];
         $query = $this->find()->select(['dcs_code', 'dcs_name'])
-                ->where(['insurance_master_code' => $insuranceCode, 'bmc_code' => $bmcCode, 'status' => 'PUBLISH']);
+                ->where(['insurance_master_code' => $insuranceCode, 'bmc_code' => $bmcCode, 'status' => $status]);
 
         if ($date) {
             $today = date("Y-m-d");
@@ -149,7 +151,7 @@ class TblInsuranceDetailSummary extends ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        if (strtolower($this->status) == 'publish') {
+        if (strtolower($this->status) == 'publish' || strtolower($this->status) == 'partial_finalize') {
             $sentboxArray = [];
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
             foreach ($sentboxArray as $sent) {

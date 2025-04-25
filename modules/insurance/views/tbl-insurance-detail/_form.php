@@ -41,7 +41,7 @@ $form = ActiveForm::begin([
         <?= Html::hiddenInput('type', $type, ['id' => 'type']); ?>
         <?= $form->field($model, 'member_name')->textInput(['maxlength' => true]) ?>
     </div> 
-    <div class="col-sm-2">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'adhar_no')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-2">
@@ -56,7 +56,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'nominee_member_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'nominee_adhar_no')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-12 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

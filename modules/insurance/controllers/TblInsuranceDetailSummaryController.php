@@ -3,6 +3,7 @@
 namespace app\modules\insurance\controllers;
 
 use app\controllers\ChildController;
+use app\modules\insurance\models\TblInsuranceDetail;
 use Yii;
 use app\modules\insurance\models\TblInsuranceDetailSummary;
 use app\modules\insurance\models\TblInsuranceDetailSummaryHistory;
@@ -25,18 +26,32 @@ class TblInsuranceDetailSummaryController extends ChildController {
         $this->viewFile = 'extend_date';
         $this->model->scenario = 'extend_date';
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model = TblInsuranceDetailSummary::find()->where(['insurance_master_code' => $this->model->insurance_master_code, 'dcs_code' => $this->model->dcs_code, 'status' => 'PUBLISH'])->one();
+            $postData = Yii::$app->request->post();
+            $status = ['PUBLISH', 'PARTIAL_FINALIZE'];
+            $this->model = TblInsuranceDetailSummary::find()->where(['insurance_master_code' => $this->model->insurance_master_code, 'dcs_code' => $this->model->dcs_code, 'status' => $status])->one();
             if (!empty($this->model)) {
                 $master = [];
+                $is_revoke = 0;
+                if(!empty($postData['TblInsuranceDetailSummary']['is_revoke'])){
+                    $is_revoke = $postData['TblInsuranceDetailSummary']['is_revoke'];
+                }
+                $status = $this->model->status;
                 $historyModel = new TblInsuranceDetailSummaryHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $master[] = $historyModel;
                 $this->model->scenario = 'extend_date';
                 $this->model->load(Yii::$app->request->post());
+                if($is_revoke && $status == 'PARTIAL_FINALIZE'){
+                    $this->model->status = 'PUBLISH';
+                }
                 if ($this->model->validate()) {
                     $master[] = $this->model;
                     $transaction = $this->generalModel->saveTransaction($master, ['Insurance Detail Summary', 'edit']);
                     if ($transaction !== FALSE) {
+                        if($this->model->is_revoke && $status == 'PARTIAL_FINALIZE'){
+                            $detailModel = new TblInsuranceDetail();
+                            $detailModel->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'status' => 'PUBLISH'], ['insurance_master_code' => $this->model->insurance_master_code, 'dcs_code' => $this->model->dcs_code]);
+                        }
                         return $this->redirect(['/insurance/tbl-insurance-detail/index']);
                     }
                 }
@@ -53,11 +68,13 @@ class TblInsuranceDetailSummaryController extends ChildController {
         $dcs_code = Yii::$app->request->post('dcs_code');
 
         $insuranceDetailSummaryModel = new TblInsuranceDetailSummary();
-        $data = $insuranceDetailSummaryModel->getInsuranceDetailSummary($insurance_master_code, $dcs_code, 'PUBLISH');
+        $status = ['PUBLISH', 'PARTIAL_FINALIZE'];
+        $data = $insuranceDetailSummaryModel->getInsuranceDetailSummary($insurance_master_code, $dcs_code, $status);
         if (!empty($data)) {
             $toDate = Yii::$app->controls->view_date($data->to_date);
             $fromDate = Yii::$app->controls->view_date($data->from_date);
-            return Json::encode(['status' => 'success', 'to_date' => $toDate, 'from_date' => $fromDate]);
+            $status = $data->status;
+            return Json::encode(['status' => 'success', 'to_date' => $toDate, 'from_date' => $fromDate, 'data_status' => $status]);
         } else {
             return Json::encode(['status' => 'error']);
         }

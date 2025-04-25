@@ -2180,6 +2180,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['discarded' => Yii::t('app', 'Discarded'), 'done' => Yii::t('app', 'Done'), 'pending' => Yii::t('app', 'Pending')],
             ],
+            'insurance_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['DRAFT' => Yii::t('app', 'Draft'), 'PUBLISH' => Yii::t('app', 'Publish'), 'PARTIAL_FINALIZE' => Yii::t('app', 'Partial Finalize'), 'FINALIZE' => Yii::t('app', 'Finalize')],
+            ],
         ];
         return $records[$l];
     }

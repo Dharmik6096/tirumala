@@ -79,6 +79,11 @@ $attribute = [
             return Yii::$app->general->getStaticValue($model->originating_org_type, 'originating_org_type');
         }
     ],
+    ['attribute' => 'status', 'filter' => FALSE,
+        'value' => function($model) {
+            return Yii::$app->general->getStaticValue($model->status, 'insurance_status');
+        }
+    ],
 ];
 
 $grid_option = [

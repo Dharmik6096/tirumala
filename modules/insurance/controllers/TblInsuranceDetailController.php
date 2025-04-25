@@ -99,7 +99,7 @@ class TblInsuranceDetailController extends ChildController {
                     }
                 }
             } else {
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'You Can Not Add Record.']);
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Cannot add record. Insurance must be in draft status and within the allowed DCS edit period.']);
                 return $this->redirect(['create']);
             }
         }
@@ -238,9 +238,9 @@ class TblInsuranceDetailController extends ChildController {
         $today = date("Y-m-d");
         $getInsuranceDetail = TblInsuranceDetail::find()->where(['status' => ['DRAFT', 'PUBLISH'], 'dcs_code' => $model->dcs_code])->orderBy(['member_id' => SORT_DESC])->one();
         $dcsDetail = TblDcs::find()->where(['dcs_code' => $model->dcs_code])->one();
-        $insuranceSummary = $model->checkInsuranceDetail($model->insurance_master_code, $model->dcs_code, ['PUBLISH', 'FINALIZE']);
+        $insuranceSummary = $model->checkInsuranceDetail($model->insurance_master_code, $model->dcs_code, ['PUBLISH', 'FINALIZE', 'PARTIAL_FINALIZE']);
 
-        if (!empty($insuranceSummary) && $insuranceSummary->status == 'FINALIZE' || !empty($insuranceSummary) && strtotime($insuranceSummary->to_date) >= strtotime($today)) {
+        if (!empty($insuranceSummary) && $insuranceSummary->status == 'FINALIZE' || (!empty($insuranceSummary) && strtotime($insuranceSummary->to_date) >= strtotime($today) && $insuranceSummary->status != 'PARTIAL_FINALIZE')) {
             $model->addError('insurance_master_code', ($insuranceSummary->status == 'FINALIZE') ? 'You cannot create/update this record because it has been finalized.' : 'You cannot create/update because this is assigned to the desktop level');
             return false;
         }
@@ -530,9 +530,9 @@ class TblInsuranceDetailController extends ChildController {
                         $errors[] = 'Member id already exist in sheet.';
                     }
                     $sheetMemberIds[] = $insuranceDetailModel->member_id;
-                    if (in_array($dcsmemberCode, $sheetMemberCodes)) {
-                        $errors[] = 'Member code already exist in sheet.';
-                    }
+                    // if (in_array($dcsmemberCode, $sheetMemberCodes)) {
+                    //     $errors[] = 'Member code already exist in sheet.';
+                    // }
                     if (!preg_match('/^0+$/', $memberCode)) {
                         $sheetMemberCodes[] = $dcsmemberCode;
                     }
@@ -569,16 +569,14 @@ class TblInsuranceDetailController extends ChildController {
                         }
                     }
 
-                    if (empty($insuranceDetailModel->dcs_name)) {
-                        $errors[] = 'Society Name cannot be blank.';
+                    if (empty($insuranceDetailModel->dcs_name) || !preg_match('/^[a-zA-Z0-9. ]*$/', $insuranceDetailModel->dcs_name)) {
+                        $errors[] = 'Society Name cannot be blank or should not contain the special characters';
                     }
-
-                    if (empty($insuranceDetailModel->member_name)) {
-                        $errors[] = 'Member Name cannot be blank.';
+                    if (empty($insuranceDetailModel->member_name) || !preg_match('/^[a-zA-Z0-9. ]*$/', $insuranceDetailModel->member_name)) {
+                        $errors[] = 'Member Name cannot be blank or should not contain the special characters';
                     }
-
-                    if ((empty($insuranceDetailModel->age)) || ($insuranceDetailModel->age < $memberMinAge || $insuranceDetailModel->age > $memberMaxAge)) {
-                        $errors[] = 'Invalid age. Please enter a valid age within the range of ' . $memberMinAge . ' to ' . $memberMaxAge;
+                    if (!empty($insuranceDetailModel->nominee_member_name) && !preg_match('/^[a-zA-Z0-9. ]*$/', $insuranceDetailModel->nominee_member_name)) {
+                        $errors[] = 'Nominee Member Name should not contain the special characters';
                     }
 
                     if (empty($insuranceDetailModel->member_id)) {

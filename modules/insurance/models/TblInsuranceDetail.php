@@ -76,7 +76,7 @@ class TblInsuranceDetail extends ChildModel {
             [['status'], 'default', 'value' => 'DRAFT', 'on' => ['create']],
             [['is_delete'], 'default', 'value' => 0, 'on' => ['create']],
             [['member_id'], 'unique', 'targetAttribute' => ['member_id', 'insurance_master_code'], 'on' => ['create'], 'message' => Yii::t('app/validation', 'The combination of {attribute} And Insurance Master Code has already been taken.')],
-            [['member_code'], 'unique', 'targetAttribute' => ['member_code', 'insurance_master_code'], 'on' => ['create'], 'message' => Yii::t('app/validation', 'The combination of {attribute} And Insurance Master Code has already been taken.')],
+            // [['member_code'], 'unique', 'targetAttribute' => ['member_code', 'insurance_master_code'], 'on' => ['create'], 'message' => Yii::t('app/validation', 'The combination of {attribute} And Insurance Master Code has already been taken.')],
             [['adhar_no', 'nominee_adhar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'on' => ['create', 'update']],
@@ -86,6 +86,9 @@ class TblInsuranceDetail extends ChildModel {
                 }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
             [['dob'], 'checkAgeLimit', 'on' => ['create', 'update']],
             [['insurance_master_code'], 'safe', 'on' => ['androidsync']],
+            [['member_name', 'nominee_member_name'], function ($attribute, $params) {
+                Yii::$app->general->validateAlphaNumber($this, $attribute,$params);
+            },'skipOnEmpty'=> false],
         ];
     }
 
@@ -225,7 +228,7 @@ class TblInsuranceDetail extends ChildModel {
         $class = '';
         $editable = true;
         $status = strtolower($this->status);
-        if ($status !== 'draft') {
+        if ($status !== 'draft' && $status !== 'partial_finalize') {
             $today = date("Y-m-d");
             $insuranceDetailSummaryCode = $this->insuranceDetailSummaryCode;
             if (!empty($insuranceDetailSummaryCode) && strtotime($insuranceDetailSummaryCode->from_date) <= strtotime($today) && strtotime($insuranceDetailSummaryCode->to_date) >= strtotime($today) || $status == 'finalize') {
@@ -241,7 +244,7 @@ class TblInsuranceDetail extends ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        if (strtolower($this->status) == 'publish') {
+        if (strtolower($this->status) == 'publish' || strtolower($this->status) == 'partial_finalize') {
             $sentboxArray = [];
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
             foreach ($sentboxArray as $sent) {
@@ -257,7 +260,7 @@ class TblInsuranceDetail extends ChildModel {
     }
 
     public function afterDelete() {
-        if (strtolower($this->status) == 'publish') {
+        if (strtolower($this->status) == 'publish' || strtolower($this->status) == 'partial_finalize') {
             $sentboxArray = [];
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
             foreach ($sentboxArray as $sent) {

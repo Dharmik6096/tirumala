@@ -1301,6 +1301,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Insurance Detail'), 'url' => ['/insurance/tbl-insurance-detail/index'], 'active' => ($cntrl == 'tbl-insurance-detail')],
                             ['label' => Yii::t('app', 'Insurance Detail Report'), 'url' => ['/misreports/reports/insurance-detail']],
                             ['label' => Yii::t('app', 'Insurance Detail Change Log'), 'url' => ['/misreports/reports/insurance-detail-reconciliation']],
+                            ['label' => Yii::t('app', 'Insurance Summary DCS Wise'), 'url' => ['/misreports/reports/insurance-summary-dcs-wise']],
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],

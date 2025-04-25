@@ -37,7 +37,7 @@ use yii\base\UserException;
 class TblInsuranceMaster extends ChildModel {
 
     public $operation;
-
+    
     /**
      * @inheritdoc
      */
@@ -50,16 +50,19 @@ class TblInsuranceMaster extends ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'insurance_start_date', 'insurance_end_date', 'dcs_edit_start_date', 'dcs_edit_end_date', 'member_min_age', 'member_max_age', 'insurance_final_date', 'insurance_description', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'status'], 'safe'],
-                [['union_code', 'insurance_start_date', 'insurance_end_date', 'insurance_description'], 'required'],
-                [['is_active'], 'default', 'value' => 1, 'except' => ['update']],
-                [['insurance_description'], 'string', 'max' => 200],
-                [['member_min_age', 'member_max_age'], 'integer', 'min' => 1],
-                [['member_min_age'], 'checkAge'],
+            [['union_code', 'insurance_start_date', 'insurance_end_date', 'dcs_edit_start_date', 'dcs_edit_end_date', 'member_min_age', 'member_max_age', 'insurance_final_date', 'insurance_description', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'status'], 'safe'],
+            [['union_code', 'insurance_start_date', 'insurance_end_date', 'insurance_description'], 'required'],
+            [['is_active'], 'default', 'value' => 1, 'except' => ['update']],
+            [['insurance_description'], 'string', 'max' => 200],
+            [['member_min_age', 'member_max_age'], 'integer', 'min' => 1],
+            [['member_min_age'], 'checkAge'],
 //            [['dcs_edit_start_date', 'dcs_edit_end_date'], 'checkDate'],
             [['insurance_start_date'], 'validateDate'],
-                [['insurance_master_code'], 'required', 'on' => ['import_insurance_detail']],
-                [['status'], 'default', 'value' => 'DRAFT'],
+            [['insurance_master_code'], 'required', 'on' => ['import_insurance_detail']],
+            [['status'], 'default', 'value' => 'DRAFT'],
+            [['insurance_description'], function ($attribute, $params) {
+                Yii::$app->general->validateAlphaNumber($this, $attribute,$params);
+            },'skipOnEmpty'=> false],
         ];
     }
 
@@ -154,5 +157,4 @@ class TblInsuranceMaster extends ChildModel {
         $sentbox->dest_org_type = $type;
         return $sentbox;
     }
-
 }
