@@ -123,7 +123,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
 
                     if ($model->oldAttributes['allow_app_login'] == 1 && $model->allow_app_login == 1) {
                         if ($model->oldAttributes['mobile_no'] != $model->mobile_no || $model->oldAttributes['login_type'] != $model->login_type) {
-                            if($model->oldAttributes['mobile_no'] != $model->mobile_no){
+                            if ($model->oldAttributes['mobile_no'] != $model->mobile_no) {
                                 $contactModel = new TblContactDetails();
                                 $contactModel->mobile_no = $model->oldAttributes['mobile_no'];
                                 $contactModelData = $contactModel->getContactDetailsRecord();
@@ -132,7 +132,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                                     $contactModel = $contactModelData;
                                 }
                                 $master[] = $contactModel;
-    
+
                                 $contNewModel = new TblContactDetails();
                                 $contNewModel->mobile_no = $model->mobile_no;
                                 $newModelData = $contNewModel->getContactDetailsRecord();
@@ -144,7 +144,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                                 }
                                 $contNewModel->department = $model->department;
                                 $master[] = $contNewModel;
-    
+
                                 $appOrgModel = new TblAppOrganizationMapping();
                                 $appOrgModel->mobile_no = $model->oldAttributes['mobile_no'];
                                 $appOrgModel->detail_code = $contNewModel->detail_code;
@@ -478,8 +478,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
         return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
     }
-    
-    public function actionOrganizationMapNew($id) {
+
+    public function actionOrganizationMap($id) {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
         $model->user_id = $id;
@@ -588,6 +588,18 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             return $this->redirect(['index']);
         }
         return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
+    }
+
+    private function addUserOrganizationMapping($data, $type, $userId, $active) {
+        foreach ($data as $value) {
+            $modelNew = new TblUserOrganizationMapping();
+            $modelNew->organization_code = $value;
+            $modelNew->organization_type = $type;
+            $modelNew->user_id = $userId;
+            $modelNew->is_active = $active;
+            Yii::$app->operation->defaults($modelNew, INSERT);
+            $modelNew->save(TRUE, FALSE);
+        }
     }
 
     public function setHtmlContent($OTP, &$htmlContent, &$message, $username) {
