@@ -313,7 +313,7 @@ class DropDown extends Component {
         $script = "$(document).ready(function() {
             var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
             var fieldName = '" . strtolower($name) . "';
-            $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#'+modelname+'-'+fieldName).on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
                 var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                 var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                 var unionCode = $('#" . $depends . "').val();
@@ -338,7 +338,7 @@ class DropDown extends Component {
         $script = "$(document).ready(function() {
             var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
             var fieldName = '" . strtolower($name) . "';
-            $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#'+modelname+'-'+fieldName).on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
                 var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                 var mcc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                 var plantCode = $('#" . $depends . "').val();
@@ -362,7 +362,7 @@ class DropDown extends Component {
                     var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
                     var fieldName = '" . strtolower($name) . "';
                     var hasBMC = `$hasBMC`;
-                    $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    $('#'+modelname+'-'+fieldName).on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
                         var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                         var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                             var mccCode = $('#" . $depends . "').val();
@@ -457,7 +457,7 @@ class DropDown extends Component {
         $script = "$(document).ready(function() {
                         var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
                         var fieldName = '" . strtolower($name) . "';
-                        $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                        $('#'+modelname+'-'+fieldName).on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
                             var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                             if(length == 0) {
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
@@ -2464,7 +2464,7 @@ class DropDown extends Component {
                         var array_val = [];
                         var depend = '" . $depends[0] . "';
 //                        console.log('#'+modelname+'-'+fieldName+'-'+depend+'-'+$('#'+depend).val());
-                            $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            $('#'+modelname+'-'+fieldName).on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
                                 $.each(selected_val_json, function(index, value) {
                                     $('#'+modelname+'-'+fieldName).find('option[value='+value+']').attr('selected', 'selected');
                                     array_val.push(value);
