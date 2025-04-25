@@ -114,7 +114,7 @@ $form = ActiveForm::begin([
             </div>
         </div>
         <div class="clearfix"></div>
-        <div>
+        <div id="milk-receipt-transaction">
             <div class="col-lg-12 mt35">
                 <h5 class="panel-heading mb15"><?= Yii::t('app', 'Milk Receipt Transaction') ?></h5>
                 <div class="col-sm-1 entry_type"> 
