@@ -292,6 +292,22 @@ class DropDown extends Component {
         } else {
             $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
         }
+        $script = "$(document).ready(function() {
+            var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+            var fieldName = '" . strtolower($name) . "';
+            $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
+                var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+                var unionCode = $('#" . $depends . "').val();
+                if(unionCode!='' && length == 1) {
+                    $('#'+modelname+'-'+fieldName).val(plant);
+                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                    $('#'+modelname+'-'+fieldName).trigger('change');
+                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                }
+            });
+        });";
+        Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_union_plant');
     }
 
     public function plant_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {
@@ -301,35 +317,53 @@ class DropDown extends Component {
         } else {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple, $extra_param, $readonly);
         }
+        $script = "$(document).ready(function() {
+            var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+            var fieldName = '" . strtolower($name) . "';
+            $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
+                var mcc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+                var plantCode = $('#" . $depends . "').val();
+                if(plantCode!='' && length == 1) {
+                    $('#'+modelname+'-'+fieldName).val(mcc);
+                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                    $('#'+modelname+'-'+fieldName).trigger('change');
+                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                }
+            });
+        });";
+        Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_plant_mcc');
     }
 
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
 
         $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
-        if ((Yii::$app->session->get('hasBMC') == 0)) {
-            $script = "$(document).ready(function() {
-                        var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
-                        var fieldName = '" . strtolower($name) . "';
-                        $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                            var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
-                            var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
-                                var mccCode = $('#" . $depends . "').val();
-                            if(mccCode!='' && length == 0) {
-                                $('#'+modelname+'-'+fieldName).parent('div').parent().show();
-                            } else if(length == 1) {
-                                $('#'+modelname+'-'+fieldName).val(bmc);
+        $hasBMC = Yii::$app->session->get('hasBMC');
+        $script = "$(document).ready(function() {
+                    var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+                    var fieldName = '" . strtolower($name) . "';
+                    var hasBMC = `$hasBMC`;
+                    $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                        var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
+                        var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+                            var mccCode = $('#" . $depends . "').val();
+                        if(mccCode!='' && length == 0) {
+                            $('#'+modelname+'-'+fieldName).parent('div').parent().show();
+                        } else if(length == 1) {
+                            $('#'+modelname+'-'+fieldName).val(bmc);
+                            if(hasBMC == 0){
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
-                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                                $('#'+modelname+'-'+fieldName).trigger('change');
-                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                            } else {
-                                $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
                             }
-                        });
-                    });";
-            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_bmc_hide');
-        }
+                            $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                            $('#'+modelname+'-'+fieldName).trigger('change');
+                            $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                        } else if(hasBMC == 0) {
+                            $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
+                        }
+                    });
+                });";
+        Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_bmc_hide');
     }
 
     public function channel_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {

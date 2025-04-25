@@ -128,6 +128,7 @@ class TblDcsController extends ChildController {
         $validate = 1;
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
+        Yii::$app->default->getDefaults($this->model);
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel();
