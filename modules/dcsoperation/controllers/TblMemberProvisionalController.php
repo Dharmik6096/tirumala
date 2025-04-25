@@ -544,7 +544,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $model_save[] = $historyMemberModel;
                 }
                 $tblMember->scenario = 'ApprovalMember';
-                $tblMember->attributes = $memberModel->attributes;
+//                $tblMember->attributes = $memberModel->attributes;
+                foreach ($memberModel->attributes as $key => $value) {
+                    if ($value != null && $value != '') {
+                        $tblMember->$key = $value;
+                    }
+                }
                 $tblMember->is_verified = $memberModel->is_verify;
                 $tblMember->member_code = ($memberModel->provisional_from == 'mobile_update') ? $memberCode : $tblMember->getCode();
                 $historyModel = new TblMemberProvisionalHistory();
