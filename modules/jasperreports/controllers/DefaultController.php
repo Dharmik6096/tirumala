@@ -26,7 +26,7 @@ class DefaultController extends \app\controllers\ChildController {
             $client_code = \Yii::$app->session->get('eiplCode');
             if (!empty($client_code) && isset($this->getLabels($this->report)['path'][$client_code])) {
                 $this->data['path'] = $this->getLabels($this->report)['path'][$client_code];
-            } elseif ((!empty($client_code) && isset($this->getLabels($this->report)['path']['EIPLCOMMON'])) || $client_code = 'null') {
+            } elseif ((!empty($client_code) && isset($this->getLabels($this->report)['path']['EIPLCOMMON'])) || (empty($client_code) && isset($this->getLabels($this->report)['path']['EIPLCOMMON']))) {
                 $this->data['path'] = $this->getLabels($this->report)['path']['EIPLCOMMON'];
             }
             $model->scenario = $this->data['scenario'];
