@@ -63,9 +63,34 @@ class DataExchangeController extends ChildController {
                 $json_array_key = $value['json_key'] ?? '';
                 $apiType = strtoupper($value['api_type']);
                 if ($apiType == 'XML') {
+                    $headers = [
+                        'Content-Type: application/soap+xml;charset=UTF-8',
+                        'Cookie: sap-usercontext=sap-client=100',
+                        'Authorization: Basic ' . base64_encode('Lsupport:Lorhan@1'),
+                    ];
+                    $context = stream_context_create([
+                        'http' => [
+                            'header' => implode("\r\n", $headers)
+                        ]
+                    ]);
+                    $client = new SoapClient(null, [
+                        'location' => $value['request_url'],
+                        'uri' => 'urn:sap-com:document:sap:soap:functions:mc-style',
+                        'login' => 'Lsupport',
+                        'password' => 'Lorhan@1',
+                        'trace' => 1,
+                        'exceptions' => true,
+                        'soap_version' => SOAP_1_2,
+                        'cache_wsdl' => WSDL_CACHE_NONE,
+                        'stream_context' => $context,
+                    ]);
+
                     $postData = $this->generateSoapXml($output, $value);
-                    $api = new SoapClient($value['request_url'], ['trace' => true, 'exceptions' => true, 'cache_wsdl' => WSDL_CACHE_MEMORY]);
-                    $response = $api->__doRequest($postData, $value['request_url'], '', 1);
+                    try {
+                        $response = $client->__doRequest($postData, $value['request_url'], '', SOAP_1_2, false);
+                    } catch (\Exception $e) {
+                        echo "<h3>SOAP Error</h3><pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
+                    }
                 } else {
                     $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
 
@@ -163,8 +188,8 @@ class DataExchangeController extends ChildController {
         $envelope->setAttribute('xmlns:soap', Yii::$app->params['data_exchange_url']);
         $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:soap:functions:mc-style');
         $doc->appendChild($envelope);
-        $header = $doc->createElement('soap:Header');
-        $envelope->appendChild($header);
+
+        $envelope->appendChild($doc->createElement('soap:Header'));
         $body = $doc->createElement('soap:Body');
         $envelope->appendChild($body);
 
