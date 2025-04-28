@@ -542,9 +542,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $historyMemberModel = new TblMemberHistory();
                     Yii::$app->operation->history($tblMember, $historyMemberModel, UPDATE);
                     $model_save[] = $historyMemberModel;
-                    $safeAttributes = $tblMember->safeAttributes();
                     foreach ($memberModel->attributes as $key => $value) {
-                        if ($value != null && $value != '' && in_array($key, $safeAttributes)) {
+                        if ($value != null && $value != '' && $tblMember->hasAttribute($key)) {
                             $tblMember->$key = $value;
                         }
                     }
