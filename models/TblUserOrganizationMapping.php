@@ -30,8 +30,7 @@ use app\modules\organisation\models\TblRouteMapping;
  * @property TblUsers $updatedBy
  * @property TblUsers $createdBy
  */
-class TblUserOrganizationMapping extends ChildModel
-{
+class TblUserOrganizationMapping extends ChildModel {
 
     public $organization;
     public $federation;
@@ -45,32 +44,29 @@ class TblUserOrganizationMapping extends ChildModel
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_user_organization_mapping';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['federation'], 'required', 'on' => 'organizationMapping'],
-            [['union'], 'required', 'on' => 'organizationMappingUnion'],
-            [['federation', 'union', 'dcs', 'created_at', 'deleted_at', 'updated_at', 'organization', 'plant', 'mcc', 'bmc'], 'safe'],
-            [['is_active'], 'integer'],
-            [['organization_code', 'organization_type'], 'string', 'max' => 25],
-            [['created_by', 'updated_by', 'user_id'], 'string', 'max' => 14],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
-            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
-            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
-            [['federation'], 'validateOnLoginType'],
+                [['federation'], 'required', 'on' => 'organizationMapping'],
+                [['union'], 'required', 'on' => 'organizationMappingUnion'],
+                [['federation', 'union', 'dcs', 'created_at', 'deleted_at', 'updated_at', 'organization', 'plant', 'mcc', 'bmc'], 'safe'],
+                [['is_active'], 'integer'],
+                [['organization_code', 'organization_type'], 'string', 'max' => 25],
+                [['created_by', 'updated_by', 'user_id'], 'string', 'max' => 14],
+                [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+                [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
+                [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
+                [['federation'], 'validateOnLoginType'],
         ];
     }
 
-    public function validateChecked($attribute, $params)
-    {
+    public function validateChecked($attribute, $params) {
 
         if (!empty($this->identity)) {
             $ary = explode('-', $this->identity);
@@ -84,8 +80,7 @@ class TblUserOrganizationMapping extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'organization' => Yii::t('app', 'Organization'),
@@ -112,24 +107,21 @@ class TblUserOrganizationMapping extends ChildModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->hasOne(TblUsers::className(), ['id' => 'user_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
-    {
+    public function getUpdatedBy() {
         return $this->hasOne(TblUsers::className(), ['id' => 'updated_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
-    {
+    public function getCreatedBy() {
         return $this->hasOne(TblUsers::className(), ['id' => 'created_by']);
     }
 
@@ -137,13 +129,11 @@ class TblUserOrganizationMapping extends ChildModel
      * @inheritdoc
      * @return TblUserOrganizationMappingQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblUserOrganizationMappingQuery(get_called_class());
     }
 
-    public function getOrganization($id, $orgType)
-    {
+    public function getOrganization($id, $orgType) {
         $userOrg = User::getSelectedOrganization($orgType);
 
         foreach ($userOrg['data'] as $row) {
@@ -159,9 +149,8 @@ class TblUserOrganizationMapping extends ChildModel
         return ['value' => $data, 'selected' => $selected];
     }
 
-    public function getOrganizationsArray($id, $orgType, $orgArray = [])
-    {
-        if (!empty($orgArray)) {
+    public function getOrganizationsArray($id, $orgType, $orgArray = []) {
+        if (!empty($orgArray) && empty($orgType)) {
             $orgType = !empty($orgArray[0]['organization_type_id']) ? $orgArray[0]['organization_type_id'] : '';
         }
         $userOrg = User::getSelectedOrganization($orgType);
@@ -194,7 +183,12 @@ class TblUserOrganizationMapping extends ChildModel
         }
 
         switch ($orgType) {
-            case '7':
+            case '7' :
+                if (!empty($orgArray) && !empty($orgType)) {
+                    foreach ($orgArray['bmc'] as $key => $value) {
+                        $selected[$value] = $value;
+                    }
+                }
                 $federations = $this->getFederations();
                 $unions = $this->getUnions($federations['selectedArray'], 0);
                 $bmc_temp = $this->getBMC(0, $selected);
@@ -214,7 +208,12 @@ class TblUserOrganizationMapping extends ChildModel
                 $route_temp = $this->getRoute($plant['selectedArray'], $mcc['selectedArray'], $bmc['selectedArray'], $dcs['selectedArray']);
                 $route['selectedArray'] = $route_temp['selectedArray'];
                 break;
-            case '6':
+            case '6' :
+                if (!empty($orgArray) && !empty($orgType)) {
+                    foreach ($orgArray['mcc'] as $key => $value) {
+                        $selected[$value] = $value;
+                    }
+                }
                 $federations = $this->getFederations();
                 $unions = $this->getUnions($federations['selectedArray'], 0);
                 $mcc_temp = $this->getMCC(0, $selected);
@@ -230,7 +229,12 @@ class TblUserOrganizationMapping extends ChildModel
                 $dcs = $this->getDcs($selected);
                 $route = $this->getRoute($plant['selectedArray'], $mcc['selectedArray'], $bmc['selectedArray'], 0);
                 break;
-            case '5':
+            case '5' :
+                if (!empty($orgArray) && !empty($orgType)) {
+                    foreach ($orgArray['plant'] as $key => $value) {
+                        $selected[$value] = $value;
+                    }
+                }
                 $federations = $this->getFederations();
                 $unions = $this->getUnions($federations['selectedArray'], 0);
                 $plant = $this->getPlant(0, $selected);
@@ -280,8 +284,7 @@ class TblUserOrganizationMapping extends ChildModel
         return ['federation' => $federations, 'union' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route];
     }
 
-    private function getDcs($BMCArray)
-    {
+    private function getDcs($BMCArray) {
         $query = TblDcs::find();
         $query->select(['dcs_code', 'dcs_name']);
         $query->where(['is_active' => 1]);
@@ -297,8 +300,7 @@ class TblUserOrganizationMapping extends ChildModel
         return ['data' => $data, 'selectedArray' => []];
     }
 
-    private function getBMC($MCCArray, $DcsArray)
-    {
+    private function getBMC($MCCArray, $DcsArray) {
         $query = TblDcsBmc::find();
         $query->select(['bmc_code', 'bmc_name']);
         $query->where(['is_active' => 1]);
@@ -325,8 +327,7 @@ class TblUserOrganizationMapping extends ChildModel
         return ['data' => $data, 'selectedArray' => $selected];
     }
 
-    private function getMCC($plantArray, $BMCArray)
-    {
+    private function getMCC($plantArray, $BMCArray) {
         $query = TblMccPlant::find();
         $query->select(['mcc_plant_code', 'name']);
         $query->where(['is_active' => 1]);
@@ -352,8 +353,7 @@ class TblUserOrganizationMapping extends ChildModel
         return ['data' => $data, 'selectedArray' => $selected];
     }
 
-    private function getPlant($unionArray, $MCCArray)
-    {
+    private function getPlant($unionArray, $MCCArray) {
         $query = TblPlant::find();
         $query->select(['plant_code', 'name']);
         $query->where(['is_active' => 1]);
@@ -380,8 +380,7 @@ class TblUserOrganizationMapping extends ChildModel
         return ['data' => $data, 'selectedArray' => $selected];
     }
 
-    private function getUnions($fedearionArray, $plantArray)
-    {
+    private function getUnions($fedearionArray, $plantArray) {
         $query = TblUnions::find();
         $query->select(['union_code', 'union_name']);
         $query->where(['is_active' => 1]);
@@ -408,8 +407,7 @@ class TblUserOrganizationMapping extends ChildModel
         return ['data' => $data, 'selectedArray' => $selected];
     }
 
-    private function getFederations()
-    {
+    private function getFederations() {
         $allFeder = User::getSelectedOrganization(2);
         $selected = [];
         foreach ($allFeder['data'] as $row) {
@@ -421,16 +419,15 @@ class TblUserOrganizationMapping extends ChildModel
         return ['data' => $data, 'selectedArray' => $selected];
     }
 
-    public function getCode()
-    {
+    public function getCode() {
 
         $orgCode = Yii::$app->session->get('organizations_code');
         $len = strlen($orgCode);
 
         $val = (new \yii\db\Query)
-            ->select(["MAX(convert(int,id)) as id"])
-            ->from('tbl_user_organization_mapping')
-            ->one();
+                ->select(["MAX(convert(int,id)) as id"])
+                ->from('tbl_user_organization_mapping')
+                ->one();
         $code1 = (int) $val['id'] + 1;
 
         $value = $orgCode . $code1;
@@ -438,17 +435,16 @@ class TblUserOrganizationMapping extends ChildModel
         return $value;
     }
 
-    public function getInstalltionCode($orgCode)
-    {
+    public function getInstalltionCode($orgCode) {
 
         $orgCode = Yii::$app->session->get('organizations_code');
         $len = strlen($orgCode);
 
         $val = (new \yii\db\Query)
-            ->select("MAX(CAST(trim(SUBSTRING(`id` FROM " . $len . " +1)) AS UNSIGNED)) as id")
-            ->from('tbl_user_organization_mapping')
-            ->where('(CAST(trim(SUBSTRING(id, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
-            ->one();
+                ->select("MAX(CAST(trim(SUBSTRING(`id` FROM " . $len . " +1)) AS UNSIGNED)) as id")
+                ->from('tbl_user_organization_mapping')
+                ->where('(CAST(trim(SUBSTRING(id, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->one();
         $code1 = (int) $val['id'] + 1;
 
         $value = $orgCode . $code1;
@@ -456,19 +452,16 @@ class TblUserOrganizationMapping extends ChildModel
         return $value;
     }
 
-    public function getUserOrgs($userCode)
-    {
+    public function getUserOrgs($userCode) {
         $records = $this->find()->select(['organization_code', 'organization_type'])->where(['user_id' => $userCode, 'is_active' => 1])->asArray()->all();
         return $records;
     }
 
-    public function getUserMapping()
-    {
+    public function getUserMapping() {
         return $this->find()->where(['user_id' => $this->user_id])->all();
     }
 
-    public function getUserOrgMapping()
-    {
+    public function getUserOrgMapping() {
         return $this->find()->where(['user_id' => $this->user_id, 'organization_type' => $this->organization_type])->all();
     }
 
@@ -476,8 +469,7 @@ class TblUserOrganizationMapping extends ChildModel
         return $this->find()->where(['user_id' => $this->user_id, 'organization_type' => $this->organization_type, 'organization_code' => $this->organization_code, 'is_active' => 1])->all();
     }
 
-    private function getRoute($PlantArray, $MCCArray, $BMCArray, $DcsArray)
-    {
+    private function getRoute($PlantArray, $MCCArray, $BMCArray, $DcsArray) {
         $query = TblRouteMapping::find();
         $query->select(['route_code', 'route_name']);
         $query->where(['to_dest' => $PlantArray, 'to_type' => 'plant']);
@@ -504,17 +496,15 @@ class TblUserOrganizationMapping extends ChildModel
         return ['data' => $data, 'selectedArray' => $selected];
     }
 
-    public function getUserMaster()
-    {
+    public function getUserMaster() {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
-    public function validateOnLoginType($attribute, $params)
-    {
+    public function validateOnLoginType($attribute, $params) {
         if (!empty($this->user_id)) {
             $login_type = Yii::$app->general->getforeignkey($this->userMaster, 'login_type');
             if (!empty($login_type)) {
-                if ($login_type == 'vsp' || $login_type == 'route_supervisor') {
+                if ($login_type == 'vsp') {
                     if ((empty($this->dcs)) || count($this->dcs) != 1) {
                         $msg = empty($this->dcs) ? Yii::t('app', 'DCS') . ' cannot be blank.' : 'Allow to Map single ' . Yii::t('app', 'DCS');
                         $this->addError('dcs', Yii::t('app/validation', $msg));
@@ -545,9 +535,14 @@ class TblUserOrganizationMapping extends ChildModel
                         $msg = Yii::t('app', 'MCC') . ' cannot be blank.';
                         $this->addError('mcc', Yii::t('app/validation', $msg));
                         return false;
+                    } else if ((empty($this->dcs))) {
+                        $msg = Yii::t('app', 'DCS') . ' cannot be blank.';
+                        $this->addError('dcs', Yii::t('app/validation', $msg));
+                        return false;
                     }
                 }
             }
         }
     }
+
 }

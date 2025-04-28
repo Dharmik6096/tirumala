@@ -18,6 +18,7 @@ use yii\widgets\ActiveForm;
 use \app\modules\details\models\TblContactDetailsHistory;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
+use yii\web\Response;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -571,6 +572,10 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
         if (empty($modelData) && !empty($app_organization)) {
             $organization = $app_organization;
+            if(!empty(Yii::$app->request->post()['TblUserOrganizationMapping'])){
+                $postData = Yii::$app->request->post();
+                $organization = $model->getOrganizationsArray($id, $postData['user_type'], $postData['TblUserOrganizationMapping']);
+            }  
         } else {
             $organization = $model->getOrganizationsArray($id, $user->user_type_id);
         }
