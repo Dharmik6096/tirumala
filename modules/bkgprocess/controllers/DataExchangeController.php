@@ -9,15 +9,19 @@ use yii\helpers\Url;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\bkgprocess\models\TblDataExchangeConfig;
 use app\components\WebApi;
+use app\modules\clienterp\models\TblDataExchangeLog;
+use DOMDocument;
+use SoapClient;
 
 class DataExchangeController extends ChildController {
 
     public $freeAccessActions = ['data-exchange'];
     public $errorPath = '';
+    private $toEncrypt = ['Mdob', 'Ndob', 'Adharno', 'Fdob'];
 
     public function init() {
         parent::init();
-        //$this->errorPath = Yii::$app->params['FTPDirPath'] . 'ErrorLogs/FTP';
+//$this->errorPath = Yii::$app->params['FTPDirPath'] . 'ErrorLogs/FTP';
     }
 
     /**
@@ -44,7 +48,6 @@ class DataExchangeController extends ChildController {
             $sp_param = [];
             $sp_param[] = $value['union_code'];
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-
             if (!empty($output)) {
                 $currentDate = strtotime(date('Y-m-d H:i:s'));
                 $futureDate = $currentDate + (60 * $value['interval']);
@@ -57,50 +60,149 @@ class DataExchangeController extends ChildController {
                 $modelKey = $value['update_key'];
                 $updateKey = $value['update_key_with'];
                 $update_ids = array_column($output, $updateKey);
-                $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
+                $json_array_key = $value['json_key'] ?? '';
+                $apiType = strtoupper($value['api_type']);
+                if ($apiType == 'XML') {
+                    $postData = $this->generateSoapXml($output, $value);
+                    $api = new SoapClient($value['request_url'], ['trace' => true, 'exceptions' => true, 'cache_wsdl' => WSDL_CACHE_MEMORY]);
+                    $response = $api->__doRequest($postData, $value['request_url'], '', 1);
+                } else {
+                    $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
 
-                $postData = !empty($output) ? true : false;
-                if (!empty($json_array_key)) {
-                    $body[$json_array_key] = $output;
+                    $postData = !empty($output) ? true : false;
+                    if (!empty($json_array_key)) {
+                        $body[$json_array_key] = $output;
+                    } else {
+                        $body = !empty($output[0]) ? $output[0] : [];
+                    }
+                    $postData = [];
+                    if (!empty(Yii::$app->params['data_exchange_vendor_code'])) {
+                        $body['code'] = Yii::$app->params['data_exchange_vendor_code'];
+                        $postData['params'] = $body;
+                    } else {
+                        $postData = $body;
+                    }
+                    $postData = json_encode($postData);
+
+                    $api = new WebApi();
+                    $api->serverUrl = $value['request_url'];
+                    $api->authentication = FALSE;
+                    $api->vendor_code = !empty($body['code']) ? $body['code'] : '';
+                    $api->body = $postData;
+
+                    $response = $api->ExchangeData();
+                }
+
+                if ($value['api_type'] == 'XML' && !empty($response)) {
+                    $this->processXmlResponse($response, $sp_name, $value);
                 } else {
-                    $body = !empty($output[0]) ? $output[0] : [];
-                }
-                $postData = [];
-                if (!empty(Yii::$app->params['data_exchange_vendor_code'])) {
-                    $body['code'] = Yii::$app->params['data_exchange_vendor_code'];
-                    $postData['params'] = $body;
-                } else {
-                    $postData = $body;
-                }
-                $postData = json_encode($postData);
-                $api = new WebApi();
-                $api->serverUrl = $value['request_url'];
-                $api->authentication = FALSE;
-                $api->vendor_code = !empty($body['code']) ? $body['code'] : '';
-                $api->body = $postData;
-             
-                $response = $api->ExchangeData();
-                $responseData = json_decode(json_encode($response), true);
-                $loopData = [];
-                if (empty($json_array_key) && !empty($responseData['result'])) {
-                    $loopData[] = $responseData['result'];
-                } else if (!empty($responseData['result']['data'])) {
-                    $loopData = !empty($responseData['result']['data']) ? $responseData['result']['data'] : [];
-                } else if (empty(Yii::$app->params['data_exchange_vendor_code']) && !empty($responseData['data'])) {
-                    $loopData = $responseData['data'];
-                }
-                if (!empty($loopData)) {
-                    foreach ($loopData as $resp_data) {
-                        $status = (isset($resp_data['status']) && (strtolower($resp_data['status']) == '200')) ? 2 : 3;
-                        $resp_status = !empty($resp_data['status']) ? $resp_data['status'] : NULL;
-                        $resp_desc = !empty($resp_data['msg']) ? $resp_data['msg'] : NULL;
-                        $updateValue = !empty($resp_data[$updateKey]) ? $resp_data[$updateKey] : '';
-                        $model = new $model_name();
-                        $model->updateAll(['data_post_status' => $status, 'resp_status' => $resp_status, 'resp_desc' => $resp_desc, 'response_datetime' => date('Y-m-d H:i:s')], [$modelKey => $updateValue]);
+                    $responseData = json_decode(json_encode($response), true);
+                    $loopData = [];
+                    if (empty($json_array_key) && !empty($responseData['result'])) {
+                        $loopData[] = $responseData['result'];
+                    } else if (!empty($responseData['result']['data'])) {
+                        $loopData = !empty($responseData['result']['data']) ? $responseData['result']['data'] : [];
+                    } else if (empty(Yii::$app->params['data_exchange_vendor_code']) && !empty($responseData['data'])) {
+                        $loopData = $responseData['data'];
+                    }
+                    if (!empty($loopData)) {
+                        foreach ($loopData as $resp_data) {
+                            $status = (isset($resp_data['status']) && (strtolower($resp_data['status']) == '200')) ? 2 : 3;
+                            $resp_status = !empty($resp_data['status']) ? $resp_data['status'] : NULL;
+                            $resp_desc = !empty($resp_data['msg']) ? $resp_data['msg'] : NULL;
+                            $updateValue = !empty($resp_data[$updateKey]) ? $resp_data[$updateKey] : '';
+                            $model = new $model_name();
+                            $model->updateAll(['data_post_status' => $status, 'resp_status' => $resp_status, 'resp_desc' => $resp_desc, 'response_datetime' => date('Y-m-d H:i:s')], [$modelKey => $updateValue]);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private function processXmlResponse($soapResponse, $sp_name, $exchangeData) {
+        $xml = simplexml_load_string($soapResponse);
+        $namespaces = $xml->getNamespaces(true);
+        foreach ($namespaces as $prefix => $uri) {
+            $xml->registerXPathNamespace($prefix, $uri);
+        }
+        $updateKeys = explode(',', $exchangeData['update_key']);
+        $resParamKeys = explode(',', $exchangeData['res_param_keys']);
+
+        foreach ($xml->xpath('//env:Body//item') as $item) {
+            $itemData = [];
+            foreach ($item as $child) {
+                $itemData[$child->getName()] = (string) $child;
+            }
+            $whereParts = array_map(function ($key) use ($itemData) {
+                return isset($itemData[$key]) ? $itemData[$key] : '';
+            }, $updateKeys);
+            $whereKey = implode('-', $whereParts);
+
+            $resParams = [];
+            $status = 0;
+            foreach ($resParamKeys as $key) {
+                $resParams[] = $itemData[$key] ?? '';
+                if ($key == 'Type' && isset($itemData[$key])) {
+                    $status = ($itemData[$key] == 'S') ? 2 : 3;
+                }
+            }
+            $sp_res_param = array_merge([$whereKey], [$status], $resParams);
+            \Yii::$app->general->getSpData('sp_data_exchange_log_update', $sp_res_param, true);
+        }
+    }
+
+    private function generateSoapXml($data, $value) {
+        $tags = !empty($value['json_key']) ? explode(',', $value['json_key']) : [];
+        if (empty($tags)) {
+            return '';
+        }
+        $doc = new DOMDocument('1.0', 'UTF-8');
+        $doc->formatOutput = true;
+        $envelope = $doc->createElementNS(Yii::$app->params['data_exchange_url'], 'soap:Envelope');
+        $envelope->setAttribute('xmlns:soap', Yii::$app->params['data_exchange_url']);
+        $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:soap:functions:mc-style');
+        $doc->appendChild($envelope);
+        $header = $doc->createElement('soap:Header');
+        $envelope->appendChild($header);
+        $body = $doc->createElement('soap:Body');
+        $envelope->appendChild($body);
+
+        $parent = $body;
+        $no_of_tags = count($tags) - 1;
+        foreach ($tags as $key => $tagName) {
+            if ($key != $no_of_tags) {
+                $element = $doc->createElement($tagName);
+                $parent->appendChild($element);
+                $parent = $element;
+            }
+        }
+        $lastTag = end($tags);
+        foreach ($data as $itemData) {
+            $lock = new TblDataExchangeLog();
+            $lock->process_name = $itemData['process_name'];
+            $lock->process_code = $itemData['process_code'];
+            $lock->update_key = $itemData['eiplCode'];
+            $lock->data_post_status = 1;
+            $lock->picked_datetime = date('Y-m-d H:i:s');
+            $lock->save();
+            unset($itemData['eiplCode'], $itemData['process_name'], $itemData['process_code']);
+
+            $item = $doc->createElement($lastTag);
+            foreach ($itemData as $key => $value) {
+                if (!empty($value) && in_array($key, $this->toEncrypt)) {
+                    $decryptedData = Yii::$app->general->decryptData($value);
+                    $value = $decryptedData !== false ? $decryptedData : $value;
+                }
+                $child = $doc->createElement($key);
+                $child->appendChild($doc->createTextNode($value ?? ''));
+                $item->appendChild($child);
+            }
+
+            $parent->appendChild($item);
+        }
+        $xml = $doc->saveXML();
+        return $xml;
     }
 
 }

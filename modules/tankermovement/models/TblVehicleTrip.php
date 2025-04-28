@@ -57,14 +57,15 @@ class TblVehicleTrip extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip']],
+                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip', 'chekinout']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip', 'is_check_in', 'check_in_type', 'check_in_code', 'check_in_datetime'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
                 [['trip_for'], 'default', 'value' => 'bmcdispatch'],
                 [['trip_mode'], 'default', 'value' => 'online'],
                 [['is_active'], 'default', 'value' => 1],
                 [['is_auto_trip'], 'default', 'value' => 0],
+                [['is_check_in'], 'default', 'value' => 0],
                 [['vehicle_code'], 'checkVehicleStatus', 'on' => ['createTrip', 'autogeneratetrip']],
         ];
     }
@@ -398,6 +399,34 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 }
             }
             $saveModel[] = $trip_detail;
+        }
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$childModel) {
+        $content = $modelSave['content'];
+        $model->scenario = 'chekinout';
+        $isValid = FALSE;
+        if ($content['action_type'] == 'out') {
+            $isValid = TRUE;
+            $model->is_check_in = 0;
+            $model->check_in_type = $model->check_in_code = $model->check_in_datetime = NULL;
+        } else if ($content['action_type'] == 'in' && $model->is_check_in != '1') {
+            $isValid = TRUE;
+            $model->is_check_in = 1;
+            $model->check_in_type = Yii::$app->eiplapp->identity->module_type;
+            $model->check_in_code = Yii::$app->eiplapp->identity->module_code;
+            $model->check_in_datetime = $content['check_in_datetime'];
+        }
+        if ($isValid) {
+            $remarks = Yii::$app->eiplapp->identity->login_type . '-' . Yii::$app->eiplapp->identity->mobile_no . '-' . $content['action_type'];
+            $sub_status_time = $model->sub_status_time;
+            $trip_sub_status = $model->trip_sub_status;
+            $model->trip_sub_status = 'trip_check_' . $content['action_type'];
+            $model->sub_status_time = $content['check_in_datetime'];
+            Yii::$app->general->setVehicleTripTrackingDetail($model, $remarks);
+            $model->trip_sub_status = $trip_sub_status;
+            $model->sub_status_time = $sub_status_time;
+            $model->updated_by = Yii::$app->eiplapp->identity->module_code;
         }
     }
 

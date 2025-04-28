@@ -11,6 +11,7 @@ use app\modules\syncutility\models\TblSentbox;
 use yii\base\UserException;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
+use app\modules\tankermovement\models\TblVehicleTrip;
 
 /**
  * This is the model class for table "tbl_vehicle_trip_detail".
@@ -293,6 +294,37 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
     public function validateDeparture($attribute, $params) {
         if (!empty($this->arrival_time) && strtotime($this->departure_time) <= strtotime($this->arrival_time)) {
             $this->addError($attribute, 'Departure time must be greater than Arrival time.');
+        }
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$childModel) {
+        $content = $modelSave['content'];
+        $action_datetime = $content['action_datetime'];
+        $remarks = $content['remarks'];
+        $action_type = $content['action_type'];
+        $model->scenario = 'gate-' . $action_type;
+        $isValid = FALSE;
+        $trip = TblVehicleTrip::findOne($model->vehicle_trip_code);
+        if ($action_type == 'in' && empty($model->arrival_time)) {
+            $isValid = TRUE;
+            $model->arrival_time = $action_datetime;
+            $model->in_remarks = $remarks;
+            $trip->trip_sub_status = $model->is_last_destination ? 'plant_lot_pending' : 'gate_in';
+        } else if ($action_type == 'out' && empty($model->departure_time)) {
+            $isValid = TRUE;
+            $model->departure_time = $action_datetime;
+            $model->out_remarks = $remarks;
+            $trip->trip_sub_status = 'gate_out';
+        }
+        if ($isValid && $model->validate()) {
+            $trip->sub_status_time = $action_datetime;
+            $childModel[] = $trip;
+            $response = Yii::$app->general->getColumnName($model->source_org_type);
+            if (!empty($response['rel'])) {
+                $sourceData = $model->{$response['rel'] . 'Source'};
+                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+            }
+            Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
         }
     }
 
