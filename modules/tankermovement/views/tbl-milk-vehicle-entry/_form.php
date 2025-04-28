@@ -76,16 +76,16 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?> 
             </div>
-            <div class="col-sm-2 number-validate"> 
+            <div class="col-sm-2 number-validate disp_none"> 
                 <?= $form->field($model, 'gross_weight')->textInput(['readonly' => 'readonly']) ?>
             </div>
-            <div class="col-sm-2 number-validate"> 
+            <div class="col-sm-2 number-validate disp_none"> 
                 <?= $form->field($model, 'tare_weight')->textInput(['readonly' => 'readonly']) ?>
             </div>
-            <div class="col-sm-2 number-validate"> 
+            <div class="col-sm-2 number-validate disp_none"> 
                 <?= $form->field($model, 'qty')->textInput(['readonly' => 'readonly']) ?>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2 disp_none">
                 <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99', 'options' => ['readonly' => true]]); ?>
             </div>
         </div>
@@ -221,6 +221,8 @@ $form = ActiveForm::begin([
                                                                     if (data.status == "success"){ 
                                                                         $("#loadercontent").hide();
                                                                         $("#pageloader").hide();
+                                                                        $(".number-validate.disp_none, .disp_none").removeClass("disp_none");
+                                                                        $(".field-tblmilkvehicleentry-tare_weight_time").parent().removeClass("disp_none");
                                                                         $("#tblmilkvehicleentry-milk_vehicle_entry_code").val(data.milk_vehicle_entry_code);
                                                                         $("#tblmilkvehicleentry-gross_weight").val(data.gross_weight);
                                                                         $("#tblmilkvehicleentry-tare_weight").val(data.tare_weight);
@@ -634,12 +636,20 @@ $script = "
         var gross_weight=$('#tblmilkvehicleentrytransaction-gross_weight').val() || 0;
         var tare_weight=$('#tblmilkvehicleentrytransaction-tare_weight').val() || 0;
         var qty = parseFloat(gross_weight) - parseFloat(tare_weight);
+        var main_gross_weight=$('#tblmilkvehicleentry-gross_weight').val() || 0;
         if (parseFloat(gross_weight) < parseFloat(tare_weight)) {
             bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>tare weight should not be more than gross weight</span></div></div>\");
             $('#tblmilkvehicleentrytransaction-tare_weight').val('');
             $('#tblmilkvehicleentrytransaction-chamber_quantity').val('');
             return false;
         }
+
+        if (main_gross_weight != 0 && parseFloat(main_gross_weight) < parseFloat(gross_weight)) {
+            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>gross weight should not be more than first gross weight</span></div></div>\");
+            $('#tblmilkvehicleentrytransaction-gross_weight').val('');
+            return false;
+        }
+
         if (!isNaN(qty)) {
             qty = Math.max(0, qty);
         } else {

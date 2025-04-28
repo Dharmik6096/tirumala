@@ -530,6 +530,12 @@ $this->registerJs($script, View::POS_END, 'bmc-config-popup');
 ?>
 <?php
 $script = "$(document).ready(function(){
+    function formatLocalDate(date) {
+        var day = date.getDate().toString().padStart(2, '0');
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var year = date.getFullYear();
+        return day + '-' + month + '-' + year;
+    }
     $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
         var from_date = $('#tblbmcmilkdispatch-from_date').val();
         var to_date = $('#tblbmcmilkdispatch-to_date').val();
@@ -543,10 +549,15 @@ $script = "$(document).ready(function(){
             var fromDateObj = new Date(formatted_from_date);
             var toDateObj = new Date(formatted_to_date);
             var date = new Date(formatted_to_date);
-            date.setDate(date.getDate() + 1);
-            date = date.toISOString().split('T')[0];
-            format_date = date.split('-');
-            date = format_date[2]+'-'+format_date[1]+'-'+format_date[0];
+            var currentDate = new Date();
+            date.setHours(0, 0, 0, 0);
+            currentDate.setHours(0, 0, 0, 0);
+            if (date < currentDate) {
+                date.setDate(date.getDate() + 1);
+            } else {
+               date.setDate(date.getDate());
+            }
+            date = formatLocalDate(date);
             if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
                 var errorMessage = 'must not be less than from date.';
                 var errorElement = '<div class=\"error-message error_message\">' + errorMessage + '</div>';
@@ -554,6 +565,7 @@ $script = "$(document).ready(function(){
                 $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
             } else {
                 $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                $('#tblbmcmilkdispatch-transaction_date').kvDatepicker('destroy');
                 $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
                         format: 'dd-mm-yyyy', // Set your desired date format
                         todayHighlight: true,
