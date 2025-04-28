@@ -1144,13 +1144,15 @@ class SchedulerController extends ChildController {
                 $saveModel[] = $row;
 
                 $appmodel = new TblEiplAppLogin();
-                $appData = $appmodel->getAppDetail($row);
-                if (!empty($appData)) {
-                    $appHistoryModel = new TblEiplAppLoginHistory();
-                    Yii::$app->operation->history($appData, $appHistoryModel, UPDATE);
-                    $saveModel[] = $appHistoryModel;
-                    $appData->is_active = 0;
-                    $saveModel[] = $appData;
+                $appDataList = $appmodel->getAppDetail($row);
+                if (!empty($appDataList)) {
+                    foreach ($appDataList as $appData) {
+                        $appHistoryModel = new TblEiplAppLoginHistory();
+                        Yii::$app->operation->history($appData, $appHistoryModel, UPDATE);
+                        $saveModel[] = $appHistoryModel;
+                        $appData->is_active = 0;
+                        $saveModel[] = $appData;
+                    }
                 }
                 $generalModel = new GeneralModel();
                 $transaction = $generalModel->saveTransaction($saveModel, [], ['User Deactivated', 'edit']);
