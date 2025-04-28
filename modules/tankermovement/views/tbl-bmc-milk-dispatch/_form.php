@@ -530,6 +530,20 @@ $this->registerJs($script, View::POS_END, 'bmc-config-popup');
 ?>
 <?php
 $script = "$(document).ready(function(){
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    var ydd = String(yesterday.getDate()).padStart(2, '0');
+    var ymm = String(yesterday.getMonth() + 1).padStart(2, '0');
+    var yyyyy = yesterday.getFullYear();
+    var yesterdayFormatted = ydd + '-' + ymm + '-' + yyyyy;
+
+    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
+        format: 'dd-mm-yyyy',
+        todayHighlight: true,
+        autoclose: true,
+        endDate: yesterdayFormatted
+    });
+
     $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
         var from_date = $('#tblbmcmilkdispatch-from_date').val();
         var to_date = $('#tblbmcmilkdispatch-to_date').val();
