@@ -11,7 +11,7 @@ class DefaultValue extends Component {
         $defaults = $this->processDefaultsArray();
         $clientCode = $eiplcode ?: Yii::$app->session->get('eiplCode');
         $modelClass = (new \ReflectionClass($model))->getShortName();
-        $clientDefaults = $defaults[$clientCode][$modelClass] ?: $defaults['EIPLCOMMON'][$modelClass] ?: [];
+        $clientDefaults = $defaults[$clientCode][$modelClass] ?? $defaults['EIPLCOMMON'][$modelClass] ?: [];
 
         foreach ($clientDefaults as $attr => $val) {
             $model->$attr = $val;
