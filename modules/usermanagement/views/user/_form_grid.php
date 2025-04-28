@@ -61,7 +61,7 @@ $attribute = [
         [
         'attribute' => 'mobile_no',
         'value' => 'mobile_no',
-        'visible' => false,
+        'visible' => TRUE,
         'filter' => true,
     ],
         ['attribute' => 'allow_app_login',
