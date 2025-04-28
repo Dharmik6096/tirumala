@@ -136,21 +136,19 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblDcsProvisionalHistory extends \yii\db\ActiveRecord
-{
+class TblDcsProvisionalHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_provisional_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['dcs_provisional_code', 'allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'mapped_village_no', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status', 'rate_flag', 'is_name_request', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'dpu_type', 'member_rate_code', 'is_live', 'is_single_farmer', 'default_milk_type', 'credit_sale_allow', 'auto_code', 'mfile_digit', 'is_chiller', 'antibiotic_check', 'is_security_cheque', 'originating_type'], 'safe'],
             [['effective_date', 'registration_date', 'valid_from', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
@@ -164,7 +162,7 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord
             [['destination_code', 'branch_code'], 'safe'],
             [['email'], 'safe'],
             [['pincode', 'village_code', 'mcc_plant_code', 'plant_code', 'old_mcc_plant_code'], 'safe'],
-            [['registration_code', 'service_tax', 'tin_no', 'gst_no', 'fssi'], 'safe'],
+            [['registration_code', 'service_tax', 'tin_no', 'gst_no', 'fssi', 'fssi_expiry_date'], 'safe'],
             [['bank_code'], 'safe'],
             [['district_code', 'union_code'], 'safe'],
             [['hamlet_code'], 'safe'],
@@ -175,7 +173,7 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord
             [['local_address'], 'safe'],
             [['local_firstname', 'local_lastname', 'local_surname'], 'safe'],
             [['ref_code', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['data_post_id','status'], 'safe'],
+            [['data_post_id', 'status'], 'safe'],
             [['sap_vendor_code'], 'safe'],
             [['voter_id'], 'safe'],
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
@@ -186,8 +184,7 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'dcs_provisional_code' => Yii::t('app', 'Dcs Provisional Code'),
@@ -236,7 +233,8 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord
             'mapped_village_no' => Yii::t('app', 'Mapped Village No'),
             'secretory_info' => Yii::t('app', 'Secretory Info'),
             'gst_no' => Yii::t('app', 'Gst No'),
-            'fssi' => Yii::t('app', 'Fssi'),
+            'fssi' => Yii::t('app', 'FSSAI'),
+            'fssi_expiry_date' => Yii::t('app', 'FSSAI Expiry Date'),
             'organisation_type_code' => Yii::t('app', 'Organisation Type Code'),
             'scheme_type_code' => Yii::t('app', 'Scheme Type Code'),
             'is_registered' => Yii::t('app', 'Is Registered'),
@@ -320,4 +318,5 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord
             'status' => Yii::t('app', 'Status'),
         ];
     }
+
 }
