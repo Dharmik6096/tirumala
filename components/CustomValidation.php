@@ -1207,11 +1207,10 @@ class CustomValidation extends Component {
             'DODLA' => [
                 'TblVehicleMaster' => [
                     'default' => [
-                            [['parsing_no'], function ($attribute, $params) {
-                                Yii::$app->general->validVehicleNumber($this, $attribute, $params);
-                            }, 'except' => ['activation']],
-                            [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
-                            [['no_of_compartment'], 'required'],
+                        [['parsing_no'], function ($attribute, $params) {
+                            Yii::$app->general->validVehicleNumber($this, $attribute, $params);
+                        }, 'except' => ['activation']],
+                        [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
                     ],
                 ],
             ],

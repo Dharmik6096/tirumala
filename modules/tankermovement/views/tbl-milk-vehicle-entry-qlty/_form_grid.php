@@ -28,6 +28,8 @@ $attribute = [
         ['attribute' => 'status_datetime', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->status_datetime);
         }, 'filter' => false],
+        ['attribute' => 'acidity', 'filter' => false],
+        ['attribute' => 'mbrt', 'filter' => false],
         ['attribute' => 'fat', 'filter' => false],
         ['attribute' => 'snf', 'filter' => false],
 ];

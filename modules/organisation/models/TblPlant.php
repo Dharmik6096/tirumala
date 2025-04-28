@@ -262,4 +262,10 @@ class TblPlant extends \app\models\ChildModel {
         return $data;
     }
 
+    public function getPlantData($plant_code) {
+        $partyList = $this->find()->select(["CONCAT(plant_code, '#plant') AS plant_code, CONCAT(name, ' - ', ref_code, ' - PLANT') AS name"])
+        ->where(['or', ['plant_code' => $plant_code], ['ref_code' => $plant_code]])->asArray()->all();
+        return ArrayHelper::map($partyList, 'plant_code', 'name');
+    }
+
 }

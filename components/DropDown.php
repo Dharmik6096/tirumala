@@ -605,7 +605,7 @@ class DropDown extends Component {
 
     public function vehicleMasterOpen($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-vehicle-master/vehicle-open-list', Yii::t('app', 'Select Vehicle'), $multiple, $extra_param, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/vehicle-open-list', Yii::t('app', 'Select Vehicle'), $multiple, $extra_param, $readonly);
     }
 
     public function datewise_transporter_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
@@ -687,6 +687,11 @@ class DropDown extends Component {
     public function vehicleQaInspectionList($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-qa-inspection/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
+    }
+
+    public function chamberNoList($model, $form, $depends, $name = 'chamber_no', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-chamber-list', Yii::t('app', 'Select Chamber'), $multiple, '', $readonly);
     }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
@@ -2025,6 +2030,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['DCS' => Yii::t('app', 'DCS'), 'BULKVEN' => Yii::t('app', 'Customer')],
             ],
+            'trip_status' => [
+                'name' => 'trip_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['tankerfull' => Yii::t('app', 'Tankerfull'), 'open' => Yii::t('app', 'Open'), 'generated' => Yii::t('app', 'Generated'), 'closed' => Yii::t('app', 'Closed')],
+            ],
+            'lot_quality_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['discarded' => Yii::t('app', 'Discarded'), 'done' => Yii::t('app', 'Done'), 'pending' => Yii::t('app', 'Pending')],
+            ],
         ];
         return $records[$l];
     }
@@ -2171,6 +2186,7 @@ class DropDown extends Component {
             'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
             'chamber_no' => ['name' => 'chamber_no', 'fields' => 'milk_vehicle_entry_qlty_code,chamber_no,', 'prompt' => Yii::t('app', 'Select Compartment'), 'model' => 'TblMilkVehicleEntryQlty', 'depend' => 'trip_code', 'dependArray' => ['status']],
             'dock_no' => ['name' => 'dock_no', 'fields' => 'dock_no,dock_name,dock_no', 'prompt' => Yii::t('app', 'Select Dock No'), 'model' => 'TblPlantDockMapping', 'depend' => 'plant_code'],
+            'vehicle_transpoter' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'whereCondition' => ['vehicle_use_type' => [1, 2], 'union_code' => !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : '']],
         ];
         return $label[$l];
     }

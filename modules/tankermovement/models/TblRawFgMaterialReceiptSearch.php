@@ -19,7 +19,7 @@ class TblRawFgMaterialReceiptSearch extends TblRawFgMaterialReceipt {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'union_code', 'plant_code', 'gross_weight', 'tare_weight', 'material_code', 'originating_type', 'raw_fg_material_receipt_code', 'receipt_datetime', 'party_code', 'vehicle_code', 'document_type', 'document_date', 'document_no', 'gross_weight_datetime', 'tare_weight_datetime', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'material_entry_type', 'remarks', 'dock_no'], 'safe'],
+                [['from_date', 'to_date', 'union_code', 'plant_code', 'gross_weight', 'tare_weight', 'material_code', 'originating_type', 'raw_fg_material_receipt_code', 'receipt_datetime', 'party_code', 'vehicle_code', 'document_type', 'document_date', 'document_no', 'gross_weight_datetime', 'tare_weight_datetime', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'material_entry_type', 'remarks', 'dock_no', 'tanker_no'], 'safe'],
         ];
     }
 
@@ -49,7 +49,7 @@ class TblRawFgMaterialReceiptSearch extends TblRawFgMaterialReceipt {
 
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_raw_fg_material_receipt', 'tbl_raw_fg_material_receipt');
-        $query->joinWith(['partyMaster', 'vehicleCode', 'materialCode']);
+        $query->joinWith(['partyMaster', 'materialCode']);
 
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
         $query->andFilterWhere(['>=', 'tbl_raw_fg_material_receipt.receipt_datetime', $from_date]);
@@ -74,7 +74,7 @@ class TblRawFgMaterialReceiptSearch extends TblRawFgMaterialReceipt {
         ]);
 
         $query->andFilterWhere(['like', 'tbl_party_master.party_name', $this->party_code])
-                ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->vehicle_code])
+                ->andFilterWhere(['like', 'tbl_raw_fg_material_receipt.tanker_no', $this->tanker_no])
                 ->andFilterWhere(['like', 'tbl_material_master.material_name', $this->material_code])
                 ->andFilterWhere(['like', 'tbl_raw_fg_material_receipt.document_type', $this->document_type])
                 ->andFilterWhere(['like', 'tbl_raw_fg_material_receipt.document_no', $this->document_no])

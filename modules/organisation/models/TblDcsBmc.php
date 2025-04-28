@@ -561,4 +561,8 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $query->all();
     }
 
+    public function getAllBmcData() {
+        return $this->find()->where(['bmc_code' => $this->bmc_code])->all();
+    }
+
 }

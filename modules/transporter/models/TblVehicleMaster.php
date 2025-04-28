@@ -7,9 +7,12 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblCapacity;
 use app\modules\organisation\models\TblVehicleType;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblFuelTypeMaster;
 use app\modules\transporter\models\TblBillingType;
+use yii\base\UserException;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_vehicle_master".
@@ -80,10 +83,6 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 [['transporter_code'], 'fieldValidate', 'on' => 'importCsv'],
                 [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'parsing_no', 'billing_method', 'vehicle_use_type'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
                 [['parsing_no', 'driver_name', 'transporter_code', 'wef_date', 'billing_method'], 'required', 'on' => 'importCsv'],
-                [['no_of_compartment'], 'default', 'value' => 1],
-                [['no_of_compartment'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'chamber_no');
-                }, 'on' => 'importCsv'],
                 [['vehicle_type_code', 'fuel_type_code', 'capacity_code'], 'required', 'except' => ['activation']],
 //                [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required', 'except' => ['activation']],
 //                [['union_code'], 'required', 'except' => ['importCsv', 'activation']],
@@ -301,25 +300,24 @@ class TblVehicleMaster extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
-        foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                }
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code, '', TRUE, 2);
+            $sentbox = new TblSentbox();
+            $sentbox->source_org_id = $this->union_code;
+            if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
             }
         }
-    }
-
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
+        $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration($this->union_code, 'tanker_movement_with_trip_sub_status', 'PORTAL') == 1 ? TRUE : FALSE;
+        if ($tankerMovementWithTripSubStatus && $flag === 'INSERT' && in_array($this->vehicle_use_type, [1, 2])) {
+            $vehicleQaInspection = new TblVehicleQaInspection();
+            $vehicleQaInspection->attributes = $this->attributes;
+            $vehicleQaInspection->status = 'pending';
+            $vehicleQaInspection->trip_code = $vehicleQaInspection->remarks = '';
+            $vehicleQaInspection->transaction_datetime = $this->created_at;
+            $vehicleQaInspection->save(TRUE, FALSE);
+        }
     }
 
     public function convertDateDot() {
@@ -347,6 +345,27 @@ class TblVehicleMaster extends \app\models\ChildModel {
             $this->union_code = Yii::$app->general->getforeignkey($this->transporter, 'union_code');
             $this->parsing_no = strtoupper($this->parsing_no);
         }
+    }
+
+    public function getVehicleMaster($unionCode, $type, $code, $milkReceipt, $transaction_date) {
+        $query = $this->find()
+                ->select(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])
+                ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
+                ->innerJoin('tbl_vehicle_trip_detail', 'tbl_vehicle_trip_detail.trip_code = tbl_vehicle_trip.trip_code')
+                ->where(['tbl_vehicle_master.union_code' => $unionCode, 'LOWER(tbl_vehicle_trip_detail.source_org_type)' => strtolower($type), 'tbl_vehicle_trip_detail.source_org_code' => $code, 'tbl_vehicle_master.vehicle_use_type' => [1, 2]])
+                ->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $transaction_date])
+                ->andWhere(['IS NOT', 'arrival_time', null])
+                ->andWhere(['IS', 'departure_time', null]);
+
+        if ($milkReceipt) {
+            $query->andWhere(['NOT', ['tbl_vehicle_trip.trip_status' => 'closed']]);
+        } else {
+            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']]);
+        }
+        $data = $query->groupBy(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])->all();
+        return ArrayHelper::map($data, 'vehicle_code', function($value) {
+                    return $value->parsing_no;
+                });
     }
 
 }
