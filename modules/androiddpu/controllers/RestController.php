@@ -97,6 +97,7 @@ class RestController extends ActiveController {
         $mcc_plant_code = [];
         $plant_code = [];
         $union_code = '';
+        $eipl_code = '';
         $model_data = [];
         if ($type == 'VLC') {
             $model = new TblDcs();
@@ -108,6 +109,7 @@ class RestController extends ActiveController {
                 $bmc_code[] = $model_data->bmc_code;
                 $mcc_plant_code[] = $model_data->mcc_plant_code;
                 $plant_code[] = $model_data->plant_code;
+                $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
             }
         } else if ($type == 'BMC') {
             $model = new TblDcsBmc();
@@ -124,6 +126,7 @@ class RestController extends ActiveController {
                 foreach ($model_data->tblBmcGroup as $bmc) {
                     $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($bmc->tblDcsCode, 'dcs_code'));
                 }
+                $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
             }
         } else if ($type == 'MCC') {
             $model = new TblMccPlant();
@@ -140,6 +143,7 @@ class RestController extends ActiveController {
                     $bmc_code = array_merge($bmc_code, ArrayHelper::getColumn($mcc->tblBmcCode, 'bmc_code'));
                     $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
                 }
+                $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
             }
         }
         if ($is_string) {
@@ -152,7 +156,7 @@ class RestController extends ActiveController {
             $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
             $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
         }
-        return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data];
+        return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data, 'eipl_code' => $eipl_code];
     }
 
 }

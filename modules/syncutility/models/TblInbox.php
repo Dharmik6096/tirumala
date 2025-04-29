@@ -94,7 +94,7 @@ class TblInbox extends \yii\db\ActiveRecord {
                 ->andWhere(['or', ['tbl_inbox.data_post_status' => NULL], ['tbl_inbox.data_post_status' => ''], ['tbl_inbox.data_post_status' => 0]])
                 ->andWhere(['NOT IN', 'tbl_inbox.table_name', ['tbl_app_startup', 'tbl_config_txn_result', 'tbl_milk_collectionasd', 'tbl_milk_collection_summaryasd']])
                 ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
-                ->limit(500);
+                ->limit(300);
 
         $pendingDataQuery = $this->find()
                 ->joinWith(['syncPriority'])
