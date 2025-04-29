@@ -178,48 +178,48 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-12">
-        <div class="col-sm-2">
-            <?= Yii::$app->controls->date($model, $form, 'fssi_expiry_date', '', FALSE, date('Y-m-d')); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'sap_vendor_code')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'secretory_info')->textarea(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('collection', $model, $form, '', $model->getAttributeLabel('x_col2'), false, 'x_col2', false); ?>    
-        </div>
-        <div class="col-sm-2 number-validate">  
-            <?= $form->field($model, 'ts_code_m')->textInput() ?>
-        </div>
-        <div class="col-sm-2 number-validate">  
-            <?= $form->field($model, 'ts_code_e')->textInput() ?>
-        </div>        
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'fssi_expiry_date', '', FALSE, date('Y-m-d')); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'sap_vendor_code')->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'secretory_info')->textarea(['maxlength' => true]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('collection', $model, $form, '', $model->getAttributeLabel('x_col2'), false, 'x_col2', false); ?>    
+    </div>
+    <div class="col-sm-2 number-validate">  
+        <?= $form->field($model, 'ts_code_m')->textInput() ?>
+    </div>
+    <div class="col-sm-2 number-validate">  
+        <?= $form->field($model, 'ts_code_e')->textInput() ?>
     </div>
     <div class='pull-left col-sm-4'>
-        <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/><br/>
+        <!-- <div class="ms-3"> -->
+            <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/><br/>
+        <!-- </div> -->
         <div class="col-sm-4">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type'); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type', 'margin_left_20_reverse'); ?>
         </div>
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'diff_milk_type'); ?>
     </div>
     <?php if ($showIsBMC == 0) { ?>
         <div class="col-sm-2 mt15">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bmc'); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bmc', 'margin_left_20_reverse'); ?>
         </div>
     <?php } ?>
-    <div class="col-sm-2">
+    <div class="col-sm-2 mb-3">
         <?= Yii::$app->dropdown->dropdownStatic('machine_owned_type', $model, $form, 'form-group', $model->getAttributeLabel('machine_owned'), false, 'machine_owned', false); ?>
     </div>
 </div>
@@ -308,9 +308,9 @@ $form = ActiveForm::begin([
         ])
         ?>
     <?php } ?>
-    <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
+    <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group mb-3', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
     <!--</div>-->
-    <div class="col-sm-2 mt10">
+    <div class="col-sm-2 mt10 margin_left_20_reverse">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_multi_family_member'); ?>
     </div>
     <!--<div class="col-sm-3">-->
@@ -355,8 +355,8 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
     </div>
-    <div class="col-sm-2 mt10">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'cutoff'); ?>
+    <div class="col-sm-2 mt23 ">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'cutoff' , 'margin_left_20_reverse'); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Lower Milk Type', FALSE, 'lower_milk_type'); ?>
