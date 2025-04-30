@@ -49,7 +49,7 @@ $form = ActiveForm::begin([
           <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_auto_trip'); ?>
     </div>
     <div class="col-sm-6">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true, '', false, false); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 megaSizeDualList">
