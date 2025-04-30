@@ -29,9 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
 $attribute = [
     [
         'attribute' => 'description',
-        'value' => function(Role $model) {
-            return Html::a($model->description, ['view', 'id' => $model->name], ['data-pjax' => 0]);
-        },
         'format' => 'raw',
     ],
     'name',

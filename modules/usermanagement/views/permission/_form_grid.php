@@ -75,15 +75,6 @@ $this->params['breadcrumbs'][] = $this->title;
 $attribute = [
     [
         'attribute' => 'description',
-        'value' => function($model) {
-            if ($model->name == Yii::$app->getModule('user-management')->commonPermissionName) {
-                return Html::a(
-                                $model->description, ['view', 'id' => $model->name], ['data-pjax' => 0, 'class' => 'label label-primary']
-                );
-            } else {
-                return Html::a($model->description, ['view', 'id' => $model->name], ['data-pjax' => 0]);
-            }
-        },
         'format' => 'raw',
     ],
     'name',
