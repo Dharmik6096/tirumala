@@ -322,5 +322,22 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         $value = $orgCode . $code;
         return $value;
     }
+    
+    public function getTripDetailsCount() {
+        $transaction_date = date('Y-m-d', strtotime($this->transaction_date));
+        $count = TblVehicleTripDetail::find()
+                ->joinWith(['tripCode'])
+                ->Where([
+                    'tbl_vehicle_trip.trip_status' => ['generated', 'open'],
+                    'LOWER(tbl_vehicle_trip_detail.source_org_type)' => $this->source_org_type,
+                    'tbl_vehicle_trip_detail.source_org_code' => $this->source_org_code,
+                    'tbl_vehicle_trip_detail.trip_code' => $this->trip_code
+                ])
+                ->andWhere(['<=', 'transaction_date', $transaction_date])
+                ->andWhere(['IS NOT', 'arrival_time', null])
+                ->andWhere(['IS', 'departure_time', null])
+                ->count();
+        return $count == 1;
+    }
 
 }
