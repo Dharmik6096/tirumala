@@ -230,7 +230,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => $subStatus]);
         } else if ($trip_process == 'milk_entry_qlty_merge') {
             $plants = empty($plants) ? (!empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL) : $plants;
-            $query->andWhere(['vt.trip_status' => ['closed']]);
+            $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => 'cleaning_pending']);
             $query->andWhere(['BETWEEN', 'vt.transaction_date', date('Y-m-d', strtotime('-2 days')), date('Y-m-d')]);
             if (!empty($plants)) {
                 $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);
