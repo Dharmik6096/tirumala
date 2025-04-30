@@ -285,29 +285,31 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/depend-vehicles', 'Select Vehicle', $multiple, $model->$name);
     }
 
-    public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
+    public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoSelect = TRUE) {
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
         } else {
             $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
         }
-        $script = "$(document).ready(function() {
-            var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
-            var fieldName = '" . strtolower($name) . "';
-            $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
-                var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
-                var unionCode = $('#" . $depends . "').val();
-                if(unionCode!='' && length == 1) {
-                    $('#'+modelname+'-'+fieldName).val(plant);
-                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                    $('#'+modelname+'-'+fieldName).trigger('change');
-                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                }
-            });
-        });";
-        Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_union_plant');
+        if($autoSelect) {
+            $script = "$(document).ready(function() {
+                var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+                var fieldName = '" . strtolower($name) . "';
+                $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
+                    var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+                    var unionCode = $('#" . $depends . "').val();
+                    if(unionCode!='' && length == 1) {
+                        $('#'+modelname+'-'+fieldName).val(plant);
+                        $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                        $('#'+modelname+'-'+fieldName).trigger('change');
+                        $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                    }
+                });
+            });";
+            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_union_plant');
+        }
     }
 
     public function plant_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {
