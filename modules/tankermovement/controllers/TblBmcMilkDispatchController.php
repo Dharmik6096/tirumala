@@ -402,8 +402,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model = new TblDcsBmc();
                     $data = $model->getBMCList('', $RLS);
                 } else if (strtolower($parents[0]) == 'plant') {
+                    $RLS = (isset($parents[3]) && !empty($parents[3])) ? 'FALSE' : 'TRUE';
                     $model = new TblPlant();
-                    $data = $model->getPlantList($parents[1]);
+                    $data = $model->getPlantList($parents[1], $RLS);
                 } else if (strtolower($parents[0]) == 'party') {
                     $model = new TblPartyMaster();
                     $data = $model->getPartyList($parents[1]);

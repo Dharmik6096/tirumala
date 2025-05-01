@@ -45,7 +45,7 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'receipt_shift_code'); ?>
             </div>
-            <?= Html::hiddenInput('tankerMovement', 'falseBmcRLS', ['id' => 'tankerMovement']); ?>
+            <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
             <?php if (!$tripMandateOnReceipt) { ?>
                 <div class="col-sm-1">
                     <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
