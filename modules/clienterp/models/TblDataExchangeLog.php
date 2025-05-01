@@ -5,6 +5,7 @@ namespace app\modules\clienterp\models;
 use app\modules\dcsoperation\models\TblMemberProvisional;
 use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetails;
 use Yii;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_data_exchange_log".
@@ -55,7 +56,7 @@ class TblDataExchangeLog extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'data_exchange_log_code' => Yii::t('app', 'Data Exchange Lock Code'),
+            'data_exchange_log_code' => Yii::t('app', 'Data Exchange Log Code'),
             'process_name' => Yii::t('app', 'Process Name'),
             'process_code' => Yii::t('app', 'Process Code'),
             'data_post_status' => Yii::t('app', 'Data Post Status'),
@@ -64,12 +65,12 @@ class TblDataExchangeLog extends \app\models\ChildModel {
             'resp_desc' => Yii::t('app', 'Resp Desc'),
             'resp_msg' => Yii::t('app', 'Resp Msg'),
             'response_datetime' => Yii::t('app', 'Response Datetime'),
-            'resp_param_1' => Yii::t('app', 'Resp Param 1'),
-            'resp_param_2' => Yii::t('app', 'Resp Param 2'),
-            'resp_param_3' => Yii::t('app', 'Resp Param 3'),
-            'resp_param_4' => Yii::t('app', 'Resp Param 4'),
-            'resp_param_5' => Yii::t('app', 'Resp Param 5'),
-            'resp_param_6' => Yii::t('app', 'Resp Param 6'),
+            'resp_param_1' => Yii::t('app', 'Mandt'),
+            'resp_param_2' => Yii::t('app', 'Crnam'),
+            'resp_param_3' => Yii::t('app', 'Created at'),
+            'resp_param_4' => Yii::t('app', 'Crzet'),
+            'resp_param_5' => Yii::t('app', 'Adhar no'),
+            'resp_param_6' => Yii::t('app', 'Account no'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -84,7 +85,7 @@ class TblDataExchangeLog extends \app\models\ChildModel {
         return $this->hasOne(TblMemberProvisionalFamilyDetails::className(), ['CAST(member_provisional_family_detail_code AS varchar)' => 'process_code']);
     }
 
-    public function getmemberProvisionalCode() {
+    public function getMemberProvisionalCode() {
         return $this->hasOne(TblMemberProvisional::className(), ['provisional_member_code' => 'process_code']);
     }
 
