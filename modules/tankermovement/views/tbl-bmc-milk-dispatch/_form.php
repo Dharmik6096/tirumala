@@ -31,12 +31,21 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE, FALSE, '', $readonly); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE, FALSE, '', $readonly); ?>
-            </div>
+            <?php if ($readonly) { ?>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'plant_code')->dropDownList([$model->plant_code => Yii::$app->general->getforeignkey($model->plantCode, 'name')], ['disabled' => 'disabled', 'prompt' => '']) ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'mcc_plant_code')->dropDownList([$model->mcc_plant_code => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name')], ['disabled' => 'disabled', 'prompt' => '']) ?>
+                </div>
+            <?php } else { ?>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE, FALSE, '', $readonly); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE, FALSE, '', $readonly); ?>
+                </div>
+            <?php } ?>
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
             </div>
@@ -57,22 +66,40 @@ $form = ActiveForm::begin([
                 <div class="col-sm-2 filldata" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
-                <div class="col-sm-2 filldata"> 
-                    <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-union_code,type,tblbmcmilkdispatch-bmc_code,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
-                </div>
+                <?php if ($readonly) { ?>
+                    <div class="col-sm-2 filldata">
+                        <?= $form->field($model, 'vehicle_code')->dropDownList([$model->vehicle_code => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no')], ['disabled' => 'disabled', 'prompt' => '']) ?>
+                    </div>
+                <?php } else { ?>
+                    <div class="col-sm-2 filldata"> 
+                        <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-union_code,type,tblbmcmilkdispatch-bmc_code,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
+                    </div>
+                <?php } ?>
             <?php } else { ?>
                 <div class="col-sm-2 filldata">
                     <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
                 </div>
-                <div class="col-sm-2 filldata" id='transactionDate'>
-                    <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                <?php if ($readonly) { ?>
+                    <div class="col-sm-2 filldata">
+                        <?= $form->field($model, 'vehicle_code')->dropDownList([$model->vehicle_code => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no')], ['disabled' => 'disabled', 'prompt' => '']) ?>
+                    </div>
+                <?php } else { ?>
+                    <div class="col-sm-2 filldata" id='transactionDate'>
+                        <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+            <?php if ($readonly) { ?>
+                <div class="col-sm-2 filldata">
+                    <?= $form->field($model, 'trip_code')->dropDownList([$model->trip_code => $model->trip_code], ['disabled' => 'disabled', 'prompt' => '']) ?>
+                </div>
+            <?php } else { ?>
+                <div class="col-sm-2 filldata">
+                    <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
+                    <?= Html::hiddenInput('tankerMovementWithTripSubStatus', $tankerMovementWithTripSubStatus, ['id' => 'tankerMovementWithTripSubStatus']); ?>
+                    <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
                 </div>
             <?php } ?>
-            <div class="col-sm-2 filldata">
-                <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
-                <?= Html::hiddenInput('tankerMovementWithTripSubStatus', $tankerMovementWithTripSubStatus, ['id' => 'tankerMovementWithTripSubStatus']); ?>
-                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
-            </div>
             <div id="addTripButtonDiv" class="col-sm-4 addTripButtonDiv">
                 <button id="addTripButton" class="btn btn-primary">Generate Trip</button>
             </div>
@@ -219,22 +246,25 @@ $form = ActiveForm::begin([
 $script = "
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
+var isSecondTransaction = `$readonly`;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
-    $('#tblbmcmilkdispatch-trip_code').on('change',function() {
-        $('#addTripButtonDiv').hide();
-        var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
-        var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
-        var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-        if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
-            if (tripGenerateBtn) {
-                $('#addTripButtonDiv').show();   
+    if(!isSecondTransaction) {
+        $('#tblbmcmilkdispatch-trip_code').on('change',function() {
+            $('#addTripButtonDiv').hide();
+            var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
+            var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
+            var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
+            if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
+                if (tripGenerateBtn) {
+                    $('#addTripButtonDiv').show();   
+                }
+            } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
+                $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
             }
-        } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
-            $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
-        }
-    });
+        });
+    }
     $('#addTripButton').on('click', function(e) {
         e.preventDefault();
         
@@ -348,50 +378,51 @@ $(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-ve
             $('#tblbmcmilkdispatchtxn-dispatch_qty').val('');
         }             
     });
-
-$(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
-    var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
-    var trip_code = $('#tblbmcmilkdispatch-trip_code').val();     
-    var source_org_type = 'bmc';
-    $('.field-tblbmcmilkdispatch-destination_type').removeClass('no_pointer_disabled');
-    $('.field-tblbmcmilkdispatch-destination_code').removeClass('no_pointer_disabled');
-    if(setData(trip_code) && setData(source_org_code)){
-        $.ajax({
-            type: 'post',
-            url: '" . Url::to(['vehicle-trip-detail']) . "',
-            data: {'source_org_code' : source_org_code,'trip_code':trip_code,'source_org_type':source_org_type,'tankerMovementWithTripSubStatus':tankerMovementWithTripSubStatus}, 
-            success: function(data) {
-                var obj = $.parseJSON(data);
-                if (obj.status == 'success') {
-                    if (obj.data.is_auto_trip == 0 && obj.data.is_last_destination == 0) {
-                        var destType = obj.data.destination_type.toUpperCase();
-                        $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select');
-                        $('.field-tblbmcmilkdispatch-destination_type').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
-                        $('#tblbmcmilkdispatch-destination_code').one('depdrop.afterChange', function() {
-                            setTimeout(function() {
-                                $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
-                                $('.field-tblbmcmilkdispatch-destination_code').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
-                            }, 1000);
-                        });
-                    } else if (obj.data.is_auto_trip == 1) {
-                        $('#is-last-destination-container').show();
-                    } else {
-                        $('#is-last-destination-container').hide();
-                    }
-                    if (setData(obj.data.arrival_time)) {
-                        let arrivalTime = obj.data.arrival_time;
-                        let timeOnly = arrivalTime.slice(11, 16); 
-                        $('#tblbmcmilkdispatch-vehicle_in_time').val(timeOnly).prop('readonly', true);
+if(!isSecondTransaction) {
+    $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
+        var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
+        var trip_code = $('#tblbmcmilkdispatch-trip_code').val();     
+        var source_org_type = 'bmc';
+        $('.field-tblbmcmilkdispatch-destination_type').removeClass('no_pointer_disabled');
+        $('.field-tblbmcmilkdispatch-destination_code').removeClass('no_pointer_disabled');
+        if(setData(trip_code) && setData(source_org_code)){
+            $.ajax({
+                type: 'post',
+                url: '" . Url::to(['vehicle-trip-detail']) . "',
+                data: {'source_org_code' : source_org_code,'trip_code':trip_code,'source_org_type':source_org_type,'tankerMovementWithTripSubStatus':tankerMovementWithTripSubStatus}, 
+                success: function(data) {
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        if (obj.data.is_auto_trip == 0 && obj.data.is_last_destination == 0) {
+                            var destType = obj.data.destination_type.toUpperCase();
+                            $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select');
+                            $('.field-tblbmcmilkdispatch-destination_type').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
+                            $('#tblbmcmilkdispatch-destination_code').one('depdrop.afterChange', function() {
+                                setTimeout(function() {
+                                    $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
+                                    $('.field-tblbmcmilkdispatch-destination_code').toggleClass('no_pointer_disabled', !!tankerMovementWithTripSubStatus);
+                                }, 1000);
+                            });
+                        } else if (obj.data.is_auto_trip == 1) {
+                            $('#is-last-destination-container').show();
+                        } else {
+                            $('#is-last-destination-container').hide();
+                        }
+                        if (setData(obj.data.arrival_time)) {
+                            let arrivalTime = obj.data.arrival_time;
+                            let timeOnly = arrivalTime.slice(11, 16); 
+                            $('#tblbmcmilkdispatch-vehicle_in_time').val(timeOnly).prop('readonly', true);
+                        } else {
+                            $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('readonly', false);
+                        }
                     } else {
                         $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('readonly', false);
                     }
-                } else {
-                    $('#tblbmcmilkdispatch-vehicle_in_time').val(obj.currentTime).trigger('change').prop('readonly', false);
                 }
-            }
-        });
-    }
-});
+            });
+        }
+    });
+}
 
 function setData(field = ''){
     if(field != '' && field != null && field != undefined && field != 'Loading ...'){
@@ -529,55 +560,57 @@ $script = "$(document).ready(function(){
 $this->registerJs($script, View::POS_END, 'bmc-config-popup');
 ?>
 <?php
-$script = "$(document).ready(function(){
-    function formatLocalDate(date) {
-        var day = date.getDate().toString().padStart(2, '0');
-        var month = (date.getMonth() + 1).toString().padStart(2, '0');
-        var year = date.getFullYear();
-        return day + '-' + month + '-' + year;
-    }
-    $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
-        var from_date = $('#tblbmcmilkdispatch-from_date').val();
-        var to_date = $('#tblbmcmilkdispatch-to_date').val();
-        if (from_date !== '' && to_date !== '') {
-            // Split date strings and format them as yyyy-mm-dd
-            var from_date_parts = from_date.split('-');
-            var to_date_parts = to_date.split('-');
-            var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
-            var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
-
-            var fromDateObj = new Date(formatted_from_date);
-            var toDateObj = new Date(formatted_to_date);
-            var date = new Date(formatted_to_date);
-            var currentDate = new Date();
-            date.setHours(0, 0, 0, 0);
-            currentDate.setHours(0, 0, 0, 0);
-            if (date < currentDate) {
-                date.setDate(date.getDate() + 1);
-            } else {
-               date.setDate(date.getDate());
-            }
-            date = formatLocalDate(date);
-            if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
-                var errorMessage = 'must not be less than from date.';
-                var errorElement = '<div class=\"error-message error_message\">' + errorMessage + '</div>';
-                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
-            } else {
-                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                $('#tblbmcmilkdispatch-transaction_date').kvDatepicker('destroy');
-                $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
-                        format: 'dd-mm-yyyy', // Set your desired date format
-                        todayHighlight: true,
-                        autoclose: true,
-                        endDate: date,
-                        startDate: to_date
-                    });
-                 }  
-        } else {
-            $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+if (!$readonly) {
+    $script = "$(document).ready(function(){
+        function formatLocalDate(date) {
+            var day = date.getDate().toString().padStart(2, '0');
+            var month = (date.getMonth() + 1).toString().padStart(2, '0');
+            var year = date.getFullYear();
+            return day + '-' + month + '-' + year;
         }
-    });
-});";
-$this->registerJs($script, View::POS_END, 'to-date-from-date');
+        $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
+            var from_date = $('#tblbmcmilkdispatch-from_date').val();
+            var to_date = $('#tblbmcmilkdispatch-to_date').val();
+            if (from_date !== '' && to_date !== '') {
+                // Split date strings and format them as yyyy-mm-dd
+                var from_date_parts = from_date.split('-');
+                var to_date_parts = to_date.split('-');
+                var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
+                var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
+    
+                var fromDateObj = new Date(formatted_from_date);
+                var toDateObj = new Date(formatted_to_date);
+                var date = new Date(formatted_to_date);
+                var currentDate = new Date();
+                date.setHours(0, 0, 0, 0);
+                currentDate.setHours(0, 0, 0, 0);
+                if (date < currentDate) {
+                    date.setDate(date.getDate() + 1);
+                } else {
+                   date.setDate(date.getDate());
+                }
+                date = formatLocalDate(date);
+                if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
+                    var errorMessage = 'must not be less than from date.';
+                    var errorElement = '<div class=\"error-message error_message\">' + errorMessage + '</div>';
+                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                    $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
+                } else {
+                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker('destroy');
+                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
+                            format: 'dd-mm-yyyy', // Set your desired date format
+                            todayHighlight: true,
+                            autoclose: true,
+                            endDate: date,
+                            startDate: to_date
+                        });
+                     }  
+            } else {
+                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+            }
+        });
+    });";
+    $this->registerJs($script, View::POS_END, 'to-date-from-date');
+}
 ?>

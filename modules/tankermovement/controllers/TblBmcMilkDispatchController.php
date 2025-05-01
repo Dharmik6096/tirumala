@@ -527,6 +527,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->to_datetime = $model->to_date;
             $txn_model->union_code = $model->union_code;
             $txn_model->bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
+            $txn_model->vehicle_code = $model->vehicle_code;
             $txn_model->scenario = 'createPlantDispatch';
             if ($txn_model->validate()) {
                 $saveModel = [];
