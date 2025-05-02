@@ -638,7 +638,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         return Json::encode($response);
     }
     
-    public function actionChallen($id) {
+    public function actionChallan($id) {
         $controls = [];
         $controls['p_bmc_milk_dispatch_code'] = $id;
         $controls['p_report_name'] = 'Tanker Dispatch Challan';

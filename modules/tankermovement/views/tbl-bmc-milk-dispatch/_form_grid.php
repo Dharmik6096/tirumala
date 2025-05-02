@@ -202,7 +202,7 @@ $grid_option = [
         },
         'tanker-dispatch-challan' => function ($url, $model) {
             $options = ['title' => 'Print Challan', 'target' => '_blank'];
-            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/challen', 'id' => $model->bmc_milk_dispatch_code], $options);
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/challan', 'id' => $model->bmc_milk_dispatch_code], $options);
         },
     ]
 ];
