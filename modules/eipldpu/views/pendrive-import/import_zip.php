@@ -1,9 +1,9 @@
 <?php
 
 use yii\web\View;
-use yii\widgets\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Html;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 
@@ -125,7 +125,7 @@ $this->title = 'EIPL Collection Zip File';
                                     }
                              }'),
                 ],
-                'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit', 'disabled' => true,],
+                'options' => ['class' => 'btn-login btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit', 'disabled' => true,],
             ]);
             AjaxSubmitButton::end();
             ?>
@@ -133,3 +133,9 @@ $this->title = 'EIPL Collection Zip File';
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+<?php
+$script = "
+            Dropzone.autoDiscover = false;
+            ";
+$this->registerJs($script, View::POS_END, 'import-zip');
+?>
