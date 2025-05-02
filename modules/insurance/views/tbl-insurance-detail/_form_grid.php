@@ -41,7 +41,7 @@ $attribute = [
     ['attribute' => 'sr_no'],
     ['attribute' => 'member_id'],
     ['attribute' => 'member_code', 'value' => function($model) {
-            return substr($model->member_code, -4);
+            return $model->member_code;
         }, 'filter' => true],
     ['attribute' => 'member_name'],
     ['attribute' => 'adhar_no', 'value' => function($model) {

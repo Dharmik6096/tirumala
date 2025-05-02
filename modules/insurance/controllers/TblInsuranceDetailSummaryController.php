@@ -50,7 +50,7 @@ class TblInsuranceDetailSummaryController extends ChildController {
                     if ($transaction !== FALSE) {
                         if($this->model->is_revoke && $status == 'PARTIAL_FINALIZE'){
                             $detailModel = new TblInsuranceDetail();
-                            $detailModel->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'status' => 'PUBLISH'], ['insurance_master_code' => $this->model->insurance_master_code, 'dcs_code' => $this->model->dcs_code]);
+                            $detailModel->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'status' => 'PUBLISH'], ['insurance_master_code' => $this->model->insurance_master_code, 'dcs_code' => $this->model->dcs_code, 'is_delete' => 0]);
                         }
                         return $this->redirect(['/insurance/tbl-insurance-detail/index']);
                     }

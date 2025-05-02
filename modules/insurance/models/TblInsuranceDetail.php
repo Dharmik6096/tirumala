@@ -88,7 +88,7 @@ class TblInsuranceDetail extends ChildModel {
             [['insurance_master_code'], 'safe', 'on' => ['androidsync']],
             [['member_name', 'nominee_member_name'], function ($attribute, $params) {
                 Yii::$app->general->validateAlphaNumber($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
+            },'skipOnEmpty'=> false, 'except' => ['androidsync']],
         ];
     }
 

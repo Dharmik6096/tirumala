@@ -546,9 +546,8 @@ class TblInsuranceDetailController extends ChildController {
                         $dcsCode = str_pad($dcsCode, 4, '0', STR_PAD_LEFT);
                         if (!preg_match('/^\d{4}$/', $dcsCode)) {
                             $errors[] = 'Society Code must be 4 digits long.';
-                        } elseif (!preg_match('/^\d{4}$/', $memberCode)) {
-                            $errors[] = 'Member Code cannot be more than 4 digits long.';
-                        } else if (array_key_exists($dcsCode, $dcsArray)) {
+                        }
+                        else if (array_key_exists($dcsCode, $dcsArray)) {
                             $orgData = $dcsArray[$dcsCode]['org_data'];
                             $orgDataParts = explode('###', $orgData);
                             $insuranceDetailModel->union_code = $orgDataParts[0];
@@ -569,19 +568,17 @@ class TblInsuranceDetailController extends ChildController {
                         }
                     }
 
-                    if (empty($insuranceDetailModel->dcs_name) || !preg_match('/^[a-zA-Z0-9. ]*$/', $insuranceDetailModel->dcs_name)) {
-                        $errors[] = 'Society Name cannot be blank or should not contain the special characters';
+                    if (empty($insuranceDetailModel->dcs_name)) {
+                        $errors[] = 'Society Name cannot be blank';
                     }
-                    if (empty($insuranceDetailModel->member_name) || !preg_match('/^[a-zA-Z0-9. ]*$/', $insuranceDetailModel->member_name)) {
-                        $errors[] = 'Member Name cannot be blank or should not contain the special characters';
-                    }
-                    if (!empty($insuranceDetailModel->nominee_member_name) && !preg_match('/^[a-zA-Z0-9. ]*$/', $insuranceDetailModel->nominee_member_name)) {
-                        $errors[] = 'Nominee Member Name should not contain the special characters';
+
+                    if (empty($insuranceDetailModel->member_name)) {
+                        $errors[] = 'Member Name cannot be blank';
                     }
 
                     if (empty($insuranceDetailModel->member_id)) {
                         $errors[] = 'Member Id cannot be blank.';
-                    } elseif (!ctype_digit($insuranceDetailModel->member_id)) {
+                    } elseif (!ctype_digit((string)$insuranceDetailModel->member_id)) {
                         $errors[] = 'Member Id must be numeric.';
                     } elseif (!preg_match('/^\d{10}$/', $insuranceDetailModel->member_id)) {
                         $errors[] = 'Member Id must be 10 digits long.';
@@ -614,11 +611,10 @@ class TblInsuranceDetailController extends ChildController {
                         $errors[] = 'DOB cannot be blank.';
                     } else {
                         $dateDotFormat = DateTime::createFromFormat('d.m.Y', $dob);
-                        $dateDashFormat = DateTime::createFromFormat('d-m-Y', $dob);
-                        if ($dateDotFormat || $dateDashFormat) {
-                            $dob = $dateDotFormat ? $dateDotFormat->format('Y-m-d') : $dateDashFormat->format('Y-m-d');
+                        if ($dateDotFormat) {
+                            $dob = $dateDotFormat->format('Y-m-d');
                         } else {
-                            $errors[] = 'Please enter DOB in a valid format, e.g., 01.12.2018 or 01-12-2018.';
+                            $errors[] = 'Please enter DOB in a valid format, e.g. 01.12.2018.';
                         }
                     }
 
