@@ -88,7 +88,8 @@ $attribute = [
         'attribute' => 'driver_name', 'label' => Yii::t('app', 'Driver Name'),
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->vehicleCode, 'driver_name');
-        }
+        },
+        'enableSorting' => false
     ],
     [
         'attribute' => 'driver_contact_no', 'label' => Yii::t('app', 'Driver Contact No.'),
