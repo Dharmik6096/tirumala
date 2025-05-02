@@ -45,10 +45,12 @@ use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
 use app\modules\collection\models\TblBulkBillingImport;
 use app\modules\collection\models\TblMilkCollection;
+use app\modules\eipldpu\models\TblEiplPacketFileLog;
+use app\modules\eipldpu\controllers\PendriveImportController;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda', 'process-bulk-eipl-files'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -1475,6 +1477,31 @@ class SchedulerController extends ChildController {
                 $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
             } catch (\Throwable $e) {
                 $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+            }
+        }
+    }
+
+    public function actionProcessBulkEiplFiles() {
+        $model = new TblEiplPacketFileLog();
+        $model->file_status = 0;
+        $model->status = 0;
+        $modelData = $model->getPendingData();
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->file_id;
+            }, $modelData);
+            $model->updateFileStatus($ids);
+            $file_id = implode(',', $ids);
+            PendriveImportController::actionProcessFiles($file_id);
+
+            $model->file_status = 2;
+            $model->status = 2;
+            $modelData = $model->getPendingData($ids);
+            if (!empty($modelData)) {
+                $ids = array_map(function($e) {
+                    return $e->file_id;
+                }, $modelData);
+                PendriveImportController::savePacketData($ids);
             }
         }
     }

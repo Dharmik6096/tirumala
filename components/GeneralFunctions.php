@@ -819,6 +819,8 @@ class GeneralFunctions extends Component {
     }
 
     public function decryptData($string) {
+        if ($string == null)
+            return FALSE;
         $decryptedData = !empty($string) ? \Yii::$app->encrypter->decrypt($string) : $string;
         if ($decryptedData) {
             return $decryptedData;
@@ -1041,7 +1043,7 @@ class GeneralFunctions extends Component {
     }
 
     public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '', $appendVlc = true, $plantFilter = 0) {
-        //$plantFilter (0-noimpact/1-onlyforplant/2-includeplant)
+//$plantFilter (0-noimpact/1-onlyforplant/2-includeplant)
         $sentboxArray = [];
         $mcc = [];
         $bmc = [];
@@ -2371,7 +2373,7 @@ class GeneralFunctions extends Component {
                     ]);
                 } else if ($link) {
                     $attachmentsList[] = Html::a(Html::img($attachment->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment->attachment, [
-                                //                            'title' => 'Download',
+//                            'title' => 'Download',
                                 'class' => 'image-popup-no-margins',
                                 'download' => $attachment->attachment_type,
                     ]);
@@ -2445,7 +2447,7 @@ class GeneralFunctions extends Component {
                 }
             }
             reset($objects);
-            rmdir($dir);
+            //  rmdir($dir);
         }
     }
 
@@ -2583,6 +2585,12 @@ class GeneralFunctions extends Component {
         $date_time_of_collection = ($hour < 3) ? date('Y-m-d', strtotime($currentDate . " -1 days")) : $currentDate;
         $defaultShiftCode = ($hourMinute >= '03:00' && $hourMinute < '15:00') ? 1 : 2;
         return [$defaultShiftCode, $date_time_of_collection];
+    }
+
+    public static function getAttachmentUrl($module_name, $module_Code) {
+        $attachment = \app\modules\general\models\TblAttachment::find()
+                ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
+                ->one();
     }
 
     public function validateExceedTime($model, $attribute, $min, $max) {
