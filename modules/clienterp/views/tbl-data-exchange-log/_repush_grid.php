@@ -56,8 +56,8 @@ use app\modules\dcsoperation\models\TblMemberProvisional;
         'attributes' => $attribute,
         'active_column' => false,
         'actions' => [
-            'views' => function($url, $model) {
-                if (strtolower($model['process_name']) == 'member provisional') {
+            'views' => function($url, $model) use($searchModel) {
+                if (strtolower($searchModel->process_name) == 'member provisional') {
                     $label = 'Provisional Member View';
                     $url = '/dcsoperation/tbl-member-provisional/view';
                 } else {
