@@ -61,11 +61,11 @@ $grid_option = [
                 $label = 'Provisional Member Family Detail View';
                 $url = '/clienterp/tbl-data-exchange-log/view-family';
             }
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $label];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $label];
             return Html::a('<i class="fa fa-eye"></i>', [$url, 'id' => $model->process_code], $options);
         },
         'view_history' => function($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Data Exchange Log History View'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Data Exchange Log History View'];
             return Html::a('<i class="fa fa-history"></i>', ['/clienterp/tbl-data-exchange-log/view-history', 'id' => $model->process_code], $options);
         },
     ]
