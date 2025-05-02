@@ -36,3 +36,7 @@ $grid_option = [
 
 Yii::$app->grid->bind($fDataProvider, $familyMemberModel, $grid_option);
 ?>
+<?php
+
+$script = '$(".kv-panel-before").hide();';
+$this->registerJs($script, View::POS_END, 'member-family-list');

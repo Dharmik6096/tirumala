@@ -7,6 +7,7 @@ use app\modules\clienterp\models\TblDataExchangeLogSearch;
 use app\modules\clienterp\models\TblDataExchangeLog;
 use app\modules\clienterp\models\TblDataExchangeLogHistory;
 use Yii;
+use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetailsSearch;
 
 /**
  * TblDataExchangeLogController implements the CRUD actions for TblDataExchangeLog model.
@@ -21,6 +22,16 @@ class TblDataExchangeLogController extends ChildController {
         $searchModel = new TblDataExchangeLogSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionCreate() {
+        $searchModel = new TblDataExchangeLogSearch();
+        $searchModel->scenario = 'dataExcahnge';
+        $dataProvider = $searchModel->searchLogData(Yii::$app->request->queryParams);
+        return $this->render('create', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
@@ -44,6 +55,28 @@ class TblDataExchangeLogController extends ChildController {
         if ($transaction == 'customRedirect') {
             return $this->redirect(['index']);
         }
+    }
+
+    public function actionViewHistory($id) {
+        $dataExchangeModel = new TblDataExchangeLogSearch();
+        $dataExchangeModel->process_code = $id;
+        $exchangeDataProvider = $dataExchangeModel->searchHistory(Yii::$app->request->queryParams);
+
+        return $this->render('view_history', [
+                    'dataExchangeModel' => $dataExchangeModel,
+                    'exchangeDataProvider' => $exchangeDataProvider,
+        ]);
+    }
+
+    public function actionViewFamily($id) {
+        $familyMemberModel = new TblMemberProvisionalFamilyDetailsSearch();
+        $familyMemberModel->member_provisional_family_detail_code = $id;
+        $fDataProvider = $familyMemberModel->searchFamilyData(Yii::$app->request->queryParams);
+
+        return $this->render('@app/modules/dcsoperation/views/tbl-member-provisional/_family_grid', [
+                    'familyMemberModel' => $familyMemberModel,
+                    'fDataProvider' => $fDataProvider,
+        ]);
     }
 
 }
