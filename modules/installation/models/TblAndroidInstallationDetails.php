@@ -139,7 +139,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
 
     public function getActiveDeviceData($dest_org_id, $dest_org_type, $device = '') {
         $query = $this->find()
-                ->select('tbl_android_installation_details.device_id, tbl_android_installation_details.hash_key')
+                ->select('tbl_android_installation_details.device_id')
                 ->distinct()
                 ->joinWith(['androidInstallationCode'])
                 ->where([
