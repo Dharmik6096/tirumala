@@ -402,8 +402,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model = new TblDcsBmc();
                     $data = $model->getBMCList('', $RLS);
                 } else if (strtolower($parents[0]) == 'plant') {
+                    $RLS = (isset($parents[3]) && !empty($parents[3])) ? 'FALSE' : 'TRUE';
                     $model = new TblPlant();
-                    $data = $model->getPlantList($parents[1]);
+                    $data = $model->getPlantList($parents[1], $RLS);
                 } else if (strtolower($parents[0]) == 'party') {
                     $model = new TblPartyMaster();
                     $data = $model->getPartyList($parents[1]);
@@ -527,6 +528,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->to_datetime = $model->to_date;
             $txn_model->union_code = $model->union_code;
             $txn_model->bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
+            $txn_model->vehicle_code = $model->vehicle_code;
             $txn_model->scenario = 'createPlantDispatch';
             if ($txn_model->validate()) {
                 $saveModel = [];
@@ -634,6 +636,13 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
+    }
+    
+    public function actionChallan($id) {
+        $controls = [];
+        $controls['p_bmc_milk_dispatch_code'] = $id;
+        $controls['p_report_name'] = 'Tanker Dispatch Challan';
+        $this->printDocument($controls, 'vsp/TankerDispatchChallan', 'TankerDispatchChallan', 'pdf');
     }
 
 }

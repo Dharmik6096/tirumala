@@ -200,6 +200,10 @@ $grid_option = [
             $options = ['class' => $url ? '' : 'link-disable', 'title' => Yii::t('app', 'Edit'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'aria-label' => 'Edit', 'onclick' => $url ? null : 'return false;'];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', [$url, 'id' => $model->bmc_milk_dispatch_code], $options);
         },
+        'tanker-dispatch-challan' => function ($url, $model) {
+            $options = ['title' => 'Print Challan', 'target' => '_blank'];
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/challan', 'id' => $model->bmc_milk_dispatch_code], $options);
+        },
     ]
 ];
 

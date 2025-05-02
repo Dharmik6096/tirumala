@@ -310,7 +310,7 @@ class DropDown extends Component {
         } else {
             $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
         }
-        if($autoSelect) {
+        if ($autoSelect) {
             $script = "$(document).ready(function() {
                 var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
                 var fieldName = '" . strtolower($name) . "';
@@ -2113,6 +2113,11 @@ class DropDown extends Component {
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['discarded' => Yii::t('app', 'Discarded'), 'done' => Yii::t('app', 'Done'), 'pending' => Yii::t('app', 'Pending')],
+            ],
+            'process_names' => [
+                'name' => 'process_name',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Member Provisional' => Yii::t('app', 'Member Provisional'), 'Member Provisional Family Detail' => Yii::t('app', 'Member Provisional Family Detail')],
             ],
         ];
         return $records[$l];

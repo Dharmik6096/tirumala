@@ -76,8 +76,6 @@ class DataExchangeController extends ChildController {
                     $client = new SoapClient(null, [
                         'location' => $value['request_url'],
                         'uri' => 'urn:sap-com:document:sap:soap:functions:mc-style',
-                        'login' => 'Lsupport',
-                        'password' => 'Lorhan@1',
                         'trace' => 1,
                         'exceptions' => true,
                         'soap_version' => SOAP_1_2,
@@ -119,7 +117,7 @@ class DataExchangeController extends ChildController {
                 }
 
                 if ($value['api_type'] == 'XML' && !empty($response)) {
-                    $this->processXmlResponse($response, $sp_name, $value);
+                    $this->processXmlResponse($response, $sp_name, $value, $output);
                 } else {
                     $responseData = json_decode(json_encode($response), true);
                     $loopData = [];
@@ -145,7 +143,7 @@ class DataExchangeController extends ChildController {
         }
     }
 
-    private function processXmlResponse($soapResponse, $sp_name, $exchangeData) {
+    private function processXmlResponse($soapResponse, $sp_name, $exchangeData, $output) {
         $xml = simplexml_load_string($soapResponse);
         $namespaces = $xml->getNamespaces(true);
         foreach ($namespaces as $prefix => $uri) {
@@ -172,8 +170,10 @@ class DataExchangeController extends ChildController {
                     $status = ($itemData[$key] == 'S') ? 2 : 3;
                 }
             }
-            $sp_res_param = array_merge([$whereKey], [$status], $resParams);
-            \Yii::$app->general->getSpData('sp_data_exchange_log_update', $sp_res_param, true);
+            foreach ($output as $data) {
+                $sp_res_param = array_merge([$whereKey], [$data['process_name'], $data['process_code']], [$status], $resParams);
+                \Yii::$app->general->getSpData('sp_data_exchange_log_update', $sp_res_param, true);
+            }
         }
     }
 

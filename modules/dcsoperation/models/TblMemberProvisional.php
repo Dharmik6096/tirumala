@@ -1023,4 +1023,8 @@ class TblMemberProvisional extends ChildModel {
         return strtolower($this->provisional_status) == 'pending' ? TRUE : FALSE;
     }
 
+    public function getDcs($dcs_code) {
+        return TblDcs::find()->select(['dcs_code_ex'])->where(['dcs_code' => $dcs_code])->one();
+    }
+
 }
