@@ -131,6 +131,11 @@ class CustomValidation extends Component {
                             [['rate_wharehouse'], 'required'],
                     ],
                 ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
+                    ],
+                ],
             ],
             'EIPLCOMMON' => [
                 'TblPlant' => [
@@ -294,6 +299,9 @@ class CustomValidation extends Component {
                 'TblBulkBillingImport' => [
                         [['bank_account_no', 'ifsc'], 'required', 'on' => ['member_billing_import']],
                 ],
+                'TblUserAndroid' => [
+                        [['email'], 'email'],
+                ],
             ],
             'NIFPL' => [
                 'TblDcs' => [
@@ -384,6 +392,11 @@ class CustomValidation extends Component {
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
+                    ],
+                ],
             ],
             'MURALYA' => [
                 'TblBankDetails' => [
@@ -407,6 +420,11 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                    ],
+                ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
                     ],
                 ],
             ],
@@ -433,6 +451,11 @@ class CustomValidation extends Component {
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                    ],
+                ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
                     ],
                 ],
             ],
@@ -519,6 +542,11 @@ class CustomValidation extends Component {
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
                     ]
                 ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
+                    ],
+                ],
             ],
             'PRABHAT' => [
                 'BackGroundDataImport' => [
@@ -594,6 +622,11 @@ class CustomValidation extends Component {
                             }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
                     ]
                 ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
+                    ],
+                ],
             ],
             'HATSUN' => [
                 'TblContactDetails' => [
@@ -642,7 +675,7 @@ class CustomValidation extends Component {
                     'default' => [
                             [['max_allowed_qty'], 'number', 'min' => 0.5, 'max' => 15],
                         //[['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv']],
-                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                        [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
                             [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
@@ -1107,7 +1140,7 @@ class CustomValidation extends Component {
                     'default' => [
                             [['max_allowed_qty'], 'number', 'min' => 0.5],
                         //[['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv']],
-                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                        [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
                             [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
@@ -1127,7 +1160,7 @@ class CustomValidation extends Component {
                     'default' => [
                             [['max_allowed_qty'], 'number', 'min' => 0.5],
                         //[['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv']],
-                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                        [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
                             [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
@@ -1207,10 +1240,15 @@ class CustomValidation extends Component {
             'DODLA' => [
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validVehicleNumber($this, $attribute, $params);
-                        }, 'except' => ['activation']],
-                        [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
+                            [['parsing_no'], function ($attribute, $params) {
+                                Yii::$app->general->validVehicleNumber($this, $attribute, $params);
+                            }, 'except' => ['activation']],
+                            [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
+                    ],
+                ],
+                'TblUserAndroid' => [
+                    'default' => [
+                            [['email'], 'email'],
                     ],
                 ],
             ],
