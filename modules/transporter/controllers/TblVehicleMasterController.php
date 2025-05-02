@@ -65,6 +65,7 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         $this->model = new TblVehicleMaster();
         $this->viewFile = 'create';
         $saveModel = [];
+        Yii::$app->default->getDefaults($this->model);
         if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
             $this->setModel($this->model);
             $this->model->vehicle_code = Yii::$app->general->getCodeAutoIncrement($this->model);

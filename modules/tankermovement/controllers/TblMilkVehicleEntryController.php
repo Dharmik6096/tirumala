@@ -102,6 +102,10 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $modelSave = [];
         $txn_model = new TblMilkVehicleEntryTransaction();
         $txn_model->gross_weight_time = date('H:i');
+        $txn_model->tare_weight_time = date('H:i');
+        $this->model->arrival_time = date('H:i');
+        $this->model->receipt_shift_code = (date('G') >= 6 && date('G') < 18) ? 1 : 2;
+        $this->model->receipt_datetime  = date('Y-m-d');
         $bmc_user = (!empty($_SESSION['BMC']) && count(explode(',', $_SESSION['BMC'])) == 1) ? 'BMC' : '';
         $this->setCode($this->model);
         if (Yii::$app->request->post()) {
