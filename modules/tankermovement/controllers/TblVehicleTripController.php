@@ -415,7 +415,30 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $remarks = $tripDetail->out_remarks;
                 $trip->trip_sub_status = 'gate_out';
             }
+            if ($tripDetail->is_last_destination == 1) {
+                $orgCode = $tripDetail->source_org_code;
+                $orgType = strtoupper($tripDetail->source_org_type);
+                $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $trip['vehicle_code']])->one();
+                $userIds = TblUserOrganizationMapping::find()->select('user_id')
+                    ->where(['organization_code' => $orgCode, 'organization_type' => $orgType])
+                    ->column();
+
+                foreach ($userIds as $userId) {
+                    $model = new TblAlertNotificationPortal();
+                    $model->receiver_detail = $userId;
+                    $model->receiver_type = 'PORTAL_NOTIFICATION';
+                    $model->message = 'Your vehicle-' . $parsingNo->parsing_no . ' has arrived at PLANT-' . $orgCode . ' for trip : ' . $tripDetail->trip_code;
+                    $model->header_info = 'PORTAL_NOTIFICATION';
+                    $model->send_status = 0;
+                    $model->entry_datetime = date('Y-m-d H:i:s');
+                    $model->save(false);
+                }
+            }
+
             if ($tripDetail->validate()) {
+                echo '<pre>';
+                print_r('12');
+                die;
                 $models = [$tripDetail, $trip];
                 $transaction = $this->generalModel->saveTransaction($models, ['Trip Detail', 'edit']);
                 if ($transaction == 'customRedirect') {
