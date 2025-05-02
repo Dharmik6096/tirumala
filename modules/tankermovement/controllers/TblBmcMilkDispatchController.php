@@ -637,5 +637,12 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
+    
+    public function actionChallen($id) {
+        $controls = [];
+        $controls['p_bmc_milk_dispatch_code'] = $id;
+        $controls['p_report_name'] = 'Tanker Dispatch Challan';
+        $this->printDocument($controls, 'vsp/TankerDispatchChallan', 'TankerDispatchChallan', 'pdf');
+    }
 
 }
