@@ -723,6 +723,9 @@ echo GhostMenu::widget([
                                     ['label' => '223 -' . Yii::t('app', 'Bmc Collection Summary'), 'url' => ['/misreports/reports/bmc-collection-summary']],
                                     ['label' => '224 -' . Yii::t('app', 'date wise summary : pdf'), 'url' => ['/jasperreports/default/bmc-collection-summary']],
                                     ['label' => '225 -' . Yii::t('app', 'Route Wise Difference'), 'url' => ['/misreports/reports/root-wise-difference']],
+                                    ['label' => '226 -' . Yii::t('app', 'Route Wise CDA'), 'url' => ['/misreports/reports/route-wise-cda-format']],
+                                    ['label' => '227 -' . Yii::t('app', 'Milk Dispatch List'), 'url' => ['/misreports/reports/milk-dispatch-list']],
+                                    ['label' => '228 -' . Yii::t('app', 'Milk Reject List'), 'url' => ['/misreports/reports/milk-reject-list']],
                             ]
                         ],
                             [
@@ -803,6 +806,7 @@ echo GhostMenu::widget([
                             ['label' => '511 -' . Yii::t('app', 'Chilling Bill'), 'url' => ['/jasperreports/default/mcc-chilling-bill']],
                             ['label' => '512 -' . Yii::t('app', 'Chilling Bill Invoice'), 'url' => ['/jasperreports/default/mcc-chilling-bill-invoice']],
                             ['label' => '513 -' . Yii::t('app', 'TP Bill'), 'url' => ['/jasperreports/default/party-payment-bill']],
+                            ['label' => '514 -' . Yii::t('app', 'Handling & Storage Charges(chiller) Summary'), 'url' => ['/misreports/reports/chiller-cost-summary']],
                     ]
                 ],
                     [
@@ -1279,6 +1283,7 @@ echo GhostMenu::widget([
                         ],
                             ['label' => Yii::t('app', 'Help Manual'), 'url' => ['/site/help-manual'], 'visible' => ($eiplCode == 'GYAN') ? TRUE : FALSE],
                             ['label' => Yii::t('app', 'Client Erp Api Logs'), 'url' => ['/clienterp/tbl-client-erp-api-log/index']],
+                            ['label' => Yii::t('app', 'Data Exchange Logs'), 'url' => ['/clienterp/tbl-data-exchange-log/index']],
                             ['label' => Yii::t('app', 'Collection Pendrive File'), 'url' => ['/misreports/reports/collection-pendrive-file']],
                             ['label' => Yii::t('app', 'FAT/SNF Threshold'), 'url' => ['/general/tbl-fat-snf-threshold/index'], 'active' => ($cntrl == 'tbl-fat-snf-threshold')],
                             ['label' => Yii::t('app', 'Shift Time'), 'url' => ['/general/tbl-shift-time/index'], 'active' => ($cntrl == 'tbl-shift-time')],

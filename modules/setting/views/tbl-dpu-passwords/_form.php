@@ -32,7 +32,7 @@ $form = ActiveForm::begin(['options' => [
             <?php //var_dump($dataProvider->getModels())?>
         </div>
     <?php } ?>
-    <table class="table table-bordered table-striped table-language">
+    <table class="table table-bordered table-hover table-striped table-language">
         <thead>
             <tr>
                 <th><?php echo $model[0]->getAttributeLabel('dcs_code') ?></th>
