@@ -61,8 +61,8 @@ class DataExchangeController extends ChildController {
                 $updateKey = $value['update_key_with'];
                 $update_ids = array_column($output, $updateKey);
                 $json_array_key = $value['json_key'] ?? '';
-                $apiType = strtoupper($value['api_type']);
-                if ($apiType == 'XML') {
+                $apiType = !empty($value['api_type']) ? strtoupper($value['api_type']) : '';
+                if (!empty($apiType) && $apiType == 'XML') {
                     $headers = [
                         'Content-Type: application/soap+xml;charset=UTF-8',
                         'Cookie: sap-usercontext=sap-client=100',
