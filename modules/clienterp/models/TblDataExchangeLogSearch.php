@@ -134,6 +134,11 @@ class TblDataExchangeLogSearch extends TblDataExchangeLog {
         ]);
         $query->andWhere(['is not ', 'mp.application_no', null]);
 
+        if (!$this->validate()) {
+            $query->where('0=1');
+            return $dataProvider;
+        }
+
         if ($this->data_post_status != null && $this->data_post_status != '' && $this->data_post_status != 0) {
             $query->andWhere(['del.data_post_status' => $this->data_post_status]);
             $query->andWhere(['del.process_name' => $this->process_name]);
