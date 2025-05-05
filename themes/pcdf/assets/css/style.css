@@ -6086,28 +6086,27 @@ tr.highlightRow {
 .well.box-well .list-group {
     margin-bottom: 0px !important;
 }
-.fa-bell{
-    margin: 18px 0px 0px 100px;
-    font-size: medium;
-}
 .notification-box{
     width: 300px;
     max-height: 300px;
     overflow-y: auto;
-    margin-left: 100px !important;
     padding:10px;
 }
-.list-none{
+.bell-icon{
     list-style: none;
     cursor: pointer;
+    margin: 18px 0px 0px 100px;
+    font-size: medium;
 }
 .badge{
     background: red;
     position: absolute;
-    top: 5px;
-    right: 0;
+    top: -10px;
+    right: -5px;
 }
 .notification-msg{
     border-bottom: 1px solid #eee; 
-    padding-bottom: 10px;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
 }

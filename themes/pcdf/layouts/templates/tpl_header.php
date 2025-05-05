@@ -21,7 +21,7 @@ $logo = file_exists($dir_path) ? $new_logo : $logo;
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="<?= Url::to(['/site/dashboard']) ?>"><img src="<?= $logo ?>" alt='<?= Yii::t('app', 'Company Logo') ?>' class="logo img-responsive"/></a>
-            <li class="dropdown list-none" id="notification-bell">
+            <li class="dropdown bell-icon" id="notification-bell">
                 <a class="dropdown-toggle" data-toggle="dropdown">
                     <i class="fa fa-bell"></i>
                     <span id="notification-count" class="badge"></span>
@@ -51,7 +51,7 @@ $deleteNoti = Url::to(['/sms/default/delete-notification']);
 $this->registerJs(<<<JS
 $('#notification-list').hide();
 let shownNotificationIds = [];
-let isPageLoad = true;
+let loginTime = new Date();
 var cnt = 0;
 getNotification();
 function getNotification() {
@@ -63,27 +63,21 @@ function getNotification() {
             if (response && response.length > 0) {
                 var html = '';
                 response.forEach(function(noti) {
-                    if(noti.send_status == 0 || noti.send_status == 1){
+                    var notiTime = new Date(noti.datetime);
+                    if(noti.send_status == 0){
                         cnt++;
-                        if(noti.send_status == 0){
-                            if(isPageLoad){
-                                setTimeout(function () {
-                                    showFlashMessage(noti.message);
-                                }, delay);
-                                delay += 6000; // 5 sec display + 1 sec gap
-                            } else {
-                                showFlashMessage(noti.message);
-                            }
+                        if (noti.send_status == 0 && notiTime > loginTime) {
+                            showFlashMessage(noti.message);
                         }
                     }
-                        shownNotificationIds.push(noti.id);
-                    html += '<div class="notification-msg" style="display:flex; justify-content:space-between; align-items:center; padding:4px 10px;">' +
+                    shownNotificationIds.push(noti.id);
+                    html += '<div class="notification-msg">' +
                                 '<span>' + noti.message + '</span>' +
                                 '<a href="#" class="delete-noti" id="'+noti.id+'" style="color:red;"><i class="fa fa-trash"></i></a>' +
                             '</div>';
                 });
                 if(cnt != 0){
-                    $('#notification-count').text(cnt); 
+                    $('#notification-count').text(cnt).show(); 
                 }
                 $('#notification-list').append(html);
             }
@@ -96,7 +90,7 @@ setInterval(function () {
 }, 10000);
 // On bell icon click
 $('#notification-bell').on('click', function() {
-    $('#notification-list').show();
+    $('#notification-list').toggle();
     $('#notification-count').hide();
     var count = $('#notification-count').text();
     if (count !== '' && count != 0) {
@@ -105,6 +99,7 @@ $('#notification-bell').on('click', function() {
             type: "POST",
             success: function(data) {
                 $('#notification-count').text('');
+                cnt = 0;
             }
         });
     }
@@ -121,7 +116,7 @@ $(document).on('click', '.delete-noti', function(e) {
             if (res.success) {
                 $('#'+id).parent('div.notification-msg').remove();
             }
-            if($('#notification-list').html().trim() == ''){
+            if($('#notification-list .notification-msg').length == 0){
                 $('#notification-list').hide();
             }
         }

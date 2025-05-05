@@ -24,6 +24,8 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\Response;
 use app\modules\tankermovement\models\TblVehicleTripTracking;
+use app\models\TblUserOrganizationMapping;
+use app\modules\sms\models\TblAlertNotificationPortal;
 
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
@@ -415,30 +417,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $remarks = $tripDetail->out_remarks;
                 $trip->trip_sub_status = 'gate_out';
             }
-            if ($tripDetail->is_last_destination == 1) {
-                $orgCode = $tripDetail->source_org_code;
-                $orgType = strtoupper($tripDetail->source_org_type);
-                $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $trip['vehicle_code']])->one();
-                $userIds = TblUserOrganizationMapping::find()->select('user_id')
-                    ->where(['organization_code' => $orgCode, 'organization_type' => $orgType])
-                    ->column();
-
-                foreach ($userIds as $userId) {
-                    $model = new TblAlertNotificationPortal();
-                    $model->receiver_detail = $userId;
-                    $model->receiver_type = 'PORTAL_NOTIFICATION';
-                    $model->message = 'Your vehicle-' . $parsingNo->parsing_no . ' has arrived at PLANT-' . $orgCode . ' for trip : ' . $tripDetail->trip_code;
-                    $model->header_info = 'PORTAL_NOTIFICATION';
-                    $model->send_status = 0;
-                    $model->entry_datetime = date('Y-m-d H:i:s');
-                    $model->save(false);
-                }
-            }
 
             if ($tripDetail->validate()) {
-                echo '<pre>';
-                print_r('12');
-                die;
                 $models = [$tripDetail, $trip];
                 $transaction = $this->generalModel->saveTransaction($models, ['Trip Detail', 'edit']);
                 if ($transaction == 'customRedirect') {
@@ -448,6 +428,25 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
                     }
                     Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
+                    if ($tripDetail->is_last_destination == 1) {
+                        $orgCode = $tripDetail->source_org_code;
+                        $orgType = strtoupper($tripDetail->source_org_type);
+                        $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $trip['vehicle_code']])->one();
+                        $userIds = TblUserOrganizationMapping::find()->select('user_id')
+                                ->where(['organization_code' => $orgCode, 'organization_type' => $orgType])
+                                ->column();
+
+                        foreach ($userIds as $userId) {
+                            $model = new TblAlertNotificationPortal();
+                            $model->receiver_detail = $userId;
+                            $model->receiver_type = 'PORTAL_NOTIFICATION';
+                            $model->message = 'Your vehicle-' . $parsingNo->parsing_no . ' has arrived at PLANT-' . $orgCode . ' for trip : ' . $tripDetail->trip_code;
+                            $model->header_info = 'PORTAL_NOTIFICATION';
+                            $model->send_status = 0;
+                            $model->entry_datetime = date('Y-m-d H:i:s');
+                            $model->save(false);
+                        }
+                    }
                     return ['status' => 'success', 'msg' => 'Trip processed successfully.'];
                 } else {
                     return ['status' => 'error', 'msg' => Yii::$app->getSession()->getFlash('success')['message']];
@@ -474,7 +473,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $parents[2] = isset($parents[2]) ? $parents[2] : '';
                 }
                 $data = $trip->getOpenTripDetailList($parents[0], $parents[1], $parents[2]);
-                $data= ArrayHelper::map($data, 'trip_code', 'trip_code');
+                $data = ArrayHelper::map($data, 'trip_code', 'trip_code');
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
