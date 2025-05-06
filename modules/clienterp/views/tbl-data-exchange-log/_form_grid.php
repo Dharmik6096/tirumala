@@ -9,13 +9,17 @@ use yii\helpers\Html;
 
 $attribute = [
         ['attribute' => 'process_name', 'filter' => false],
+        ['attribute' => 'update_key', 'label' => 'Application No', 'value' => function($model) {
+            $updateKeyParts = explode('-', $model->update_key);
+            return !empty($updateKeyParts[0]) ? $updateKeyParts[0] : '';
+        }, 'filter' => true],
         ['attribute' => 'process_code', 'value' => function($model) {
             if (strtolower($model->process_name) == 'member provisional') {
                 return Yii::$app->general->getforeignkey($model->memberProvisionalCode, 'member_name');
             } else {
                 return Yii::$app->general->getforeignkey($model->memberProvisionalFamilyDetailCode, 'family_member_name');
             }
-        }, 'filter' => false, 'label' => 'name'],
+        }, 'filter' => false, 'label' => 'Name'],
         ['attribute' => 'resp_param_1'],
         ['attribute' => 'resp_param_2'],
         ['attribute' => 'resp_param_3'],

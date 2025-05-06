@@ -6,6 +6,8 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\tms\models\TblUserTrackingMovement;
+use yii\data\ArrayDataProvider;
+use yii\db\Expression;
 use yii\db\Query;
 
 /**
@@ -19,7 +21,7 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
     public function rules() {
         return [
             [['tracking_id', 'originating_type'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'user_code'], 'required'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'user_code'], 'required', 'on' => 'indexOther'],
             [['tracking_datetime', 'lat_long', 'module_name', 'module_code', 'user_code', 'mobile_no', 'login_type', 'device_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'plant_code', 'mcc_plant_code'], 'safe'],
         ];
     }
@@ -42,75 +44,118 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
     public function search($params, $returnType = 'dataProvider') {
         $this->load($params);
 
-        $query = TblUserTrackingMovement::find()
-                ->joinWith('userCode')
-                ->innerJoin(
-                ['last_movement' => (new Query())
-            ->select(['user_code', 'MAX(tracking_datetime) AS max_tracking_datetime'])
-            ->from('tbl_user_tracking_movement')
-            ->groupBy('user_code')], 'tbl_user_tracking_movement.user_code = last_movement.user_code AND tbl_user_tracking_movement.tracking_datetime = last_movement.max_tracking_datetime'
-        );
-
-        if (!empty($this->tracking_datetime)) {
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_user_tracking_movement.tracking_datetime, 126)', date('Y-m-d', strtotime($this->tracking_datetime))]);
+        if (!empty($this->mcc_plant_code) && empty($this->user_code)) {
+            $sp_param[] = $this->mcc_plant_code;
+            $sp_param[] = 'MCC';
+            $outputs = \Yii::$app->general->getSpData('sp_app_get_user_list_for_complain_assisgn', $sp_param);
+            $userData = array_column($outputs, 'user_id');
+        } else if (!empty($this->user_code)) {
+            $userData = (array) $this->user_code;
+        } else {
+            $data = $this->getLatestUserTracking();
+            $userData = array_column($data, 'user_code');
         }
 
-        if ($this->user_code != 0) {
-            $query->andFilterWhere(['tbl_user_tracking_movement.user_code' => $this->user_code]);
-        }
-
-        if ($returnType == 'latLong') {
+        $sp_params = [implode(',', $userData)];
+        $output = \Yii::$app->general->getSpData('proc_user_last_tracking_list', $sp_params);
+        if ($returnType === 'latLong') {
             $dataArray = [];
-            if (!empty($this->user_code) || $this->user_code == 0) {
-                $results = $query->all();
-                foreach ($results as $result) {
-                    list($latitude, $longitude) = explode(',', $result->lat_long);
+            $serial_number = 1;
+            foreach ($output as $row) {
+                if (!empty($row['lat_long']) && strpos($row['lat_long'], ',') !== false) {
+                    list($latitude, $longitude) = explode(',', $row['lat_long']);
                     $dataArray[] = [
-                        'user_code' => $result->user_code,
-                        'user_name' => $result->userCode->name,
-                        'tracking_datetime' => $result->tracking_datetime,
-                        'lat' => $latitude,
-                        'long' => $longitude,
+                        'user_code' => $row['user_code'],
+                        'user_name' => $row['user_name'],
+                        'tracking_datetime' => $row['tracking_datetime'],
+                        'lat' => trim($latitude),
+                        'long' => trim($longitude),
+                        'serial_number' => $serial_number++,
                     ];
                 }
             }
             return $dataArray;
-        } else {
-            $dataProvider = new ActiveDataProvider([
-                'query' => $query,
-                'pagination' => false,
-            ]);
+        } 
 
-            if (!$this->validate()) {
-                $query->where('0=1');
-                return $dataProvider;
-            }
+        return new ArrayDataProvider([
+            'allModels' => $output,
+            'pagination' => false,
+            'sort' => [
+                'attributes' => ['tracking_datetime', 'user_name', 'user_code', 'lat_long', 'login_type', 'mobile_no'],
+            ],
+        ]);
+    }
 
-            return $dataProvider;
-        }
+    public function getLatestUserTracking() {
+        $dateFilter = date('Y-m-d') . ' 00:00:00.000000';
+
+        $userTracking = (new Query())
+                ->select([
+                    'user_code' => 'tu.created_by',
+                    'created_at' => 'tu.created_at',
+                    'rn' => new Expression('ROW_NUMBER() OVER (PARTITION BY tu.created_by ORDER BY tu.created_at DESC)')
+                ])
+                ->from(['tu' => 'tbl_user_tracking_movement'])
+                ->innerJoin(['u' => 'user'], 'tu.created_by = u.user_code')
+                ->where(['>=', 'tu.created_at', $dateFilter]);
+
+        $flutterTracking = (new Query())
+                ->select([
+                    'user_code' => 'tf.created_by',
+                    'created_at' => 'tf.created_at',
+                    'rn' => new Expression('ROW_NUMBER() OVER (PARTITION BY tf.created_by ORDER BY tf.created_at DESC)')
+                ])
+                ->from(['tf' => 'tbl_flutter_app_tracking'])
+                ->where(['>=', 'tf.created_at', $dateFilter])
+                ->andWhere(['NOT IN', 'tf.login_type', ['farmer', 'VSP', '']]);
+
+        $combinedTracking = (new Query())
+                ->select(['user_code', 'created_at'])
+                ->from(['ut' => $userTracking])
+                ->where(['rn' => 1])
+                ->union(
+                (new Query())
+                ->select(['user_code', 'created_at'])
+                ->from(['ft' => $flutterTracking])
+                ->where(['rn' => 1]), true
+        );
+
+        $rankedCombined = (new Query())
+                ->select([
+                    '*',
+                    'rnq' => new Expression('ROW_NUMBER() OVER (PARTITION BY user_code ORDER BY created_at DESC)')
+                ])
+                ->from(['ct' => $combinedTracking]);
+
+        $query = (new Query())
+                ->select('*')
+                ->from(['rc' => $rankedCombined])
+                ->where(['rnq' => 1])
+                ->orderBy(['created_at' => SORT_DESC]);
+
+        return $query->all();
     }
 
     public function searchUser($params) {
         $this->load($params);
         $dataArray = [];
         if (!empty($this->user_code) && !empty($this->tracking_datetime)) {
-            $results = TblUserTrackingMovement::find()
-                    ->where(['user_code' => $this->user_code])
-                    ->andWhere(['like', 'CONVERT(VARCHAR(25), tbl_user_tracking_movement.tracking_datetime, 126)', date('Y-m-d', strtotime($this->tracking_datetime))])
-                    ->orderBy(['tracking_datetime' => SORT_ASC])
-                    ->all();
+            $sp_param[] = date('Y-m-d', strtotime($this->tracking_datetime));
+            $sp_param[] = date('Y-m-d', strtotime($this->tracking_datetime));
+            $sp_param[] = $this->user_code;
+
+            $results = \Yii::$app->general->getSpData('proc_user_tracking_list', $sp_param);
 
             foreach ($results as $result) {
-                list($latitude, $longitude) = explode(',', $result->lat_long);
+                list($latitude, $longitude) = explode(',', $result['lat_long']);
                 $dataArray[] = [
-                    'tracking_datetime' => $result->tracking_datetime,
+                    'tracking_datetime' => $result['tracking_datetime'],
                     'lat' => $latitude,
                     'long' => $longitude,
                 ];
             }
         }
-
-        return $dataArray;
+        return array_slice($dataArray, 0, 25);
     }
 
 }

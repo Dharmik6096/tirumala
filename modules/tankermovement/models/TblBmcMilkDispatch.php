@@ -328,7 +328,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         $count = TblVehicleTripDetail::find()
                 ->joinWith(['tripCode'])
                 ->Where([
-                    'tbl_vehicle_trip.trip_status' => ['generated', 'open'],
+                    'tbl_vehicle_trip.trip_status' => ['generated', 'open', 'tankerfull'],
                     'LOWER(tbl_vehicle_trip_detail.source_org_type)' => $this->source_org_type,
                     'tbl_vehicle_trip_detail.source_org_code' => $this->source_org_code,
                     'tbl_vehicle_trip_detail.trip_code' => $this->trip_code
