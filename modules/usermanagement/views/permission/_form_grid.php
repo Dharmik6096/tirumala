@@ -75,18 +75,6 @@ $this->params['breadcrumbs'][] = $this->title;
 $attribute = [
     [
         'attribute' => 'description',
-        'value' => function($model) {
-            if ($model->checkNotVendor()) {
-                if ($model->name == Yii::$app->getModule('user-management')->commonPermissionName) {
-                    return Html::a(
-                                    $model->description, ['view', 'id' => $model->name], ['data-pjax' => 0, 'class' => 'label label-primary']
-                    );
-                } else {
-                    return Html::a($model->description, ['view', 'id' => $model->name], ['data-pjax' => 0]);
-                }
-            } else
-                return $model->description;
-        },
         'format' => 'raw',
     ],
     'name',
@@ -95,7 +83,7 @@ $attribute = [
         'filter' => ArrayHelper::map(AuthItemGroup::find()->asArray()->all(), 'code', 'name'),
         'value' => function(Permission $model) {
             // return $model->group_code ? $model->group->name : '';
-            return $model->group_code ? Yii::$app->general->getforeignkey($model->group,'name') : '';
+            return $model->group_code ? Yii::$app->general->getforeignkey($model->group, 'name') : '';
         },
     ],
 ];
@@ -106,17 +94,14 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'views' => function($url, $model) {
-            $class = $model->checkNotVendor() ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Assign Permission', 'class' => $class];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Assign Permission'];
             return Html::a('<i class="fa fa-key"></i>', ['/user-management/permission/view', 'id' => $model->name], $options);
         },
         'update' => function($url, $model) {
-            $class = $model->checkNotVendor() ? '' : 'link-disable';
 //                    $url=  str_replace('edit', 'update', $url);
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update', 'class' => $class];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update'];
             return Html::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        'delete' => ['option' => 'group_code,name,/user-management/permission/delete,checkNotVendor()'],
     ]
 ];
 

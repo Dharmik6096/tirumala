@@ -743,6 +743,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMissingShift() {
         $this->report = 'MissingShift';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MissingBmcShift';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -2008,7 +2013,35 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'ComplainActivityList';
         return $this->actionIndex();
     }
+    
+    public function actionRouteWiseCdaFormat() {
+        $this->report = 'RouteWiseCdaFormat';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'RouteWiseCdaDateWiseFormat';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'RouteWiseCdaConsolidatedFormat';
+            }
+        }
+        return $this->actionIndex();
+    }
 
+    public function actionMilkDispatchList() {
+        $this->report = 'MilkDispatchList';
+        return $this->actionIndex();
+    }
+    
+    public function actionMilkRejectList() {
+        $this->report = 'MilkRejectList';
+        return $this->actionIndex();
+    }
+    
+    public function actionChillerCostSummary() {
+        $this->report = 'ChillerCostSummary';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2940,6 +2973,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_missing_collection_shift',
                 'scenario' => 'MissingShift',
                 'title' => 'Missing Shift',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
+            ],
+            'MissingBmcShift' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_missing_bmc_collection_shift',
+                'scenario' => 'MissingShift',
+                'title' => 'Missing Shift',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
             ],
             'SapMilkCollectionData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -4341,6 +4382,54 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_complain_activity_list',
                 'scenario' => 'ComplainActivityList',
                 'title' => 'Complain Activity Report',
+                'bkg_export' => TRUE,
+            ],
+            'RouteWiseCdaFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_route_wise_cda_date_shift',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '226 - Route Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
+            ],
+            'RouteWiseCdaDateWiseFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_route_wise_cda_date',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '226 - Route Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
+            ],
+            'RouteWiseCdaConsolidatedFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_route_wise_cda_consolidated',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '226 - Route Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
+            ],
+            'MilkDispatchList' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_dispatch_list',
+                'scenario' => 'MilkDispatchList',
+                'title' => '227 - Milk Dispatch List',
+                'bkg_export' => TRUE,
+            ],
+            'MilkRejectList' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_reject_list',
+                'scenario' => 'MilkRejectList',
+                'title' => '228 - Milk Reject List',
+                'bkg_export' => TRUE,
+            ],
+            'ChillerCostSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_chiller_cost_summary',
+                'scenario' => 'ChillerCostSummary',
+                'title' => '514 - Handling & Storage Charges(chiller) Summary',
                 'bkg_export' => TRUE,
             ],
         ];

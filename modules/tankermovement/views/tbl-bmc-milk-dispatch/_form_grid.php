@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
 use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 
 <?php
@@ -192,6 +193,17 @@ $grid_option = [
     'active_column' => FALSE,
     'actions' => [
         'view' => TRUE,
+        'edit' => function ($url, $model) {
+            $canEdit = $model->getTripDetailsCount();
+            $type = strtolower($model->source_org_type);
+            $url = $canEdit && $type == 'bmc' ? '/tankermovement/tbl-bmc-milk-dispatch/create' : ($canEdit && $type == 'plant' ? '/tankermovement/tbl-bmc-milk-dispatch/create-plant-dispatch' : '');
+            $options = ['class' => $url ? '' : 'link-disable', 'title' => Yii::t('app', 'Edit'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'aria-label' => 'Edit', 'onclick' => $url ? null : 'return false;'];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', [$url, 'id' => $model->bmc_milk_dispatch_code], $options);
+        },
+        'tanker-dispatch-challan' => function ($url, $model) {
+            $options = ['title' => 'Print Challan', 'target' => '_blank'];
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/challan', 'id' => $model->bmc_milk_dispatch_code], $options);
+        },
     ]
 ];
 

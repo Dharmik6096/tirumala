@@ -11,7 +11,7 @@ class DefaultValue extends Component {
         $defaults = $this->processDefaultsArray();
         $clientCode = $eiplcode ?: Yii::$app->session->get('eiplCode');
         $modelClass = (new \ReflectionClass($model))->getShortName();
-        $clientDefaults = $defaults[$clientCode][$modelClass] ?: $defaults['EIPLCOMMON'][$modelClass] ?: [];
+        $clientDefaults = $defaults[$clientCode][$modelClass] ?? $defaults['EIPLCOMMON'][$modelClass] ?? [];
 
         foreach ($clientDefaults as $attr => $val) {
             $model->$attr = $val;
@@ -30,6 +30,15 @@ class DefaultValue extends Component {
                     'vendor' => 'EIPL',
                     'dpu_type' => 0,
                     'machine_owned' => 2
+                ],
+            ],
+            'DODLA' => [
+                'TblVehicleMaster' => [
+                    'billing_method'=> 'fix_rent_daily',
+                    'vehicle_use_type'=> 1,
+                    'fuel_type_code'=> 2,
+                    'flag_wef_date'=> date('Y-m-d'),
+                    'billing_qty_flag'=> 1,
                 ],
             ],
         ];

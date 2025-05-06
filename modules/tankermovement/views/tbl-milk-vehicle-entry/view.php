@@ -14,11 +14,16 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
         <div class="form-grid">
             <div class="table-responsive">
                 <?php
-                $reldest = Yii::$app->general->getDestRelation(strtolower($model->receipt_at));
-                $attdest = strtolower($model->receipt_at) == 'bmc' ? 'bmc_name' : (strtolower($model->receipt_at) == 'vendor' ? 'customer_name' : (strtolower($model->receipt_at) == 'party' ? 'party_name' : 'name'));
+                $relDestResponse = Yii::$app->general->getColumnName($model->receipt_at);
+                $reldest = $relDestResponse['rel'];
+                $attdest = $relDestResponse['name'];
+                $att = $relDestResponse['ref_code'];
 
-                $relsource = Yii::$app->general->getDestRelation(strtolower($model->dispatch_from));
-                $attsource = strtolower($model->dispatch_from) == 'bmc' ? 'bmc_name' : (strtolower($model->dispatch_from) == 'vendor' ? 'customer_name' : (strtolower($model->dispatch_from) == 'party' ? 'party_name' : 'name'));
+                $relSourceResponse = Yii::$app->general->getColumnName($model->dispatch_from);
+                $relsource = $relSourceResponse['rel'];
+                $attsource = $relSourceResponse['name'];
+                $att = $relSourceResponse['ref_code'];
+
                 $attributes = [
                         [
                         'columns' => [
@@ -78,13 +83,13 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
                                 [
                                 'attribute' => 'dispatch_from_code',
                                 'label' => (Yii::t('app', 'Source Ref.Code')),
-                                'value' => Yii::$app->general->getforeignkey($model->{$relsource . 'Source'}, 'ref_code'),
+                                'value' => Yii::$app->general->getforeignkey($model->{$relsource . 'Source'}, $att),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
                                 'attribute' => 'receipt_at_code',
                                 'label' => (Yii::t('app', 'Destination Ref.Code')),
-                                'value' => Yii::$app->general->getforeignkey($model->{$reldest . 'Dest'}, 'ref_code'),
+                                'value' => Yii::$app->general->getforeignkey($model->{$reldest . 'Dest'}, $att),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],

@@ -542,9 +542,16 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $historyMemberModel = new TblMemberHistory();
                     Yii::$app->operation->history($tblMember, $historyMemberModel, UPDATE);
                     $model_save[] = $historyMemberModel;
+                    foreach ($memberModel->attributes as $key => $value) {
+                        if ($value != null && $value != '' && $tblMember->hasAttribute($key)) {
+                            $tblMember->$key = $value;
+                        }
+                    }
+                } else {
+                    $tblMember->attributes = $memberModel->attributes;
                 }
                 $tblMember->scenario = 'ApprovalMember';
-                $tblMember->attributes = $memberModel->attributes;
+
                 $tblMember->is_verified = $memberModel->is_verify;
                 $tblMember->member_code = ($memberModel->provisional_from == 'mobile_update') ? $memberCode : $tblMember->getCode();
                 $historyModel = new TblMemberProvisionalHistory();

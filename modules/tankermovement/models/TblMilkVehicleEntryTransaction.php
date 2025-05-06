@@ -77,6 +77,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
             [['status', 'cron_pick_datetime','pick_datetime','response_datetime','response_msg', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'safe'],
             [['status'], 'default', 'value' => 0],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['gross_weight'], 'validateGrossWeight', 'except' => ['androidsync']],
         ];
     }
 
@@ -174,6 +175,19 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
                     ->count();
             if ($count > 0) {
                 $this->addError('chamber_no', Yii::t('app/validation', 'Chamber Entry is already exist.'));
+                return false;
+            }
+        }
+    }
+
+    public function validateGrossWeight($attribute, $params) {
+        if (!empty($this->milk_vehicle_entry_code)) {
+            $mainGrossWeight = TblMilkVehicleEntry::find()
+                    ->select('gross_weight')
+                    ->where(['milk_vehicle_entry_code' => $this->milk_vehicle_entry_code])
+                    ->scalar();
+            if (!empty($mainGrossWeight) && $mainGrossWeight  < $this->gross_weight) {
+                $this->addError('gross_weight', Yii::t('app/validation', 'Gross weight should not be more than first gross weight.'));
                 return false;
             }
         }

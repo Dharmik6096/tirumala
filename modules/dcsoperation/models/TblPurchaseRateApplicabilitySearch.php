@@ -53,8 +53,9 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         ]);
 
 //        $query->joinWith(['dcsCode', 'shiftCode']);
-        $query->joinWith(['shiftCode', 'shiftApplicability sapp', 'dcsCode.bmcCode as bmc']);
+        $query->joinWith(['shiftCode', 'shiftApplicability sapp']);
         $query->join('LEFT JOIN', 'tbl_dcs as dcs', 'dcs.dcs_code = tbl_purchase_rate_applicability.dcs_code');
+        $query->join('LEFT JOIN', 'tbl_bmc as bmc', 'bmc.bmc_code = dcs.bmc_code');
         //$query->joinWith(['rateType','dcsCode','rateMethod']);
 
         $this->load($params);

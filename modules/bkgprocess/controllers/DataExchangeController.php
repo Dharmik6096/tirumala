@@ -61,11 +61,41 @@ class DataExchangeController extends ChildController {
                 $updateKey = $value['update_key_with'];
                 $update_ids = array_column($output, $updateKey);
                 $json_array_key = $value['json_key'] ?? '';
-                $apiType = strtoupper($value['api_type']);
-                if ($apiType == 'XML') {
+                $apiType = !empty($value['api_type']) ? strtoupper($value['api_type']) : '';
+                $authentication_key = $value['authentication_key'] ?? '';
+                $authData = json_decode($authentication_key, true);
+                $body_auth = $authData['body'] ?? [];
+                if (!empty($apiType) && $apiType == 'XML') {
+                    $headers = [
+                        'Content-Type: application/soap+xml;charset=UTF-8',
+                        'Cookie: sap-usercontext=sap-client=100',
+                    ];
+                    if (!empty($authData['header']) && is_array($authData['header'])) {
+                        foreach ($authData['header'] as $key => $val) {
+                            $headers[] = $key . ': ' . $val;
+                        }
+                    }
+                    $context = stream_context_create([
+                        'http' => [
+                            'header' => implode("\r\n", $headers)
+                        ]
+                    ]);
+                    $client = new SoapClient(null, [
+                        'location' => $value['request_url'],
+                        'uri' => 'urn:sap-com:document:sap:soap:functions:mc-style',
+                        'trace' => 1,
+                        'exceptions' => true,
+                        'soap_version' => SOAP_1_2,
+                        'cache_wsdl' => WSDL_CACHE_NONE,
+                        'stream_context' => $context,
+                    ]);
+
                     $postData = $this->generateSoapXml($output, $value);
-                    $api = new SoapClient($value['request_url'], ['trace' => true, 'exceptions' => true, 'cache_wsdl' => WSDL_CACHE_MEMORY]);
-                    $response = $api->__doRequest($postData, $value['request_url'], '', 1);
+                    try {
+                        $response = $client->__doRequest($postData, $value['request_url'], '', SOAP_1_2, false);
+                    } catch (\Exception $e) {
+                        echo "<h3>SOAP Error</h3><pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
+                    }
                 } else {
                     $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
 
@@ -94,7 +124,7 @@ class DataExchangeController extends ChildController {
                 }
 
                 if ($value['api_type'] == 'XML' && !empty($response)) {
-                    $this->processXmlResponse($response, $sp_name, $value);
+                    $this->processXmlResponse($response, $sp_name, $value, $output);
                 } else {
                     $responseData = json_decode(json_encode($response), true);
                     $loopData = [];
@@ -120,7 +150,7 @@ class DataExchangeController extends ChildController {
         }
     }
 
-    private function processXmlResponse($soapResponse, $sp_name, $exchangeData) {
+    private function processXmlResponse($soapResponse, $sp_name, $exchangeData, $output) {
         $xml = simplexml_load_string($soapResponse);
         $namespaces = $xml->getNamespaces(true);
         foreach ($namespaces as $prefix => $uri) {
@@ -147,8 +177,10 @@ class DataExchangeController extends ChildController {
                     $status = ($itemData[$key] == 'S') ? 2 : 3;
                 }
             }
-            $sp_res_param = array_merge([$whereKey], [$status], $resParams);
-            \Yii::$app->general->getSpData('sp_data_exchange_log_update', $sp_res_param, true);
+            foreach ($output as $data) {
+                $sp_res_param = array_merge([$whereKey], [$data['process_name'], $data['process_code']], [$status], $resParams);
+                \Yii::$app->general->getSpData('sp_data_exchange_log_update', $sp_res_param, true);
+            }
         }
     }
 
@@ -163,8 +195,8 @@ class DataExchangeController extends ChildController {
         $envelope->setAttribute('xmlns:soap', Yii::$app->params['data_exchange_url']);
         $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:soap:functions:mc-style');
         $doc->appendChild($envelope);
-        $header = $doc->createElement('soap:Header');
-        $envelope->appendChild($header);
+
+        $envelope->appendChild($doc->createElement('soap:Header'));
         $body = $doc->createElement('soap:Body');
         $envelope->appendChild($body);
 
@@ -179,15 +211,7 @@ class DataExchangeController extends ChildController {
         }
         $lastTag = end($tags);
         foreach ($data as $itemData) {
-            $lock = new TblDataExchangeLog();
-            $lock->process_name = $itemData['process_name'];
-            $lock->process_code = $itemData['process_code'];
-            $lock->update_key = $itemData['eiplCode'];
-            $lock->data_post_status = 1;
-            $lock->picked_datetime = date('Y-m-d H:i:s');
-            $lock->save();
             unset($itemData['eiplCode'], $itemData['process_name'], $itemData['process_code']);
-
             $item = $doc->createElement($lastTag);
             foreach ($itemData as $key => $value) {
                 if (!empty($value) && in_array($key, $this->toEncrypt)) {
