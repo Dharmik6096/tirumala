@@ -36,7 +36,7 @@ class TblDataExchangeConfig extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['union_code', 'tbl_name', 'sp_name', 'json_key', 'update_key', 'update_key_with'], 'string'],
-                [['last_execution', 'next_execution', 'api_type', 'res_param_keys'], 'safe'],
+                [['last_execution', 'next_execution', 'api_type', 'res_param_keys', 'authentication_key'], 'safe'],
                 [['interval', 'priority', 'is_active'], 'integer'],
         ];
     }

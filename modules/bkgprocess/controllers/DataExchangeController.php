@@ -62,12 +62,19 @@ class DataExchangeController extends ChildController {
                 $update_ids = array_column($output, $updateKey);
                 $json_array_key = $value['json_key'] ?? '';
                 $apiType = !empty($value['api_type']) ? strtoupper($value['api_type']) : '';
+                $authentication_key = $value['authentication_key'] ?? '';
+                $authData = json_decode($authentication_key, true);
+                $body_auth = $authData['body'] ?? [];
                 if (!empty($apiType) && $apiType == 'XML') {
                     $headers = [
                         'Content-Type: application/soap+xml;charset=UTF-8',
                         'Cookie: sap-usercontext=sap-client=100',
-                        'Authorization: Basic ' . base64_encode('Lsupport:Lorhan@1'),
                     ];
+                    if (!empty($authData['header']) && is_array($authData['header'])) {
+                        foreach ($authData['header'] as $key => $val) {
+                            $headers[] = $key . ': ' . $val;
+                        }
+                    }
                     $context = stream_context_create([
                         'http' => [
                             'header' => implode("\r\n", $headers)
@@ -204,15 +211,7 @@ class DataExchangeController extends ChildController {
         }
         $lastTag = end($tags);
         foreach ($data as $itemData) {
-            $lock = new TblDataExchangeLog();
-            $lock->process_name = $itemData['process_name'];
-            $lock->process_code = $itemData['process_code'];
-            $lock->update_key = $itemData['eiplCode'];
-            $lock->data_post_status = 1;
-            $lock->picked_datetime = date('Y-m-d H:i:s');
-            $lock->save();
             unset($itemData['eiplCode'], $itemData['process_name'], $itemData['process_code']);
-
             $item = $doc->createElement($lastTag);
             foreach ($itemData as $key => $value) {
                 if (!empty($value) && in_array($key, $this->toEncrypt)) {
