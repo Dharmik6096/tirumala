@@ -24,6 +24,7 @@ if (!empty($onlineData)) {
                 'info' => $info,
                 'lat' => $data['lat'],
                 'long' => $data['long'],
+                'serial_number' => $data['serial_number'],
             ];
         }
     }
@@ -34,6 +35,7 @@ if (empty($latLongArray)) {
         'info' => 'Default Location',
         'lat' => 23.051489132364928,
         'long' => 72.49427197180005,
+        'serial_number' => '0'
     ];
 }
 
@@ -75,25 +77,81 @@ $script = <<<JS
     });
     var infoWindow = new google.maps.InfoWindow();
     
-    locations.forEach(function(location) {
-        var markerPosition = { lat: parseFloat(location.lat), lng: parseFloat(location.long) };
-        var marker = new google.maps.Marker({
-            map: map,
-            position: markerPosition,
-            icon: "$mapIcon",
+    function createCenteredNumberMarker(location) {
+        var canvas = document.createElement('canvas');
+        canvas.width = 25; 
+        canvas.height = 41;
+        
+        var ctx = canvas.getContext('2d');
+        var img = new Image();
+        
+        return new Promise(function(resolve) {
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                var centerX = canvas.width / 2;
+                var centerY = 15;
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                var number = location.serial_number.toString();
+                if (number.length > 1) {
+                    ctx.font = 'bold 10px Arial';
+                }
+                
+                ctx.fillText(number, centerX, centerY);
+                
+                resolve({
+                    url: canvas.toDataURL(),
+                    size: new google.maps.Size(25, 41),
+                    scaledSize: new google.maps.Size(25, 41),
+                    anchor: new google.maps.Point(12.5, 41)
+                });
+            };
+            
+            img.src = "$mapIcon";
+            
+            if (img.complete) {
+                img.onload();
+            }
         });
-
-        bounds.extend(markerPosition);
-
-        marker.addListener('click', function() {
-            infoWindow.setContent(location.info);
-            infoWindow.open(map, marker);
+    }
+    
+    var markerPromises = locations.map(function(location) {
+        return createCenteredNumberMarker(location).then(function(icon) {
+            var position = new google.maps.LatLng(
+                parseFloat(location.lat), 
+                parseFloat(location.long)
+            );
+            
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                icon: icon,
+                title: location.user_name
+            });
+            
+            bounds.extend(position);
+            
+            marker.addListener('click', function() {
+                infoWindow.setContent(location.info);
+                infoWindow.open(map, marker);
+            });
+            
+            return marker;
         });
     });
-
-    if (locations.length > 1) {
-        map.fitBounds(bounds);
-    }
+    
+    Promise.all(markerPromises).then(function() {
+        if (locations.length > 1) {
+            map.fitBounds(bounds);
+        }
+    });
 JS;
 
 $this->registerJs($script, View::POS_READY, 'user-tracking-movement');
