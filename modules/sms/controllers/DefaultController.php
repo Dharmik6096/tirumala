@@ -102,7 +102,7 @@ class DefaultController extends Controller {
         if (!empty($_GET['shown'])) {
             $notifications = $notifications->andWhere(['NOT IN', 'alert_notification_id', $_GET['shown']]);
         }
-        $notifications = $notifications->andWhere(['between', 'entry_datetime', date('Y-m-d H:i:s', strtotime('-10 days')), date('Y-m-d H:i:s')])
+        $notifications = $notifications->andWhere(['between', 'cast(entry_datetime as date)', date('Y-m-d', strtotime('-10 days')), date('Y-m-d')])
                 ->andWhere(['in', 'send_status', [0, 1]])
                 ->orderBy(['entry_datetime' => SORT_DESC])
                 ->limit(20)
