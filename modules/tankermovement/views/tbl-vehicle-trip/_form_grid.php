@@ -84,19 +84,8 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
         }
     ],
-    [
-        'attribute' => 'driver_name', 'label' => Yii::t('app', 'Driver Name'),
-        'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->vehicleCode, 'driver_name');
-        },
-        'enableSorting' => false
-    ],
-    [
-        'attribute' => 'driver_contact_no', 'label' => Yii::t('app', 'Driver Contact No.'),
-        'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->vehicleCode, 'driver_contact_no');
-        }
-    ],
+    ['attribute' => 'driver_name', 'label' => Yii::t('app', 'Driver Name'), 'enableSorting' => false],
+    ['attribute' => 'mobile_no', 'label' => Yii::t('app', 'Driver Contact No.')],
     ['attribute' => 'challan_no'],
     ['attribute' => 'bmc_detail'],
     ['attribute' => 'kg_fat'],
