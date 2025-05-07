@@ -5,7 +5,6 @@ namespace app\modules\tankermovement\controllers;
 use Yii;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblVehicleTripSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
@@ -13,7 +12,6 @@ use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
-use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
@@ -24,8 +22,6 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\Response;
 use app\modules\tankermovement\models\TblVehicleTripTracking;
-use app\models\TblUserOrganizationMapping;
-use app\modules\sms\models\TblAlertNotificationPortal;
 
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
