@@ -1,15 +1,16 @@
 <?php
 
 $attribute = [
-    ['attribute' => 'user_code', 'filter' => false],
-    ['attribute' => 'user_code', 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->userCode, 'name');
-        }, 'filter' => false],
+    ['attribute' => 'user_code', 'label' => Yii::t('app', 'User Code'), 'filter' => false],
+    ['attribute' => 'user_name', 'label' => Yii::t('app', 'Name'), 'filter' => false],
+    ['attribute' => 'login_type', 'filter' => false],
+    ['attribute' => 'mobile_no', 'filter' => false],
     [
         'attribute' => 'lat_long',
         'format' => 'raw',
+        'filter' => false,
         'value' => function ($model) {
-            return Yii::$app->controls->openInGoogleMaps($model->lat_long, $model->lat_long);
+            return Yii::$app->controls->openInGoogleMaps($model['lat_long'], $model['lat_long']);
         }
     ],
 ];

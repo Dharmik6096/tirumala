@@ -40,7 +40,7 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
 ?>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=<?= Html::encode($googleMapKey) ?>&libraries=&v=weekly" defer></script>
-<div class="panel panel-default panel-grid panel-main tbl-complain-view hide-grid-settings">
+<div class="panel panel-default panel-grid tbl-complain-view hide-grid-settings">
     <div class="panel-heading">
         <?= $this->title; ?>
     </div>

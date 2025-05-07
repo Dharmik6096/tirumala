@@ -34,6 +34,7 @@ class TblUserTrackingMovementController extends ChildController {
 
     public function actionIndexOther() {
         $searchModel = new TblUserTrackingMovementSearch();
+        $searchModel->scenario = 'indexOther';
         $output = $searchModel->searchUser(Yii::$app->request->queryParams, 'latLong');
         return $this->render('index_other', [
                     'searchModel' => $searchModel,
