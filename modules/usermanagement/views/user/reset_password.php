@@ -13,10 +13,10 @@ use yii\helpers\Html;
                     'id' => 'user',
         ]);
         ?>
-
+        <?php echo $form->errorSummary($model); ?>
         <div class="row margin-top-10">
             <div class="col-sm-3">
-                <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+                <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off', 'class' => 'form-control check_password_strength']) ?>
             </div>
             <div class="col-sm-3">
                 <?= $form->field($model, 'repeat_password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>

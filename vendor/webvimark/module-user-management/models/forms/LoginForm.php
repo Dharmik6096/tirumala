@@ -23,6 +23,8 @@ use app\modules\geo\models\TblDistricts;
 use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\dcsaccounting\models\TblFinancialYear;
 use app\modules\general\models\TblViewHistoryTableList;
+use Exception;
+use yii\base\UserException;
 
 class LoginForm extends Model {
 
@@ -63,7 +65,7 @@ class LoginForm extends Model {
      * Validates the password.
      * This method serves as the inline validation for password.
      */
-    public function validatePassword() {
+    public function validatePassword($isExpired = false, &$userCode = '') {
         if (!Yii::$app->getModule('user-management')->checkAttempts()) {
             $this->addError('password', UserManagementModule::t('front', 'Too many attempts'));
 
@@ -74,8 +76,30 @@ class LoginForm extends Model {
             $user = $this->getUser();
             //   var_dump($user);exit;
             if (!$user || !$user->validatePassword($this->password)) {
-
                 $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password.'));
+            } else if($isExpired){
+                $passwordUpdatedAt = $user->last_password_updated_at;
+                $userCode = $user->id;
+                if (empty($passwordUpdatedAt)) {
+                    return true;
+                }
+                $expirationDays = 0;
+                $unionCode = TblUnions::find()->select('union_code')->where(['is_active' => 1])->scalar();
+                if (!empty($unionCode)) {
+                    $configDays = Yii::$app->general->getUnionConfiguration($unionCode, 'portal_password_expiry_days', 'PORTAL');
+                    if (is_numeric($configDays)) {
+                        $expirationDays = (int)$configDays;
+                    }
+                }
+                $updatedDateTime = new \DateTime($passwordUpdatedAt);
+                $expirationDateTime = clone $updatedDateTime;
+                $expirationDateTime->add(new \DateInterval("P{$expirationDays}D"));
+                
+                $currentDateTime = new \DateTime();
+
+                if ($expirationDays > 0 && $currentDateTime > $expirationDateTime) {
+                    return true;
+                }
             }
         }
     }
