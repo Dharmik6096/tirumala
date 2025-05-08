@@ -34,13 +34,18 @@ class DefaultValue extends Component {
             ],
             'DODLA' => [
                 'TblVehicleMaster' => [
-                    'billing_method'=> 'fix_rent_daily',
-                    'vehicle_use_type'=> 1,
-                    'fuel_type_code'=> 2,
-                    'flag_wef_date'=> date('Y-m-d'),
-                    'billing_qty_flag'=> 1,
+                    'billing_method' => 'fix_rent_daily',
+                    'vehicle_use_type' => 1,
+                    'fuel_type_code' => 2,
+                    'flag_wef_date' => date('Y-m-d'),
+                    'billing_qty_flag' => 1,
                 ],
             ],
+//            'AMULAMCS' => [
+//                'TblBulkNotification' => [
+//                    'login_type' => 'MEMBER',
+//                ],
+//            ],
         ];
     }
 

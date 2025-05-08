@@ -302,6 +302,28 @@ class CustomValidation extends Component {
                 'TblUserAndroid' => [
                         [['email'], 'email'],
                 ],
+                'TblBulkNotification' => [
+                        [['wef_date'], 'required'],
+                        [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'when' => function ($model) {
+                            return $model->notification_type == '4';
+                        }, 'whenClient' => "function (attribute, value) {
+                        return $('#tblbulknotification-notification_type').val() == '4';
+                        }"],
+                        [['title', 'from_date', 'to_date', 'campaign_name'], 'required', 'when' => function ($model) {
+                            return $model->notification_type == '3';
+                        }, 'whenClient' => "function (attribute, value) {
+                        return $('#tblbulknotification-notification_type').val() == '3';
+                        }"],
+                        [['login_type', 'receiver_type'], 'required', 'when' => function ($model) {
+                            return $model->notification_type != '3';
+                        }, 'whenClient' => "function (attribute, value) {
+                        return $('#tblbulknotification-notification_type').val() != '3';
+                        }"],
+                        [['from_date', 'to_date'], 'required', 'when' => function ($model) {
+                            return !empty($model->auto_scrolling);
+                        }, 'whenClient' => "function (attribute, value) { return $('#tblbulknotification-auto_scrolling').is(':checked') }"
+                    ],
+                ],
             ],
             'NIFPL' => [
                 'TblDcs' => [
@@ -1252,10 +1274,31 @@ class CustomValidation extends Component {
                     ],
                 ],
             ],
-            'EMILKPRO' => [
+            'AMULAMCS' => [
                 'User' => [
                     'default' => [
-                        [['dispatch_center_type_code'], 'required'],
+                            [['dispatch_center_type_code'], 'required'],
+                    ]
+                ],
+                'TblBulkNotification' => [
+                    'default' => [
+                            [['union_code', 'title', 'campaign_name'], 'required'],
+                            [['plant_code', 'mcc_plant_code', 'bmc_code', 'app_type', 'login_type'], 'required', 'when' => function ($model) {
+                                return $model->notification_type == '1';
+                            }, 'whenClient' => "function (attribute, value) {
+                            return $('#tblbulknotification-notification_type').val() == '1';
+                            }"],
+                            [['wef_date'], 'required', 'when' => function ($model) {
+                                return $model->notification_type == '1' || $model->notification_type == '2' || $model->notification_type == '4' || $model->notification_type == '8';
+                            }, 'whenClient' => "function (attribute, value) {
+                            return $('#tblbulknotification-notification_type').val() == '1' || $('#tblbulknotification-notification_type').val() == '2' || $('#tblbulknotification-notification_type').val() == '4'|| $('#tblbulknotification-notification_type').val() == '8';
+                            }"],
+                            [['from_date', 'to_date', 'from_shift_code', 'from_shift_code', 'to_shift_code'], 'required', 'when' => function ($model) {
+                                return $model->notification_type == '3';
+                            }, 'whenClient' => "function (attribute, value) {
+                            return $('#tblbulknotification-notification_type').val() == '3';
+                            }"],
+                            [['message'], 'string', 'max' => 150],
                     ]
                 ],
             ],

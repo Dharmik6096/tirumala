@@ -53,7 +53,7 @@ class TblBulkNotificationHistory extends \yii\db\ActiveRecord {
                 [['bulk_notification_id', 'content_id', 'status', 'originating_type', 'from_date', 'to_date'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'receiver_type', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by'], 'safe'],
                 [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'history_created_at'], 'safe'],
-                [['notification_type', 'filename', 'file_path', 'payment_cycle_code', 'auto_scrolling', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['notification_type', 'filename', 'file_path', 'payment_cycle_code', 'auto_scrolling', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_shift_code', 'to_shift_code'], 'safe'],
         ];
     }
 
