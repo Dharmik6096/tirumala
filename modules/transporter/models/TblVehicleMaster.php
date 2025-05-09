@@ -344,6 +344,9 @@ class TblVehicleMaster extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $this->union_code = Yii::$app->general->getforeignkey($this->transporter, 'union_code');
             $this->parsing_no = strtoupper($this->parsing_no);
+            $this->vehicle_use_type = 2;
+            $this->flag_wef_date = date('Y-m-d');
+            $this->billing_qty_flag = 1;
         }
     }
 
