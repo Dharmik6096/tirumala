@@ -214,4 +214,11 @@ class TblTaskController extends ChildController {
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
+    public function actionTaskActivity($id) {
+        $controls = [];
+        $controls['p_task_activity_code'] = $id;
+        $controls['p_report_name'] = 'Task Activity Form';
+        $this->printDocument($controls, 'vsp/TaskActivityForm', 'TaskActivityForm', 'pdf');
+    }
+
 }

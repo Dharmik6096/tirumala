@@ -24,7 +24,7 @@ use yii\helpers\Url;
  */
 class TblVehicleMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['depend-vehicles', 'get-chamber-list', 'vehicle-open-list'];
+    public $freeAccessActions = ['depend-vehicles', 'get-chamber-list', 'vehicle-open-list', 'get-vehicle-transpoter'];
 
     /**
      * Lists all TblVehicleMaster models.
