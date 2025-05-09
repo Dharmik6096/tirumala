@@ -10,6 +10,8 @@ $logo_image = !empty($logo_code) ? $logo_code : strtolower($eipl_code) . '.png';
 $new_logo = $this->theme->getUrl('/assets/images/union_logo/') . $logo_image;
 $dir_path = Yii::$app->basePath . '/' . substr(Yii::$app->params['logo_path'], 1) . $logo_image;
 $logo = file_exists($dir_path) ? $new_logo : $logo;
+$portalNotification = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'portal_notification', 'PORTAL');
+$portalNotificationSetInterval = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'portal_notification_set_interval', 'PORTAL');
 ?>
 
 <div class="navbar navbar-fixed-top menu-wrap">
@@ -21,15 +23,17 @@ $logo = file_exists($dir_path) ? $new_logo : $logo;
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="<?= Url::to(['/site/dashboard']) ?>"><img src="<?= $logo ?>" alt='<?= Yii::t('app', 'Company Logo') ?>' class="logo img-responsive"/></a>
-            <li class="dropdown bell-icon" id="notification-bell">
-                <a class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-bell"></i>
-                    <span id="notification-count" class="badge"></span>
-                </a>
-                <ul class="dropdown-menu notification-box" id="notification-list">
-                    <li><div id="notification-items"></div></li>
-                </ul>
-            </li>
+            <?php if (!empty($portalNotification) && (int) $portalNotificationSetInterval > 0) { ?>
+                <li class="dropdown bell-icon" id="notification-bell">
+                    <a class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-bell"></i>
+                        <span id="notification-count" class="badge"></span>
+                    </a>
+                    <ul class="dropdown-menu notification-box" id="notification-list">
+                        <li><div id="notification-items"></div></li>
+                    </ul>
+                </li>
+            <?php } ?>
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <?php if (false && (Url::home() . 'site' == Yii::$app->request->url || Url::home() . 'site/index' == Yii::$app->request->url)) { ?>
@@ -45,10 +49,11 @@ $logo = file_exists($dir_path) ? $new_logo : $logo;
 </div>
 
 <?php
-$ajaxUrl = Url::to(['/sms/default/get-latest-notification']);
-$deleteNoti = Url::to(['/sms/default/delete-notification']);
-
-$this->registerJs(<<<JS
+if (!empty($portalNotification) && (int) $portalNotificationSetInterval > 0) {
+    $ajaxUrl = Url::to(['/sms/default/get-latest-notification']);
+    $deleteNoti = Url::to(['/sms/default/delete-notification']);
+    $setInterval = ((int) $portalNotificationSetInterval) * 60 * 1000;
+    $this->registerJs(<<<JS
 $('#notification-list').hide();
 let shownNotificationIds = [];
 let loginTime = new Date();
@@ -87,7 +92,7 @@ function getNotification() {
 
 setInterval(function () {
     getNotification();
-}, 10000);
+}, {$setInterval});
 // On bell icon click
 $('#notification-bell').on('click', function() {
     $('#notification-list').toggle();
@@ -159,5 +164,6 @@ function showFlashMessage(message) {
 }
 
 JS
-);
+    );
+}
 ?>

@@ -5,7 +5,6 @@ namespace app\modules\tankermovement\controllers;
 use Yii;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblVehicleTripSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
@@ -13,7 +12,6 @@ use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
-use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
@@ -24,8 +22,6 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\Response;
 use app\modules\tankermovement\models\TblVehicleTripTracking;
-use app\models\TblUserOrganizationMapping;
-use app\modules\sms\models\TblAlertNotificationPortal;
 
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
@@ -428,25 +424,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
                     }
                     Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
-                    if ($tripDetail->is_last_destination == 1) {
-                        $orgCode = $tripDetail->source_org_code;
-                        $orgType = strtoupper($tripDetail->source_org_type);
-                        $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $trip['vehicle_code']])->one();
-                        $userIds = TblUserOrganizationMapping::find()->select('user_id')
-                                ->where(['organization_code' => $orgCode, 'organization_type' => $orgType])
-                                ->column();
-
-                        foreach ($userIds as $userId) {
-                            $model = new TblAlertNotificationPortal();
-                            $model->receiver_detail = $userId;
-                            $model->receiver_type = 'PORTAL_NOTIFICATION';
-                            $model->message = 'Your vehicle-' . $parsingNo->parsing_no . ' has arrived at PLANT-' . $orgCode . ' for trip : ' . $tripDetail->trip_code;
-                            $model->header_info = 'PORTAL_NOTIFICATION';
-                            $model->send_status = 0;
-                            $model->entry_datetime = date('Y-m-d H:i:s');
-                            $model->save(false);
-                        }
-                    }
                     return ['status' => 'success', 'msg' => 'Trip processed successfully.'];
                 } else {
                     return ['status' => 'error', 'msg' => Yii::$app->getSession()->getFlash('success')['message']];
