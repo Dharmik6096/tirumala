@@ -4388,6 +4388,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_chiller_cost_summary',
                 'scenario' => 'ChillerCostSummary',
                 'title' => '514 - Handling & Storage Charges(chiller) Summary',
+                'to_decrypt' => ['pan_no'],
                 'bkg_export' => TRUE,
             ],
         ];

@@ -49,6 +49,11 @@ $grid_option = [
             $options = ['target' => '_blank', 'title' => Yii::t('app', 'View Form'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View Form')];
             return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tms/tbl-task/view-form', 'id' => $model->task_activity_code], $options);
         },
+        'task-activity-form' => function ($url, $model) {
+            $class = ($model->status == 'CLOSE') ? '' : 'link-disable';
+            $options = ['class' => $class, 'title' => 'Task Activity Form', 'target' => '_blank'];
+            return GhostHtml::a('<i class="fa fa-paperclip"></i>', ['/tms/tbl-task/task-activity', 'id' => $model->task_activity_code], $options);
+        },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['#'], FALSE);

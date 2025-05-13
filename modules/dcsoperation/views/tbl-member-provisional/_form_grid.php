@@ -176,11 +176,13 @@ $grid_option = [
             if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 1) {
                 $icon = '<i class="fa fa-eye"></i>';
                 $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
+                $title = 'Provisional Member View';
                 if ($pending_approval) {
                     $icon = '<i class="fa fa-check"></i>';
                     $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
+                    $title = 'Approve Member';
                 }
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title];
                 return Html::a($icon, $url, $options);
             } else {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Provisional Member View'];

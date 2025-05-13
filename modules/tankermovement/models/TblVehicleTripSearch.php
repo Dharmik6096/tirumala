@@ -41,7 +41,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblVehicleTrip::find()->alias('t')->select(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
+        $query = TblVehicleTrip::find()->alias('t')->select(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status', 't.driver_name', 't.mobile_no',
             't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip',
             'challan_no' => "STUFF((
           SELECT ',' + d.challan_no
@@ -116,9 +116,10 @@ class TblVehicleTripSearch extends TblVehicleTrip {
         $query->andFilterWhere(['like', 't.trip_code', $this->trip_code])
                 ->andFilterWhere(['like', 't.grn_no', $this->grn_no])
                 ->andFilterWhere(['like', 't.trip_sub_status', $this->trip_sub_status])
-                ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode]);
+                ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode])
+                ->andFilterWhere(['like', 't.driver_name', $this->driver_name]);
         $query->groupBy(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
-            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip']);
+            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip', 't.driver_name' , 't.mobile_no']);
         $query->orderBy(['transaction_date' => SORT_DESC, 'vehicle_trip_code' => SORT_ASC]);
         return $dataProvider;
     }
