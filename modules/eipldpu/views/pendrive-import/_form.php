@@ -6,6 +6,10 @@ use yii\helpers\Html;
 use kato\DropZone;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
+
+$loginUser = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+$dateFolder = $loginUser . '_' . date('YmdHis');
+$dropzoneUrl = \yii\helpers\Url::to(['/eipldpu/pendrive-import/import-file', 'fileFolder' => $dateFolder]);
 ?>
 <?php
 $form = ActiveForm::begin(['options' => [
@@ -18,9 +22,10 @@ $form = ActiveForm::begin(['options' => [
 ?>
 <div class="modal-body">
     <div class="row">
-            <?php echo Html::hiddenInput('TblEiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
+        <?php echo Html::hiddenInput('TblEiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
+        <?php echo Html::hiddenInput('file_folder', $dateFolder, ['id' => 'file_folder']); ?>
         <div class="col-sm-3">
-<?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
         </div>
         <div class="col-sm-12">
             <?=
@@ -28,7 +33,7 @@ $form = ActiveForm::begin(['options' => [
                 'id' => 'myDropzone',
                 'options' => [
                     'acceptedMimeTypes' => ".eip",
-                    'url' => \yii\helpers\Url::to(['/eipldpu/pendrive-import/import-file']),
+                    'url' => $dropzoneUrl,
                     'addRemoveLinks' => true,
                     'autoDiscover' => false,
                     'maxFiles' => 20,

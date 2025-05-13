@@ -58,7 +58,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 
 class SiteController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data', 'merge-weight-quality-data'];
 
     public function init() {
         parent::init();
@@ -84,7 +84,7 @@ class SiteController extends \app\controllers\ChildController {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -1839,7 +1839,7 @@ class SiteController extends \app\controllers\ChildController {
                 $ignore_tables = ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'];
                 $version_no = 0;
                 $update_ids = array_column($modelData, 'uuid');
-                //$model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
+//$model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
                         $process_record = TRUE;
@@ -1853,12 +1853,12 @@ class SiteController extends \app\controllers\ChildController {
                         if (in_array($transaction_data->table_name, $ignore_tables)) {
                             $process_record = FALSE;
                         } else if (in_array($transaction_data->table_name, $version_ignore_tables)) {
-                            //  if (!in_array($transaction_data->dest_org_id, ['001'])) {
+//  if (!in_array($transaction_data->dest_org_id, ['001'])) {
                             $version_no = (int) str_replace('d_', '', $transaction_data->version_no);
                             if ($version_no <= 100) {
                                 $process_record = FALSE;
                             }
-                            // }
+// }
                         }
                         if ($process_record) {
                             $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
@@ -3277,6 +3277,11 @@ class SiteController extends \app\controllers\ChildController {
         $tableHtml = $this->renderAjax('_complain_summary_table.php', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'series' => $series, 'res' => $res[0], 'tableHtml' => $tableHtml];
+    }
+
+    public function actionMergeWeightQualityData() {
+        $sp_name = 'process_weight_quality_merge_data';
+        \Yii::$app->general->getSpData($sp_name, [], TRUE);
     }
 
 }

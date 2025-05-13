@@ -162,8 +162,8 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     ]);
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                   ?>: </span> -->
-                        <div class="col-sm-1 searchFilterHeader">
+                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                      ?>: </span> -->
+                        <div class="col-sm-2 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
                         <div class="col-sm-1 searchFilterHeader">
@@ -275,7 +275,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         ?>
                         <div class="col-sm-8 padding_left_right_0">
                             <span class="col-sm-12 background_shadow float_right dashboardWidgetHeader">
-                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                   ?>: </span> -->
+                                                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                      ?>: </span> -->
                                 <div class="col-sm-6 searchFilterHeader">
                                     <?= Yii::$app->controls->date($model, $form, 'dup_search_date', '', true, false, false, false); ?>
                                 </div>

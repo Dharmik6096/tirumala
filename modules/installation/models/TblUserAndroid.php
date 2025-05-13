@@ -47,6 +47,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
     public $toEncrypt = ['password'];
     public $org_type, $org_code, $repeat_password, $role_code;
     public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code, $f_dcs_code;
+    public $form_validation_type = 'default';
 
     /**
      * @inheritdoc
@@ -59,7 +60,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code'], 'required', 'except' => ['installation', 'importCsv']],
                 [['username', 'name', 'password', 'repeat_password', 'mobile_no', 'org_type', 'org_code'], 'required', 'on' => 'importCsv'],
                 [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no', 'device_id'], 'safe'],
@@ -73,8 +74,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 [['union_code'], 'string', 'max' => 3],
                 [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
                 [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['email'], 'email'],
-                [['org_code'], 'setData', 'on' => 'importCsv'],
+            // [['email'], 'email'],
+            [['org_code'], 'setData', 'on' => 'importCsv'],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
@@ -89,6 +90,9 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 [['role_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRole::className(), 'targetAttribute' => ['role_code' => 'role_code'], 'on' => ['importCsv']],
                 [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'on' => ['importCsv']],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblUserAndroid', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
