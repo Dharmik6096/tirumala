@@ -61,7 +61,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      */
     public function rules() {
         $main_rules = [
-                [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['installation', 'importCsv']],
+                [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code'], 'required', 'except' => ['installation', 'importCsv']],
                 [['username', 'name', 'password', 'repeat_password', 'mobile_no', 'org_type', 'org_code'], 'required', 'on' => 'importCsv'],
                 [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no', 'device_id'], 'safe'],
                 [['originating_type'], 'integer'],
