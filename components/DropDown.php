@@ -2081,6 +2081,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Member Provisional' => Yii::t('app', 'Member Provisional'), 'Member Provisional Family Detail' => Yii::t('app', 'Member Provisional Family Detail')],
             ],
+            'security_return_mode' => [
+                'name' => 'security_return_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Bank' => Yii::t('app', 'Bank'), 'Cheque' => Yii::t('app', 'Cheque')],
+            ],
         ];
         return $records[$l];
     }
