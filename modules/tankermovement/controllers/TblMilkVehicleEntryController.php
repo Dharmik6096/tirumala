@@ -105,7 +105,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $txn_model->tare_weight_time = date('H:i');
         $this->model->arrival_time = date('H:i');
         $this->model->receipt_shift_code = (date('G') < 12) ? 1 : 2;
-        $this->model->receipt_datetime  = date('Y-m-d');
+        $this->model->receipt_datetime = date('Y-m-d');
         $bmc_user = (!empty($_SESSION['BMC']) && count(explode(',', $_SESSION['BMC'])) == 1) ? 'BMC' : '';
         $this->setCode($this->model);
         if (Yii::$app->request->post()) {
@@ -617,6 +617,32 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionGetClrInput() {
+        $unionCode = Yii::$app->request->post('union_code');
+        $receiptAtCode = Yii::$app->request->post('receiptAtCode');
+        $isClrInput = Yii::$app->general->getCheckBmcConfiguration($unionCode, 'is_clr_input', $receiptAtCode, 'PLANT', 'PLANT_RECEIPT_CONFIG');
+        if ($isClrInput == '') {
+            $isClrInput = Yii::$app->general->getUnionConfiguration($unionCode, 'is_clr_input', 'PORTAL');
+        }
+        $response = ['status' => 'success', 'data' => ($isClrInput != '') ? $isClrInput : 0];
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
+    }
+
+    public function actionCalculateClr() {
+        $fat = (float) Yii::$app->request->post('fat');
+        $snf = (float) Yii::$app->request->post('snf');
+        $clr = (float) Yii::$app->request->post('clr');
+        $union = Yii::$app->request->post('union_code');
+        $org_code = Yii::$app->request->post('receiptAtCode');
+        $is_clr_input = Yii::$app->request->post('is_clr_input');
+
+        $result = Yii::$app->general->calculateData($union, $org_code, $fat, $snf, $clr, 'PLANT', $is_clr_input, 'PLANT_RECEIPT_CONFIG');
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }
 
 }

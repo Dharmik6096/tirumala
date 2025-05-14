@@ -2948,4 +2948,22 @@ class GeneralFunctions extends Component {
         return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
 
+    public function calculateData($union = '', $bmcCode = '', $fat = '', $snf = '', $clr = '', $customer_type = '', $is_clr_input = '', $config) {
+        $response = [];
+
+        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, $customer_type, $config);
+        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, $customer_type, $config);
+        if ($lr1 == '' || $lr2 == '') {
+            $lr1 = (float) $this->getUnionConfiguration($union, 'clr_constant1', 'PORTAL');
+            $lr2 = (float) $this->getUnionConfiguration($union, 'clr_constant2', 'PORTAL');
+        }
+        
+        $lr1 = empty($lr1) ? 1 : $lr1;
+        $lr2 = empty($lr2) ? 0 : $lr2;
+
+        $response['clr'] = $is_clr_input == 0 ? ($snf - ($fat * $lr1) - $lr2) * 4 : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
+
+        return $response;
+    }
+
 }
