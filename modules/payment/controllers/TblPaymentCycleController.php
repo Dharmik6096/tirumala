@@ -166,9 +166,13 @@ class TblPaymentCycleController extends ChildController {
         $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_payment_cycle', Yii::$app->request->post('id'), 'payment_cycle_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
-            $historyModel = new TblPaymentCycleHistory();
-            Yii::$app->operation->history($this->model, $historyModel, DELETE);
-            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+            if($this->model->disableDelete()){
+                $historyModel = new TblPaymentCycleHistory();
+                Yii::$app->operation->history($this->model, $historyModel, DELETE);
+                $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+            } else {
+                $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
+            }
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }

@@ -507,6 +507,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'ShiftWiseBill';
         return $this->actionIndex();
     }
+    
+    public function actionCompleteTrip() {
+        $this->report = 'CompleteTrip';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1209,6 +1214,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => ['ELANAD' => 'vsp/ShiftWiseBill'],
                 'scenario' => 'ShiftWiseBill',
                 'title' => 'Shift Wise Bill',
+                'bkg_export' => TRUE,
+            ],
+            'CompleteTrip' => [
+                'param' => 'p_vehicle_code,p_trip_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/CompleteTrip',
+                'scenario' => 'CompleteTrip',
+                'title' => 'Complete Trip Details',
                 'bkg_export' => TRUE,
             ],
         ];

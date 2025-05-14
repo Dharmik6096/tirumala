@@ -43,7 +43,7 @@ class TblBankDetails extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
+                [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected', 'except' => 'deactivate'],
                 [['branch_code', 'bank_account_no', 'ifsc', 'bank_code'], 'required', 'on' => 'additional'],
             /* [['branch_code', 'bank_account_no', 'ifsc'], 'required','when' => function($model) {
               return !empty($this->bank_code)?true:false;

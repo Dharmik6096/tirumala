@@ -380,6 +380,20 @@ $defaultToggle = true;
                                                 </div>
                                                 <?php
                                             }
+                                            if (in_array($value, array('p_trip_code'))) {
+                                                ?>
+                                                <div class="col-sm-3 val_dcs_code">
+                                                    <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'p_trip_code'); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                            if (in_array($value, array('p_vehicle_code'))) {
+                                                ?>
+                                                <div class="col-sm-3 val_dcs_code">
+                                                    <?= Yii::$app->dropdown->vehicle($model, $form, 'p_vehicle_code', $model->getAttributeLabel('vehicle_code')); ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
