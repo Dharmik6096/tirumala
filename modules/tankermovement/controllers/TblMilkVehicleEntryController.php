@@ -38,7 +38,7 @@ use app\modules\tankermovement\models\TblMilkVehicleEntryReject;
  */
 class TblMilkVehicleEntryController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['transaction-detail', 'get-trip-code', 'change-trip-code', 'transaction-form', 'view-config'];
+    public $freeAccessActions = ['transaction-detail', 'get-trip-code', 'change-trip-code', 'transaction-form', 'view-config', 'get-clr-input', 'calculate-clr'];
 
     /**
      * Lists all TblMilkVehicleEntry models.
