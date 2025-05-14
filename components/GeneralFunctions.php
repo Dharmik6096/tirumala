@@ -573,11 +573,11 @@ class GeneralFunctions extends Component {
                 $i = 4;
                 break;
             case 5:
-                $orgs = ['MCC', 'BMC'];
+                $orgs = ['MCC', 'BMC', 'DCS'];
                 $i = 5;
                 break;
             case 6:
-                $orgs = ['BMC'];
+                $orgs = ['BMC', 'DCS'];
                 $i = 6;
                 break;
             case 7:
