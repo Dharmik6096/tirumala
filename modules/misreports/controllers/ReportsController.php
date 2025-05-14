@@ -2024,6 +2024,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
     
+    public function actionMonthlySahayakIncome() {
+        $this->report = 'MonthlySahayakIncome';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4389,6 +4394,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ChillerCostSummary',
                 'title' => '514 - Handling & Storage Charges(chiller) Summary',
                 'to_decrypt' => ['pan_no'],
+                'bkg_export' => TRUE,
+            ],
+            'MonthlySahayakIncome' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_monthly_sahayak_income',
+                'scenario' => 'MonthlySahayakIncome',
+                'title' => 'CC Incharge Remuneration',
                 'bkg_export' => TRUE,
             ],
         ];
