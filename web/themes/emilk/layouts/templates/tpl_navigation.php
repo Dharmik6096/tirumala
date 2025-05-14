@@ -1089,6 +1089,9 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Day Book (MIS)'), 'url' => ['/misreports/reports/mcc-day-book-dispatch-hub-horizontal']],
                             ['label' => Yii::t('app', 'MCC Day Book'), 'url' => ['/jasperreports/default/mcc-day-book-dispatch-hub']],
                             ['label' => Yii::t('app', 'CC Incharge Remuneration'), 'url' => ['/misreports/reports/monthly-sahayak-income']],
+                            ['label' => Yii::t('app', 'CC Wise Closing Balance'), 'url' => ['/misreports/reports/mis-cc-wise-closing-balance']],
+                            ['label' => Yii::t('app', 'Vehicle wise Quality Report '), 'url' => ['/misreports/reports/proc-mis-lot-wise-details']],
+                            ['label' => Yii::t('app', 'Comparison Report'), 'url' => ['/misreports/reports/comparison-report']],
                     ]
                 ],
                     [
