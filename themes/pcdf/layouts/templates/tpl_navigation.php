@@ -1017,6 +1017,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'CC Wise Closing Balance'), 'url' => ['/misreports/reports/mis-cc-wise-closing-balance']],
                             ['label' => Yii::t('app', 'Vehicle wise Quality Report '), 'url' => ['/misreports/reports/proc-mis-lot-wise-details']],
                             ['label' => Yii::t('app', 'Comparison Report'), 'url' => ['/misreports/reports/comparison-report']],
+                            ['label' => Yii::t('app', 'Complete Trip Details'), 'url' => ['/jasperreports/default/complete-trip']],
                     ]
                 ],
                     [
