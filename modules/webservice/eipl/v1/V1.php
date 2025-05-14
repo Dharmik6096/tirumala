@@ -813,6 +813,10 @@ class V1 extends \yii\base\Module {
                 'main_table' => 'TblVehicleTripDetail',
                 'save_child' => true
             ],
+            'composite-dispatch-actual/list' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#status',
+                'sp' => 'sp_app_eipl_v1_CDA',
+            ],
         ];
         return $label;
     }
