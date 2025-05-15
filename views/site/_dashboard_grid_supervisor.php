@@ -12,7 +12,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Route Supervisor')
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
         <?= $breadcrum_title . $this->title; ?>
-        <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon btn btn-danger apply-shortcut btn-block right_30" ><i class="fa fa-file-excel-o"></i></button> 
+        <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon btn btn-danger apply-shortcut btn-block right_30" ><i class="fa fa-file-excel"></i></button> 
         <span class="right_align_date mr50"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
     <div class="panel-body hide-grid-export">
