@@ -23,7 +23,7 @@ $attribute = [
         }],
     ['attribute' => 'sloc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->toStoreLocCode, 'sloc_code');
-        }, 'filter' => false],
+        }, 'filter' => true],
     ['attribute' => 'purchase_date', 'attribute' => 'purchase_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -46,8 +46,9 @@ $attribute = [
             return ($model->from_type == 'VEN') ? $model->from_type : Yii::$app->general->getmultiforeignkey($model->fromStoreLocCode, ['storeLocType'], 'slt_name');
         }, 'filter' => false],
     ['attribute' => 'from_dest', 'value' => function($model) {
+        // return $model->from_dest;
             return ($model->from_type == 'VEN') ? Yii::$app->general->getmultiforeignkey($model->assetDetail, ['manufacturerCode'], 'customer_name') : Yii::$app->general->getforeignkey($model->fromStoreLocCode, 'store_location_name');
-        }, 'filter' => false],
+        }, 'filter' => true],
     ['attribute' => 'to_type', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->toStoreLocCode, ['storeLocType'], 'slt_name');
         }, 'filter' => false],

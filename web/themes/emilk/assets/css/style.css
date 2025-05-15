@@ -5790,3 +5790,7 @@ h4{
 .margin_left_20_reverse{
     margin-left :  -20px !important;
 }
+
+.mr50 {
+    margin-right: 50px;
+}
