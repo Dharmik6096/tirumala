@@ -6114,3 +6114,7 @@ tr.highlightRow {
     display: flex;
     align-items: center;
 }
+
+.mr50 {
+    margin-right: 50px;
+}

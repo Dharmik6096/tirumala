@@ -50,7 +50,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tms/tbl-task/view-form', 'id' => $model->task_activity_code], $options);
         },
         'task-activity-form' => function ($url, $model) {
-            $class = ($model->status == 'CLOSE') ? '' : 'link-disable';
+            $class = (($model->status == 'CLOSE') && !empty($model->form_data)) ? '' : 'link-disable';
             $options = ['class' => $class, 'title' => 'Task Activity Form', 'target' => '_blank'];
             return GhostHtml::a('<i class="fa fa-paperclip"></i>', ['/tms/tbl-task/task-activity', 'id' => $model->task_activity_code], $options);
         },

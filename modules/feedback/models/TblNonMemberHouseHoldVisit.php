@@ -100,6 +100,7 @@ class TblNonMemberHouseHoldVisit extends ChildModel
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'reason_id' => Yii::t('app', 'Reason'),
         ];
     }
 
@@ -134,7 +135,7 @@ class TblNonMemberHouseHoldVisit extends ChildModel
     }
 
     public function getSurveyerCode() {
-        return $this->hasOne(User::className(), ['id' => 'surveyer_code']);
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
     public function convertDateDot() {
@@ -161,5 +162,9 @@ class TblNonMemberHouseHoldVisit extends ChildModel
             $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Invalid.'));
             return false;
         }
+    }
+
+    public function getReasonID() {
+        return $this->hasOne(TblVCGMRGReasonsMaster::className(), ['reason_id' => 'reason_id']);
     }
 }
