@@ -121,7 +121,13 @@ $this->title = Yii::$app->general->getforeignkey($model->formTypeCode, 'form_nam
                     'id' => 'task-activity-list',
                     'attributes' => [
                         ['attribute' => 'question',],
-                        ['attribute' => 'answer',],
+                        [
+                            'attribute' => 'answer',
+                            'format' => 'raw',
+                            'value' => function($model) {
+                                return nl2br(str_replace(',', ",\n", $model['answer']));
+                            }
+                        ],
                     ],
                     'active_column' => FALSE,
                     'style' => 'display: flex;'

@@ -100,6 +100,26 @@ class TblTaskController extends ChildController {
         $attachment = new TblAttachment();
         $task_attachment = $attachment->getAttachmentDataProvider($id, 'tbl_task_activity');
         ksort($form_data);
+        foreach ($form_data as &$item) {
+            $mpp = $item['answer']['Selected Mpp'] ?? null;
+            if (is_array($mpp)) {
+                $html = "Selected Mpp:\n";
+                $count = 1;
+                foreach ($mpp as $val) {
+                    $html .= $count . ". ";
+                    if (is_array($val)) {
+                        foreach ($val as $key => $v) {
+                            $html .= "$key: $v\n";
+                        }
+                    } else {
+                        $html .= "Mpp Name: $val\n";
+                    }
+                    $count++;
+                }
+                $html .= "remarks: " . ($item['answer']['remarks'] ?? '') . "\n";
+                $item['answer'] = $html;
+            }
+        }
         $dataPro = [
             'allModels' => $form_data,
             'sort' => [
