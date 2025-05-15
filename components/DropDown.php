@@ -2196,6 +2196,23 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Bank' => Yii::t('app', 'Bank'), 'Cheque' => Yii::t('app', 'Cheque')],
             ],
+            'milk_sale_on' => [
+                'name' => 'milk_sale_on',
+                'prompt' => Yii::t('app', 'Select Report Type'),
+                'data' => [1 => Yii::t('app', 'Date shift wise'), 2 => Yii::t('app', 'Date wise')
+                ],
+            ],
+            'billing_on' => [
+                'name' => 'billing_on',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Payment Cycle Wise'), 2 => Yii::t('app', 'Month Wise'), 3 => Yii::t('app', 'Year Wise'), 4 => Yii::t('app', 'Consolidate')
+                ],
+            ],
+            'dispatch_type' => [
+                'name' => 'dispatch_type',
+                'prompt' => Yii::t('app', 'Select Dispatch Type'),
+                'data' => ['summary' => Yii::t('app', 'Summary'), 'detail' => Yii::t('app', 'Detail')],
+            ],
         ];
         return $records[$l];
     }

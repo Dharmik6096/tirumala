@@ -2008,12 +2008,12 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VspTransitRecovery';
         return $this->actionIndex();
     }
-    
+
     public function actionComplainActivityList() {
         $this->report = 'ComplainActivityList';
         return $this->actionIndex();
     }
-    
+
     public function actionRouteWiseCdaFormat() {
         $this->report = 'RouteWiseCdaFormat';
         if (Yii::$app->request->queryParams) {
@@ -2031,37 +2031,57 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MilkDispatchList';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkRejectList() {
         $this->report = 'MilkRejectList';
         return $this->actionIndex();
     }
-    
+
     public function actionChillerCostSummary() {
         $this->report = 'ChillerCostSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMonthlySahayakIncome() {
         $this->report = 'MonthlySahayakIncome';
         return $this->actionIndex();
     }
-    
+
     public function actionMisCcWiseClosingBalance() {
         $this->report = 'MisCcWiseClosingBalance';
         return $this->actionIndex();
     }
-    
+
     public function actionProcMisLotWiseDetails() {
         $this->report = 'ProcMisLotWiseDetails';
         return $this->actionIndex();
     }
-    
+
     public function actionComparisonReport() {
         $this->report = 'ComparisonReport';
         return $this->actionIndex();
     }
-    
+
+    public function actionLocalMilkSale() {
+        $this->report = 'LocalMilkSale';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberBilling() {
+        $this->report = 'MemberBilling';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberBillingDcsWise() {
+        $this->report = 'MemberBillingDcsWise';
+        return $this->actionIndex();
+    }
+
+    public function actionProductDispatchCenterWiseDetail() {
+        $this->report = 'ProductDispatchCenterWiseDetail';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4480,6 +4500,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ComparisonReport',
                 'title' => 'Comparison Report ',
                 'bkg_export' => TRUE,
+            ],
+            'LocalMilkSale' => [
+                'param' => 'milk_sale_on:static:milk_sale_on,union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_local_milk_sale_all_report',
+                'scenario' => 'LocalMilkSale',
+                'title' => 'Local Milk Sale',
+            ],
+            'MemberBilling' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string,to_date:string,billing_on:static:billing_on',
+                'sp_name' => 'rpt_mis_member_billing_all_report',
+                'scenario' => 'MemberBilling',
+                'title' => 'Member Billing',
+            ],
+            'MemberBillingDcsWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,billing_on:static:billing_on',
+                'sp_name' => 'rpt_mis_member_billing_society_all_report',
+                'scenario' => 'MemberBillingDcsWise',
+                'title' => 'Member Billing DCS Wise',
+            ],
+            'ProductDispatchCenterWiseDetail' => [
+                'param' => 'dispatch_center_type,dispatch_center,from_date:string,to_date:string,dispatch_type',
+                'sp_name' => 'mis_product_dispatch_zser',
+                'scenario' => 'ProductDispatchCenterWiseDetail',
+                'title' => 'Product Dispatch Center Wise Detail',
             ],
         ];
         return $label[$l];

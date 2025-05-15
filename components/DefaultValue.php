@@ -41,11 +41,11 @@ class DefaultValue extends Component {
                     'billing_qty_flag' => 1,
                 ],
             ],
-//            'AMULAMCS' => [
-//                'TblBulkNotification' => [
-//                    'login_type' => 'MEMBER',
-//                ],
-//            ],
+            'AMULAMCS' => [
+                'TblBulkNotification' => [
+                    'login_type' => 'farmer',
+                ],
+            ],
         ];
     }
 

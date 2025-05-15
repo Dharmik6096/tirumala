@@ -154,7 +154,6 @@ class DefaultController extends Controller {
                     $header = [];
                     $row->status = 2;
                     $notification = $row->bulkNotification;
-                    $eipl_code = Yii::$app->general->getforeignkey($row->unionCode, 'eipl_code');
                     $message[] = ['attributeAlias' => 'MESSAGE', 'attributeValue' => $notification->message];
                     $messageJson = json_encode($message);
                     $header['apiFor'] = 'default';
@@ -178,8 +177,8 @@ class DefaultController extends Controller {
                         $row->status = 3;
                         $row->resp_desc = 'error';
                     }
-                    if ($row->status == 2 && $eipl_code == 'AMULAMCS') {
-                        if (in_array($notification->notification_type, [2, 3, 4, 5, 7, 8])) {
+                    if ($row->status == 2) {
+                        if (in_array($notification->notification_type, [2, 3, 5, 7, 8])) {
                             $sentboxArray = [];
                             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $row->dcs_code);
 

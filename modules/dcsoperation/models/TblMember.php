@@ -210,6 +210,9 @@ class TblMember extends ChildModel {
                 [['ifsc', 'bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'on' => 'kycVerify'],
                 [['rate_class'], 'validateRateClass', 'on' => ['androidsync']],
                 [['member_code'], 'refCodeValidate', 'on' => ['androidsync']],
+                [['adhar_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'deactivate', 'post_sap_data', 'specialCodeImportCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

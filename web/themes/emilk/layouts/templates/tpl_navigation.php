@@ -1053,9 +1053,14 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/misreports/reports/milk-collection-audit']],
                                     ['label' => Yii::t('app', 'Member Milk Collection'), 'url' => ['/misreports/reports/member-milk-collection']],
                                     ['label' => Yii::t('app', 'Member  Milk Collection Society Wise'), 'url' => ['/misreports/reports/member-milk-collection-dcs-wise']],
+                                    ['label' => Yii::t('app', 'Local Milk Sale'), 'url' => ['/misreports/reports/local-milk-sale']],
                                     ['label' => Yii::t('app', 'DCS/BMC/Member Wise Top Collection'), 'url' => ['/misreports/reports/dcs-bmc-member-wise-top-collection']],
+                                    ['label' => Yii::t('app', 'Member Billing'), 'url' => ['/misreports/reports/member-billing']],
+                                    ['label' => Yii::t('app', 'Member Billing Society Wise'), 'url' => ['/misreports/reports/member-billing-dcs-wise']],
                                     ['label' => Yii::t('app', 'FAT Analysis Report'), 'url' => ['/misreports/reports/fat-analysis-report']],
-                                    ['label' => Yii::t('app', 'DCS & Member Wise Qty Compare'), 'url' => ['/misreports/reports/dcs-and-member-wise-qty-compare']],]
+                                    ['label' => Yii::t('app', 'DCS & Member Wise Qty Compare'), 'url' => ['/misreports/reports/dcs-and-member-wise-qty-compare']],
+                                    ['label' => Yii::t('app', 'Product Dispatch Center Wise Detail'), 'url' => ['/misreports/reports/product-dispatch-center-wise-detail']],
+                            ]
                         ],
                             ['label' => Yii::t('app', 'Milk Collection Status Detail'), 'url' => ['/misreports/reports/milk-collection-status-detail']],
                             ['label' => Yii::t('app', 'Qty Slab Report Format 1'), 'url' => ['/misreports/reports/vlc-qty-slab-wise-category']],

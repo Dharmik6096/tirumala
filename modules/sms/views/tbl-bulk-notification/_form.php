@@ -13,6 +13,7 @@ $button = Yii::$app->label->button($type);
 $this->title = Yii::t('app', $title);
 $readonly = $type == 'create' ? FALSE : TRUE;
 $eipl_code = Yii::$app->session->get('eiplCode');
+$class = $type == 'create' ? '' : 'disable_div';
 ?>
 
 <?php
@@ -27,8 +28,8 @@ $form = ActiveForm::begin([
 <?= $form->errorSummary($model); ?>
 
 <div class="row">
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('notification_type', $model, $form, 'form-group', $model->getAttributeLabel('notification_type'), $readonly, 'notification_type', false); ?>
+    <div class="col-sm-2 <?= $class ?> ">
+        <?= Yii::$app->dropdown->dropdownStatic('notification_type', $model, $form, 'form-group', $model->getAttributeLabel('notification_type'), false, 'notification_type', false); ?>
     </div>
     <div class="col-sm-2 app_type">
         <?= Yii::$app->dropdown->dropdown('app_type', $model, $form, '', TRUE, false, 'app_type'); ?>
@@ -52,7 +53,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbulknotification-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblbulknotification-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), TRUE); ?>         
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblbulknotification-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), true); ?>         
     </div>  
     <div class="col-sm-2 app_type">
         <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblbulknotification-dcs_code', '', Yii::t('app', 'Member')); ?>
@@ -153,11 +154,11 @@ $form = ActiveForm::begin([
                                                  var errMsg = '';
                                                     var notificationType= $('#tblbulknotification-notification_type').val();                                
                                                     if ('$eipl_code' != 'AMULAMCS') {
-                                                        if((notificationType=='2' || notificationType=='4' || notificationType=='3' || notificationType=='8') && ($('#file_name').val())==''){                                       
+                                                        if((notificationType=='2' || notificationType=='4' || notificationType=='3' ) && ($('#file_name').val())==''){                                       
                                                             errMsg += 'Please Attach File.';
                                                         }
                                                     } else {
-                                                        if ((notificationType == '2' || notificationType == '4' || notificationType=='8') && ($('#file_name').val())=='') {
+                                                        if ((notificationType == '2' || notificationType=='8') && ($('#file_name').val())=='') {
                                                             errMsg += 'Please Attach File.';
                                                         }
                                                     }
@@ -241,10 +242,12 @@ $(document).ready(function () {
         if(type == '1'){
             $('.receiver_type, .app_type, .login_type').show();
             $('.import-area, .payment_cycle_dd').hide();
+            $('#tblbulknotification-login_type').val('farmer').trigger('change').trigger('select2:select');
             resetDateShiftFields();
         }else if(type == '2' || type == '4' || type == '5' || type == '6'|| type == '7' || type == '8'){
             $('.receiver_type, .import-area, .payment_cycle_dd').show();
             $('.app_type, .login_type').hide();
+            $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
             resetDateShiftFields();
             if (type == '4') {
                 $('#tblbulknotification-login_type').val('vsp').trigger('change').trigger('select2:select');
@@ -252,6 +255,7 @@ $(document).ready(function () {
         }else if(type == '3'){
             $('.import-area, .f_date, .t_date, .f_shift, .t_shift, .auto_scrol_s').show();
             $('.app_type, .login_type, .receiver_type, .payment_cycle_dd').hide();
+            $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
         }
     }
 });
