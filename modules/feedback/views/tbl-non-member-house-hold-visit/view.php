@@ -17,107 +17,126 @@ $this->title = Yii::$app->label->title('view', 'Non Member House Hold Visit');
             $attributes = [
                 [
                     'columns' => [
+                         [
+                            'attribute' => 'house_hold_visit_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
                         [
                             'attribute' => 'mcc_plant_code',
                             'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'mcc_plant_code',
                             'label' => Yii::t('app', 'MCC Name'),
                             'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'bmc_code',
                             'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                        
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'bmc_code',
                             'label' => Yii::t('app', 'BMC Name'),
                             'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'dcs_code',
                             'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'dcs_code',
                             'label' => Yii::t('app', 'DCS Name'),
                             'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'surveyer_code',
                             'value' => Yii::$app->general->getforeignkey($model->surveyerCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                        
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'visit_date',
                             'value' => Yii::$app->controls->view_date($model->visit_date),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'address_line',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                        
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'pincode',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'milch_animal_cow_cnt',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                       
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'milch_animal_cow_ear_tags',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'milch_animal_buff_cnt',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                        [
-                            'attribute' => 'milch_animal_buff_ear_tags',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
+                        
                     ],
                 ],
                 [
                     'columns' => [
                         [
-                            'attribute' => 'milch_animal_country_cow_cnt',
+                            'attribute' => 'milch_animal_buff_ear_tags',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
+                            'attribute' => 'milch_animal_country_cow_cnt',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'mobile_no',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'reason_id',
+                            'value' => Yii::$app->general->getforeignkey($model->reasonID, 'reason_desc'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
