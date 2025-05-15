@@ -450,7 +450,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $parents[2] = isset($parents[2]) ? $parents[2] : '';
                 }
                 $data = $trip->getOpenTripDetailList($parents[0], $parents[1], $parents[2]);
-                $data = ArrayHelper::map($data, 'trip_code', 'trip_code');
+                $data = ArrayHelper::map($data, 'trip_code', $parents[1] == 'milk_entry_qlty' ? function ($tripData) {
+                            return $tripData['parsing_no'] . ' (' . $tripData['trip_code'] . ')';
+                        } : 'trip_code');
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

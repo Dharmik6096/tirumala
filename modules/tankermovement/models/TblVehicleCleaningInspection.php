@@ -47,8 +47,9 @@ class TblVehicleCleaningInspection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['config_code', 'transaction_datetime', 'originating_type', 'union_code', 'transporter_code', 'vehicle_code', 'trip_code', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'created_at', 'updated_at'], 'safe'],
-                [['union_code', 'transporter_code', 'vehicle_code'], 'required'],
+            [['config_code', 'transaction_datetime', 'originating_type', 'union_code', 'transporter_code', 'vehicle_code', 'trip_code', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'created_at', 'updated_at'], 'safe'],
+            [['union_code', 'transporter_code', 'vehicle_code'], 'required'],
+            [['vehicle_code'], 'tripCodeRequired'],
         ];
     }
 
@@ -93,6 +94,15 @@ class TblVehicleCleaningInspection extends \app\models\ChildModel {
 
     public function getConfigResult() {
         return TblConfigTxnResult::findOne(['ref_code' => $this->vehicle_cleaning_inspection_code, 'config_code' => $this->config_code, 'config_for' => 'VEHICLE_CLEANING_INSPECTION']);
+    }
+
+    public function tripCodeRequired($attribute, $params) {
+        $tripModel = new TblVehicleTripDetail();
+        $tripData = $tripModel->getOpenTripDetailList($this->union_code, 'cleaning_inspection', $this->vehicle_code);
+        if (!empty($tripData) && empty($this->trip_code)) {
+            $this->addError('trip_code', Yii::t('app/validation', $this->getAttributeLabel('trip_code') . ' cannot be blank.'));
+            return false;
+        }
     }
 
 }

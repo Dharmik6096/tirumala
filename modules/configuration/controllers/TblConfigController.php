@@ -89,6 +89,7 @@ class TblConfigController extends \app\controllers\ChildController {
         $configModel = new TblConfig();
         $masterData = $configModel->getConfigData($code);
         $model = [];
+        $saveModel = [];
         foreach ($masterData as $m) {
             $saveModel = new TblUnionConfigResult();
             $saveModel->config_code = $m->config_code;
@@ -148,11 +149,14 @@ class TblConfigController extends \app\controllers\ChildController {
                 return Json::encode(ActiveForm::validate($saveModel));
             }
         }
-        return $this->renderAjax('_input_form', [
-                    'masterData' => $masterData,
-                    'saveModel' => $saveModel,
-                    'model' => $model,
-        ]);
+        if(!empty($model)){
+            return $this->renderAjax('_input_form', [
+                        'masterData' => $masterData,
+                        'saveModel' => $saveModel,
+                        'model' => $model,
+            ]); 
+        }
+       
     }
 
     public function actionConfigProcessList() {
