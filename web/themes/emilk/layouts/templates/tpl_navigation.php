@@ -1160,6 +1160,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Task Type'), 'url' => ['/tms/tbl-task-type/index'], 'active' => ($cntrl == 'tbl-task-type')],
                             ['label' => Yii::t('app', 'Form Type'), 'url' => ['/tms/tbl-form-type/index'], 'active' => ($cntrl == 'tbl-form-type')],
                             ['label' => Yii::t('app', 'User Attendance'), 'url' => ['/tms/tbl-user-attendance/index'], 'active' => ($cntrl == 'tbl_user_attendance')],
+                            ['label' => Yii::t('app', 'User Attendance Regularization'), 'url' => ['/tms/tbl-user-attendance-regularization/index'], 'active' => ($cntrl == 'tbl-user-attendance-regularization')],
                             ['label' => Yii::t('app', 'Task'), 'url' => ['/tms/tbl-task/index'], 'active' => ($cntrl == 'tbl-task')],
                             ['label' => Yii::t('app', 'Current Location of All Users'), 'url' => ['/tms/tbl-user-tracking-movement/index'], 'active' => ($cntrl == 'tbl-user-tracking-movement')],
                             ['label' => Yii::t('app', 'Individual Location of a User'), 'url' => ['/tms/tbl-user-tracking-movement/index-other'], 'active' => ($cntrl == 'tbl-user-tracking-movement')],

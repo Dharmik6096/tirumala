@@ -568,7 +568,11 @@ class DefaultController extends \app\controllers\ChildController {
                 $controls['REPORT_LOCALE'] = $controls['locale'] . '_IN';
             }
             $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
-//                  var_dump($controls);die;
+                //  var_dump($controls);die;
+                echo '<pre>';
+                print_r($controls);
+                die;
+
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
                 $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
                 $clientJasper->setRequestTimeout(300);
