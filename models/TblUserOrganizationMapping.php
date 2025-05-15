@@ -184,8 +184,8 @@ class TblUserOrganizationMapping extends ChildModel {
 
         switch ($orgType) {
             case '7' :
-                if (!empty($orgArray) && !empty($orgType)) {
-                    foreach ($orgArray['bmc'] as $key => $value) {
+                if (!empty($orgArray) && !empty($orgType) && !empty($orgArray['bmc'])) {
+                    foreach($orgArray['bmc'] as $key => $value){
                         $selected[$value] = $value;
                     }
                 }
@@ -209,8 +209,8 @@ class TblUserOrganizationMapping extends ChildModel {
                 $route['selectedArray'] = $route_temp['selectedArray'];
                 break;
             case '6' :
-                if (!empty($orgArray) && !empty($orgType)) {
-                    foreach ($orgArray['mcc'] as $key => $value) {
+                if (!empty($orgArray) && !empty($orgType) && !empty($orgArray['mcc'])) {
+                    foreach($orgArray['mcc'] as $key => $value){
                         $selected[$value] = $value;
                     }
                 }
@@ -230,8 +230,8 @@ class TblUserOrganizationMapping extends ChildModel {
                 $route = $this->getRoute($plant['selectedArray'], $mcc['selectedArray'], $bmc['selectedArray'], 0);
                 break;
             case '5' :
-                if (!empty($orgArray) && !empty($orgType)) {
-                    foreach ($orgArray['plant'] as $key => $value) {
+                if (!empty($orgArray) && !empty($orgType) && !empty($orgArray['plant'])) {
+                    foreach($orgArray['plant'] as $key => $value){
                         $selected[$value] = $value;
                     }
                 }
