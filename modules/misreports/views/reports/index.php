@@ -461,7 +461,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('month', 'report_req_status', 'payment_type', 'rate_cal_for'))) {
+                                        if (in_array($value, array('month', 'report_req_status', 'payment_type', 'rate_cal_for', 'trip_status'))) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?>
