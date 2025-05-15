@@ -324,6 +324,20 @@ class CustomValidation extends Component {
                         }, 'whenClient' => "function (attribute, value) { return $('#tblbulknotification-auto_scrolling').is(':checked') }"
                     ],
                 ],
+                'TblProduct' => [
+                    [['product_type'], function ($attribute, $params) {
+                        Yii::$app->general->validateGlobalStatic($this, $attribute, 'product_type');
+                    }, 'on' => 'importCsv'],
+                    [['x_col3'], 'required', 'except' => ['androidsync', 'importCsv']],
+                    [['product_type'], 'required', 'on' => ['importCsv']],
+                    [['product_name'], function ($attribute, $params) {
+                        Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                    }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
+                    [['product_type'], 'setProductType', 'on' => ['importCsv']],
+                    [['x_col3'], 'default', 'value' => 2],
+                    [['min_stock'], 'double', 'min' => 0],
+                    [['min_stock'], 'default', 'value' => 0],
+                ],
             ],
             'NIFPL' => [
                 'TblDcs' => [
@@ -1301,6 +1315,12 @@ class CustomValidation extends Component {
                             [['message'], 'string', 'max' => 150],
                     ]
                 ],
+                // 'TblProduct' => [
+                //     'default' => [
+                //             [['ref_code'], 'required'],
+                //             [['ref_code'], 'validateRefCode'],
+                //     ],
+                // ],
             ],
         ];
     }

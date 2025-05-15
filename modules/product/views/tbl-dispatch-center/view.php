@@ -5,9 +5,9 @@ use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'Dispatch Center');
-// if (Yii::$app->general->allowUpdateDelete($model)) {
-//     $this->params['menu'][] = Yii::$app->controls->update($model->dispatch_center_code);
-// }
+if (Yii::$app->general->allowUpdateDelete($model)) {
+    $this->params['menu'][] = Yii::$app->controls->update($model->dispatch_center_code);
+}
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

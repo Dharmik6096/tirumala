@@ -82,12 +82,18 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('user', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('secondary_parent'), false, 'secondary_parent'); ?>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('dispatch_center_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('dispatch_center_type'), false, 'dispatch_center_type_code'); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'user-dispatch_center_type_code', 'dispatch_center_code', $model->getAttributeLabel('dispatch_center'), TRUE); ?>
-    </div>
+    <?php
+    $union_code = explode(',', Yii::$app->session->get('Unions'));
+    $inventory_with_dispatch_center = Yii::$app->general->getUnionConfiguration($union_code[0], 'inventory_with_dispatch_center', 'PORTAL') == 1 ? true : false;
+    if($inventory_with_dispatch_center){ ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdown('dispatch_center_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('dispatch_center_type'), false, 'dispatch_center_type_code'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'user-dispatch_center_type_code', 'dispatch_center_code', $model->getAttributeLabel('dispatch_center'), TRUE); ?>
+        </div>
+    <?php
+    } ?>
     <div class="col-sm-2 mt18">
         <?= $form->field($model, 'is_engineer', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
     </div>

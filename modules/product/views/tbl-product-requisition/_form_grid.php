@@ -90,7 +90,7 @@ $attribute = [
                     'autoclose' => true]
             ],
             'value' => function($model) {
-                return Yii::$app->controls->view_datetime(Yii::$app->general->getforeignkey($model->productRequisitionCode, 'req_date'), 'php:d-m-Y H:i:s');
+                return Yii::$app->controls->view_datetime(Yii::$app->general->getforeignkey($model->productRequisitionCode, 'req_date'), 'php:d-m-Y');
             }
         ],
         ['label' => Yii::t('app', 'Description'), 'attribute' => 'description', 'value' => function($model) {
