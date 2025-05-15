@@ -157,7 +157,7 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord {
             [['dcs_code', 'bmc_code', 'old_bmc_code'], 'safe'],
             [['address', 'dcs_name'], 'safe'],
             [['bank_account_no', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'upi_no', 'ccenter_code', 'center_code', 'vendor_code', 'sap_center_code', 'rate_chart_code', 'resp_status', 'resp_desc', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'milk_type', 'dob', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['contact_person', 'dcs_short_name', 'beneficiary_name', 'punch_line', 'department', 'firstname', 'lastname', 'surname', 'password', 'gender', 'account_type', 'cheque_number'], 'safe'],
+            [['contact_person', 'dcs_short_name', 'beneficiary_name', 'punch_line', 'department', 'firstname', 'lastname', 'surname', 'password', 'gender', 'account_type', 'cheque_number', 'security_return_date', 'security_return_amt', 'security_return_mode'], 'safe'],
             [['dcs_code_ex', 'route_code', 'old_route_code', 'cutoff', 'lower_milk_type', 'cutoff_val', 'operation_type'], 'safe'],
             [['destination_code', 'branch_code'], 'safe'],
             [['email'], 'safe'],
