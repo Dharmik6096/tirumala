@@ -5814,3 +5814,6 @@ h4{
     display: flex;
     align-items: center;
 }
+.mr50 {
+    margin-right: 50px;
+}
