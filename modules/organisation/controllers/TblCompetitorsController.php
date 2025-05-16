@@ -74,7 +74,7 @@ class TblCompetitorsController extends \app\controllers\ChildController {
             }
             $transaction = $this->generalModel->saveDeleteTransaction($master, [], $recordsToDelete, ['Competitor Mapping', 'create']);
             if ($transaction == 'customRedirect') {
-                return $this->redirect(['index']);
+                return $this->redirect(Yii::$app->request->referrer);
             }
         }
         return $this->render('create', [

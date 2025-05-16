@@ -5,7 +5,7 @@ use app\components\ActiveForm;
 use yii\web\View;
 
 $button = Yii::$app->label->button('create');
-$this->title = Yii::t('app', 'Competitor : ' . $competitor->competitor_name);
+$this->title = Yii::t('app', 'Competitors Mapping : ' . $competitor->competitor_name);
 $defaultToggle = true;
 ?>
 <div class="panel panel-default panel-main">
@@ -163,13 +163,6 @@ $script = "
         $('#allowCashCheckAll').prop('checked', true);
         if(this.checked == false){
             $('#allowCashCheckAll').prop('checked', false);
-        }
-    });
-    
-    $(document).ready(function () {
-        var lengthOfUl = $('.error-summary ul li').length;
-        if(lengthOfUl > 0) {
-            $('.error-summary ul li:eq(0)').before('<li>" . Yii::t('app', 'Member payment is Already restricted for following.') . "</li>');
         }
     });
     $('.mis_report_modal_toggle').on('click', function(){

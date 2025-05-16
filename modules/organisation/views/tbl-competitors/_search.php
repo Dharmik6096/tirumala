@@ -8,7 +8,7 @@ use app\components\ActiveForm;
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><?php echo Yii::t('app', 'Search Competitors'); ?></h4>
+                <h4 class="modal-title"><?php echo Yii::t('app', 'Search Competitors Mapping'); ?></h4>
             </div>
             <div class="">
                 <?php
