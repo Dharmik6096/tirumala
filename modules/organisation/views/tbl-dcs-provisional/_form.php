@@ -433,6 +433,9 @@ $form = ActiveForm::begin([
         </div>
     </div>
     <div class="col-sm-2 mt10">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
+    </div>
+    <div class="col-sm-2 mt10">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_security_cheque'); ?>
     </div>
     <div class="col-sm-2 mt10 security_cheque">
@@ -441,8 +444,17 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt10 number-validate security_cheque">
         <?= $form->field($model, 'cheque_amount')->textInput() ?>   
     </div>
-    <div class="col-sm-2 mt10">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
+    <div class="col-sm-2 mt10 security_cheque">
+        <?= $form->field($model, 'cheque_bank')->textInput() ?>   
+    </div>
+    <div class="col-sm-2 mt10 security_cheque">
+        <?= Yii::$app->controls->date($model, $form, 'security_return_date'); ?>
+    </div>
+    <div class="col-sm-2 mt10 number-validate security_cheque">
+        <?= $form->field($model, 'security_return_amt')->textInput() ?>   
+    </div>
+    <div class="col-sm-2 mt10 security_cheque">
+        <?= Yii::$app->dropdown->dropdownStatic('security_return_mode', $model, $form, '', $model->getAttributeLabel('security_return_mode'), false); ?>
     </div>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="row">
