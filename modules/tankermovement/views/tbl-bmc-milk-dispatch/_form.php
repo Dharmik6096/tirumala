@@ -27,7 +27,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">BMC Milk Dispatch Detail</h4>
         </div>
-        <div class="col-md-8 <?= $disabled ?> padding-bottom-20">
+        <div class="row col-md-8 <?= $disabled ?> padding-bottom-20">
             <?php echo Html::hiddenInput('is_clr_input', 0, ['id' => 'is_clr_input']); ?>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
