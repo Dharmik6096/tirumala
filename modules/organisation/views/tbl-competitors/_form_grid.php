@@ -16,7 +16,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'applicabilty' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Competitor Mapping'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-bs-placement' => 'top', 'title' => 'Competitor Mapping'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-competitors/competitor-mapping', 'id' => $model->competitor_id], $options);
         },
     ]
