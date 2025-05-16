@@ -37,6 +37,9 @@ $attribute = [
         ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'visible' => TRUE, 'filter' => false],
+        ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code Ex'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
+        }, 'visible' => TRUE, 'filter' => false],
         ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Customer') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
         }, 'visible' => TRUE, 'filter' => false],
