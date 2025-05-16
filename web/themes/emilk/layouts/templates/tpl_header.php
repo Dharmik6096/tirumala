@@ -65,22 +65,23 @@ function getNotification() {
                 var html = '';
                 response.forEach(function(noti) {
                     var notiTime = new Date(noti.datetime);
-                    if(noti.send_status == 0){
-                        cnt++;
-                        if (noti.send_status == 0 && notiTime > loginTime) {
+                    var isNew = (noti.send_status == 0 && notiTime > loginTime);
+                        if(noti.send_status == 0){
+                            cnt++;
+                            if (isNew) {
                             showFlashMessage(noti.message);
                         }
                     }
                     shownNotificationIds.push(noti.id);
                     html += '<div class="notification-msg">' +
-                                '<span>' + noti.message + '</span>' +
+                                '<span class="notification-text ' + (isNew ? 'new-notification' : '') + '">' + noti.message + '</span>' +
                                 '<a href="#" class="delete-noti" id="'+noti.id+'" style="color:red;"><i class="fa fa-trash"></i></a>' +
                             '</div>';
                 });
                 if(cnt != 0){
                     $('#notification-count').text(cnt).show(); 
                 }
-                $('#notification-list').append(html);
+                $('#notification-list').prepend(html);
             }
         }
     });
@@ -91,21 +92,21 @@ setInterval(function () {
 }, {$setInterval});
 // On bell icon click
 $('#notification-bell').on('click', function() {
-    $('#notification-list').toggle();
+    $('#notification-list').show();
     $('#notification-count').hide();
     var count = $('#notification-count').text();
-    if (count !== '' && count != 0) {
-        $.ajax({
-            url: "{$ajaxUrl}",
-            type: "POST",
+        if (count !== '' && count != 0) {
+            $.ajax({
+                url: "{$ajaxUrl}",
+                type: "POST",
             success: function(data) {
                 $('#notification-count').text('');
-                cnt = 0;
-            }
-        });
-    }
+                    cnt = 0;
+                }
+            });
+        }
 });
-
+                
 // Delete icon click
 $(document).on('click', '.delete-noti', function(e) {
     e.preventDefault();
@@ -126,19 +127,26 @@ $(document).on('click', '.delete-noti', function(e) {
 
 // Close dropdown if clicked outside
 $(document).click(function(e) {
-    if (!$(e.target).closest('#notification-bell').length) {
-        $('#notification-list').hide();
+    if ($('#notification-list').is(':visible')) {
+        if (!$(e.target).closest('#notification-bell, #notification-list').length) {
+            $('#notification-list').hide();
+            $('.new-notification').removeClass('new-notification');
+        }
     }
 });
-  
-
 
 function showFlashMessage(message) {
     const flash = $('<div class="flash-message"></div>').text(message);
+    let flashCount = $('.flash-message').length; 
+    let maxMessagesOnScreen = 20; 
+    let topPosition = 20 + (flashCount % maxMessagesOnScreen) * 40;
+    if (flashCount >= maxMessagesOnScreen) {
+        topPosition = 20 + ((flashCount - maxMessagesOnScreen) % maxMessagesOnScreen) * 40;
+    }
     $('body').append(flash);
     flash.css({
         position: 'fixed',
-        top: '20px',
+        top: topPosition + 'px',
         right: '20px',
         background: '#28a745',
         color: '#fff',
@@ -160,6 +168,6 @@ function showFlashMessage(message) {
 }
 
 JS
-    );
+);
 }
 ?>
