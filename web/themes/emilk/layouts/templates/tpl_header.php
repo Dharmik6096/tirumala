@@ -17,7 +17,19 @@ $portalNotificationSetInterval = Yii::$app->general->getUnionConfiguration(Yii::
 <div class="navbar fixed-top menu-wrap navbar-expand-lg navbar-lightasd bg-lightasd">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?= Url::to(['/site/dashboard']) ?>"><img src="<?= $logo ?>" alt='<?= Yii::t('app', 'Company Logo') ?>' class="logo img-responsive"/></a>
-        <?php if (!empty($portalNotification) && (int) $portalNotificationSetInterval > 0) { ?>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+            <?php if (false && (Url::home() . 'site' == Yii::$app->request->url || Url::home() . 'site/index' == Yii::$app->request->url)) { ?>
+                <span class="pull-right dashboard_set_icon"><a data-toggle="collapse" href="#collapse1"><i class="fa fa-cog faa-spin animated faa-slow"></i></a></span>
+                <?php
+            }
+            if (!Yii::$app->user->isGuest) {
+                require_once('tpl_navigation.php');
+            }
+            ?>
+            <?php if (!empty($portalNotification) && (int) $portalNotificationSetInterval > 0) { ?>
                 <li class="dropdown bell-icon" id="notification-bell">
                     <a class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell"></i>
@@ -28,18 +40,6 @@ $portalNotificationSetInterval = Yii::$app->general->getUnionConfiguration(Yii::
                     </ul>
                 </li>
             <?php } ?>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-        <div class="collapse navbar-collapse" id="navbarScroll">
-            <?php if (false && (Url::home() . 'site' == Yii::$app->request->url || Url::home() . 'site/index' == Yii::$app->request->url)) { ?>
-                <span class="pull-right dashboard_set_icon"><a data-toggle="collapse" href="#collapse1"><i class="fa fa-cog faa-spin animated faa-slow"></i></a></span>
-                        <?php
-                    }
-                    if (!Yii::$app->user->isGuest) {
-                        require_once('tpl_navigation.php');
-                    }
-                    ?>
         </div>
     </div>
 </div>
@@ -168,6 +168,6 @@ function showFlashMessage(message) {
 }
 
 JS
-);
+    );
 }
 ?>
