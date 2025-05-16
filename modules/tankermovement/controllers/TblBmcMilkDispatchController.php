@@ -665,7 +665,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $org_code = Yii::$app->request->post('bmcCode');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
 
-        $result = Yii::$app->general->calculateData($union, $org_code, $fat, $snf, $clr, 'BMC', $is_clr_input, 'BMC_DISPATCH_CONFIG');
+        $result = Yii::$app->general->calculateData('BMC_DISPATCH_CONFIG', $union, $org_code, $fat, $snf, $clr, 'BMC', $is_clr_input);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }

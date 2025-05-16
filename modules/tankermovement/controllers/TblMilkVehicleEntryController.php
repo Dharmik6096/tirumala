@@ -639,7 +639,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $org_code = Yii::$app->request->post('receiptAtCode');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
 
-        $result = Yii::$app->general->calculateData($union, $org_code, $fat, $snf, $clr, 'PLANT', $is_clr_input, 'PLANT_RECEIPT_CONFIG');
+        $result = Yii::$app->general->calculateData('PLANT_RECEIPT_CONFIG', $union, $org_code, $fat, $snf, $clr, 'PLANT', $is_clr_input);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
