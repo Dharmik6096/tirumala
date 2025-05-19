@@ -252,35 +252,32 @@ var initDepdropMs;
     });
     
     $('.check_password_strength').on("keyup", function () {
-        console.log('t');
         var this_id = $(this).attr('id');
         var password = $(this).val();
         var fieldContainer = $('.field-' + this_id);
-        var helpBlock = fieldContainer.find('.help-block');
-    
+        var errorBlock = fieldContainer.find('.invalid-feedback');
+        var inputField = fieldContainer.find('input');
         var label = fieldContainer.find('label').text();
-        var messages = [];
-    
+        var message = '';
+
         if (password.length < 8) {
-            messages.push(label + ' must be at least 8 characters long');
+            message = label + ' must be at least 8 characters long';
+        } else if (!/[a-z]/.test(password)) {
+            message = label + ' must contain at least one lowercase letter';
+        } else if (!/[A-Z]/.test(password)) {
+            message = label + ' must contain at least one uppercase letter';
+        } else if (!/\d/.test(password)) {
+            message = label + ' must contain at least one digit';
+        } else if (!/[\W_]/.test(password)) {
+            message = label + ' must contain at least one special character';
         }
-        if (!/[a-z]/.test(password)) {
-            messages.push(label + ' must contain at least one lowercase letter');
-        }
-        if (!/[A-Z]/.test(password)) {
-            messages.push(label + ' must contain at least one uppercase letter');
-        }
-        if (!/\d/.test(password)) {
-            messages.push(label + ' must contain at least one digit');
-        }
-        if (!/[\W_]/.test(password)) {
-            messages.push(label + ' must contain at least one special character');
-        }
-    
-        if (messages.length > 0) {
-            helpBlock.attr('title', messages.join(' | ')).html(messages.join('<br>'));
+
+        if (message) {
+            errorBlock.html(message).show();
+            inputField.removeClass('is-valid').addClass('is-invalid');
         } else {
-            helpBlock.attr('title', '').html('');
+            errorBlock.html('').hide();
+            inputField.removeClass('is-invalid').addClass('is-valid');
         }
     });
 })(jQuery);
