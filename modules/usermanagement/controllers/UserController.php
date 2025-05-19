@@ -433,12 +433,13 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             //if ($model->load(Yii::$app->request->post()) AND $model->save()) {
             $master = [];
             $delete = [];
+            $historyModel = new UserHistory();
+            Yii::$app->operation->history($model, $historyModel, UPDATE);
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 if ($tableName == "{{%user}}") {
-                    $historyModel = new UserHistory();
-                    Yii::$app->operation->history($model, $historyModel, UPDATE);
                     $model->load(Yii::$app->request->post());
                     $model->last_password_updated_at = date('Y-m-d H:i:s');
+                    $master[] = $historyModel;
                     $master[] = $model;
 
                     $apiMaster = new TblApiMaster();
