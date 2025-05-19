@@ -10,11 +10,6 @@ use yii\helpers\Url;
  * @var webvimark\modules\UserManagement\models\forms\ChangeOwnPasswordForm $model
  */
 $this->title = UserManagementModule::t('back', 'Change own password');
-$this->params['breadcrumbs'][] = $this->title;
-$logout_url = '/user-management/auth/logout';
-if (Yii::$app->session->get('Login-sess') === 'Rail') {
-    $logout_url = '/site/rail-logout';
-}
 ?>
 
 <div class="panel panel-default panel-main">

@@ -252,7 +252,6 @@ var initDepdropMs;
     });
     
     $('.check_password_strength').on("keyup", function () {
-        console.log('t');
         var this_id = $(this).attr('id');
         var password = $(this).val();
         var fieldContainer = $('.field-' + this_id);
