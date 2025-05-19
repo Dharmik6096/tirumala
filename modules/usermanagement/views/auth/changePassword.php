@@ -17,24 +17,6 @@ if (Yii::$app->session->get('Login-sess') === 'Rail') {
 }
 ?>
 
-<div class="navbar navbar-fixed-top menu-wrap">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="javascript:void(0)"><img src="<?= $this->theme->getUrl('/assets/images/logo.png') ?>" alt="AMCS Logo" class="logo img-responsive"/></a>
-        </div>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="<?= Url::to([$logout_url]) ?>"><i class="fa fa-sign-in"></i> <span>Login</span></a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
     <div class="panel-body">
