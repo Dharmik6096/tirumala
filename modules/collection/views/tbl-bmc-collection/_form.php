@@ -316,7 +316,7 @@ $script = "
                         if (obj.status == 'success' && obj.data != null)
                         {
                             var exist_is_clr_input = $('#is_clr_input').val();
-                            var is_clr_input = obj.data.is_clr_input;
+                            var is_clr_input = obj.data;
                             $('#is_clr_input').val(is_clr_input);
                             var snf_html = $('.snf_calculate').html();
                             var crl_html = $('.clr_calculate').html();
