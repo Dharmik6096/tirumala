@@ -62,6 +62,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
     }
 
     public function actionChangePassword($userCode = '') {
+        $this->layout = "@app/themes/pcdf/layouts/guestLayout.php";
         if (empty($userCode)) {
             return $this->goHome();
         }
