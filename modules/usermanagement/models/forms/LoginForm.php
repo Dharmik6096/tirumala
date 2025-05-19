@@ -20,6 +20,7 @@ use app\modules\general\models\TblViewHistoryTableList;
 use app\modules\organisation\models;
 use Exception;
 use yii\base\UserException;
+use webvimark\modules\UserManagement\UserManagementModule;
 
 class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm {
 
@@ -447,6 +448,48 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
                     }, $state_list));
         } else {
             return 0;
+        }
+    }
+
+    /**
+	 * Validates the password.
+	 * This method serves as the inline validation for password.
+	 */
+	public function validatePassword($isExpired = false, &$userCode = '') {
+        if (!Yii::$app->getModule('user-management')->checkAttempts()) {
+            $this->addError('password', UserManagementModule::t('front', 'Too many attempts'));
+
+            return false;
+        }
+
+        if (!$this->hasErrors()) {
+            $user = $this->getUser();
+            if (!$user || !$user->validatePassword($this->password)) {
+                $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password.'));
+            } else if ($isExpired) {
+                $expirationDays = 0;
+                $userCode = $user->id;
+                $unionCode = TblUnions::find()->select('union_code')->where(['is_active' => 1])->scalar();
+                if (!empty($unionCode)) {
+                    $configDays = Yii::$app->general->getUnionConfiguration($unionCode, 'portal_password_expiry_days', 'PORTAL');
+                    if (is_numeric($configDays)) {
+                        $expirationDays = (int) $configDays;
+                    }
+                }
+                if ($expirationDays > 0) {
+                    $passwordUpdatedAt = $user->last_password_updated_at;
+                    if (empty($passwordUpdatedAt)) {
+                        return true;
+                    }
+                    $updatedDateTime = new \DateTime($passwordUpdatedAt);
+                    $expirationDateTime = clone $updatedDateTime;
+                    $expirationDateTime->add(new \DateInterval("P{$expirationDays}D"));
+                    $currentDateTime = new \DateTime();
+                    if ($currentDateTime > $expirationDateTime) {
+                        return true;
+                    }
+                }
+            }
         }
     }
 

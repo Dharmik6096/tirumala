@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'validateOnBlur' => false,
         ]);
         ?>
-
+        <?php echo $form->errorSummary($model); ?>
         <div class="row">
             <?php if ($model->scenario != 'restoreViaEmail'): ?>            
                 <div class="col-sm-2">
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             <?php endif; ?>
             <div class="col-sm-2">
-                <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+                <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off', 'class' => 'form-control check_password_strength']) ?>
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'repeat_password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>

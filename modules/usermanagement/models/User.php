@@ -78,7 +78,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
                 ['email', 'email', 'except' => ['DeactiveUser']],
                 ['email', 'validateEmailConfirmedUnique', 'except' => ['DeactiveUser']],
                 ['bind_to_ip', 'validateBindToIp', 'except' => ['DeactiveUser']],
-                [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id', 'otp_code'], 'safe'],
+                [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id', 'otp_code', 'last_password_updated_at'], 'safe'],
                 ['bind_to_ip', 'trim'],
                 [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
                 [['mobile_no'], function ($attribute, $params) {
@@ -89,6 +89,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
             //            ['password', 'trim', 'on' => ['newUser', 'changePassword']],
             ['password', 'match', 'pattern' => '/^\S*$/', 'message' => Yii::t('app', 'Space not allowed in Password.')],
                 ['repeat_password', 'required', 'on' => ['newUser', 'changePassword']],
+                ['password', 'validatePasswordStrength', 'on' => ['newUser', 'passwordReset']],
                 ['repeat_password', 'compare', 'compareAttribute' => 'password'],
                 [['allow_app_login'], 'default', 'value' => 0],
                 [['department', 'mobile_no', 'login_type'], 'required', 'when' => function ($model) {
@@ -171,6 +172,16 @@ class User extends \webvimark\modules\UserManagement\models\User {
                     return $array['name'] . '-' . $array['department'];
                 });
         return $list;
+    }
+
+    public function validatePasswordStrength($attribute, $params) {
+        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
+            $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
+        } 
+        if ($this->scenario === 'passwordReset' && $this->validatePassword($this->password)) {
+            $this->addError('password', 'New password cannot be the same as the old password.');
+            return;
+        }
     }
 
     public static function assignRole($userId, $roleName) {
@@ -271,9 +282,10 @@ class User extends \webvimark\modules\UserManagement\models\User {
                     }
                 }
                 // Don't let non-superadmin edit superadmin
-                if (isset($this->oldAttributes['superadmin']) && !Yii::$app->user->isSuperadmin && $this->oldAttributes['superadmin'] == 1) {
-                    return false;
-                }
+                // Comments Regarding Password Reset Functionality
+                // if (isset($this->oldAttributes['superadmin']) && !Yii::$app->user->isSuperadmin && $this->oldAttributes['superadmin'] == 1) {
+                //     return false;
+                // }
             }
         }
         // If password has been set, than create password hash

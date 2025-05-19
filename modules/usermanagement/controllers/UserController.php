@@ -19,6 +19,8 @@ use \app\modules\details\models\TblContactDetailsHistory;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
 use yii\web\Response;
+use yii\data\ActiveDataProvider;
+use yii\web\NotFoundHttpException;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -57,6 +59,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $this->model->portal_type = 'portal';
             $this->model->is_active = 1;
             $this->model->mobile_no = !empty($this->model->mobile_no) ? $this->model->mobile_no : NULL;
+            $this->model->last_password_updated_at = date('Y-m-d H:i:s');
 
             //Assign Role
             $master = [];
@@ -485,7 +488,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
 
     public function actionPasswordReset($id) {
         $model = $this->findModel($id);
-
+        $model->scenario = 'passwordReset';
         if ($this->scenarioOnUpdate) {
             $model->scenario = $this->scenarioOnUpdate;
         }
@@ -494,11 +497,13 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             //if ($model->load(Yii::$app->request->post()) AND $model->save()) {
             $master = [];
             $delete = [];
-            if ($model->validate()) {
+            $historyModel = new UserHistory();
+            Yii::$app->operation->history($model, $historyModel, UPDATE);
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 if ($tableName == "{{%user}}") {
-                    $historyModel = new UserHistory();
-                    Yii::$app->operation->history($model, $historyModel, UPDATE);
                     $model->load(Yii::$app->request->post());
+                    $model->last_password_updated_at = date('Y-m-d H:i:s');
+                    $master[] = $historyModel;
                     $master[] = $model;
 
                     $apiMaster = new TblApiMaster();
