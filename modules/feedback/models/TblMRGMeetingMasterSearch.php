@@ -10,14 +10,14 @@ use app\modules\feedback\models\TblMRGMeetingMaster;
 /**
  * TblMRGMeetingMasterSearch represents the model behind the search form about `app\modules\feedback\models\TblMRGMeetingMaster`.
  */
-class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster
-{
+class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster {
+
     public $area_office_name, $pib_office_name;
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['MRG_M_Id', 'attandance_count', 'originating_type'], 'integer'],
             [['MRG_M_code', 'MRG_date', 'from_time', 'to_time', 'm_from_date', 'm_to_date', 'pib_office_code', 'area_office_code', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'area_office_name', 'pib_office_name', 'status'], 'safe'],
@@ -27,8 +27,7 @@ class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +39,7 @@ class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblMRGMeetingMaster::find();
 
         // add conditions that should always apply here
@@ -59,7 +57,16 @@ class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster
         }
 
         $query->joinWith(['pibOfficeCode']);
-
+        $query->innerJoin('tbl_MRG_meeting_org_mapping', 'tbl_MRG_meeting_org_mapping.MRG_M_Id = tbl_mrg_meeting_master.MRG_M_Id');
+        if (Yii::$app->session->get('MCC') !== '') {
+            $query->andFilterWhere(['tbl_MRG_meeting_org_mapping.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        if (Yii::$app->session->get('BMC') !== '') {
+            $query->andFilterWhere(['tbl_MRG_meeting_org_mapping.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        if (Yii::$app->session->get('Dcs') !== '') {
+            $query->andFilterWhere(['tbl_MRG_meeting_org_mapping.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        }
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_MRG_meeting_master.MRG_M_Id' => $this->MRG_M_Id,
@@ -72,13 +79,14 @@ class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster
         ]);
 
         $query->andFilterWhere(['like', 'tbl_MRG_meeting_master.MRG_M_code', $this->MRG_M_code])
-            ->andFilterWhere(['like', 'tbl_MRG_meeting_master.pib_office_code', $this->pib_office_code])
-            ->andFilterWhere(['like', 'tbl_MRG_meeting_master.area_office_code', $this->area_office_code])
-            ->andFilterWhere(['like', 'user.name', $this->area_office_name])
-            ->andFilterWhere(['like', 'user.name', $this->pib_office_name])
-            ->andFilterWhere(['like', 'tbl_MRG_meeting_master.status', $this->status])
-            ->andFilterWhere(['like', 'tbl_MRG_meeting_master.remarks', $this->remarks]);
+                ->andFilterWhere(['like', 'tbl_MRG_meeting_master.pib_office_code', $this->pib_office_code])
+                ->andFilterWhere(['like', 'tbl_MRG_meeting_master.area_office_code', $this->area_office_code])
+                ->andFilterWhere(['like', 'user.name', $this->area_office_name])
+                ->andFilterWhere(['like', 'user.name', $this->pib_office_name])
+                ->andFilterWhere(['like', 'tbl_MRG_meeting_master.status', $this->status])
+                ->andFilterWhere(['like', 'tbl_MRG_meeting_master.remarks', $this->remarks]);
 
         return $dataProvider;
     }
+
 }
