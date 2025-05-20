@@ -2024,6 +2024,26 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
     
+    public function actionMonthlySahayakIncome() {
+        $this->report = 'MonthlySahayakIncome';
+        return $this->actionIndex();
+    }
+    
+    public function actionMisCcWiseClosingBalance() {
+        $this->report = 'MisCcWiseClosingBalance';
+        return $this->actionIndex();
+    }
+    
+    public function actionProcMisLotWiseDetails() {
+        $this->report = 'ProcMisLotWiseDetails';
+        return $this->actionIndex();
+    }
+    
+    public function actionComparisonReport() {
+        $this->report = 'ComparisonReport';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3342,7 +3362,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => ['2' => Yii::t('app', 'All'), '0' => Yii::t('app', 'Unlock'), '1' => Yii::t('app', 'Lock')],
             ],
             'SummaryReportMcc' => [
-                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,as_on_date:string',
                 'sp_name' => 'mis_summary_report_at_cc',
                 'scenario' => 'SummaryReportMcc',
                 'title' => 'Summary Report - MCC',
@@ -4389,6 +4409,34 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ChillerCostSummary',
                 'title' => '514 - Handling & Storage Charges(chiller) Summary',
                 'to_decrypt' => ['pan_no'],
+                'bkg_export' => TRUE,
+            ],
+            'MonthlySahayakIncome' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_monthly_sahayak_income',
+                'scenario' => 'MonthlySahayakIncome',
+                'title' => 'CC Incharge Remuneration',
+                'bkg_export' => TRUE,
+            ],
+            'MisCcWiseClosingBalance' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_mis_cc_wise_closing_balance',
+                'scenario' => 'MisCcWiseClosingBalance',
+                'title' => 'CC Wise Closing Balance',
+                'bkg_export' => TRUE,
+            ],
+            'ProcMisLotWiseDetails' => [
+                'param' => 'vehicle_code,trip_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_mis_lot_wise_details',
+                'scenario' => 'ProcMisLotWiseDetails',
+                'title' => 'Vehicle wise Quality Report',
+                'bkg_export' => TRUE,
+            ],
+            'ComparisonReport' => [
+                'param' => 'vehicle_code,trip_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_mis_quantity_and_quality_comparing',
+                'scenario' => 'ComparisonReport',
+                'title' => 'Comparison Report ',
                 'bkg_export' => TRUE,
             ],
         ];

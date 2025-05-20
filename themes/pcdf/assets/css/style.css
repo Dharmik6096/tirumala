@@ -6086,3 +6086,7 @@ tr.highlightRow {
 .well.box-well .list-group {
     margin-bottom: 0px !important;
 }
+
+.mr50 {
+    margin-right: 50px;
+}

@@ -10,6 +10,7 @@ use yii\helpers\Html;
 
 <?php
 $attribute = [
+    ['attribute' => 'house_hold_visit_code', 'filter' => false, 'visible' => true],
     ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
         }, 'vAlign' => 'middle', 'filter' => false],
@@ -30,6 +31,9 @@ $attribute = [
         }, 'label' => Yii::t('app', 'DCS Name'), 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'name', 'label' => Yii::t('app', 'Member Name'), 'vAlign' => 'middle'],
     ['attribute' => 'mobile_no'],
+    ['attribute' => 'reason_id', 'value' => function($model) {
+        return Yii::$app->general->getforeignkey($model->reasonID, 'reason_desc');
+    }, 'filter' => false, 'visible' => true],
     ['attribute' => 'address_line'],
     ['attribute' => 'pincode'],
     ['attribute' => 'surveyer_code', 'value' => function($model) {
