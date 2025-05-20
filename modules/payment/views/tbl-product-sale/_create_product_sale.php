@@ -66,8 +66,8 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                 </div>
                 <div class="col-sm-2 no_pointer">
                     <?php
-                        $model->invoice_date = !empty($model->invoice_date) ? $model->invoice_date : date('d-m-Y');
-                        echo Yii::$app->controls->date($model, $form, 'invoice_date', '', true, date('d-m-Y'));
+                    $model->invoice_date = !empty($model->invoice_date) ? $model->invoice_date : date('d-m-Y');
+                    echo Yii::$app->controls->date($model, $form, 'invoice_date', '', true, date('d-m-Y'));
                     ?>
                 </div>
                 <div class="clearfix"></div>
@@ -311,6 +311,7 @@ $script = "
         if(batchNoWiseRate == 'FALSE') {
             setRate();
         }
+    setTax();
     });
     $(document).on('change','#tblproductsaletransaction-quantity',function(){
         setAmount();
@@ -751,6 +752,28 @@ $script = "
                         startDate: invoice_date
                     });
                    
+    }
+    
+    function setTax() {
+        var productCode=$('#tblproductsaletransaction-product_code').val();
+        var unionCode = $('#tblproductsale-union_code').val();
+        if(setData(productCode)&& setData(unionCode)){
+           $.ajax({
+                type: 'POST',
+                url: '" . Url::to(['get-tax']) . "',     
+                data: 'productCode='+productCode+'&unionCode='+unionCode,
+                success: function(data)
+                {
+                    var obj1 = $.parseJSON(data);
+                    if (obj1.status == 'success')
+                    {
+                        if(setData(obj1.tax_code)){
+                            $('#tblproductsaletransaction-tax_code').val(obj1.tax_code).trigger('change').trigger('select2:select');
+                        }
+                    }
+                }
+            });
+        }
     }
 ";
 $this->registerJs($script, View::POS_END, 'create-product-sale-form');
