@@ -63,7 +63,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
             } else if ($model->login()) {
                 return $this->redirect(['/site/dashboard']);
             } else {
-                $model->username = $_POST['LoginForm']['username'];
+                $model->username = $username;
             }
         }
         $login_enc_key = substr(bin2hex(random_bytes(10)), -16);
