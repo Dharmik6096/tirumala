@@ -29,10 +29,10 @@ trait AbstractItemTrait {
         return [
             [['name', 'rule_name', 'group_code'], 'trim'],
             ['description', 'required', 'on' => 'webInput'],
-            ['description', 'string', 'max' => 255],
+            [['description', 'name'], 'string', 'max' => 255],
             ['name', 'required'],
             ['name', 'validateUniqueName'],
-            [['name', 'rule_name', 'group_code'], 'string', 'max' => 64],
+            [['rule_name', 'group_code'], 'string', 'max' => 64],
             [['rule_name', 'description', 'group_code', 'data'], 'default', 'value' => null],
             [['type', 'entry_type'], 'integer'],
             ['organizations_type', 'safe'],
