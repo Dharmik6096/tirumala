@@ -474,7 +474,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
     }
 
     public function actionMap($trip_code) {
-        $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->all();
+        $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->orderBy(['sub_status_time' => SORT_ASC])->all();
         $parsingNo = '';
         if (!empty($tripTrack) && isset($tripTrack[0]['vehicle_code'])) {
             $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $tripTrack[0]['vehicle_code']])->one();
