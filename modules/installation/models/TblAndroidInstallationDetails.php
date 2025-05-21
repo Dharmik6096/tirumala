@@ -154,7 +154,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         }
         return $query->all();
     }
-    
+
     public function getActiveDeviceDataForOrganizations($dest_org_id, $dest_org_type, $device = '') {
         $org_string = "'" . implode(',', $dest_org_id) . "'";
         $organization_type = "'" . implode("','", $dest_org_type) . "'";
