@@ -175,12 +175,18 @@ class User extends \webvimark\modules\UserManagement\models\User {
     }
 
     public function validatePasswordStrength($attribute, $params) {
-        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
-            $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
-        } 
-        if ($this->scenario === 'passwordReset' && $this->validatePassword($this->password)) {
-            $this->addError('password', 'New password cannot be the same as the old password.');
-            return;
+        // if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
+        //     $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
+        // } 
+        if ($this->scenario === 'passwordReset') {
+            if($this->validatePassword($this->password)){
+                $this->addError('password', 'New password cannot be the same as the old password.');
+                return;
+            }
+            if($this->password === preg_replace('/^01#/', '', $this->username)){
+                $this->addError('password', 'New password cannot be the same as the username.');
+                return;
+            }
         }
     }
 

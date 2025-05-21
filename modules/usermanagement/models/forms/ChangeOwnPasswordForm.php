@@ -33,6 +33,11 @@ class ChangeOwnPasswordForm extends \webvimark\modules\UserManagement\models\for
 			return false;
 		}
 
+		if ($this->password === preg_replace('/^01#/', '', $this->user->username)) {
+			$this->addError('password', 'New password cannot be the same as the username.');
+			return false;
+		}
+
 		$this->user->password = $this->password;
 		$this->user->last_password_updated_at = date('Y-m-d H:i:s');
 		$this->user->removeConfirmationToken();
