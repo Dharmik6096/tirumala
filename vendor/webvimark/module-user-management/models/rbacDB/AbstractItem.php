@@ -173,11 +173,11 @@ abstract class AbstractItem extends ActiveRecord
 			[['name', 'rule_name', 'description', 'group_code'], 'trim'],
 
 			['description', 'required', 'on'=>'webInput'],
-			[['description', 'name'], 'string', 'max' => 255],
+			['description', 'string', 'max' => 255],
 
 			['name', 'required'],
 			['name', 'validateUniqueName'],
-			[['rule_name', 'group_code'], 'string', 'max' => 64],
+			[['name', 'rule_name', 'group_code'], 'string', 'max' => 64],
 
 			[['rule_name', 'description', 'group_code', 'data'], 'default', 'value'=>null],
 
