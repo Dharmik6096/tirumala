@@ -98,7 +98,7 @@ $script = "
             $('#tblvehicleqainspection-transporter_code').val('').trigger('change').trigger('select2:select');
         }
 
-        $('#tblvehicleqainspection-trip_code').on('depdrop.afterChange', function(event, id, value) {
+        $('#tblvehicleqainspection-trip_code').on('depdrop:afterChange', function(event, id, value) {
             setDefaultTripCode();
          });
     });

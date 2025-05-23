@@ -243,6 +243,19 @@ $attribute = [
             return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
         }, 'filter' => FALSE, 'visible' => false],
         ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'is_security_cheque', 'filter' => FALSE, 'visible' => FALSE, 
+            'value' => function($model) {
+            return ($model->is_security_cheque == 1) ? 'Yes' : 'No';
+        }],
+        ['attribute' => 'cheque_number', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'cheque_amount', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'cheque_bank', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->security_return_date, 'php:d-m-Y');
+        }, 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_amt', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_mode', 'filter' => FALSE, 'visible' => FALSE],
 ];
 $gridId = 'dcs-list';
 $grid_option = [

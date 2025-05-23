@@ -5,7 +5,6 @@ namespace app\modules\tankermovement\controllers;
 use Yii;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblVehicleTripSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
@@ -13,7 +12,6 @@ use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
-use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
@@ -415,6 +413,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $remarks = $tripDetail->out_remarks;
                 $trip->trip_sub_status = 'gate_out';
             }
+
             if ($tripDetail->validate()) {
                 $models = [$tripDetail, $trip];
                 $transaction = $this->generalModel->saveTransaction($models, ['Trip Detail', 'edit']);
@@ -451,7 +450,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $parents[2] = isset($parents[2]) ? $parents[2] : '';
                 }
                 $data = $trip->getOpenTripDetailList($parents[0], $parents[1], $parents[2]);
-                $data= ArrayHelper::map($data, 'trip_code', 'trip_code');
+                $data = ArrayHelper::map($data, 'trip_code', $parents[1] == 'milk_entry_qlty' ? function ($tripData) {
+                            return $tripData['parsing_no'] . ' (' . $tripData['trip_code'] . ')';
+                        } : 'trip_code');
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

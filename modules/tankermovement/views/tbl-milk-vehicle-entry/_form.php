@@ -30,6 +30,7 @@ $form = ActiveForm::begin([
 <div class="micro_form">
     <div class="row">
         <div class="row col-lg-10 master_fields <?= $disabled ?>">
+            <?php echo Html::hiddenInput('is_clr_input', 0, ['id' => 'is_clr_input']); ?>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
@@ -344,6 +345,8 @@ $script = "
         var EntryType = document.querySelector('.col-sm-1.entry_type');
         var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
         var tankerMovementWithTripSubStatus = '" . $tankerMovementWithTripSubStatus . "';
+        $('#tblmilkvehicleentrytransaction-snf').attr('readonly', false).val('');
+        $('#tblmilkvehicleentrytransaction-clr').attr('readonly', false).val('');
         if (setData(receipt_at)) {
             if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
                $('.tanker_no_hide').css('display', 'block');
@@ -363,7 +366,7 @@ $script = "
                 entryTypeField.val('').prop('readonly', false).trigger('change');   
                 EntryType.classList.remove('no_pointer');    
                 $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
-
+                isClrInput();
                 $(document).off('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code')
                             .on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code', tripSubStatus);
             } else {
@@ -486,8 +489,74 @@ $script = "
             return false;
         }
     }
+
+    $(document).on('change', '#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-snf', function() {
+        calculateClr();
+    });
+
+    function calculateClr(){
+        var union = $('#tblmilkvehicleentry-union_code').val();
+        var fat = $('#tblmilkvehicleentrytransaction-fat').val();
+        var snf = $('#tblmilkvehicleentrytransaction-snf').val();
+        var clr = $('#tblmilkvehicleentrytransaction-clr').val();
+        var is_clr_input = $('#is_clr_input').val();
+        var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();
+        var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();
+
+        is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentrytransaction-clr').val('');
+        is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentrytransaction-snf').val('');
+
+        if(setData(receiptAtCode) && setData(receiptAt) && receiptAt == 'PLANT' && ((is_clr_input == 0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !=''))){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['calculate-clr']) . "',
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'receiptAtCode':receiptAtCode},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success')
+                    {
+                        if(is_clr_input==0){
+                            $('#tblmilkvehicleentrytransaction-clr').val(obj.data.toFixed(2));
+                        }else{
+                            $('#tblmilkvehicleentrytransaction-snf').val(obj.data);
+                        }
+                    }
+                },
+                error:function(data){
+                }
+            });
+        }    
+    };
+
+    function isClrInput(){
+        var union = $('#tblmilkvehicleentry-union_code').val();
+        var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();
+        var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();
+                
+        if(setData(receiptAtCode)){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['get-clr-input']) . "',
+                data: {'union_code':union,'receiptAtCode':receiptAtCode},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.data != null) {
+                        var is_clr_input = obj.data;
+                        $('#is_clr_input').val(is_clr_input);
+                        if (is_clr_input == 0) {
+                            $('#tblmilkvehicleentrytransaction-snf').attr('readonly', false);
+                            $('#tblmilkvehicleentrytransaction-clr').attr('readonly', true);
+                        } else {
+                            $('#tblmilkvehicleentrytransaction-snf').attr('readonly', true);
+                            $('#tblmilkvehicleentrytransaction-clr').attr('readonly', false);
+                        }
+                    }
+                }
+            });
+        }
+    };
     
- function BindData(trip_code){
+    function BindData(trip_code){
         $.ajax({
                 type: 'get',
                 url: '" . Url::to(['dispatch-detail']) . "',
