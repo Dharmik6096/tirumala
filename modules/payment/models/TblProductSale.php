@@ -54,7 +54,7 @@ use app\modules\product\models\TblProductReceiptTransaction;
  */
 class TblProductSale extends \app\models\ChildModel {
 
-    public $payment_cycle_code, $available_credit, $customer_name, $ex_code, $avl_credit;
+    public $payment_cycle_code, $available_credit, $customer_name, $ex_code, $avl_credit, $general_party_master_code;
     public $is_sentbox = TRUE;
     public $saveChildRecords = TRUE;
     public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code, $available_stock, $sap_batch_no, $product_stock_rate;

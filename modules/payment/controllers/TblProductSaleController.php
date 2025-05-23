@@ -416,10 +416,14 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $data = '';
                 }
             }
-        } else if (!empty($type) && strtolower($type) != 'dcs') {
+        } else if (!empty($type) && strtolower($type) != 'dcs' && strtolower($type) != 'party') {
             $headModel->customer_code = $customer_code;
             $data = Yii::$app->general->validateCustomerCode($headModel);
             $headModel->customer_code = $data;
+        } else if(!empty($type) && strtolower($type) == 'party') {
+            $headModel->customer_code = $customer_code;
+            $data = Yii::$app->general->validateGeneratePartyMasterCode($headModel);
+            $name = $data;
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($customer_code, $bmc);
@@ -431,7 +435,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $headModel->customer_code = $data;
         }
         if (!empty($data)) {
-            $name = Yii::$app->general->getCustomer($headModel, $type);
+            $name = !empty($name) ? $name : Yii::$app->general->getCustomer($headModel, $type);
             $response['status'] = 'success';
             $response['data'] = $name;
             $response['code'] = $headModel->customer_code;

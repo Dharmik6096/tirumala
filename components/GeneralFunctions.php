@@ -53,6 +53,7 @@ use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\product\models\TblGeneralPartyMaster;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblVehicleTrip;
@@ -1584,6 +1585,15 @@ class GeneralFunctions extends Component {
                 $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             }
             return $data = empty($Code) ? '' : $Code;
+        }
+    }
+
+    public function validateGeneratePartyMasterCode($model) {
+        if (!empty($model->customer_code) && strtolower($model->customer_type) == 'party') {
+            $modelData = TblGeneralPartyMaster::find()
+                        ->where(['general_party_master_code' => $model->customer_code])
+                        ->one();
+            return !empty($modelData) ? $modelData->party_name : '';
         }
     }
 

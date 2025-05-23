@@ -77,8 +77,11 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                     $lable = Yii::t('app', 'Member Code');
                 }
                 ?>
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-2 reset_field ex_code">
                     <?= $form->field($model, 'ex_code')->textInput()->label($lable) ?>
+                </div>
+                <div class="col-sm-2 reset_field party">
+                    <?= Yii::$app->dropdown->dropdown('general_party_master', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('party code'), false, '', false, false); ?>
                 </div>
                 <div class="col-sm-2 reset_field">
                     <?php
@@ -266,6 +269,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
 
 <?php
 $script = "
+    $('.party').hide();
     var batchNoWiseRate = $('#batch_no_wise_rate').val();
     $('#tblproductsale-invoice_date').prop('readonly', true);
     $(document).on('change','#tblproductsale-invoice_date',function(){
@@ -296,6 +300,13 @@ $script = "
     $(document).on('change','#tblproductsale-customer_type',function(){
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
+        $('.party').hide();
+        $('.ex_code').show();
+        var customerType = $(this).val();
+        if (customerType && customerType.toLowerCase() == 'party') {
+            $('.ex_code').hide();
+            $('.party').show();
+        }
         if(batchNoWiseRate == 'FALSE') {
             setRate();
         }
@@ -561,6 +572,12 @@ $script = "
             $('#tblproductsale-payment_mode').trigger('change');
             $('#tblproductsale-avl_credit').val(0);
     });
+    $(document).on('change', '#tblproductsale-general_party_master_code', function() {  
+        setVendorCode();
+            $('#tblproductsale-payment_mode').val('');
+            $('#tblproductsale-payment_mode').trigger('change');
+            $('#tblproductsale-avl_credit').val(0);
+    });
     $('#tblproductsale-invoice_date').change(function(){
         $('#tblproductsale-ex_code').val('');
         if($('#tblproductsale-payment_mode').val() == 1) {
@@ -571,8 +588,11 @@ $script = "
     function setVendorCode(){
         $('#tblproductsale-customer_code').val('');
         $('#tblproductsale-customer_name').val('');
-        var code = $('#tblproductsale-ex_code').val();
         var type= $('#tblproductsale-customer_type').val(); 
+        var code = $('#tblproductsale-ex_code').val();
+        if (type && type.toLowerCase() == 'party') {
+            code = $('#tblproductsale-general_party_master_code').val();
+        }
         var union= $('#tblproductsale-union_code').val(); 
         var bmc= $('#tblproductsale-bmc_code').val(); 
         var date= $('#tblproductsale-invoice_date').val(); 
