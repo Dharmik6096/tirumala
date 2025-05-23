@@ -81,7 +81,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                     <?= $form->field($model, 'ex_code')->textInput()->label($lable) ?>
                 </div>
                 <div class="col-sm-2 reset_field party">
-                    <?= Yii::$app->dropdown->dropdown('general_party_master', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('party code'), false, '', false, false); ?>
+                    <?= Yii::$app->dropdown->depend_dropdown('general_party_master', $model, $form, 'tblproductsale-bmc_code', 'form-group col-sm-2', $model->getAttributeLabel('party_code')); ?>
                 </div>
                 <div class="col-sm-2 reset_field">
                     <?php
@@ -225,6 +225,15 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                                                                     $("#tblproductsaletransaction-tax_code").val("");
                                                                     $("#tblproductsaletransaction-tax_code").trigger("select2:select");
                                                                     $("#tblproductsaletransaction-tax_code").trigger("change");
+                                                                    
+                                                                    var customerType = $("#tblproductsale-customer_type").val();
+                                                                    $(".party").hide();
+                                                                    $(".ex_code").show();
+                                                                    var customerType = $(this).val();
+                                                                    if (customerType && customerType.toLowerCase() == "party") {
+                                                                        $(".ex_code").hide();
+                                                                        $(".party").show();
+                                                                    }
 //                                                                 
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                         setTimeout(function(){
@@ -496,6 +505,10 @@ $script = "
             customer_code=$('#tblproductsale-dcs_code').val();
             customer_type='DCS';
         }
+        if (customer_type && customer_type.toLowerCase() == 'party') {
+            customer_type = 'BMC';
+            customer_code = bmc_code;
+        }
         $.ajax({
             type: 'post',
             url: '" . Url::to(['/payment/tbl-product-sale/load-rate']) . "',
@@ -707,7 +720,7 @@ $script = "
     
     }
     $('#tblproductsale-payment_mode').on('change', function(){
-        if($('#tblproductsale-payment_mode').val() == 1) {
+        if($('#tblproductsale-payment_mode').val() == 1 && $('#tblproductsale-customer_type').val() != 'PARTY') {
             setAvailableCredit();
         }
     });

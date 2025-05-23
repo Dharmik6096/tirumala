@@ -114,6 +114,10 @@ class TblProductStock extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
+    // public function getPartyCode() {
+    //     return $this->hasOne(TblGeneralPartyMaster::className(), ['generate_party_code' => 'customer_code']);
+    // }
+
     public function getExistStock($type, $batch = '', $checkMccStock = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
         if (!empty($batch)) {
@@ -157,6 +161,12 @@ class TblProductStock extends \app\models\ChildModel {
             $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
             $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+        } elseif (strtoupper($type) == 'PARTY') {
+            $party = TblGeneralPartyMaster::find()->where(['general_party_master_code' => $code])->one();
+            $this->dcs_code = $party->dcs_code;
+            $this->bmc_code = $party->bmc_code;
+            $this->mcc_plant_code = $party->mcc_plant_code;
+            $this->plant_code = $party->plant_code;
         }
     }
 

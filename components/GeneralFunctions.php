@@ -1426,12 +1426,16 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
             } else if (strtolower($type) == 'member') {
                 $name = $this->getforeignkey($model->memberCode, 'ex_member_code');
+            } else if(strtolower($type) == 'bmc') {
+                $name = $this->getforeignkey($model->bmcCode, 'bmc_code_ex');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'customer_code_ex');
             }
         } else if ($bmcCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'bmc_code');
+            } else if(strtolower($type) == 'bmc') {
+                $name = $this->getforeignkey($model->bmcCode, 'bmc_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'bmc_code');
             }
@@ -1440,6 +1444,8 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'ref_code');
             } else if (strtolower($type) == 'member') {
                 $name = $this->getforeignkey($model->memberCode, 'ref_code');
+            } else if(strtolower($type) == 'bmc') {
+                $name = $this->getforeignkey($model->bmcCode, 'ref_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
             }

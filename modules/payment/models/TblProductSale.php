@@ -77,7 +77,17 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
                 [['bmc_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct', 'productSaleImport', 'saleProductOnDispatch']],
-                [['union_code', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
+                [['union_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
+                [['ex_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
+                            return ($this->customer_type != 'PARTY');
+                        }, 'whenClient' => "function (attribute, value) { 
+                    return $('#tblproductsale-customer_type').val() != 'PARTY'; 
+                }"],
+                [['general_party_master_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
+                            return ($this->customer_type == 'PARTY');
+                        }, 'whenClient' => "function (attribute, value) { 
+                    return $('#tblproductsale-customer_type').val() == 'PARTY'; 
+                }"],
                 [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
                 [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
@@ -126,7 +136,11 @@ class TblProductSale extends \app\models\ChildModel {
                 [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+                [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport'],'when' => function () {
+                            return ($this->customer_type != 'PARTY');
+                        }, 'whenClient' => "function (attribute, value) { 
+                    return $('#tblproductsale-customer_type').val() != 'PARTY'; 
+                }"],
                 [['invoice_date'], 'pastDateValidate', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync', 'saleProductOnDispatch']],
                 [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
