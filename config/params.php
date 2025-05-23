@@ -50,6 +50,7 @@ $eipl_params = [
     'feedback_upload' => '/uploads/feedback_upload/',
     'sap_data_files' => '/sap_data_files/',
     'payment_xml_upload' => '/uploads/payment_xml_upload/',
+    'software_complaint_dir_path' => '/uploads/software-complaint-docs/',
     'data_exchange_url' => 'http://www.w3.org/2003/05/soap-envelope',
 ];
 /* Application Server wise custom param file changes - asmita - 15/06/2023 */

@@ -108,6 +108,11 @@ $attribute = [
         },
     ],
     'employee_id',
+        ['attribute' => 'is_engineer',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('allow_app_login', $searchModel, 'is_engineer'),
+        'value' => function (User $model) {
+            return isset($model->is_engineer) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->is_engineer] : '';
+        },],
         /* [
           'class' => 'webvimark\components\StatusColumn',
           'attribute' => 'status',
@@ -163,6 +168,11 @@ $grid_option = [
             $disable = '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Organization Lat Long Map', 'class' => $disable];
             return Html::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-organization-latlong/map-route-source', 'id' => $model->id], $options);
+        },
+        'engineer-map' => function ($url, $model) {
+            $disable = ($model->is_engineer == 1) ? 'link-disable' : '';
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Map Engineers', 'class' => $disable];
+            return Html::a('<i class="fa fa-users"></i>', ['/user-management/user/map-engineer', 'id' => $model->id], $options);
         },
     ]
 ];

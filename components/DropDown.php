@@ -739,6 +739,21 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, $url, Yii::t('app', 'Select User'), $multiple, '', $readonly);
     }
 
+    public function product_group($model, $form, $depends, $name = 'product_group_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+        $this->setClass($form, $name);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-group/product-group-list', Yii::t('app', 'Select'), $multiple, $extra_param, $readonly, $id);
+    }
+
+    public function insurance_dcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/insurance/tbl-insurance-detail-summary/dcs-list', Yii::t('app', 'Select Society'), $multiple, $model->$name, $readonly);
+    }
+
+    public function product_master($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readOnly);
+    }
+
     public function contactDetails($model, $form, $depends, $name = 'detail_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/details/tbl-contact-details/contact-details-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
@@ -936,18 +951,36 @@ class DropDown extends Component {
         $fields = explode(',', $labelData['fields']);
         $model_name = Yii::$app->path->define($labelData['model']);
         $model = new $model_name();
+        $tablename = $model->tablename();
         $where = [];
         if ($model->hasAttribute('is_active')) {
             $where['is_active'] = 1;
         }
+// if (isset($labelData['whereCondition'])) {
+//     $where = array_merge($labelData['whereCondition'], $where);
+// }
+        $whereCondition = [];
         if (isset($labelData['whereCondition'])) {
-//            echo '<pre>';
-//            print_r($labelData['whereCondition']);
-//            die;
-            $where = array_merge($labelData['whereCondition'], $where);
+            foreach ($labelData['whereCondition'] as $key => $value) {
+                $whereCondition[$tablename . '.' . $key] = $value;
+            }
         }
-        $select_fields[] = $fields[0];
-        $select_fields[] = $fields[1];
+        if (isset($labelData['rlsWhereCondition']) && !empty($labelData['applyRls'])) {
+            foreach ($labelData['rlsWhereCondition'] as $key => $value) {
+                $whereCondition[$key] = $value;
+            }
+        }
+        $where = array_merge($whereCondition, $where);
+
+        $select_fields[] = $tablename . '.' . $fields[0];
+        if (isset($labelData['concatfield'])) {
+            $select_fields[] = "CONCAT(" . $tablename . "." . $fields[1] . ',\' - \',' . $labelData["concatfield"] . ") AS " . $fields[1];
+        } else {
+            $select_fields[] = $tablename . '.' . $fields[1];
+        }
+
+// $select_fields[] = $fields[0];
+// $select_fields[] = $fields[1];
 
         if (!empty($fields[2])) {
             array_push($select_fields, $fields[2]);
@@ -958,14 +991,32 @@ class DropDown extends Component {
 
         if (isset($old_model->{$fields[0]}) && $old_model->{$fields[0]} != '') {
             $unionQuery = $model->find()
-                            ->select($select_fields)
-                            ->where([$fields[0] => $old_model->{$fields[0]}])
+                    ->select($select_fields);
+            if (isset($labelData['joinwith'])) {
+                foreach ($labelData['joinwith'] as $val) {
+                    $unionQuery->joinWith($val);
+                }
+            }
+            $unionQuery->where([$tablename . '.' . $fields[0] => $old_model->{$fields[0]}])
                             ->createCommand()->rawSql;
-            $tmp_query = $model->find()->select($select_fields)->where($where)->union($unionQuery);
+
+            $tmp_query = $model->find()->select($select_fields);
+            if (isset($labelData['joinwith'])) {
+                foreach ($labelData['joinwith'] as $val) {
+                    $tmp_query->joinWith($val);
+                }
+            }
+            $tmp_query->where($where)->union($unionQuery);
             $query = new Query();
             $records = $query->select('*')->from(['u' => $tmp_query])->orderBy($fields[1])->all();
         } else {
-            $records = $model->find()->select($select_fields)->where($where)->orderBy($model->tablename() . '.' . $fields[1])->all();
+            $records = $model->find()->select($select_fields);
+            if (isset($labelData['joinwith'])) {
+                foreach ($labelData['joinwith'] as $val) {
+                    $records = $records->joinWith($val);
+                }
+            }
+            $records = $records->where($where)->orderBy($tablename . '.' . $fields[1])->all();
         }
 
         return ArrayHelper::map($records, $fields[0], function ($array, $key) use ($fields) {
@@ -988,7 +1039,7 @@ class DropDown extends Component {
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $data['data'];
 
-        //client wise dropdown option remove
+//client wise dropdown option remove
         $client_code = \Yii::$app->session->get('eiplCode');
         if (isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])) {
             foreach ($data['client_wise_rmv'][$client_code] as $value) {
@@ -1767,8 +1818,7 @@ class DropDown extends Component {
             'notification_type' => [
                 'name' => 'notification_type',
                 'prompt' => Yii::t('app', 'Select Notification Type'),
-                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'AMCS Special Message'), 4 => Yii::t('app', 'Milk Bill'), 5 => Yii::t('app', 'Bacteria Test')],
-                'remove_key' => ['2', '5']
+                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'AMCS Special Message'), 4 => Yii::t('app', 'Milk Bill'), 5 => Yii::t('app', 'Bacteria Test'), 6 => Yii::t('app', 'Eipl Bill'), 7 => Yii::t('app', 'Multi Priptra'), 8 => Yii::t('app', 'AMCS Milk Bill')],
             ],
             'month' => [
                 'name' => 'month',
@@ -1976,6 +2026,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Payment Mode'),
                 'data' => ['1' => Yii::t('app', 'Cash'), '2' => Yii::t('app', 'DD'), '3' => Yii::t('app', 'Check'), '4' => Yii::t('app', 'Other')],
             ],
+            'applicant_relation' => [
+                'name' => 'applicant_relation',
+                'prompt' => Yii::t('app', 'Select Applicant Relation'),
+                'data' => [1 => Yii::t('app', 'Father'), 2 => Yii::t('app', 'Husband'), 3 => Yii::t('app', 'Mother')],
+            ],
             'machine_owned_type' => [
                 'name' => 'machine_owned_type',
                 'prompt' => Yii::t('app', 'Select Machine Owned Type'),
@@ -2089,6 +2144,55 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['bmc_collection' => Yii::t('app', 'BMC Collection'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
             ],
+            'product_requisition_type' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['DCS' => Yii::t('app', 'DCS')],
+            ],
+            'consumer_type' => [
+                'name' => 'consumer_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Member'), 2 => Yii::t('app', 'Non-Member'), 3 => Yii::t('app', 'Vendor'), 4 => Yii::t('app', 'Institute'), 5 => Yii::t('app', 'Retail Sale'), 6 => Yii::t('app', 'Customer'), 7 => Yii::t('app', 'Other')],
+            ],
+            'credit_debit' => [
+                'name' => 'credit_debit',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Credit'), 0 => Yii::t('app', 'Debit')],
+            ],
+            'gender' => [
+                'name' => 'gender',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => 'Male', 2 => 'Female', 3 => 'Transgender'],
+            ],
+            'originating_org_type' => [
+                'name' => 'originating_org_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['PORTAL' => Yii::t('app', 'Portal'), 'VLC' => Yii::t('app', 'DCS')],
+            ],
+            'complaint_type' => [
+                'name' => 'complaint_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Onsite'), 2 => Yii::t('app', 'Offsite'), 3 => Yii::t('app', 'Telephonic')
+                ],
+            ],
+            'priority' => [
+                'name' => 'priority',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'High'), 2 => Yii::t('app', 'Medium'), 3 => Yii::t('app', 'Low')
+                ],
+            ],
+            'resolution_type' => [
+                'name' => 'resolution_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Field Visit'), 2 => Yii::t('app', 'Telephonic')
+                ],
+            ],
+            'complaint_status' => [
+                'name' => 'complaint_status',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Create'), 2 => Yii::t('app', 'Assign'), 3 => Yii::t('app', 'Re-Assign'), 4 => Yii::t('app', 'Resolved')
+                ],
+            ],
             'hold_type' => [
                 'name' => 'hold_type',
                 'prompt' => Yii::t('app', 'Hold Type'),
@@ -2114,6 +2218,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['discarded' => Yii::t('app', 'Discarded'), 'done' => Yii::t('app', 'Done'), 'pending' => Yii::t('app', 'Pending')],
             ],
+            'insurance_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['DRAFT' => Yii::t('app', 'Draft'), 'PUBLISH' => Yii::t('app', 'Publish'), 'PARTIAL_FINALIZE' => Yii::t('app', 'Partial Finalize'), 'FINALIZE' => Yii::t('app', 'Finalize')],
+            ],
             'process_names' => [
                 'name' => 'process_name',
                 'prompt' => Yii::t('app', 'Select'),
@@ -2123,6 +2232,23 @@ class DropDown extends Component {
                 'name' => 'security_return_mode',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Bank' => Yii::t('app', 'Bank'), 'Cheque' => Yii::t('app', 'Cheque')],
+            ],
+            'milk_sale_on' => [
+                'name' => 'milk_sale_on',
+                'prompt' => Yii::t('app', 'Select Report Type'),
+                'data' => [1 => Yii::t('app', 'Date shift wise'), 2 => Yii::t('app', 'Date wise')
+                ],
+            ],
+            'billing_on' => [
+                'name' => 'billing_on',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'Payment Cycle Wise'), 2 => Yii::t('app', 'Month Wise'), 3 => Yii::t('app', 'Year Wise'), 4 => Yii::t('app', 'Consolidate')
+                ],
+            ],
+            'dispatch_type' => [
+                'name' => 'dispatch_type',
+                'prompt' => Yii::t('app', 'Select Dispatch Type'),
+                'data' => ['summary' => Yii::t('app', 'Summary'), 'detail' => Yii::t('app', 'Detail')],
             ],
         ];
         return $records[$l];
@@ -2268,6 +2394,10 @@ class DropDown extends Component {
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
             'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
             'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'dispatch_center_type' => ['name' => 'dispatch_center_type_code', 'fields' => 'dispatch_center_type_code,dispatch_center_type', 'prompt' => 'Select Dispatch Center Type', 'model' => 'TblDispatchCenterType', 'joinwith' => ['userDispatchCenterMapping'], 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
+            'dispatch_center' => ['name' => 'dispatch_center_code', 'fields' => 'dispatch_center_code,dispatch_center_name', 'prompt' => 'Select Dispatch Center', 'model' => 'TblDispatchCenter', 'joinwith' => ['dispatchCenterTypeCode', 'userDispatchCenterMapping'], 'concatfield' => 'tbl_dispatch_center_type.dispatch_center_type', 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
+            'insurance_master_list' => ['name' => 'insurance_master_code', 'fields' => 'insurance_master_code,insurance_description', 'prompt' => 'Select Insurance', 'model' => 'TblInsuranceMaster'],
+            'forceSyncTables' => ['name' => 'table_name', 'fields' => 'table_name,table_desc', 'prompt' => 'Select Process', 'model' => 'TblForceSyncTableList'],
             'chamber_no' => ['name' => 'chamber_no', 'fields' => 'milk_vehicle_entry_qlty_code,chamber_no,', 'prompt' => Yii::t('app', 'Select Compartment'), 'model' => 'TblMilkVehicleEntryQlty', 'depend' => 'trip_code', 'dependArray' => ['status']],
             'dock_no' => ['name' => 'dock_no', 'fields' => 'dock_no,dock_name,dock_no', 'prompt' => Yii::t('app', 'Select Dock No'), 'model' => 'TblPlantDockMapping', 'depend' => 'plant_code'],
             'vehicle_transpoter' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'whereCondition' => ['vehicle_use_type' => [1, 2], 'union_code' => !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : '']],
@@ -2387,6 +2517,15 @@ class DropDown extends Component {
     public function customerType($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/get-customer-type', Yii::t('app', 'Select Customer Type'), $multiple, 'where', $readonly);
+    }
+
+    public function dispatchCenterType($model, $form, $depends, $name = 'dispatch_center_code', $islable = false, $multiple = false, $readonly = false, $extra_param = '', $id = '') {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-dispatch-center-type/get-dispatch-center', Yii::t('app', 'Select Dispatch Center'), $multiple, $extra_param, $readonly, $id);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-dispatch-center-type/get-dispatch-center', Yii::t('app', 'Select Dispatch Center'), $multiple, 'where', $readonly);
+        }
     }
 
     public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name = '', $sp_param = []) {

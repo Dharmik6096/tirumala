@@ -19,6 +19,7 @@ $button = Yii::$app->label->button($type);
 $this->title = Yii::t('app', $title);
 $readOnly = false;
 $isNewRecord = (isset($type) && $type == 'create') ? TRUE : FALSE;
+$classs = (isset($type) && $type == 'edit') ? 'mt18' : '';
 
 if (!$isNewRecord)
     $readOnly = true;
@@ -79,6 +80,22 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('user', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('secondary_parent'), false, 'secondary_parent'); ?>
+    </div>
+    <?php
+    $union_code = explode(',', Yii::$app->session->get('Unions'));
+    $inventory_with_dispatch_center = Yii::$app->general->getUnionConfiguration($union_code[0], 'inventory_with_dispatch_center', 'PORTAL') == 1 ? true : false;
+    if ($inventory_with_dispatch_center) {
+        ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdown('dispatch_center_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('dispatch_center_type'), false, 'dispatch_center_type_code'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'user-dispatch_center_type_code', 'dispatch_center_code', $model->getAttributeLabel('dispatch_center'), TRUE); ?>
+        </div>
+    <?php }
+    ?>
+    <div class="col-sm-2 mt18">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_engineer'); ?>
     </div>
     <?php /* if ($model->checkNotSelf()) { ?>
       <div class="col-sm-2 mt25">

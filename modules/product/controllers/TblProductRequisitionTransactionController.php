@@ -16,6 +16,8 @@ use yii\widgets\ActiveForm;
 use app\components\Model;
 use yii\helpers\Json;
 use app\modules\product\models\TblProductPurchaseRateApplicability;
+use app\modules\product\models\TblProduct;
+use app\modules\globalmaster\models\TblUnits;
 
 /**
  * TblProductRequisitionTransactionController implements the CRUD actions for TblProductRequisitionTransaction model.
@@ -26,7 +28,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
     public $dataProvider;
     public $jsonEncoded;
     public $scheme;
-    public $freeAccessActions = ['validate-vehicle', 'validate-product'];
+    public $freeAccessActions = ['validate-vehicle', 'validate-product', 'validate-product-data'];
 
     /**
      * Lists all TblProductRequisitionTransaction models.
@@ -77,11 +79,17 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                 $list = [];
                 $reqModel->addProductRequisition($jsonData);
                 $reqCode = $reqModel->product_requisition_code;
-                $reqModel->req_date = !empty($reqModel->req_date) ? Yii::$app->formatter->asDate($reqModel->req_date, DATE_FORMAT) : NULL;
+                $reqModel->req_date = !empty($reqModel->req_date) ? Yii::$app->controls->save_datetime($reqModel->req_date) : NULL;
+                $product_code = Yii::$app->request->post()['TblProductRequisitionTransaction']['product_code'];
+                $dispatch_center = Yii::$app->general->getDispatchCenter($reqModel->dcs_code, 'DCS', $product_code);
+                if(empty($dispatch_center)){
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Dispatch center not mapped']);
+                    return $this->redirect(Yii::$app->request->referrer);
+                }
             } else {
                 $reqCode = Yii::$app->getRequest()->getQueryParam('id');
             }
-
             $transaction = FALSE;
             if ($this->model->load(Yii::$app->request->post()) && Yii::$app->request->post('submit') === 'save') {
                 $reqModel->status = 'Draft'; //1
@@ -92,7 +100,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                 $this->model->product_requisition_code = $reqCode;
                 $this->model->requisition_transaction_code = Yii::$app->general->getTransactionCode($this->model, $this->model->product_requisition_code);
                 $this->model->requisition_on_date = !empty($this->model->requisition_on_date) ? Yii::$app->formatter->asDate($this->model->requisition_on_date, DATE_FORMAT) : NULL;
-              
+                $this->model->dispatch_center_code =  !empty($dispatch_center) ? $dispatch_center['dispatch_center_code'] : NULL;
                 if (Yii::$app->request->get('id') == -1) {
                     $transaction = $this->generalModel->saveTransaction([$reqModel], [$this->model], ['Product Requisition transaction', 'create']);
                 } else {
@@ -225,13 +233,14 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
         }
     }
 
-    public function actionAcceptRequisition($id) {
-//        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
+    /////old code rename function name only//////
+    public function actionAcceptRequisitionOld($id) {
+        //        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
         $this->model = new TblProductRequisition();
         $this->model = $this->model->getRecord($id);
-        $this->viewFile = 'accept_requisition';
+        $this->viewFile = 'accept_requisition_old';
         $this->searchModel = new TblProductRequisitionSearch();
-//        $this->dataProvider = $this->searchModel->searchRequisition(Yii::$app->request->queryParams);
+        //        $this->dataProvider = $this->searchModel->searchRequisition(Yii::$app->request->queryParams);
         $schememodal = new TblProductRequisitionTransaction();
         if ((Yii::$app->request->post())) {
             $approvedByUser = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
@@ -338,6 +347,135 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
         ]);
     }
 
+    public function actionAcceptRequisition() {
+        $searchModel = new TblProductRequisitionTransactionSearch();
+        $searchModel->scenario = 'acceptRequisition';
+        $dataProvider = $searchModel->searchAcceptRequisition(Yii::$app->request->queryParams);
+        $this->model = $dataProvider->getModels();
+        $this->viewFile = 'accept_requisition';
+        $selectedArr = [];
+        if ((Yii::$app->request->post())) {
+            $approvedByUser = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+            $app = 1;
+            if (true) {
+                $modelAttributes = $_POST['TblProductRequisitionTransaction'];
+                $list = [];
+                $rcnt = 0;
+                $cnt = 0;
+                $validData = true;
+                foreach ($modelAttributes as $key => $row) {
+                    $selectedArr[] = $key;
+                    $modelNew = TblProductRequisitionTransaction::findOne($modelAttributes[$key]['requisition_transaction_code']);
+                    if (isset($modelAttributes[$key]['req_action']) && $modelAttributes[$key]['req_action'] != '' && empty($modelNew->parent_product_code)) {
+                        if ($modelNew->status == 'Sent' || $modelAttributes[$key]['req_action'] == 2 || $modelNew->approved_quantity != $modelAttributes[$key]['approved_quantity'] || $modelNew->discount_amount != $modelAttributes[$key]['discount_amount']) {
+                            if (!empty($modelNew->approved_date)) {
+                                $old_scheme = ''; //$modelNew->getProductScheme($modelNew->approved_date, $modelNew->approved_quantity);
+                            } else {
+                                $old_scheme = '';
+                            }
+                            $historyModel = new TblProductRequisitionTransactionHistory();
+                            Yii::$app->operation->history($modelNew, $historyModel, UPDATE);
+                            array_push($list, $historyModel);
+                            $modelNew->approved_quantity = $modelAttributes[$key]['approved_quantity'];
+                            $modelNew->discount_amount = $modelAttributes[$key]['discount_amount'];
+                            $modelNew->x_col2 = $modelAttributes[$key]['x_col2'];
+                            $modelNew->approved_date = date('Y-m-d');
+                            $modelNew->is_approved = $app;
+                            $modelNew->approved_by = $approvedByUser;
+                            $modelNew->provisional_amount = round($modelNew->provisional_rate * $modelNew->approved_quantity, 2);
+
+                            $modelNew->operation = FALSE;
+                            if ($modelNew->validate()) {
+                                if ($modelAttributes[$key]['req_action'] == '2') {
+                                    $modelNew->status = 'Rejected'; //11
+                                    $rcnt++;
+                                } else {
+                                    $modelNew->status = 'Under Dispatch'; //46
+                                    if ($modelNew->approved_quantity == 0) {
+                                        $modelNew->status = 'Rejected'; //11
+                                        $rcnt++;
+                                    }
+                                }
+                                array_push($list, $modelNew);
+                                $masterProductRequisition = TblProductRequisition::find()->where(['product_requisition_code' => $modelNew->product_requisition_code, 'status' => 'Sent'])->one();
+                                if($modelNew->status == 'Under Dispatch' && !empty($masterProductRequisition)){
+                                    $masterProductRequisition->status = 'Under Dispatch';
+                                    array_push($list, $masterProductRequisition);
+                                } else if($modelNew->status == 'Rejected' && !empty($masterProductRequisition)){
+                                    $allTractionCheck = TblProductRequisitionTransaction::find()->where(['product_requisition_code' => $modelNew->product_requisition_code])->andWhere(['<>','requisition_transaction_code', $modelNew->requisition_transaction_code])->andWhere(['status' => ['Sent','Under Dispatch','Dispatched']])->all();
+                                    if(empty($allTractionCheck)){
+                                        $masterProductRequisition->status = 'Rejected';
+                                        array_push($list, $masterProductRequisition);
+                                    }
+                                }
+                            } else {
+                                $validData = false;
+                                $this->model[$key] = $modelNew;
+                                $this->model[$key]->req_action = $modelAttributes[$key]['req_action'];
+                            }
+                        }
+                    } else {
+                        if (isset($modelAttributes[$key]['approved_quantity']) && $modelNew->approved_quantity != $modelAttributes[$key]['approved_quantity'] && $modelAttributes[$key]['req_action'] == '1') {
+                            $historyModel = new TblProductRequisitionTransactionHistory();
+                            Yii::$app->operation->history($modelNew, $historyModel, UPDATE);
+                            array_push($list, $historyModel);
+                            $modelNew->approved_quantity = $modelAttributes[$key]['approved_quantity'];
+                            $modelNew->x_col2 = $modelAttributes[$key]['x_col2'];
+                            $modelNew->provisional_amount = round($modelNew->provisional_rate * $modelNew->approved_quantity, 2);
+
+                            $modelNew->approved_date = date('Y-m-d');
+                            $modelNew->is_approved = $app;
+                            $modelNew->approved_by = $approvedByUser;
+                            $modelNew->operation = FALSE;
+                            if ($modelNew->validate()) {
+                                if ($modelNew->approved_quantity == 0) {
+                                    $modelNew->status = 'Rejected'; //11
+                                }
+                                array_push($list, $modelNew);
+                                $masterProductRequisition = TblProductRequisition::find()->where(['product_requisition_code' => $modelNew->product_requisition_code, 'status' => 'Sent'])->one();
+                                if($modelNew->status == 'Under Dispatch' && !empty($masterProductRequisition)){
+                                    $masterProductRequisition->status = 'Under Dispatch';
+                                    array_push($list, $masterProductRequisition);
+                                } else if($modelNew->status == 'Rejected' && !empty($masterProductRequisition)){
+                                    $allTractionCheck = TblProductRequisitionTransaction::find()->where(['product_requisition_code' => $modelNew->product_requisition_code])->andWhere(['<>','requisition_transaction_code', $modelNew->requisition_transaction_code])->andWhere(['status' => ['Sent','Under Dispatch','Dispatched']])->all();
+                                    if(empty($allTractionCheck)){
+                                        $masterProductRequisition->status = 'Rejected';
+                                        array_push($list, $masterProductRequisition);
+                                    }
+                                }
+                            } else {
+                                $validData = false;
+                                $this->model[$key] = $modelNew;
+                                $this->model[$key]->req_action = $modelAttributes[$key]['req_action'];
+                            }
+                        }
+
+                        if ($modelNew->status == 'Rejected') {
+                            $rcnt++;
+                        }
+                    }
+                }
+                if (!empty($list)) {
+                    $master = [];
+                    $transaction = $this->generalModel->saveTransaction($list, $master, ['product requisition', 'create']);
+                    if ($transaction !== FALSE) {
+                        if ($transaction == 'customRedirect') {
+                            return $this->redirect(['tbl-product-requisition/index']);
+                        }
+                    }
+                } else {
+                    return $this->redirect(['tbl-product-requisition/index']);
+                }
+            }
+        }
+        return $this->render($this->viewFile, [
+                    'model' => $this->model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'selectedArr' => $selectedArr,
+        ]);
+    }
+
     public function actionValidateProduct() {
 
 //        $array = ['status' => 'error'];
@@ -362,6 +500,32 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
             if (!empty($appData)) {
                 $app = ['status' => 'success', 'name' => $appData['product_name'], 'rate' => $appData['purchase_rate'], 'unit' => $appData['unit_name'], 'tax_code' => $appData['tax_code']];
             }
+        }
+        echo json_encode($app);
+    }
+
+    public function actionValidateProductData() {
+
+        $app = ['status' => 'error'];
+        if (!empty($_POST['id']) && !empty($_POST['customer_type']) && !empty($_POST['customer_code'])) {
+            $date = !empty($_POST['date']) ? date('Y-m-d', strtotime($_POST['date'])) : date('Y-m-d');
+
+            $productData = TblProduct::find()
+                            ->where(['product_code' => $_POST['id']])->one();
+            if (!empty($productData)) {
+                $unit = !empty($productData->unitCode) ? $productData->unitCode->unit_name : '';
+                $app = ['status' => 'success', 'name' => $productData->product_name, 'unit' => $unit];
+            }
+        }
+        echo json_encode($app);
+    }
+    
+    public function actionCheckDispatchCenterApplicability() {
+        $post_data = Yii::$app->request->post();
+        $dispatch_center = Yii::$app->general->getDispatchCenter($post_data['dcs_code'], 'DCS', $post_data['product_code']);
+        $app = ['status' => 'success', 'message' => 'Dispatch center mapped'];
+        if(empty($dispatch_center)){
+            $app = ['status' => 'error', 'message' => 'Dispatch center not mapped'];
         }
         echo json_encode($app);
     }

@@ -129,4 +129,13 @@ class TblProductGroup extends \app\models\ChildModel {
         return $sentbox;
     }
 
+    public function getProdutGroupList($unionCode) {
+        $query = $this->find()
+                ->select(['product_group_code', 'product_group_name'])
+                ->where(['union_code' => $unionCode, 'is_active' => 1])
+                ->all();
+        $value = ArrayHelper::map($query, 'product_group_code', 'product_group_name');
+        return $value;
+    }
+
 }

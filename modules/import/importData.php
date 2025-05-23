@@ -191,6 +191,7 @@ class importData extends \yii\base\Module {
             'member_update_special_code' => ['table_name' => 'tbl_member', 'import_main_class' => 'BackGroundDataImportStrategy', 'fields' => 'dcs_code,member_code,special_code', 'scenario' => 'specialCodeImportCsv', 'update_key' => 'member_code,dcs_code', 'exclude_update' => 'member_code,dcs_code', 'historyClass' => 'TblMemberHistory', 'validate_length' => false],
             'localmilkrateapplicability-bulk' => ['table_name' => 'tbl_local_milk_sale_rate', 'fields' => 'dcs_code,local_milk_rate_code,wef_date', 'scenario' => 'importCsv'],
             'local_milk_rate_bulk' => ['table_name' => 'tbl_local_milk_rate', 'fields' => 'union_code,milk_type_code,milk_quality_type_code,milk_class,rate,wef_date', 'scenario' => 'importCsv'],
+            'insurance-detail' => ['table_name' => 'tbl_insurance_detail', 'fields' => 'sr_no,dcs_code,dcs_name,member_id,adhar_no,member_code,member_name,gender_code,dob,age,nominee_member_name,date_of_joining_scheme,nominee_adhar_no', 'scenario' => 'importCsv'],
             'asset-verification' => ['import_class' => 'tbl_asset_verification_data', 'table_name' => 'tbl_asset_verification_data', 'fields' => 'asset_code,serial_number,manufacturer_serial_number', 'save_child' => true, 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
             'compartment-detail' => ['table_name' => 'tbl_vehicle_compartment_detail', 'fields' => 'vehicle_code,compartment_no,capacity', 'scenario' => 'importCsv'],
         ];

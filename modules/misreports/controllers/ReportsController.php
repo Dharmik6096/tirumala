@@ -1124,6 +1124,9 @@ class ReportsController extends \app\controllers\ChildController {
                             if (!empty($formateChange)) {
                                 $output[$i][$decKey] = date($formateChange, strtotime($output[$i][$decKey]));
                             }
+                            if (isset($this->data['mask_data']) && in_array($decKey, $this->data['mask_data'])) {
+                                $output[$i][$decKey] = Yii::$app->general->maskAadhar($output[$i][$decKey]);
+                            }
                         }
                     }
                 }
@@ -1922,6 +1925,21 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionInsuranceDetail() {
+        $this->report = 'InsuranceDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionInsuranceDetailReconciliation() {
+        $this->report = 'InsuranceDetailReconciliation';
+        return $this->actionIndex();
+    }
+
+    public function actionInsuranceSummaryDcsWise() {
+        $this->report = 'InsuranceSummaryDcsWise';
+        return $this->actionIndex();
+    }
+
     public function actionTpCostDetail() {
         $this->report = 'TpCostDetail';
         return $this->actionIndex();
@@ -1995,12 +2013,12 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VspTransitRecovery';
         return $this->actionIndex();
     }
-    
+
     public function actionComplainActivityList() {
         $this->report = 'ComplainActivityList';
         return $this->actionIndex();
     }
-    
+
     public function actionRouteWiseCdaFormat() {
         $this->report = 'RouteWiseCdaFormat';
         if (Yii::$app->request->queryParams) {
@@ -2018,37 +2036,57 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MilkDispatchList';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkRejectList() {
         $this->report = 'MilkRejectList';
         return $this->actionIndex();
     }
-    
+
     public function actionChillerCostSummary() {
         $this->report = 'ChillerCostSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMonthlySahayakIncome() {
         $this->report = 'MonthlySahayakIncome';
         return $this->actionIndex();
     }
-    
+
     public function actionMisCcWiseClosingBalance() {
         $this->report = 'MisCcWiseClosingBalance';
         return $this->actionIndex();
     }
-    
+
     public function actionProcMisLotWiseDetails() {
         $this->report = 'ProcMisLotWiseDetails';
         return $this->actionIndex();
     }
-    
+
     public function actionComparisonReport() {
         $this->report = 'ComparisonReport';
         return $this->actionIndex();
     }
-    
+
+    public function actionLocalMilkSale() {
+        $this->report = 'LocalMilkSale';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberBilling() {
+        $this->report = 'MemberBilling';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberBillingDcsWise() {
+        $this->report = 'MemberBillingDcsWise';
+        return $this->actionIndex();
+    }
+
+    public function actionProductDispatchCenterWiseDetail() {
+        $this->report = 'ProductDispatchCenterWiseDetail';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4247,6 +4285,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Rate Recalculation(Custom)',
                 'bkg_export' => TRUE,
             ],
+            'InsuranceDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,insurance_master_code',
+                'sp_name' => 'mis_insurance_detail',
+                'to_decrypt' => ['adhar_no', 'dob', 'nominee_adhar_no'],
+                'mask_data' => ['adhar_no', 'nominee_adhar_no'],
+                'scenario' => 'InsuranceDetail',
+                'title' => 'Insurance Detail',
+            ],
+            'InsuranceDetailReconciliation' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,insurance_master_code,p_organization_type:static:originating_org_type,operation_type',
+                'sp_name' => 'mis_insurance_detail_reconciliation',
+                'to_decrypt' => ['current_adhar_no', 'current_dob', 'previous_adhar_no', 'previous_dob', 'adhar_no', 'dob', 'nominee_adhar_no'],
+                'mask_data' => ['current_adhar_no', 'previous_adhar_no', 'adhar_no', 'nominee_adhar_no'],
+                'scenario' => 'InsuranceDetailReconciliation',
+                'title' => 'Insurance Detail Change Log',
+            ],
+            'InsuranceSummaryDcsWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,insurance_master_code',
+                'sp_name' => 'mis_insurance_summary_dcs_wise',
+                'to_decrypt' => ['current_adhar_no', 'current_dob', 'previous_adhar_no', 'previous_dob'],
+                'mask_data' => ['current_adhar_no', 'previous_adhar_no'],
+                'scenario' => 'InsuranceSummaryDcsWise',
+                'title' => 'Insurance Summary DCS Wise',
+            ],
             'TpCostDetail' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
                 'sp_name' => 'mis_tpt_cost',
@@ -4450,6 +4512,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ComparisonReport',
                 'title' => 'Comparison Report ',
                 'bkg_export' => TRUE,
+            ],
+            'LocalMilkSale' => [
+                'param' => 'milk_sale_on:static:milk_sale_on,union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_local_milk_sale_all_report',
+                'scenario' => 'LocalMilkSale',
+                'title' => 'Local Milk Sale',
+            ],
+            'MemberBilling' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string,to_date:string,billing_on:static:billing_on',
+                'sp_name' => 'rpt_mis_member_billing_all_report',
+                'scenario' => 'MemberBilling',
+                'title' => 'Member Billing',
+            ],
+            'MemberBillingDcsWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,billing_on:static:billing_on',
+                'sp_name' => 'rpt_mis_member_billing_society_all_report',
+                'scenario' => 'MemberBillingDcsWise',
+                'title' => 'Member Billing DCS Wise',
+            ],
+            'ProductDispatchCenterWiseDetail' => [
+                'param' => 'dispatch_center_type,dispatch_center,from_date:string,to_date:string,dispatch_type',
+                'sp_name' => 'mis_product_dispatch_zser',
+                'scenario' => 'ProductDispatchCenterWiseDetail',
+                'title' => 'Product Dispatch Center Wise Detail',
             ],
         ];
         return $label[$l];

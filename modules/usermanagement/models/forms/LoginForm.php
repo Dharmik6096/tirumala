@@ -66,7 +66,7 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
     }
 
     public function setSession() {
-        
+
         $user = User::find()->where(['username' => $this->username, 'is_active' => 1])->one();
 
         if (!isset($user->user_code)) {
@@ -99,6 +99,7 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
             $maker_checker = 0;
         }
         $organization_logo = '';
+        $federation = '';
         $union = '';
         $plant = '';
         $mcc = '';
@@ -219,11 +220,11 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
                 }
             }
         } catch (UserException $e) {
-            
+            return false;
         } catch (\yii\db\Exception $e) {
-            
+            return false;
         } catch (Exception $ex) {
-            
+            return false;
         }
         $language_code = 'en';
         Yii::$app->session->set('Federations', $federation);
@@ -249,6 +250,7 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
         Yii::$app->session->set('unionKeyPattern', $unionKeyPattern);
         Yii::$app->session->set('financialYear', $finacialYear);
         Yii::$app->session->set('ViewHistory', $ViewHistory);
+        Yii::$app->session->set('isEngineer', $user->is_engineer);
         return true;
     }
 
@@ -452,10 +454,10 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
     }
 
     /**
-	 * Validates the password.
-	 * This method serves as the inline validation for password.
-	 */
-	public function validatePassword($isExpired = false, &$userCode = '') {
+     * Validates the password.
+     * This method serves as the inline validation for password.
+     */
+    public function validatePassword($isExpired = false, &$userCode = '') {
         if (!Yii::$app->getModule('user-management')->checkAttempts()) {
             $this->addError('password', UserManagementModule::t('front', 'Too many attempts'));
 

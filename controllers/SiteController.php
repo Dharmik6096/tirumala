@@ -2110,6 +2110,8 @@ class SiteController extends \app\controllers\ChildController {
                             ->all();
                     if (!empty($modelDataAll)) {
                         foreach ($modelDataAll as $modelData) {
+                            $encrypt = $modelData->encryptModel($modelData->attributes);
+                            $modelData->setAttributes($encrypt);
                             $union_code = '';
                             $plant_code = '';
                             $mcc_plant_code = '';

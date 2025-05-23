@@ -24,8 +24,17 @@ class TblProductRequisitionController extends \app\controllers\ChildController {
      * Lists all TblProductRequisition models.
      * @return mixed
      */
+//    public function actionIndex() {
+//        $searchModel = new TblProductRequisitionSearch();
+//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+//
+//        return $this->render('index', [
+//                    'searchModel' => $searchModel,
+//                    'dataProvider' => $dataProvider,
+//        ]);
+//    }
     public function actionIndex() {
-        $searchModel = new TblProductRequisitionSearch();
+        $searchModel = new TblProductRequisitionTransactionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -56,26 +65,28 @@ class TblProductRequisitionController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblProductRequisition();
         $this->viewFile = 'create';
-
+        $this->model->scenario = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->vendor_code = $this->model->bmc_code;
             if ($this->model->vendor_type == 'DCS') {
                 $this->model->vendor_code = $this->model->dcs_code;
             }
-            $this->model->product_requisition_code = Yii::$app->general->getUuid(); //Yii::$app->general->getPrimaryCode($this->model);
+            $this->model->product_requisition_code = Yii::$app->general->getPrimaryCode($this->model);
             if (!empty($this->model->date)) {
                 $this->model->date = Yii::$app->formatter->asDate($this->model->date, DATE_FORMAT);
             }
             $this->model->status = 0;
-            $this->model->union_code = Yii::$app->session->get('organizations_code');
+//            $this->model->union_code = Yii::$app->session->get('organizations_code');
 //            $this->model->union_code = '001';
             if ($this->model->validate()) {
                 $result = 'success';
                 //$this->model->save();
                 Yii::$app->response->format = trim(Response::FORMAT_JSON);
-
-                $url = \yii\helpers\Url::to(['tbl-product-requisition-transaction/create', 'id' => -1]);
-                $a = ['status' => $result, 'url' => $url, 'object' => $this->model->attributes];
+                $attribute_data = $this->model->attributes;
+                $attribute_data['req_date'] = $attribute_data['req_date'].' '.Yii::$app->request->post()['TblProductRequisition']['req_time'];
+                $attribute_data['req_time'] = Yii::$app->request->post()['TblProductRequisition']['req_time'];
+                $url = \yii\helpers\Url::to(['tbl-product-requisition-transaction/create', 'id' => -1, 'date' => $this->model->req_date]);
+                $a = ['status' => $result, 'url' => $url, 'object' => $attribute_data];
                 return $a;
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;

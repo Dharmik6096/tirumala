@@ -44,6 +44,7 @@ class TblProductRequisition extends \app\models\ChildModel {
     public $operation = TRUE;
     public $plant_name, $mcc_name, $customer_name, $route_code;
     public $is_sentbox = TRUE;
+    public $req_time;
 
     /**
      * @inheritdoc
@@ -57,18 +58,20 @@ class TblProductRequisition extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vendor_type', 'req_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['androidsync']],
-                [['product_requisition_code'], 'safe'],
-                [['product_requisition_code'], 'required', 'on' => ['androidsync']],
-                [['dcs_code'], 'required', 'when' => function ($model) {
+            [['vendor_type', 'req_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['androidsync']],
+            [['product_requisition_code'], 'safe'],
+            [['product_requisition_code'], 'required', 'on' => ['androidsync']],
+            [['dcs_code'], 'required', 'when' => function ($model) {
                     return $model->vendor_type == 'DCS';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductrequisition-vendor_type').val() == 'DCS'; 
           }", 'except' => ['androidsync']],
-                [['product_requisition_code', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['req_date', 'created_at', 'updated_at'], 'safe'],
-                [['originating_type'], 'safe'],
-                [['description'], 'string', 'max' => 500],
+            [['product_requisition_code', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['req_date', 'created_at', 'updated_at'], 'safe'],
+            [['originating_type'], 'safe'],
+            [['description'], 'string', 'max' => 500],
+            [['req_time'], 'safe'],
+            [['req_time'], 'required', 'on' => ['create']],
         ];
     }
 
@@ -108,7 +111,7 @@ class TblProductRequisition extends \app\models\ChildModel {
 
     public function addProductRequisition($records) {
         $this->attributes = $records;
-        $this->product_requisition_code = !empty($this->product_requisition_code) ? $this->product_requisition_code : Yii::$app->general->getUuid(); //Yii::$app->general->getPrimaryCode($this);
+        $this->product_requisition_code = Yii::$app->general->getPrimaryCode($this);
     }
 
     public function getRecord($code) {
@@ -206,6 +209,17 @@ class TblProductRequisition extends \app\models\ChildModel {
         return $name;
     }
 
+    public function getEntityRefCode() {
+        $type = $this->vendor_type;
+        $name = '';
+        if ($type == 'BMC') {
+            $name = Yii::$app->general->getforeignkey($this->bmcCode, 'ref_code');
+        } else if ($type == 'DCS') {
+            $name = Yii::$app->general->getforeignkey($this->dcsCode, 'ref_code');
+        }
+        return $name;
+    }
+
     public function getMccCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
@@ -243,19 +257,24 @@ class TblProductRequisition extends \app\models\ChildModel {
         return $sentbox;
     }
 
-    public function getApprovedRequisitionTransactions($reqCode) {
+    public function getApprovedRequisitionTransactions($reqCode, $dispCode) {
+        $productData = Yii::$app->general->getDispCenterProducts($dispCode);
         $subQuery = (new \yii\db\Query())
                 ->select('sum(dispatch_qty) as dispatch_qty,product_code,product_requisition_code,requisition_transaction_code')
                 ->from('tbl_product_dispatch_transaction AS t')
                 ->groupBy(['product_requisition_code', 'product_code', 'requisition_transaction_code']);
 
-        return $rows = (new \yii\db\Query())
-                ->select('prt.*,product_name')
+        $rows = (new \yii\db\Query())
+                ->select('prt.*,product_name,ref_code')
                 ->from('tbl_product_requisition_transaction AS prt')
                 ->innerJoin('tbl_product', 'tbl_product.product_code=prt.product_code')
                 ->leftJoin(['x' => $subQuery], 'x.requisition_transaction_code=prt.requisition_transaction_code')
-                ->where("is_approved=1 and (dispatch_qty < prt.approved_quantity OR dispatch_qty is null) and prt.product_requisition_code='" . $reqCode . "' and prt.status in ('Under Dispatch')")
-                ->all();
+                ->where("is_approved=1 and (dispatch_qty < prt.approved_quantity OR dispatch_qty is null) and prt.product_requisition_code='" . $reqCode . "' and prt.status in ('Under Dispatch')");
+
+        if ($productData['pass_where_close'] == 'Yes') {
+            $rows->andWhere(['prt.product_code' => $productData['product_list']]);
+        }
+        return $rows->all();
     }
 
 }

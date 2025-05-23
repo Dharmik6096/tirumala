@@ -253,6 +253,12 @@ class TblDcsController extends ChildController {
                                     array_push($orgMap, $modelNew);
                                 }
                             }
+                            if (strtolower($vendorModel->vendor_code) == 'eipl') {
+                                $path = Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
+                                if (!file_exists($path) || !is_dir($path)) {
+                                    FileHelper::createDirectory($path);
+                                }
+                            }
                             $this->generalModel->saveTransaction($orgMap, ['society', 'create']);
                         }
                     }

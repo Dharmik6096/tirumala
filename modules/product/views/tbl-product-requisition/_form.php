@@ -30,7 +30,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblproductrequisition-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
     </div>      
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('requisition_type', $model, $form, 'form-group', $model->getAttributeLabel('vendor_type'), false, 'vendor_type', false); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('product_requisition_type', $model, $form, 'form-group', $model->getAttributeLabel('vendor_type'), false, 'vendor_type', false); ?>
         <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblproductrequisition-bmc_code', 'vendor_type', TRUE, FALSE); ?>
     </div>
     <div class="col-sm-2">
@@ -39,6 +39,12 @@ $form = ActiveForm::begin([
 
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'req_date', '', true); ?>
+    </div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'req_time')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '99:99',])->label('Requisition Time (24 Hrs)');
+        ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblproductrequisition-bmc_code', 'dcs_code', Yii::t('app', 'DCS')); ?>

@@ -10,6 +10,8 @@ use yii\web\View;
 /* @var $form yii\widgets\ActiveForm */
 
 $button = Yii::$app->label->button($type);
+
+$start_date = Yii::$app->request->get('date');
 ?>
 <?php
 $form = ActiveForm::begin(['options' => [
@@ -17,7 +19,6 @@ $form = ActiveForm::begin(['options' => [
                 'field-class' => 'form-group col-sm-3',
             ],
             'validateOnBlur' => TRUE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -40,8 +41,13 @@ $form = ActiveForm::begin(['options' => [
     </div>
 
     <div class="col-sm-2 reset_field">
-        <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblproductrequisitiontransaction-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+        <?php
+        echo Yii::$app->dropdown->product_master($model, $form, 'tblproductrequisitiontransaction-union_code', 'product_code', $model->getAttributeLabel('product_code'), FALSE, '', FALSE, TRUE);
+        ?>
     </div>
+    <!--    <div class="col-sm-2 reset_field">
+    <?php // Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblproductrequisitiontransaction-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+        </div>-->
     <?= $form->field($model, 'uom', ['options' => ['placeholder' => $model->uom, 'class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
     <?= $form->field($model, 'quantity', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
 
@@ -52,7 +58,7 @@ $form = ActiveForm::begin(['options' => [
     <?= $form->field($model, 'provisional_amount', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
 
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'requisition_on_date', '', true); ?>
+        <?= Yii::$app->controls->date($model, $form, 'requisition_on_date', '', false, $start_date); ?>
     </div>
 
     <?= Html::hiddenInput('product_req', '', ['id' => 'product_req']); ?>
@@ -90,9 +96,10 @@ $script = "
         customer_type = local.vendor_type;
         customer_code = local.vendor_code;
         if(id!=''){
+            checkDispatchCenter(id, local.dcs_code);
             $.ajax({
                 type: 'post',
-                url: '" . Url::to(['/product/tbl-product-requisition-transaction/validate-product']) . "',    
+                url: '" . Url::to(['/product/tbl-product-requisition-transaction/validate-product-data']) . "',    
                 data: 'date='+local.req_date+'&customer_type='+customer_type+'&customer_code='+customer_code+'&id='+id+'&rid=" . Yii::$app->getRequest()->getQueryParam('id') . "',
                 success: function(data) {
                     var obj1 = $.parseJSON(data);
@@ -138,6 +145,25 @@ $script = "
             amt=amt.toFixed(2);
             $('#tblproductrequisitiontransaction-provisional_amount').val(amt);
         }
+    }
+    
+    function checkDispatchCenter(product_code, dcs_code) {
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/product/tbl-product-requisition-transaction/check-dispatch-center-applicability']) . "',    
+            data: 'product_code='+product_code+'&dcs_code='+dcs_code,
+            success: function(data) {
+                var obj1 = $.parseJSON(data);
+                if (obj1.status == 'error')
+                {
+                    bootbox.alert('<div class=\"row\"><div class=\"col-sm-12\"><div class=\'bg-info\'><i class=\"fa fa-3x fa-times-circle aria-hidden=true\"></i></div><span>'+obj1.message+'</span></div></div>',function(){
+                        bootbox.hideAll();
+                        $('#tblproductrequisitiontransaction-product_code').focus().select();
+                    });
+                    return false;
+                }
+            }
+        });  
     }
 ";
 $this->registerJs($script, View::POS_END, 'product-req-txn-form-one');

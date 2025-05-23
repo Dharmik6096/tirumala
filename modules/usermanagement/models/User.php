@@ -67,18 +67,18 @@ class User extends \webvimark\modules\UserManagement\models\User {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['username', 'name'], 'required'],
                 [['role'], 'required', 'on' => ['newUser']],
                 [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
-            //			['username', 'unique'],
+//			['username', 'unique'],
             [['user_code', 'employee_id'], 'unique'],
                 ['username', 'trim'],
                 [['status', 'email_confirmed', 'is_active'], 'integer'],
                 ['email', 'email', 'except' => ['DeactiveUser']],
                 ['email', 'validateEmailConfirmedUnique', 'except' => ['DeactiveUser']],
                 ['bind_to_ip', 'validateBindToIp', 'except' => ['DeactiveUser']],
-                [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id', 'otp_code', 'last_password_updated_at'], 'safe'],
+                [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id', 'otp_code', 'last_password_updated_at', 'dispatch_center_code', 'dispatch_center_type_code', 'is_engineer'], 'safe'],
                 ['bind_to_ip', 'trim'],
                 [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
                 [['mobile_no'], function ($attribute, $params) {
@@ -110,6 +110,10 @@ class User extends \webvimark\modules\UserManagement\models\User {
                 [['username', 'password', 'repeat_password', 'otp_code'], 'required', 'on' => 'verifyOtp'],
                 [['username'], 'required', 'on' => 'forgetPsd'],
         ];
+
+        $client_rules = Yii::$app->customvalidation->getRules('User', 'default');
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -175,15 +179,15 @@ class User extends \webvimark\modules\UserManagement\models\User {
     }
 
     public function validatePasswordStrength($attribute, $params) {
-         if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
-             $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
-         } 
+        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
+            $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
+        }
         if ($this->scenario === 'passwordReset') {
-            if($this->validatePassword($this->password)){
+            if ($this->validatePassword($this->password)) {
                 $this->addError('password', 'New password cannot be the same as the old password.');
                 return;
             }
-            if($this->password === preg_replace('/^01#/', '', $this->username)){
+            if ($this->password === preg_replace('/^01#/', '', $this->username)) {
                 $this->addError('password', 'New password cannot be the same as the username.');
                 return;
             }
@@ -255,8 +259,8 @@ class User extends \webvimark\modules\UserManagement\models\User {
     public static function getAvailableRoles() {
         $roles = Role::getAvailableRoles(true, true);
         $out = [];
-        //             print_r($roles);
-        //             exit;
+//             print_r($roles);
+//             exit;
         foreach ($roles as $key => $row) {
             $out[$key] = str_replace('_', ' ', $row);
         }
@@ -277,24 +281,24 @@ class User extends \webvimark\modules\UserManagement\models\User {
             }
             $this->generateAuthKey();
         } else {
-            // Console doesn't have Yii::$app->user, so we skip it for console
+// Console doesn't have Yii::$app->user, so we skip it for console
             if (php_sapi_name() != 'cli') {
                 if (Yii::$app->user->id == $this->id) {
-                    // Make sure user will not deactivate himself
+// Make sure user will not deactivate himself
                     $this->status = static::STATUS_ACTIVE;
-                    // Superadmin could not demote himself
+// Superadmin could not demote himself
                     if (Yii::$app->user->isSuperadmin and $this->superadmin != 1) {
                         $this->superadmin = 1;
                     }
                 }
-                // Don't let non-superadmin edit superadmin
-                // Comments Regarding Password Reset Functionality
-                // if (isset($this->oldAttributes['superadmin']) && !Yii::$app->user->isSuperadmin && $this->oldAttributes['superadmin'] == 1) {
-                //     return false;
-                // }
+// Don't let non-superadmin edit superadmin
+// Comments Regarding Password Reset Functionality
+// if (isset($this->oldAttributes['superadmin']) && !Yii::$app->user->isSuperadmin && $this->oldAttributes['superadmin'] == 1) {
+//     return false;
+// }
             }
         }
-        // If password has been set, than create password hash
+// If password has been set, than create password hash
         if ($this->password) {
             $this->setPassword($this->password);
         }
@@ -406,6 +410,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
                     $values[$val->organization_code] = $fed->federation_name;
                     break;
                 default:
+                    //$national = \app\models\TblNational::find()->where(['national_code'=>$val->organization_code])->select('national_name')->one();
                     $values[$val->organization_code] = 'PCDF';
                     break;
             }
@@ -591,6 +596,18 @@ class User extends \webvimark\modules\UserManagement\models\User {
         }
         $userData = $query->one();
         return $userData ?: null;
+    }
+
+    public function getUserDispatchCenterMappingCode() {
+        return $this->hasMany(TblUserDispatchCenterMapping::className(), ['user_code' => 'id']);
+    }
+
+    public function getEngineerList() {
+        $query = $this->find()->select(['id', 'name'])->where(['is_engineer' => 1])->all();
+        $value = ArrayHelper::map($query, 'id', function($query) {
+                    return $query->id . ' - ' . $query->name;
+                });
+        return $value;
     }
 
 }

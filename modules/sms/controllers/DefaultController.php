@@ -11,6 +11,7 @@ use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\models\GeneralModel;
 use app\modules\sms\models\TblBulkNotificationApplicability;
 use app\modules\sms\models\TblAlertNotificationPortal;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * Default controller for the `sms` module
@@ -151,6 +152,7 @@ class DefaultController extends Controller {
                 try {
                     $message = [];
                     $header = [];
+                    $row->status = 2;
                     $notification = $row->bulkNotification;
                     $message[] = ['attributeAlias' => 'MESSAGE', 'attributeValue' => $notification->message];
                     $messageJson = json_encode($message);
@@ -166,10 +168,32 @@ class DefaultController extends Controller {
                     $param['login_type'] = $notification->login_type;
                     $param['message_json'] = $messageJson;
                     $param['header_json'] = $headerJson;
+                    $result = \Yii::$app->general->getSpData('sp_generate_bulk_notification', $param, false);
+                    $sp_result = !empty($result[0]['result']) ? $result[0]['result'] : 0;
+                    if ($sp_result == 1) {
+                        $row->status = 2;
+                        $row->resp_desc = 'generated';
+                    } else {
+                        $row->status = 3;
+                        $row->resp_desc = 'error';
+                    }
+                    if ($row->status == 2) {
+                        if (in_array($notification->notification_type, [2, 3, 5, 7, 8])) {
+                            $sentboxArray = [];
+                            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $row->dcs_code);
 
-                    \Yii::$app->general->getSpData('sp_generate_bulk_notification', $param, TRUE);
-                    $row->status = 2;
-                    $row->resp_desc = 'generated';
+                            foreach ($sentboxArray as $sent) {
+                                $flag = 'INSERT';
+                                sleep(10);
+                                $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $row);
+                                if (TRUE) {
+                                    if (!($sentbox->setSentbox($row, $flag))) {
+                                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                                    }
+                                }
+                            }
+                        }
+                    }
                     $row->updateProcessStatus();
                 } catch (\Throwable $e) {
                     var_dump($e);
@@ -184,6 +208,18 @@ class DefaultController extends Controller {
                 }
             }
         }
+    }
+
+    private function sentboxModel($code, $type, $row) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $row->union_code;
+        $sentbox->dest_org_type = $type;
+        $sentbox->table_name = 'tbl_bulk_notification';
+        $dateTime = date('Y-m-d H:i:s');
+        $microtime = date('Y-m-d H:i:s', strtotime($dateTime . ' +5 minute')) . '.' . gettimeofday()["usec"];
+        $sentbox->posting_timestamp = $microtime;
+        return $sentbox;
     }
 
 }
