@@ -575,4 +575,8 @@ class User extends \webvimark\modules\UserManagement\models\User {
         return $userData ?: null;
     }
 
+    public function getUserCode() {
+        return $this->hasOne(self::className(), ['id' => 'created_by']);
+    }
+
 }
