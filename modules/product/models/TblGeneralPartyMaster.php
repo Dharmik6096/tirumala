@@ -2,6 +2,13 @@
 
 namespace app\modules\product\models;
 
+use app\models\ChildModel;
+use app\modules\organisation\models\TblBmcChillerInfo;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblUnions;
+use app\modules\transporter\models\TblVehicleMaster;
 use Yii;
 
 /**
@@ -27,7 +34,7 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblGeneralPartyMaster extends \yii\db\ActiveRecord
+class TblGeneralPartyMaster extends ChildModel
 {
     /**
      * @inheritdoc
@@ -43,7 +50,22 @@ class TblGeneralPartyMaster extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['party_name','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','ref_code','party_type','party_code','is_product_sale','is_active','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type'], 'safe'],
+            [['party_name', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'ref_code', 'party_type', 'party_code', 'is_product_sale', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['is_active', 'is_product_sale'], 'default', 'value' => 1],
+            [['party_name'], 'string', 'max' => 225],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'ref_code'], 'required', 'except' => ['importCsv']],
+            [['bmc_code', 'party_type', 'party_name'], 'required'],
+            [['party_type'], function ($attribute, $params) {
+                Yii::$app->general->validateGlobalStatic($this, $attribute, 'general_party_type');
+            }, 'on' => 'importCsv'],
+            [['bmc_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
+            [
+                ['bmc_code'],
+                'unique',
+                'targetAttribute' => ['union_code', 'party_type', 'party_code'],
+                'message' => 'The combination of Union, Party Type and Party Code has already been taken.'
+            ],
+
         ];
     }
 
@@ -55,11 +77,11 @@ class TblGeneralPartyMaster extends \yii\db\ActiveRecord
         return [
             'general_party_master_code' => Yii::t('app', 'General Party Master Code'),
             'party_name' => Yii::t('app', 'Party Name'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'ref_code' => Yii::t('app', 'Ref Code'),
             'party_type' => Yii::t('app', 'Party Type'),
             'party_code' => Yii::t('app', 'Party Code'),
@@ -73,5 +95,66 @@ class TblGeneralPartyMaster extends \yii\db\ActiveRecord
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getUnionCode()
+    {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode()
+    {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode()
+    {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode()
+    {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function assignAutoData($attribute, $params)
+    {
+        if (empty($this->getErrors())) {
+            if (!empty($this->ref_code) || (!empty($this->party_code))) {
+                $bmcModel = new TblDcsBmc();
+                $bmcModel->bmc_code = $this->bmc_code;
+                $bmcData = $bmcModel->bmcData(TRUE);
+                if (!empty($bmcData[0])) {
+                    $this->union_code = $bmcData[0]->union_code;
+                    $this->plant_code = $bmcData[0]->plant_code;
+                    $this->mcc_plant_code = $bmcData[0]->mcc_plant_code;
+                    $this->bmc_code = $bmcData[0]->bmc_code;
+                    if ($this->party_type == 'EMPLOYEE') {
+                        $this->ref_code = !empty($this->ref_code) ? $this->ref_code : $this->party_code;
+                        $this->party_code = NULL;
+                    } else if ($this->party_type == 'VEHICLE') {
+                        $vehicleData = TblVehicleMaster::find()->where(['parsing_no' => $this->party_code])->one();
+                        if (!empty($vehicleData)) {
+                            $this->ref_code = $vehicleData->parsing_no;
+                            $this->party_code = $vehicleData->vehicle_code;
+                        } else {
+                            $this->addError('party_code', Yii::t('app/validation', $this->getAttributeLabel('party_code') . ' is invalid.'));
+                        }
+                    } else if ($this->party_type == 'CHILLER') {
+                        $bmcChillerInfoData = TblBmcChillerInfo::find()->where(['sap_vendor_code' => $this->party_code])->one();
+                        if (!empty($bmcChillerInfoData)) {
+                            $this->party_code  = $bmcChillerInfoData->chiller_info_code;
+                            $this->ref_code  = $bmcChillerInfoData->sap_vendor_codeng_no;
+                        } else {
+                            $this->addError('party_code', Yii::t('app/validation', $this->getAttributeLabel('party_code') . ' is invalid.'));
+                        }
+                    }
+                } else {
+                    $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is invalid.'));
+                }
+            } else {
+                $this->addError('party_code', Yii::t('app/validation', $this->getAttributeLabel('party_code') . ' CCcannot be blank.'));
+            }
+        }
     }
 }

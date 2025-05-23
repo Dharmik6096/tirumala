@@ -193,6 +193,7 @@ class importData extends \yii\base\Module {
             'local_milk_rate_bulk' => ['table_name' => 'tbl_local_milk_rate', 'fields' => 'union_code,milk_type_code,milk_quality_type_code,milk_class,rate,wef_date', 'scenario' => 'importCsv'],
             'asset-verification' => ['import_class' => 'tbl_asset_verification_data', 'table_name' => 'tbl_asset_verification_data', 'fields' => 'asset_code,serial_number,manufacturer_serial_number', 'save_child' => true, 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
             'compartment-detail' => ['table_name' => 'tbl_vehicle_compartment_detail', 'fields' => 'vehicle_code,compartment_no,capacity', 'scenario' => 'importCsv'],
+            'general-party-master' => ['table_name' => 'tbl_general_party_master', 'fields' => 'bmc_code,party_type,party_code,party_name', 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
         ];
         return $label[$l];
     }
