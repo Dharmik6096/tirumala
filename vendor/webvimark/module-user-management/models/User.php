@@ -755,4 +755,8 @@ class User extends UserIdentity {
         return ArrayHelper::map($data, 'user_code', 'name');
     }
 
+    public function getUserCode() {
+        return $this->hasOne(self::className(), ['id' => 'created_by']);
+    }
+
 }

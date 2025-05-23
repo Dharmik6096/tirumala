@@ -166,6 +166,11 @@ class PendriveImportController extends \app\controllers\ChildController {
                                         $model->response_msg = 'OK';
                                         //$modelSave[] = $model;
                                         $model->rate = (empty($model->rate) && !empty($model->qty)) ? ($model->amt / $model->qty) : $model->rate;
+                                        if ($model->shift != 'M' || $model->shift != 'E') {
+                                            if (isset($attributes['shift'])) {
+                                                $model->shift = $attributes['shift'];
+                                            }
+                                        }
                                         $model->save();
                                         $success_cnt += 1;
                                     } catch (\Throwable $ex) {
