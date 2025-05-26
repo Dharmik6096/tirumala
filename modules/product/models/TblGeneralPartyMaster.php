@@ -151,4 +151,8 @@ class TblGeneralPartyMaster extends ChildModel {
         }
     }
 
+    public function validateGenaralPartyCode($party, $bmc) {
+        $data = $this->find()->select('general_party_master_code')->where(['bmc_code' => $bmc, 'is_active' => 1])->andWhere(['or', ['CAST(general_party_master_code as varchar)' => $party], ['ref_code' => $party]])->all();
+        return !empty($data) && count($data) == 1 ? $data[0]->general_party_master_code : '';   
+    }
 }

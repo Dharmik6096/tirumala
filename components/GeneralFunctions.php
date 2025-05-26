@@ -1558,6 +1558,10 @@ class GeneralFunctions extends Component {
             $model->customer_type = 'DCS';
             $dcs = new TblDcs();
             $model->customer_code = $dcs->validDcs($model->customer_code, $model->bmc_code);
+        } else if(strtoupper($model->customer_type) == 'PARTY'){
+            $model->customer_type = strtoupper($model->customer_type);
+            $party = new TblGeneralPartyMaster();
+            $model->customer_code = $party->validateGenaralPartyCode($model->customer_code, $model->bmc_code);
         } else {
             $model->customer_type = strtoupper($model->customer_type);
             $model->customer_code = $this->validateCustomerCode($model);

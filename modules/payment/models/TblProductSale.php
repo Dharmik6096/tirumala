@@ -136,11 +136,7 @@ class TblProductSale extends \app\models\ChildModel {
                 [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport'],'when' => function () {
-                            return ($this->customer_type != 'PARTY');
-                        }, 'whenClient' => "function (attribute, value) { 
-                    return $('#tblproductsale-customer_type').val() != 'PARTY'; 
-                }"],
+                [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
                 [['invoice_date'], 'pastDateValidate', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync', 'saleProductOnDispatch']],
                 [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
@@ -323,7 +319,7 @@ class TblProductSale extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             if (!empty($this->invoice_date) && $this->payment_mode == 1) {
                 $model = new TblPaymentCycleApplicability();
-                $model->applicable_type = strtolower($this->customer_type) == 'member' ? 'DCS' : $this->customer_type;
+                $model->applicable_type = strtolower($this->customer_type) == 'member' ? 'DCS' : (strtolower($this->customer_type) == 'party' ? 'BMC' : $this->customer_type);
                 $model->applicable_code = $this->bmc_code;
                 $model->applicable_for = 'BMC';
                 $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
@@ -334,7 +330,7 @@ class TblProductSale extends \app\models\ChildModel {
                     }
                     // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_credit_limit', 'PORTAL');
                     $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'check_credit_limit', $this);
-                    if ($config == 1) {
+                    if ($config == 1 && strtolower($this->customer_type) != 'party') {
                         $creditLimitCheckMonthly = Yii::$app->general->getUnionConfiguration($this->union_code, 'credit_limit_check_monthly', 'PORTAL');
                         if ($creditLimitCheckMonthly == 1) {
                             list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($this->invoice_date, 'current');
@@ -520,8 +516,8 @@ class TblProductSale extends \app\models\ChildModel {
             if (strtoupper($model->customer_type) == 'MEMBER') {
                 $memberRate = 1;
             }
-            $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->customer_code;
-            $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : $this->customer_type;
+            $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : (strtoupper($this->customer_type) == 'PARTY' ? $this->bmc_code : $this->customer_code);
+            $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : (strtoupper($this->customer_type) == 'PARTY' ? 'BMC' : $this->customer_type);
             if ($batchNoWiseProductRate == 0 || $batchNoWiseProductRate == '') {
                 if ($config != '1' || $this->scenario != 'productSaleImport') {
                     $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
@@ -1050,8 +1046,8 @@ class TblProductSale extends \app\models\ChildModel {
                 if (strtolower($data->customer_type) == 'member') {
                     $memberRate = 1;
                 }
-                $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->customer_code;
-                $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : $this->customer_type;
+                $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : (strtoupper($this->customer_type) == 'PARTY' ? $this->bmc_code : $this->customer_code);
+                $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : (strtoupper($this->customer_type) == 'PARTY' ? 'BMC' : $this->customer_type);
                 $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
                         ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
                         ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $date])
