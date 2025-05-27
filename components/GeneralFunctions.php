@@ -56,6 +56,7 @@ use app\modules\general\models\TblProcessApproval;
 use app\modules\product\models\TblDispatchCenter;
 use app\modules\product\models\TblDispatchCenterApplicability;
 use app\modules\product\models\TblProduct;
+use app\modules\product\models\TblGeneralPartyMaster;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblVehicleTrip;
@@ -1428,12 +1429,16 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
             } else if (strtolower($type) == 'member') {
                 $name = $this->getforeignkey($model->memberCode, 'ex_member_code');
+            } else if (strtolower($type) == 'bmc') {
+                $name = $this->getforeignkey($model->bmcCode, 'bmc_code_ex');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'customer_code_ex');
             }
         } else if ($bmcCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'bmc_code');
+            } else if (strtolower($type) == 'bmc') {
+                $name = $this->getforeignkey($model->bmcCode, 'bmc_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'bmc_code');
             }
@@ -1442,6 +1447,8 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'ref_code');
             } else if (strtolower($type) == 'member') {
                 $name = $this->getforeignkey($model->memberCode, 'ref_code');
+            } else if (strtolower($type) == 'bmc') {
+                $name = $this->getforeignkey($model->bmcCode, 'ref_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
             }
@@ -1554,6 +1561,10 @@ class GeneralFunctions extends Component {
             $model->customer_type = 'DCS';
             $dcs = new TblDcs();
             $model->customer_code = $dcs->validDcs($model->customer_code, $model->bmc_code);
+        } else if (strtoupper($model->customer_type) == 'PARTY') {
+            $model->customer_type = strtoupper($model->customer_type);
+            $party = new TblGeneralPartyMaster();
+            $model->customer_code = $party->validateGenaralPartyCode($model->customer_code, $model->bmc_code);
         } else {
             $model->customer_type = strtoupper($model->customer_type);
             $model->customer_code = $this->validateCustomerCode($model);
@@ -1587,6 +1598,15 @@ class GeneralFunctions extends Component {
                 $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             }
             return $data = empty($Code) ? '' : $Code;
+        }
+    }
+
+    public function validateGeneratePartyMasterCode($model) {
+        if (!empty($model->customer_code) && strtolower($model->customer_type) == 'party') {
+            $modelData = TblGeneralPartyMaster::find()
+                    ->where(['general_party_master_code' => $model->customer_code])
+                    ->one();
+            return !empty($modelData) ? $modelData->party_name : '';
         }
     }
 
@@ -3028,7 +3048,7 @@ class GeneralFunctions extends Component {
         return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
 
-    public function calculateData($union = '', $bmcCode = '', $fat = '', $snf = '', $clr = '', $customer_type = '', $is_clr_input = '', $config) {
+    public function calculateData($config, $union = '', $bmcCode = '', $fat = '', $snf = '', $clr = '', $customer_type = '', $is_clr_input = '') {
         $response = [];
 
         $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, $customer_type, $config);
@@ -3037,7 +3057,7 @@ class GeneralFunctions extends Component {
             $lr1 = (float) $this->getUnionConfiguration($union, 'clr_constant1', 'PORTAL');
             $lr2 = (float) $this->getUnionConfiguration($union, 'clr_constant2', 'PORTAL');
         }
-        
+
         $lr1 = empty($lr1) ? 1 : $lr1;
         $lr2 = empty($lr2) ? 0 : $lr2;
 

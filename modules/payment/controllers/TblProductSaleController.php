@@ -43,13 +43,14 @@ use app\modules\collection\models\TblMilkCollection;
 use app\modules\product\models\TblProductReceipt;
 use app\modules\product\models\TblProductReceiptTransaction;
 use app\modules\payment\models\TblMonthlyCreditLimit;
+use app\modules\product\models\TblProduct;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
  */
 class TblProductSaleController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate', 'get-available-stock'];
+    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate', 'get-available-stock', 'get-tax'];
 
     /**
      * Lists all TblProductSale models.
@@ -415,10 +416,14 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $data = '';
                 }
             }
-        } else if (!empty($type) && strtolower($type) != 'dcs') {
+        } else if (!empty($type) && strtolower($type) != 'dcs' && strtolower($type) != 'party') {
             $headModel->customer_code = $customer_code;
             $data = Yii::$app->general->validateCustomerCode($headModel);
             $headModel->customer_code = $data;
+        } else if(!empty($type) && strtolower($type) == 'party') {
+            $headModel->customer_code = $customer_code;
+            $data = Yii::$app->general->validateGeneratePartyMasterCode($headModel);
+            $name = $data;
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($customer_code, $bmc);
@@ -430,7 +435,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $headModel->customer_code = $data;
         }
         if (!empty($data)) {
-            $name = Yii::$app->general->getCustomer($headModel, $type);
+            $name = !empty($name) ? $name : Yii::$app->general->getCustomer($headModel, $type);
             $response['status'] = 'success';
             $response['data'] = $name;
             $response['code'] = $headModel->customer_code;
@@ -1088,7 +1093,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $model->applicable_code = $bmc;
                 $model->applicable_for = 'BMC';
                 $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
-                if(!empty($modelData)){
+                if (!empty($modelData)) {
                     $fromDate = date('Y-m-d', strtotime($modelData->from_date));
                     $toDate = date('Y-m-d', strtotime($modelData->to_date));
 
@@ -1173,6 +1178,19 @@ class TblProductSaleController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionGetTax() {
+        $data = [];
+        $data['status'] = 'error';
+        if (!empty($_POST['productCode']) && !empty($_POST['unionCode'])) {
+            $tax_code = TblProduct::find()->select('tax_code')->where(['product_code' => $_POST['productCode'], 'union_code' => $_POST['unionCode']])->one();
+            if (!empty($tax_code)) {
+                $data['status'] = 'success';
+                $data['tax_code'] = $tax_code['tax_code'];
+            }
+        }
+        return Json::encode($data);
     }
 
 }

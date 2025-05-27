@@ -427,6 +427,9 @@ $form = ActiveForm::begin([
         </div>
     </div>
     <div class="col-sm-2 mt10">
+        <?= Yii::$app->controls->active($model, $form); ?>
+    </div>
+    <div class="col-sm-2 mt10">
         <?= $form->field($model, 'is_security_cheque', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <div class="col-sm-2 mt10 security_cheque">
@@ -446,9 +449,6 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2 mt10 security_cheque">
         <?= Yii::$app->dropdown->dropdownStatic('security_return_mode', $model, $form, '', $model->getAttributeLabel('security_return_mode'), false); ?>
-    </div>
-    <div class="col-sm-2 mt10">
-        <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="row">

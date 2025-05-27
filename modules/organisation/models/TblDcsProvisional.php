@@ -419,7 +419,7 @@ class TblDcsProvisional extends ChildModel {
             'voter_id' => Yii::t('app', 'Voter ID'),
             'dob' => Yii::t('app', 'Dob'),
             'account_type' => Yii::t('app', 'Account Type'),
-            'is_security_cheque' => Yii::t('app', 'Is Security Cheque'),
+            'is_security_cheque' => Yii::t('app', 'Is Security Cheque?'),
             'cheque_number' => Yii::t('app', 'Cheque Number'),
             'cheque_amount' => Yii::t('app', 'Cheque Amount'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -440,6 +440,7 @@ class TblDcsProvisional extends ChildModel {
             'security_return_date' => Yii::t('app', 'Security Return Date'),
             'security_return_amt' => Yii::t('app', 'Security Return Amount'),
             'security_return_mode' => Yii::t('app', 'Security Return Mode'),
+            'cheque_bank' => Yii::t('app', 'Cheque Bank'),
         ];
     }
 
