@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use yii\web\View;
 ?>
 <?php
+
 $attribute = [
     ['attribute' => 'owner_name', 'filter' => FALSE],
     ['attribute' => 'rate_type', 'filter' => FALSE],
@@ -40,7 +41,8 @@ $attribute = [
     ['attribute' => 'billing_method',
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('billing_method_chiller_info')['data'][$model->billing_method]) ? Yii::$app->dropdown->getRecords('billing_method_chiller_info')['data'][$model->billing_method] : '';
-    }],
+        }],
+    ['attribute' => 'sap_vendor_code', 'filter' => FALSE],
 ];
 
 $grid_option = [
