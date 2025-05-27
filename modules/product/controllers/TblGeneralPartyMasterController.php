@@ -84,8 +84,15 @@ class TblGeneralPartyMasterController extends ChildController
         $historyModel = new TblGeneralPartyMasterHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->is_active = 0;
-        $record = $this->generalModel->saveTransaction([$this->model, $historyModel], ['General Party', 'delete']);
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['General Party', 'delete']);
+        if ($transaction == 'customRedirect') {
+            $msg = Yii::$app->getSession()->getFlash('success')['message'];
+            $record = ['status' => 'success', 'msg' => $msg];
+        } else {
+            $msg = Yii::$app->getSession()->getFlash('success')['message'];
+            $record = ['status' => 'error', 'msg' => $msg];
+        }
+        Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode($record);
     }
 
