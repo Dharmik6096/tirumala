@@ -54,11 +54,11 @@ use app\modules\product\models\TblProductReceiptTransaction;
  */
 class TblProductSale extends \app\models\ChildModel {
 
-    public $payment_cycle_code, $available_credit, $customer_name, $ex_code, $avl_credit;
+    public $payment_cycle_code, $available_credit, $customer_name, $ex_code, $avl_credit, $general_party_master_code;
     public $is_sentbox = TRUE;
     public $saveChildRecords = TRUE;
     public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code, $available_stock, $sap_batch_no, $product_stock_rate;
-    public $calculateTax = FALSE;
+    public $calculateTax = TRUE;
 
     /**
      * @inheritdoc
@@ -72,22 +72,32 @@ class TblProductSale extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['payment_mode'], function ($attribute, $params) {
+                [['payment_mode'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'payment_mode');
                 }, 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
-            [['bmc_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct', 'productSaleImport', 'saleProductOnDispatch']],
-            [['union_code', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
-            [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
-            [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
-            [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit', 'sap_batch_no', 'is_cash_sale', 'product_stock_rate'], 'safe'],
-            [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
-            [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
-            [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
-            [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
-            [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct', 'androidsync', 'saleProductOnDispatch']],
-            [['other_amount', 'discount', 'paid_amount', 'amount_due', 'is_cash_sale'], 'default', 'value' => 0],
+                [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
+                [['bmc_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct', 'productSaleImport', 'saleProductOnDispatch']],
+                [['union_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
+                [['ex_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
+                            return ($this->customer_type != 'PARTY');
+                        }, 'whenClient' => "function (attribute, value) { 
+                    return $('#tblproductsale-customer_type').val() != 'PARTY'; 
+                }"],
+                [['general_party_master_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
+                            return ($this->customer_type == 'PARTY');
+                        }, 'whenClient' => "function (attribute, value) { 
+                    return $('#tblproductsale-customer_type').val() == 'PARTY'; 
+                }"],
+                [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
+                [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
+                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit', 'sap_batch_no', 'is_cash_sale', 'product_stock_rate'], 'safe'],
+                [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
+                [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
+                [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
+                [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
+                [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct', 'androidsync', 'saleProductOnDispatch', 'productSaleImport', 'productSaleMemberImport']],
+                [['other_amount', 'discount', 'paid_amount', 'amount_due', 'is_cash_sale'], 'default', 'value' => 0],
 //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
 //                return ($this->amount_due>0);
@@ -97,13 +107,13 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsale-payment_mode').val() == 1; 
           }"],
-            [['no_of_installment'], 'integer', 'min' => 1, 'on' => 'saleProduct', 'when' => function () {
+                [['no_of_installment'], 'integer', 'min' => 1, 'on' => 'saleProduct', 'when' => function () {
                     return ($this->payment_mode == 1);
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblproductsale-payment_mode').val() == 1; 
           }", 'tooSmall' => 'You must have atleast 1 installment to pay the due'],
-            [['no_of_installment'], 'validateInstallments', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
-            [['dcs_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
+                [['no_of_installment'], 'validateInstallments', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
+                [['dcs_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
                     return ($this->customer_type == 'Member');
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsale-customer_type').val() == 'Member'; 
@@ -116,20 +126,20 @@ class TblProductSale extends \app\models\ChildModel {
             [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code', TRUE);
                 }, 'on' => ['productSaleImport']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['productSaleImport']],
-            [['customer_type'], function ($attribute, $params) {
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['productSaleImport']],
+                [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['productSaleImport']],
-            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['productSaleImport']],
-            [['invoice_date'], 'convertDateDot', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
-            [['invoice_date'], 'pastDateValidate', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync', 'saleProductOnDispatch']],
-            [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
+                [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['productSaleImport']],
+                [['invoice_date'], 'convertDateDot', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+                [['invoice_date'], 'pastDateValidate', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync', 'saleProductOnDispatch']],
+                [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
             /*    [['bmc_code'], function ($attribute, $params) {
               if (empty($this->getErrors())) {
               $flag = strtolower($this->customer_type) == 'member' ? 'member_lock' : 'bmc_lock';
@@ -143,14 +153,14 @@ class TblProductSale extends \app\models\ChildModel {
             //  [['sap_batch_no'], 'validateSapBatchNo', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             //[['quantity'], 'integer', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['product_sale_code'], 'validateDuplicate', 'on' => ['androidsync']],
-            [['deduction_start_date'], 'required', 'on' => ['saleProduct'], 'when' => function () {
+                [['deduction_start_date'], 'required', 'on' => ['saleProduct'], 'when' => function () {
                     return $this->payment_mode == 1;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsale-payment_mode').val() == 1; 
             }"],
-            [['deduction_start_date'], 'convertDateDot', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['deduction_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
-            [['deduction_start_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['deduction_start_date'], 'convertDateDot', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['deduction_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['deduction_start_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
         ];
     }
 
@@ -309,7 +319,7 @@ class TblProductSale extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             if (!empty($this->invoice_date) && $this->payment_mode == 1) {
                 $model = new TblPaymentCycleApplicability();
-                $model->applicable_type = strtolower($this->customer_type) == 'member' ? 'DCS' : $this->customer_type;
+                $model->applicable_type = strtolower($this->customer_type) == 'member' ? 'DCS' : (strtolower($this->customer_type) == 'party' ? 'BMC' : $this->customer_type);
                 $model->applicable_code = $this->bmc_code;
                 $model->applicable_for = 'BMC';
                 $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
@@ -320,7 +330,7 @@ class TblProductSale extends \app\models\ChildModel {
                     }
                     // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_credit_limit', 'PORTAL');
                     $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'check_credit_limit', $this);
-                    if ($config == 1) {
+                    if ($config == 1 && strtolower($this->customer_type) != 'party') {
                         $creditLimitCheckMonthly = Yii::$app->general->getUnionConfiguration($this->union_code, 'credit_limit_check_monthly', 'PORTAL');
                         if ($creditLimitCheckMonthly == 1) {
                             list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($this->invoice_date, 'current');
@@ -368,7 +378,7 @@ class TblProductSale extends \app\models\ChildModel {
                                 $creditAmount = $modelData->amount;
                             }
                         }
-                        
+
                         $availableCredit = $creditAmount - $saledAmount;
                         $amt = !empty($this->amount_due) ? $this->amount_due : 0;
                         $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
@@ -506,8 +516,8 @@ class TblProductSale extends \app\models\ChildModel {
             if (strtoupper($model->customer_type) == 'MEMBER') {
                 $memberRate = 1;
             }
-            $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->customer_code;
-            $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : $this->customer_type;
+            $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : (strtoupper($this->customer_type) == 'PARTY' ? $this->bmc_code : $this->customer_code);
+            $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : (strtoupper($this->customer_type) == 'PARTY' ? 'BMC' : $this->customer_type);
             if ($batchNoWiseProductRate == 0 || $batchNoWiseProductRate == '') {
                 if ($config != '1' || $this->scenario != 'productSaleImport') {
                     $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
@@ -545,7 +555,9 @@ class TblProductSale extends \app\models\ChildModel {
         } else {
             $this->loadRate($model, $detailModel);
         }
-        $detailModel->tax_code = NULL; //Yii::$app->general->getforeignkey($detailModel->productCode, 'tax_code');
+        //$detailModel->tax_code = NULL;
+        $productTax = $detailModel->productCode;
+        $detailModel->tax_code = !empty($productTax->tax_code) ? $productTax->tax_code : NULL;
 
         if ($this->calculateTax) {
             $configModel = new TblDcsGeneralConfig();
@@ -568,7 +580,7 @@ class TblProductSale extends \app\models\ChildModel {
         $model->paid_amount = $model->payment_mode == 1 ? 0 : $model->amount_due;
         $model->is_installment = $model->payment_mode == 1 ? 1 : 0;
         $model->no_of_installment = $model->payment_mode == 1 ? $model->no_of_installment : 0;
-        $this->createProductSaleData($model, $detailModel, $modelSave, $configModelData, $data, false);
+        $this->createProductSaleData($model, $detailModel, $modelSave, $configModelData, $data, true);
 //        $data = $detailModel->productSaleCode;
         $detailModel->scenario = 'SaleImport';
         if (!$detailModel->validate()) {
@@ -682,7 +694,7 @@ class TblProductSale extends \app\models\ChildModel {
             if (!$flag) {
                 // var totalAmt = obj1.total;
                 // var changed_amount = obj1 . changedAmount;
-                (float) $taxAmt = ($detailModel->rate - $total) * $detailModel->quantity; //var taxAmt = (rateValue - totalAmt) * recQty;
+                $taxAmt = round(abs((float) ($detailModel->rate - $total) * $detailModel->quantity), 2); //var taxAmt = (rateValue - totalAmt) * recQty;
                 // var disc = obj1 . totalDiscount;
 //            $chagnedRate = (float) $value; //var chagnedRate = obj1 . changedAmount;
                 (float) $changeamount = $value * $detailModel->quantity; //var changeamount = (obj1 . changedAmount * recQty) . toFixed(2);
@@ -701,7 +713,7 @@ class TblProductSale extends \app\models\ChildModel {
                 $existToralAmt = $model->amount_due; //var existToralAmt = $('#tblproductsale-amount_due').val();
                 $chagneAmt = $existToralAmt - $diffAmt - $discountValue; //var chagneAmt = existToralAmt - diffAmt - discountValue;
                 $model->amount_due = $chagneAmt; // $('#tblproductsale-amount_due').val(chagneAmt.toFixed(0));
-                $detailModel->tax_amount = (float) $taxAmt; //$('#tblproductsaletransaction-tax_amount').val(Math.abs(taxAmt.toFixed(2)));
+                $detailModel->tax_amount = round(abs((float) $taxAmt), 2); //$('#tblproductsaletransaction-tax_amount').val(Math.abs(taxAmt.toFixed(2)));
             }
         }
     }
@@ -1034,8 +1046,8 @@ class TblProductSale extends \app\models\ChildModel {
                 if (strtolower($data->customer_type) == 'member') {
                     $memberRate = 1;
                 }
-                $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->customer_code;
-                $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : $this->customer_type;
+                $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : (strtoupper($this->customer_type) == 'PARTY' ? $this->bmc_code : $this->customer_code);
+                $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : (strtoupper($this->customer_type) == 'PARTY' ? 'BMC' : $this->customer_type);
                 $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
                         ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
                         ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $date])
@@ -1162,4 +1174,5 @@ class TblProductSale extends \app\models\ChildModel {
             $this->addError('invoice_date', Yii::t('app/validation', $this->getAttributeLabel('invoice_date') . ' Must be smaller than ' . date('d.m.Y')));
         }
     }
+
 }
