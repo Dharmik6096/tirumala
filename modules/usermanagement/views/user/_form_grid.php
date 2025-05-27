@@ -107,6 +107,22 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
         },
     ],
+    [
+        'attribute' => 'created_at',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_datetime($model->created_at, 'php:d-m-Y H:i:s');
+        },
+        'visible' => FALSE,
+        'filter' => FALSE
+    ],
+    [
+        'attribute' => 'created_by',
+        'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        },
+        'visible' => FALSE,
+        'filter' => FALSE
+    ],
     'employee_id',
         ['attribute' => 'is_engineer',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('allow_app_login', $searchModel, 'is_engineer'),

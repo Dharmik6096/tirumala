@@ -290,6 +290,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Product Dispatch With Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 1], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') != 0),],
                     ['label' => Yii::t('app', 'Product Dispatch Without Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
                     ['label' => Yii::t('app', 'PM Advance'), 'url' => ['/payment/tbl-loan-product-sale-details/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-loan-product-sale-details') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
+                    ['label' => Yii::t('app', 'General Party'), 'url' => ['/product/tbl-general-party-master/index'], 'active' => ($cntrl == 'tbl-general-party-master')],
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_left'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
@@ -383,6 +384,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
                             ['label' => Yii::t('app', 'MCC Bill Head Transaction'), 'url' => ['/vsp/tbl-mcc-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-detail')],
                             ['label' => Yii::t('app', 'MCC Bill Head Criteria'), 'url' => ['/vsp/tbl-mcc-bill-head-criteria/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-criteria')],
+                            ['label' => Yii::t('app', 'MCC Rechilling Detail'), 'url' => ['/payment/tbl-mcc-rechilling-detail/index'], 'active' => ($cntrl == 'tbl-mcc-rechilling-detail')],
                             ['label' => Yii::t('app', 'MCC Payment'), 'url' => ['/payment/tbl-mcc-payment/index'], 'active' => ($cntrl == 'tbl-mcc-payment')],
                     ]
                 ],

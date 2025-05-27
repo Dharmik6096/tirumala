@@ -600,4 +600,11 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->find()->where(['bmc_code' => $this->bmc_code])->all();
     }
 
+    public function getBmcPlantList($plant_codes) {
+        return $this->find()
+            ->select('plant_code')
+            ->distinct()
+            ->where(['plant_code' => $plant_codes])
+            ->all();
+    }
 }

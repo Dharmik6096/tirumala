@@ -194,6 +194,8 @@ class importData extends \yii\base\Module {
             'insurance-detail' => ['table_name' => 'tbl_insurance_detail', 'fields' => 'sr_no,dcs_code,dcs_name,member_id,adhar_no,member_code,member_name,gender_code,dob,age,nominee_member_name,date_of_joining_scheme,nominee_adhar_no', 'scenario' => 'importCsv'],
             'asset-verification' => ['import_class' => 'tbl_asset_verification_data', 'table_name' => 'tbl_asset_verification_data', 'fields' => 'asset_code,serial_number,manufacturer_serial_number', 'save_child' => true, 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
             'compartment-detail' => ['table_name' => 'tbl_vehicle_compartment_detail', 'fields' => 'vehicle_code,compartment_no,capacity', 'scenario' => 'importCsv'],
+            'general-party-master' => ['table_name' => 'tbl_general_party_master', 'fields' => 'bmc_code,party_type,party_code,party_name', 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
+            'mcc-rechilling-detail' => ['table_name' => 'tbl_mcc_rechilling_detail', 'fields' => 'chiller_info_code,chilling_date,shift_code,qty,rate', 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
         ];
         return $label[$l];
     }

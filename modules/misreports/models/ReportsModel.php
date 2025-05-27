@@ -175,7 +175,8 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#reportsmodel-milk_sale_on').val() == '1';
           }", 'on' => ['LocalMilkSale']],
-                [['union_code', 'from_date', 'to_date', 'billing_on'], 'required', 'on' => ['MemberBilling', 'MemberBillingDcsWise']],];
+                [['union_code', 'from_date', 'to_date', 'billing_on'], 'required', 'on' => ['MemberBilling', 'MemberBillingDcsWise']],
+        ];
     }
 
     public function attributeLabels() {

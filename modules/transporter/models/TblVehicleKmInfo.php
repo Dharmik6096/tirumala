@@ -279,4 +279,15 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
         return $array;
     }
 
+    public function getLatestVehicleData($bmcCode) {
+        return $this->find()
+                        ->alias('v')
+                        ->select(['v.vehicle_code'])
+                        ->innerJoin('tbl_route_mapping r', 'r.route_code = v.route_code')
+                        ->where(['r.to_type' => 'bmc', 'r.to_dest' => $bmcCode, 'v.vehicle_code' => $this->vehicle_code, 'r.is_active' => 1])
+                        ->andWhere(['<=', 'v.created_at', date('Y-m-d H:i:s')])
+                        ->orderBy(['v.created_at' => SORT_DESC])
+                        ->one();
+    }
+
 }

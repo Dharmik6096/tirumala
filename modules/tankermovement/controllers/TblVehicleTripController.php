@@ -2,6 +2,7 @@
 
 namespace app\modules\tankermovement\controllers;
 
+use app\modules\organisation\models\TblDcsBmc;
 use Yii;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblVehicleTripSearch;
@@ -228,9 +229,19 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         if (empty($bmc_array)) {
             $this->model->is_auto_trip = 1;
         }
-        if (empty($bmc_array) && !empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1) {
-            $this->model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0];
-            $bmc_array[] = $this->model->plant_code . '#plant';
+        if (empty($bmc_array) && !empty(Yii::$app->session->get('Plant'))) {
+            if(count(explode(',', Yii::$app->session->get('Plant'))) == 1){
+                $this->model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0];
+                $bmc_array[] = $this->model->plant_code . '#plant';
+            } else {
+                $plants = explode(',', Yii::$app->session->get('Plant'));
+                $bmcModel = new TblDcsBmc();
+                $plantCodes = $bmcModel->getBmcPlantList($plants);
+                if(count($plantCodes) == 1){
+                    $this->model->plant_code = $plantCodes[0]['plant_code'];
+                    $bmc_array[] = $plantCodes[0]['plant_code'].'#plant';
+                }
+            }
         }
         $this->model->bmc_code = $bmc_array;
         return $this->customRender();
@@ -463,7 +474,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
     }
 
     public function actionMap($trip_code) {
-        $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->all();
+        $tripTrack = TblVehicleTripTracking::find()->where(['trip_code' => $trip_code])->orderBy(['sub_status_time' => SORT_ASC])->all();
         $parsingNo = '';
         if (!empty($tripTrack) && isset($tripTrack[0]['vehicle_code'])) {
             $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $tripTrack[0]['vehicle_code']])->one();
