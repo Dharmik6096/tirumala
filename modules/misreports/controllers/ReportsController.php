@@ -3400,7 +3400,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => ['2' => Yii::t('app', 'All'), '0' => Yii::t('app', 'Unlock'), '1' => Yii::t('app', 'Lock')],
             ],
             'SummaryReportMcc' => [
-                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,as_on_date:string',
                 'sp_name' => 'mis_summary_report_at_cc',
                 'scenario' => 'SummaryReportMcc',
                 'title' => 'Summary Report - MCC',

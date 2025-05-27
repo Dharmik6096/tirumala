@@ -149,13 +149,13 @@ class PendriveImportController extends \app\controllers\ChildController {
                             $model->main_table = 0;
                             $model->source_type = $file->source_type;
                             $model->created_at = date('Y-m-d H:i:s');
-                            $model->created_by = Yii::$app->user->identity->id;
+                            $model->created_by = isset(Yii::$app->user->identity->id) ? Yii::$app->user->identity->id : null;
                             $main_data_model = new TblEiplPacketProcess();
                             $main_data_model->attributes = $model->attributes;
                             if (!empty($packet_config)) {
                                 if (!isset($packet_config['savelog'])) {
                                     try {
-                                        $data_array = $this->PacketData($packet, $packet_config);
+                                        $data_array = self::PacketData($packet, $packet_config);
                                         $model->attributes = $data_array;
                                         $model->dcs_code = $model->vlccid;
                                         $model->main_table = 1;
@@ -166,6 +166,11 @@ class PendriveImportController extends \app\controllers\ChildController {
                                         $model->response_msg = 'OK';
                                         //$modelSave[] = $model;
                                         $model->rate = (empty($model->rate) && !empty($model->qty)) ? ($model->amt / $model->qty) : $model->rate;
+                                        if ($model->shift != 'M' || $model->shift != 'E') {
+                                            if (isset($attributes['shift'])) {
+                                                $model->shift = $attributes['shift'];
+                                            }
+                                        }
                                         $model->save();
                                         $success_cnt += 1;
                                     } catch (\Throwable $ex) {
@@ -185,7 +190,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                                     }
                                 } else {
                                     unset($packet_config['savelog']);
-                                    $data_array = $this->PacketData($packet, $packet_config);
+                                    $data_array = self::PacketData($packet, $packet_config);
                                     $attributes = array_merge($attributes, $data_array);
                                     continue;
                                 }
