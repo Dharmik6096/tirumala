@@ -2281,6 +2281,7 @@ class DropDown extends Component {
             'chamber_no' => ['name' => 'chamber_no', 'fields' => 'milk_vehicle_entry_qlty_code,chamber_no,', 'prompt' => Yii::t('app', 'Select Compartment'), 'model' => 'TblMilkVehicleEntryQlty', 'depend' => 'trip_code', 'dependArray' => ['status']],
             'dock_no' => ['name' => 'dock_no', 'fields' => 'dock_no,dock_name,dock_no', 'prompt' => Yii::t('app', 'Select Dock No'), 'model' => 'TblPlantDockMapping', 'depend' => 'plant_code'],
             'vehicle_transpoter' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'whereCondition' => ['vehicle_use_type' => [1, 2], 'union_code' => !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : '']],
+            'bmc_chiller_info' => ['name' => 'chiller_info_code', 'fields' => 'chiller_info_code,owner_name,sap_vendor_code', 'prompt' => Yii::t('app', 'Select BMC Chiller Info'), 'model' => 'TblBmcChillerInfo', 'depend' => 'bmc_code'],
         ];
         return $label[$l];
     }
