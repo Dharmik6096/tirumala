@@ -404,6 +404,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
                             ['label' => Yii::t('app', 'MCC Bill Head Transaction'), 'url' => ['/vsp/tbl-mcc-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-detail')],
                             ['label' => Yii::t('app', 'MCC Bill Head Criteria'), 'url' => ['/vsp/tbl-mcc-bill-head-criteria/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-criteria')],
+                            ['label' => Yii::t('app', 'MCC Rechilling Detail'), 'url' => ['/payment/tbl-mcc-rechilling-detail/index'], 'active' => ($cntrl == 'tbl-mcc-rechilling-detail')],
                             ['label' => Yii::t('app', 'MCC Payment'), 'url' => ['/payment/tbl-mcc-payment/index'], 'active' => ($cntrl == 'tbl-mcc-payment')],
                     ]
                 ],
