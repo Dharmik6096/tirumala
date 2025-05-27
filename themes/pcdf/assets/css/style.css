@@ -6125,3 +6125,15 @@ tr.highlightRow {
 .new-notification {
     font-weight: bold;
 }
+
+.customDaulBoxCss .btn-group.buttons{
+    display: flex;
+}
+.customDaulBoxCss .btn-group.buttons button{
+    width: 100%;
+    margin: auto;
+    display: inline-block;
+}
+.customDaulBoxCss .btn-group.buttons .moveall, .customDaulBoxCss .btn-group.buttons .removeall {
+    display: none;
+} 

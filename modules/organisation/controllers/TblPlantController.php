@@ -288,7 +288,7 @@ class TblPlantController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
                 $plants = new TblPlant();
-                $data = $plants->getPlantList($parents[0]);
+                $data = $plants->getPlantList($parents[0], FALSE);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
