@@ -137,7 +137,7 @@ class TblGeneralPartyMaster extends ChildModel {
                         $bmcChillerInfoData = TblBmcChillerInfo::find()->where(['or', ['sap_vendor_code' => $this->party_code], ['sap_vendor_code' => $this->ref_code]])->one();
                         if (!empty($bmcChillerInfoData)) {
                             $this->party_code = $bmcChillerInfoData->chiller_info_code;
-                            $this->ref_code = $bmcChillerInfoData->sap_vendor_codeng_no;
+                            $this->ref_code = $bmcChillerInfoData->sap_vendor_code;
                         } else {
                             $this->addError('party_code', Yii::t('app/validation', $this->getAttributeLabel('party_code') . ' is invalid.'));
                         }
