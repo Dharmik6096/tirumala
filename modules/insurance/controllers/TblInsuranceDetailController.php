@@ -426,7 +426,8 @@ class TblInsuranceDetailController extends ChildController {
 
     private function uploadExcel($fileName, &$masterModel, &$childModel, $insuranceMaster, &$message, $oneDcsCode = 'FALSE') {
         $importPath = Yii::$app->basePath . '/web/import/';
-        $objPHPExcel = \PHPExcel_IOFactory::load($importPath . $fileName);
+        $objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load($importPath . $fileName);
+
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
 
             $column_one = $worksheet->getCell('A1')->getValue();

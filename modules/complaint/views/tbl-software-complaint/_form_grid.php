@@ -5,12 +5,13 @@ use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
+use yii\web\View;
 
 $user = \Yii::$app->session->get('UserCode');
 ?>
 
 <div class="grid-search">
-    <?php // $this->render('_search', ['model' => $searchModel]);   ?>
+<?php // $this->render('_search', ['model' => $searchModel]);    ?>
 </div>
 
 <?php
@@ -105,7 +106,7 @@ $attribute = [
         'value' => function($model) {
             if (!empty($model->attachment)) {
                 $absoluteBaseUrl = Url::base(true);
-                $path = $absoluteBaseUrl . '/web/uploads/software-complaint-docs/';
+                $path = $absoluteBaseUrl . '/uploads/software-complaint-docs/';
                 return Html::a('<i class="fa fa-download"><i/>', $path . $model->attachment, ['target' => '_blank']);
             }
         }],
@@ -124,7 +125,7 @@ $grid_option = [
                 $addClass = 'link-disable';
             }
             $url = Url::to(['tbl-software-complaint/update', 'id' => $model->complaint_code]);
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $addClass]);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $addClass]);
         },
         'assign' => function ($url, $model)use($user) {
             $addClass = '';
@@ -135,7 +136,7 @@ $grid_option = [
             $url = Url::to(['tbl-software-complaint/assign-complaint', 'id' => $model->complaint_code]);
             $status = $model->complaint_status;
             $class = ($status != 4) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Assign', 'class' => '' . $class . ' ' . $addClass, 'data-val' => $model->complaint_code, 'data-name' => ''];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Assign', 'class' => '' . $class . ' ' . $addClass, 'data-val' => $model->complaint_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-user"></i>', $url, $options);
         },
         'resolve' => function ($url, $model)use($user) {
@@ -147,13 +148,13 @@ $grid_option = [
             $url = Url::to(['tbl-software-complaint/resolve-complaint', 'id' => $model->complaint_code]);
             $status = $model->complaint_status;
             $class = ($status == 2 || $status == 3) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Resolve', 'class' => '' . $class . ' ' . $addClass, 'data-val' => $model->complaint_code, 'data-name' => ''];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Resolve', 'class' => '' . $class . ' ' . $addClass, 'data-val' => $model->complaint_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-check-square"></i>', $url, $options);
         },
         'service-bill' => function ($url, $model) {
             $url = Url::to(['tbl-software-complaint/service-bill', 'id' => $model->complaint_code]);
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Service Bill', 'target' => '_blank'];
-            return GhostHtml::a('<i class="fa fa-money"></i>', $url, $options);
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Service Bill', 'target' => '_blank'];
+            return GhostHtml::a('<i class="fa fa-money-bill"></i>', $url, $options);
         },
     ]
 ];

@@ -26,7 +26,7 @@ $is_submit = FALSE;
         <table class="table table-hover table-bordered table-striped table-main table-language">
             <thead>
                 <tr>
-                    <!--<th><?php //Yii::t('app', '')            ?></th>-->
+                    <!--<th><?php //Yii::t('app', '')                   ?></th>-->
                     <th><?= Html::checkbox('requisition_checkbox', false, ['label' => '', 'class' => 'allCheckBoxManage reqTxnFieldsNotDisabled']) ?></th>
                     <th><?= Yii::t('app', 'Requisition') ?></th>
                     <th><?= Yii::t('app', 'Type') ?></th>
@@ -61,7 +61,9 @@ $is_submit = FALSE;
                         <?php
                         $requisition = $transaction->productRequisitionCode;
                         ?>
-                        <td class="pcheckbox"><?= $form->field($transaction, '[' . $key . ']requisition_transaction_code', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{endLabel}</div>'])->checkbox(['class' => 'reqTxnFields reqTxnFieldsNotDisabled']); ?></td>
+                        <td class="pcheckbox">
+                            <?= Yii::$app->controls->checkTemplateBootstrap5($transaction, $form, '[' . $key . ']requisition_transaction_code', '', false, 'reqTxnFields reqTxnFieldsNotDisabled'); ?>
+                        </td>
                         <td class="pname"><?= !empty($requisition) && !empty($requisition->product_requisition_code) ? $requisition->product_requisition_code : '' ?></td>
                         <td class="pname"><?= !empty($requisition) && !empty($requisition->vendor_type) ? $requisition->vendor_type : '' ?></td>
                         <td class="pname"><?= !empty($requisition) && !empty($requisition->vendor_code) ? $requisition->vendor_code : '' ?></td>
@@ -126,7 +128,7 @@ $is_submit = FALSE;
             <div class="form-group">
                 <?php
                 if ($is_submit) {
-                    echo Html::submitButton(Yii::t('app', 'Submit'), ['class' => 'btn btn-default apply-shortcut submitForm', 'value' => '1', 'name' => 'accept', 'id' => 'accept']);
+                    echo Html::submitButton(Yii::t('app', 'Submit'), ['class' => 'btn btn-default apply-shortcut submitForm btn-login', 'value' => '1', 'name' => 'accept', 'id' => 'accept']);
                 }
                 echo Yii::$app->controls->cancel($model);
                 ?>

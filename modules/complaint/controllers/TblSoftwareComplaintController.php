@@ -126,9 +126,10 @@ class TblSoftwareComplaintController extends \app\controllers\ChildController {
     }
 
     public function actionUploadFile() {
-
-        $path = Yii::$app->basePath . '/web/uploads/software-complaint-docs/';
-        Yii::$app->general->checkDirectory($path, '0777');
+        $path = Yii::getAlias('@webroot') . Yii::$app->params['software_complaint_dir_path'];
+        if (!is_dir($path)) {
+            Yii::$app->general->checkDirectory($path);
+        }
         $this->model = new TblSoftwareComplaint();
 
         try {

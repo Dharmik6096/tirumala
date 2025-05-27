@@ -5,7 +5,8 @@ use demogorgorn\ajax\AjaxSubmitButton;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\helpers\Html;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
+use yii\web\View;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
 $form = ActiveForm::begin([
@@ -178,3 +179,7 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
+<?php
+$script = "Dropzone.autoDiscover = false;";
+$this->registerJs($script, View::POS_END, 'insurance');
+?>

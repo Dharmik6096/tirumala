@@ -29,11 +29,11 @@ $grid_option = [
         'view' => true,
         'edit' => function ($url, $model) {
             $options = ['title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/product/tbl-dispatch-center/update', 'id' => $model->dispatch_center_code], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/product/tbl-dispatch-center/update', 'id' => $model->dispatch_center_code], $options);
         },
 //        'delete' => ['option' => 'dispatch_center_name,dispatch_center_code,tbl-dispatch-center/delete'],
         'applicabilty' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-dispatch-center/dispatch-center-applicability', 'id' => $model->dispatch_center_code], $options);
         }
     ]

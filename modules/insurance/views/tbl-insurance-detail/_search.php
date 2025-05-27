@@ -17,7 +17,7 @@ use app\components\ActiveForm;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('insurance_master_list', $model, $form, 'form-group col-sm-2 padding-right-5'); ?> 
     </div>
-    <div class="form-group">
+    <div class="form-group d-flex">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
     </div>

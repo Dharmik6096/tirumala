@@ -21,18 +21,18 @@ use kartik\grid\GridView;
             echo Html::hiddenInput('process_flag', 'draft', ['class' => 'process_flag']);
             echo Html::hiddenInput('insurance_master_code', $searchModel->insurance_master_code);
             $attribute = [
-                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => false],
-                ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'DCS Code Ex'), 'filter' => false],
-                ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'filter' => false],
-                ['attribute' => 'member_count', 'filter' => false],
-                ['attribute' => 'status', 'filter' => false],
-                ['attribute' => 'from_date',
+                    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => false],
+                    ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'DCS Code Ex'), 'filter' => false],
+                    ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'filter' => false],
+                    ['attribute' => 'member_count', 'filter' => false],
+                    ['attribute' => 'status', 'filter' => false],
+                    ['attribute' => 'from_date',
                     'filterType' => GridView::FILTER_DATE,
                     'filterWidgetOptions' => ['pluginOptions' => ['format' => 'dd-mm-yyyy', 'autoclose' => true]],
                     'value' => function($model) {
-                    return Yii::$app->controls->view_date($model['from_date']);
+                        return Yii::$app->controls->view_date($model['from_date']);
                     }],
-                ['attribute' => 'to_date',
+                    ['attribute' => 'to_date',
                     'filterType' => GridView::FILTER_DATE,
                     'filterWidgetOptions' => ['pluginOptions' => ['format' => 'dd-mm-yyyy', 'autoclose' => true]],
                     'value' => function($model) {
@@ -74,12 +74,12 @@ use kartik\grid\GridView;
                         </div>
                         <div class="clearfix"></div>
                         <?php
-                        echo Html::button(Yii::t('app', 'Publish'), ['class' => 'btn btn-primary ', 'id' => 'publish']);
+                        echo Html::button(Yii::t('app', 'Publish'), ['class' => 'btn btn-primary btn-login', 'id' => 'publish']);
                     } else {
-                        echo Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'finalize']);
+                        echo Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary btn-login', 'id' => 'finalize']);
                     }
                 }
-                echo Yii::$app->controls->custombutton('Cancel', ['/insurance/tbl-insurance-master/index']);
+                echo Yii::$app->controls->custombutton('Cancel', ['/insurance/tbl-insurance-master/index'], '', 'btn-login');
                 ?>
             </div>
             <div class="clearfix"></div>

@@ -1,8 +1,9 @@
 <?php
 
 use yii\helpers\Html;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\web\JsExpression;
+use yii\web\View;
 
 $url = \yii\helpers\Url::to(['/complaint/tbl-software-complaint/remove']);
 $path = Yii::$app->params['software_complaint_dir_path'];
@@ -20,7 +21,7 @@ file_exists($path . $txnModel->attachment) ? $size = filesize($path . $txnModel-
     <?= Yii::$app->dropdown->dropdownStatic('resolution_type', $model, $form, '', $model->getAttributeLabel('resolution_type'), false, 'resolution_type') ?> 
 </div>
 <div class="col-sm-1 mt15">
-    <?= $form->field($model, 'is_chargeable', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_chargeable'); ?>
 </div>
 <div class="col-sm-1  number-validate">
     <?= $form->field($model, 'amount')->textInput() ?>
@@ -102,6 +103,10 @@ file_exists($path . $txnModel->attachment) ? $size = filesize($path . $txnModel-
     ]);
     ?>
 </div>  
+<?php
+$script = "Dropzone.autoDiscover = false;";
+$this->registerJs($script, View::POS_END, 'resolve-compalint');
+?>
 
 
 

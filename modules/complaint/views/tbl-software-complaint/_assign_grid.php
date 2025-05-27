@@ -33,7 +33,7 @@ $attribute = [
         'value' => function($model) {
             if (!empty($model->attachment)) {
                 $absoluteBaseUrl = Url::base(true);
-                $path = $absoluteBaseUrl . '/web/uploads/software-complaint-docs/';
+                $path = $absoluteBaseUrl . '/uploads/software-complaint-docs/';
                 return Html::a('<i class="fa fa-download"><i/>', $path . $model->attachment, ['target' => '_blank']);
             }
         }],

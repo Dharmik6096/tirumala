@@ -25,7 +25,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view-sub-ledger' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-sub-ledger', 'data-original-title' => 'View Sub Ledger', 'data-val' => $model->voucher_transaction_code];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-sub-ledger', 'title' => 'View Sub Ledger', 'data-val' => $model->voucher_transaction_code];
             return GhostHtml::a_alert('<i class="fa fa-link"></i>', ['/dcsaccounting/tbl-voucher/view-sub-ledger', 'id' => $model->voucher_transaction_code], $options);
         },
     ]

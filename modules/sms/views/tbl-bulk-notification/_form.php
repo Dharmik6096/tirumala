@@ -262,3 +262,7 @@ $(document).ready(function () {
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
+<?php
+$script = "Dropzone.autoDiscover = false;";
+$this->registerJs($script, View::POS_END, 'bulk-notification');
+?>

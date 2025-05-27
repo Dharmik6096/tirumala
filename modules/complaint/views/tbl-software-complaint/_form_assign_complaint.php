@@ -1,8 +1,9 @@
 <?php
 
 use yii\helpers\Html;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\web\JsExpression;
+use yii\web\View;
 
 $url = \yii\helpers\Url::to(['/complaint/tbl-software-complaint/remove']);
 $path = Yii::$app->params['software_complaint_dir_path'];
@@ -101,6 +102,7 @@ if ($engineer) {
     ]);
     ?>
 </div>  
-
-
-
+<?php
+$script = "Dropzone.autoDiscover = false;";
+$this->registerJs($script, View::POS_END, 'assign-compalint');
+?>

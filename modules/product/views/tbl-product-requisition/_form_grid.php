@@ -153,26 +153,26 @@ $grid_option = [
     'id' => 'product-requisition-list',
     'attributes' => $attribute,
     'active_column' => false,
-    'actions' => [
-        'view' => true,
+//    'actions' => [
+//        'view' => true,
         //'delete' => ['option' => 'date,product_requisition_code,tbl-product-requisition/delete'],
-        'transaction' => function ($url, $model) {
-            $class = ($model->status == 'Draft') ? '' : 'disabled';
-            $options = ['data-name' => $model->req_date, 'class' => $class, 'data-val' => $model->product_requisition_code, 'title' => Yii::t('app', 'Add Requisition Transaction')];
-            return GhostHtml::a('<i class="fas fa-plus"></i>', ['/product/tbl-product-requisition-transaction/create', 'id' => $model->product_requisition_code], $options);
-        },
-        'reqaccept' => function ($url, $model) {
-            // $class = $model->disableApprove()? 'disabled' : '';
-            $class = in_array($model->status, ['Rejected', 'Draft', 'Dispatched']) ? 'disabled' : '';
-            // $class = '';
-            $options = ['data-name' => $model->req_date, 'class' => $class, 'data-val' => $model->product_requisition_code, 'title' => Yii::t('app', 'Accept Requisition')];
-            return GhostHtml::a('<i class="glyphicon glyphicon-ok"></i>', ['/product/tbl-product-requisition-transaction/accept-requisition', 'id' => $model->product_requisition_code], $options);
-        },
+//        'transaction' => function ($url, $model) {
+//            $class = ($model->status == 'Draft') ? '' : 'disabled';
+//            $options = ['data-name' => $model->req_date, 'class' => $class, 'data-val' => $model->product_requisition_code, 'title' => Yii::t('app', 'Add Requisition Transaction')];
+//            return GhostHtml::a('<i class="fas fa-plus"></i>', ['/product/tbl-product-requisition-transaction/create', 'id' => $model->product_requisition_code], $options);
+//        },
+//        'reqaccept' => function ($url, $model) {
+//            // $class = $model->disableApprove()? 'disabled' : '';
+//            $class = in_array($model->status, ['Rejected', 'Draft', 'Dispatched']) ? 'disabled' : '';
+//            // $class = '';
+//            $options = ['data-name' => $model->req_date, 'class' => $class, 'data-val' => $model->product_requisition_code, 'title' => Yii::t('app', 'Accept Requisition')];
+//            return GhostHtml::a('<i class="glyphicon glyphicon-ok"></i>', ['/product/tbl-product-requisition-transaction/accept-requisition', 'id' => $model->product_requisition_code], $options);
+//        },
 //        'product-dispatch' => function ($url, $model) {
 //            $options = ['data-val' => $model->product_requisition_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Product Dispatch'];
 //            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/product/tbl-product-dispatch/create', 'id' => $model->product_requisition_code], $options);
 //        },
-    ]
+//    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

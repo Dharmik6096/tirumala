@@ -76,18 +76,18 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                 }
                 if ($notification_type == 2) {
                     $this->model->filename = $files;
-                    $this->model->file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . $this->model->filename;
+                    $this->model->file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'upload/images/' . $this->model->filename;
                 }
                 if ($notification_type == 3) {
                     $this->model->filename = $files;
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
-                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/';
+                    $old_directory = \Yii::getAlias('@webroot') . '/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/upload/';
                     if (!empty($this->model->filename) && Yii::$app->general->checkDirectory($new_directory)) {
                         rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                     }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/';
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'upload/';
                     $this->model->from_date = !empty($this->model->from_date) ? date('Y-m-d', strtotime($this->model->from_date)) . ' ' . (!empty($this->model->from_shift_code) ? Yii::$app->general->getshift($this->model->from_shift_code) : '00:00:00') : '';
                     $this->model->to_date = !empty($this->model->to_date) ? date('Y-m-d', strtotime($this->model->to_date)) . ' ' . (!empty($this->model->to_shift_code) ? Yii::$app->general->getshift($this->model->to_shift_code) : '23:59:59') : '';
                     $this->model->app_type = NULL;
@@ -99,14 +99,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $this->model->filename = $files;
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
-                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $old_directory = \Yii::getAlias('@webroot') . '/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/upload/' . $this->model->bmc_code . $filename . '/';
                     if (Yii::$app->general->checkDirectory($new_directory)) {
                         rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                     }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'upload/' . $this->model->bmc_code . $filename . '/';
                     $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
-                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $utility_path = \Yii::getAlias('@webroot') . '/utility/pdf-splitter/';
                     $crnt_dir = getcwd();
                     chdir($utility_path);
                     exec($command);
@@ -126,14 +126,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $this->model->filename = $files;
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
-                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $old_directory = \Yii::getAlias('@webroot') . '/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/upload/' . $this->model->bmc_code . $filename . '/';
                     if (!empty($this->model->filename) && Yii::$app->general->checkDirectory($new_directory)) {
                         rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                     }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'upload/' . $this->model->bmc_code . $filename . '/';
                     $command = 'java -jar pdf-splitter-bactaria-1.0.jar "' . $new_directory . $this->model->filename . '"';
-                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $utility_path = \Yii::getAlias('@webroot') . '/utility/pdf-splitter/';
                     $crnt_dir = getcwd();
                     chdir($utility_path);
                     exec($command);
@@ -149,14 +149,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $this->model->filename = $files;
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
-                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $old_directory = \Yii::getAlias('@webroot') . '/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/upload/' . $this->model->bmc_code . $filename . '/';
                     if (!empty($this->model->filename) && Yii::$app->general->checkDirectory($new_directory)) {
                         rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                     }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'upload/' . $this->model->bmc_code . $filename . '/';
                     $command = 'java -jar pdf-splitter-amul-invoice-1.0.jar "' . $new_directory . $this->model->filename . '"';
-                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $utility_path = \Yii::getAlias('@webroot') . '/utility/pdf-splitter/';
                     $crnt_dir = getcwd();
                     chdir($utility_path);
                     exec($command);
@@ -166,14 +166,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $this->model->filename = $files;
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
-                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $old_directory = \Yii::getAlias('@webroot') . '/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/upload/' . $this->model->bmc_code . $filename . '/';
                     if (!empty($this->model->filename) && Yii::$app->general->checkDirectory($new_directory)) {
                         rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                     }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'upload/' . $this->model->bmc_code . $filename . '/';
                     $command = 'java -jar pdf-splitter-multi-1.0.jar "' . $new_directory . $this->model->filename . '"';
-                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $utility_path = \Yii::getAlias('@webroot') . '/utility/pdf-splitter/';
                     $crnt_dir = getcwd();
                     chdir($utility_path);
                     exec($command);

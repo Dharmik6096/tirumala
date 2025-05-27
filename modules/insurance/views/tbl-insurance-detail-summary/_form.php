@@ -1,6 +1,6 @@
 <?php
 
-use app\components\ActiveForm; 
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 
@@ -40,7 +40,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE); ?>
     </div>
     <div class="col-sm-2 mt10 hide">
-        <?= $form->field($model, 'is_revoke', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_revoke'); ?>
     </div>
     <div class="col-sm-12 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

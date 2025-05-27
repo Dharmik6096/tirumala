@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
@@ -55,8 +55,7 @@ $form = ActiveForm::begin();
     </div>
     <?php if ($type == 'edit' && $model->complaint_status == 4) { ?>
         <div class="col-sm-1 mt15">
-            <?= $form->field($model, 'is_chargeable', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
-        </div>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_chargeable'); ?>  </div>
         <div class="col-sm-2 number-validate">
             <?= $form->field($model, 'amount')->textInput() ?>
         </div>
@@ -145,3 +144,7 @@ $form = ActiveForm::begin();
 </div>
 
 <?php ActiveForm::end(); ?>
+<?php
+$script = "Dropzone.autoDiscover = false;";
+$this->registerJs($script, View::POS_END, 'software-compalint');
+?>

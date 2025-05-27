@@ -41,8 +41,8 @@ $grid_option = [
         'view' => true,
         'update' => function ($url, $model) {
             $class = $model->status == 'DRAFT' ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->insurance_master_code];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->insurance_master_code];
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
     ]
 ];
