@@ -6,17 +6,17 @@
  */
 
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 ?>
 
 <?php
 
 $attribute = [
-    ['attribute' => 'union name', 'value' => function($model) {
+        ['attribute' => 'union name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => false],
-    ['attribute' => 'dispatch_center_name'],
-    ['attribute' => 'dispatch_center_type_code', 'value' => function($model) {
+        ['attribute' => 'dispatch_center_name'],
+        ['attribute' => 'dispatch_center_type_code', 'value' => function($model) {
             return $model->getDispatchCenterType($model->dispatch_center_type_code);
         }, 'filter' => false],
 ];

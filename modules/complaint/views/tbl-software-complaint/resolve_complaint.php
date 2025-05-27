@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use kartik\detail\DetailView;
@@ -18,14 +18,14 @@ $this->title = 'Software Complaint Resolve';
             <div class="table-responsive">
                 <?php
                 $attributes = [
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'union_code',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'dcs_code',
                                 'label' => Yii::t('app', 'Ref. Code'),
                                 'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code'),
@@ -33,85 +33,85 @@ $this->title = 'Software Complaint Resolve';
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'dcs_code',
                                 'label' => Yii::t('app', 'Soc. Code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'dcs_code',
                                 'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'contact_person',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'contact_person_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'complaint_date',
                                 'value' => Yii::$app->controls->view_date($model->complaint_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'service_call_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'product_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'product_name',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'complaint_type',
                                 'value' => isset($model->complaint_type) ? Yii::$app->dropdown->getRecords('complaint_type')['data'][$model->complaint_type] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'priority',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'complaint_desc',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'km',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'remarks',
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
@@ -141,6 +141,7 @@ $this->title = 'Software Complaint Resolve';
                     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                         <h4 class="theme-box-heading"><?= Yii::t('app', 'Complaint Details') ?></h4>
                     </div>
+                    <div class="clearfix"></div>
                     <div class="form-grid">
                         <?=
                         $this->render('../../../complaint/views/tbl-software-complaint/_assign_grid', [
@@ -166,6 +167,7 @@ $this->title = 'Software Complaint Resolve';
         ]);
         ?>
         <?php echo $form->errorSummary($model); ?>
+        <div class="clearfix"></div>
         <div class="row">
             <?=
             $this->render('_form_resolve_complaint', [

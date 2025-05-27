@@ -1,9 +1,9 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use kartik\detail\DetailView;
 use yii\helpers\Url;
 
@@ -26,7 +26,7 @@ $is_submit = FALSE;
         <table class="table table-hover table-bordered table-striped table-main table-language">
             <thead>
                 <tr>
-                    <!--<th><?php //Yii::t('app', '')         ?></th>-->
+                    <!--<th><?php //Yii::t('app', '')           ?></th>-->
                     <th><?= Html::checkbox('requisition_checkbox', false, ['label' => '', 'class' => 'allCheckBoxManage reqTxnFieldsNotDisabled']) ?></th>
                     <th><?= Yii::t('app', 'Requisition') ?></th>
                     <th><?= Yii::t('app', 'Type') ?></th>

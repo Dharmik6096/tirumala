@@ -49,16 +49,16 @@ class TblForceSyncRequest extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'dcs_code', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'table_name'], 'required'],
-            [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['from_shift', 'to_shift', 'is_download', 'originating_type'], 'safe'],
-            [['union_code'], 'safe'],
-            [['plant_code', 'mcc_plant_code'], 'safe'],
-            [['bmc_code', 'dcs_code'], 'safe'],
-            [['created_by', 'updated_by', 'table_name'], 'safe'],
-            [['originating_org_code', 'originating_org_type'], 'safe'],
-            [['is_download'], 'default', 'value' => 0],
-            [['to_datetime'], 'validateDateRange']
+                [['union_code', 'dcs_code', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'table_name'], 'required'],
+                [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['from_shift', 'to_shift', 'is_download', 'originating_type'], 'safe'],
+                [['union_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code'], 'safe'],
+                [['bmc_code', 'dcs_code'], 'safe'],
+                [['created_by', 'updated_by', 'table_name'], 'safe'],
+                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['is_download'], 'default', 'value' => 0],
+                [['to_datetime'], 'validateDateRange']
         ];
     }
 
@@ -131,7 +131,7 @@ class TblForceSyncRequest extends \app\models\ChildModel {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {

@@ -36,8 +36,7 @@ use app\modules\tankermovement\models\TblPartyMaster;
 /**
  * TblDcsBmcController implements the CRUD actions for TblDcsBmc model.
  */
-class TblDcsBmcController extends \app\controllers\ChildController
-{
+class TblDcsBmcController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
@@ -47,16 +46,15 @@ class TblDcsBmcController extends \app\controllers\ChildController
      * Lists all TblDcsBmc models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $model = new TblDcsBmc();
         $searchModel = new TblDcsBmcSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'model' => $model,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -65,8 +63,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         $bsearchModel = new TblBankDetailsSearch();
         $bsearchModel->module_name = 'bmc';
         $bsearchModel->module_code = $id;
@@ -89,11 +86,11 @@ class TblDcsBmcController extends \app\controllers\ChildController
         $sndataProvider = $snsearchModel->search(Yii::$app->request->queryParams);
         $isaction = FALSE;
         return $this->render('view', [
-            'model' => $this->findModel($id),
-            'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
-            'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
-            'sdataProvider' => $sdataProvider, 'ssearchModel' => $ssearchModel,
-            'sndataProvider' => $sndataProvider, 'snsearchModel' => $snsearchModel, 'isaction' => $isaction
+                    'model' => $this->findModel($id),
+                    'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
+                    'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
+                    'sdataProvider' => $sdataProvider, 'ssearchModel' => $ssearchModel,
+                    'sndataProvider' => $sndataProvider, 'snsearchModel' => $snsearchModel, 'isaction' => $isaction
         ]);
     }
 
@@ -102,8 +99,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->viewFile = 'create';
         $this->model = new TblDcsBmc();
         $this->bankDetails = new TblBankDetails();
@@ -126,6 +122,8 @@ class TblDcsBmcController extends \app\controllers\ChildController
             }
             $this->contactDetails->load(Yii::$app->request->post());
             $this->contactDetails->setModel('bmc', $this->model->bmc_code);
+            $this->model->fssi_expiry_date = !empty($this->model->fssi_expiry_date) ? date('Y-m-d', strtotime($this->model->fssi_expiry_date)) : NULL;
+
             $master[] = $this->model;
             $modelMilkType = $this->setMilk();
             if (!empty($modelMilkType)) {
@@ -154,8 +152,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         $validate = 1;
@@ -206,8 +203,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionDelete()
-    {
+    public function actionDelete() {
         $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_bmc', Yii::$app->request->post('id'), 'bmc_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
@@ -222,8 +218,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode($record);
     }
 
-    public function actionBankDetails($id)
-    {
+    public function actionBankDetails($id) {
         $bankDetails = new TblBankDetails();
         $bankDetails->scenario = 'additional';
         $searchModel = new TblBankDetailsSearch();
@@ -232,38 +227,36 @@ class TblDcsBmcController extends \app\controllers\ChildController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $modelDcs = $this->findModel($id);
         return $this->render('../../../details/views/tbl-bank-details/create', [
-            'model' => $bankDetails,
-            'id' => $id,
-            'module' => 'bmc',
-            'dist' => $modelDcs->district_code,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'dist_field' => 'tbldcsbmc-district_code'
+                    'model' => $bankDetails,
+                    'id' => $id,
+                    'module' => 'bmc',
+                    'dist' => $modelDcs->district_code,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'dist_field' => 'tbldcsbmc-district_code'
         ]);
     }
 
-    public function actionContactDetails($id)
-    {
+    public function actionContactDetails($id) {
         $contactDetails = new TblContactDetails();
         $searchModel = new TblContactDetailsSearch();
         $searchModel->module_name = 'bmc';
         $searchModel->module_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('../../../details/views/tbl-contact-details/create', [
-            'model' => $contactDetails,
-            'id' => $id,
-            'module' => 'bmc',
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'bmc',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider
         ]);
     }
 
-    protected function customRender()
-    {
+    protected function customRender() {
         return $this->render($this->viewFile, [
-            'model' => $this->model,
-            'bankDetails' => $this->bankDetails,
-            'contactDetails' => $this->contactDetails
+                    'model' => $this->model,
+                    'bankDetails' => $this->bankDetails,
+                    'contactDetails' => $this->contactDetails
         ]);
     }
 
@@ -274,8 +267,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
      * @return TblDcsBmc the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblDcsBmc::findOne($id)) !== null) {
             return $model;
         } else {
@@ -283,18 +275,15 @@ class TblDcsBmcController extends \app\controllers\ChildController
         }
     }
 
-    private function setModel()
-    {
+    private function setModel() {
         $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
     }
 
-    protected function customRedirect()
-    {
+    protected function customRedirect() {
         return $this->redirect(['index', 'dcs' => Yii::$app->request->get('dcs'), 'dcsname' => Yii::$app->request->get('dcsname'), 'subcenter' => Yii::$app->request->get('subcenter'), 'subname' => Yii::$app->request->get('subname')]);
     }
 
-    public function actionBmcList()
-    {
+    public function actionBmcList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -312,8 +301,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
-    public function actionBmcListUnion()
-    {
+    public function actionBmcListUnion() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -329,8 +317,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
-    public function actionGetMccBmc()
-    {
+    public function actionGetMccBmc() {
         $mccList = [];
         if (!empty($_POST['mcc'])) {
             $palnt = explode(',', $_POST['mcc']);
@@ -341,8 +328,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
-    private function setMilk()
-    {
+    private function setMilk() {
         $milkArray = $this->model->milk_type_code;
         $list = [];
         foreach ($milkArray as $row) {
@@ -355,8 +341,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return $list;
     }
 
-    public function actionBmcMapping($id)
-    {
+    public function actionBmcMapping($id) {
         $DcsBmcModel = new TblDcsBmc();
         $bmc_data = $DcsBmcModel->getBMCList([], TRUE, FALSE, TRUE);
         unset($bmc_data[$id]);
@@ -410,14 +395,13 @@ class TblDcsBmcController extends \app\controllers\ChildController
         }
 
         return $this->render('_bmc_mapping', [
-            'model' => $model, 'bmc_data' => $bmc_data,
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
+                    'model' => $model, 'bmc_data' => $bmc_data,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
         ]);
     }
 
-    public function actionDeleteBmc()
-    {
+    public function actionDeleteBmc() {
         $model = TblBmcGroupMapping::findOne(Yii::$app->request->post('id'));
         $record = [];
         $historyModel = new TblBmcGroupMappingHistory();
@@ -427,8 +411,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode($record);
     }
 
-    public function actionSilosInfo($id)
-    {
+    public function actionSilosInfo($id) {
         $contactDetails = new TblBmcSilosInfo();
         $searchModel = new TblBmcSilosInfoSearch();
         $searchModel->module_name = 'BMC';
@@ -436,17 +419,16 @@ class TblDcsBmcController extends \app\controllers\ChildController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $isaction = TRUE;
         return $this->render('@app/modules/organisation/views/tbl-bmc-silos-info/create', [
-            'model' => $contactDetails,
-            'id' => $id,
-            'module' => 'BMC',
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'isaction' => $isaction
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'BMC',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'isaction' => $isaction
         ]);
     }
 
-    public function actionPouredBmcList()
-    {
+    public function actionPouredBmcList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -464,8 +446,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
-    public function actionExportSentbox($id)
-    {
+    public function actionExportSentbox($id) {
         $this->model = $this->findModel($id);
 
         $dcsModel = new TblDcs();
@@ -497,7 +478,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
 
         $labelT = $id . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'] .
-            header('Content-Type: ' . $header['mime']);
+                header('Content-Type: ' . $header['mime']);
         //        header('Content-Type: text/plain');
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
@@ -513,8 +494,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         exit();
     }
 
-    public function actionChannelBmcList()
-    {
+    public function actionChannelBmcList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -530,8 +510,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
-    public function actionGetPlantBmc()
-    {
+    public function actionGetPlantBmc() {
         $plantList = [];
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
@@ -548,8 +527,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode(['status' => 'success', 'data' => $result]);
     }
 
-    public function actionGetPlantBmcWithParty()
-    {
+    public function actionGetPlantBmcWithParty() {
         $plantList = [];
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
@@ -572,8 +550,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode(['status' => 'success', 'data' => $result]);
     }
 
-    public function actionUnionBmcList()
-    {
+    public function actionUnionBmcList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -591,8 +568,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
-    public function actionBmcDocumentUpload($id)
-    {
+    public function actionBmcDocumentUpload($id) {
         $model = $this->findModel($id);
         $module_code = $model->bmc_code;
         $module_name = 'tbl_bmc';
@@ -600,8 +576,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         return $val->actiondocumentUpload('bmc', $id, $model, $module_code, $module_name);
     }
 
-    public function actionBmcChillerInfo($id)
-    {
+    public function actionBmcChillerInfo($id) {
         $model = new TblBmcChillerInfo();
         $searchModel = new TblBmcChillerInfoSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -636,16 +611,15 @@ class TblDcsBmcController extends \app\controllers\ChildController
         }
 
         return $this->render('@app/modules/organisation/views/tbl-bmc-chiller-info/create', [
-            'model' => $model,
-            'id' => $id,
-            'module' => 'BMC',
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'model' => $model,
+                    'id' => $id,
+                    'module' => 'BMC',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionUpdateChillerInfo()
-    {
+    public function actionUpdateChillerInfo() {
         $data = [];
         $data['status'] = 'error';
         $data['message'] = '';
@@ -678,4 +652,5 @@ class TblDcsBmcController extends \app\controllers\ChildController
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
+
 }
