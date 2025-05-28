@@ -71,7 +71,10 @@ class TblPlantDispatch extends \app\models\ChildModel {
             [['dispatch_date', 'document_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'Invalid date format.'), 'on' => ['clienterp_cargill']],
             [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, TRUE);
-                }, 'on' => ['importCsv', 'clienterp_cargill']],
+                }, 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                Yii::$app->general->validateBMC($this, $attribute, TRUE, TRUE);
+            }, 'on' => ['clienterp_cargill']],
             [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_master_code'], 'on' => 'importCsv'],
         ];
     }
