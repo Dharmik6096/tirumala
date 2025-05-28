@@ -138,8 +138,8 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
         } else {
             $product_requisition_code = Yii::$app->getRequest()->getQueryParam('id');
             if (!empty($product_requisition_code)) {
-                $reqModel = TblProductRequisition::find()->select('req_date')->leftJoin('tbl_product_requisition_transaction', 'tbl_product_requisition.product_requisition_code = tbl_product_requisition_transaction.product_requisition_code')->where(['tbl_product_requisition_transaction.requisition_transaction_code' => $product_requisition_code])->one();
-                $delivery_date = $reqModel['req_date'];
+                $reqModel = TblProductRequisition::find()->select('req_date')->where(['tbl_product_requisition.product_requisition_code' => $this->product_requisition_code])->one();
+                $delivery_date = !empty($reqModel['req_date']) ? $reqModel['req_date'] : '';
             } else {
                 $chek_date = FALSE;
             }
