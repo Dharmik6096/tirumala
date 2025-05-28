@@ -114,6 +114,10 @@ class TblProductStock extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
+    // public function getPartyCode() {
+    //     return $this->hasOne(TblGeneralPartyMaster::className(), ['generate_party_code' => 'customer_code']);
+    // }
+
     public function getExistStock($type, $batch = '', $checkMccStock = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
         if (!empty($batch)) {
