@@ -120,8 +120,7 @@ class TblGeneralPartyMasterController extends ChildController
             if ($parents != null) {
                 $parties = new TblGeneralPartyMaster();
                 $out = $parties->allParty($parents);
-                echo Json::encode(['output' => $out, 'selected' => '']);
-                return;
+                return Json::encode(['output' => $out, 'selected' => '']);
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
