@@ -49,7 +49,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox()->label('Is Partial Trip?'); ?>
     </div>
     <div class="col-sm-6">
-        <?php echo Html::hiddenInput('rls', TRUE, ['id' => 'tblvehicletrip-rls']); ?>
+        <?php echo Html::hiddenInput('rls', 'FALSE', ['id' => 'tblvehicletrip-rls']); ?>
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-rls', 'plant_code', Yii::t('app', 'Plant'), true, '', false, false); ?>
     </div>
     <div class="clearfix"></div>
