@@ -47,7 +47,8 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['disabled' => $readonly])->label('Is Partial Trip?'); ?>
     </div>
     <div class="col-sm-6">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true); ?>
+        <?php echo Html::hiddenInput('rls', TRUE, ['id' => 'tblvehicletrip-rls']); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-rls', 'plant_code', Yii::t('app', 'Plant'), true); ?>
     </div>
     <div class="col-sm-6">
         <label class="control-label">Dispatch already taken</label>
