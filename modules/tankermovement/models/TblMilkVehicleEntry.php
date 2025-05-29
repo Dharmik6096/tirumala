@@ -46,7 +46,7 @@ use app\modules\tankermovement\models\TblPartyMaster;
  */
 class TblMilkVehicleEntry extends \app\models\ChildModel {
 
-    public $vehicle, $customer_name, $bmc_ref_code, $bmc_name, $ref_code, $process_approval_code, $remarks;
+    public $vehicle, $customer_name, $bmc_ref_code, $bmc_name, $ref_code, $process_approval_code, $remarks, $is_clr_input;
 
     /**
      * @inheritdoc
@@ -90,7 +90,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false,],
                 [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true, 'except' => ['androidsync']],
                 [['approval_status'], 'default', 'value' => 'Pending', 'on' => ['androidsync']],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_clr_input'], 'safe'],
         ];
     }
 

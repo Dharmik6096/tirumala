@@ -28,6 +28,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">BMC Milk Dispatch Detail</h4>
         </div>
         <div class="col-md-8 micro_form <?= $disabled ?> padding-bottom-20">
+            <?php echo Html::hiddenInput('is_clr_input', 0, ['id' => 'is_clr_input']); ?>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
@@ -175,14 +176,14 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'snf')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'water')->textInput() ?>
+            <?= $form->field($txn_model, 'clr')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'temperature')->textInput() ?>
+            <?= $form->field($txn_model, 'water')->textInput() ?>
         </div>
         <div class="clearfix"></div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'clr')->textInput() ?>
+            <?= $form->field($txn_model, 'temperature')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'protein')->textInput() ?>
@@ -431,6 +432,76 @@ function setData(field = ''){
         return false;
     }
 }   
+
+$(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatchtxn-fat, #tblbmcmilkdispatchtxn-clr, #tblbmcmilkdispatchtxn-snf', function() {
+    calculateClr();
+});
+
+function calculateClr(){
+    var union = $('#tblbmcmilkdispatch-union_code').val();
+    var fat = $('#tblbmcmilkdispatchtxn-fat').val();
+    var snf = $('#tblbmcmilkdispatchtxn-snf').val();
+    var clr = $('#tblbmcmilkdispatchtxn-clr').val();
+    var is_clr_input = $('#is_clr_input').val()
+    var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+
+    is_clr_input == 0 && (fat == '' || snf == '') && $('#tblbmcmilkdispatchtxn-clr').val('');
+    is_clr_input == 1 && (fat == '' || clr == '') && $('#tblbmcmilkdispatchtxn-snf').val('');
+
+    if(setData(bmcCode) && ((is_clr_input == 0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !=''))){
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['calculate-clr']) . "',
+            data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
+            success: function(data) {                                        
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success')
+                {
+                    if(is_clr_input==0){
+                        $('#tblbmcmilkdispatchtxn-clr').val(obj.data.toFixed(2));
+                    }else{
+                        $('#tblbmcmilkdispatchtxn-snf').val(obj.data);
+                    }
+                }
+            },
+            error:function(data){
+
+            }
+        });
+    }    
+};
+
+$('#tblbmcmilkdispatch-bmc_code').change(function() {
+    isClrInput();
+});
+
+function isClrInput(){
+    var union = $('#tblbmcmilkdispatch-union_code').val();
+    var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+    $('#tblbmcmilkdispatchtxn-snf').val('');
+    $('#tblbmcmilkdispatchtxn-clr').val('');
+    if(setData(bmcCode)){
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['get-clr-input']) . "',
+            data: {'union_code':union,'bmcCode':bmcCode},
+            success: function(data) {                                        
+                var obj = $.parseJSON(data);
+                if (obj.data != null) {
+                    var is_clr_input = obj.data;
+                    $('#is_clr_input').val(is_clr_input);
+                    if (is_clr_input == 0) {
+                        $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
+                        $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true);
+                    } else {
+                        $('#tblbmcmilkdispatchtxn-snf').attr('readonly', true);
+                        $('#tblbmcmilkdispatchtxn-clr').attr('readonly', false);
+                    }
+                }
+            }
+        });
+    }
+};
 
 $(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-rtpl', function() {
     var rtpl=$('#tblbmcmilkdispatchtxn-rtpl').val();

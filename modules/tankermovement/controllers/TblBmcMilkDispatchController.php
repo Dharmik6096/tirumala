@@ -33,7 +33,7 @@ use app\components\ActiveForm;
  */
 class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code'];
+    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input'];
 
     /**
      * Lists all TblBmcMilkDispatch models.
@@ -637,12 +637,37 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
-    
+
     public function actionChallan($id) {
         $controls = [];
         $controls['p_bmc_milk_dispatch_code'] = $id;
         $controls['p_report_name'] = 'Tanker Dispatch Challan';
         $this->printDocument($controls, 'vsp/TankerDispatchChallan', 'TankerDispatchChallan', 'pdf');
+    }
+
+    public function actionGetClrInput() {
+        $unionCode = Yii::$app->request->post('union_code');
+        $bmcCode = Yii::$app->request->post('bmc_code');
+        $isClrInput = Yii::$app->general->getCheckBmcConfiguration($unionCode, 'is_clr_input', $bmcCode, 'BMC', 'BMC_DISPATCH_CONFIG');
+        if ($isClrInput == '') {
+            $isClrInput = Yii::$app->general->getUnionConfiguration($unionCode, 'is_clr_input', 'PORTAL');
+        }
+        $response = ['status' => 'success', 'data' => ($isClrInput != '') ? $isClrInput : 0];
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
+    }
+
+    public function actionCalculateClr() {
+        $fat = (float) Yii::$app->request->post('fat');
+        $snf = (float) Yii::$app->request->post('snf');
+        $clr = (float) Yii::$app->request->post('clr');
+        $union = Yii::$app->request->post('union_code');
+        $org_code = Yii::$app->request->post('bmcCode');
+        $is_clr_input = Yii::$app->request->post('is_clr_input');
+
+        $result = Yii::$app->general->calculateData('BMC_DISPATCH_CONFIG', $union, $org_code, $fat, $snf, $clr, 'BMC', $is_clr_input);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }
 
 }

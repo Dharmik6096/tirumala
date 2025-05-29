@@ -254,6 +254,19 @@ $attribute = [
         ['attribute' => 'machine_owned', 'value' => function($model) {
             return isset($model->machine_owned) ? Yii::$app->dropdown->getRecords('machine_owned_type')['data'][$model->machine_owned] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('machine_owned_type', $searchModel, 'machine_owned'), 'visible' => FALSE],
+        ['attribute' => 'is_security_cheque', 'filter' => FALSE, 'visible' => FALSE, 
+            'value' => function($model) {
+            return ($model->is_security_cheque == 1) ? 'Yes' : 'No';
+        }],
+        ['attribute' => 'cheque_number', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'cheque_amount', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'cheque_bank', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->security_return_date, 'php:d-m-Y');
+        }, 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_amt', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_mode', 'filter' => FALSE, 'visible' => FALSE],
 ];
 
 $grid_option = [

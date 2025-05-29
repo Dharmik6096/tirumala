@@ -285,6 +285,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/depend-vehicles', 'Select Vehicle', $multiple, $model->$name);
     }
 
+    public function generalPartyMaster($model, $form, $depends, $name = 'general_party_master_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-general-party-master/party-list', 'Select Party', $multiple, $model->$name);
+    }
+
     public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoSelect = TRUE) {
         $this->setClass($form, $name);
         if ($multiple) {
@@ -2080,6 +2085,16 @@ class DropDown extends Component {
                 'name' => 'process_name',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Member Provisional' => Yii::t('app', 'Member Provisional'), 'Member Provisional Family Detail' => Yii::t('app', 'Member Provisional Family Detail')],
+            ],
+            'security_return_mode' => [
+                'name' => 'security_return_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Bank' => Yii::t('app', 'Bank'), 'Cheque' => Yii::t('app', 'Cheque')],
+            ],
+            'general_party_type' => [
+                'name' => 'party_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['VEHICLE' => Yii::t('app', 'VEHICLE'), 'EMPLOYEE' => Yii::t('app', 'EMPLOYEE'), 'CHILLER' => Yii::t('app', 'CHILLER')],
             ],
         ];
         return $records[$l];

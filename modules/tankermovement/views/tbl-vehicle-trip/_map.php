@@ -18,7 +18,15 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                 <div class="step <?= $stepClass ?>">
 
                     <div class="step-content">
-                        <h5><strong><?= ucwords(str_replace('_', ' ', $trip->trip_sub_status)) ?></strong></h5>
+                        <?php
+                        $labelMap = [
+                            'cleaning_pending' => 'Plant Lot Done',
+                            'qa_pending' => 'Cleaning Done',
+                            'tanker_qualified' => 'QA Done',
+                        ];
+                        $customLabel = isset($labelMap[$trip->trip_sub_status]) ? $labelMap[$trip->trip_sub_status] : ucwords(str_replace('_', ' ', $trip->trip_sub_status));
+                        ?>
+                        <h5><strong><?= $customLabel ?></strong></h5>
                         <p><?= isset($remarks[0]) ? $remarks[0] : '' ?> - <?= isset($remarks[1]) ? $remarks[1] : '' ?></p>
                         <h6><?= Yii::$app->controls->view_datetime($trip->sub_status_time) ?></h6>
                         <p class="mt10"><?= isset($remarks[2]) ? $remarks[2] : '' ?></p>

@@ -273,7 +273,7 @@ class TblDcs extends ChildModel {
                 }],
                 [['credit_sale_allow', 'is_chiller'], 'default', 'value' => 0],
                 [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'password'], 'safe'],
-                [['cheque_number', 'cheque_amount', 'is_security_cheque', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
+                [['cheque_number', 'cheque_amount', 'is_security_cheque', 'emilk_sync_status', 'emilk_sync_timestamp', 'cheque_bank', 'security_return_date', 'security_return_amt', 'security_return_mode'], 'safe'],
                 [['dcs_code'], function ($attribute, $params) {
                     ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv'], 'when' => function ($model) {
@@ -333,6 +333,7 @@ class TblDcs extends ChildModel {
                         Yii::$app->general->validOneDigitDecimal($this, $attribute, $params);
                     }
                 }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']],
+                [['is_security_cheque'], 'default', 'value' => 0],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -449,6 +450,13 @@ class TblDcs extends ChildModel {
             'evening_kms' => Yii::t('app', 'Head Load KM(E)'),
             'machine_owned' => Yii::t('app', 'Machine Owned Type'),
             'employee_id' => Yii::t('app', 'Employee Id'),
+            'is_security_cheque' => Yii::t('app', 'Is Security Cheque?'),
+            'cheque_number' => Yii::t('app', 'Cheque Number'),
+            'cheque_amount' => Yii::t('app', 'Cheque Amount'),
+            'cheque_bank' => Yii::t('app', 'Cheque Bank'),
+            'security_return_date' => Yii::t('app', 'Security Return Date'),
+            'security_return_amt' => Yii::t('app', 'Security Return Amount'),
+            'security_return_mode' => Yii::t('app', 'Security Return Mode'),
         ];
     }
 
