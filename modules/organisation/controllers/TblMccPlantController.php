@@ -94,6 +94,7 @@ class TblMccPlantController extends \app\controllers\ChildController {
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $this->contactDetails->form_validation_type = 'mcc-create';
+        $this->contactDetails->department = 'mcc_incharge';
         $validate = 1;
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
