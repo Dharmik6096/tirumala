@@ -59,7 +59,11 @@ class MemberDeactivateImportStrategy extends ARImportStrategy {
                         }
                     }
                     $dcs = new TblDcs();
+                    $dcs_code=$model->dcs_code;
                     $model->dcs_code = $dcs->getValidDcs($model->dcs_code);
+                    if(!empty($dcs_code) && empty($model->dcs_code)){
+                        $model->addError('dcs_code', Yii::t('app/validation', $model->getAttributeLabel('dcs_code') . ' is invalid or inactive'));
+                    }
                     $model->member_code = $model->dcs_code . str_pad(substr($model->member, -4), 4, '0', STR_PAD_LEFT);
 
                     if ($model->is_active == '1') {

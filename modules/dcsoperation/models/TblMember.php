@@ -788,6 +788,24 @@ class TblMember extends ChildModel {
             $dcs_ref_code = Yii::$app->general->getforeignkey($this->dcsCode, 'ref_code');
             $this->ref_code = $dcs_ref_code . $this->ex_member_code;
         }
+        if (empty($this->animal_type_code)) {
+            $this->animal_type_code = 1;
+        }
+        if (empty($this->caste_category_code)) {
+            $this->caste_category_code = 1;
+        }
+        if (empty($this->gender_code)) {
+            $this->gender_code = '1';
+        }
+        if (empty($this->member_type_code)) {
+            $this->member_type_code = 1;
+        }
+        if (empty($this->address)) {
+            $this->address = 'address';
+        }
+        if (empty($this->hamlet_code)) {
+            $this->hamlet_code = Yii::$app->general->getforeignkey($this->dcsCode, 'hamlet_code');
+        }
     }
 
 }
