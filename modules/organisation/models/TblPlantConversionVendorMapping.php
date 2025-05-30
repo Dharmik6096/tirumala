@@ -3,6 +3,7 @@
 namespace app\modules\organisation\models;
 
 use Yii;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 /**
  * This is the model class for table "tbl_plant_conversion_vendor_mapping".
@@ -54,6 +55,10 @@ class TblPlantConversionVendorMapping extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getParty() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'party_master_code']);
     }
 
 }

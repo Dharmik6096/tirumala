@@ -154,8 +154,7 @@ $this->title = Yii::$app->label->title('view', 'party master');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'is_sales_office',
-                            'value' => !empty($model->is_sales_office) ? 'Yes' : 'No',
+                            'attribute' => 'party_type',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
