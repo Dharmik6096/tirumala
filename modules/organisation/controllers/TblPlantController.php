@@ -401,7 +401,7 @@ class TblPlantController extends \app\controllers\ChildController {
                     }
                 }
             } else {
-                $model->addError('party_master_code', 'Please select at least one party.');
+                $mapping->addError('party_master_code', 'Please select at least one party.');
             }
         }
         return $this->render('_conversion_vendor_mapping', [
