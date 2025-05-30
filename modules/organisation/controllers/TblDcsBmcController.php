@@ -536,7 +536,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
             $model = new TblDcsBmc();
-            $plantList = $model->getBMCList([], 'TRUE', false, false, [], $plant, 'BMC');
+            $plantList = $model->getBMCList([], 'FALSE', false, false, [], $plant, 'BMC');
         }
         $partyList = [];
         if (!empty($_POST['action_type']) && $_POST['action_type'] == 'party' && !empty($_POST['union_code'])) {
@@ -560,7 +560,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
             $model = new TblDcsBmc();
-            $bmcList = $model->getBMCList([], 'TRUE', false, false, [], $plant, 'BMC');
+            $bmcList = $model->getBMCList([], 'FALSE', false, false, [], $plant, 'BMC');
         }
         $partyList = [];
         if (!empty($_POST['action_type']) && $_POST['action_type'] == 'party' && !empty($_POST['union_code'])) {
