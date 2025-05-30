@@ -61,12 +61,15 @@ class TblMilkVehicleEntryQltyMerge extends ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-                [['config_code', 'union_code', 'is_qty_only', 'is_pending_merge', 'is_approved', 'originating_type', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'created_at', 'updated_at', 'plant_code', 'vehicle_code', 'trip_code', 'chamber_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['fat', 'snf', 'chamber_no', 'trip_code'], 'required', 'except' => ['androidsync']],
-                [['is_qty_only', 'is_pending_merge', 'is_approved'], 'default', 'value' => 1],
-                ['chamber_no', 'unique', 'targetAttribute' => ['chamber_no', 'trip_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+        $main_rules = [
+            [['config_code', 'union_code', 'is_qty_only', 'is_pending_merge', 'is_approved', 'originating_type', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'created_at', 'updated_at', 'plant_code', 'vehicle_code', 'trip_code', 'chamber_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'tested_by', 'verified_by'], 'safe'],
+            [['fat', 'snf', 'chamber_no', 'trip_code'], 'required', 'except' => ['androidsync']],
+            [['is_qty_only', 'is_pending_merge', 'is_approved'], 'default', 'value' => 1],
+            ['chamber_no', 'unique', 'targetAttribute' => ['chamber_no', 'trip_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblMilkVehicleEntryQltyMerge', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

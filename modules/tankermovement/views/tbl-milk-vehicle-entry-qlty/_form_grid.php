@@ -32,6 +32,8 @@ $attribute = [
         ['attribute' => 'mbrt', 'filter' => false],
         ['attribute' => 'fat', 'filter' => false],
         ['attribute' => 'snf', 'filter' => false],
+        ['attribute' => 'tested_by', 'filter' => false],
+        ['attribute' => 'verified_by', 'filter' => false],
 ];
 foreach ($config_list as $config) {
     $attribute[] = [
