@@ -61,4 +61,11 @@ class TblPlantConversionVendorMapping extends \app\models\ChildModel {
         return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'party_master_code']);
     }
 
+    public function getMappedPlant($partyMasterCode) {
+        return $this->find()
+                    ->alias('m')
+                    ->innerJoin('tbl_plant p', 'p.plant_code = m.plant_code')
+                    ->where(['party_master_code'=>$partyMasterCode])->one();
+    }
+
 }
