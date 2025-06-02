@@ -136,9 +136,13 @@ class TblPartyMaster extends \app\models\ChildModel {
         ];
     }
 
-    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
+    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false, $partyType = '') {
         $query = $this->find()->select(['party_master_code', 'party_name'])
-                ->where(['is_active' => 1]);
+                ->where(['union_code' => $unionCode, 'is_active' => 1]);
+        if (!empty($partyType)) {
+            $partyTypeIn = ($partyType === 'bmcMilkDispatch' || $partyType === 'milkReceiptSource') ? ['conversion_vendor', 'sales_party'] : ($partyType === 'milkReceiptDest' ? ['sales_party'] : []);
+            !empty($partyTypeIn) && $query->andWhere(['party_type' => $partyTypeIn]);
+        }
         $value = $query->orderBy('party_name asc')->all();
         $value = ArrayHelper::map($value, 'party_master_code', function ($value) use ($concatCode) {
                     return $value->party_name . ($concatCode ? ' - ' . $value->party_master_code : '');
@@ -179,8 +183,18 @@ class TblPartyMaster extends \app\models\ChildModel {
     }
 
     public function getUnionPartyList($unionCode) {
-        $partyList = $this->find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])
-                        ->where(['is_active' => 1, 'union_code' => $unionCode])->asArray()->all();
+        $partyList = $this->find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - ', party_type, ' - party') AS party_name"])
+                        ->where(['is_active' => 1, 'party_type' => 'sales_party', 'union_code' => $unionCode])->asArray()->all();
+        return ArrayHelper::map($partyList, 'party_master_code', 'party_name');
+    }
+
+    public function getMappedPartyList($unionCode) {
+        $partyList = $this->find()
+            ->alias('p')
+            ->select(["CONCAT(p.party_master_code, '#party#', p.party_type) AS party_master_code","CONCAT(party_name, ' - ', REPLACE(p.party_type, '_', ' '), ' - party') AS party_name"])
+            ->innerJoin('tbl_plant_conversion_vendor_mapping m','m.party_master_code = p.party_master_code')
+            ->where(['p.is_active' => 1,'p.party_type' => 'conversion_vendor','p.union_code' => $unionCode])
+            ->asArray()->all();
         return ArrayHelper::map($partyList, 'party_master_code', 'party_name');
     }
 

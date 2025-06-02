@@ -90,6 +90,7 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2">
                 <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
+                <?= Html::hiddenInput('partyType', 'bmcMilkDispatch', ['id' => 'partyType']); ?>
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,NULL,tankerMovement', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2 mt15 no_pointer_disabled" id="is-last-destination-container">
