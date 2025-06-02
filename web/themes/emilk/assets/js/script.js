@@ -250,5 +250,35 @@ var initDepdropMs;
             $('.field-' + this_id + ' .help-block').attr('title', $('.field-' + this_id + ' label').text() + ' is not valid').text($('.field-' + this_id + ' label').text() + ' is not valid');
         }
     });
+    
+    $('.check_password_strength').on("keyup", function () {
+        var this_id = $(this).attr('id');
+        var password = $(this).val();
+        var fieldContainer = $('.field-' + this_id);
+        var errorBlock = fieldContainer.find('.invalid-feedback');
+        var inputField = fieldContainer.find('input');
+        var label = fieldContainer.find('label').text();
+        var message = '';
+
+        if (password.length < 8) {
+            message = label + ' must be at least 8 characters long';
+        } else if (!/[a-z]/.test(password)) {
+            message = label + ' must contain at least one lowercase letter';
+        } else if (!/[A-Z]/.test(password)) {
+            message = label + ' must contain at least one uppercase letter';
+        } else if (!/\d/.test(password)) {
+            message = label + ' must contain at least one digit';
+        } else if (!/[\W_]/.test(password)) {
+            message = label + ' must contain at least one special character';
+        }
+
+        if (message) {
+            errorBlock.html(message).show();
+            inputField.removeClass('is-valid').addClass('is-invalid');
+        } else {
+            errorBlock.html('').hide();
+            inputField.removeClass('is-invalid').addClass('is-valid');
+        }
+    });
 })(jQuery);
 

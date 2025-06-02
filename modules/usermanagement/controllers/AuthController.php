@@ -9,7 +9,7 @@ use app\modules\usermanagement\models\User;
 use app\modules\usermanagement\models\forms\ChangeOwnPasswordForm;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
-use yii\widgets\ActiveForm;
+use app\components\ActiveForm;
 use app\modules\sms\models\TblAlertNotification;
 use app\models\IdentityMaster;
 use app\modules\sms\models\TblApiMaster;
@@ -20,7 +20,7 @@ use app\models\GeneralModel;
 class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController
 {
 
-    public $freeAccessActions = ['forget-password'];
+    public $freeAccessActions = ['forget-password', 'change-password'];
 
     public function actionLogin()
     {
@@ -58,7 +58,9 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
             $model->password = \Yii::$app->EIPLSecurity->UrlDecrypt($model->password, TRUE);
             $model->username = $identity->organization_code . '#' . $model->username;
             Yii::$app->session->set('login_enc_key', NULL);
-            if ($model->login()) {
+            if($model->validatePassword(true, $userCode)){
+                return $this->redirect(['change-password', 'userCode' => $userCode]);
+            } else if ($model->login()) {
                 return $this->redirect(['/site/dashboard']);
             } else {
                 $model->username = $username;
@@ -172,4 +174,34 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         }
         return $this->renderIsAjax('forget_password', ['model' => $model, 'sentOtp' => $sentOtp]);
     }
+
+    public function actionChangePassword($userCode = '') {
+        $this->layout = "@app/web/themes/emilk/layouts/guestLayout.php";
+        if (empty($userCode)) {
+            return $this->goHome();
+        }
+    
+        $user = User::findOne(['id' => $userCode, 'is_active' => 1]);
+
+        $model = new ChangeOwnPasswordForm(['user' => $user]);
+    
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+    
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate() && $model->changePassword()) {
+                return $this->render('changePassword', ['model' => $model, 'passwordChanged' => true]);
+            }
+            if (!$model->hasErrors()) {
+                Yii::$app->session->setFlash('success', ['type' => 'error','message' => 'Failed to change password. Please check your inputs.']);
+            }
+        } else {
+            Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => 'Your Password is Expired. Kindly update your password.']);
+        }
+    
+        return $this->render('changePassword', ['model' => $model, 'passwordChanged' => false]);
+    }
+
 }
