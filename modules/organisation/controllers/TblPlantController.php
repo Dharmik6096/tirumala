@@ -91,6 +91,7 @@ class TblPlantController extends \app\controllers\ChildController {
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $this->contactDetails->form_validation_type = 'plant-create';
+        $this->contactDetails->department = 'plant_incharge';
         $validate = 1;
 
         if ($this->model->load(Yii::$app->request->post())) {
