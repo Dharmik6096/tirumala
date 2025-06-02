@@ -112,6 +112,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $this->contactDetails->form_validation_type = 'bmc-create';
+        $this->contactDetails->department = 'bmc_operator';
         $validate = 1;
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
