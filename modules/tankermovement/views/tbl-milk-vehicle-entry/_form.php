@@ -38,7 +38,8 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'receipt_at'); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
+                <?= Html::hiddenInput('partyTypeDest', 'milkReceiptDest', ['id' => 'partyTypeDest']); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code,NULL,NULL,partyTypeDest', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2 ReceiptDatetime">
                 <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
@@ -47,12 +48,13 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'receipt_shift_code'); ?>
             </div>
             <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
+            <?= Html::hiddenInput('partyTypeSource', 'milkReceiptSource', ['id' => 'partyTypeSource']); ?>
             <?php if (!$tripMandateOnReceipt) { ?>
                 <div class="col-sm-1">
                     <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
                 </div>
                 <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code,NULL,tankerMovement', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code,NULL,tankerMovement,partyTypeSource', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
                 </div>
             <?php } ?>
             <div class="col-sm-2 tanker_no_hide"> 
@@ -71,7 +73,7 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
                 </div>
                 <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code,NULL,tankerMovement', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code,NULL,tankerMovement,partyTypeSource', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
                 </div>
             <?php } ?>
             <div class="col-sm-2">

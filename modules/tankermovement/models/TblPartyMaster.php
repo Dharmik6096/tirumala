@@ -136,9 +136,13 @@ class TblPartyMaster extends \app\models\ChildModel {
         ];
     }
 
-    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
+    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false, $partyType = '') {
         $query = $this->find()->select(['party_master_code', 'party_name'])
-                ->where(['is_active' => 1]);
+                ->where(['union_code' => $unionCode, 'is_active' => 1]);
+        if (!empty($partyType)) {
+            $partyTypeIn = ($partyType === 'bmcMilkDispatch' || $partyType === 'milkReceiptSource') ? ['conversion_vendor', 'sales_party'] : ($partyType === 'milkReceiptDest' ? ['sales_party'] : []);
+            !empty($partyTypeIn) && $query->andWhere(['party_type' => $partyTypeIn]);
+        }
         $value = $query->orderBy('party_name asc')->all();
         $value = ArrayHelper::map($value, 'party_master_code', function ($value) use ($concatCode) {
                     return $value->party_name . ($concatCode ? ' - ' . $value->party_master_code : '');
