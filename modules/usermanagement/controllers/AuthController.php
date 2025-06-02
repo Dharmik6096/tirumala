@@ -2,6 +2,8 @@
 
 namespace app\modules\usermanagement\controllers;
 
+use app\components\ActiveForm;
+use yii\web\Response;
 use Yii;
 use webvimark\modules\UserManagement\models\forms\LoginForm;
 use app\modules\organisation\models\TblUnions;
@@ -11,10 +13,11 @@ use app\modules\sms\models\TblApiMaster;
 use app\models\UserHistory;
 use app\modules\usermanagement\models\User;
 use app\modules\sms\models\TblAlertTemplate;
+use webvimark\modules\UserManagement\models\forms\ChangeOwnPasswordForm;
 
 class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController {
 
-    public $freeAccessActions = ['forget-password'];
+    public $freeAccessActions = ['forget-password', 'change-password'];
 
     public function actionLogin() {
         if (!Yii::$app->user->isGuest) {
@@ -35,8 +38,6 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         if (empty($identity)) {
             return $this->render('error');
         }
-//                if($identity->organization_type!='NATIONAL')
-//                    $model->scenario = 'non_national';
         if (Yii::$app->request->isAjax) {
             $model->username = $identity->organization_code . '#' . $model->username;
             if ($model->load(Yii::$app->request->post())) {
@@ -47,13 +48,46 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
 
         if ($model->load(Yii::$app->request->post())) {
             $model->username = $identity->organization_code . '#' . $model->username;
-            if ($model->login())
+            if($model->validatePassword(true, $userCode)){
+                return $this->redirect(['change-password', 'userCode' => $userCode]);
+            } else if ($model->login()) {
                 return $this->redirect(['/site/dashboard']);
-            else
+            } else {
                 $model->username = $_POST['LoginForm']['username'];
+            }
+                
         }
         Yii::$app->session->set('Login-sess', 'User');
         return $this->renderIsAjax($loginFile, compact('model'));
+    }
+
+    public function actionChangePassword($userCode = '') {
+        $this->layout = "@app/themes/pcdf/layouts/guestLayout.php";
+        if (empty($userCode)) {
+            return $this->goHome();
+        }
+    
+        $user = User::findOne(['id' => $userCode, 'is_active' => 1]);
+
+        $model = new ChangeOwnPasswordForm(['user' => $user]);
+    
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+    
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate() && $model->changePassword()) {
+                return $this->render('changePassword', ['model' => $model, 'passwordChanged' => true]);
+            }
+            if (!$model->hasErrors()) {
+                Yii::$app->session->setFlash('success', ['type' => 'error','message' => 'Failed to change password. Please check your inputs.']);
+            }
+        } else {
+            Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => 'Your Password is Expired. Kindly update your password.']);
+        }
+    
+        return $this->render('changePassword', ['model' => $model, 'passwordChanged' => false]);
     }
 
     public function actionForgetPassword() {
