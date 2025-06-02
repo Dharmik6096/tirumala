@@ -523,11 +523,18 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $vehicleTripDetails = $this->model->vehicleTripDetailCode ?? [];
 
         $sourceBmc = array_map(function($item) {
-            if (!empty($item->source_org_code) && !empty($item->source_org_type)) {
-                return ($item->source_org_type != 'bmc') ? $item->source_org_code . '#' . strtolower($item->source_org_type) : $item->source_org_code;
+            if (!empty($item->source_org_code) && !empty($item->source_org_type) && $item->is_virtual_location != 2) {
+                if($item->source_org_type == 'bmc'){
+                    return $item->source_org_code;
+                } else if($item->is_virtual_location == 1){
+                    return $item->source_org_code . '#' . strtolower($item->source_org_type) .'#conversion_vendor';
+                } else {
+                    return $item->source_org_code . '#' . strtolower($item->source_org_type);
+                }
             }
             return null;
         }, $vehicleTripDetails);
+
         $this->model->bmc_code = array_values($sourceBmc);
         $saveModel = [];
         $deleteModel = [];
@@ -659,6 +666,44 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $saveModel[] = $lastDetail;
                     }
 
+                    if(!empty($sloc_detail[2])){
+                        $mappedModel = new TblPlantConversionVendorMapping();
+                        $mappedPlant = $mappedModel->getMappedPlant($sloc_detail[0]);
+                        if(!empty($mappedPlant)){
+                            $virtul_trip_detail = new TblVehicleTripDetail();
+                            $virtul_trip_detail->is_virtual_location = 1;
+                            $virtul_trip_detail->source_org_code = $sloc_detail[0];
+                            $virtul_trip_detail->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
+                            $virtul_trip_detail->destination_code = $mappedPlant['plant_code'];
+                            $virtul_trip_detail->destination_type = 'plant';
+                            $virtul_trip_detail->originating_org_code = $this->model->union_code;
+                            $virtul_trip_detail->vehicle_trip_code = $this->model->vehicle_trip_code;
+                            $virtul_trip_detail->vehicle_code = $this->model->vehicle_code;
+                            $virtul_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                            $virtul_trip_detail->trip_code = $this->model->trip_code;
+                            $virtul_trip_detail->vehicle_trip_detail_code = $virtul_trip_detail->vehicle_trip_code . 'T' . $maxNumber;
+                            $virtul_trip_detail->sequence_no = $sequence_no;
+                            $virtul_trip_detail->scenario = 'on_crete_trip';
+                            $saveModel[] = $virtul_trip_detail;
+                            if (!$virtul_trip_detail->validate()) {
+                                $validate = FALSE;
+                                $errors = $virtul_trip_detail->getErrors();
+                                if (isset($errors['destination_code'])) {
+                                    $this->model->addError('bmc_code', $errors['destination_code'][0]);
+                                }
+                            }
+                            $maxNumber++;
+                            $sequence_no++;
+
+                            $sloc_detail[0] = $mappedPlant->plant_code;
+                            $sloc_detail[1] = 'plant';
+                            $trip_detail->is_virtual_location = 2;
+                        } else {
+                            $validate = FALSE;
+                            $this->model->addError('bmc_code', 'Conversion party not mapped with plant');
+                        }
+                    }
+
                     $trip_detail->source_org_code = $sloc_detail[0];
                     $trip_detail->source_org_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
 
@@ -669,7 +714,6 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $trip_detail->trip_code = $this->model->trip_code;
                     $trip_detail->vehicle_trip_detail_code = $trip_detail->vehicle_trip_code . 'T' . $maxNumber;
                     $trip_detail->sequence_no = $sequence_no;
-                    $sequence_no++;
                     $trip_detail->scenario = 'on_crete_trip';
                     $saveModel[] = $trip_detail;
                     if (!$trip_detail->validate()) {
@@ -680,6 +724,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         }
                     }
                     $maxNumber++;
+                    $sequence_no++;
                 }
                 if ($validate) {
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
