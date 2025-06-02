@@ -25,6 +25,22 @@ $attribute = [
     ['attribute' => 'user_code', 'label' => Yii::t('app', 'User'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
         }, 'visible' => true, 'filter' => true],
+    ['attribute' => 'user_code',
+        'label' => Yii::t('app', 'Login Type'),
+        'filter' => FALSE,
+        'visible' => true,
+        'value' => function ($model) {
+            $login_type = Yii::$app->general->getforeignkey($model->userCode, 'login_type');
+            return isset($login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$login_type] : '') : '';
+        }],
+    ['attribute' => 'user_code',
+    'label' => Yii::t('app', 'Department'),
+    'value' => function($model) {
+        return Yii::$app->general->getmultiforeignkey($model->userCode, ['departmentCode'], 'department');
+    }, 'visible' => true, 'filter' => false],
+    ['attribute' => 'user_code', 'label' => Yii::t('app', 'Employee Id'), 'value' => function($model) {
+        return Yii::$app->general->getforeignkey($model->userCode, 'employee_id');
+    }, 'visible' => true, 'filter' => false],
     ['attribute' => 'attendance_date', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->attendance_date);
         }, 'filter' => false],
