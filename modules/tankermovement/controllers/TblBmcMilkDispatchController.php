@@ -104,6 +104,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->trip_code = $model->trip_code;
             $txn_model->vehicle_code = $model->vehicle_code;
             $txn_model->scenario = 'create';
+            $validation = TRUE;
             if ($txn_model->validate()) {
                 $saveModel = [];
                 $deleteModel = [];
@@ -125,7 +126,11 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
-                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'bmc', $model->bmc_code, $model->destination_type, $model->destination_code, $model->is_last_destination);
+                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'bmc', $model->bmc_code, $model->destination_type, $model->destination_code, $model->is_last_destination, $validation);
+                        if(!$validation){
+                            $model->bmc_milk_dispatch_code = '';
+                            $model->addError('destination_code', "Conversion party not mapped with plant");
+                        }
                     }
                     $saveModel[] = $model;
                 }
@@ -185,22 +190,24 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
-                if ($transaction != 'customRedirect' && $new_rec) {
-                    $model->bmc_milk_dispatch_code = '';
-                } else if ($transaction == 'customRedirect') {
-                    if ($new_rec) {
-                        $response = Yii::$app->general->getColumnName($model->source_org_type);
-                        $remarks = $model->remarks;
-                        if (!empty($response['rel'])) {
-                            $sourceData = $model->{$response['rel'] . 'Source'};
-                            $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                if($validation){
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
+                    if ($transaction != 'customRedirect' && $new_rec) {
+                        $model->bmc_milk_dispatch_code = '';
+                    } else if ($transaction == 'customRedirect') {
+                        if ($new_rec) {
+                            $response = Yii::$app->general->getColumnName($model->source_org_type);
+                            $remarks = $model->remarks;
+                            if (!empty($response['rel'])) {
+                                $sourceData = $model->{$response['rel'] . 'Source'};
+                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                            }
+                            $tripModel->trip_sub_status = 'bmc_dispatch';
+                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
                         }
-                        $tripModel->trip_sub_status = 'bmc_dispatch';
-                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                        return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
                     }
-                    return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
-                }
+                } 
             }
         }
         return $this->render('create', [
@@ -532,6 +539,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
             $txn_model->vehicle_code = $model->vehicle_code;
             $txn_model->scenario = 'createPlantDispatch';
+            $validation = TRUE;
             if ($txn_model->validate()) {
                 $saveModel = [];
                 $deleteModel = [];
@@ -552,7 +560,11 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
-                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'plant', $model->plant_code, $model->destination_type, $model->destination_code, $model->is_last_destination);
+                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'plant', $model->plant_code, $model->destination_type, $model->destination_code, $model->is_last_destination, $validation);
+                        if(!$validation){
+                            $model->bmc_milk_dispatch_code = '';
+                            $model->addError('destination_code', "Conversion party not mapped with plant");
+                        }
                     }
                     $tripModel->scenario = 'closetrip';
                     $saveModel[] = $model;
@@ -587,21 +599,23 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['PLANT Milk Dispatch', 'create']);
-                if ($transaction != 'customRedirect' && $new_rec) {
-                    $model->bmc_milk_dispatch_code = '';
-                } else if ($transaction == 'customRedirect') {
-                    if ($new_rec) {
-                        $response = Yii::$app->general->getColumnName($model->source_org_type);
-                        $remarks = $model->remarks;
-                        if (!empty($response['rel'])) {
-                            $sourceData = $model->{$response['rel'] . 'Source'};
-                            $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                if($validation) {
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['PLANT Milk Dispatch', 'create']);
+                    if ($transaction != 'customRedirect' && $new_rec) {
+                        $model->bmc_milk_dispatch_code = '';
+                    } else if ($transaction == 'customRedirect') {
+                        if ($new_rec) {
+                            $response = Yii::$app->general->getColumnName($model->source_org_type);
+                            $remarks = $model->remarks;
+                            if (!empty($response['rel'])) {
+                                $sourceData = $model->{$response['rel'] . 'Source'};
+                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                            }
+                            $tripModel->trip_sub_status = 'plant_dispatch';
+                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
                         }
-                        $tripModel->trip_sub_status = 'plant_dispatch';
-                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                        return $this->redirect(['create-plant-dispatch', 'id' => $model->bmc_milk_dispatch_code]);
                     }
-                    return $this->redirect(['create-plant-dispatch', 'id' => $model->bmc_milk_dispatch_code]);
                 }
             }
         }
