@@ -33,6 +33,7 @@ class ChangeOwnPasswordForm extends Model
 	{
 		return [
 			[['password', 'repeat_password'], 'required'],
+			[['password'], 'validatePasswordStrength'],
 			[['password', 'repeat_password', 'current_password'], 'string', 'max'=>255],
 			[['password', 'repeat_password', 'current_password'], 'trim'],
 			['password', 'match', 'pattern' => Yii::$app->getModule('user-management')->passwordRegexp],
@@ -84,8 +85,25 @@ class ChangeOwnPasswordForm extends Model
 			return false;
 		}
 
+		if ($this->user->validatePassword($this->password)) {
+			$this->addError('password', 'New password cannot be the same as the old password.');
+			return false;
+		}
+
+		if ($this->password === preg_replace('/^01#/', '', $this->user->username)) {
+			$this->addError('password', 'New password cannot be the same as the username.');
+			return false;
+		}
+
 		$this->user->password = $this->password;
+		$this->user->last_password_updated_at = date('Y-m-d H:i:s');
 		$this->user->removeConfirmationToken();
 		return $this->user->save();
 	}
+
+	public function validatePasswordStrength($attribute, $params) {
+        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
+            $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
+        }
+    }
 }
