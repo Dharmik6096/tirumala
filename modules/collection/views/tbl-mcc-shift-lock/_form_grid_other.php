@@ -8,7 +8,6 @@ use yii\web\View;
 use app\modules\collection\models\TblMccShiftLock;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use app\modules\usermanagement\models\User;
-use webvimark\modules\UserManagement\models\User;
 
 $client_code = \Yii::$app->session->get('eiplCode');
 $visible = $client_code == 'NIFPL' ? TRUE : FALSE;
