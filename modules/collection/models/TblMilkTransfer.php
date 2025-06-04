@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_milk_transfer".
@@ -58,13 +59,8 @@ class TblMilkTransfer extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['source_type', 'destination_type'], 'default', 'value' => 'BMC'],
-                [['milk_transfer_code'], 'safe'],
-                [['milk_transfer_code', 'from_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'source_type', 'destination_type'], 'required', 'except' => 'androidsync'],
-                [['to_date', 'to_shift'], 'required', 'when' => function ($model) {
-                    return $model->transfer_type == 0;
-                }, 'whenClient' => "function (attribute, value) {
-              return $('#tblmilktransfer-transfer_type').val() == '0';
-          }", 'except' => 'androidsync'],
+                [['transaction_datetime', 'shift_code'], 'safe'],
+                [['from_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'source_type', 'destination_type', 'transaction_datetime', 'shift_code', 'to_date', 'to_shift'], 'required', 'except' => 'androidsync'],
                 [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
                 [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
                 [['fat', 'snf', 'qty', 'temp'], 'safe'],
@@ -115,6 +111,8 @@ class TblMilkTransfer extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'source_type' => Yii::t('app', 'Source Type'),
             'destination_type' => Yii::t('app', 'Destination Type'),
+            'transaction_datetime' => Yii::t('app', 'Transaction Date'),
+            'shift_code' => Yii::t('app', 'Shift'),
         ];
     }
 
@@ -162,12 +160,16 @@ class TblMilkTransfer extends \app\models\ChildModel {
         return $this->hasOne(TblShift::className(), ['id' => 'to_shift']);
     }
 
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
         $code = $this->transfer_type == 1 ? $this->destination_code : $this->source_code;
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $code, '', '');
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = ((isset($this->operation) && $this->operation == true) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $this);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {

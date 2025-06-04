@@ -54,7 +54,7 @@ class TblMilkTransferHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['milk_transfer_code', 'source_type', 'destination_type'], 'safe'],
+                [['milk_transfer_code', 'source_type', 'destination_type', 'transaction_datetime', 'shift_code'], 'safe'],
                 [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
                 [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
                 [['fat', 'snf', 'qty', 'temp'], 'safe'],
@@ -102,6 +102,8 @@ class TblMilkTransferHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'transaction_datetime' => Yii::t('app', 'Transaction Date'),
+            'shift_code' => Yii::t('app', 'Shift'),
         ];
     }
 
