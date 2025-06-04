@@ -151,30 +151,6 @@ return [
                 'valueColOptions' => ['style' => 'width:30%'],
             ],
             [
-                'attribute' => 'approved_at',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'approved_by',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
-                'attribute' => 'approval_status',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'approval_remarks',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
                 'attribute' => 'status',
                 'valueColOptions' => ['style' => 'width:30%'],
             ],
