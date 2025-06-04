@@ -59,13 +59,8 @@ class TblMilkTransfer extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['source_type', 'destination_type'], 'default', 'value' => 'BMC'],
-                [['milk_transfer_code', 'transaction_datetime', 'shift_code'], 'safe'],
-                [['milk_transfer_code', 'from_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'source_type', 'destination_type', 'transaction_datetime', 'shift_code'], 'required', 'except' => 'androidsync'],
-                [['to_date', 'to_shift'], 'required', 'when' => function ($model) {
-                        return $model->transfer_type == 0;
-                    }, 'whenClient' => "function (attribute, value) {
-                    return $('#tblmilktransfer-transfer_type').val() == '0';
-                }", 'except' => 'androidsync'],
+                [['transaction_datetime', 'shift_code'], 'safe'],
+                [['from_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'source_type', 'destination_type', 'transaction_datetime', 'shift_code', 'to_date', 'to_shift'], 'required', 'except' => 'androidsync'],
                 [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
                 [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
                 [['fat', 'snf', 'qty', 'temp'], 'safe'],
