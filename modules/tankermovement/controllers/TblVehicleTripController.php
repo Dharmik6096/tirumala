@@ -674,6 +674,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                             $historyModel = new TblBmcMilkDispatchHistory();
                             Yii::$app->operation->history($bmcMilkDispatchData, $historyModel, UPDATE);
                             $saveModel[] = $historyModel;
+                            $bmcMilkDispatchData->scenario = 'tripUpdate';
                             $bmcMilkDispatchData->destination_code = $sloc_detail[0];
                             $bmcMilkDispatchData->destination_type = !empty($sloc_detail[1]) ? $sloc_detail[1] : 'bmc';
                             $bmcMilkDispatchData->is_last_destination = $lastDetail->is_last_destination;

@@ -331,7 +331,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
     }
 
     public function getTakenTripDetailCode() {
-        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null]);
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null])->orderBy('sequence_no');
     }
 
     public function addTripRoute(&$saveModel, &$deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination = 0, &$validation) {

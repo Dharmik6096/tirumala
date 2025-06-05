@@ -56,14 +56,19 @@ $form = ActiveForm::begin([
             <?php
             if(!empty($model->takenTripDetailCode)) {
                 foreach($model->takenTripDetailCode as $key => $value) { 
-                    $name = '';
-                    $response = Yii::$app->general->getColumnName($value->source_org_type);
-                    if (!empty($response['rel'])) {
-                        $sourceData = $value->{$response['rel'] . 'Source'};
-                        $name = $sourceData->{$response['name']} . ' - '. $sourceData->{$response['ref_code']};
-                    } ?>
-                    <p><?php echo $name . ' - ' . strtoupper($value->source_org_type); ?></p>
-                <?php
+                    if($value->is_virtual_location != 2){
+                        $name = '';
+                        $response = Yii::$app->general->getColumnName($value->source_org_type);
+                        if (!empty($response['rel'])) {
+                            $sourceData = $value->{$response['rel'] . 'Source'};
+                            $name = $sourceData->{$response['name']} . ' - '. $sourceData->{$response['ref_code']};
+                            if($value->is_virtual_location == 1){
+                                $name = $sourceData->{$response['name']} . ' - conversion vendor '. $sourceData->{$response['ref_code']};
+                            }
+                        } ?>
+                        <p><?php echo $name . ' - ' . strtoupper($value->source_org_type); ?></p>
+                    <?php
+                    }
                 }
             }
             ?>
