@@ -59,23 +59,22 @@ class TblBmcDispatchFlushStockSearch extends TblBmcDispatchFlushStock {
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
         $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
         $from_date .= ' ' . $from_shift;
-        $query->andFilterWhere(['>=', 'transaction_date', $from_date]);
+        $query->andFilterWhere(['>=', 'tbl_bmc_dispatch_flush_stock.transaction_date', $from_date]);
 
         $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
         $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
         $to_date .= ' ' . $to_shift;
-        $query->andFilterWhere(['<=', 'transaction_date', $to_date]);
+        $query->andFilterWhere(['<=', 'tbl_bmc_dispatch_flush_stock.transaction_date', $to_date]);
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'bmc_dispatch_flush_stock_code' => $this->bmc_dispatch_flush_stock_code,
-            'milk_type_code' => $this->milk_type_code,
-            'milk_quality_type_code' => $this->milk_quality_type_code,
+            'tbl_bmc_dispatch_flush_stock.milk_type_code' => $this->milk_type_code,
+            'tbl_bmc_dispatch_flush_stock.milk_quality_type_code' => $this->milk_quality_type_code,
         ]);
 
-        $query->andFilterWhere(['like', 'remarks', $this->remarks])
-                ->andFilterWhere(['like', 'bmc_silos_info_code', $this->bmc_silos_info_code])
-                ->andFilterWhere(['like', 'qty', $this->qty])
+        $query->andFilterWhere(['like', 'tbl_bmc_dispatch_flush_stock.remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_flush_stock.bmc_silos_info_code', $this->bmc_silos_info_code])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_flush_stock.qty', $this->qty])
                 ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
 
 

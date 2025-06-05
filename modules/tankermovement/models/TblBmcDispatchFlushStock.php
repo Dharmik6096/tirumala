@@ -56,7 +56,6 @@ class TblBmcDispatchFlushStock extends \app\models\ChildModel {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'qty', 'shift_code', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'originating_type', 'transaction_date', 'created_at', 'updated_at', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['create', 'update', 'importCsv']],
-                [['bmc_code'], 'unique', 'targetAttribute' => ['bmc_code', 'transaction_date', 'shift_code', 'bmc_silos_info_code'], 'message' => Yii::t('app/validation', 'BMC Dispatch Flush Stock has been already taken.'), 'on' => ['create', 'update', 'importCsv']],
                 [['transaction_date'], 'convertDateDot', 'on' => ['importCsv']],
                 [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
                 [['transaction_date'], 'convertDate', 'on' => ['importCsv']],
@@ -71,6 +70,7 @@ class TblBmcDispatchFlushStock extends \app\models\ChildModel {
                 [['bmc_code'], 'pastDateValidate', 'on' => ['importCsv']],
                 [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
                 [['bmc_silos_info_code'], 'validateSilo', 'skipOnError' => true, 'on' => ['importCsv']],
+                [['bmc_code'], 'unique', 'targetAttribute' => ['bmc_code', 'transaction_date', 'shift_code', 'bmc_silos_info_code'], 'message' => Yii::t('app/validation', 'BMC Dispatch Flush Stock has been already taken.'), 'on' => ['create', 'update', 'importCsv']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'qty', 'shift_code', 'bmc_silos_info_code', 'transaction_date', 'milk_type_code', 'milk_quality_type_code'], 'required', 'on' => ['create', 'update', 'importCsv'], 'except' => ['androidsync']],
                 [['milk_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
@@ -164,6 +164,9 @@ class TblBmcDispatchFlushStock extends \app\models\ChildModel {
     public function importData($attribute, $params) {
         if (empty($this->getErrors())) {
             $this->transaction_date = $this->transaction_date . ' ' . \Yii::$app->general->getshift($this->shift_code);
+        }
+        if ($this->isNewRecord) {
+            $this->x_col1 = Yii::$app->general->getUuid();
         }
     }
 
