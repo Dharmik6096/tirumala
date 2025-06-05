@@ -178,12 +178,12 @@ class TblBmcDispatchFlushStock extends \app\models\ChildModel {
 
     public function validatesilo($attribute, $params) {
         $bmc_silo = TblBmcSilosInfo::find()->alias('s')->select('s.bmc_silos_info_code')
-                        ->innerJoin('tbl_bmc_chiller_info as c', 'c.bmc_code = s.module_code')
-                        ->where(['c.is_active' => 1, 's.is_active' => 1, 's.module_name' => 'BMC', 's.module_code' => $this->bmc_code,
-                        ])->one();
-
+                ->innerJoin('tbl_bmc_chiller_info as c', 'c.bmc_code = s.module_code')
+                ->where(['c.is_active' => 1, 's.is_active' => 1, 's.module_name' => 'BMC', 's.module_code' => $this->bmc_code])
+                ->andWhere(['or', ['c.sap_vendor_code' => $this->bmc_silos_info_code], ['s.bmc_silos_info_code' => $this->bmc_silos_info_code]])
+                ->one();
         if (empty($bmc_silo)) {
-            $this->addError($attribute, Yii::t('app/validation', 'Silo No. is invalid'));
+            $this->addError($attribute, Yii::t('app/validation', 'Silo No. is invalid.'));
             return false;
         } else {
             $this->bmc_silos_info_code = $bmc_silo->bmc_silos_info_code;
