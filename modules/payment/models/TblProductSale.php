@@ -136,6 +136,15 @@ class TblProductSale extends \app\models\ChildModel {
                 [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['invoice_date'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        if (strtoupper($this->customer_type) == 'MEMBER') {
+                            Yii::$app->general->paymentCycleLock($this, 'invoice_date', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member', 'sync_lock_member']);
+                        } else if (strtoupper($this->customer_type) != 'PARTY') {
+                            Yii::$app->general->paymentCycleLock($this, 'invoice_date', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc', 'sync_lock_bmc']);
+                        }
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync']],
                 [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
                 [['invoice_date'], 'pastDateValidate', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport', 'androidsync', 'saleProductOnDispatch']],
                 [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
@@ -316,7 +325,7 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function validatePaymentCycle($attribute, $params) {
-        if (empty($this->getErrors())) {
+        if (empty($this->getErrors()) && strtoupper($this->customer_type) != 'PARTY') {
             if (!empty($this->invoice_date) && $this->payment_mode == 1) {
                 $model = new TblPaymentCycleApplicability();
                 $model->applicable_type = strtolower($this->customer_type) == 'member' ? 'DCS' : (strtolower($this->customer_type) == 'party' ? 'BMC' : $this->customer_type);
