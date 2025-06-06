@@ -85,6 +85,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_sales_office'); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('party_type', $model, $form, 'form-group', TRUE, false, 'party_type', false); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">
         <div class="form-group">

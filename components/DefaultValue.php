@@ -24,6 +24,10 @@ class DefaultValue extends Component {
                 'TblDcs' => [
                 // Common defaults
                 ],
+                'TblBmcDispatchFlushStock' => [
+                    'milk_type_code' => 3,
+                    'milk_quality_type_code' => 1,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [
@@ -34,11 +38,11 @@ class DefaultValue extends Component {
             ],
             'DODLA' => [
                 'TblVehicleMaster' => [
-                    'billing_method'=> 'fix_rent_daily',
-                    'vehicle_use_type'=> 1,
-                    'fuel_type_code'=> 2,
-                    'flag_wef_date'=> date('Y-m-d'),
-                    'billing_qty_flag'=> 1,
+                    'billing_method' => 'fix_rent_daily',
+                    'vehicle_use_type' => 1,
+                    'fuel_type_code' => 2,
+                    'flag_wef_date' => date('Y-m-d'),
+                    'billing_qty_flag' => 1,
                 ],
             ],
         ];

@@ -19,7 +19,7 @@ class TblMilkTransferSearch extends TblMilkTransfer {
      */
     public function rules() {
         return [
-                [['milk_transfer_code', 'transaction_id', 'from_date', 'to_date', 'union_code', 'source_code', 'destination_code', 'vehicle_no', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'transfer_types'], 'safe'],
+                [['milk_transfer_code', 'transaction_id', 'from_date', 'to_date', 'union_code', 'source_code', 'destination_code', 'vehicle_no', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'transfer_types', 'transaction_datetime', 'shift_code'], 'safe'],
                 [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'integer'],
                 [['fat', 'snf', 'qty', 'temp'], 'number'],
                 [['transfer_types'], 'required', 'on' => ['indexSearch']],

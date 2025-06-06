@@ -95,6 +95,9 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'description')->textarea() ?>
             </div>
         </div>
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'is_virtual_plant', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
         <?php if ($type == 'create') { ?>
             <div class="clearfix"></div>
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">

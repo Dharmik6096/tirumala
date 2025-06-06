@@ -79,8 +79,8 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-plant_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
                 </div>
             <?php } ?>
-            <div id="addTripButtonDiv" class="col-sm-4 addTripButtonDiv">
-                <button id="addTripButton" class="btn btn-primary">Generate Trip</button>
+            <div id="addTripButtonDiv" class="col-sm-2 addTripButtonDiv">
+                <button id="addTripButton" class="btn btn-primary mb0">Generate Trip</button>
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'vehicle_in_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
@@ -90,10 +90,14 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2">
                 <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
+                <?= Html::hiddenInput('partyType', 'bmcMilkDispatch', ['id' => 'partyType']); ?>
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,NULL,tankerMovement', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
-            <div class="col-sm-2 mt15" id="is-last-destination-container">
+            <div class="col-sm-2 mt15 no_pointer_disabled" id="is-last-destination-container">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_last_destination'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'tested_by')->textInput() ?>
             </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
@@ -112,6 +116,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-1">
             <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+        </div>
+        <div class="col-sm-1">
+            <?= $form->field($txn_model, 'shift_of_milk')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
@@ -137,10 +144,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'density')->textInput() ?>
         </div>
+        <div class="clearfix"></div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'lactose')->textInput() ?>
         </div>
-        <div class="clearfix"></div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'freezing_point')->textInput() ?>
         </div>
@@ -165,7 +172,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
-        <div class="clearfix"></div>
+        <!-- <div class="clearfix"></div> -->
         <div id="transactions-from">
 
         </div>
@@ -316,6 +323,15 @@ $(document).ready(function(){
                                 });
                             } else if (obj.data.is_auto_trip == 1) {
                                 $('#is-last-destination-container').show();
+                                $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
+                                    var destType = $(this).val().toUpperCase();
+                                    var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');
+                                    if (destType === 'PLANT' || destType === 'PARTY') {
+                                        isCheckbox.prop('checked', true);
+                                    } else {
+                                        isCheckbox.prop('checked', false);
+                                    }
+                                });
                             } else {
                                 $('#is-last-destination-container').hide();
                             }

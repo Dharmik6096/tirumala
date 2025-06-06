@@ -69,6 +69,19 @@ $attribute = [
         ['attribute' => 'to_shift', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->toShiftCode, 'shift');
         }, 'vAlign' => 'middle', 'filter' => false],
+        [
+        'attribute' => 'transaction_datetime',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->transaction_datetime);
+        }],
+        ['attribute' => 'shift_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
+        }, 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'transfer_type',
 //        'filter' => Yii::$app->dropdown->dropdownfilterStatic('transfer_type', $searchModel, 'transfer_type'),
         'value' => function($model) {

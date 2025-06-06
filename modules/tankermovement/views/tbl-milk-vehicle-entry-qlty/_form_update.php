@@ -58,6 +58,12 @@ $form = ActiveForm::begin([
     <div class="col-sm-1 number-validate">
         <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'tested_by')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'verified_by')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+    </div>
     <?php
     $index = 1;
     $cnt = 1;

@@ -2134,6 +2134,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['VEHICLE' => Yii::t('app', 'VEHICLE'), 'EMPLOYEE' => Yii::t('app', 'EMPLOYEE'), 'CHILLER' => Yii::t('app', 'CHILLER')],
             ],
+            'party_type' => [
+                'name' => 'party_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['conversion_vendor' => Yii::t('app', 'conversion_vendor'), 'sales_party' => Yii::t('app', 'sales_party'), 'sales_office' => Yii::t('app', 'sales_office')],
+            ],
         ];
         return $records[$l];
     }

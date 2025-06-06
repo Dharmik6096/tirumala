@@ -30,7 +30,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $config = new TblConfig();
         $config->config_for = 'PLANT';
-        $config->process_name = 'PLANT_RECEIPT';
+        $config->process_name = 'PLANT_QUALITY_RECEIPT';
         $config->config_type = 'CONTROL';
         $config_list = $config->getControlConfigList();
         return $this->render('index', [
@@ -69,7 +69,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $trip_model = $model->getPlant($trip_code);
         $config = new TblConfig();
         $config->config_for = 'PLANT';
-        $config->process_name = 'PLANT_RECEIPT';
+        $config->process_name = 'PLANT_QUALITY_RECEIPT';
         $config->config_type = 'CONTROL';
         $config_mapping = new TblConfigTxnResult();
         $config_list = [];
@@ -115,7 +115,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
                 $config_model = new TblConfigTxnResult();
                 $config_model->attributes = $milkVehicleEntryQltyData->attributes;
                 $config_model->attributes = $data;
-                $config_model->config_for = 'PLANT_RECEIPT';
+                $config_model->config_for = 'PLANT_QUALITY_RECEIPT';
                 $config_model->ref_table = 'tbl_milk_vehicle_entry_qlty';
                 $config_model->ref_code = $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code;
                 $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
@@ -126,7 +126,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $historyModel = new TblMilkVehicleEntryQltyHistory();
             Yii::$app->operation->history($milkVehicleEntryQltyData, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
-            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'] as $attr) {
+            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'tested_by', 'verified_by'] as $attr) {
                 $milkVehicleEntryQltyData->$attr = $model->$attr;
             }
             $milkVehicleEntryQltyData->status = 'done';
@@ -196,7 +196,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $saveModel[] = $vehicleTripData;
         }
 
-        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
         foreach ($configTxnData as $key => $id) {
             $configTxnHistoryModel = new TblConfigTxnResultHistory();
             Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);
@@ -228,14 +228,14 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $config = new TblConfig();
         $config->config_for = 'PLANT';
-        $config->process_name = 'PLANT_RECEIPT';
+        $config->process_name = 'PLANT_QUALITY_RECEIPT';
         $config->config_type = 'CONTROL';
         $config_list = [];
         if ($model && !empty($model->plant_code)) {
             $config_list = $config->getOrgConfigList($config->config_for, $model->plant_code);
         }
         $config_mapping = new TblConfigTxnResult();
-        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
+        $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
 
         return $this->render('update', [
                     'model' => $model,
@@ -257,7 +257,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $deleteModel = [];
             $milkVehicleEntryQltyData = $this->findModel($model->milk_vehicle_entry_qlty_code);
 
-            $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $model->milk_vehicle_entry_qlty_code, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
+            $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $model->milk_vehicle_entry_qlty_code, 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
             foreach ($configTxnData as $key => $data) {
                 $configTxnHistoryModel = new TblConfigTxnResultHistory();
                 Yii::$app->operation->history($data, $configTxnHistoryModel, UPDATE);
@@ -271,7 +271,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
                 $config_model = new TblConfigTxnResult();
                 $config_model->attributes = $milkVehicleEntryQltyData->attributes;
                 $config_model->attributes = $data;
-                $config_model->config_for = 'PLANT_RECEIPT';
+                $config_model->config_for = 'PLANT_QUALITY_RECEIPT';
                 $config_model->ref_table = 'tbl_milk_vehicle_entry_qlty';
                 $config_model->ref_code = $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code;
                 $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);

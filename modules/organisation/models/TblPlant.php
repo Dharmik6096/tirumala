@@ -11,6 +11,7 @@ use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
 use yii\base\UserException;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 /**
  * This is the model class for table "tbl_plant".
@@ -67,7 +68,7 @@ class TblPlant extends \app\models\ChildModel {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
                 [['mobile_no'], 'string', 'max' => 10],
-                [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'sap_vendor_code'], 'safe'],
+                [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'sap_vendor_code', 'is_virtual_plant'], 'safe'],
                 [['capacity'], 'integer'],
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
 //            [['plant_code'], 'integer', 'min' => 1],
@@ -109,6 +110,7 @@ class TblPlant extends \app\models\ChildModel {
             'valid_from' => Yii::t('app', 'Valid From'),
             'plant_code_ex' => Yii::t('app', 'Plant Code Ex'),
             'ref_code' => Yii::t('app', 'Code'),
+            'is_virtual_plant' => Yii::t('app', 'is Virtual Plant?'),
         ];
     }
 
@@ -265,8 +267,18 @@ class TblPlant extends \app\models\ChildModel {
 
     public function getPlantData($plant_code) {
         $partyList = $this->find()->select(["CONCAT(plant_code, '#plant') AS plant_code, CONCAT(name, ' - ', ref_code, ' - PLANT') AS name"])
-        ->where(['or', ['plant_code' => $plant_code], ['ref_code' => $plant_code]])->asArray()->all();
+                        ->where(['or', ['plant_code' => $plant_code], ['ref_code' => $plant_code]])->asArray()->all();
         return ArrayHelper::map($partyList, 'plant_code', 'name');
+    }
+
+    public function getParty() {
+        return TblPartyMaster::find()->alias('p')->select(['p.party_master_code', 'p.party_name'])
+                        ->leftJoin('tbl_plant_conversion_vendor_mapping m', 'p.party_master_code = m.party_master_code')
+                        ->where(['p.party_type' => 'conversion_vendor'])
+                        ->andWhere(['m.party_master_code' => null])
+                        ->orderBy(['p.party_name' => SORT_ASC])
+                        ->asArray()
+                        ->all();
     }
 
 }

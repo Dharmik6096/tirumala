@@ -10,11 +10,11 @@ use yii\helpers\Url;
     <?php
     $attribute = [
         ['attribute' => 'milk_type_code', 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
-        }, 'vAlign' => 'middle'],
+                return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
+            }, 'vAlign' => 'middle'],
         ['attribute' => 'milk_quality_type_code', 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
-        }, 'vAlign' => 'middle'],
+                return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
+            }, 'vAlign' => 'middle'],
         [
             'attribute' => 'bmc_silos_info_code',
             'value' => function ($model) {
@@ -23,11 +23,12 @@ use yii\helpers\Url;
             'visible' => $isVisible
         ],
         'chamber_no',
+        'shift_of_milk',
         'dispatch_qty',
         ['attribute' => 'qty_diff', 'visible' => $isVisible],
         ['attribute' => 'qty_diff_type_code', 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->qtyDiffType, 'qty_diff_type_name');
-        }, 'vAlign' => 'middle'],
+                return Yii::$app->general->getforeignkey($model->qtyDiffType, 'qty_diff_type_name');
+            }, 'vAlign' => 'middle'],
         ['attribute' => 'balance_qty', 'visible' => $isVisible],
         'fat',
         'snf',

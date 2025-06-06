@@ -535,6 +535,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
     public function actionGetPlantBmc()
     {
         $plantList = [];
+        $mappedPartyList = [];
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
             $model = new TblDcsBmc();
@@ -545,14 +546,16 @@ class TblDcsBmcController extends \app\controllers\ChildController
             $union_code = $_POST['union_code'];
             $model = new TblPartyMaster();
             $partyList = $model->getUnionPartyList($union_code);
+            $mappedPartyList = $model->getMappedPartyList($union_code);
         }
-        $result = $plantList + $partyList;
+        $result = $plantList + $partyList + $mappedPartyList;
         return Json::encode(['status' => 'success', 'data' => $result]);
     }
 
     public function actionGetPlantBmcWithParty()
     {
         $plantList = [];
+        $mappedPartyList = [];
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
             $model = new TblPlant();
@@ -562,15 +565,16 @@ class TblDcsBmcController extends \app\controllers\ChildController
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
             $model = new TblDcsBmc();
-            $bmcList = $model->getBMCList([], 'TRUE', false, false, [], $plant, 'BMC');
+            $bmcList = $model->getBMCList([], 'FALSE', false, false, [], $plant, 'BMC');
         }
         $partyList = [];
         if (!empty($_POST['action_type']) && $_POST['action_type'] == 'party' && !empty($_POST['union_code'])) {
             $union_code = $_POST['union_code'];
             $model = new TblPartyMaster();
             $partyList = $model->getUnionPartyList($union_code);
+            $mappedPartyList = $model->getMappedPartyList($union_code);
         }
-        $result = $plantList + $bmcList + $partyList;
+        $result = $plantList + $bmcList + $partyList + $mappedPartyList;
         return Json::encode(['status' => 'success', 'data' => $result]);
     }
 

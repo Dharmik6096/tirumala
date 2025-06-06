@@ -49,10 +49,11 @@ $form = ActiveForm::begin([
           <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_auto_trip'); ?>
     </div>
     <div class="col-sm-6">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true, '', false, false); ?>
+        <?php echo Html::hiddenInput('rls', 'FALSE', ['id' => 'tblvehicletrip-rls']); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-rls', 'plant_code', Yii::t('app', 'Plant'), true, '', false, false); ?>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-12 megaSizeDualList">
+    <div class="col-sm-12 megaSizeDualList customDaulBoxCss">
         <?php
         echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12'], 'labelOptions' => ['label' => Yii::t('app', 'PLANT/BMC*')]])
                 ->widget(DualListbox::className(), [
@@ -117,29 +118,37 @@ $('#tblvehicletrip-plant_code').on('change',function(){
                     options += '<option value=\"' + uniquePlantValue + '\">' + plantText + ' - PLANT</option>';
                 });          
                 $.each(obj1.data, function(index, value) {
-                    if(jQuery.inArray(index,selarray) == -1){   
+                    // if(jQuery.inArray(index,selarray) == -1){   
                         options += '<option value=\"'+index+'\">'+value+'</option>';  
-                    }
+                    // }
                 });
+
+                var container = $('#tblvehicletrip-bmc_code').bootstrapDualListbox('getContainer');
+                container.find('input.filter').val('').trigger('input');
+                container.find('select').trigger('change');
+
                 $('#tblvehicletrip-bmc_code').html(options);
                 $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);
-                if (selectedBmcCodesInitial.length > 0 && isLoadPage) {
-                    setTimeout(
-                        function() {
-                            var dualListBoxContainer = $('#tblvehicletrip-bmc_code').bootstrapDualListbox('getContainer');
-                            var sourceSelect = dualListBoxContainer.find('.box1 select');
-                            $.each(selectedBmcCodesInitial, function(index, valueToSelect) {
-                                var optionToMove = sourceSelect.find('option:not(:selected)[value=\"' + valueToSelect + '\"]').first();
-                                if (optionToMove.length > 0) {
-                                    optionToMove.prop('selected', true);
-                                    dualListBoxContainer.find('.box1 .move').trigger('click');
-                                }
-                            });
-                            isLoadPage = false;
-                        },
-                        500
-                    );
-                }
+
+                var moveSelected = function (items) {
+                    var sourceSelect = container.find('.box1 select');
+                    $.each(items, function (i, valueToSelect) {
+                        var optionToMove = sourceSelect.find('option:not(:selected)[value=\"' + valueToSelect + '\"]').first();
+                        if (optionToMove.length > 0) {
+                            optionToMove.prop('selected', true);
+                            container.find('.box1 .move').trigger('click');
+                        }
+                    });
+                };
+
+                setTimeout(function () {
+                    if (selectedBmcCodesInitial.length > 0 && isLoadPage) {
+                        moveSelected(selectedBmcCodesInitial);
+                        isLoadPage = false;
+                    } else if (selarray.length > 0) {
+                        moveSelected(selarray);
+                    }
+                }, 500);
             }
         }
     });           
