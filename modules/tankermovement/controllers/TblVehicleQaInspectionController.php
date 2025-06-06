@@ -121,7 +121,7 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                     }
                     Yii::$app->general->setVehicleTripTrackingDetail($tripDetail, $model->remarks);
                 }
-                $this->redirect(['index']);
+                return $this->redirect(['index']);
             }
         }
         return $this->render('create', [
