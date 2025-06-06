@@ -350,15 +350,15 @@ $(document).ready(function(){
             }
         });
     }
+});
 
-    function setData(field = ''){
+function setData(field = ''){
     if(field != '' && field != null && field != undefined && field != 'Loading ...'){
         return true;
     } else {
         return false;
     }
-} 
-});
+}
 ";
 
 $script .= "
