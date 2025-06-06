@@ -126,7 +126,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $historyModel = new TblMilkVehicleEntryQltyHistory();
             Yii::$app->operation->history($milkVehicleEntryQltyData, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
-            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'] as $attr) {
+            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'tested_by', 'verified_by'] as $attr) {
                 $milkVehicleEntryQltyData->$attr = $model->$attr;
             }
             $milkVehicleEntryQltyData->status = 'done';
