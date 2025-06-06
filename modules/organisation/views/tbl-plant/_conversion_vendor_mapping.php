@@ -9,7 +9,7 @@ $button = Yii::$app->label->button('create');
 $this->title = Yii::t('app', $title);
 ?>
 <div class="panel panel-default panel-main">
-    <div class="panel-heading">Plant : <?= $plantModel->name ?> </div>
+    <div class="panel-heading">Plant : <?= $plantModel->name . ' - ' . $plantModel->ref_code ?> </div>
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin(['options' => [
@@ -83,7 +83,7 @@ $this->title = Yii::t('app', $title);
                         <div class="form-group">                    
                             <?= Yii::$app->controls->save($button, $model); ?>
                             <?= Yii::$app->controls->reset(); ?>
-                            <?= Yii::$app->controls->cancel($model); ?>
+                            <?= Html::a('Cancel', ['index'], ['class' => 'btn btn-danger']) ?>
                         </div>
                     </div>
                 </div>
