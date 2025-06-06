@@ -101,7 +101,7 @@ $grid_option = [
         'conversion-vendor-mapping' => function ($url, $model) {
             $class = $model->is_virtual_plant == 0 ? 'link-disable' : '';
             $options = ['data-name' => $model->name, 'data-val' => $model->plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Conversion Vendor Mapping', 'class' => $class];
-            return GhostHtml::a('<i class="fa fa-map-pin"></i>', ['/organisation/tbl-plant/conversion-vendor-mapping', 'id' => $model->plant_code], $options);
+            return GhostHtml::a('<i class="fa fa-map"></i>', ['/organisation/tbl-plant/conversion-vendor-mapping', 'id' => $model->plant_code], $options);
         },
     ]
 ];
