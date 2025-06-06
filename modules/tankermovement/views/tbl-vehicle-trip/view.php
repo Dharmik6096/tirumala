@@ -291,7 +291,7 @@ $is_button_visible = true;
                                 return '';
                             }
                             $class = 'link-disable';
-                            if ($is_button_visible && empty($model->arrival_time)) {
+                            if ($is_button_visible && empty($model->arrival_time) && $RLS) {
                                 $is_button_visible = false;
                                 $class = '';
                             }

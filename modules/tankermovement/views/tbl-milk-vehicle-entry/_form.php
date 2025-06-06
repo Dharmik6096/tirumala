@@ -366,9 +366,6 @@ $script = "
                 entryTypeField.val('').prop('readonly', false).trigger('change');   
                 EntryType.classList.remove('no_pointer');    
                 $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
-                if(!qltyParamsReadOnly){
-                    isClrInput();
-                }
                 $(document).off('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code')
                             .on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code', tripSubStatus);
             } else {
@@ -427,6 +424,7 @@ $script = "
                             $('#dispatch-detail').css('display', 'block');
                             $('#milk-receipt-transaction').css('display', 'block');
                             $('#milk-receipt-transaction-detail').css('display', 'block');
+                            isClrInput();
                         }
                     },
                 });
@@ -436,12 +434,14 @@ $script = "
                 $('#dispatch-detail').css('display', 'block');
                 $('#milk-receipt-transaction').css('display', 'block');
                 $('#milk-receipt-transaction-detail').css('display', 'block');
+                isClrInput();
             }
         } else {
             $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
             $('#dispatch-detail').css('display', 'none');
             $('#milk-receipt-transaction').css('display', 'none');
             $('#milk-receipt-transaction-detail').css('display', 'none');
+            isClrInput();
         }
     }
     
@@ -533,13 +533,11 @@ $script = "
     };
 
     function isClrInput(){
-        $('#tblmilkvehicleentrytransaction-snf').attr('readonly', false).val('');
-        $('#tblmilkvehicleentrytransaction-clr').attr('readonly', false).val('');
         var union = $('#tblmilkvehicleentry-union_code').val();
         var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();
         var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();
                 
-        if(setData(receiptAtCode)){
+        if(setData(receiptAtCode) && (!qltyParamsReadOnly)){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['get-clr-input']) . "',
