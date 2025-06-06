@@ -66,7 +66,7 @@ class TblMilkVehicleEntryQltySearch extends TblMilkVehicleEntryQlty {
             $query->where('0=1');
             return $dataProvider;
         }
-        if (empty($this->status)) {
+        if (empty($this->trip_code) && empty($this->status)) {
             $query->andWhere(['LOWER(status)' => 'pending']);
         }
 

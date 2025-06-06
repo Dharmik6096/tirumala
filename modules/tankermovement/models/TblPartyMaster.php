@@ -137,7 +137,7 @@ class TblPartyMaster extends \app\models\ChildModel {
     }
 
     public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false, $partyType = '') {
-        $query = $this->find()->select(['party_master_code', 'party_name'])
+        $query = $this->find()->select(['party_master_code', 'party_name', 'sap_vendor_code'])
                 ->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (!empty($partyType)) {
             $partyTypeIn = ($partyType === 'bmcMilkDispatch' || $partyType === 'milkReceiptSource') ? ['conversion_vendor', 'sales_party'] : ($partyType === 'milkReceiptDest' ? ['sales_party'] : []);
@@ -145,7 +145,7 @@ class TblPartyMaster extends \app\models\ChildModel {
         }
         $value = $query->orderBy('party_name asc')->all();
         $value = ArrayHelper::map($value, 'party_master_code', function ($value) use ($concatCode) {
-                    return $value->party_name . ($concatCode ? ' - ' . $value->party_master_code : '');
+                    return $value->party_name . ($concatCode && !empty($value->sap_vendor_code) ? ' - ' . $value->sap_vendor_code : '');
                 });
         return $value;
     }

@@ -212,7 +212,7 @@ $(document).ready(function(){
             var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
             var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
+            if(setData(transaction_date) && setData(transaction_date) && setData(vehicleCode) && setData(vehicleCode) && tripCodeDropdownLength == 1){
                 if (tripGenerateBtn) {
                     $('#addTripButtonDiv').show();   
                 } 
@@ -257,7 +257,7 @@ $(document).ready(function(){
     });
 
     var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
-    if(bmc_milk_dispatch_code!=''){
+    if(setData(bmc_milk_dispatch_code)){
         $('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
     }
     $(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code', function() {
@@ -370,7 +370,7 @@ $script .= "
         var to_shift = $('#tblbmcmilkdispatch-to_shift_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
         var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
-        if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && vehicle_code !=''){
+        if(setData(from_date) && setData(from_shift) && setData(to_date) && setData(to_shift) && setData(vehicle_code)){
             $('#transactions-from').html('');
             $('#transactions-detial').html('');           
             BindData(from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
@@ -431,7 +431,7 @@ $script = "$(document).ready(function(){
   ViewConfig(id);
     });
     function ViewConfig(code){
-        if(code != ''){         
+        if(setData(code)){         
         $.ajax({
                 type: 'get',
                 url: '" . Url::to(['/tankermovement/tbl-bmc-milk-dispatch/view-config']) . "',
@@ -468,7 +468,7 @@ if (!$readonly) {
         $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
             var from_date = $('#tblbmcmilkdispatch-from_date').val();
             var to_date = $('#tblbmcmilkdispatch-to_date').val();
-            if (from_date !== '' && to_date !== '') {
+            if (setData(from_date) && setData(to_date)) {
                 // Split date strings and format them as yyyy-mm-dd
                 var from_date_parts = from_date.split('-');
                 var to_date_parts = to_date.split('-');

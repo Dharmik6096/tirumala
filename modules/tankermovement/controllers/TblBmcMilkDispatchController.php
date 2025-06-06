@@ -91,6 +91,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
+            // echo '<pre>';
+            // print_r($model);
+            // die;
             $model->from_date = date('Y-m-d', strtotime($model->from_date)) . ' ' . \Yii::$app->general->getshift($model->from_shift_code);
             $model->to_date = date('Y-m-d', strtotime($model->to_date)) . ' ' . \Yii::$app->general->getshift($model->to_shift_code);
             $model->transaction_date = date('Y-m-d', strtotime($model->transaction_date));
@@ -126,7 +129,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
-                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'bmc', $model->bmc_code, $model->destination_type, $model->destination_code, $model->is_last_destination, $validation);
+                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'bmc', $model->bmc_code, $model->destination_type, $model->destination_code, $validation, $model->is_last_destination);
                         if(!$validation){
                             $model->bmc_milk_dispatch_code = '';
                             $model->addError('destination_code', "Conversion party not mapped with plant");
@@ -416,7 +419,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 } else if (strtolower($parents[0]) == 'party') {
                     $partyType = (isset($parents[4]) && !empty($parents[4])) ? $parents[4] : '';
                     $model = new TblPartyMaster();
-                    $data = $model->getPartyList($parents[1], 'TRUE', [], false, $partyType);
+                    $data = $model->getPartyList($parents[1], 'TRUE', [], true, $partyType);
                 } else {
                     $model = new TblCustomerMaster();
                     $data = $model->getCustomerCodeList($parents[2], $parents[0], $parents[1]);
@@ -560,7 +563,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
-                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'plant', $model->plant_code, $model->destination_type, $model->destination_code, $model->is_last_destination, $validation);
+                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'plant', $model->plant_code, $model->destination_type, $model->destination_code, $validation, $model->is_last_destination);
                         if(!$validation){
                             $model->bmc_milk_dispatch_code = '';
                             $model->addError('destination_code', "Conversion party not mapped with plant");

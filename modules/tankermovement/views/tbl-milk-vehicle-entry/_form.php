@@ -347,8 +347,6 @@ $script = "
         var EntryType = document.querySelector('.col-sm-1.entry_type');
         var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
         var tankerMovementWithTripSubStatus = '" . $tankerMovementWithTripSubStatus . "';
-        $('#tblmilkvehicleentrytransaction-snf').attr('readonly', false).val('');
-        $('#tblmilkvehicleentrytransaction-clr').attr('readonly', false).val('');
         if (setData(receipt_at)) {
             if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
                $('.tanker_no_hide').css('display', 'block');
@@ -368,7 +366,9 @@ $script = "
                 entryTypeField.val('').prop('readonly', false).trigger('change');   
                 EntryType.classList.remove('no_pointer');    
                 $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
-                isClrInput();
+                if(!qltyParamsReadOnly){
+                    isClrInput();
+                }
                 $(document).off('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code')
                             .on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code', tripSubStatus);
             } else {
@@ -493,7 +493,9 @@ $script = "
     }
 
     $(document).on('change', '#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-snf', function() {
-        calculateClr();
+        if(!qltyParamsReadOnly){
+            calculateClr();
+        }
     });
 
     function calculateClr(){
@@ -508,7 +510,7 @@ $script = "
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentrytransaction-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentrytransaction-snf').val('');
 
-        if(setData(receiptAtCode) && setData(receiptAt) && receiptAt == 'PLANT' && ((is_clr_input == 0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !=''))){
+        if(setData(receiptAtCode) && setData(receiptAt) && receiptAt == 'PLANT' && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
@@ -531,6 +533,8 @@ $script = "
     };
 
     function isClrInput(){
+        $('#tblmilkvehicleentrytransaction-snf').attr('readonly', false).val('');
+        $('#tblmilkvehicleentrytransaction-clr').attr('readonly', false).val('');
         var union = $('#tblmilkvehicleentry-union_code').val();
         var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();
         var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();
@@ -542,7 +546,7 @@ $script = "
                 data: {'union_code':union,'receiptAtCode':receiptAtCode},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
-                    if (obj.data != null) {
+                    if (setData(obj.data)) {
                         var is_clr_input = obj.data;
                         $('#is_clr_input').val(is_clr_input);
                         if (is_clr_input == 0) {
