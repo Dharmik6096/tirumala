@@ -370,7 +370,7 @@ class TblPlantController extends \app\controllers\ChildController {
         $searchModel->plant_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         foreach ($partyList as $party) {
-            $list[$party['party_master_code']] = $party['party_name'];
+            $list[$party['party_master_code']] = $party['party_name'] . ' - ' . $party['sap_vendor_code'];
         }
         $mapping = new TblPlantConversionVendorMapping();
         $mapping->plant_code = $id;
