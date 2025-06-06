@@ -52,8 +52,8 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'edit' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit'];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/tankermovement/tbl-bmc-dispatch-flush-stock/update', 'id' => $model->bmc_dispatch_flush_stock_code], $options);
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit'];
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/tankermovement/tbl-bmc-dispatch-flush-stock/update', 'id' => $model->bmc_dispatch_flush_stock_code], $options);
         },
     ]
 ];
