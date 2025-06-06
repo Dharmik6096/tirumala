@@ -97,7 +97,7 @@ $form = ActiveForm::begin([
             </div>
         </div>
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'is_virtual_plant', ['checkboxTemplate' => "<div class='checkbox " . $class . "''>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_virtual_plant', $class); ?>
         </div>
         <?php if ($type == 'create') { ?>
             <div class="clearfix"></div>
