@@ -91,9 +91,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
-            // echo '<pre>';
-            // print_r($model);
-            // die;
             $model->from_date = date('Y-m-d', strtotime($model->from_date)) . ' ' . \Yii::$app->general->getshift($model->from_shift_code);
             $model->to_date = date('Y-m-d', strtotime($model->to_date)) . ' ' . \Yii::$app->general->getshift($model->to_shift_code);
             $model->transaction_date = date('Y-m-d', strtotime($model->transaction_date));
