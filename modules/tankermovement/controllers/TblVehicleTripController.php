@@ -167,7 +167,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                                     $this->model->addError('bmc_code', 'Conversion party not mapped with plant');
                                 }
                             }
-                            $this->setTripDetail($save_model, $bmc_array, $key, $this->model, $sloc_detail, $validate, $$is_auto_trip, $sequence_no, $cnt, $is_virtual_location);
+                            $this->setTripDetail($save_model, $bmc_array, $key, $this->model, $sloc_detail, $validate, $is_auto_trip, $sequence_no, $cnt, $is_virtual_location);
                         }
                         $qaModel = new TblVehicleQaInspection();
                         $qaRecords = $qaModel->getVehicleQaInpection($this->model->vehicle_code);
@@ -435,22 +435,23 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $remarks = '';
             if (!empty($postData['arrival_time']) && $actionType == 'gate-in') {
                 $postedArrival = strtotime($postData['arrival_time']);
-                if ($tripDetail->is_virtual_location == 2) {
-                    $prevTripDetail = TblVehicleTripDetail::find()
+                if ($tripDetail->is_virtual_location == 1) {
+                    $tripDetail->departure_time = $departure = date('Y-m-d H:i:s', $postedArrival + 1);
+                    $nextTripDetail = TblVehicleTripDetail::find()
                             ->where(['vehicle_trip_code' => $tripDetail->vehicle_trip_code])
-                            ->andWhere(['<', 'sequence_no', $tripDetail->sequence_no])
-                            ->orderBy(['sequence_no' => SORT_DESC])
+                            ->andWhere(['>', 'sequence_no', $tripDetail->sequence_no])
+                            ->orderBy(['sequence_no' => SORT_ASC])
                             ->one();
-                    if ($prevTripDetail) {
-                        $prevTripDetail->departure_time = $departure = date('Y-m-d H:i:s', $postedArrival - 1);
-                        $prevTripDetail->arrival_time = date('Y-m-d H:i:s', strtotime($departure) - 1);
-                        $tripDetail->arrival_time = date('Y-m-d H:i:s', $postedArrival);
-                        $trip->sub_status_time = $tripDetail->arrival_time;
+                    if ($nextTripDetail) {
+                        $nextTripDetail->scenario = $actionType;
+                        $nextTripDetail->arrival_time = date('Y-m-d H:i:s', strtotime($departure) + 1);
+                        $trip->sub_status_time = $nextTripDetail->arrival_time;
+                        $trip->trip_sub_status = $nextTripDetail->is_last_destination ? 'plant_lot_pending' : 'gate_in';
                     }
                 } else {
                     $tripDetail->arrival_time = $trip->sub_status_time = date('Y-m-d H:i:s', $postedArrival);
+                    $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'gate_in';
                 }
-                $trip->trip_sub_status = $tripDetail->is_last_destination ? 'plant_lot_pending' : 'gate_in';
                 $remarks = $tripDetail->in_remarks;
             } elseif (!empty($postData['departure_time']) && $actionType == 'gate-out') {
                 $tripDetail->departure_time = $trip->sub_status_time = date('Y-m-d H:i:s', strtotime($postData['departure_time']));
@@ -463,8 +464,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
             if ($tripDetail->validate()) {
                 $models = [$tripDetail, $trip];
-                if (isset($prevTripDetail)) {
-                    $models[] = $prevTripDetail;
+                if (isset($nextTripDetail)) {
+                    $models[] = $nextTripDetail;
                 }
                 $transaction = $this->generalModel->saveTransaction($models, ['Trip Detail', 'edit']);
                 if ($transaction == 'customRedirect') {

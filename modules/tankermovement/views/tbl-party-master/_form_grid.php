@@ -12,7 +12,8 @@ use app\modules\usermanagement\components\GhostHtml;
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'party_type', 'filter' => FALSE, 'visible' => TRUE],
     ['attribute' => 'party_name'],
     ['attribute' => 'party_contact_no'],
     ['attribute' => 'owner_name'],
@@ -30,7 +31,6 @@ $attribute = [
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
     ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
-    ['attribute' => 'party_type', 'filter' => FALSE, 'visible' => TRUE],
 ];
 
 $grid_option = [

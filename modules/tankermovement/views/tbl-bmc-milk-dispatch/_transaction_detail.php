@@ -64,6 +64,8 @@ use yii\helpers\Url;
                 return $model->is_rejected == 1 ? 'Yes' : 'No';
             }, 'filter' => false
         ],
+        'test_report_no',
+        'shift_of_milk',
     ];
 
     $grid_option = [

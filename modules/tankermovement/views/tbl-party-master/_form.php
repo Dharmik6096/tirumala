@@ -21,6 +21,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
         </div>
         <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdownStatic('party_type', $model, $form, 'form-group', TRUE, false, 'party_type', false); ?>
+        </div>
+        <div class="col-sm-2">
             <?= $form->field($model, 'party_name')->textInput() ?>
         </div>
         <div class="col-sm-2">
@@ -81,12 +84,6 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
-    </div>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_sales_office'); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('party_type', $model, $form, 'form-group', TRUE, false, 'party_type', false); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">

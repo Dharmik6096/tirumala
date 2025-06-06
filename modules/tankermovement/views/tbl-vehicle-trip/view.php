@@ -259,6 +259,16 @@ $is_button_visible = true;
                         }
                     ],
                     ['attribute' => 'out_remarks', 'label' => (Yii::t('app', 'GateOut Remarks')),],
+                    [
+                        'attribute' => 'is_virtual_location',
+                        'value' => function ($model) {
+                            $labels = [
+                                1 => 'conversion_vendor',
+                                2 => 'virtual_plant',
+                            ];
+                            return $labels[$model->is_virtual_location] ?? '';
+                        },
+                    ],
                 ];
                 $cnt = 0;
                 $ctnDep = 0;
@@ -281,7 +291,7 @@ $is_button_visible = true;
                                 return '';
                             }
                             $class = 'link-disable';
-                            if ($is_button_visible && empty($model->arrival_time) && $RLS && $model->is_virtual_location != 1) {
+                            if ($is_button_visible && empty($model->arrival_time)) {
                                 $is_button_visible = false;
                                 $class = '';
                             }
@@ -303,7 +313,7 @@ $is_button_visible = true;
                                 }
                                 $ctnDep++;
                             }
-                            if ($is_button_visible && empty($model->departure_time) && $model->is_virtual_location != 1) {
+                            if ($is_button_visible && empty($model->departure_time)) {
                                 if (!empty($model->challan_no) && $RLS) {
                                     $class = '';
                                 }

@@ -272,7 +272,7 @@ class TblPlant extends \app\models\ChildModel {
     }
 
     public function getParty() {
-        return TblPartyMaster::find()->alias('p')->select(['p.party_master_code', 'p.party_name'])
+        return TblPartyMaster::find()->alias('p')->select(['p.party_master_code', 'p.party_name', 'p.sap_vendor_code'])
                         ->leftJoin('tbl_plant_conversion_vendor_mapping m', 'p.party_master_code = m.party_master_code')
                         ->where(['p.party_type' => 'conversion_vendor'])
                         ->andWhere(['m.party_master_code' => null])

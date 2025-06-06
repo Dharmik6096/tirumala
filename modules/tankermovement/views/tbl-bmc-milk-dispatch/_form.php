@@ -264,7 +264,7 @@ $(document).ready(function(){
             var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
             var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
+            if(setData(transaction_date) && setData(transaction_date) && setData(vehicleCode) && setData(vehicleCode) && tripCodeDropdownLength == 1){
                 if (tripGenerateBtn) {
                     $('#addTripButtonDiv').show();   
                 }
@@ -313,7 +313,7 @@ $(document).ready(function(){
     });
 
     var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
-    if(bmc_milk_dispatch_code!=''){
+    if(setData(bmc_milk_dispatch_code)){
         $('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
     }
 
@@ -324,9 +324,9 @@ $(document).ready(function(){
         var bmcSiloInfoCode = $('#tblbmcmilkdispatchtxn-bmc_silos_info_code').val();
         var stockDetailArray = [];
         var check_key = bmcSiloInfoCode+ '_' + milkTypeCode + '_' + milkQualityTypeCode;
-        if(milkTypeCode != '' && bmcSiloInfoCode!='' && milkQualityTypeCode !='') {
+        if(setData(milkTypeCode) && setData(bmcSiloInfoCode) && setData(milkQualityTypeCode)) {
             var data = $('#stockdetail').val();
-            if(data != undefined && data != '' && isNaN(data)){
+            if(setData(data)){
                 stockDetailArray = jQuery.parseJSON(data);
                 var stockDetail = stockDetailArray[check_key];
                 var totalQty = 0;
@@ -412,7 +412,7 @@ if(!isSecondTransaction) {
                                 }, 1000);
                             });
                         } else if (obj.data.is_auto_trip == 1) {
-                            $('#is-last-destination-container').show();
+                            $('#is-last-destination-container').hide();
                             $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
                                 var destType = $(this).val().toUpperCase();
                                 var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');
@@ -420,7 +420,7 @@ if(!isSecondTransaction) {
                                     isCheckbox.prop('checked', true);
                                 } else {
                                     isCheckbox.prop('checked', false);
-                                }
+                                }  
                             });
                         } else {
                             $('#is-last-destination-container').hide();
@@ -464,7 +464,7 @@ function calculateClr(){
     is_clr_input == 0 && (fat == '' || snf == '') && $('#tblbmcmilkdispatchtxn-clr').val('');
     is_clr_input == 1 && (fat == '' || clr == '') && $('#tblbmcmilkdispatchtxn-snf').val('');
 
-    if(setData(bmcCode) && ((is_clr_input == 0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !=''))){
+    if(setData(bmcCode) && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
         $.ajax({
             type: 'post',
             url:'" . Url::to(['calculate-clr']) . "',
@@ -503,7 +503,7 @@ function isClrInput(){
             data: {'union_code':union,'bmcCode':bmcCode},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
-                if (obj.data != null) {
+                if (setData(obj.data)) {
                     var is_clr_input = obj.data;
                     $('#is_clr_input').val(is_clr_input);
                     if (is_clr_input == 0) {
@@ -522,7 +522,7 @@ function isClrInput(){
 $(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-rtpl', function() {
     var rtpl=$('#tblbmcmilkdispatchtxn-rtpl').val();
     var dispatch_qty=$('#tblbmcmilkdispatchtxn-dispatch_qty').val();
-    if(rtpl !='' && dispatch_qty!=''){
+    if(setData(rtpl) && setData(dispatch_qty)){
         $('#tblbmcmilkdispatchtxn-amount').val(parseFloat(rtpl*dispatch_qty).toFixed(2))
     } 
 });
@@ -551,7 +551,7 @@ $script .= "
         var to_shift = $('#tblbmcmilkdispatch-to_shift_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
         var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
-        if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && bmc_code != '' && vehicle_code !=''){
+        if(setData(from_date) && setData(from_shift) && setData(to_date) && setData(to_shift) && setData(bmc_code) && setData(vehicle_code)){
             $('#purchase-detial').html('');
             $('#transactions-from').html('');
             $('#transactions-detial').html('');           
@@ -579,37 +579,40 @@ $script .= "
     }  
   
     function BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
-       
-         $.ajax({
-                type: 'get',
-                url: '" . Url::to(['purchase-detail']) . "',
-                data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code,'union_code' : union_code},             
-                success: function(data) {
-                  $('#purchase-detial').html(data);                                                                 
-                }
-            });
-        $.ajax({
-                type: 'get',
-                url: '" . Url::to(['transaction-form']) . "',
-                data: {'bmc_code' : bmc_code,'union_code':union_code},             
-                success: function(data) {
-                  $('#transactions-from').html(data);                                                                 
-                }
-            });            
-        $.ajax({
-                type: 'get',
-                url: '" . Url::to(['transaction-detail']) . "',
-                data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code},             
-                success: function(data) {
-                  $('#transactions-detial').html(data);
-               //   $('#loadercontent').hide();
-               //   $('#pageloader').hide();  
-                },
-                error: function(data) {  
-                //    $('#loadercontent').hide();
-                 //   $('#pageloader').hide();
-                }
-            });     
+        if(setData(union_code)){
+            $.ajax({
+                    type: 'get',
+                    url: '" . Url::to(['purchase-detail']) . "',
+                    data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code,'union_code' : union_code},             
+                    success: function(data) {
+                    $('#purchase-detial').html(data);                                                                 
+                    }
+                });
+            $.ajax({
+                    type: 'get',
+                    url: '" . Url::to(['transaction-form']) . "',
+                    data: {'bmc_code' : bmc_code,'union_code':union_code},             
+                    success: function(data) {
+                    $('#transactions-from').html(data);                                                                 
+                    }
+                });
+        }
+        if(setData(bmc_milk_dispatch_code)) {
+            $.ajax({
+                    type: 'get',
+                    url: '" . Url::to(['transaction-detail']) . "',
+                    data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code},             
+                    success: function(data) {
+                    $('#transactions-detial').html(data);
+                //   $('#loadercontent').hide();
+                //   $('#pageloader').hide();  
+                    },
+                    error: function(data) {  
+                    //    $('#loadercontent').hide();
+                    //   $('#pageloader').hide();
+                    }
+                });    
+        } 
     }
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
@@ -621,7 +624,7 @@ $script = "$(document).ready(function(){
   ViewConfig(id);
     });
     function ViewConfig(code){
-        if(code != ''){         
+        if(setData(code)){         
         $.ajax({
                 type: 'get',
                 url: '" . Url::to(['/tankermovement/tbl-bmc-milk-dispatch/view-config']) . "',
@@ -658,7 +661,7 @@ if (!$readonly) {
         $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
             var from_date = $('#tblbmcmilkdispatch-from_date').val();
             var to_date = $('#tblbmcmilkdispatch-to_date').val();
-            if (from_date !== '' && to_date !== '') {
+            if (setData(from_date) && setData(to_date)) {
                 // Split date strings and format them as yyyy-mm-dd
                 var from_date_parts = from_date.split('-');
                 var to_date_parts = to_date.split('-');

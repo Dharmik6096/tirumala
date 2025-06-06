@@ -260,7 +260,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $remarks = !empty($postData['remarks']) ? $postData['remarks'] : 'AMCS Dispatch';
                 $tripModel->trip_status = $is_last_destination == 1 ? 'tankerfull' : 'open';
                 $saveModel[] = $tripModel;
-                $tripModel->addTripRoute($saveModel, $deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination);
+                $validation = TRUE;
+                $tripModel->addTripRoute($saveModel, $deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $validation, $is_last_destination);
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
                 if ($transaction == 'customRedirect') {
                     $res_data['message'] = 'Trip Updated Successfully.';
