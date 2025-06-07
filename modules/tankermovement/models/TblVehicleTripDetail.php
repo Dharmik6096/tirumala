@@ -310,6 +310,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $isValid = TRUE;
             $model->in_remarks = $remarks;
             $model->arrival_time = $action_datetime;
+            $trip->trip_sub_status = $model->is_last_destination ? 'plant_lot_pending' : 'gate_in';
             if ($model->is_virtual_location == 1) {
                 $model->departure_time = $departure = date('Y-m-d H:i:s', $action_datetime + 1);
                 $nextTripDetail = TblVehicleTripDetail::find()
@@ -320,12 +321,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                 if (!empty($nextTripDetail)) {
                     $nextTripDetail->scenario = 'gate-' . $action_type;
                     $nextTripDetail->arrival_time = date('Y-m-d H:i:s', strtotime($departure) + 1);
-                    $trip->sub_status_time = $nextTripDetail->arrival_time;
-                    $trip->trip_sub_status = $nextTripDetail->is_last_destination ? 'plant_lot_pending' : 'gate_in';
                 }
-            } else {
-                $trip->sub_status_time = $action_datetime;
-                $trip->trip_sub_status = $model->is_last_destination ? 'plant_lot_pending' : 'gate_in';
             }
         } else if ($action_type == 'out' && empty($model->departure_time)) {
             $isValid = TRUE;
