@@ -168,7 +168,7 @@ class TblMilkTransfer extends \app\models\ChildModel {
 
     public function validateToDate($attribute, $params) {
         if (!empty($this->to_date) && !empty($this->from_date) && ($this->from_date > $this->to_date)) {
-            $this->addError($attribute, Yii::t('app/validation', 'To Date Must be Greater than From Date.'));
+            $this->addError($attribute, Yii::t('app/validation', 'To Date Must be Greater than or Equal to From Date.'));
             return false;
         }
     }

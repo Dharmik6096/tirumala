@@ -261,6 +261,7 @@ $is_button_visible = true;
                     ['attribute' => 'out_remarks', 'label' => (Yii::t('app', 'GateOut Remarks')),],
                     [
                         'attribute' => 'is_virtual_location',
+                        'label' => Yii::t('app', 'Location Type'),
                         'value' => function ($model) {
                             $labels = [
                                 1 => 'conversion_vendor',

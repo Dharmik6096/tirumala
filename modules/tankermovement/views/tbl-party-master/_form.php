@@ -6,6 +6,8 @@ use yii\web\View;
 use yii\helpers\Url;
 ?>
 <?php
+$readonly = $type == 'create' ? FALSE : TRUE;
+
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
             'validateOnChange' => FALSE,
@@ -20,7 +22,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('party_type', $model, $form, 'form-group', TRUE, false, 'party_type', false); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('party_type', $model, $form, 'form-group', TRUE, $readonly, 'party_type', false); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'party_name')->textInput() ?>
