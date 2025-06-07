@@ -2,6 +2,7 @@
 
 namespace app\modules\tankermovement\models;
 
+use app\modules\collection\models\TblMccShiftLock;
 use Yii;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblVehicleTrip;
@@ -343,6 +344,80 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 ->andWhere(['IS', 'departure_time', null])
                 ->count();
         return $count == 1;
+    }
+
+    public function getFromDateToDate() {
+        $result = ['status' => 'error', 'from_date' => null, 'from_shift' => null, 'to_date' => null, 'to_shift' => null];
+
+        $physical = TblBmcDispatchStock::find()
+                ->where(['bmc_code' => $this->bmc_code, 'type' => 'physical'])
+                ->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])
+                ->one();
+
+        $dispatch = TblBmcDispatchStock::find()
+                ->where(['bmc_code' => $this->bmc_code, 'type' => 'dispatch'])
+                ->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])
+                ->one();
+
+        $shiftLock = TblMccShiftLock::find()
+                ->where(['mcc_plant_code' => $this->bmcCode->mcc_plant_code, 'bmc_lock' => 1])
+                ->orderBy(['created_at' => SORT_DESC])
+                ->one();
+
+        if (!empty($physical)) {
+            // IF Not - check - Any previous Dispatch entry is available
+            if (empty($dispatch)) {
+                if (empty($shiftLock) || $shiftLock->created_at <= $physical->created_at) {
+                    // Set - Both From Date & To Date as last Physical Stock Entry
+                    $result = [
+                        'status' => 'success',
+                        'from_date' => date('d-m-Y', strtotime($physical->to_date)),
+                        'from_shift' => $physical->to_shift_code,
+                        'to_date' => date('d-m-Y', strtotime($physical->from_date)),
+                        'to_shift' => $physical->from_shift_code,
+                    ];
+                } else {
+                    $fromDate = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($physical->from_date)));
+                    $fromShift = (date('H', strtotime($fromDate)) == 18) ? 2 : 1;
+
+                    $result = [
+                        // Set last physical stock entry date shift as from Date-shift. +12 Hr
+                        'status' => 'success',
+                        'from_date' => date('d-m-Y', strtotime($fromDate)),
+                        'from_shift' => $fromShift,
+                        // Latest RMRD Shift Lock Date
+                        'to_date' => date('d-m-Y', strtotime($shiftLock->date_time_of_collection)),
+                        'to_shift' => $shiftLock->shift_code,
+                    ];
+                }
+            } else {
+                if (!empty($shiftLock) && $dispatch->to_date < $shiftLock->created_at) {
+                    $fromDate = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($dispatch->to_date)));
+                    $fromShift = (date('H', strtotime($fromDate)) == 18) ? 2 : 1;
+
+                    $result = [
+                        // Set previous dispatch to date shift +12 hours
+                        'status' => 'success',
+                        'from_date' => date('d-m-Y', strtotime($fromDate)),
+                        'from_shift' => $fromShift,
+                        // Set - Latest RMRD Shift Lock Date
+                        'to_date' => date('d-m-Y', strtotime($shiftLock->date_time_of_collection)),
+                        'to_shift' => $shiftLock->shift_code,
+                    ];
+                } else {
+                    $result = [
+                        // Set previous dispatch from date & shift
+                        'status' => 'success',
+                        'from_date' => date('d-m-Y', strtotime($dispatch->from_date)),
+                        'from_shift' => $dispatch->from_shift_code,
+                        'to_date' => date('d-m-Y', strtotime($dispatch->to_date)),
+                        'to_shift' => $dispatch->to_shift_code,
+                    ];
+                }
+            }
+        }
+
+        return $result;
     }
 
 }

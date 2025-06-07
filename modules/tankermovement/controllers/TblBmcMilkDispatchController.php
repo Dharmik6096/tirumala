@@ -687,4 +687,12 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }
 
+    public function actionGetFromDateToDate() {
+        $bmcMilkDispatch = new TblBmcMilkDispatch();
+        $bmcMilkDispatch->bmc_code = Yii::$app->request->post('bmcCode');
+        $result = $bmcMilkDispatch->getFromDateToDate();
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Json::encode(['status' => $result['status'], 'data' => $result]);
+    }
+
 }
