@@ -412,13 +412,14 @@ if(!isSecondTransaction) {
                                 }, 1000);
                             });
                         } else if (obj.data.is_auto_trip == 1) {
-                            $('#is-last-destination-container').hide();
                             $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
                                 var destType = $(this).val().toUpperCase();
                                 var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');
                                 if (destType === 'PLANT' || destType === 'PARTY') {
+                                    $('#is-last-destination-container').show();
                                     isCheckbox.prop('checked', true);
                                 } else {
+                                    $('#is-last-destination-container').hide();
                                     isCheckbox.prop('checked', false);
                                 }  
                             });
@@ -489,7 +490,32 @@ function calculateClr(){
 
 $('#tblbmcmilkdispatch-bmc_code').change(function() {
     isClrInput();
+    // setFromDateToDate();
 });
+
+function setFromDateToDate(){
+    $('.field-tblbmcmilkdispatch-from_date').addClass('disabled no_pointer');
+    $('.field-tblbmcmilkdispatch-from_shift_code').addClass('no_pointer_disabled');
+    $('.field-tblbmcmilkdispatch-to_date').addClass('disabled no_pointer');
+    $('.field-tblbmcmilkdispatch-to_shift_code').addClass('no_pointer_disabled');
+    var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+    if(setData(bmcCode)){
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['get-from-date-to-date']) . "',
+            data: {'bmcCode':bmcCode},
+            success: function(data) {                                        
+                var obj = $.parseJSON(data);
+                if (obj.data.status = 'success') {
+                    $('#tblbmcmilkdispatch-from_date').parent().kvDatepicker('update',obj.data.from_date);
+                    $('#tblbmcmilkdispatch-from_shift_code').val(obj.data.from_shift).trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatch-to_date').parent().kvDatepicker('update',obj.data.to_date);
+                    $('#tblbmcmilkdispatch-to_shift_code').val(obj.data.to_shift).trigger('change').trigger('select2:select');
+                }
+            }
+        });
+    }
+};
 
 function isClrInput(){
     var union = $('#tblbmcmilkdispatch-union_code').val();

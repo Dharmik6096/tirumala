@@ -15,6 +15,7 @@ $attribute = [
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
     ['attribute' => 'party_type', 'filter' => FALSE, 'visible' => TRUE],
     ['attribute' => 'party_name'],
+    ['attribute' => 'sap_vendor_code', 'filter' => TRUE, 'visible' => TRUE],
     ['attribute' => 'party_contact_no'],
     ['attribute' => 'owner_name'],
     ['attribute' => 'owner_contact_no'],
@@ -30,7 +31,6 @@ $attribute = [
     ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
     ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
 ];
 
 $grid_option = [
