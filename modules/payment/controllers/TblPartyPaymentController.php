@@ -114,7 +114,7 @@ class TblPartyPaymentController extends ChildController {
     }
 
     public function actionPaymentAdjust() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblPartyPayment();
         $req = Yii::$app->request;
         if ($req->isAjax) {
@@ -392,4 +392,5 @@ class TblPartyPaymentController extends ChildController {
             echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
         }
     }
+
 }
