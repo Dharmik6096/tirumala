@@ -12,6 +12,7 @@ use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\transporter\models\TblVehicleMaster;
+use app\modules\collection\controllers\TblMccShiftLockController;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -336,7 +337,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
         return $this->response;
     }
 
-    public function actionShiftLockList() {
+    public function actionBmcShiftLockList() {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['content'])) {
@@ -351,13 +352,40 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                         'from_date' => $content['from_date'],
                         'to_date' => $content['to_date'],
                     ];
-                    $sp = ($orgDetail['eipl_code'] == 'NIFPL') ? 'portal_mcc_shift_lock_data_nif' : 'portal_mcc_shift_lock_data_other';
+                    $sp = ($orgDetail['eipl_code'] == 'NIFPL') ? 'portal_mcc_shift_lock_data_nif' : 'sp_app_amcs_v5_shift_lock_list';
                     $res_data = \Yii::$app->general->getSpData($sp, $params);
                 }
             }
         }
         $this->response['data'] = $res_data;
         return $this->response;
+    }
+
+    public function actionBmcDataLock() {
+        $res_data = [];
+        try {
+            $data = $this->post_data;
+            if (!empty($data['content'])) {
+                $content = $data['content'];
+                if (!empty($data['organization_type']) && !empty($data['organization_code']) && $data['organization_type'] == 'BMC') {
+                    $orgDetail = $this->getOrgDetail($data['organization_type'], $data['organization_code'], FALSE);
+                    if ($orgDetail) {
+                        $shift_lock = new TblMccShiftLockController('tbl-mcc-shift-lock', Yii::$app->getModule('collection'));
+                        Yii::$app->session->set('eiplCode', $orgDetail['eipl_code']);
+                        if ($content['bmc_lock'] == 0) {
+                            $shift_lock->actionBmcDataLock($content['mcc_plant_code'], date('Y-m-d', strtotime($content['date_time_of_collection'])), $content['shift_code'], $content['qty'], $content['avg_fat'], $content['avg_snf'], $content['amount'], 'api_response');
+                        } else {
+                            $shift_lock->actionBmcDataUnlock($content['mcc_plant_code'], date('Y-m-d', strtotime($content['date_time_of_collection'])), $content['shift_code'], $content['qty'], $content['avg_fat'], $content['avg_snf'], $content['amount'], 'api_response');
+                        }
+                        $res_data = !empty(Yii::$app->session->getFlash('success')) ? Yii::$app->session->getFlash('success') : '';
+                    }
+                }
+            }
+            $this->response['data'] = $res_data;
+            return $this->response;
+        } catch (\Throwable $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
 }
