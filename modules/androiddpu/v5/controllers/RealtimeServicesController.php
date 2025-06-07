@@ -330,4 +330,28 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
         return $this->response;
     }
 
+    public function actionShiftLockList() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code']) && $data['organization_type'] == 'BMC' && !empty($content['from_date']) && !empty($content['to_date'])) {
+                $orgDetail = $this->getOrgDetail($data['organization_type'], $data['organization_code'], FALSE);
+                if ($orgDetail) {
+                    $params = [
+                        'f_union_code' => $orgDetail['union_code'],
+                        'f_plant_code' => $orgDetail['plant_code'][0],
+                        'f_mcc_code' => $orgDetail['mcc_plant_code'][0],
+                        'from_date' => $content['from_date'],
+                        'to_date' => $content['to_date'],
+                    ];
+                    $sp = ($orgDetail['eipl_code'] == 'NIFPL') ? 'portal_mcc_shift_lock_data_nif' : 'portal_mcc_shift_lock_data_other';
+                    $res_data = \Yii::$app->general->getSpData($sp, $params);
+                }
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
 }
