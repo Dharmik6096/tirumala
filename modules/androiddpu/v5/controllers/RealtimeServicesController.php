@@ -145,6 +145,11 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $model->plant_code = $bmcDetail->plant_code;
                 $model->mcc_plant_code = $bmcDetail->mcc_plant_code;
 
+                $bmcMilkDispatchTxnModel = new TblBmcMilkDispatchTxn();
+                $bmcMilkDispatchTxnModel->bmc_code = $model->bmc_code;
+                $bmcMilkDispatchTxnModel->transaction_date = $model->transaction_date;
+                $testReportNo = $bmcMilkDispatchTxnModel->generateTestReportNo();
+
                 $postData = $data['content'];
                 $from_datetime = $postData['from_date'];
                 $to_datetime = $postData['to_date'];
@@ -232,6 +237,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $response_data['stockDetail'] = $stock_data;
                 $response_data['tripDetail'] = $trip_data;
                 $response_data['dispatchDetail'] = $dispatch_data;
+                $response_data['testReportNo'] = $testReportNo;
             }
         }
         $this->response['data'] = $response_data;
