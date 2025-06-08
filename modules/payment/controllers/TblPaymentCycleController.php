@@ -490,6 +490,31 @@ class TblPaymentCycleController extends ChildController {
         return Json::encode(['output' => '']);
     }
 
+    public function actionPaymentCycleListWithDate() {
+        $out = null;
+
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            if (!empty($value[0]) && !empty($value[1])) {
+                $unionCode = $value[0];
+                $code = $value[1];
+                $type = $value[2];
+                $for = $value[3];
+                $where = (array) json_decode($value[4]);
+                $member_billing_lock_check = isset($value[5]) ? $value[5] : '0';
+                $typeCheck = isset($value[6]) ? $value[6] : 0;
+                $paymentcycleModel = new TblPaymentCycleApplicability();
+                $list = $paymentcycleModel->paymentCycles($unionCode, $code, $type, $for, $where, $member_billing_lock_check, $typeCheck);
+                foreach ($list as $key => $r) {
+                    $out[] = array('id' => $r,
+                        'name' => $r);
+                }
+                return Json::encode(['output' => $out]);
+            }
+        }
+        return Json::encode(['output' => '']);
+    }
+
     public function actionBmcDataUnlock($payment_cycle_code, $id) {
         $this->updateRecords($payment_cycle_code, $id, 'data_lock_bmc', 'Data Lock - BMC', 'Data Unlock - BMC');
     }
