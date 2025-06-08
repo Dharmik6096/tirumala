@@ -256,6 +256,9 @@ class DefaultController extends \app\controllers\ChildController {
         if ($client_code == 'SHUDDH') {
             $this->report = 'VendorMilkPaymentShuddh';
         }
+        if ($client_code == 'PARAM') {
+            $this->report = 'VendorMilkPaymentShuddh';
+        }
         return $this->actionIndex();
     }
 
