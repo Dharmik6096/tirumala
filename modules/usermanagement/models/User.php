@@ -96,6 +96,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
             'portal_type' => UserManagementModule::t('back', 'Portal Type'),
             'designation_code' => UserManagementModule::t('back', 'Designation'),
             'employee_id' => UserManagementModule::t('back', 'Employee Id'),
+            'dispatch_center_code' => UserManagementModule::t('back', 'Dispatch Center'),
         ];
     }
 
