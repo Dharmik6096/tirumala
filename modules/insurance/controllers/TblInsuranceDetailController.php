@@ -498,6 +498,7 @@ class TblInsuranceDetailController extends ChildController {
                     $dcsmemberCode = $worksheet->getCell('B' . $row)->getValue() . $worksheet->getCell('F' . $row)->getValue();
                     $srNo = $worksheet->getCell('D' . $row)->getValue();
                     $adharNo = str_replace(' ', '', $worksheet->getCell('E' . $row)->getValue());
+                    // $adharNo = preg_replace('/[^A-Za-z0-9\-]/', '', $adharNo);
                     $dob = $worksheet->getCell('I' . $row)->getValue();
                     $insuranceDetailModel->sr_no = str_pad(substr($srNo, 6, 4), 4, "0", STR_PAD_LEFT);
                     $insuranceDetailModel->dcs_code = $worksheet->getCell('B' . $row)->getValue();
@@ -537,9 +538,9 @@ class TblInsuranceDetailController extends ChildController {
                     if (!preg_match('/^0+$/', $memberCode)) {
                         $sheetMemberCodes[] = $dcsmemberCode;
                     }
-                    if (in_array($adharNo, $sheetAdharNos)) {
-                        $errors[] = 'Adhar no already exist in sheet.';
-                    }
+                    // if (in_array($adharNo, $sheetAdharNos)) {
+                    //     $errors[] = 'Adhar no already exist in sheet.';
+                    // }
                     $sheetAdharNos[] = $adharNo;
 
                     if (!empty($dcsCode) && isset($memberCode)) {
@@ -593,20 +594,26 @@ class TblInsuranceDetailController extends ChildController {
 
                     if (empty($adharNo)) {
                         $errors[] = 'Aadhar Number cannot be blank.';
-                    } elseif (!preg_match('/^[0-9]{12}$/', $adharNo)) {
-                        $errors[] = 'Aadhar card number can only contain exactly 12 digits.';
-                    } else {
-                        $encryptedAdharNo = \Yii::$app->general->encryptData($adharNo);
-                        if ($oneDcsCode != 'FALSE' && array_key_exists($encryptedAdharNo, $adharNoArray)) {
-                            $errors[] = 'Please enter a unique Aadhar No.';
-                        } else {
-                            $insuranceDetailModel->adhar_no = $encryptedAdharNo;
-                        }
+                    } else if(!empty($adharNo)){
+                        $insuranceDetailModel->adhar_no = \Yii::$app->general->encryptData($adharNo);
                     }
 
-                    if (!empty($nomineeAdharNo) && !preg_match('/^[0-9]{12}$/', $nomineeAdharNo)) {
-                        $errors[] = 'Nominee Aadhar card number can only contain exactly 12 digits.';
-                    }
+                    // if (empty($adharNo)) {
+                    //     $errors[] = 'Aadhar Number cannot be blank.';
+                    // } elseif (!preg_match('/^[0-9]{12}$/', $adharNo)) {
+                    //     $errors[] = 'Aadhar card number can only contain exactly 12 digits.';
+                    // } else {
+                    //     $encryptedAdharNo = \Yii::$app->general->encryptData($adharNo);
+                    //     if ($oneDcsCode != 'FALSE' && array_key_exists($encryptedAdharNo, $adharNoArray)) {
+                    //         $errors[] = 'Please enter a unique Aadhar No.';
+                    //     } else {
+                    //         $insuranceDetailModel->adhar_no = $encryptedAdharNo;
+                    //     }
+                    // }
+
+                    // if (!empty($nomineeAdharNo) && !preg_match('/^[0-9]{12}$/', $nomineeAdharNo)) {
+                    //     $errors[] = 'Nominee Aadhar card number can only contain exactly 12 digits.';
+                    // }
 
                     if (empty($dob)) {
                         $errors[] = 'DOB cannot be blank.';

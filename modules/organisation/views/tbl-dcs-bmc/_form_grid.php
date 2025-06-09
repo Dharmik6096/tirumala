@@ -124,7 +124,7 @@ $grid_option = [
             $options = ['data-name' => isset($dcsmodel->subCenterCode) ? $dcsmodel->subCenterCode->sub_center_name : '', 'data-val' => $dcsmodel->subcenter_code, 'title' => 'Update'];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/organisation/tbl-dcs-bmc/update', 'id' => $dcsmodel->bmc_code], ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit'], $options);
         },
-        'delete' => ['option' => 'bmc_name,bmc_code,tbl-dcs-bmc/delete'],
+//        'delete' => ['option' => 'bmc_name,bmc_code,tbl-dcs-bmc/delete'],
         'bank-details' => function ($url, $model) {
             $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Bank Details'];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-dcs-bmc/bank-details', 'id' => $model->bmc_code], $options);
