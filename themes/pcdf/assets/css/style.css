@@ -6124,7 +6124,6 @@ tr.highlightRow {
 .new-notification {
     font-weight: bold;
 }
-
 .customDaulBoxCss .btn-group.buttons{
     display: flex;
 }
@@ -6135,4 +6134,7 @@ tr.highlightRow {
 }
 .customDaulBoxCss .btn-group.buttons .moveall, .customDaulBoxCss .btn-group.buttons .removeall {
     display: none;
-} 
+}
+.mb0 {
+    margin-bottom: 0px;
+}

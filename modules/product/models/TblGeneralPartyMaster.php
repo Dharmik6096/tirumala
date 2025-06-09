@@ -21,7 +21,6 @@ use Yii;
  * @property string $plant_code
  * @property string $mcc_plant_code
  * @property string $bmc_code
- * @property string $dcs_code
  * @property string $ref_code
  * @property string $party_type
  * @property string $party_code
@@ -49,7 +48,7 @@ class TblGeneralPartyMaster extends ChildModel {
      */
     public function rules() {
         return [
-            [['party_name', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'ref_code', 'party_type', 'party_code', 'is_product_sale', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['party_name', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'ref_code', 'party_type', 'party_code', 'is_product_sale', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
             [['is_active', 'is_product_sale'], 'default', 'value' => 1],
             [['party_name'], 'string', 'max' => 225],
             [['union_code', 'plant_code', 'mcc_plant_code', 'ref_code'], 'required', 'except' => ['importCsv']],
@@ -58,7 +57,7 @@ class TblGeneralPartyMaster extends ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'general_party_type');
                 }, 'on' => 'importCsv'],
             [['bmc_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
-            [['bmc_code'], 'unique', 'targetAttribute' => ['union_code', 'party_type', 'party_code'], 'message' => 'The combination of Union, Party Type and Party Code has already been taken.']
+            [['bmc_code'], 'unique', 'targetAttribute' => ['union_code', 'ref_code', 'party_type'], 'message' => 'The combination of Union, Ref Code and Party Type has already been taken.']
         ];
     }
 
@@ -73,7 +72,6 @@ class TblGeneralPartyMaster extends ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
-            'dcs_code' => Yii::t('app', 'DCS'),
             'ref_code' => Yii::t('app', 'Ref Code'),
             'party_type' => Yii::t('app', 'Party Type'),
             'party_code' => Yii::t('app', 'Party Code'),
@@ -154,5 +152,15 @@ class TblGeneralPartyMaster extends ChildModel {
     public function validateGenaralPartyCode($party, $bmc) {
         $data = $this->find()->select('general_party_master_code')->where(['bmc_code' => $bmc, 'is_active' => 1])->andWhere(['or', ['CAST(general_party_master_code as varchar)' => $party], ['ref_code' => $party]])->all();
         return !empty($data) && count($data) == 1 ? $data[0]->general_party_master_code : '';   
+    }
+
+    public function allParty($parents = '') {
+        $rows = $this->find()->where(['bmc_code' => $parents[0], 'is_active' => 1, 'is_product_sale' => 1])->all();
+        $parties = [];
+        foreach ($rows as $value) {
+            $parties[] = array('id' => $value->general_party_master_code,
+                'name' => $value->party_name . '(' . $value->ref_code.') - '.$value->party_type);
+        }
+        return $parties;
     }
 }

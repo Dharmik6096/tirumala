@@ -108,6 +108,20 @@ $this->title = Yii::$app->label->title('view', 'Milk Tranfer');
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                                [
+                                'attribute' => 'transaction_datetime',
+                                'value' => Yii::$app->controls->view_date($model->transaction_datetime),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                                [
+                                'attribute' => 'shift_code',
+                                'value' => Yii::$app->general->getforeignkey($model->shiftCode, 'shift'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
                         [
                         'columns' => [
                                 [

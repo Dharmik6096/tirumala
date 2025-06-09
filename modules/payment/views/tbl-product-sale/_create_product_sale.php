@@ -81,7 +81,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                     <?= $form->field($model, 'ex_code')->textInput()->label($lable) ?>
                 </div>
                 <div class="col-sm-2 reset_field party">
-                    <?= Yii::$app->dropdown->depend_dropdown('general_party_master', $model, $form, 'tblproductsale-bmc_code', 'form-group col-sm-2', $model->getAttributeLabel('party_code')); ?>
+                    <?= Yii::$app->dropdown->generalPartyMaster($model, $form, 'tblproductsale-bmc_code', 'general_party_master_code', $model->getAttributeLabel('party_code')); ?>
                 </div>
                 <div class="col-sm-2 reset_field">
                     <?php
@@ -671,7 +671,7 @@ $script = "
             getAvailableStock();
         }
     });
-    $('#tblproductsaletransaction-sap_batch_no').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#tblproductsaletransaction-sap_batch_no').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         let varVal = $('#tblproductsaletransaction-sap_batch_no option:nth-child(2)').val();
         if(varVal == undefined) {
             varVal = '';

@@ -79,8 +79,8 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-plant_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
                 </div>
             <?php } ?>
-            <div id="addTripButtonDiv" class="col-sm-4 addTripButtonDiv">
-                <button id="addTripButton" class="btn btn-primary">Generate Trip</button>
+            <div id="addTripButtonDiv" class="col-sm-2 addTripButtonDiv">
+                <button id="addTripButton" class="btn btn-primary mb0">Generate Trip</button>
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'vehicle_in_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
@@ -90,10 +90,14 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2">
                 <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
+                <?= Html::hiddenInput('partyType', 'bmcMilkDispatch', ['id' => 'partyType']); ?>
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,NULL,tankerMovement', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
-            <div class="col-sm-2 mt15" id="is-last-destination-container">
+            <div class="col-sm-2 mt15 no_pointer_disabled" id="is-last-destination-container">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_last_destination'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'tested_by')->textInput() ?>
             </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
@@ -112,6 +116,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-1">
             <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+        </div>
+        <div class="col-sm-1">
+            <?= $form->field($txn_model, 'shift_of_milk')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
@@ -137,10 +144,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'density')->textInput() ?>
         </div>
+        <div class="clearfix"></div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'lactose')->textInput() ?>
         </div>
-        <div class="clearfix"></div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'freezing_point')->textInput() ?>
         </div>
@@ -165,7 +172,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
-        <div class="clearfix"></div>
+        <!-- <div class="clearfix"></div> -->
         <div id="transactions-from">
 
         </div>
@@ -205,7 +212,7 @@ $(document).ready(function(){
             var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
             var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
+            if(setData(transaction_date) && setData(transaction_date) && setData(vehicleCode) && setData(vehicleCode) && tripCodeDropdownLength == 1){
                 if (tripGenerateBtn) {
                     $('#addTripButtonDiv').show();   
                 } 
@@ -250,7 +257,7 @@ $(document).ready(function(){
     });
 
     var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
-    if(bmc_milk_dispatch_code!=''){
+    if(setData(bmc_milk_dispatch_code)){
         $('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
     }
     $(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code', function() {
@@ -316,6 +323,15 @@ $(document).ready(function(){
                                 });
                             } else if (obj.data.is_auto_trip == 1) {
                                 $('#is-last-destination-container').show();
+                                $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
+                                    var destType = $(this).val().toUpperCase();
+                                    var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');
+                                    if (destType === 'PLANT' || destType === 'PARTY') {
+                                        isCheckbox.prop('checked', true);
+                                    } else {
+                                        isCheckbox.prop('checked', false);
+                                    }
+                                });
                             } else {
                                 $('#is-last-destination-container').hide();
                             }
@@ -334,15 +350,15 @@ $(document).ready(function(){
             }
         });
     }
+});
 
-    function setData(field = ''){
+function setData(field = ''){
     if(field != '' && field != null && field != undefined && field != 'Loading ...'){
         return true;
     } else {
         return false;
     }
-} 
-});
+}
 ";
 
 $script .= "
@@ -354,7 +370,7 @@ $script .= "
         var to_shift = $('#tblbmcmilkdispatch-to_shift_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
         var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
-        if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && vehicle_code !=''){
+        if(setData(from_date) && setData(from_shift) && setData(to_date) && setData(to_shift) && setData(vehicle_code)){
             $('#transactions-from').html('');
             $('#transactions-detial').html('');           
             BindData(from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
@@ -415,7 +431,7 @@ $script = "$(document).ready(function(){
   ViewConfig(id);
     });
     function ViewConfig(code){
-        if(code != ''){         
+        if(setData(code)){         
         $.ajax({
                 type: 'get',
                 url: '" . Url::to(['/tankermovement/tbl-bmc-milk-dispatch/view-config']) . "',
@@ -452,7 +468,7 @@ if (!$readonly) {
         $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
             var from_date = $('#tblbmcmilkdispatch-from_date').val();
             var to_date = $('#tblbmcmilkdispatch-to_date').val();
-            if (from_date !== '' && to_date !== '') {
+            if (setData(from_date) && setData(to_date)) {
                 // Split date strings and format them as yyyy-mm-dd
                 var from_date_parts = from_date.split('-');
                 var to_date_parts = to_date.split('-');

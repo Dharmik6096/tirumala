@@ -102,6 +102,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $this->contactDetails->form_validation_type = 'route-create';
+        $this->contactDetails->department = 'route_supervisor';
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);

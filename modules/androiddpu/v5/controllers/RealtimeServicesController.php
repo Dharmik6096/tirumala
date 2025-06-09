@@ -145,6 +145,11 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $model->plant_code = $bmcDetail->plant_code;
                 $model->mcc_plant_code = $bmcDetail->mcc_plant_code;
 
+                $bmcMilkDispatchTxnModel = new TblBmcMilkDispatchTxn();
+                $bmcMilkDispatchTxnModel->bmc_code = $model->bmc_code;
+                $bmcMilkDispatchTxnModel->transaction_date = $model->transaction_date;
+                $testReportNo = $bmcMilkDispatchTxnModel->generateTestReportNo();
+
                 $postData = $data['content'];
                 $from_datetime = $postData['from_date'];
                 $to_datetime = $postData['to_date'];
@@ -232,6 +237,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $response_data['stockDetail'] = $stock_data;
                 $response_data['tripDetail'] = $trip_data;
                 $response_data['dispatchDetail'] = $dispatch_data;
+                $response_data['testReportNo'] = $testReportNo;
             }
         }
         $this->response['data'] = $response_data;
@@ -260,7 +266,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $remarks = !empty($postData['remarks']) ? $postData['remarks'] : 'AMCS Dispatch';
                 $tripModel->trip_status = $is_last_destination == 1 ? 'tankerfull' : 'open';
                 $saveModel[] = $tripModel;
-                $tripModel->addTripRoute($saveModel, $deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination);
+                $validation = TRUE;
+                $tripModel->addTripRoute($saveModel, $deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $validation, $is_last_destination);
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
                 if ($transaction == 'customRedirect') {
                     $res_data['message'] = 'Trip Updated Successfully.';

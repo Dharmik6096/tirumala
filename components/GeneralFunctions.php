@@ -2140,9 +2140,15 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function validateBMC($model, $attribute, $hierarchy = FALSE) {
+    public function validateBMC($model, $attribute, $hierarchy = FALSE, $check_vendor = FALSE) {
         $bmcModel = new TblDcsBmc();
-        $records = $bmcModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'])->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
+        $query = $bmcModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code']);
+            if($check_vendor){
+                $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute], ['sap_vendor_code' => $model->$attribute]]);
+            } else {
+                $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]]);
+            }
+        $records = $query->all();
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->bmc_code;
             if ($hierarchy == 'TRUE') {

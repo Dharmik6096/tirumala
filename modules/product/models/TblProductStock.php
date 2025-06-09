@@ -161,12 +161,6 @@ class TblProductStock extends \app\models\ChildModel {
             $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
             $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
-        } elseif (strtoupper($type) == 'PARTY') {
-            $party = TblGeneralPartyMaster::find()->where(['general_party_master_code' => $code])->one();
-            $this->dcs_code = $party->dcs_code;
-            $this->bmc_code = $party->bmc_code;
-            $this->mcc_plant_code = $party->mcc_plant_code;
-            $this->plant_code = $party->plant_code;
         }
     }
 

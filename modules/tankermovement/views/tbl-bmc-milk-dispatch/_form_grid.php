@@ -175,6 +175,7 @@ $attribute = [
     ],
     // ['attribute' => 'gross_weight'],
     // ['attribute' => 'tare_weight'],
+    ['attribute' => 'tested_by', 'visible' => true, 'filter' => false],
     ['attribute' => 'remarks'],
         [
         'attribute' => 'is_last_destination',

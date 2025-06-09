@@ -14,7 +14,6 @@ use Yii;
  * @property string $plant_code
  * @property string $mcc_plant_code
  * @property string $bmc_code
- * @property string $dcs_code
  * @property string $ref_code
  * @property string $party_type
  * @property string $party_code
@@ -47,7 +46,7 @@ class TblGeneralPartyMasterHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['general_party_master_code','party_name','union_code','plant_code','mcc_plant_code','bmc_code','dcs_code','ref_code','party_type','party_code','is_product_sale','is_active','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','operation_type'], 'safe'],
+            [['general_party_master_code','party_name','union_code','plant_code','mcc_plant_code','bmc_code','ref_code','party_type','party_code','is_product_sale','is_active','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','operation_type'], 'safe'],
         ];
     }
 
@@ -64,7 +63,6 @@ class TblGeneralPartyMasterHistory extends \yii\db\ActiveRecord
             'plant_code' => Yii::t('app', 'Plant Code'),
             'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
             'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
             'ref_code' => Yii::t('app', 'Ref Code'),
             'party_type' => Yii::t('app', 'Party Type'),
             'party_code' => Yii::t('app', 'Party Code'),
