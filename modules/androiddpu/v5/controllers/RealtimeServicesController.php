@@ -388,4 +388,17 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
         }
     }
 
+    public function actionTankerDestinationList() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['organization_type']) && !empty($data['organization_code'])) {
+            $orgDetail = $this->getOrgDetail($data['organization_type'], $data['organization_code'], FALSE);
+            if (!empty($orgDetail['union_code'])) {
+                $res_data = \Yii::$app->general->getSpData('sp_app_amcs_v5_tanker_destination_list', ['union_code' => $orgDetail['union_code']]);
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
 }
