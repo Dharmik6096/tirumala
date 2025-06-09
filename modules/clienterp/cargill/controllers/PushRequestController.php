@@ -34,9 +34,9 @@ class PushRequestController extends PushMasterController {
             } else {
                 $plantdisModel->document_date = $document_date->format('Y-m-d');
             }
-            $plant_data = $plantdisModel->plantCode;
             if ($plantdisModel->validate()) {
-                if (!empty($plant_data) && $plant_data->sap_vendor_code == $request['plant_code']) {
+                $plant_data = $plantdisModel->plantCode;
+                if (!empty($plant_data) && $plant_data->ref_code == $request['plant_code']) {
                     $plantdisModel->originating_org_code = $plantdisModel->union_code;
                     $plantdisModel->created_by = 'api';
                     $save_model[] = $plantdisModel;
@@ -91,6 +91,9 @@ class PushRequestController extends PushMasterController {
         } catch (\Throwable $ex) {
             $this->response->setStatusCode($this->eiplResponseCode->statusError);
             $this->response->setMessage(['Error While Process Request.']);
+        }
+        if (empty($plant_data) && !empty($plantdisModel->getErrors())) {
+            $plant_data = TblPlant::find()->where(['sap_vendor_code' => $request['plant_code']])->one();
         }
         $responseTimestamp = date('Y-m-d H:i:s');
         $this->setLogData($request, $this->response, $requestTimestamp, $responseTimestamp, $plant_data);

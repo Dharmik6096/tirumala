@@ -17,6 +17,7 @@ use yii\helpers\Json;
  */
 class TblGeneralPartyMasterController extends ChildController
 {
+    public $freeAccessActions = ['party-list'];
     /**
      * Lists all TblGeneralPartyMaster models.
      * @return mixed
@@ -81,10 +82,17 @@ class TblGeneralPartyMasterController extends ChildController
     public function actionDelete() {
         $this->model = $this->findModel(Yii::$app->request->post('id'));
         $historyModel = new TblGeneralPartyMasterHistory();
-        Yii::$app->operation->history($this->model, $historyModel, DELETE);
-        $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
-
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->is_active = 0;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['General Party', 'delete']);
+        if ($transaction == 'customRedirect') {
+            $msg = Yii::$app->getSession()->getFlash('success')['message'];
+            $record = ['status' => 'success', 'msg' => $msg];
+        } else {
+            $msg = Yii::$app->getSession()->getFlash('success')['message'];
+            $record = ['status' => 'error', 'msg' => $msg];
+        }
+        Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode($record);
     }
 
@@ -103,5 +111,18 @@ class TblGeneralPartyMasterController extends ChildController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionPartyList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $parties = new TblGeneralPartyMaster();
+                $out = $parties->allParty($parents);
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 }

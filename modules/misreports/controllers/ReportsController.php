@@ -1023,7 +1023,13 @@ class ReportsController extends \app\controllers\ChildController {
                     $model->{$value} .= ' ' . $shift . '.000';
                 }
             }
-            $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
+            if ($value == 'date_payment_cycle' && !empty($model->{$value})) {
+                $pay_cycle_date = explode('to', $model->{$value});
+                $controls['from_date'] = date('Y-m-d', strtotime($pay_cycle_date[0])).' 06:00:00';
+                $controls['to_date'] = (trim(date('Y-m-d', strtotime($pay_cycle_date[1])))).' 18:00:00';
+            } else {
+                $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
+            }
         }
         $showOutPut = TRUE;
         if (!empty($this->data['download_day_differe'])) {
@@ -1569,6 +1575,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionTallyReport() {
         $this->report = 'TallyReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'TallyConsolidatedReport';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -3762,11 +3773,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Vehicle Master History',
             ],
             'TallyReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,report_type',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,date_payment_cycle,report_collection_type',
                 'sp_name' => 'mis_milk_collection_bill_shivprasad',
                 'scenario' => 'TallyReport',
-                'title' => '916 - TallyReport',
-                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection')],
+                'title' => '916 - Tally Report',
+                'report_type' => [Yii::t('app', 'Tally Report'), Yii::t('app', 'Tally Consolidated Report')],
+            ],
+            'TallyConsolidatedReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,date_payment_cycle,report_collection_type',
+                'sp_name' => 'mis_milk_collection_bill_shivprasad_consolidated',
+                'scenario' => 'TallyReport',
+                'title' => '916 - Tally Consolidated Report',
+                'report_type' => [Yii::t('app', 'Tally Report'), Yii::t('app', 'Tally Consolidated Report')],
             ],
             'VehicleMasterHistory' => [
                 'param' => 'transporter_code',

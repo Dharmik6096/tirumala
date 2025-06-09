@@ -229,6 +229,17 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('date_payment_cycle'))) {
+                                            echo Html::hiddenInput('customer_type', 'dcs', ['id' => 'reportsmodel-customer_type']);
+                                            $where = json_encode(['data_lock_member' => 1]);
+                                            echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
+                                            echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->paymentCycleWithDate($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc,0,reportsmodel-type_check', 'date_payment_cycle', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+                                            </div>
+                                            <?php
+                                        }
                                         if (in_array($value, array('payment_cycle_code'))) {
 
                                             if (isset($value_array[1]) && isset($value_array[2]) && $value_array[1] == 'default') {
