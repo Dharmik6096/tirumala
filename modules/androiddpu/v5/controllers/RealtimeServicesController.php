@@ -346,14 +346,11 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $orgDetail = $this->getOrgDetail($data['organization_type'], $data['organization_code'], FALSE);
                 if ($orgDetail) {
                     $params = [
-                        'f_union_code' => $orgDetail['union_code'],
-                        'f_plant_code' => $orgDetail['plant_code'][0],
-                        'f_mcc_code' => $orgDetail['mcc_plant_code'][0],
+                        'f_mcc_code' => ',' . implode(',', $orgDetail['mcc_plant_code']) . ',',
                         'from_date' => $content['from_date'],
                         'to_date' => $content['to_date'],
                     ];
-                    $sp = ($orgDetail['eipl_code'] == 'NIFPL') ? 'portal_mcc_shift_lock_data_nif' : 'sp_app_amcs_v5_shift_lock_list';
-                    $res_data = \Yii::$app->general->getSpData($sp, $params);
+                    $res_data = \Yii::$app->general->getSpData('sp_app_amcs_v5_shift_lock_list', $params);
                 }
             }
         }
@@ -372,20 +369,23 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                     if ($orgDetail) {
                         $shift_lock = new TblMccShiftLockController('tbl-mcc-shift-lock', Yii::$app->getModule('collection'));
                         Yii::$app->session->set('eiplCode', $orgDetail['eipl_code']);
-                        if ($content['bmc_lock'] == 0) {
+                        if ($content['bmc_lock'] == 1) {
                             $shift_lock->actionBmcDataLock($content['mcc_plant_code'], date('Y-m-d', strtotime($content['date_time_of_collection'])), $content['shift_code'], $content['qty'], $content['avg_fat'], $content['avg_snf'], $content['amount'], 'api_response');
                         } else {
                             $shift_lock->actionBmcDataUnlock($content['mcc_plant_code'], date('Y-m-d', strtotime($content['date_time_of_collection'])), $content['shift_code'], $content['qty'], $content['avg_fat'], $content['avg_snf'], $content['amount'], 'api_response');
                         }
-                        $res_data = !empty(Yii::$app->session->getFlash('success')) ? Yii::$app->session->getFlash('success') : '';
+                        if (Yii::$app->session->hasFlash('success')) {
+                            $res_data = Yii::$app->session->getFlash('success')['message'];
+                        }
                     }
                 }
+                Yii::$app->session->remove('eiplCode');
             }
-            $this->response['data'] = $res_data;
-            return $this->response;
+            $this->response['data'] = ['message' => $res_data];
         } catch (\Throwable $e) {
-            return ['error' => $e->getMessage()];
+            $this->response['data'] = ['message' => $e->getMessage()];
         }
+        return $this->response;
     }
 
     public function actionTankerDestinationList() {

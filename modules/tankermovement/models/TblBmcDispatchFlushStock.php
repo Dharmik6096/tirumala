@@ -95,7 +95,7 @@ class TblBmcDispatchFlushStock extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC'),
             'transaction_date' => Yii::t('app', 'Date'),
             'shift_code' => Yii::t('app', 'Shift'),
-            'bmc_silos_info_code' => Yii::t('app', 'Bmc Silos Info'),
+            'bmc_silos_info_code' => Yii::t('app', 'Silo No.'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
             'qty' => Yii::t('app', 'Qty'),

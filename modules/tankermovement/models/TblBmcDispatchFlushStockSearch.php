@@ -48,7 +48,7 @@ class TblBmcDispatchFlushStockSearch extends TblBmcDispatchFlushStock {
         ]);
 
         $this->load($params);
-        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'shiftCode', 'milkType', 'milkQualityType']);
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'shiftCode', 'milkType', 'milkQualityType', 'silosInfoCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_dispatch_flush_stock', 'tbl_bmc_dispatch_flush_stock', 'tbl_bmc_dispatch_flush_stock');
 
         if (!$this->validate()) {
