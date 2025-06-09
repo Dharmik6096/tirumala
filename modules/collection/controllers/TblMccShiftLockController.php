@@ -27,8 +27,6 @@ use yii\helpers\Url;
  */
 class TblMccShiftLockController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['bmc-data-lock', 'bmc-data-unlock'];
-
     /**
      * Lists all TblMccShiftLock models.
      * @return mixed
