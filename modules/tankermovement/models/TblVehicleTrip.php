@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlantConversionVendorMapping;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\syncutility\models\TblSentbox;
 use yii\base\UserException;
@@ -330,10 +331,10 @@ class TblVehicleTrip extends \app\models\ChildModel {
     }
 
     public function getTakenTripDetailCode() {
-        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null]);
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null])->orderBy('sequence_no');
     }
 
-    public function addTripRoute(&$saveModel, &$deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, $is_last_destination = 0) {
+    public function addTripRoute(&$saveModel, &$deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, &$validation, $is_last_destination = 0) {
         $trip_detail = TblVehicleTripDetail::find()
                         ->where(['trip_code' => $this->trip_code])
                         ->andWhere(['lower(source_org_type)' => $source_org_type, 'source_org_code' => $source_org_code])
@@ -347,23 +348,59 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 if (empty($trip_detail->destination_code)) {
                     $trip_detail->destination_type = $destination_type;
                     $trip_detail->destination_code = $destination_code;
+                    $isParty = strtolower($trip_detail->destination_type) == 'party';
+                    $sequence = $trip_detail->sequence_no + 1;
+                    $codeSuffix = intval(substr($trip_detail->vehicle_trip_detail_code, -1));
+                    if($isParty && $trip_detail->partyMasterCodeDest->party_type == 'conversion_vendor') {
+                            $mappedModel = new TblPlantConversionVendorMapping();
+                            $mappedPlant = $mappedModel->getMappedPlant($trip_detail->destination_code);
+                            if(!empty($mappedPlant)){
+                                $virtul_trip_detail = new TblVehicleTripDetail();
+                                $virtul_trip_detail->scenario = 'autoTrip';
+                                $virtul_trip_detail->vehicle_trip_detail_code = $this->vehicle_trip_code . 'T' . (++$codeSuffix);
+                                $virtul_trip_detail->vehicle_trip_code = $this->vehicle_trip_code;
+                                $virtul_trip_detail->vehicle_code = $this->vehicle_code;
+                                $virtul_trip_detail->trip_code = $this->trip_code;
+                                $virtul_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                                $virtul_trip_detail->source_org_type = $trip_detail->destination_type;
+                                $virtul_trip_detail->source_org_code = $trip_detail->destination_code;
+                                $virtul_trip_detail->destination_type = 'plant';
+                                $virtul_trip_detail->destination_code = $mappedPlant->plant_code;
+                                $virtul_trip_detail->challan_no = $challan_no;
+                                $virtul_trip_detail->is_virtual_location = 1;
+                                $virtul_trip_detail->sequence_no = $sequence;
+                                $saveModel[] = $virtul_trip_detail;
 
-                    $numeric_part = intval(substr($trip_detail->vehicle_trip_detail_code, -1));
-                    $updated_numeric_part = $numeric_part + 1;
-                    $new_vehicle_trip_detail_code = $this->vehicle_trip_code . 'T' . $updated_numeric_part;
-
-                    $auto_trip_detail = new TblVehicleTripDetail();
-                    $auto_trip_detail->scenario = 'autoTrip';
-                    $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
-                    $auto_trip_detail->vehicle_trip_code = $this->vehicle_trip_code;
-                    $auto_trip_detail->vehicle_code = $this->vehicle_code;
-                    $auto_trip_detail->trip_code = $this->trip_code;
-                    $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
-                    $auto_trip_detail->source_org_code = $destination_code;
-                    $auto_trip_detail->source_org_type = $destination_type;
-                    $auto_trip_detail->is_last_destination = (int) $is_last_destination;
-                    $auto_trip_detail->sequence_no = $trip_detail->sequence_no + 1;
-                    $saveModel[] = $auto_trip_detail;
+                                $next_virtul_trip_detail = new TblVehicleTripDetail();
+                                $next_virtul_trip_detail->scenario = 'autoTrip';
+                                $next_virtul_trip_detail->vehicle_trip_detail_code = $this->vehicle_trip_code . 'T' . (++$codeSuffix);
+                                $next_virtul_trip_detail->vehicle_trip_code = $this->vehicle_trip_code;
+                                $next_virtul_trip_detail->vehicle_code = $this->vehicle_code;
+                                $next_virtul_trip_detail->trip_code = $this->trip_code;
+                                $next_virtul_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                                $next_virtul_trip_detail->source_org_type = $virtul_trip_detail->destination_type;
+                                $next_virtul_trip_detail->source_org_code = $virtul_trip_detail->destination_code;
+                                $next_virtul_trip_detail->is_last_destination = (int) $is_last_destination;
+                                $next_virtul_trip_detail->is_virtual_location = 2;
+                                $next_virtul_trip_detail->sequence_no = $sequence + 1;
+                                $saveModel[] = $next_virtul_trip_detail;
+                            } else {
+                                $validation = FALSE;
+                            }
+                    } else {
+                        $auto_trip_detail = new TblVehicleTripDetail();
+                        $auto_trip_detail->scenario = 'autoTrip';
+                        $auto_trip_detail->vehicle_trip_detail_code = $this->vehicle_trip_code . 'T' . (++$codeSuffix);
+                        $auto_trip_detail->vehicle_trip_code = $this->vehicle_trip_code;
+                        $auto_trip_detail->vehicle_code = $this->vehicle_code;
+                        $auto_trip_detail->trip_code = $this->trip_code;
+                        $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                        $auto_trip_detail->source_org_code = $destination_code;
+                        $auto_trip_detail->source_org_type = $destination_type;
+                        $auto_trip_detail->is_last_destination = (int) $is_last_destination;
+                        $auto_trip_detail->sequence_no = $sequence;
+                        $saveModel[] = $auto_trip_detail;
+                    }
                 } else if ($is_last_destination == 1) {
                     $exist_next_trip_detail = TblVehicleTripDetail::find()
                             ->where(['vehicle_trip_code' => $this->vehicle_trip_code, 'sequence_no' => $trip_detail->sequence_no + 1, 'source_org_code' => $trip_detail->destination_code])

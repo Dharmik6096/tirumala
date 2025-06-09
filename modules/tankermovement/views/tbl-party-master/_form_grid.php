@@ -11,8 +11,10 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'party_type', 'filter' => FALSE, 'visible' => TRUE],
     ['attribute' => 'party_name'],
+    ['attribute' => 'sap_vendor_code', 'filter' => TRUE, 'visible' => TRUE],
     ['attribute' => 'party_contact_no'],
     ['attribute' => 'owner_name'],
     ['attribute' => 'owner_contact_no'],
@@ -28,10 +30,6 @@ $attribute = [
     ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
     ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
-    ['attribute' => 'is_sales_office', 'filter' => FALSE, 'value' => function($model){
-        return !empty($model->is_sales_office) ? 'Yes' : 'No';
-    }],
 ];
 
 $grid_option = [

@@ -8,6 +8,7 @@ use yii\web\View;
 /* @var $form yii\widgets\ActiveForm */
 $summary_model = $type == 'create' ? [$model, $contactDetails] : $model;
 $readonly = $type == 'create' ? FALSE : TRUE;
+$class = ($type == 'create' || $model->is_virtual_plant != 1) ? '' : 'no_pointer';
 $nameWarning = 0;
 $codeWarning = 0;
 if (!empty($_POST)) {
@@ -92,6 +93,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2"> 
             <?= $form->field($model, 'description')->textarea() ?>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'is_virtual_plant', ['checkboxTemplate' => "<div class='checkbox " . $class . "''>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
         <?php if ($type == 'create') { ?>
             <div class="clearfix"></div>

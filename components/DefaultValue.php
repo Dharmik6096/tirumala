@@ -24,6 +24,10 @@ class DefaultValue extends Component {
                 'TblDcs' => [
                 // Common defaults
                 ],
+                'TblBmcDispatchFlushStock' => [
+                    'milk_type_code' => 3,
+                    'milk_quality_type_code' => 1,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [

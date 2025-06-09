@@ -34,6 +34,8 @@ $attribute = [
         ['attribute' => 'lactose', 'filter' => false],
         ['attribute' => 'freezing_point', 'filter' => false],
         ['attribute' => 'temp', 'filter' => false],
+        ['attribute' => 'tested_by', 'filter' => false],
+        ['attribute' => 'verified_by', 'filter' => false],
 ];
 foreach ($config_list as $config) {
     $attribute[] = [

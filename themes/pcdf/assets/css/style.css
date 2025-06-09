@@ -6136,4 +6136,7 @@ tr.highlightRow {
 }
 .customDaulBoxCss .btn-group.buttons .moveall, .customDaulBoxCss .btn-group.buttons .removeall {
     display: none;
-} 
+}
+.mb0 {
+    margin-bottom: 0px;
+}

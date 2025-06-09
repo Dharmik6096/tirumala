@@ -38,7 +38,8 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'receipt_at'); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
+                <?= Html::hiddenInput('partyTypeDest', 'milkReceiptDest', ['id' => 'partyTypeDest']); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code,NULL,NULL,partyTypeDest', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2 ReceiptDatetime">
                 <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
@@ -47,12 +48,13 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'receipt_shift_code'); ?>
             </div>
             <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
+            <?= Html::hiddenInput('partyTypeSource', 'milkReceiptSource', ['id' => 'partyTypeSource']); ?>
             <?php if (!$tripMandateOnReceipt) { ?>
                 <div class="col-sm-1">
                     <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
                 </div>
                 <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code,NULL,tankerMovement', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code,NULL,tankerMovement,partyTypeSource', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
                 </div>
             <?php } ?>
             <div class="col-sm-2 tanker_no_hide"> 
@@ -71,7 +73,7 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
                 </div>
                 <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code,NULL,tankerMovement', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code,NULL,tankerMovement,partyTypeSource', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
                 </div>
             <?php } ?>
             <div class="col-sm-2">
@@ -345,8 +347,6 @@ $script = "
         var EntryType = document.querySelector('.col-sm-1.entry_type');
         var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
         var tankerMovementWithTripSubStatus = '" . $tankerMovementWithTripSubStatus . "';
-        $('#tblmilkvehicleentrytransaction-snf').attr('readonly', false).val('');
-        $('#tblmilkvehicleentrytransaction-clr').attr('readonly', false).val('');
         if (setData(receipt_at)) {
             if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
                $('.tanker_no_hide').css('display', 'block');
@@ -366,7 +366,6 @@ $script = "
                 entryTypeField.val('').prop('readonly', false).trigger('change');   
                 EntryType.classList.remove('no_pointer');    
                 $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
-                isClrInput();
                 $(document).off('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code')
                             .on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code', tripSubStatus);
             } else {
@@ -425,6 +424,7 @@ $script = "
                             $('#dispatch-detail').css('display', 'block');
                             $('#milk-receipt-transaction').css('display', 'block');
                             $('#milk-receipt-transaction-detail').css('display', 'block');
+                            isClrInput();
                         }
                     },
                 });
@@ -434,12 +434,14 @@ $script = "
                 $('#dispatch-detail').css('display', 'block');
                 $('#milk-receipt-transaction').css('display', 'block');
                 $('#milk-receipt-transaction-detail').css('display', 'block');
+                isClrInput();
             }
         } else {
             $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
             $('#dispatch-detail').css('display', 'none');
             $('#milk-receipt-transaction').css('display', 'none');
             $('#milk-receipt-transaction-detail').css('display', 'none');
+            isClrInput();
         }
     }
     
@@ -491,7 +493,9 @@ $script = "
     }
 
     $(document).on('change', '#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-snf', function() {
-        calculateClr();
+        if(!qltyParamsReadOnly){
+            calculateClr();
+        }
     });
 
     function calculateClr(){
@@ -506,7 +510,7 @@ $script = "
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentrytransaction-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentrytransaction-snf').val('');
 
-        if(setData(receiptAtCode) && setData(receiptAt) && receiptAt == 'PLANT' && ((is_clr_input == 0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !=''))){
+        if(setData(receiptAtCode) && setData(receiptAt) && receiptAt == 'PLANT' && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
@@ -533,14 +537,14 @@ $script = "
         var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();
         var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();
                 
-        if(setData(receiptAtCode)){
+        if(setData(receiptAtCode) && (!qltyParamsReadOnly)){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['get-clr-input']) . "',
                 data: {'union_code':union,'receiptAtCode':receiptAtCode},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
-                    if (obj.data != null) {
+                    if (setData(obj.data)) {
                         var is_clr_input = obj.data;
                         $('#is_clr_input').val(is_clr_input);
                         if (is_clr_input == 0) {

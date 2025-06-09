@@ -196,6 +196,7 @@ class importData extends \yii\base\Module {
             'compartment-detail' => ['table_name' => 'tbl_vehicle_compartment_detail', 'fields' => 'vehicle_code,compartment_no,capacity', 'scenario' => 'importCsv'],
             'general-party-master' => ['table_name' => 'tbl_general_party_master', 'fields' => 'bmc_code,party_type,party_code,party_name', 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
             'mcc-rechilling-detail' => ['table_name' => 'tbl_mcc_rechilling_detail', 'fields' => 'chiller_info_code,chilling_date,shift_code,qty,rate', 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
+            'bmc_flush_dispatch' => ['table_name' => 'tbl_bmc_dispatch_flush_stock', 'fields' => 'bmc_code,transaction_date,shift_code,bmc_silos_info_code,milk_type_code,milk_quality_type_code,qty,remarks', 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1', 'update_key' => 'bmc_code,transaction_date,shift_code,bmc_silos_info_code', 'exclude_update' => 'bmc_code,transaction_date,shift_code,bmc_silos_info_code,milk_type_code,milk_quality_type_code,bmc_dispatch_flush_stock_code', 'historyClass' => 'TblBmcDispatchFlushStockHistory', 'validate_length' => false],
         ];
         return $label[$l];
     }

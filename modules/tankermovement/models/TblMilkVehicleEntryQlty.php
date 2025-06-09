@@ -66,16 +66,20 @@ class TblMilkVehicleEntryQlty extends ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-                [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code'], 'safe'],
-                [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
-                [['chamber_no', 'acidity', 'mbrt'], 'required'],
-                [['originating_type'], 'integer'],
-                [['union_code'], 'string', 'max' => 3],
-                [['plant_code'], 'string', 'max' => 6],
-                [['vehicle_code', 'trip_code'], 'string', 'max' => 20],
-                [['chamber_no', 'status'], 'string', 'max' => 50],
+        $main_rules = [
+            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by'], 'safe'],
+            [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
+            [['chamber_no', 'acidity', 'mbrt'], 'required'],
+            [['originating_type'], 'integer'],
+            [['union_code'], 'string', 'max' => 3],
+            [['plant_code'], 'string', 'max' => 6],
+            [['vehicle_code', 'trip_code'], 'string', 'max' => 20],
+            [['chamber_no', 'status'], 'string', 'max' => 50],
+            [['tested_by', 'verified_by'], 'string', 'max' => 100],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblMilkVehicleEntryQlty', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -117,6 +121,8 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'lot_datetime' => Yii::t('app', 'Lot Datetime'),
             'lot_no' => Yii::t('app', 'Lot No'),
+            'tested_by' => Yii::t('app', 'Tested By'),
+            'verified_by' => Yii::t('app', 'Verified By'),
         ];
     }
 
@@ -137,7 +143,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getMilkVehicleEntryQlty() {
-        $plantLotCreationInterval = Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'plant_lot_creation_interval', $this->plant_code, 'PLANT','PLANT_RECEIPT_CONFIG');
+        $plantLotCreationInterval = Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'plant_lot_creation_interval', $this->plant_code, 'PLANT', 'PLANT_RECEIPT_CONFIG');
         $plantLotCreationInterval = is_numeric($plantLotCreationInterval) ? (int) $plantLotCreationInterval : 0;
         if ($plantLotCreationInterval > 0) {
             $records = $this->find()
@@ -188,7 +194,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getConfigResult() {
-        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty']);
+        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty']);
     }
 
     public function getPlant($trip_code) {

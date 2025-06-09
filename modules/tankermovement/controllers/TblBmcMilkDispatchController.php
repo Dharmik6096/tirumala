@@ -104,6 +104,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->trip_code = $model->trip_code;
             $txn_model->vehicle_code = $model->vehicle_code;
             $txn_model->scenario = 'create';
+            $validation = TRUE;
             if ($txn_model->validate()) {
                 $saveModel = [];
                 $deleteModel = [];
@@ -125,11 +126,16 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
-                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'bmc', $model->bmc_code, $model->destination_type, $model->destination_code, $model->is_last_destination);
+                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'bmc', $model->bmc_code, $model->destination_type, $model->destination_code, $validation, $model->is_last_destination);
+                        if(!$validation){
+                            $model->bmc_milk_dispatch_code = '';
+                            $model->addError('destination_code', "Conversion party not mapped with plant");
+                        }
                     }
                     $saveModel[] = $model;
                 }
                 $txn_model->attributes = $model->attributes;
+                $txn_model->test_report_no = $txn_model->generateTestReportNo();
                 $txn_model->x_col1 = Yii::$app->general->getUuid();
                 $txn_model->bmc_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($txn_model, $model->bmc_milk_dispatch_code);
                 $txn_model->qty_mode = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'dispatch_qty_mode', 'BMC');
@@ -184,22 +190,24 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
-                if ($transaction != 'customRedirect' && $new_rec) {
-                    $model->bmc_milk_dispatch_code = '';
-                } else if ($transaction == 'customRedirect') {
-                    if ($new_rec) {
-                        $response = Yii::$app->general->getColumnName($model->source_org_type);
-                        $remarks = $model->remarks;
-                        if (!empty($response['rel'])) {
-                            $sourceData = $model->{$response['rel'] . 'Source'};
-                            $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                if($validation){
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
+                    if ($transaction != 'customRedirect' && $new_rec) {
+                        $model->bmc_milk_dispatch_code = '';
+                    } else if ($transaction == 'customRedirect') {
+                        if ($new_rec) {
+                            $response = Yii::$app->general->getColumnName($model->source_org_type);
+                            $remarks = $model->remarks;
+                            if (!empty($response['rel'])) {
+                                $sourceData = $model->{$response['rel'] . 'Source'};
+                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                            }
+                            $tripModel->trip_sub_status = 'bmc_dispatch';
+                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
                         }
-                        $tripModel->trip_sub_status = 'bmc_dispatch';
-                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                        return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
                     }
-                    return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
-                }
+                } 
             }
         }
         return $this->render('create', [
@@ -406,8 +414,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $model = new TblPlant();
                     $data = $model->getPlantList($parents[1], $RLS);
                 } else if (strtolower($parents[0]) == 'party') {
+                    $partyType = (isset($parents[4]) && !empty($parents[4])) ? $parents[4] : '';
                     $model = new TblPartyMaster();
-                    $data = $model->getPartyList($parents[1]);
+                    $data = $model->getPartyList($parents[1], 'TRUE', [], true, $partyType);
                 } else {
                     $model = new TblCustomerMaster();
                     $data = $model->getCustomerCodeList($parents[2], $parents[0], $parents[1]);
@@ -530,6 +539,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $txn_model->bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
             $txn_model->vehicle_code = $model->vehicle_code;
             $txn_model->scenario = 'createPlantDispatch';
+            $validation = TRUE;
             if ($txn_model->validate()) {
                 $saveModel = [];
                 $deleteModel = [];
@@ -550,12 +560,17 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_name = $tripModel->driver_name;
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
-                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'plant', $model->plant_code, $model->destination_type, $model->destination_code, $model->is_last_destination);
+                        $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'plant', $model->plant_code, $model->destination_type, $model->destination_code, $validation, $model->is_last_destination);
+                        if(!$validation){
+                            $model->bmc_milk_dispatch_code = '';
+                            $model->addError('destination_code', "Conversion party not mapped with plant");
+                        }
                     }
                     $tripModel->scenario = 'closetrip';
                     $saveModel[] = $model;
                 }
                 $txn_model->attributes = $model->attributes;
+                $txn_model->test_report_no = $txn_model->generateTestReportNo();
                 $txn_model->bmc_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($txn_model, $model->bmc_milk_dispatch_code);
                 $txn_model->qty_mode = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'dispatch_qty_mode', 'PLANT');
                 $conversion_const = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'ltr_to_kg_constant', 'PLANT');
@@ -584,21 +599,23 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['PLANT Milk Dispatch', 'create']);
-                if ($transaction != 'customRedirect' && $new_rec) {
-                    $model->bmc_milk_dispatch_code = '';
-                } else if ($transaction == 'customRedirect') {
-                    if ($new_rec) {
-                        $response = Yii::$app->general->getColumnName($model->source_org_type);
-                        $remarks = $model->remarks;
-                        if (!empty($response['rel'])) {
-                            $sourceData = $model->{$response['rel'] . 'Source'};
-                            $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                if($validation) {
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['PLANT Milk Dispatch', 'create']);
+                    if ($transaction != 'customRedirect' && $new_rec) {
+                        $model->bmc_milk_dispatch_code = '';
+                    } else if ($transaction == 'customRedirect') {
+                        if ($new_rec) {
+                            $response = Yii::$app->general->getColumnName($model->source_org_type);
+                            $remarks = $model->remarks;
+                            if (!empty($response['rel'])) {
+                                $sourceData = $model->{$response['rel'] . 'Source'};
+                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                            }
+                            $tripModel->trip_sub_status = 'plant_dispatch';
+                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
                         }
-                        $tripModel->trip_sub_status = 'plant_dispatch';
-                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                        return $this->redirect(['create-plant-dispatch', 'id' => $model->bmc_milk_dispatch_code]);
                     }
-                    return $this->redirect(['create-plant-dispatch', 'id' => $model->bmc_milk_dispatch_code]);
                 }
             }
         }
@@ -668,6 +685,14 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $result = Yii::$app->general->calculateData('BMC_DISPATCH_CONFIG', $union, $org_code, $fat, $snf, $clr, 'BMC', $is_clr_input);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
+    }
+
+    public function actionGetFromDateToDate() {
+        $bmcMilkDispatch = new TblBmcMilkDispatch();
+        $bmcMilkDispatch->bmc_code = Yii::$app->request->post('bmcCode');
+        $result = $bmcMilkDispatch->getFromDateToDate();
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Json::encode(['status' => $result['status'], 'data' => $result]);
     }
 
 }
