@@ -1999,11 +1999,6 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Payment Mode'),
                 'data' => ['1' => Yii::t('app', 'Cash'), '2' => Yii::t('app', 'DD'), '3' => Yii::t('app', 'Check'), '4' => Yii::t('app', 'Other')],
             ],
-            'applicant_relation' => [
-                'name' => 'applicant_relation',
-                'prompt' => Yii::t('app', 'Select Applicant Relation'),
-                'data' => [1 => Yii::t('app', 'Father'), 2 => Yii::t('app', 'Husband'), 3 => Yii::t('app', 'Mother')],
-            ],
             'machine_owned_type' => [
                 'name' => 'machine_owned_type',
                 'prompt' => Yii::t('app', 'Select Machine Owned Type'),

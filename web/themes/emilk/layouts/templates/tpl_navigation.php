@@ -260,7 +260,6 @@ echo GhostMenu::widget([
                     ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
-                    'visible' => $collectionApproval,
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Operations & Quality <b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'Weight Scale Calibration'), 'url' => ['/collection/tbl-weight-scale-calibration/index'], 'active' => ($cntrl == 'tbl-weight-scale-calibration')],
