@@ -12,6 +12,7 @@ use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\transporter\models\TblVehicleMaster;
+use app\modules\collection\controllers\TblMccShiftLockController;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -332,6 +333,70 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
             }
         }
 
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionBmcShiftLockList() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code']) && $data['organization_type'] == 'BMC' && !empty($content['from_date']) && !empty($content['to_date'])) {
+                $orgDetail = $this->getOrgDetail($data['organization_type'], $data['organization_code'], FALSE);
+                if ($orgDetail) {
+                    $params = [
+                        'f_mcc_code' => ',' . implode(',', $orgDetail['mcc_plant_code']) . ',',
+                        'from_date' => $content['from_date'],
+                        'to_date' => $content['to_date'],
+                    ];
+                    $res_data = \Yii::$app->general->getSpData('sp_app_amcs_v5_shift_lock_list', $params);
+                }
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionBmcDataLock() {
+        $res_data = [];
+        try {
+            $data = $this->post_data;
+            if (!empty($data['content'])) {
+                $content = $data['content'];
+                if (!empty($data['organization_type']) && !empty($data['organization_code']) && $data['organization_type'] == 'BMC') {
+                    $orgDetail = $this->getOrgDetail($data['organization_type'], $data['organization_code'], FALSE);
+                    if ($orgDetail) {
+                        $shift_lock = new TblMccShiftLockController('tbl-mcc-shift-lock', Yii::$app->getModule('collection'));
+                        Yii::$app->session->set('eiplCode', $orgDetail['eipl_code']);
+                        if ($content['bmc_lock'] == 1) {
+                            $shift_lock->actionBmcDataLock($content['mcc_plant_code'], date('Y-m-d', strtotime($content['date_time_of_collection'])), $content['shift_code'], $content['qty'], $content['avg_fat'], $content['avg_snf'], $content['amount'], 'api_response');
+                        } else {
+                            $shift_lock->actionBmcDataUnlock($content['mcc_plant_code'], date('Y-m-d', strtotime($content['date_time_of_collection'])), $content['shift_code'], $content['qty'], $content['avg_fat'], $content['avg_snf'], $content['amount'], 'api_response');
+                        }
+                        if (Yii::$app->session->hasFlash('success')) {
+                            $res_data = Yii::$app->session->getFlash('success')['message'];
+                        }
+                    }
+                }
+                Yii::$app->session->remove('eiplCode');
+            }
+            $this->response['data'] = ['message' => $res_data];
+        } catch (\Throwable $e) {
+            $this->response['data'] = ['message' => $e->getMessage()];
+        }
+        return $this->response;
+    }
+
+    public function actionTankerDestinationList() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['organization_type']) && !empty($data['organization_code'])) {
+            $orgDetail = $this->getOrgDetail($data['organization_type'], $data['organization_code'], FALSE);
+            if (!empty($orgDetail['union_code'])) {
+                $res_data = \Yii::$app->general->getSpData('sp_app_amcs_v5_tanker_destination_list', ['union_code' => $orgDetail['union_code']]);
+            }
+        }
         $this->response['data'] = $res_data;
         return $this->response;
     }

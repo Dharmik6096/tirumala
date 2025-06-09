@@ -30,18 +30,17 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcdispatchflushstock-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $disabled); ?>
     </div>  
+    <div class="col-sm-2 ">
+        <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcdispatchflushstock-module_name']); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmcdispatchflushstock-bmc_code,tblbmcdispatchflushstock-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), '', $readonly, '', '', FALSE, '', TRUE); ?>
+    </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $disabled, true); ?>
     </div>
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $disabled, 'shift_code'); ?>
     </div>
-    <div class="col-sm-2 ">
-        <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcdispatchflushstock-module_name']); ?>
-        <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmcdispatchflushstock-bmc_code,tblbmcdispatchflushstock-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), '', $readonly, '', '', FALSE, '', TRUE); ?>
-    </div>
     <div class="clearfix"></div>
-
     <div class="col-sm-2 ">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', $readonly); ?>
     </div>
@@ -52,7 +51,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'qty')->textInput() ?>
     </div>
     <div class="col-sm-4"> 
-        <?= $form->field($model, 'remarks')->textarea() ?>
+        <?= $form->field($model, 'remarks')->textInput() ?>
     </div>
     <div class="clearfix"></div>
 

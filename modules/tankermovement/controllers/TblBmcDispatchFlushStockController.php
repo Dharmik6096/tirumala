@@ -49,11 +49,11 @@ class TblBmcDispatchFlushStockController extends \app\controllers\ChildControlle
         Yii::$app->default->getDefaults($this->model);
         Yii::$app->general->setCode($this->model);
         $this->setFromDate($this->model);
+        $this->model->scenario = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->x_col1 = Yii::$app->general->getUuid();
             $this->model->transaction_date = ($this->model->transaction_date) ? Yii::$app->formatter->asDate($this->model->transaction_date, DATE_FORMAT) : '';
             $this->model->transaction_date = $this->model->transaction_date . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
-            $this->model->scenario = 'create';
             if ($this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['Flush Qty Punching', 'create']);
                 if ($transaction == 'customRedirect') {
