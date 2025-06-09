@@ -817,6 +817,10 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#status',
                 'sp' => 'sp_app_eipl_v1_CDA',
             ],
+            'tanker-destination/list' => [
+                'param' => 'union',
+                'sp' => 'sp_app_eipl_v1_tanker_destination_list',
+            ],
         ];
         return $label;
     }
