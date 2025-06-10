@@ -80,8 +80,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                 }, 'on' => ['milk_collection_other_data']],
                 ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain', 'good', 'curd', 'sour', 'drain'], 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'milk_collection_dpu_data', 'milk_collection_other_data']],
                 [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
-                [['date_time_of_collection'], 'validateDateFormat', 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection', 'bmc_quality_test', 'milk_collection_dpu_data', 'milk_collection_other_data', 'milk_collection_qty']],
-                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection', 'bmc_quality_test', 'milk_collection_dpu_data', 'milk_collection_other_data', 'milk_collection_qty']],
+                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'strictDateFormat' => true, 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection', 'bmc_quality_test', 'milk_collection_dpu_data', 'milk_collection_other_data', 'milk_collection_qty']],
                 [['collection_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
                 }],
@@ -154,13 +153,6 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
         $this->own_bmc_code = $this->bmc_code;
         $this->qlty_auto = (strtoupper($this->qlty_auto) == 'AUTOMATIC') ? 1 : 0;
         $this->qty_auto = (strtoupper($this->qty_auto) == 'AUTOMATIC') ? 1 : 0;
-    }
-
-    public function validateDateFormat($attribute, $params) {
-        $date = \DateTime::createFromFormat('d.m.Y', $this->$attribute);
-        if (!$date || $date->format('d.m.Y') != $this->$attribute) {
-            $this->addError($attribute, 'Please enter date in valid format e.g. 01.12.2018');
-        }
     }
 
 }
