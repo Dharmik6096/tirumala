@@ -156,8 +156,22 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Lot Quality');
                     'columns' => [
                         [
                             'attribute' => 'verified_by',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'sample_datetime',
+                            'value' => Yii::$app->controls->view_datetime($model->sample_datetime),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ]
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'record_status',
+                            'value' => isset($model->record_status) ? Yii::$app->dropdown->getRecords('record_status')['data'][$model->record_status] : '',
                             'valueColOptions' => ['style' => 'width:80%']
-                        ]
+                        ],
                     ]
                 ],
             ];
@@ -178,6 +192,6 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Lot Quality');
                 'container' => ['id' => 'kv-demo'],
             ]);
             ?>
-        </div>        
+        </div>
     </div>
 </div>
