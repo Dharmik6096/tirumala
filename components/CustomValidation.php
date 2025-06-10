@@ -1263,7 +1263,7 @@ class CustomValidation extends Component {
                 ],
                 'TblMilkVehicleEntryQlty' => [
                     'default' => [
-                        [['tested_by', 'verified_by'], 'required']
+                        [['tested_by', 'verified_by'], 'required', 'except' => ['resetQlty']]
                     ],
                 ],
                 'TblMilkVehicleEntryQltyMerge' => [

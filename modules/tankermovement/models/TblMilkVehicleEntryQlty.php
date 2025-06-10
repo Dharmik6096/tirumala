@@ -67,15 +67,16 @@ class TblMilkVehicleEntryQlty extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by'], 'safe'],
+            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by', 'sample_datetime', 'record_status'], 'safe'],
             [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
-            [['chamber_no', 'acidity', 'mbrt'], 'required'],
+            [['chamber_no', 'acidity', 'mbrt', 'sample_datetime', 'record_status'], 'required', 'except' => ['resetQlty']],
             [['originating_type'], 'integer'],
             [['union_code'], 'string', 'max' => 3],
             [['plant_code'], 'string', 'max' => 6],
             [['vehicle_code', 'trip_code'], 'string', 'max' => 20],
             [['chamber_no', 'status'], 'string', 'max' => 50],
             [['tested_by', 'verified_by'], 'string', 'max' => 100],
+            [['sample_datetime'], 'validateTime', 'on' => ['qltySubmit', 'update']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMilkVehicleEntryQlty', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -123,6 +124,8 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             'lot_no' => Yii::t('app', 'Lot No'),
             'tested_by' => Yii::t('app', 'Tested By'),
             'verified_by' => Yii::t('app', 'Verified By'),
+            'sample_datetime' => Yii::t('app', 'Sample Time'),
+            'record_status' => Yii::t('app', 'Record Status'),
         ];
     }
 
@@ -166,7 +169,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 $currentTime = time();
                 $intervalInSeconds = $plantLotCreationInterval * 3600;
                 if (($currentTime - $maxLotDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
-                    return ['success' => 0, 'record_data' => [], 'validation' => TRUE];
+                    return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $records];
                 }
 
                 $formattedRecords = [];
@@ -185,12 +188,12 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 //         'acidity' => number_format($record->acidity, 2, '.', ''),
                 //     ];
                 // }
-                return ['success' => 1, 'record_data' => $formattedRecords, 'validation' => FALSE];
+                return ['success' => 1, 'record_data' => $formattedRecords, 'validation' => FALSE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $records];
             } else {
-                return ['success' => 0, 'record_data' => [], 'validation' => TRUE];
+                return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => FALSE, 'lotQltyData' => []];
             }
         }
-        return ['success' => 0, 'record_data' => [], 'validation' => FALSE];
+        return ['success' => 0, 'record_data' => [], 'validation' => FALSE, 'lotQltyValidate' => FALSE, 'lotQltyData' => []];
     }
 
     public function getConfigResult() {
@@ -204,6 +207,18 @@ class TblMilkVehicleEntryQlty extends ChildModel {
 
     public function getTripData($trip_code) {
         return $query = TblVehicleTrip::find()->where(['trip_code' => $trip_code, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->count();
+    }
+
+    public function validateTime($attribute, $params) {
+        if (!empty($this->sample_datetime)) {
+            $arrival = explode(':', $this->sample_datetime);
+            if (($arrival[0] > 23 || $arrival[1] > 59)) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is Invalid'));
+            } else {
+                $time = date('H:i:s', strtotime($this->sample_datetime));
+                $this->sample_datetime = date('Y-m-d') . ' ' . $time;
+            }
+        }
     }
 
 }

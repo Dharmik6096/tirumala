@@ -75,11 +75,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                         $milkVehicleEntryQlty->plant_code = $data['organization_code'];
                         $milkVehicleEntryQlty->union_code = $milkVehicleEntryQlty->plantCode->union_code;
                         $milkVehicleEntryQltyData = $milkVehicleEntryQlty->getMilkVehicleEntryQlty();
-                        if ($milkVehicleEntryQltyData['validation']) {
-                            $tripArray['msg'] = 'Quality not Done or exceeded time limit for selected trip.';
-                        } else {
-                            $tripArray['msg'] = '';
-                        }
+                        $tripArray['msg'] = '';
                         $dispatchFrom = $dispatchFromCode = '';
                         $tripModel->trip_code = $trip_code;
                         $dispatch = $tripModel->getTripData();
@@ -89,6 +85,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                         }
                         $tripArray['dispatchFrom'] = $dispatchFrom;
                         $tripArray['dispatchFromCode'] = $dispatchFromCode;
+                        $tripArray['lotQltyValidate'] = $milkVehicleEntryQltyData['lotQltyValidate'];
+                        $tripArray['lotQltyData'] = $milkVehicleEntryQltyData['lotQltyData'];
                         $tripData[] = $tripArray;
                     }
                     $res_data = $tripData;

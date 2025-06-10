@@ -15,6 +15,8 @@ use yii\helpers\Json;
 use app\modules\configuration\models\TblConfig;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultHistory;
+use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
+use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionHistory;
 
 /**
  * TblMilkVehicleEntryQltyController implements the CRUD actions for TblMilkVehicleEntryQlty model.
@@ -104,6 +106,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
     public function actionQltySubmit() {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $model = new TblMilkVehicleEntryQlty();
+        $model->scenario = 'qltySubmit';
         $res = [];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $saveModel = [];
@@ -126,11 +129,14 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $historyModel = new TblMilkVehicleEntryQltyHistory();
             Yii::$app->operation->history($milkVehicleEntryQltyData, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
-            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'tested_by', 'verified_by'] as $attr) {
+            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'tested_by', 'verified_by', 'sample_datetime', 'record_status'] as $attr) {
                 $milkVehicleEntryQltyData->$attr = $model->$attr;
             }
             $milkVehicleEntryQltyData->status = 'done';
             $milkVehicleEntryQltyData->status_datetime = date('Y-m-d H:i:s');
+
+            $milkVehicleEntryTxnModel = new TblMilkVehicleEntryTransaction();
+            $milkVehicleEntryTxnModel->updateMilkVehicleEntryTxnWithHistory($milkVehicleEntryQltyData, $saveModel);
 
             $saveModel[] = $milkVehicleEntryQltyData;
             $query = $model->find()->where(['!=', 'status', 'discarded'])->andWhere(['trip_code' => $milkVehicleEntryQltyData->trip_code])->andWhere(['not in', 'milk_vehicle_entry_qlty_code', $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code]);
@@ -171,6 +177,8 @@ class TblMilkVehicleEntryQltyController extends ChildController {
 
     public function actionResetQlty($id) {
         $this->model = $this->findModel($id);
+        $this->model->scenario = 'resetQlty';
+
         $saveModel = [];
         $deleteModel = [];
         $historyModel = new TblMilkVehicleEntryQltyHistory();
@@ -181,7 +189,11 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         }
         $this->model->status = 'pending';
         $this->model->status_datetime = date('Y-m-d H:i:s');
+        $this->model->tested_by = $this->model->verified_by = $this->model->sample_datetime = $this->model->record_status = NULL;
         $saveModel[] = $this->model;
+
+        $milkVehicleEntryTxnModel = new TblMilkVehicleEntryTransaction();
+        $milkVehicleEntryTxnModel->updateMilkVehicleEntryTxnWithHistory($this->model, $saveModel);
 
         $vehicleTripData = NULL;
         $pendingCount = $this->model->find()->where(['union_code' => $this->model->union_code, 'trip_code' => $this->model->trip_code, 'status' => 'pending'])->andWhere(['not in', 'chamber_no', $this->model->chamber_no])->count();
@@ -251,6 +263,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $model = new TblMilkVehicleEntryQlty();
         $model->milk_vehicle_entry_qlty_code = Yii::$app->request->post()['milk_vehicle_entry_qlty_code'];
+        $model->scenario = 'update';
         $res = [];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $saveModel = [];
@@ -282,11 +295,14 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             $historyModel = new TblMilkVehicleEntryQltyHistory();
             Yii::$app->operation->history($milkVehicleEntryQltyData, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
-            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'] as $attr) {
+            foreach (['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'tested_by', 'verified_by', 'sample_datetime', 'record_status'] as $attr) {
                 $milkVehicleEntryQltyData->$attr = $model->$attr;
             }
             $milkVehicleEntryQltyData->status = 'done';
             $milkVehicleEntryQltyData->status_datetime = date('Y-m-d H:i:s');
+
+            $milkVehicleEntryTxnModel = new TblMilkVehicleEntryTransaction();
+            $milkVehicleEntryTxnModel->updateMilkVehicleEntryTxnWithHistory($milkVehicleEntryQltyData, $saveModel);
 
             $saveModel[] = $milkVehicleEntryQltyData;
             $query = $model->find()->where(['!=', 'status', 'discarded'])->andWhere(['trip_code' => $milkVehicleEntryQltyData->trip_code])->andWhere(['not in', 'milk_vehicle_entry_qlty_code', $milkVehicleEntryQltyData->milk_vehicle_entry_qlty_code]);
