@@ -202,7 +202,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
         $milkVehicleEntryTxnData = $this->find()
                 ->alias('mvet')
                 ->joinWith(['milkVehicleEntryCode mve'])
-                ->where(['mvet.chamber_no' => $milkVehicleEntryQltyData->chamber_no, 'mve.trip_code' => '7575071'])
+                ->where(['mvet.chamber_no' => $milkVehicleEntryQltyData->chamber_no, 'mve.trip_code' => $milkVehicleEntryQltyData->trip_code])
                 ->one();
 
         if (!empty($milkVehicleEntryTxnData)) {
