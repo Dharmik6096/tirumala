@@ -116,7 +116,7 @@ class TblMilkTransfer extends \app\models\ChildModel {
             'destination_type' => Yii::t('app', 'Destination Type'),
             'transaction_datetime' => Yii::t('app', 'Transaction Date'),
             'shift_code' => Yii::t('app', 'Shift'),
-            'is_rechilling' => Yii::t('app', 'Is Rechilling'),
+            'is_rechilling' => Yii::t('app', 'Is Rechilling ?'),
         ];
     }
 
