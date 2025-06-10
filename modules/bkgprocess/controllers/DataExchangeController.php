@@ -12,6 +12,7 @@ use app\components\WebApi;
 use app\modules\clienterp\models\TblDataExchangeLog;
 use DOMDocument;
 use SoapClient;
+use app\models\TblPortalDataPostLog;
 
 class DataExchangeController extends ChildController {
 
@@ -124,7 +125,7 @@ class DataExchangeController extends ChildController {
                 }
 
                 if ($value['api_type'] == 'XML' && !empty($response)) {
-                    $this->processXmlResponse($response, $sp_name, $value, $output);
+                    $this->processXmlResponse($response, $sp_name, $value, $output, $postData);
                 } else {
                     $responseData = json_decode(json_encode($response), true);
                     $loopData = [];
@@ -150,7 +151,7 @@ class DataExchangeController extends ChildController {
         }
     }
 
-    private function processXmlResponse($soapResponse, $sp_name, $exchangeData, $output) {
+    private function processXmlResponse($soapResponse, $sp_name, $exchangeData, $output, $request) {
         $xml = simplexml_load_string($soapResponse);
         $namespaces = $xml->getNamespaces(true);
         foreach ($namespaces as $prefix => $uri) {
@@ -182,6 +183,7 @@ class DataExchangeController extends ChildController {
                 \Yii::$app->general->getSpData('sp_data_exchange_log_update', $sp_res_param, true);
             }
         }
+        $this->saveExchangeLog('EIPL', $status, $exchangeData['request_url'], $request, $soapResponse);
     }
 
     private function generateSoapXml($data, $value) {
@@ -227,6 +229,17 @@ class DataExchangeController extends ChildController {
         }
         $xml = $doc->saveXML();
         return $xml;
+    }
+
+    private function saveExchangeLog($vendorCode, $status, $url, $request, $response) {
+        $log_model = new TblPortalDataPostLog();
+        $log_model->vendor_code = $vendorCode;
+        $log_model->created_at = date('Y-m-d H:i:s');
+        $log_model->status = ($status == 2) ? 1 : 0;
+        $log_model->url = $url;
+        $log_model->request = $request;
+        $log_model->response = $response;
+        $log_model->save();
     }
 
 }
