@@ -16,7 +16,6 @@ use app\modules\configuration\models\TblConfig;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultHistory;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
-use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionHistory;
 
 /**
  * TblMilkVehicleEntryQltyController implements the CRUD actions for TblMilkVehicleEntryQlty model.
@@ -63,6 +62,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $model->load(\Yii::$app->request->get());
         $searchModel = new TblMilkVehicleEntryQltySearch();
         $searchModel->scenario = 'update';
+        Yii::$app->default->getDefaults($model);
         $searchModel->load(\Yii::$app->request->get());
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $searchModel->parsing_no = TblVehicleTrip::find()->alias('vt')->joinWith('vehicleCode vm')->where(['vt.trip_code' => $searchModel->trip_code, 'vt.is_active' => 1])->select('vm.parsing_no')->scalar();
@@ -237,6 +237,11 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $model = $this->findModel($id);
         $searchModel = new TblMilkVehicleEntryQltySearch();
         $searchModel->trip_code = $model->trip_code;
+        if (strtolower($model->status) == 'pending') {
+            Yii::$app->default->getDefaults($model);
+        } else {
+            $model->sample_time = date('H:i:s', strtotime($model->sample_datetime));
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $config = new TblConfig();
         $config->config_for = 'PLANT';
