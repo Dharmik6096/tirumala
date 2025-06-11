@@ -9,33 +9,36 @@ use yii\helpers\Url;
 
     <?php
     $attribute = [
-            ['attribute' => 'entry_type', 'filter' => false],
-            ['attribute' => 'grn_no', 'filter' => false],
-            ['attribute' => 'challan_no', 'filter' => false],
-            ['attribute' => 'milk_type_code', 'value' => function($model) {
+        ['attribute' => 'entry_type', 'filter' => false],
+        ['attribute' => 'grn_no', 'filter' => false],
+        ['attribute' => 'challan_no', 'filter' => false],
+        ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
             }, 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+        ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
             }, 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'chamber_no', 'filter' => false],
-            ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'chamber_quantity', 'value' => 'chamber_quantity', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'clr', 'filter' => false],
-            ['attribute' => 'protein', 'filter' => false],
-            ['attribute' => 'density', 'filter' => false],
-            ['attribute' => 'lactose', 'filter' => false],
-            ['attribute' => 'freezing_point', 'filter' => false],
-            ['attribute' => 'mbrt', 'filter' => false],
-            ['attribute' => 'acidity', 'filter' => false],
-            ['attribute' => 'is_qty_only', 'value' => function($model) {
+        ['attribute' => 'chamber_no', 'filter' => false],
+        ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'chamber_quantity', 'value' => 'chamber_quantity', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'clr', 'filter' => false],
+        ['attribute' => 'protein', 'filter' => false],
+        ['attribute' => 'density', 'filter' => false],
+        ['attribute' => 'lactose', 'filter' => false],
+        ['attribute' => 'freezing_point', 'filter' => false],
+        ['attribute' => 'mbrt', 'filter' => false],
+        ['attribute' => 'acidity', 'filter' => false],
+        ['attribute' => 'is_qty_only', 'value' => function($model) {
                 return ($model->is_qty_only == 1) ? 'Yes' : 'No';
             }, 'filter' => false, 'visible' => true],
-            ['attribute' => 'is_pending_merge', 'value' => function($model) {
+        ['attribute' => 'is_pending_merge', 'value' => function($model) {
                 return ($model->is_pending_merge == 1) ? 'Yes' : 'No';
-            }, 'filter' => false, 'visible' => true]
+            }, 'filter' => false, 'visible' => true],
+        ['attribute' => 'record_status', 'value' => function($model) {
+                return isset($model->record_status) ? Yii::$app->dropdown->getRecords('record_status')['data'][$model->record_status] : '';
+            }, 'filter' => false],
     ];
 
     $grid_option = [

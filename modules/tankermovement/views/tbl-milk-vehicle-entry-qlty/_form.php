@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
+use yii\widgets\MaskedInput;
 ?>
 <?php $url = Url::to(['/tankermovement/tbl-milk-vehicle-entry-qlty/qlty-submit', 'TblMilkVehicleEntry' => ['trip_code' => $model->trip_code]]); ?>
 <?php
@@ -65,6 +66,12 @@ $form = ActiveForm::begin([
                 </div>
                 <div class="col-sm-2">
                     <?= $form->field($model, 'verified_by')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-1">
+                    <?= $form->field($model, 'sample_datetime')->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
+                </div>
+                <div class="col-sm-2"> 
+                    <?= Yii::$app->dropdown->dropdownStatic('record_status', $model, $form, 'form-group', $model->getAttributeLabel('record_status'), false, 'record_status', false); ?>
                 </div>
                 <?php
                 $index = 1;

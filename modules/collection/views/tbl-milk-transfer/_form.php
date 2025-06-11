@@ -77,6 +77,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'remarks')->textInput() ?>
     </div>
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'is_rechilling', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
