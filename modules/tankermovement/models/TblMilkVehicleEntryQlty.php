@@ -161,7 +161,20 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             }
             $records = $query->all();
             if (!empty($records)) {
-                if (!$forAPI) {
+                $formattedRecordsForAPI = [];
+                if ($forAPI) {
+                    foreach ($records as $record) {
+                        $formattedRecordsForAPI[] = [
+                            'plant_code' => $record->plant_code,
+                            'vehicle_code' => $record->vehicle_code,
+                            'trip_code' => $record->trip_code,
+                            'chamber_no' => $record->chamber_no,
+                            'status' => $record->status,
+                            'sample_datetime' => Yii::$app->controls->view_datetime($record->sample_datetime, 'php:Y-m-d H:i:s'),
+                            'record_status' => $record->record_status,
+                        ];
+                    }
+                } else {
                     $totalRecords = count($records);
                     $doneRecordsCount = 0;
                     $maxLotDatetime = NULL;
@@ -177,7 +190,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                     $currentTime = time();
                     $intervalInSeconds = $plantLotCreationInterval * 3600;
                     if (($currentTime - $maxLotDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
-                        return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $records];
+                        return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $formattedRecordsForAPI];
                     }
                 }
 
@@ -197,7 +210,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 //         'acidity' => number_format($record->acidity, 2, '.', ''),
                 //     ];
                 // }
-                return ['success' => 1, 'record_data' => $formattedRecords, 'validation' => FALSE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $records];
+                return ['success' => 1, 'record_data' => $formattedRecords, 'validation' => FALSE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $formattedRecordsForAPI];
             } else {
                 return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => TRUE, 'lotQltyData' => []];
             }
