@@ -76,7 +76,10 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             [['vehicle_code', 'trip_code'], 'string', 'max' => 20],
             [['chamber_no', 'status'], 'string', 'max' => 50],
             [['tested_by', 'verified_by'], 'string', 'max' => 100],
-            [['sample_datetime'], 'validateTime', 'on' => ['qltySubmit', 'update']],
+            [['sample_datetime'], function ($attribute, $params) {
+                    Yii::$app->general->validateTime($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'on' => ['qltySubmit', 'update']],
+            [['sample_datetime'], 'validateSampleAfterGrossWeight', 'on' => ['qltySubmit', 'update']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMilkVehicleEntryQlty', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -145,31 +148,37 @@ class TblMilkVehicleEntryQlty extends ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getMilkVehicleEntryQlty() {
+    public function getMilkVehicleEntryQlty($forAPI = FALSE) {
         $plantLotCreationInterval = Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'plant_lot_creation_interval', $this->plant_code, 'PLANT', 'PLANT_RECEIPT_CONFIG');
         $plantLotCreationInterval = is_numeric($plantLotCreationInterval) ? (int) $plantLotCreationInterval : 0;
         if ($plantLotCreationInterval > 0) {
-            $records = $this->find()
-                    ->where(['trip_code' => $this->trip_code, 'union_code' => $this->union_code])
-                    ->andWhere(['!=', 'status', 'discarded'])
-                    ->all();
+            $query = $this->find()
+                    ->where(['trip_code' => $this->trip_code, 'union_code' => $this->union_code]);
+            if ($forAPI) {
+                $query->andWhere(['LOWER(status)' => 'done']);
+            } else {
+                $query->andWhere(['!=', 'LOWER(status)', 'discarded']);
+            }
+            $records = $query->all();
             if (!empty($records)) {
-                $totalRecords = count($records);
-                $doneRecordsCount = 0;
-                $maxLotDatetime = NULL;
-                foreach ($records as $record) {
-                    if ($record->status === 'done') {
-                        $doneRecordsCount++;
+                if (!$forAPI) {
+                    $totalRecords = count($records);
+                    $doneRecordsCount = 0;
+                    $maxLotDatetime = NULL;
+                    foreach ($records as $record) {
+                        if ($record->status === 'done') {
+                            $doneRecordsCount++;
+                        }
+                        $currentLotDatetime = strtotime($record->lot_datetime);
+                        if ($maxLotDatetime === NULL || $currentLotDatetime > $maxLotDatetime) {
+                            $maxLotDatetime = $currentLotDatetime;
+                        }
                     }
-                    $currentLotDatetime = strtotime($record->lot_datetime);
-                    if ($maxLotDatetime === NULL || $currentLotDatetime > $maxLotDatetime) {
-                        $maxLotDatetime = $currentLotDatetime;
+                    $currentTime = time();
+                    $intervalInSeconds = $plantLotCreationInterval * 3600;
+                    if (($currentTime - $maxLotDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
+                        return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $records];
                     }
-                }
-                $currentTime = time();
-                $intervalInSeconds = $plantLotCreationInterval * 3600;
-                if (($currentTime - $maxLotDatetime) > $intervalInSeconds || $totalRecords !== $doneRecordsCount) {
-                    return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $records];
                 }
 
                 $formattedRecords = [];
@@ -190,7 +199,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 // }
                 return ['success' => 1, 'record_data' => $formattedRecords, 'validation' => FALSE, 'lotQltyValidate' => TRUE, 'lotQltyData' => $records];
             } else {
-                return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => FALSE, 'lotQltyData' => []];
+                return ['success' => 0, 'record_data' => [], 'validation' => TRUE, 'lotQltyValidate' => TRUE, 'lotQltyData' => []];
             }
         }
         return ['success' => 0, 'record_data' => [], 'validation' => FALSE, 'lotQltyValidate' => FALSE, 'lotQltyData' => []];
@@ -209,14 +218,29 @@ class TblMilkVehicleEntryQlty extends ChildModel {
         return $query = TblVehicleTrip::find()->where(['trip_code' => $trip_code, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->count();
     }
 
-    public function validateTime($attribute, $params) {
-        if (!empty($this->sample_datetime)) {
-            $arrival = explode(':', $this->sample_datetime);
-            if (($arrival[0] > 23 || $arrival[1] > 59)) {
-                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is Invalid'));
-            } else {
-                $time = date('H:i:s', strtotime($this->sample_datetime));
-                $this->sample_datetime = date('Y-m-d') . ' ' . $time;
+    public function validateSampleAfterGrossWeight($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $milkVehicleEntryQltyData = $this->findOne($this->chamber_no);
+            $milkVehicleEntryTxn = TblMilkVehicleEntryTransaction::find()
+                    ->alias('mvet')
+                    ->joinWith(['milkVehicleEntryCode mve'])
+                    ->where(['mvet.chamber_no' => $milkVehicleEntryQltyData->chamber_no, 'mve.trip_code' => $milkVehicleEntryQltyData->trip_code])
+                    ->orderBy(['mvet.gross_weight_time' => SORT_DESC])
+                    ->one();
+            $time = date('H:i:s', strtotime($this->sample_datetime));
+            $this->sample_datetime = date('Y-m-d') . ' ' . $time;
+            if (!empty($milkVehicleEntryTxn) && !empty($milkVehicleEntryTxn->gross_weight_time)) {
+                $grossDate = date('Y-m-d', strtotime($milkVehicleEntryTxn->gross_weight_time));
+                $grossTime = date('H:i:s', strtotime($milkVehicleEntryTxn->gross_weight_time));
+                $todayDate = date('Y-m-d');
+                if ($todayDate < $grossDate) {
+                    $this->addError($attribute, 'Sample collection date must be equal or after gross weight date.');
+                    return;
+                }
+                if ($todayDate == $grossDate && $time <= $grossTime) {
+                    $this->addError($attribute, 'Sample collection time must be after gross weight time.');
+                    return;
+                }
             }
         }
     }

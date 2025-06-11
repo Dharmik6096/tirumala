@@ -74,7 +74,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                         $milkVehicleEntryQlty->trip_code = $trip_code;
                         $milkVehicleEntryQlty->plant_code = $data['organization_code'];
                         $milkVehicleEntryQlty->union_code = $milkVehicleEntryQlty->plantCode->union_code;
-                        $milkVehicleEntryQltyData = $milkVehicleEntryQlty->getMilkVehicleEntryQlty();
+                        $milkVehicleEntryQltyData = $milkVehicleEntryQlty->getMilkVehicleEntryQlty(TRUE);
                         $tripArray['msg'] = '';
                         $dispatchFrom = $dispatchFromCode = '';
                         $tripModel->trip_code = $trip_code;

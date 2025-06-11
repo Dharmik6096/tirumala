@@ -199,18 +199,20 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
     }
 
     public function updateMilkVehicleEntryTxnWithHistory($milkVehicleEntryQltyData, &$saveModel) {
-        $milkVehicleEntryTxnData = $this->find()
+        $milkVehicleEntryTxnDataList = $this->find()
                 ->alias('mvet')
                 ->joinWith(['milkVehicleEntryCode mve'])
                 ->where(['mvet.chamber_no' => $milkVehicleEntryQltyData->chamber_no, 'mve.trip_code' => $milkVehicleEntryQltyData->trip_code])
-                ->one();
+                ->all();
 
-        if (!empty($milkVehicleEntryTxnData)) {
-            $milkVehicleEntryTxnHistoryModel = new TblMilkVehicleEntryTransactionHistory();
-            Yii::$app->operation->history($milkVehicleEntryTxnData, $milkVehicleEntryTxnHistoryModel, UPDATE);
-            $milkVehicleEntryTxnData->record_status = $milkVehicleEntryQltyData->record_status;
-            $saveModel[] = $milkVehicleEntryTxnHistoryModel;
-            $saveModel[] = $milkVehicleEntryTxnData;
+        if (!empty($milkVehicleEntryTxnDataList)) {
+            foreach ($milkVehicleEntryTxnDataList as $milkVehicleEntryTxnData) {
+                $milkVehicleEntryTxnHistoryModel = new TblMilkVehicleEntryTransactionHistory();
+                Yii::$app->operation->history($milkVehicleEntryTxnData, $milkVehicleEntryTxnHistoryModel, UPDATE);
+                $milkVehicleEntryTxnData->record_status = $milkVehicleEntryQltyData->record_status;
+                $saveModel[] = $milkVehicleEntryTxnHistoryModel;
+                $saveModel[] = $milkVehicleEntryTxnData;
+            }
         }
     }
 
