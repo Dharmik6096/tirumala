@@ -8,6 +8,7 @@ use app\modules\clienterp\components\EiplResponse;
 use Yii;
 use app\modules\clienterp\models\TblClientErpApiLog;
 use app\modules\clienterp\models\TblClientErpApiLogSearch;
+use app\modules\tankermovement\models\TblMilkVehicleEntry;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionSearch;
 use yii\web\NotFoundHttpException;
@@ -58,8 +59,18 @@ class TblClientErpApiLogController extends ChildController
         $searchModel = new TblClientErpApiLogSearch();
         $searchModel->scenario = 'viewLog';
         $dataProvider = [];
+        $searchTransactionModel = new TblMilkVehicleEntryTransactionSearch();
+        $dataTransactionProvider = [];
         if($erp_process_name == 2){
-            $model = TblMilkVehicleEntryTransaction::findOne($id);
+            $whereValue = explode('_',$id);
+            $model = TblMilkVehicleEntry::find()->where(['trip_code' => $whereValue[2]])->one();
+            // $txModel = TblMilkVehicleEntryTransaction::find()->where(['milk_vehicle_entry_code' => $model->milk_vehicle_entry_code, 'source_org_code' => $whereValue[0], 'source_org_type' => $whereValue[1]])->all();
+            // $searchModel->desc2 = !empty($txModel) ? array_column($txModel, 'milk_vehicle_entry_transaction_code') : '';
+            $searchTransactionModel->milk_vehicle_entry_code = $model->milk_vehicle_entry_code;
+            $searchTransactionModel->source_org_code = $whereValue[0];
+            $searchTransactionModel->source_org_type = $whereValue[1];
+            $searchTransactionModel->scenario = 'view';
+            $dataTransactionProvider = $searchTransactionModel->searchMilkReceiptView();
             $searchModel->desc2 = $id;
             $searchModel->erp_process_name = $erp_process_name;
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -73,6 +84,8 @@ class TblClientErpApiLogController extends ChildController
             'erp_process_name' => $erp_process_name,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'searchTransactionModel' => $searchTransactionModel,
+            'dataTransactionProvider' => $dataTransactionProvider,
 
         ]);
     }

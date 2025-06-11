@@ -15,21 +15,21 @@ $this->title = Yii::$app->label->title('view', 'Client ERP API Log');
             <div class="table-responsive">
                 <?php
                 if ($erp_process_name == 2) {
-                    $attributes = include('_milk_view.php');
+                    // $attributes = include('_milk_view.php');
                 } else {
                     $attributes = include('_log_view.php');
                 }
-                echo DetailView::widget([
-                    'model' => $model,
-                    'attributes' => $attributes,
-                    'mode' => 'view',
-                    'bordered' => true,
-                    'striped' => false,
-                    'responsive' => true,
-                    'hAlign' => 'left',
-                    'vAlign' => 'top',
-                    'container' => ['id' => 'kv-demo'],
-                ]);
+                // echo DetailView::widget([
+                //     'model' => $model,
+                //     'attributes' => $attributes,
+                //     'mode' => 'view',
+                //     'bordered' => true,
+                //     'striped' => false,
+                //     'responsive' => true,
+                //     'hAlign' => 'left',
+                //     'vAlign' => 'top',
+                //     'container' => ['id' => 'kv-demo'],
+                // ]);
                 ?>
             </div>
         </div>

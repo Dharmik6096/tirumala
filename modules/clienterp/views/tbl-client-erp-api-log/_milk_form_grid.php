@@ -54,8 +54,9 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-share-square-o"></i>', ['/clienterp/tbl-client-erp-api-log/repush', 'id' => $model->milk_vehicle_entry_transaction_code], $options);
         },
         'log_view' => function ($url, $model) {
+            $id = $model->source_org_code.'_'.$model->source_org_type.'_'.$model->trip_code;
             $options = ['data-val' => $model->milk_vehicle_entry_transaction_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Logs'];
-            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/clienterp/tbl-client-erp-api-log/view', 'id' => $model->milk_vehicle_entry_transaction_code, 'erp_process_name' => 2], $options);
+            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/clienterp/tbl-client-erp-api-log/view', 'id' => $id, 'erp_process_name' => 2], $options);
         },
     ]
 ];
