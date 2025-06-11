@@ -254,6 +254,9 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                     $this->addError($attribute, 'Sample collection time must be after gross weight time.');
                     return;
                 }
+            } else {
+                $this->addError('sample_datetime', 'Gross weight is pending.');
+                return;
             }
         }
     }
