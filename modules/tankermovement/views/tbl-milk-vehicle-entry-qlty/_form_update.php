@@ -69,7 +69,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'sample_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
     </div>
     <div class="col-sm-1">
-        <?= $form->field($model, 'sample_time')->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
+        <?= $form->field($model, 'sample_time')->widget(MaskedInput::className(), ['mask' => '99:99','options' => ['class' => 'form-control 24_hour_time_input', 'placeholder' => 'HH:MM']]); ?>
     </div>
     <div class="col-sm-2"> 
         <?= Yii::$app->dropdown->dropdownStatic('record_status', $model, $form, 'form-group', $model->getAttributeLabel('record_status'), false, 'record_status', false); ?>
