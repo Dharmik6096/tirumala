@@ -3,9 +3,6 @@
 namespace app\modules\tankermovement\models;
 
 use app\models\ChildModel;
-use app\modules\configuration\models\TblConfig;
-use app\modules\configuration\models\TblConfigMapping;
-use app\modules\configuration\models\TblConfigResult;
 use app\modules\globalmaster\models\TblVehicleType;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
@@ -53,7 +50,7 @@ use app\modules\tankermovement\models\TblVehicleTrip;
  */
 class TblMilkVehicleEntryQlty extends ChildModel {
 
-    public $config_code;
+    public $config_code, $sample_time;
 
     /**
      * @inheritdoc
@@ -67,16 +64,17 @@ class TblMilkVehicleEntryQlty extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by', 'sample_datetime', 'record_status'], 'safe'],
+            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by', 'sample_datetime', 'record_status', 'sample_time'], 'safe'],
             [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['chamber_no', 'acidity', 'mbrt', 'sample_datetime', 'record_status'], 'required', 'except' => ['resetQlty']],
+            [['sample_time'], 'required', 'on' => ['qltySubmit', 'update']],
             [['originating_type'], 'integer'],
             [['union_code'], 'string', 'max' => 3],
             [['plant_code'], 'string', 'max' => 6],
             [['vehicle_code', 'trip_code'], 'string', 'max' => 20],
             [['chamber_no', 'status'], 'string', 'max' => 50],
             [['tested_by', 'verified_by'], 'string', 'max' => 100],
-            [['sample_datetime'], function ($attribute, $params) {
+            [['sample_time'], function ($attribute, $params) {
                     Yii::$app->general->validateTime($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['qltySubmit', 'update']],
             [['sample_datetime'], 'validateSampleAfterGrossWeight', 'on' => ['qltySubmit', 'update']],
@@ -127,7 +125,8 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             'lot_no' => Yii::t('app', 'Lot No'),
             'tested_by' => Yii::t('app', 'Tested By'),
             'verified_by' => Yii::t('app', 'Verified By'),
-            'sample_datetime' => Yii::t('app', 'Sample Time'),
+            'sample_datetime' => Yii::t('app', 'Sample Date'),
+            'sample_time' => Yii::t('app', 'Sample Time'),
             'record_status' => Yii::t('app', 'Record Status'),
         ];
     }
@@ -223,40 +222,48 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     }
 
     public function getPlant($trip_code) {
-        return TblVehicleTripDetail::find()->select(['source_org_code'])
-                        ->where(['is_last_destination' => 1, 'source_org_type' => 'plant', 'trip_code' => $trip_code])->one();
+        return TblVehicleTripDetail::find()->select(['source_org_code'])->where(['is_last_destination' => 1, 'source_org_type' => 'plant', 'trip_code' => $trip_code])->one();
     }
 
     public function getTripData($trip_code) {
-        return $query = TblVehicleTrip::find()->where(['trip_code' => $trip_code, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->count();
+        return TblVehicleTrip::find()->where(['trip_code' => $trip_code, 'trip_status' => ['open', 'tankerfull'], 'is_active' => 1])->count();
     }
 
     public function validateSampleAfterGrossWeight($attribute, $params) {
         if (empty($this->getErrors())) {
             $milkVehicleEntryQltyData = $this->findOne($this->chamber_no);
-            $milkVehicleEntryTxn = TblMilkVehicleEntryTransaction::find()
-                    ->alias('mvet')
-                    ->joinWith(['milkVehicleEntryCode mve'])
-                    ->where(['mvet.chamber_no' => $milkVehicleEntryQltyData->chamber_no, 'mve.trip_code' => $milkVehicleEntryQltyData->trip_code])
-                    ->orderBy(['mvet.gross_weight_time' => SORT_DESC])
-                    ->one();
-            $time = date('H:i:s', strtotime($this->sample_datetime));
-            $this->sample_datetime = date('Y-m-d') . ' ' . $time;
-            if (!empty($milkVehicleEntryTxn) && !empty($milkVehicleEntryTxn->gross_weight_time)) {
-                $grossDate = date('Y-m-d', strtotime($milkVehicleEntryTxn->gross_weight_time));
-                $grossTime = date('H:i:s', strtotime($milkVehicleEntryTxn->gross_weight_time));
-                $todayDate = date('Y-m-d');
-                if ($todayDate < $grossDate) {
-                    $this->addError($attribute, 'Sample collection date must be equal or after gross weight date.');
+            $lotQltySampleTimeValidateConfig = Yii::$app->general->getUnionConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', 'PORTAL');
+            $lotQltySampleTimeValidate =  $lotQltySampleTimeValidateConfig = '' ? 1 : $lotQltySampleTimeValidateConfig;
+            if (!empty($lotQltySampleTimeValidate)) {
+                $lotQltySampleTimeValidateConfig = Yii::$app->general->getCheckBmcConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', $milkVehicleEntryQltyData->plant_code, 'PLANT', 'PLANT_RECEIPT_CONFIG');
+                $lotQltySampleTimeValidate = $lotQltySampleTimeValidateConfig == '' ? 1 : $lotQltySampleTimeValidateConfig;
+            }
+            $sampleTime = date('H:i:s', strtotime($this->sample_time));
+            $sampleDate = date('Y-m-d', strtotime($this->sample_datetime));
+            $this->sample_datetime = $sampleDate . ' ' . $sampleTime;
+            if (!empty($lotQltySampleTimeValidate)) {
+                $milkVehicleEntryTxn = TblMilkVehicleEntryTransaction::find()
+                        ->alias('mvet')
+                        ->joinWith(['milkVehicleEntryCode mve'])
+                        ->where(['mvet.chamber_no' => $milkVehicleEntryQltyData->chamber_no, 'mve.trip_code' => $milkVehicleEntryQltyData->trip_code])
+                        ->orderBy(['mvet.gross_weight_time' => SORT_DESC])
+                        ->one();
+
+                if (!empty($milkVehicleEntryTxn) && !empty($milkVehicleEntryTxn->gross_weight_time)) {
+                    $grossDate = date('Y-m-d', strtotime($milkVehicleEntryTxn->gross_weight_time));
+                    $grossTime = date('H:i:s', strtotime($milkVehicleEntryTxn->gross_weight_time));
+                    if ($sampleDate < $grossDate) {
+                        $this->addError($attribute, 'Sample collection date must be equal or after gross weight date.');
+                        return;
+                    }
+                    if ($sampleDate == $grossDate && $sampleTime <= $grossTime) {
+                        $this->addError('sample_time', 'Sample collection time must be after gross weight time.');
+                        return;
+                    }
+                } else {
+                    $this->addError('sample_datetime', 'Gross weight is pending.');
                     return;
                 }
-                if ($todayDate == $grossDate && $time <= $grossTime) {
-                    $this->addError($attribute, 'Sample collection time must be after gross weight time.');
-                    return;
-                }
-            } else {
-                $this->addError('sample_datetime', 'Gross weight is pending.');
-                return;
             }
         }
     }
