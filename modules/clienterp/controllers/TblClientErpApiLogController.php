@@ -64,8 +64,6 @@ class TblClientErpApiLogController extends ChildController
         if($erp_process_name == 2){
             $whereValue = explode('_',$id);
             $model = TblMilkVehicleEntry::find()->where(['trip_code' => $whereValue[2]])->one();
-            // $txModel = TblMilkVehicleEntryTransaction::find()->where(['milk_vehicle_entry_code' => $model->milk_vehicle_entry_code, 'source_org_code' => $whereValue[0], 'source_org_type' => $whereValue[1]])->all();
-            // $searchModel->desc2 = !empty($txModel) ? array_column($txModel, 'milk_vehicle_entry_transaction_code') : '';
             $searchTransactionModel->milk_vehicle_entry_code = $model->milk_vehicle_entry_code;
             $searchTransactionModel->source_org_code = $whereValue[0];
             $searchTransactionModel->source_org_type = $whereValue[1];

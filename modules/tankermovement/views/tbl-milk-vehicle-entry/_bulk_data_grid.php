@@ -46,10 +46,10 @@ use kartik\grid\GridView;
             }, 'label' => (Yii::t('app', 'Source Name')), 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'source_org_code', 'value' => function ($model) {
                 $rel = Yii::$app->general->getDestRelation($model->source_org_type);
-                $att = strtolower($model->source_org_type) == 'bmc' ? 'ref_code' : (strtolower($model->source_org_type) == 'vendor' ? 'ref_code' : (strtolower($model->source_org_type) == 'party' ? 'sap_vendor_code' : 'ref_code'));
+                $att = 'sap_vendor_code';
                 if (!empty($rel))
                     return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
-            }, 'label' => (Yii::t('app', 'Source Ref.Code')), 'vAlign' => 'middle', 'filter' => false],
+            }, 'label' => (Yii::t('app', 'Source SAP Vendor Code')), 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'destination_type'],
 
             ['attribute' => 'destination_code', 'value' => function ($model) {
@@ -60,14 +60,15 @@ use kartik\grid\GridView;
             }, 'label' => (Yii::t('app', 'Dest. Name')), 'vAlign' => 'middle', 'filter' => false],
 
             ['attribute' => 'destination_code', 'value' => function ($model) {
-                $rel = Yii::$app->general->getDestRelation($model->destination_code);
-                $att = strtolower($model->destination_code) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_code) == 'vendor' ? 'customer_name' : (strtolower($model->destination_code) == 'party' ? 'party_name' : 'name'));
+                $rel = Yii::$app->general->getDestRelation($model->destination_type);
+                $att = 'sap_vendor_code';
                 if (!empty($rel))
-                    return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_code);
-            }, 'label' => (Yii::t('app', 'Dest. Ref.Code')), 'vAlign' => 'middle', 'filter' => false],
+                    return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
+            }, 'label' => (Yii::t('app', 'Dest SAP Vendor Code')), 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'grn_no'],
             [
-                'attribute' => 'vehicle_entry_date',
+                'attribute' => 'receipt_datetime',
+                'label' => (Yii::t('app', 'Receipt Date')),
                 'filterType' => GridView::FILTER_DATE,
                 'filterWidgetOptions' => [
                     'pluginOptions' => [
@@ -76,7 +77,7 @@ use kartik\grid\GridView;
                     ]
                 ],
                 'value' => function ($model) {
-                    return Yii::$app->controls->view_date($model->vehicle_entry_date);
+                    return Yii::$app->controls->view_date($model->milkVehicleEntryCode->receipt_datetime);
                 }
             ],
             ['attribute' => 'milkVehicleEntryCode.trip_code'],
@@ -124,9 +125,6 @@ use kartik\grid\GridView;
                 },
                 'filter' => false
             ],
-            ['attribute' => 'approval_status', 'value' => function ($model) {
-                return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->approval_status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->approval_status] : '';
-            }],
             ['attribute' => 'approval_remarks', 'format' => 'raw', 'value' => function ($model, $key, $index) use ($form, &$renderedCodesForRemark, $milkVehicleEntryModel) {
                 if (in_array($model->process_approval_code, $renderedCodesForRemark)) {
                     return '';

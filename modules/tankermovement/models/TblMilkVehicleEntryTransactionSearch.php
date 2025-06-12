@@ -13,7 +13,7 @@ use yii\db\Expression;
  */
 class TblMilkVehicleEntryTransactionSearch extends TblMilkVehicleEntryTransaction {
     public $erp_process_name, $from_date, $to_date;
-    public $operator_fat, $operator_snf, $operator_chamber_quantity;
+    public $operator_fat, $operator_snf, $operator_chamber_quantity, $receipt_datetime, $trip_code;
     /**
      * @inheritdoc
      */
@@ -24,7 +24,7 @@ class TblMilkVehicleEntryTransactionSearch extends TblMilkVehicleEntryTransactio
             [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'safe'],
             [['erp_process_name'],'required',  'except' => ['view'], 'message' => 'Process Name cannot be blank.'],
             [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],'safe'],
-            [['operator_fat', 'operator_snf', 'operator_chamber_quantity'], 'safe'],
+            [['operator_fat', 'operator_snf', 'operator_chamber_quantity', 'trip_code'], 'safe'],
         ];
     }
 
@@ -69,10 +69,20 @@ class TblMilkVehicleEntryTransactionSearch extends TblMilkVehicleEntryTransactio
 
     public function searchMilkReceipt($params)
     {
-        $vehicleEntryModel = new TblMilkVehicleEntry();
+        $vehicleEntryModel = new TblMilkVehicleEntrySearch();
         $query = TblMilkVehicleEntryTransaction::find()->alias('t');
 
         $query->select([
+            'MAX(t.milk_vehicle_entry_code) as milk_vehicle_entry_code',
+            'MAX(union_code) as union_code',
+            'MAX(plant_code) as plant_code',
+            'MAX(mcc_plant_code) as mcc_plant_code',
+            'MAX(bmc_code) as bmc_code',
+            'MAX(receipt_at) as receipt_at',
+            'MAX(receipt_at_code) as receipt_at_code',
+            'MAX(dispatch_from) as dispatch_from',
+            'MAX(dispatch_from_code) as dispatch_from_code',
+            'MAX(receipt_datetime) as receipt_datetime',
             't.source_org_code',
             't.source_org_type',
             'mve.trip_code',
@@ -103,13 +113,12 @@ class TblMilkVehicleEntryTransactionSearch extends TblMilkVehicleEntryTransactio
             $query->where('0=1');
             return $dataProvider;
         }
-
+        Yii::$app->general->filterByOrg($query, $vehicleEntryModel, 'mve', 'mve', 'mve');
+        
         $query->where(['and',
             ['<>', 't.status', '0'],
             ['is not', 't.status', null]
         ]);
-
-        Yii::$app->general->filterByOrg($query, $vehicleEntryModel, 'tbl_milk_vehicle_entry', 'tbl_milk_vehicle_entry', 'tbl_milk_vehicle_entry');
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -133,22 +142,17 @@ class TblMilkVehicleEntryTransactionSearch extends TblMilkVehicleEntryTransactio
             $query->andFilterWhere([$this->operator_chamber_quantity, 't.chamber_quantity', $this->chamber_quantity]);
         }
 
-        if (!empty($this->source_org_code)) {
-            $query->andFilterWhere(['t.source_org_code' => $this->source_org_code]);
-        }
+        $query->andFilterWhere([
+            't.entry_type' => $this->entry_type
+        ]);
 
-        if (!empty($this->source_org_type)) {
-            $query->andFilterWhere(['t.source_org_type' => $this->source_org_type]);
-        }
-
-        if (!empty($this->trip_code)) {
-            $query->andFilterWhere(['mve.trip_code' => $this->trip_code]);
-        }
+        $query->andFilterWhere(['like', 'mve.trip_code', $this->trip_code])
+                ->andFilterWhere(['like', 't.source_org_code', $this->source_org_code])
+                ->andFilterWhere(['like', 't.source_org_type', $this->source_org_type])
+                ->andFilterWhere(['like', 't.grn_no', $this->grn_no])
+                ->andFilterWhere(['like', 't.chamber_no', $this->chamber_no]);
 
         $query->groupBy(['t.source_org_code', 't.source_org_type', 'mve.trip_code']);
-        // echo '<pre>';
-        // print_r($dataProvider->getModels());
-        // die;
         return $dataProvider;
     }
 

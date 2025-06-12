@@ -49,7 +49,7 @@ use app\modules\organisation\models\TblMccPlant;
 class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
 
     public $source, $destination, $process_approval_code;
-    public $vehicle_entry_date, $trip_code;
+    public $vehicle_entry_date, $trip_code, $receipt_at, $receipt_at_code, $dispatch_from, $dispatch_from_code, $receipt_datetime;
 
     /**
      * @inheritdoc
