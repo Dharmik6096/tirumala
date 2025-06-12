@@ -126,7 +126,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
             'tested_by' => Yii::t('app', 'Tested By'),
             'verified_by' => Yii::t('app', 'Verified By'),
             'sample_datetime' => Yii::t('app', 'Sample Date'),
-            'sample_time' => Yii::t('app', 'Sample Time'),
+            'sample_time' => Yii::t('app', 'Time'),
             'record_status' => Yii::t('app', 'Record Status'),
         ];
     }
