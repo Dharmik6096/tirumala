@@ -232,9 +232,11 @@ class TblMilkVehicleEntryQlty extends ChildModel {
     public function validateSampleAfterGrossWeight($attribute, $params) {
         if (empty($this->getErrors())) {
             $milkVehicleEntryQltyData = $this->findOne($this->chamber_no);
-            $lotQltySampleTimeValidate = Yii::$app->general->getUnionConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', 'PORTAL') ?: 1;
+            $lotQltySampleTimeValidateConfig = Yii::$app->general->getUnionConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', 'PORTAL') == '' ? 1 : Yii::$app->general->getUnionConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', 'PORTAL');
+            $lotQltySampleTimeValidate =  $lotQltySampleTimeValidateConfig = '' ? 1 : $lotQltySampleTimeValidateConfig;
             if (!empty($lotQltySampleTimeValidate)) {
-                $lotQltySampleTimeValidate = Yii::$app->general->getCheckBmcConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', $milkVehicleEntryQltyData->plant_code, 'PLANT', 'PLANT_RECEIPT_CONFIG') ?: 1;
+                $lotQltySampleTimeValidateConfig = Yii::$app->general->getCheckBmcConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', $milkVehicleEntryQltyData->plant_code, 'PLANT', 'PLANT_RECEIPT_CONFIG');
+                $lotQltySampleTimeValidate = $lotQltySampleTimeValidateConfig == '' ? 1 : $lotQltySampleTimeValidateConfig;
             }
             $sampleTime = date('H:i:s', strtotime($this->sample_time));
             $sampleDate = date('Y-m-d', strtotime($this->sample_datetime));
