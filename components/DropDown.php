@@ -28,7 +28,7 @@ use app\modules\geo\models\TblRegion;
 
 class DropDown extends Component {
 
-    private $class = 'form-group padding-right-5 col-sm-2';
+    private $class = 'form-group padding-right-5 col-sm-2', $is_async = TRUE;
 
     public function state($model, $form, $name = 'state_code', $islable = false, $disable = false, $multiple = false, $searchable = true) {
 
@@ -291,11 +291,12 @@ class DropDown extends Component {
     }
 
     public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoSelect = TRUE) {
+        $this->is_async = FALSE;
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
         } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly, '', true, '', false, '', false);
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
         }
         if ($autoSelect) {
             $script = "$(document).ready(function() {
@@ -317,11 +318,12 @@ class DropDown extends Component {
     }
 
     public function plant_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {
+        $this->is_async = FALSE;
         $this->setClass($form, $name);
         if ($multiselect) {
             $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-mcc-plant/mcc-list');
         } else {
-            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple, $extra_param, $readonly, '', true, true, false);
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple, $extra_param, $readonly);
         }
         $script = "$(document).ready(function() {
             var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
@@ -341,9 +343,10 @@ class DropDown extends Component {
     }
 
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+        $this->is_async = FALSE;
         $this->setClass($form, $name);
 
-        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id, true, true, false);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
         $hasBMC = Yii::$app->session->get('hasBMC');
         $script = "$(document).ready(function() {
                     var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
@@ -380,11 +383,12 @@ class DropDown extends Component {
     }
 
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->is_async = FALSE;
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly, '', true, $autoClose);
         } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly, '', true, '', false, '', false);
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly);
         }
     }
 
@@ -766,7 +770,7 @@ class DropDown extends Component {
         ]]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '', $async = true) {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -808,6 +812,17 @@ class DropDown extends Component {
                                 'options' => $options
                             ])->label($islable);
         } else {
+            $pluginOptions = [
+                'depends' => $depends,
+                'placeholder' => $placeholder,
+                'url' => Url::to([$url]),
+                'allParam' => ["'" . $extraParam . "'"],
+                'initialize' => true,
+                'allowClear' => true,
+            ];
+            if (!$this->is_async) {
+                $pluginOptions['ajaxSettings'] = ['async' => FALSE];
+            }
             echo $form->field($model, $name)
                     ->widget(DepDrop::classname(), [
                         'type' => $dropDownType,
@@ -815,17 +830,7 @@ class DropDown extends Component {
                         'name' => $name,
                         'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
                         'options' => ['multiple' => $multiple],
-                        'pluginOptions' => [
-                            'depends' => $depends,
-                            'placeholder' => $placeholder,
-                            'url' => Url::to([$url]),
-                            'allParam' => ["'" . $extraParam . "'"],
-                            'initialize' => true,
-                            'allowClear' => true,
-                            'ajaxSettings' => [
-                                'async' => $async,
-                            ],
-                        ],
+                        'pluginOptions' => $pluginOptions,
                         'options' => $options
                     ])->label($islable);
         }
@@ -2391,7 +2396,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true, $async = true) {
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -2415,23 +2420,24 @@ class DropDown extends Component {
         }
 
         $allParam = is_array($extraParam) ? $extraParam : ["'" . $extraParam . "'"];
+        $pluginOptions = [
+            'depends' => $depends,
+            'placeholder' => $placeholder,
+            'url' => Url::to([$url]),
+            'allParam' => ["'" . $extraParam . "'"],
+            'initialize' => true,
+            'allowClear' => true,
+        ];
+        if (!$this->is_async) {
+            $pluginOptions['ajaxSettings'] = ['async' => FALSE];
+        }
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
                     'data' => $data,
                     'name' => $name,
                     'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]],
-                    'pluginOptions' => [
-                        'depends' => $depends,
-                        'placeholder' => $placeholder,
-                        'url' => Url::to([$url]),
-                        'allParam' => $allParam,
-                        'initialize' => true,
-                        'allowClear' => true,
-                        'ajaxSettings' => [
-                            'async' => $async,
-                        ],
-                    ],
+                    'pluginOptions' => $pluginOptions,
                     'options' => $options
                 ])->label($islable);
 
