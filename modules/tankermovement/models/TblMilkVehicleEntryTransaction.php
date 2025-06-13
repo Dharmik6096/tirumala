@@ -48,7 +48,8 @@ use app\modules\organisation\models\TblMccPlant;
  */
 class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
 
-    public $source, $destination;
+    public $source, $destination, $process_approval_code;
+    public $vehicle_entry_date, $trip_code, $receipt_at, $receipt_at_code, $dispatch_from, $dispatch_from_code, $receipt_datetime;
 
     /**
      * @inheritdoc
@@ -64,7 +65,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
         return [
             [['chamber_quantity', 'fat', 'snf', 'water', 'temp', 'milk_quality_type_code', 'milk_type_code', 'entry_type', 'chamber_no', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'required', 'except' => ['androidsync']],
             [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'grn_no', 'chamber_no', 'challan_no', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['vehicle_entry_chamber_date', 'created_at', 'updated_at', 'is_qty_only', 'is_pending_merge', 'record_status'], 'safe'],
+            [['vehicle_entry_chamber_date', 'created_at', 'updated_at', 'is_qty_only', 'is_pending_merge', 'record_status', 'process_approval_code', 'trip_code'], 'safe'],
             [['chamber_no', 'chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'integer'],
             [['challan_no', 'source_org_code', 'source_org_type', 'destination_type', 'destination_code'], 'required', 'when' => function ($model) {
@@ -194,8 +195,49 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
         }
     }
 
-    public function updateStatus($updateData, $ids) {
-        return $this->updateAll($updateData, ['milk_vehicle_entry_transaction_code' => $ids]);
+    // public function updateStatus($updateData, $ids) {
+    //     return $this->updateAll($updateData, ['milk_vehicle_entry_transaction_code' => $ids]);
+    // }
+    public function updateStatus(array $updateData, $ids) {
+        $idList = is_array($ids) ? $ids : [$ids];
+        $setParts = [];
+        $params = [];
+
+        foreach ($updateData as $field => $value) {
+            $setParts[] = "t.$field = :$field";
+            $params[":$field"] = $value;
+        }
+
+        $setClause = implode(', ', $setParts);
+
+        $whereParts = [];
+        foreach ($idList as $index => $id) {
+            $parts = explode('_', $id);
+            if (count($parts) !== 3) {
+                continue;
+            }
+
+            $params[":org_code_$index"] = $parts[0];
+            $params[":org_type_$index"] = $parts[1];
+            $params[":trip_code_$index"] = $parts[2];
+
+            $whereParts[] = "(t.source_org_code = :org_code_$index AND t.source_org_type = :org_type_$index AND mve.trip_code = :trip_code_$index)";
+        }
+
+        if (empty($whereParts)) {
+            return false;
+        }
+
+        $whereClause = implode(' OR ', $whereParts);
+
+        $sql = "
+            UPDATE t
+            SET $setClause
+            FROM tbl_milk_vehicle_entry_transaction t
+            INNER JOIN tbl_milk_vehicle_entry mve ON t.milk_vehicle_entry_code = mve.milk_vehicle_entry_code
+            WHERE $whereClause
+        ";
+        return Yii::$app->db->createCommand($sql)->bindValues($params)->execute();
     }
 
     public function updateMilkVehicleEntryTxnWithHistory($milkVehicleEntryQltyData, &$saveModel) {
@@ -214,6 +256,21 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
                 $saveModel[] = $milkVehicleEntryTxnData;
             }
         }
+    }
+
+    public function getPartyMasterCodeSource() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'source_org_code']);
+    }
+
+    public function getPlantCodeSource() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'source_org_code']);
+    }
+
+    public function setData($model) {
+        $this->destination_code = $model->receipt_at_code;
+        $this->destination_type = $model->receipt_at;
+        $this->source_org_code = $model->dispatch_from_code;
+        $this->source_org_type = $model->dispatch_from;
     }
 
 }
