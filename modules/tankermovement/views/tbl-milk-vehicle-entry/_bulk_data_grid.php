@@ -130,7 +130,7 @@ use kartik\grid\GridView;
                     return '';
                 }
                 $renderedCodesForRemark[] = $model->process_approval_code;
-                return '<span class=\'approval_remarks\'>' . $form->field($milkVehicleEntryModel, '[' . $model['process_approval_code'] . ']approval_remarks')->textInput(['value' => $model->approval_remarks, 'class' => 'form-control',])->label(FALSE) . '</span>';
+                return '<span class=\'approval_remarks\'>' . $form->field($milkVehicleEntryModel, '[' . $model['process_approval_code'] . ']approval_remarks')->textInput(['value' => $milkVehicleEntryModel->approval_remarks, 'class' => 'form-control',])->label(FALSE) . '</span>';
             },],
         ];
 
