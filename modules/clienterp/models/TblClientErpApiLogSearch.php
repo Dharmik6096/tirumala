@@ -51,6 +51,7 @@ class TblClientErpApiLogSearch extends TblClientErpApiLog
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);
