@@ -19,22 +19,24 @@ $attribute = [
         'attribute' => 'dispatch_from_code', 
         'label' => Yii::t('app', 'Dispatch Name'),
         'value' => function ($model) {
-        $rel = Yii::$app->general->getDestRelation($model->dispatch_from);
-        $att = strtolower($model->dispatch_from) == 'bmc' ? 'bmc_name' : (strtolower($model->dispatch_from) == 'vendor' ? 'customer_name' : (strtolower($model->dispatch_from) == 'party' ? 'party_name' : 'name'));
-        if (!empty($rel))
-            return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->dispatch_from_code);
-    }, 'vAlign' => 'middle', 'filter' => false],
+            $relModel = $model->milkVehicleEntryCode;
+            $rel = Yii::$app->general->getDestRelation($model->dispatch_from);
+            $att = strtolower($model->dispatch_from) == 'bmc' ? 'bmc_name' : (strtolower($model->dispatch_from) == 'vendor' ? 'customer_name' : (strtolower($model->dispatch_from) == 'party' ? 'party_name' : 'name'));
+            if (!empty($rel))
+                return Yii::$app->general->getforeignkey($relModel->{$rel . 'Source'}, $att) . '-' . strtoupper($model->dispatch_from_code);
+        }, 'vAlign' => 'middle', 'filter' => false],
     [
         'attribute' => 'dispatch_from_code',
         'label' => (Yii::t('app', 'Dispatch SAP vendor Code')),
         'value' => function ($model) {
+            $relModel = $model->milkVehicleEntryCode;
             $rel = Yii::$app->general->getDestRelation($model->dispatch_from);
             $att = 'sap_vendor_code';
             if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
+                return Yii::$app->general->getforeignkey($relModel->{$rel . 'Source'}, $att);
         },
         'vAlign' => 'middle',
-        'filter' => false
+        'filter' => true
     ],
     ['attribute' => 'receipt_at', 'label' => (Yii::t('app', 'Dest Type')),],
     [
@@ -58,7 +60,7 @@ $attribute = [
                 return Yii::$app->general->getforeignkey($relModel->{$rel . 'Dest'}, $att);
         },
         'vAlign' => 'middle',
-        'filter' => false
+        'filter' => true
     ],
     [
         'attribute' => 'receipt_datetime',
