@@ -90,14 +90,6 @@ use kartik\grid\GridView;
                 'filter' => false
             ],
             [
-                'attribute' => 'qty',
-                'value' => function ($model) {
-                    return Yii::$app->general->getforeignkey($model->milkVehicleEntryCode, 'qty');
-                },
-                'filter' => false
-            ],
-
-            [
                 'attribute' => 'arrival_time',
                 'value' => function ($model) {
                     return Yii::$app->controls->view_time($model->milkVehicleEntryCode->arrival_time);
@@ -106,22 +98,27 @@ use kartik\grid\GridView;
             ],
             [
                 'attribute' => 'gross_weight',
-                'value' => function ($model) {
-                    return Yii::$app->general->getforeignkey($model->milkVehicleEntryCode, 'gross_weight');
-                },
                 'filter' => false
             ],
             [
                 'attribute' => 'tare_weight',
+                'filter' => false
+            ],
+            [
+                'attribute' => 'chamber_quantity',
+                'filter' => false
+            ],
+            [
+                'attribute' => 'gross_weight_time',
                 'value' => function ($model) {
-                    return Yii::$app->general->getforeignkey($model->milkVehicleEntryCode, 'tare_weight');
+                    return Yii::$app->controls->view_datetime($model->gross_weight_time);
                 },
                 'filter' => false
             ],
             [
                 'attribute' => 'tare_weight_time',
                 'value' => function ($model) {
-                    return Yii::$app->controls->view_time($model->milkVehicleEntryCode->tare_weight_time);
+                    return Yii::$app->controls->view_datetime($model->tare_weight_time);
                 },
                 'filter' => false
             ],
@@ -130,7 +127,7 @@ use kartik\grid\GridView;
                     return '';
                 }
                 $renderedCodesForRemark[] = $model->process_approval_code;
-                return '<span class=\'approval_remarks\'>' . $form->field($milkVehicleEntryModel, '[' . $model['process_approval_code'] . ']approval_remarks')->textInput(['value' => $model->approval_remarks, 'class' => 'form-control',])->label(FALSE) . '</span>';
+                return '<span class=\'approval_remarks\'>' . $form->field($milkVehicleEntryModel, '[' . $model['process_approval_code'] . ']approval_remarks')->textInput(['value' => $milkVehicleEntryModel->approval_remarks, 'class' => 'form-control',])->label(FALSE) . '</span>';
             },],
         ];
 

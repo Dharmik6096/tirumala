@@ -14,22 +14,6 @@ $milk_type = $milkType->getAnimalMilkTypeArray();
 
 <?php
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function ($model) {
-        $relModel = $model->milkVehicleEntryCode;
-        return Yii::$app->general->getforeignkey($relModel->unionCode, 'union_name');
-    }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'plant_code', 'value' => function ($model) {
-        $relModel = $model->milkVehicleEntryCode;
-        return Yii::$app->general->getforeignkey($relModel->plantCode, 'name');
-    }, 'vAlign' => 'middle', 'filter' => false, 'visible' => true],
-    ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
-        $relModel = $model->milkVehicleEntryCode;
-        return Yii::$app->general->getforeignkey($relModel->mccPlantCode, 'name');
-    }, 'vAlign' => 'middle', 'filter' => false, 'visible' => true],
-    ['attribute' => 'bmc_code', 'value' => function ($model) {
-        $relModel = $model->milkVehicleEntryCode;
-        return Yii::$app->general->getforeignkey($relModel->bmcCode, 'bmc_name');
-    }, 'vAlign' => 'middle', 'filter' => false, 'visible' => true],
     ['attribute' => 'dispatch_from'],
     [
         'attribute' => 'dispatch_from_code', 
@@ -40,18 +24,6 @@ $attribute = [
         if (!empty($rel))
             return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att) . '-' . strtoupper($model->dispatch_from_code);
     }, 'vAlign' => 'middle', 'filter' => false],
-    [
-        'attribute' => 'dispatch_from_code',
-        'label' => (Yii::t('app', 'Dispatch Ref.Code')),
-        'value' => function ($model) {
-            $rel = Yii::$app->general->getDestRelation($model->dispatch_from);
-            $att = strtolower($model->dispatch_from) == 'party' ? 'sap_vendor_code' : 'ref_code';
-            if (!empty($rel))
-                return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
-        },
-        'vAlign' => 'middle',
-        'filter' => false
-    ],
     [
         'attribute' => 'dispatch_from_code',
         'label' => (Yii::t('app', 'Dispatch SAP vendor Code')),
