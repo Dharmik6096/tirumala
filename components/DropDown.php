@@ -295,7 +295,7 @@ class DropDown extends Component {
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
         } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly, '', true, '', false, '', false);
         }
         if ($autoSelect) {
             $script = "$(document).ready(function() {
@@ -305,12 +305,10 @@ class DropDown extends Component {
                     var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                     var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                     var unionCode = $('#" . $depends . "').val();
-                    if(unionCode!='' && length == 1) {
+                    if(unionCode != '' && unionCode != null && unionCode != undefined && unionCode != 'Loading ...' && length == 1) {
                         $('#'+modelname+'-'+fieldName).val(plant);
-                        setTimeout(function() {
-                            $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                            $('#'+modelname+'-'+fieldName).trigger('change');
-                        }, 500);
+                        $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                        $('#'+modelname+'-'+fieldName).trigger('change');
                     }
                 });
             });";
@@ -323,7 +321,7 @@ class DropDown extends Component {
         if ($multiselect) {
             $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-mcc-plant/mcc-list');
         } else {
-            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple, $extra_param, $readonly);
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple, $extra_param, $readonly, '', true, true, false);
         }
         $script = "$(document).ready(function() {
             var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
@@ -332,12 +330,10 @@ class DropDown extends Component {
                 var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                 var mcc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                 var plantCode = $('#" . $depends . "').val();
-                if(plantCode!='' && length == 1) {
+                if(plantCode!='' && plantCode != null && plantCode != undefined && plantCode != 'Loading ...' && length == 1) {
                     $('#'+modelname+'-'+fieldName).val(mcc);
-                    setTimeout(function() {
-                        $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                        $('#'+modelname+'-'+fieldName).trigger('change');
-                    }, 800);
+                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                    $('#'+modelname+'-'+fieldName).trigger('change');
                 }
             });
         });";
@@ -347,7 +343,7 @@ class DropDown extends Component {
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
 
-        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id, true, true, false);
         $hasBMC = Yii::$app->session->get('hasBMC');
         $script = "$(document).ready(function() {
                     var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
@@ -357,17 +353,15 @@ class DropDown extends Component {
                         var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                         var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                             var mccCode = $('#" . $depends . "').val();
-                        if(mccCode!='' && length == 0) {
+                        if(mccCode!='' && mccCode != null && mccCode != undefined && mccCode != 'Loading ...' && length == 0) {
                             $('#'+modelname+'-'+fieldName).parent('div').parent().show();
-                        } else if(length == 1) {
+                        } else if(mccCode!='' && mccCode != null && mccCode != undefined && mccCode != 'Loading ...' && length == 1) {
                             $('#'+modelname+'-'+fieldName).val(bmc);
                             if(hasBMC == 0){
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
                             }
-                            setTimeout(function() {
-                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                                $('#'+modelname+'-'+fieldName).trigger('change');
-                            }, 1000);
+                            $('#'+modelname+'-'+fieldName).trigger('select2:select');
+                            $('#'+modelname+'-'+fieldName).trigger('change');
                         } else if(hasBMC == 0) {
                             $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
                         }
@@ -390,7 +384,7 @@ class DropDown extends Component {
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly, '', true, $autoClose);
         } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly);
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly, '', true, '', false, '', false);
         }
     }
 
@@ -772,7 +766,7 @@ class DropDown extends Component {
         ]]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '', $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -828,6 +822,9 @@ class DropDown extends Component {
                             'allParam' => ["'" . $extraParam . "'"],
                             'initialize' => true,
                             'allowClear' => true,
+                            'ajaxSettings' => [
+                                'async' => $async,
+                            ],
                         ],
                         'options' => $options
                     ])->label($islable);
@@ -2338,7 +2335,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -2394,7 +2391,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true, $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -2431,6 +2428,9 @@ class DropDown extends Component {
                         'allParam' => $allParam,
                         'initialize' => true,
                         'allowClear' => true,
+                        'ajaxSettings' => [
+                            'async' => $async,
+                        ],
                     ],
                     'options' => $options
                 ])->label($islable);
