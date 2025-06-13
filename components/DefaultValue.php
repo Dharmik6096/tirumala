@@ -24,6 +24,9 @@ class DefaultValue extends Component {
                 'TblDcs' => [
                 // Common defaults
                 ],
+                'TblMember' => [
+                    'animal_type_code' => 1,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [
@@ -34,11 +37,16 @@ class DefaultValue extends Component {
             ],
             'DODLA' => [
                 'TblVehicleMaster' => [
-                    'billing_method'=> 'fix_rent_daily',
-                    'vehicle_use_type'=> 1,
-                    'fuel_type_code'=> 2,
-                    'flag_wef_date'=> date('Y-m-d'),
-                    'billing_qty_flag'=> 1,
+                    'billing_method' => 'fix_rent_daily',
+                    'vehicle_use_type' => 1,
+                    'fuel_type_code' => 2,
+                    'flag_wef_date' => date('Y-m-d'),
+                    'billing_qty_flag' => 1,
+                ],
+            ],
+            'COMFED' => [
+                'TblMember' => [
+                    'animal_type_code' => 3,
                 ],
             ],
         ];

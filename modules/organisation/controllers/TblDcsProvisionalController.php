@@ -223,7 +223,7 @@ class TblDcsProvisionalController extends ChildController {
                     'dataProviderOther' => $dataProviderOther,
                     'attachment' => $attachment,
                     'processApprovalModel' => $processApprovalModel,
-	                'processApprovalDataProvider' => $processApprovalDataProvider,
+                    'processApprovalDataProvider' => $processApprovalDataProvider,
         ]);
     }
 
@@ -549,10 +549,10 @@ class TblDcsProvisionalController extends ChildController {
                         $memberModel->attributes = $model->attributes;
                         $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
                         $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
-                        if(!empty($memberModel->set_master_hierarchy)){
+                        if (!empty($memberModel->set_master_hierarchy)) {
                             $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
                         }
-                        $memberModel->animal_type_code = 1;
+                        Yii::$app->default->getDefaults($memberModel);
                         $memberModel->address = $model->dcs_name;
                         $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
                         $memberModel->member_type_code = '1';
@@ -625,7 +625,7 @@ class TblDcsProvisionalController extends ChildController {
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->data_post_status = 0;
         $record = [];
-        if ($this->model->save(true,false)) {
+        if ($this->model->save(true, false)) {
             $historyModel->save();
             $record = ['status' => 'success', 'msg' => 'Dcs Provisional re-pushed successfully.'];
         } else {

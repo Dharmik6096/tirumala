@@ -323,11 +323,10 @@ class DropDown extends Component {
                     var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                     var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                     var unionCode = $('#" . $depends . "').val();
-                    if(unionCode!='' && length == 1) {
+                    if(unionCode != '' && unionCode != null && unionCode != undefined && unionCode != 'Loading ...' && length == 1) {
                         $('#'+modelname+'-'+fieldName).val(plant);
                         $('#'+modelname+'-'+fieldName).trigger('select2:select');
                         $('#'+modelname+'-'+fieldName).trigger('change');
-                        $('#'+modelname+'-'+fieldName).trigger('select2:select');
                     }
                 });
             });";
@@ -349,11 +348,10 @@ class DropDown extends Component {
                 var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                 var mcc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                 var plantCode = $('#" . $depends . "').val();
-                if(plantCode!='' && length == 1) {
+                if(plantCode!='' && plantCode != null && plantCode != undefined && plantCode != 'Loading ...' && length == 1) {
                     $('#'+modelname+'-'+fieldName).val(mcc);
                     $('#'+modelname+'-'+fieldName).trigger('select2:select');
                     $('#'+modelname+'-'+fieldName).trigger('change');
-                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
                 }
             });
         });";
@@ -373,16 +371,15 @@ class DropDown extends Component {
                         var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                         var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                             var mccCode = $('#" . $depends . "').val();
-                        if(mccCode!='' && length == 0) {
+                        if(mccCode!='' && mccCode != null && mccCode != undefined && mccCode != 'Loading ...' && length == 0) {
                             $('#'+modelname+'-'+fieldName).parent('div').parent().show();
-                        } else if(length == 1) {
+                        } else if(mccCode!='' && mccCode != null && mccCode != undefined && mccCode != 'Loading ...' && length == 1) {
                             $('#'+modelname+'-'+fieldName).val(bmc);
                             if(hasBMC == 0){
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
                             }
                             $('#'+modelname+'-'+fieldName).trigger('select2:select');
                             $('#'+modelname+'-'+fieldName).trigger('change');
-                            $('#'+modelname+'-'+fieldName).trigger('select2:select');
                         } else if(hasBMC == 0) {
                             $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
                         }
@@ -1077,7 +1074,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -2376,7 +2373,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'pluginOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -2476,11 +2473,6 @@ class DropDown extends Component {
                     ],
                     'options' => $options
                 ])->label($islable);
-
-        // echo "<pre>";
-        // print_r($depends);
-        // echo "</pre>";
-
 
         $selected = Json::encode($data);
         if (!empty($selected)) {

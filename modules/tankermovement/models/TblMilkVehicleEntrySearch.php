@@ -91,6 +91,42 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
         return $dataProvider;
     }
 
+    public function approvalSearch($params)
+    {
+        $query = TblMilkVehicleEntryTransaction::find()->alias('t');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->innerJoin('tbl_milk_vehicle_entry m', 'm.milk_vehicle_entry_code = t.milk_vehicle_entry_code');
+
+        $approval = new TblProcessApproval();
+        $subQuery = $approval->getApproveLavel('tbl_milk_vehicle_entry');
+        $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),m.milk_vehicle_entry_code) = convert(varchar(max),ap.process_code)');
+        $query->addSelect(['t.*', 'ap.process_approval_code as process_approval_code']);
+        $query->andFilterWhere(['m.approval_status' => ['Pending', 'Inprogress']]);
+
+        if (!empty($this->to_date)) {
+            $to_date = date('Y-m-d', strtotime($this->to_date));
+            $query->andFilterWhere(['<=', 'CAST(m.vehicle_entry_date AS DATE)', $to_date]);
+        }
+
+        $query->orderBy([
+            't.created_at' => SORT_DESC,
+        ]);
+
+        return $dataProvider;
+    }
+
     public function searchEditTrip($params) {
         $this->load($params);
         if ($this->scenario == 'changeTrip') {

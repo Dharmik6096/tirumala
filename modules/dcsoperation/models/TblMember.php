@@ -789,7 +789,7 @@ class TblMember extends ChildModel {
             $this->ref_code = $dcs_ref_code . $this->ex_member_code;
         }
         if (empty($this->animal_type_code)) {
-            $this->animal_type_code = 1;
+            Yii::$app->default->getDefaults($this);
         }
         if (empty($this->caste_category_code)) {
             $this->caste_category_code = 1;
