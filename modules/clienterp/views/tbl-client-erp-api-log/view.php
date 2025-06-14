@@ -5,7 +5,7 @@ use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'Client ERP API Log');
 ?>
-<div class="panel panel-default panel-grid panel-main">
+<div class="panel panel-default panel-grid hide-grid-settings">
     <div class="panel-heading">
         <?= Yii::$app->controls->cancel($model); ?>
         <?= Html::encode($this->title) ?>
@@ -35,6 +35,19 @@ $this->title = Yii::$app->label->title('view', 'Client ERP API Log');
         </div>
         <?php
         if ($erp_process_name == 2) { ?>
+            <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Milk Vehicle Transation Details') ?></h4>
+                </div>
+                <div class="form-grid">
+                    <?=
+                    $this->render('_transaction_grid', [
+                        'searchTransactionModel' => $searchTransactionModel,
+                        'dataTransactionProvider' => $dataTransactionProvider,
+                    ]);
+                    ?>
+                </div>
+            </div>
             <div class="col-md-12 padding_10_0 theme-box view-subtitle">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                     <h4 class="theme-box-heading"><?= Yii::t('app', 'Log Details') ?></h4>

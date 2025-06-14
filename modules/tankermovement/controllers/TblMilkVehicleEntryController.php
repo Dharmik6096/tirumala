@@ -201,6 +201,9 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 $this->model->qty = number_format((float) $this->model->gross_weight - (float) $this->model->tare_weight, 2, '.', '');
                 $txn_model->tare_weight_time = date('Y-m-d') . ' ' . $txn_model->tare_weight_time;
                 $txn_model->gross_weight_time = date('Y-m-d') . ' ' . $txn_model->gross_weight_time;
+                if(empty($txn_model->destination_code) || empty($txn_model->destination_type) || empty($txn_model->source_org_code) || empty($txn_model->source_org_type)){
+                    $txn_model->setData($this->model);
+                }
                 $modelSave[] = $this->model;
 
                 $txn_model->vehicle_entry_chamber_date = $this->model->vehicle_entry_date;
@@ -476,7 +479,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionBulkApproval() {
         $milkVehicleEntryModel = new TblMilkVehicleEntry();
         $searchModel = new TblMilkVehicleEntrySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
+        $dataProvider = $searchModel->approvalSearch(Yii::$app->request->queryParams, TRUE);
 
         $selection = Yii::$app->request->post('selection');
         if (Yii::$app->request->post() && !empty($selection)) {
