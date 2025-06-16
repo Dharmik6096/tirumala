@@ -878,7 +878,7 @@ class TblDcs extends ChildModel {
     }
 
     public function getRouteMapping() {
-        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code', 'union_code' => 'union_code']);
     }
 
     public function getMccDCS($mccCode = [], $RLS = 'TRUE', $values = []) {
@@ -1242,7 +1242,7 @@ class TblDcs extends ChildModel {
     }
 
     public function getRouteRefCode() {
-        return $this->hasOne(TblRouteMapping::className(), ['ref_code' => 'route_code']);
+        return $this->hasOne(TblRouteMapping::className(), ['ref_code' => 'route_code', 'union_code' => 'union_code']);
     }
 
     public function validateRoute($attribute, $params) {
