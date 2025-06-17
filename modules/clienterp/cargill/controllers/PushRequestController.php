@@ -14,6 +14,7 @@ class PushRequestController extends PushMasterController {
         $request = Yii::$app->request->getRawBody();
         $requestTimestamp = date('Y-m-d H:i:s');
         $plant_data = [];
+        $bmc_data = [];
         try {
             $errors = [];
             $save_model = [];
@@ -34,6 +35,7 @@ class PushRequestController extends PushMasterController {
             } else {
                 $plantdisModel->document_date = $document_date->format('Y-m-d');
             }
+            $bmc_data = $plantdisModel->bmcCode;
             if ($plantdisModel->validate()) {
                 $plant_data = $plantdisModel->plantCode;
                 if (!empty($plant_data) && $plant_data->ref_code == $request['plant_code']) {
@@ -96,11 +98,11 @@ class PushRequestController extends PushMasterController {
             $plant_data = TblPlant::find()->where(['sap_vendor_code' => $request['plant_code']])->one();
         }
         $responseTimestamp = date('Y-m-d H:i:s');
-        $this->setLogData($request, $this->response, $requestTimestamp, $responseTimestamp, $plant_data);
+        $this->setLogData($request, $this->response, $requestTimestamp, $responseTimestamp, $plant_data, $bmc_data);
         return $this->response;
     }
     
-    public function setLogData($request, $response, $requestTimestamp, $responseTimestamp, $plantDetail) {
+    public function setLogData($request, $response, $requestTimestamp, $responseTimestamp, $plantDetail, $bmcData) {
         // $plantDetail = !empty($request['plant_code']) ? TblPlant::find()->where(['or',['plant_code' => $request['plant_code']], ['ref_code' => $request['plant_code']], ['sap_vendor_code' => $request['plant_code']]])->one() : [];
         $statusCode = $response->getStatusCode();
         $dispatch_date = '';
@@ -116,6 +118,8 @@ class PushRequestController extends PushMasterController {
         $logData = [
             'union_code' => !empty($plantDetail['union_code']) ? $plantDetail['union_code'] : '',
             'plant_code' => !empty($plantDetail['plant_code']) ? $plantDetail['plant_code'] : '',
+            'mcc_plant_code' => !empty($bmcData['mcc_plant_code']) ? $bmcData['mcc_plant_code'] : '',
+            'bmc_code' => !empty($bmcData['bmc_code']) ? $bmcData['bmc_code'] : '',
             'request_desc' => 'inventory plant dispatch',
             'txn_type' => 'cargill',
             'date1' => $document_date,
