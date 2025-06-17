@@ -346,7 +346,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         return $count == 1;
     }
 
-    public function getFromDateToDate() {
+    public function getFromDateToDate($is_physical_stock = false, $is_stock_detail = false) {
 
         $result = ['status' => 'error', 'from_datetime' => NULL, 'from_date' => null, 'from_shift' => null, 'to_datetime' => NULL, 'to_date' => null, 'to_shift' => null, 'physical_stock_only' => 0];
         $stock = TblBmcDispatchStock::find()
@@ -428,16 +428,47 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                     ];
                 }
             }
+        } else {
+            if (!empty($is_physical_stock)) {
+                $shift = 1;
+                $date = date('Y-m-d') . ' ' . \Yii::$app->general->getshift($shift);
+                $result = [
+                    'status' => 'success',
+                    'from_datetime' => $date,
+                    'to_datetime' => $date,
+                    'from_date' => date('d-m-Y'),
+                    'from_shift' => $shift,
+                    'to_date' => date('d-m-Y'),
+                    'to_shift' => $shift,
+                    'physical_stock_only' => 2,
+                ];
+            }
         }
         $stock_data = [];
         if (!empty($result['from_datetime']) && !empty($result['to_datetime'])) {
             $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime)}")
-                    ->bindValue(':from_datetime', $result['from_datetime'])
-                    ->bindValue(':to_datetime', $result['to_datetime'])
+                    ->bindValue(':from_datetime', date('Y-m-d H:i:s', strtotime($result['from_datetime'])))
+                    ->bindValue(':to_datetime', date('Y-m-d H:i:s', strtotime($result['to_datetime'])))
                     ->bindValue(':bmc_code', $this->bmc_code);
             $stock_data = $query->queryAll();
         }
         $result['stock_data'] = $stock_data;
+
+        if (!empty($is_stock_detail)) {
+            $stock_detail = [];
+            if (!empty($stock_data)) {
+                foreach ($stock_data as $r) {
+                    $key = $r['bmc_silos_info_code'] . '_' . $r['animal_type_code'] . '_' . $r['milk_quality_type_code'];
+                    if (empty($stock_detail[$key])) {
+                        $stock_detail[$key]['previous_qty'] = 0;
+                        $stock_detail[$key]['purchase_qty'] = 0;
+                    }
+                    $stock_detail[$key]['previous_qty'] = $stock_detail[$key]['previous_qty'] + $r['previous_qty'];
+                    $stock_detail[$key]['purchase_qty'] = $stock_detail[$key]['purchase_qty'] + $r['purchase_qty'];
+                }
+            }
+            $result['stock_detail'] = $stock_detail;
+        }
 
         return $result;
     }

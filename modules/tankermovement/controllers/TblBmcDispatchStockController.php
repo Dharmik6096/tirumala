@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
 use kartik\form\ActiveForm;
+use app\modules\tankermovement\models\TblBmcMilkDispatch;
 
 /**
  * TblBmcDispatchStockController implements the CRUD actions for TblBmcDispatchStock model.
@@ -54,7 +55,6 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
         $this->model = new TblBmcDispatchStock();
         $this->viewFile = 'create';
         Yii::$app->general->setCode($this->model);
-        $this->setFromDate($this->model);
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->bmc_dispatch_stock_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->to_date = ($this->model->to_date) ? Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) : '';
@@ -186,6 +186,22 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
             }
             $model->from_date = $dispatch_date;
         }
+    }
+
+    public function actionGetDatePurchaseInfo() {
+        $bmcMilkDispatch = new TblBmcMilkDispatch();
+        $bmcMilkDispatch->bmc_code = Yii::$app->request->post('bmcCode');
+        $result = $bmcMilkDispatch->getFromDateToDate(true, true);
+
+        $tableHtml = $this->renderAjax('_purchase_detail', [
+            'result' => $result['stock_data'],
+            'stock_detail' => $result['stock_detail']
+        ]);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return [
+            'tableHtml' => $tableHtml,
+            'result' => $result,
+        ];
     }
 
 }
