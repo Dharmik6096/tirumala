@@ -55,6 +55,7 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
         $this->model = new TblBmcDispatchStock();
         $this->viewFile = 'create';
         Yii::$app->general->setCode($this->model);
+//        $this->setFromDate($this->model); (unused)
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->bmc_dispatch_stock_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->to_date = ($this->model->to_date) ? Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) : '';
