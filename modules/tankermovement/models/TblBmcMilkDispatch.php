@@ -256,6 +256,8 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                     } else {
                         if ($stock_date->from_date == $this->from_date && $stock_date->to_date == $this->to_date) {
                             return TRUE;
+                        } else if ($stock_date->to_date == $this->from_date && $stock_date->to_date == $this->to_date) {
+                            return TRUE;
                         } else if ($this->from_date < $dispatch_date) {
                             $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date. Please select this date: ' . $formatted_date . ' and shift ' . $formatted_shift));
                             return FALSE;

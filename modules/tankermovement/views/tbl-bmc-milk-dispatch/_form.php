@@ -527,7 +527,7 @@ function resetFields() {
     $('#tblbmcmilkdispatch-to_date').val('').change();
     $('#tblbmcmilkdispatch-from_shift_code').val('').trigger('change');
     $('#tblbmcmilkdispatch-to_shift_code').val('').trigger('change');
-    $('#purchase-detial').html('');
+    $('#purchase-detial table tbody').html('');
 }
 
 function isClrInput(){
