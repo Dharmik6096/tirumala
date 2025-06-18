@@ -140,6 +140,10 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
             $historyModel = new TblBmcDispatchStockHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
+            $this->model->to_date = ($this->model->to_date) ? Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) : '';
+            $this->model->to_date = $this->model->to_date . ' ' . \Yii::$app->general->getshift($this->model->to_shift_code);
+            $this->model->from_date = ($this->model->from_date) ? Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) : '';
+            $this->model->from_date = $this->model->from_date . ' ' . \Yii::$app->general->getshift($this->model->from_shift_code);
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['BMC Dispatch Stock', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();

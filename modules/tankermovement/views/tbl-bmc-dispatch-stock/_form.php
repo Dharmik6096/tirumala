@@ -44,13 +44,13 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcdispatchstock-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $disabled); ?>
             </div>  
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $disabled, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, $readonly, 'from_shift_code'); ?>
             </div>
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $disabled, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift_code', true, $readonly, 'to_shift_code'); ?>
