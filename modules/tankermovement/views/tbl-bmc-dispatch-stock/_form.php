@@ -47,13 +47,13 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $disabled, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, $disabled, 'from_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, $readonly, 'from_shift_code'); ?>
             </div>
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $disabled, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift_code', true, $disabled, 'to_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift_code', true, $readonly, 'to_shift_code'); ?>
             </div>
         </div>
 
@@ -294,25 +294,39 @@ $(document).ready(function() {
                 success: function(data) {   
                     if (data.result.status == 'success') {
                         $('#tblbmcdispatchstock-from_date').val(data.result.from_date);
-                        $('#tblbmcdispatchstock-from_shift_code').val(data.result.from_shift).trigger('change');
+                        $('#tblbmcdispatchstock-from_shift_code').val(data.result.from_shift).trigger('change').trigger('select2:select');
                         $('#tblbmcdispatchstock-to_date').val(data.result.to_date);
-                        $('#tblbmcdispatchstock-to_shift_code').val(data.result.to_shift).trigger('change');
+                        $('#tblbmcdispatchstock-to_shift_code').val(data.result.to_shift).trigger('change').trigger('select2:select');
                         $('#purchase-detial').html(data.tableHtml);
-                        enableDates(data.result.physical_stock_only);
+                        enableDisableDates(data.result.physical_stock_only);
+                    } else {
+                        resetFields();
                     }
-             }
+                }
             });
-        }
+        } else {
+            resetFields();
+	}
+    }
   
-        function enableDates(physicalStockOnly) {
+        function enableDisableDates(physicalStockOnly) {
             if (physicalStockOnly == 2) {
-                $('.field-tblbmcdispatchstock-from_date, .field-tblbmcdispatchstock-from_shift_code, .field-tblbmcdispatchstock-to_date, .field-tblbmcdispatchstock-to_shift_code').removeClass('disabled no_pointer_disabled');
+                $('.field-tblbmcdispatchstock-from_date, .field-tblbmcdispatchstock-to_date').removeClass('disabled no_pointer');
+                $('.field-tblbmcdispatchstock-from_shift_code, .field-tblbmcdispatchstock-to_shift_code').removeClass('no_pointer_disabled');
             } else {
-                $('.field-tblbmcdispatchstock-from_date, .field-tblbmcdispatchstock-from_shift_code, .field-tblbmcdispatchstock-to_date, .field-tblbmcdispatchstock-to_shift_code').addClass('disabled no_pointer');
+                $('.field-tblbmcdispatchstock-from_date, .field-tblbmcdispatchstock-to_date').addClass('disabled no_pointer');
+                $('.field-tblbmcdispatchstock-from_shift_code, .field-tblbmcdispatchstock-to_shift_code').addClass('no_pointer_disabled');
             }
         }
-    
-     };
+        
+        function resetFields() {
+            $('#tblbmcdispatchstock-from_date').val('');
+            $('#tblbmcdispatchstock-to_date').val('');
+            $('#tblbmcdispatchstock-from_shift_code').val('').trigger('change');
+            $('#tblbmcdispatchstock-to_shift_code').val('').trigger('change');
+            $('#purchase-detial table tbody').html('');
+            $('#purchase-detial table tbody').html('<tr><td colspan=\"6\" class=\"text-center\">No stock data available.</td></tr>');
+        }
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
