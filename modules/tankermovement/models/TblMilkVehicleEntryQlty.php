@@ -185,6 +185,10 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                         if ($maxLotDatetime === NULL || $currentLotDatetime > $maxLotDatetime) {
                             $maxLotDatetime = $currentLotDatetime;
                         }
+                        $formattedRecordsForAPI[] = [
+                            'chamber_no' => $record->chamber_no,
+                            'sample_datetime' => Yii::$app->controls->view_datetime($record->sample_datetime, 'php:Y-m-d H:i:s'),
+                        ];
                     }
                     $currentTime = time();
                     $intervalInSeconds = $plantLotCreationInterval * 3600;
@@ -233,7 +237,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
         if (empty($this->getErrors())) {
             $milkVehicleEntryQltyData = $this->findOne($this->chamber_no);
             $lotQltySampleTimeValidateConfig = Yii::$app->general->getUnionConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', 'PORTAL');
-            $lotQltySampleTimeValidate =  $lotQltySampleTimeValidateConfig = '' ? 1 : $lotQltySampleTimeValidateConfig;
+            $lotQltySampleTimeValidate = $lotQltySampleTimeValidateConfig = '' ? 1 : $lotQltySampleTimeValidateConfig;
             if (!empty($lotQltySampleTimeValidate)) {
                 $lotQltySampleTimeValidateConfig = Yii::$app->general->getCheckBmcConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', $milkVehicleEntryQltyData->plant_code, 'PLANT', 'PLANT_RECEIPT_CONFIG');
                 $lotQltySampleTimeValidate = $lotQltySampleTimeValidateConfig == '' ? 1 : $lotQltySampleTimeValidateConfig;
