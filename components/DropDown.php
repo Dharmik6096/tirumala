@@ -769,6 +769,19 @@ class DropDown extends Component {
     private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+        $parentField = '';
+        $initialize = false;
+        if (!empty($depends) && is_array($depends)) {
+            $parts = explode('-', $depends[0]);
+            if (count($parts) === 2) {
+                $parentField = $parts[1];
+            } elseif (!empty($parts[0])) {
+                $parentField = $parts[0];
+            }
+            if (!empty($parentField) && !empty($model->{$parentField})) {
+                $initialize = true;
+            }
+        }
         $options = [];
         $options['readonly'] = $readonly;
         $options['class'] = 'form-control ' . $class;
@@ -802,8 +815,18 @@ class DropDown extends Component {
                                     'placeholder' => $placeholder,
                                     'url' => Url::to([$url]),
                                     'allParam' => ["'" . $extraParam . "'"],
-                                    'initialize' => true,
+                                    'initialize' => $initialize,
                                     'allowClear' => true,
+                                    'ajaxSettings' => [
+                                        'beforeSend' => new \yii\web\JsExpression("
+                                            function(jqXHR, settings) {
+                                                var parentVal = $('#' + '{$depends[0]}').val();
+                                                if (!parentVal) {
+                                                    return false;
+                                                }
+                                            }
+                                        "),
+                                    ],
                                 ],
                                 'options' => $options
                             ])->label($islable);
@@ -820,8 +843,18 @@ class DropDown extends Component {
                             'placeholder' => $placeholder,
                             'url' => Url::to([$url]),
                             'allParam' => ["'" . $extraParam . "'"],
-                            'initialize' => true,
+                            'initialize' => $initialize,
                             'allowClear' => true,
+                            'ajaxSettings' => [
+                                'beforeSend' => new \yii\web\JsExpression("
+                                    function(jqXHR, settings) {
+                                        var parentVal = $('#' + '{$depends[0]}').val();
+                                        if (!parentVal) {
+                                            return false;
+                                        }
+                                    }
+                                "),
+                            ],
                         ],
                         'options' => $options
                     ])->label($islable);
@@ -835,7 +868,7 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
@@ -857,6 +890,19 @@ class DropDown extends Component {
 
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+        $parentField = '';
+        $initialize = false;
+        if (!empty($depends) && is_array($depends)) {
+            $parts = explode('-', $depends[0]);
+            if (count($parts) === 2) {
+                $parentField = $parts[1];
+            } elseif (!empty($parts[0])) {
+                $parentField = $parts[0];
+            }
+            if (!empty($parentField) && !empty($model->{$parentField})) {
+                $initialize = true;
+            }
+        }
         $tabIndex = ($tab) ? -1 : '';
         $dropDownType = DepDrop::TYPE_DEFAULT;
         if (isset($searchable) && $searchable) {
@@ -873,9 +919,16 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => true,
+                        'initialize' => $initialize,
                         'ajaxSettings' => [
-                            'async' => $async,
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    var parentVal = $('#' + '{$depends[0]}').val();
+                                    if (!parentVal) {
+                                        return false;
+                                    }
+                                }
+                            "),
                         ],
                     ],
                     'options' => [
@@ -2392,6 +2445,19 @@ class DropDown extends Component {
     private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+        $parentField = '';
+        $initialize = false;
+        if (!empty($depends) && is_array($depends)) {
+            $parts = explode('-', $depends[0]);
+            if (count($parts) === 2) {
+                $parentField = $parts[1];
+            } elseif (!empty($parts[0])) {
+                $parentField = $parts[0];
+            }
+            if (!empty($parentField) && !empty($model->{$parentField})) {
+                $initialize = true;
+            }
+        }
         $options = [];
         $options['readonly'] = $readonly;
         $options['class'] = 'form-control ' . $class;
@@ -2424,8 +2490,18 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => true,
+                        'initialize' => $initialize,
                         'allowClear' => true,
+                        'ajaxSettings' => [
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    var parentVal = $('#' + '{$depends[0]}').val();
+                                    if (!parentVal) {
+                                        return false;
+                                    }
+                                }
+                            "),
+                        ],
                     ],
                     'options' => $options
                 ])->label($islable);
