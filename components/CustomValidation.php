@@ -1272,6 +1272,11 @@ class CustomValidation extends Component {
                     ],
                 ],
             ],
+            'ELANAD' => [
+                'TblBankDetails' => [
+                    'default' => [],
+                ],
+            ],
         ];
     }
 

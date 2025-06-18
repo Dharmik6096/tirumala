@@ -76,7 +76,7 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['DayWiseQtyDetail', 'DayWiseQtySummary', 'VendorPaymentCycleWiseBmcWise']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'product_code'], 'required', 'on' => ['AdvancePm']],
                 [['to_date'], 'validateToDate', 'on' => ['AdvancePm']],
-                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment', 'MilkCollectionNegativeGroth', 'RootWiseDifference', 'AppStartupReport', 'MilkCollectionStatusDetail']],
+                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment', 'MilkCollectionNegativeGroth', 'RootWiseDifference', 'AppStartupReport']],
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment', 'RouteWiseReconciliation', 'MonthlySahayakIncome', 'MisCcWiseClosingBalance']],
                 [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory', 'StockRegisterBmcToSap', 'BillHeadDetail', 'ComplainActivityList']],
                 [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory']],
@@ -156,7 +156,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'state_code'], 'required', 'on' => ['RegionWiseUserAttendanceReport', 'EiplInstalledUsersDetails', 'AreBmcCollectionShiftReport', 'AreBmcCollDateShiftWiseSummary', 'AreBmcCollDateShiftWiseSummary', 'AreBmcCollDateShiftWiseSummary', 'AreSocietyWiseCda', 'AreSocietyWiseCda', 'AreSocietyWiseCda', 'AreVendorPayment', 'AreMemberPaymentDcsWise', 'AreMemberPaymentDcsWise', 'AreVendorBankPayment', 'AreMemberBankPayment']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_type', 'from_date', 'to_date'], 'required', 'on' => ['DcsWiseBillHeadApplicability']],
                 [['union_code', 'mcc_code', 'bmc_code'], 'required', 'on' => 'SapWqFile'],
-                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcCollectionSummaryRahema', 'MilkCollectionStatusReport', 'MilkCollectionFilterBased']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcCollectionSummaryRahema', 'MilkCollectionFilterBased']],
                 [['user_login_type'], 'required', 'on' => 'MobileAppReport'],
                 [['union_code', 'user_code', 'from_date', 'to_date'], 'required', 'on' => ['FieldStaffActivity']],
                 [['union_code', 'plant_code', 'mcc_code', 'as_on_date'], 'required', 'on' => 'ExportProvisionalMemberBankReceipt'],
@@ -168,6 +168,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'rate_cal_for', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['RateRecalculationWefDateWise']],
                 [['state_code', 'region_code', 'area_code', 'bmc_code', 'payment_cycle_code', 'bank_type'], 'required', 'on' => ['AreVendorBankPayment', 'AreMemberBankPayment']],
                 [['union_code', 'as_on_date'], 'required', 'on' => ['SummaryReportMcc']],
+                [['from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MilkCollectionStatusReport', 'MilkCollectionStatusDetail']],
         ];
     }
 

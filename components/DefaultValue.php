@@ -28,6 +28,9 @@ class DefaultValue extends Component {
                     'milk_type_code' => 3,
                     'milk_quality_type_code' => 1,
                 ],
+                'TblMember' => [
+                    'animal_type_code' => 1,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [
@@ -43,6 +46,11 @@ class DefaultValue extends Component {
                     'fuel_type_code' => 2,
                     'flag_wef_date' => date('Y-m-d'),
                     'billing_qty_flag' => 1,
+                ],
+            ],
+            'COMFED' => [
+                'TblMember' => [
+                    'animal_type_code' => 3,
                 ],
             ],
         ];

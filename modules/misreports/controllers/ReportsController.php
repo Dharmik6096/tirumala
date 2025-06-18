@@ -4027,10 +4027,11 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Export Provisional Member Bank Receipt',
             ],
             'MilkCollectionStatusReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_type',
                 'sp_name' => 'mis_milk_collection_status_report',
                 'scenario' => 'MilkCollectionStatusReport',
                 'title' => 'Milk Collection Status Report',
+                'report_type' => [Yii::t('app', 'BMC Wise'), Yii::t('app', 'Company Wise')],
             ],
             'MilkCollectionFilterBased' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,report_type,from_value:txt,to_value:txt',
@@ -4444,14 +4445,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'ProcMisLotWiseDetails' => [
-                'param' => 'vehicle_code,trip_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'vehicle_code,trip_code:vehicle_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'proc_mis_lot_wise_details',
                 'scenario' => 'ProcMisLotWiseDetails',
                 'title' => 'Vehicle wise Quality Report',
                 'bkg_export' => TRUE,
             ],
             'ComparisonReport' => [
-                'param' => 'vehicle_code,trip_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'vehicle_code,trip_code:vehicle_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'proc_mis_quantity_and_quality_comparing',
                 'scenario' => 'ComparisonReport',
                 'title' => 'Comparison Report ',
