@@ -59,7 +59,7 @@ class TblMilkTransfer extends \app\models\ChildModel {
     public function rules() {
         return [
             [['source_type', 'destination_type'], 'default', 'value' => 'BMC'],
-            [['transaction_datetime', 'shift_code'], 'safe'],
+            [['transaction_datetime', 'shift_code', 'is_rechilling'], 'safe'],
             [['from_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'source_type', 'destination_type', 'transaction_datetime', 'shift_code', 'to_date', 'to_shift'], 'required', 'except' => 'androidsync'],
             [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
             [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
@@ -75,6 +75,7 @@ class TblMilkTransfer extends \app\models\ChildModel {
                 }, 'message' => Yii::t('app/validation', 'Source and Destination must not be same.')],
             [['to_date'], 'validateToDate'],
             [['transaction_datetime'], 'transactionDateValidate'],
+            [['is_rechilling'], 'integer'],
         ];
     }
 
@@ -115,6 +116,7 @@ class TblMilkTransfer extends \app\models\ChildModel {
             'destination_type' => Yii::t('app', 'Destination Type'),
             'transaction_datetime' => Yii::t('app', 'Transaction Date'),
             'shift_code' => Yii::t('app', 'Shift'),
+            'is_rechilling' => Yii::t('app', 'Is Rechilling ?'),
         ];
     }
 

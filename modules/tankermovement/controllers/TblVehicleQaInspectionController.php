@@ -77,7 +77,7 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
             $configDataFilter = array_column($config_data, 'config_result');
             if (in_array(0, $configDataFilter)) {
                 $hasFailedConfig = true;
-                $model->status = 'closed';
+                $model->status = 'rejected';
             }
             $saveModel[] = $model;
 
@@ -93,7 +93,7 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                 $cnt++;
             }
 
-            $qaInspectionData = $model->find()->where(['vehicle_code' => $model->vehicle_code])->andWhere(['<>', 'status', 'closed'])->all();
+            $qaInspectionData = $model->find()->where(['vehicle_code' => $model->vehicle_code])->andWhere(['=', 'status', 'pending'])->all();
             if (!empty($qaInspectionData)) {
                 foreach ($qaInspectionData as $key => $inspectionData) {
                     $historyModel = new TblVehicleQaInspectionHistory();

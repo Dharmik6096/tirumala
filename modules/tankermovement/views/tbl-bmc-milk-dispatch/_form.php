@@ -382,9 +382,7 @@ $(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-ve
                     }
                 },
             });
-        } else {
-            $('#tblbmcmilkdispatchtxn-dispatch_qty').val('');
-        }             
+        }          
     });
 if(!isSecondTransaction) {
     $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
@@ -472,11 +470,12 @@ function calculateClr(){
             data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
-                if (obj.status == 'success')
-                {
+                if (obj.status == 'success') {
                     if(is_clr_input==0){
+                        $('#tblbmcmilkdispatchtxn-clr').val('');
                         $('#tblbmcmilkdispatchtxn-clr').val(obj.data.toFixed(2));
                     }else{
+                        $('#tblbmcmilkdispatchtxn-snf').val('');
                         $('#tblbmcmilkdispatchtxn-snf').val(obj.data);
                     }
                 }
@@ -490,38 +489,50 @@ function calculateClr(){
 
 $('#tblbmcmilkdispatch-bmc_code').change(function() {
     isClrInput();
-    // setFromDateToDate();
+    setDatePurchaseDetails();
 });
 
-function setFromDateToDate(){
+function setDatePurchaseDetails(){
     $('.field-tblbmcmilkdispatch-from_date').addClass('disabled no_pointer');
     $('.field-tblbmcmilkdispatch-from_shift_code').addClass('no_pointer_disabled');
     $('.field-tblbmcmilkdispatch-to_date').addClass('disabled no_pointer');
     $('.field-tblbmcmilkdispatch-to_shift_code').addClass('no_pointer_disabled');
     var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
     if(setData(bmcCode)){
+        var union = $('#tblbmcmilkdispatch-union_code').val();
         $.ajax({
             type: 'post',
-            url:'" . Url::to(['get-from-date-to-date']) . "',
+            url:'" . Url::to(['get-date-purchase-details']) . "',
             data: {'bmcCode':bmcCode},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
-                if (obj.data.status = 'success') {
-                    $('#tblbmcmilkdispatch-from_date').parent().kvDatepicker('update',obj.data.from_date);
+                if (obj.data.status == 'success') {
+                    $('#tblbmcmilkdispatch-from_date').val(obj.data.from_date);
                     $('#tblbmcmilkdispatch-from_shift_code').val(obj.data.from_shift).trigger('change').trigger('select2:select');
-                    $('#tblbmcmilkdispatch-to_date').parent().kvDatepicker('update',obj.data.to_date);
+                    $('#tblbmcmilkdispatch-to_date').val(obj.data.to_date);
                     $('#tblbmcmilkdispatch-to_shift_code').val(obj.data.to_shift).trigger('change').trigger('select2:select');
+                    $('#purchase-detial').html(obj.result);
+                } else {
+                    resetFields();
                 }
             }
         });
+    } else {
+        resetFields();
     }
 };
+
+function resetFields() {
+    $('#tblbmcmilkdispatch-from_date').val('').change();
+    $('#tblbmcmilkdispatch-to_date').val('').change();
+    $('#tblbmcmilkdispatch-from_shift_code').val('').trigger('change');
+    $('#tblbmcmilkdispatch-to_shift_code').val('').trigger('change');
+    $('#purchase-detial').html('');
+}
 
 function isClrInput(){
     var union = $('#tblbmcmilkdispatch-union_code').val();
     var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
-    $('#tblbmcmilkdispatchtxn-snf').val('');
-    $('#tblbmcmilkdispatchtxn-clr').val('');
     if(setData(bmcCode)){
         $.ajax({
             type: 'post',
@@ -529,7 +540,7 @@ function isClrInput(){
             data: {'union_code':union,'bmcCode':bmcCode},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
-                if (setData(obj.data)) {
+                if (obj.status == 'success' && obj.data != null) {
                     var is_clr_input = obj.data;
                     $('#is_clr_input').val(is_clr_input);
                     if (is_clr_input == 0) {
@@ -578,48 +589,20 @@ $script .= "
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
         var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
         if(setData(from_date) && setData(from_shift) && setData(to_date) && setData(to_shift) && setData(bmc_code) && setData(vehicle_code)){
-            $('#purchase-detial').html('');
             $('#transactions-from').html('');
             $('#transactions-detial').html('');           
             BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
         }      
     });
-    
-    function CheckTrip(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
-        $.ajax({
-                type: 'get',
-                url: '" . Url::to(['check-trip']) . "',
-                data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code,'vehicle_code' : vehicle_code},             
-                success: function(data) {
-                    var data=$.parseJSON(data);
-                    if (data.status == 'success'){   
-                    // $('#tblbmcmilkdispatch-trip_code').val(data.trip_code);
-                        BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code); 
-                    }else {
-                        $('#loadercontent').hide();
-                        $('#pageloader').hide();
-                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>' + data.msg + '</span></div></div>');
-                    }
-                } 
-        });   
-    }  
-  
+      
     function BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
         if(setData(union_code)){
-            $.ajax({
-                    type: 'get',
-                    url: '" . Url::to(['purchase-detail']) . "',
-                    data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code,'union_code' : union_code},             
-                    success: function(data) {
-                    $('#purchase-detial').html(data);                                                                 
-                    }
-                });
             $.ajax({
                     type: 'get',
                     url: '" . Url::to(['transaction-form']) . "',
                     data: {'bmc_code' : bmc_code,'union_code':union_code},             
                     success: function(data) {
-                    $('#transactions-from').html(data);                                                                 
+                        $('#transactions-from').html(data);                                                                 
                     }
                 });
         }
@@ -629,13 +612,9 @@ $script .= "
                     url: '" . Url::to(['transaction-detail']) . "',
                     data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code},             
                     success: function(data) {
-                    $('#transactions-detial').html(data);
-                //   $('#loadercontent').hide();
-                //   $('#pageloader').hide();  
+                        $('#transactions-detial').html(data);
                     },
                     error: function(data) {  
-                    //    $('#loadercontent').hide();
-                    //   $('#pageloader').hide();
                     }
                 });    
         } 
@@ -674,59 +653,4 @@ $script = "$(document).ready(function(){
     }
 });";
 $this->registerJs($script, View::POS_END, 'bmc-config-popup');
-?>
-<?php
-if (!$readonly) {
-    $script = "$(document).ready(function(){
-        function formatLocalDate(date) {
-            var day = date.getDate().toString().padStart(2, '0');
-            var month = (date.getMonth() + 1).toString().padStart(2, '0');
-            var year = date.getFullYear();
-            return day + '-' + month + '-' + year;
-        }
-        $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
-            var from_date = $('#tblbmcmilkdispatch-from_date').val();
-            var to_date = $('#tblbmcmilkdispatch-to_date').val();
-            if (setData(from_date) && setData(to_date)) {
-                // Split date strings and format them as yyyy-mm-dd
-                var from_date_parts = from_date.split('-');
-                var to_date_parts = to_date.split('-');
-                var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
-                var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
-    
-                var fromDateObj = new Date(formatted_from_date);
-                var toDateObj = new Date(formatted_to_date);
-                var date = new Date(formatted_to_date);
-                var currentDate = new Date();
-                date.setHours(0, 0, 0, 0);
-                currentDate.setHours(0, 0, 0, 0);
-                if (date < currentDate) {
-                    date.setDate(date.getDate() + 1);
-                } else {
-                   date.setDate(date.getDate());
-                }
-                date = formatLocalDate(date);
-                if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
-                    var errorMessage = 'must not be less than from date.';
-                    var errorElement = '<div class=\"error-message error_message\">' + errorMessage + '</div>';
-                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                    $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
-                } else {
-                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker('destroy');
-                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
-                            format: 'dd-mm-yyyy', // Set your desired date format
-                            todayHighlight: true,
-                            autoclose: true,
-                            endDate: date,
-                            startDate: to_date
-                        });
-                     }  
-            } else {
-                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-            }
-        });
-    });";
-    $this->registerJs($script, View::POS_END, 'to-date-from-date');
-}
 ?>

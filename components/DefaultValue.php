@@ -28,6 +28,10 @@ class DefaultValue extends Component {
                     'milk_type_code' => 3,
                     'milk_quality_type_code' => 1,
                 ],
+                'TblMilkVehicleEntryQlty' => [
+                    'sample_time' => date('H:i'),
+                    'sample_datetime' => date('Y-m-d'),
+                ],
                 'TblMember' => [
                     'animal_type_code' => 1,
                 ],
