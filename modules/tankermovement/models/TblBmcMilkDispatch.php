@@ -72,22 +72,22 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'tripUpdate']],
-            [['vehicle_out_time'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'create', 'tripUpdate']],
-            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type', 'is_clr_input', 'tested_by'], 'safe'],
-            [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
-            [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
+                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'tripUpdate']],
+                [['vehicle_out_time'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'create', 'tripUpdate']],
+                [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type', 'is_clr_input', 'tested_by'], 'safe'],
+                [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
+                [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
+                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
             //  [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
-            [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
-            [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
-            [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
+                [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
+                [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
+                [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
                     $this->source_org_code = $this->originating_org_code;
                     $this->source_org_type = $this->originating_org_type;
                 }, 'on' => 'androidsync'],
-            [['tested_by'], 'string', 'max' => 100],
+                [['tested_by'], 'string', 'max' => 100],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblBmcMilkDispatch', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -348,7 +348,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         return $count == 1;
     }
 
-    public function getFromDateToDate($is_physical_stock = false, $stock_detail_without_config = false) {
+    public function getFromDateToDate($is_physical_stock = false) {
         $bmcData = $this->bmcCode;
         $result = ['status' => 'error', 'from_datetime' => NULL, 'from_date' => null, 'from_shift' => null, 'to_datetime' => NULL, 'to_date' => null, 'to_shift' => null, 'physical_stock_only' => 0];
         $stock = TblBmcDispatchStock::find()
@@ -459,12 +459,12 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         $stock_detail = [];
         if (!empty($stock_data)) {
             $dispatch_with_milk_type = 0;
-            if (!$stock_detail_without_config) {
+            if (!$is_physical_stock) {
                 $dispatchWithMilkTypeConfig = Yii::$app->general->getUnionConfiguration($bmcData->union_code, 'bmc_dispatch_with_milk_type', 'PORTAL');
                 $dispatch_with_milk_type = ($dispatchWithMilkTypeConfig != '') ? $dispatchWithMilkTypeConfig : 0;
             }
             foreach ($stock_data as $r) {
-                $animal_type = $stock_detail_without_config ? $r['animal_type_code'] : ($dispatch_with_milk_type == '1' ? $r['animal_type_code'] : '3');
+                $animal_type = $is_physical_stock ? $r['animal_type_code'] : ($dispatch_with_milk_type == '1' ? $r['animal_type_code'] : '3');
                 $key = $r['bmc_silos_info_code'] . '_' . $animal_type . '_' . $r['milk_quality_type_code'];
                 if (empty($stock_detail[$key])) {
                     $stock_detail[$key]['previous_qty'] = 0;

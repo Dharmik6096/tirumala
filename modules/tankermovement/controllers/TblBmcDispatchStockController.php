@@ -196,7 +196,7 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
     public function actionGetDatePurchaseInfo() {
         $bmcMilkDispatch = new TblBmcMilkDispatch();
         $bmcMilkDispatch->bmc_code = Yii::$app->request->post('bmcCode');
-        $result = $bmcMilkDispatch->getFromDateToDate(true, true);
+        $result = $bmcMilkDispatch->getFromDateToDate(true);
 
         $tableHtml = $this->renderAjax('_purchase_detail', [
             'result' => $result['stock_data'],
