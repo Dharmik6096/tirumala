@@ -196,9 +196,7 @@ class DropDown extends Component {
                     var el = $('#$elementId');
                     el.parent('div').parent().hide(); 
                     if (el.data('select2')) {
-                        if (el.data('select2')) {
-                            el.trigger('select2:select');
-                        }
+                        el.trigger('select2:select');
                     } else {
                         setTimeout(arguments.callee,5);
                     }
