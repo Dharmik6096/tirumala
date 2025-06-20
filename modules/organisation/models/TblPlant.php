@@ -12,7 +12,6 @@ use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
 use yii\base\UserException;
 use app\modules\tankermovement\models\TblPartyMaster;
-use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_plant".
