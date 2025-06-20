@@ -50,7 +50,7 @@ class TblMilkQualityParamRangeHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr', 'process_name', 'org_type', 'union_code', 'org_code', 'milk_quality_param_range_code', 'animal_type_code', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr', 'process_name', 'org_type', 'union_code', 'org_code', 'milk_quality_param_range_code', 'animal_type_code', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

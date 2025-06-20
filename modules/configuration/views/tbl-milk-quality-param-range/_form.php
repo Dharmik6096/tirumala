@@ -2,66 +2,70 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\configuration\models\TblMilkQualityParamRange */
-/* @var $form yii\widgets\ActiveForm */
 ?>
-
-<div class="tbl-milk-quality-param-range-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'process_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'union_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'org_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'org_type')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'animal_type_code')->textInput() ?>
-
-    <?= $form->field($model, 'min_fat')->textInput() ?>
-
-    <?= $form->field($model, 'max_fat')->textInput() ?>
-
-    <?= $form->field($model, 'min_snf')->textInput() ?>
-
-    <?= $form->field($model, 'max_snf')->textInput() ?>
-
-    <?= $form->field($model, 'min_clr')->textInput() ?>
-
-    <?= $form->field($model, 'max_clr')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_type')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_type')->textInput() ?>
-
-    <?= $form->field($model, 'x_col1')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col2')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col3')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col4')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col5')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+<div id='quality_details'>
+    <?php $form = ActiveForm::begin(['id' => 'add-quality-detail']); ?>
+    <?php 
+    echo $form->errorSummary($model); ?>
+    <div class="row hr10">
+        <div class="col-sm-12 mt20">
+            <div class="panel panel-default">
+                <table  class="table table-bordered table-striped table-main table-language br_grey bl_grey">
+                    <thead>
+                        <tr>
+                            <th>Milk Type</th>
+                            <th>Min FAT</th>
+                            <th>Max FAT</th>
+                            <th>Min SNF</th>
+                            <th>Max SNF</th>
+                            <th>Min CLR</th>
+                            <th>Max CLR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($animalDetail as $animal) {
+                            $index = $animal->animal_type_code;
+                            $animal_type_name = $animal->animal_type_name;
+                            $existingRecord = null;
+                            foreach ($existingRecords as $record) {
+                                if ($record['animal_type_code'] == $index) {
+                                    $existingRecord = $record;
+                                    break;
+                                }
+                            }
+                            $min_fat_value = isset($existingRecord['min_fat']) ? round($existingRecord['min_fat'], 2) : '';
+                            $max_fat_value = isset($existingRecord['max_fat']) ? round($existingRecord['max_fat'], 2) : '';
+                            $min_snf_value = isset($existingRecord['min_snf']) ? round($existingRecord['min_snf'], 2) : '';
+                            $max_snf_value = isset($existingRecord['max_snf']) ? round($existingRecord['max_snf'], 2) : '';
+                            $min_clr_value = isset($existingRecord['min_clr']) ? round($existingRecord['min_clr'], 2) : '';
+                            $max_clr_value = isset($existingRecord['max_clr']) ? round($existingRecord['max_clr'], 2) : '';
+                            ?>
+                            <tr>
+                                <td class="hide_help_block"><?= $animal_type_name ?><?= Html::activeHiddenInput($model, '[' . $index . ']animal_type_code', ['value' => $index]) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_fat')->textInput(['class' => 'form-control number-validate', 'value' => $min_fat_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_fat')->textInput(['class' => 'form-control number-validate', 'value' => $max_fat_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_snf')->textInput(['class' => 'form-control number-validate', 'value' => $min_snf_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_snf')->textInput(['class' => 'form-control number-validate', 'value' => $max_snf_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_clr')->textInput(['class' => 'form-control number-validate', 'value' => $min_clr_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_clr')->textInput(['class' => 'form-control number-validate', 'value' => $max_clr_value])->label(false) ?></td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
+    <div class="clearfix"></div>
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save($type, $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
 </div>
+</div>
+<?php ActiveForm::end(); ?>
