@@ -49,7 +49,7 @@ use app\modules\organisation\models\TblMccPlant;
 class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
 
     public $source, $destination, $process_approval_code;
-    public $vehicle_entry_date, $trip_code, $receipt_at, $receipt_at_code, $dispatch_from, $dispatch_from_code, $receipt_datetime;
+    public $vehicle_entry_date, $trip_code, $receipt_at, $receipt_at_code, $dispatch_from, $dispatch_from_code, $receipt_datetime, $union_code;
 
     /**
      * @inheritdoc
@@ -63,22 +63,23 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['chamber_quantity', 'fat', 'snf', 'water', 'temp', 'milk_quality_type_code', 'milk_type_code', 'entry_type', 'chamber_no', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'required', 'except' => ['androidsync']],
-                [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'grn_no', 'chamber_no', 'challan_no', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-                [['vehicle_entry_chamber_date', 'created_at', 'updated_at', 'is_qty_only', 'is_pending_merge', 'record_status', 'process_approval_code', 'trip_code'], 'safe'],
-                [['chamber_no', 'chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
-                [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'integer'],
-                [['challan_no', 'source_org_code', 'source_org_type', 'destination_type', 'destination_code'], 'required', 'when' => function ($model) {
+            [['chamber_quantity', 'fat', 'snf', 'water', 'temp', 'milk_quality_type_code', 'milk_type_code', 'entry_type', 'chamber_no', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'required', 'except' => ['androidsync']],
+            [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'grn_no', 'chamber_no', 'challan_no', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+            [['vehicle_entry_chamber_date', 'created_at', 'updated_at', 'is_qty_only', 'is_pending_merge', 'record_status', 'process_approval_code', 'trip_code', 'union_code'], 'safe'],
+            [['chamber_no', 'chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
+            [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'integer'],
+            [['challan_no', 'source_org_code', 'source_org_type', 'destination_type', 'destination_code'], 'required', 'when' => function ($model) {
                     return $model->entry_type == 'INDIVIDUAL';
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblmilkvehicleentrytransaction-entry_type').val() == 'INDIVIDUAL';
           }", 'except' => ['androidsync']],
-                [['entry_type'], 'validateCreate', 'except' => ['androidsync']],
-                [['fat', 'snf', 'water', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'default', 'value' => '0'],
-                [['status', 'cron_pick_datetime', 'pick_datetime', 'response_datetime', 'response_msg', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'safe'],
-                [['status'], 'default', 'value' => 0],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['gross_weight'], 'validateGrossWeight', 'except' => ['androidsync']],
+            [['entry_type'], 'validateCreate', 'except' => ['androidsync']],
+            [['fat', 'snf', 'water', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'default', 'value' => '0'],
+            [['status', 'cron_pick_datetime', 'pick_datetime', 'response_datetime', 'response_msg', 'gross_weight', 'tare_weight', 'gross_weight_time', 'tare_weight_time'], 'safe'],
+            [['status'], 'default', 'value' => 0],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['gross_weight'], 'validateGrossWeight', 'except' => ['androidsync']],
+            [['tare_weight_time'], 'validateGrossTareTime', 'except' => ['androidsync']],
         ];
     }
 
@@ -271,6 +272,43 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
         $this->destination_type = $model->receipt_at;
         $this->source_org_code = $model->dispatch_from_code;
         $this->source_org_type = $model->dispatch_from;
+    }
+
+    public function validateGrossTareTime($attribute, $params) {
+        if ($this->receipt_at == 'PLANT') {
+            $milkVehicleEntryQlty = new TblMilkVehicleEntryQlty();
+            $milkVehicleEntryQlty->union_code = $this->union_code;
+            $milkVehicleEntryQlty->trip_code = $this->trip_code;
+            $milkVehicleEntryQlty->plant_code = $this->receipt_at_code;
+            $milkVehicleEntryQltyData = $milkVehicleEntryQlty->getMilkVehicleEntryQlty(TRUE);
+
+            if ($milkVehicleEntryQltyData['lotQltyValidate'] && !empty($milkVehicleEntryQltyData['lotQltyData'])) {
+                $chamberData = null;
+                foreach ($milkVehicleEntryQltyData['lotQltyData'] as $lot) {
+                    if ($lot['chamber_no'] == $this->chamber_no) {
+                        $chamberData = $lot;
+                        break;
+                    }
+                }
+                if ($chamberData !== null) {
+                    $sampleDateTime = $chamberData['sample_datetime'];
+                    $sampleDateTimeStr = date('H:i', strtotime($sampleDateTime));
+                    if (!preg_match('/^\d{4}-\d{2}-\d{2}/', $this->gross_weight_time) || !preg_match('/^\d{4}-\d{2}-\d{2}/', $this->tare_weight_time)) {
+                        $gross_weight_time = date('Y-m-d') . ' ' . $this->gross_weight_time . ':00';
+                        $tare_weight_time = date('Y-m-d') . ' ' . $this->tare_weight_time . ':00';
+                    } else {
+                        $gross_weight_time = $this->gross_weight_time;
+                        $tare_weight_time = $this->tare_weight_time;
+                    }
+                    if (strtotime($gross_weight_time) >= strtotime($sampleDateTime)) {
+                        $this->addError('gross_weight_time', "Gross Time must be less than sample time ($sampleDateTimeStr).");
+                    }
+                    if (strtotime($tare_weight_time) <= strtotime($sampleDateTime)) {
+                        $this->addError('tare_weight_time', "Tare Time must be greater than sample time ($sampleDateTimeStr).");
+                    }
+                }
+            }
+        }
     }
 
 }
