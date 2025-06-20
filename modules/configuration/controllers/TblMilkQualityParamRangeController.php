@@ -5,7 +5,6 @@ namespace app\modules\configuration\controllers;
 use Yii;
 use app\modules\configuration\models\TblMilkQualityParamRange;
 use app\modules\configuration\models\TblMilkQualityParamRangeSearch;
-use yii\web\NotFoundHttpException;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\configuration\models\TblMilkQualityParamRangeHistory;
 
@@ -42,7 +41,7 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
         $type = !empty($existingRecords) ? 'edit' : 'create';
         if (Yii::$app->request->post()) {
             $saveModel = [];
-            $h_model = [];
+            $delete_model = [];
             $is_validate = true;
             if (!empty($queryParams)) {
                 $postData = Yii::$app->request->post()['TblMilkQualityParamRange'];
@@ -51,9 +50,6 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
                 $orgType = $processName == 'BMC_MILK_DISPATCH' ? 'BMC' : 'PLANT';
 
                 foreach ($postData as $data) {
-                    if (empty($data['min_fat']) && empty($data['max_fat']) && empty($data['min_snf']) && empty($data['max_snf']) && empty($data['min_clr']) && empty($data['max_clr'])) {
-                        continue;
-                    }
                     $existingRecord = null;
                     foreach ($existingRecords as $record) {
                         if ($record['animal_type_code'] == $data['animal_type_code']) {
@@ -61,10 +57,19 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
                             break;
                         }
                     }
+                    $isAllEmpty = empty($data['min_fat']) && empty($data['max_fat']) && empty($data['min_snf']) && empty($data['max_snf']) && empty($data['min_clr']) && empty($data['max_clr']);
                     if ($existingRecord) {
                         $isChanged = false;
                         $milkQualityModel = TblMilkQualityParamRange::findOne($existingRecord['milk_quality_param_range_code']);
                         if ($milkQualityModel) {
+                            if ($isAllEmpty) {
+                                $historyModel = new TblMilkQualityParamRangeHistory();
+                                Yii::$app->operation->history($milkQualityModel, $historyModel, 'DELETE');
+                                $saveModel[] = $historyModel;
+
+                                $delete_model[] = $milkQualityModel;
+                                continue;
+                            }
                             $historyModel = new TblMilkQualityParamRangeHistory();
                             Yii::$app->operation->history($milkQualityModel, $historyModel, 'UPDATE');
                             $fields = ['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr'];
@@ -75,7 +80,7 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
                                 }
                             }
                             if ($milkQualityModel->validate() && empty($milkQualityModel->getErrors() && $isChanged)) {
-                                $h_model[] = $historyModel;
+                                $saveModel[] = $historyModel;
                                 $saveModel[] = $milkQualityModel;
                             } else {
                                 $is_validate = false;
@@ -84,6 +89,9 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
                             }
                         }
                     } else {
+                        if ($isAllEmpty) {
+                            continue;
+                        }
                         $milkQualityModel = new TblMilkQualityParamRange();
                         $milkQualityModel->animal_type_code = $data['animal_type_code'];
                         $milkQualityModel->min_fat = $data['min_fat'];
@@ -111,7 +119,7 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
             }
         }
         if (!empty($saveModel) && $is_validate) {
-            $transaction = $this->generalModel->saveTransaction($saveModel, $h_model, ['Milk Quality Param Range', $type]);
+            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $delete_model, ['Milk Quality Param Range', $type]);
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['index']);
             }
