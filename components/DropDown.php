@@ -191,10 +191,17 @@ class DropDown extends Component {
             echo $form->field($model, $name, ['options' => ['multiple' => $multiple]])->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
         }
         if (!empty($selected)) {
+            $elementId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
             $script = "$(document).ready(function() {
-                   $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
-                    });";
-            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
+                    var el = $('#$elementId');
+                    el.parent('div').parent().hide(); 
+                    if (el.data('select2')) {
+                        el.trigger('select2:select');
+                    } else {
+                        setTimeout(arguments.callee,5);
+                    }
+                });";
+            Yii::$app->view->registerJs($script, View::POS_END, $elementId);
         }
     }
 
@@ -802,8 +809,18 @@ class DropDown extends Component {
                                     'placeholder' => $placeholder,
                                     'url' => Url::to([$url]),
                                     'allParam' => ["'" . $extraParam . "'"],
-                                    'initialize' => true,
+                                    'initialize' => false,
                                     'allowClear' => true,
+                                    'ajaxSettings' => [
+                                        'beforeSend' => new \yii\web\JsExpression("
+                                            function(jqXHR, settings) {
+                                                var parentVal = $('#' + '{$depends[0]}').val();
+                                                if (!parentVal) {
+                                                    return false;
+                                                }
+                                            }
+                                        "),
+                                    ],
                                 ],
                                 'options' => $options
                             ])->label($islable);
@@ -820,8 +837,18 @@ class DropDown extends Component {
                             'placeholder' => $placeholder,
                             'url' => Url::to([$url]),
                             'allParam' => ["'" . $extraParam . "'"],
-                            'initialize' => true,
+                            'initialize' => false,
                             'allowClear' => true,
+                            'ajaxSettings' => [
+                                'beforeSend' => new \yii\web\JsExpression("
+                                    function(jqXHR, settings) {
+                                        var parentVal = $('#' + '{$depends[0]}').val();
+                                        if (!parentVal) {
+                                            return false;
+                                        }
+                                    }
+                                "),
+                            ],
                         ],
                         'options' => $options
                     ])->label($islable);
@@ -835,7 +862,7 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
@@ -873,9 +900,16 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => true,
+                        'initialize' => false,
                         'ajaxSettings' => [
-                            'async' => $async,
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    var parentVal = $('#' + '{$depends[0]}').val();
+                                    if (!parentVal) {
+                                        return false;
+                                    }
+                                }
+                            "),
                         ],
                     ],
                     'options' => [
@@ -2434,8 +2468,18 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => true,
+                        'initialize' => false,
                         'allowClear' => true,
+                        'ajaxSettings' => [
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    var parentVal = $('#' + '{$depends[0]}').val();
+                                    if (!parentVal) {
+                                        return false;
+                                    }
+                                }
+                            "),
+                        ],
                     ],
                     'options' => $options
                 ])->label($islable);
