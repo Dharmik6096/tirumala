@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\dcsoperation\models\TblMember;
 use Yii;
 
 /**
@@ -43,7 +44,7 @@ use Yii;
 class TblNonMemberHouseHoldVisit extends ChildModel
 {
     public $is_auto_increment_primary_key, $auto_key_config;
-    public $competitor_id, $milk_volume, $milk_rate;
+    public $competitor_id, $milk_volume, $milk_rate, $ex_member_code;
     /**
      * @inheritdoc
      */
@@ -166,5 +167,9 @@ class TblNonMemberHouseHoldVisit extends ChildModel
 
     public function getReasonID() {
         return $this->hasOne(TblVCGMRGReasonsMaster::className(), ['reason_id' => 'reason_id']);
+    }
+    
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
     }
 }
