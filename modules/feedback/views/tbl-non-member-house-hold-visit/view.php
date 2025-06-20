@@ -177,6 +177,17 @@ $this->title = Yii::$app->label->title('view', 'Non Member House Hold Visit');
                         ],
                     ],
                 ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'ex_member_code',
+                            'label' => Yii::t('app', 'Member Code Ex'),
+                            'value' => Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code'),
+                            'valueColOptions' => ['style' => 'width:80%'],
+                        ],
+                        
+                    ],
+                ],
             ];
 
             // View file rendering the widget
