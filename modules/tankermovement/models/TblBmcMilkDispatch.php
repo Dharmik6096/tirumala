@@ -72,22 +72,21 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'tripUpdate']],
-                [['vehicle_out_time'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'create', 'tripUpdate']],
-                [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type', 'is_clr_input', 'tested_by'], 'safe'],
-                [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
-                [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
-            //  [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'tripUpdate']],
+            [['vehicle_out_time'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'create', 'tripUpdate']],
+            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type', 'is_clr_input', 'tested_by'], 'safe'],
+            [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
+            [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
-                [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
-                [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
-                [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
+            [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
+            [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
+            [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
                     $this->source_org_code = $this->originating_org_code;
                     $this->source_org_type = $this->originating_org_type;
                 }, 'on' => 'androidsync'],
-                [['tested_by'], 'string', 'max' => 100],
+            [['tested_by'], 'string', 'max' => 100],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblBmcMilkDispatch', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -358,7 +357,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
 
         if (!empty($stock)) {
             $shiftLock = TblMccShiftLock::find()
-                    ->where(['>=', 'date_time_of_collection', $stock->to_date])
+                    ->where(['>=', 'date_time_of_collection', date('Y-m-d H:i:s', strtotime($stock->to_date))])
                     ->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
                     ->orderBy(['date_time_of_collection' => SORT_DESC])
                     ->one();
