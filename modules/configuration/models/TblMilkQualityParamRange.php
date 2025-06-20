@@ -134,11 +134,7 @@ class TblMilkQualityParamRange extends \app\models\ChildModel {
             }
         }
         if ($filled > 0 && $filled < count($fields)) {
-            foreach (array_keys($fields) as $field) {
-                if (strlen(trim((string) $this->$field)) == 0) {
-                    $this->addError($attribute, 'If any quality parameter is filled, all must be filled.');
-                }
-            }
+            $this->addError($attribute, 'If any quality parameter is filled, all must be filled.');
         }
     }
 
