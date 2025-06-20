@@ -83,7 +83,7 @@ $this->title = Yii::t('app', $title);
                         <div class="form-group">                    
                             <?= Yii::$app->controls->save($button, $model); ?>
                             <?= Yii::$app->controls->reset(); ?>
-                            <?= Html::a('Cancel', ['index'], ['class' => 'btn btn-danger']) ?>
+                            <?= Html::a('Cancel', ['index'], ['class' => 'btn btn-danger btn-login']) ?>
                         </div>
                     </div>
                 </div>
