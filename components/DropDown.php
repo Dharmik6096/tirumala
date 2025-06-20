@@ -201,10 +201,17 @@ class DropDown extends Component {
             echo $form->field($model, $name, ['options' => ['multiple' => $multiple]])->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
         }
         if (!empty($selected)) {
+            $elementId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
             $script = "$(document).ready(function() {
-                   $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
-                    });";
-            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
+                    var el = $('#$elementId');
+                    el.parent('div').parent().hide(); 
+                    if (el.data('select2')) {
+                        el.trigger('select2:select');
+                    } else {
+                        setTimeout(arguments.callee,5);
+                    }
+                });";
+            Yii::$app->view->registerJs($script, View::POS_END, $elementId);
         }
     }
 
@@ -829,8 +836,18 @@ class DropDown extends Component {
                                     'placeholder' => $placeholder,
                                     'url' => Url::to([$url]),
                                     'allParam' => ["'" . $extraParam . "'"],
-                                    'initialize' => true,
+                                    'initialize' => false,
                                     'allowClear' => true,
+                                    'ajaxSettings' => [
+                                        'beforeSend' => new \yii\web\JsExpression("
+                                            function(jqXHR, settings) {
+                                                var parentVal = $('#' + '{$depends[0]}').val();
+                                                if (!parentVal) {
+                                                    return false;
+                                                }
+                                            }
+                                        "),
+                                    ],
                                 ],
                                 'options' => $options
                             ])->label($islable);
@@ -847,8 +864,18 @@ class DropDown extends Component {
                             'placeholder' => $placeholder,
                             'url' => Url::to([$url]),
                             'allParam' => ["'" . $extraParam . "'"],
-                            'initialize' => true,
+                            'initialize' => false,
                             'allowClear' => true,
+                            'ajaxSettings' => [
+                                'beforeSend' => new \yii\web\JsExpression("
+                                    function(jqXHR, settings) {
+                                        var parentVal = $('#' + '{$depends[0]}').val();
+                                        if (!parentVal) {
+                                            return false;
+                                        }
+                                    }
+                                "),
+                            ],
                         ],
                         'options' => $options
                     ])->label($islable);
@@ -862,7 +889,7 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
@@ -903,9 +930,16 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => true,
+                        'initialize' => false,
                         'ajaxSettings' => [
-                            'async' => $async,
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    var parentVal = $('#' + '{$depends[0]}').val();
+                                    if (!parentVal) {
+                                        return false;
+                                    }
+                                }
+                            "),
                         ],
                     ],
                     'options' => [
@@ -2294,6 +2328,7 @@ class DropDown extends Component {
             'dock_no' => ['name' => 'dock_no', 'fields' => 'dock_no,dock_name,dock_no', 'prompt' => Yii::t('app', 'Select Dock No'), 'model' => 'TblPlantDockMapping', 'depend' => 'plant_code'],
             'vehicle_transpoter' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'whereCondition' => ['vehicle_use_type' => [1, 2], 'union_code' => !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : '']],
             'bmc_chiller_info' => ['name' => 'chiller_info_code', 'fields' => 'chiller_info_code,owner_name,sap_vendor_code', 'prompt' => Yii::t('app', 'Select BMC Chiller Info'), 'model' => 'TblBmcChillerInfo', 'depend' => 'bmc_code'],
+            'vehicle_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'vehicle_code'],
         ];
         return $label[$l];
     }
@@ -2478,8 +2513,18 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => true,
+                        'initialize' => false,
                         'allowClear' => true,
+                        'ajaxSettings' => [
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    var parentVal = $('#' + '{$depends[0]}').val();
+                                    if (!parentVal) {
+                                        return false;
+                                    }
+                                }
+                            "),
+                        ],
                     ],
                     'options' => $options
                 ])->label($islable);
