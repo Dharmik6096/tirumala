@@ -113,7 +113,8 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
                 <?= Html::hiddenInput('partyType', 'bmcMilkDispatch', ['id' => 'partyType']); ?>
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code,tankerMovement,partyType', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
+                <?= Html::hiddenInput('processType', 'tankerMilkDispatch', ['id' => 'processType']); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code,tankerMovement,partyType,processType', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2 mt15 no_pointer_disabled" id="is-last-destination-container">
                 <?= $form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
@@ -410,6 +411,11 @@ if(!isSecondTransaction) {
                                 }, 1000);
                             });
                         } else if (obj.data.is_auto_trip == 1) {
+                            var destType = obj.data.destination_type.toUpperCase();
+                            $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select');
+                            setTimeout(function() {
+                                $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
+                            }, 1000);
                             $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
                                 var destType = $(this).val().toUpperCase();
                                 var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');

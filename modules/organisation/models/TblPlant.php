@@ -11,6 +11,7 @@ use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\tankermovement\models\TblPartyMaster;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_plant".
@@ -178,15 +179,15 @@ class TblPlant extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['plant_code' => 'plant_code'])->where(['is_plant' => 1]);
     }
 
-    public function getPlantList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
-        $value = $this->getPlant($unionCode, $RLS, $notIn);
+    public function getPlantList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false, $type = '') {
+        $value = $this->getPlant($unionCode, $RLS, $notIn, $type);
         $value = ArrayHelper::map($value, 'plant_code', function($value) use ($concatCode) {
                     return $value->name . ($concatCode ? ' - ' . $value->plant_code : ' - ' . $value->ref_code);
                 });
         return $value;
     }
 
-    public function getPlant($unionCode = [], $RLS = 'TRUE', $notIn = []) {
+    public function getPlant($unionCode = [], $RLS = 'TRUE', $notIn = [], $type) {
         $query = $this->find()->select(['plant_code', 'name', 'ref_code'])
                 ->where(['is_active' => 1]);
         if (!empty($unionCode))
@@ -197,6 +198,10 @@ class TblPlant extends \app\models\ChildModel {
         if (!empty($notIn)) {
             $query->andWhere(['not in', 'plant_code', $notIn]);
         }
+        if (!empty($type) && $type == 'tankerMilkDispatch') {
+            $query->andWhere(['in', 'is_virtual_plant', [0, NULL]]);
+        }
+
         return $query->orderBy('name asc')->all();
     }
 
