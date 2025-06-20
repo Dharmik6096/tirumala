@@ -356,12 +356,13 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 ->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])
                 ->one();
 
-        $shiftLock = TblMccShiftLock::find()
-                ->where(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
-                ->orderBy(['date_time_of_collection' => SORT_DESC])
-                ->one();
-
         if (!empty($stock)) {
+            $shiftLock = TblMccShiftLock::find()
+                    ->where(['>=', 'date_time_of_collection', $stock->to_date])
+                    ->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
+                    ->orderBy(['date_time_of_collection' => SORT_DESC])
+                    ->one();
+
             // IF Not - check - Any previous Dispatch entry is available
             if (strtolower($stock->type) == 'physical') {
                 if (empty($shiftLock) || $shiftLock->date_time_of_collection <= $stock->to_date) {
@@ -426,7 +427,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                         'from_shift' => $stock->from_shift_code,
                         'to_date' => date('d-m-Y', strtotime($stock->to_date)),
                         'to_shift' => $stock->to_shift_code,
-                        'physical_stock_only' => 0,
+                        'physical_stock_only' => 1,
                     ];
                 }
             }
