@@ -188,7 +188,7 @@ class TblPlant extends \app\models\ChildModel {
         return $value;
     }
 
-    public function getPlant($unionCode = [], $RLS = 'TRUE', $notIn = [], $type) {
+    public function getPlant($unionCode = [], $RLS = 'TRUE', $notIn = [], $type = '') {
         $query = $this->find()->select(['plant_code', 'name', 'ref_code'])
                 ->where(['is_active' => 1]);
         if (!empty($unionCode))
