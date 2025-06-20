@@ -33,7 +33,7 @@ use app\components\ActiveForm;
  */
 class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input'];
+    public $freeAccessActions = ['get-date-purchase-details', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input'];
 
     /**
      * Lists all TblBmcMilkDispatch models.

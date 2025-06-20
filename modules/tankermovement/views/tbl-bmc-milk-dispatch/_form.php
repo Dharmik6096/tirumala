@@ -226,6 +226,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
+        <?= Html::activeHiddenInput($txn_model, 'physical_stock_only'); ?>
         <!-- <div class="clearfix"></div> -->
         <div id="transactions-from">
 
@@ -494,6 +495,7 @@ function calculateClr(){
 };
 
 $('#tblbmcmilkdispatch-bmc_code').change(function() {
+    $('#tblbmcmilkdispatchtxn-physical_stock_only').val('');
     isClrInput();
     setDatePurchaseDetails();
 });
@@ -505,7 +507,6 @@ function setDatePurchaseDetails(){
     $('.field-tblbmcmilkdispatch-to_shift_code').addClass('no_pointer_disabled');
     var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
     if(setData(bmcCode)){
-        var union = $('#tblbmcmilkdispatch-union_code').val();
         $.ajax({
             type: 'post',
             url:'" . Url::to(['get-date-purchase-details']) . "',
@@ -517,6 +518,7 @@ function setDatePurchaseDetails(){
                     $('#tblbmcmilkdispatch-from_shift_code').val(obj.data.from_shift).trigger('change').trigger('select2:select');
                     $('#tblbmcmilkdispatch-to_date').val(obj.data.to_date).trigger('change');
                     $('#tblbmcmilkdispatch-to_shift_code').val(obj.data.to_shift).trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-physical_stock_only').val(obj.data.physical_stock_only);
                     $('#purchase-detial').html(obj.result);
                 } else {
                     resetFields();
