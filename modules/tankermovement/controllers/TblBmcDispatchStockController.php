@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
 use kartik\form\ActiveForm;
+use app\modules\tankermovement\models\TblBmcMilkDispatch;
 
 /**
  * TblBmcDispatchStockController implements the CRUD actions for TblBmcDispatchStock model.
@@ -54,7 +55,7 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
         $this->model = new TblBmcDispatchStock();
         $this->viewFile = 'create';
         Yii::$app->general->setCode($this->model);
-        $this->setFromDate($this->model);
+//        $this->setFromDate($this->model); (unused)
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->bmc_dispatch_stock_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->to_date = ($this->model->to_date) ? Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) : '';
@@ -139,6 +140,10 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
             $historyModel = new TblBmcDispatchStockHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
+            $this->model->to_date = ($this->model->to_date) ? Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) : '';
+            $this->model->to_date = $this->model->to_date . ' ' . \Yii::$app->general->getshift($this->model->to_shift_code);
+            $this->model->from_date = ($this->model->from_date) ? Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) : '';
+            $this->model->from_date = $this->model->from_date . ' ' . \Yii::$app->general->getshift($this->model->from_shift_code);
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['BMC Dispatch Stock', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -186,6 +191,22 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
             }
             $model->from_date = $dispatch_date;
         }
+    }
+
+    public function actionGetDatePurchaseInfo() {
+        $bmcMilkDispatch = new TblBmcMilkDispatch();
+        $bmcMilkDispatch->bmc_code = Yii::$app->request->post('bmcCode');
+        $result = $bmcMilkDispatch->getFromDateToDate(true);
+
+        $tableHtml = $this->renderAjax('_purchase_detail', [
+            'result' => $result['stock_data'],
+            'stock_detail' => $result['stock_detail']
+        ]);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return [
+            'tableHtml' => $tableHtml,
+            'result' => $result,
+        ];
     }
 
 }

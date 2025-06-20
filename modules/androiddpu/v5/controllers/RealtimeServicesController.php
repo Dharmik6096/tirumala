@@ -149,26 +149,27 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $bmcMilkDispatchTxnModel->transaction_date = $model->transaction_date;
                 $testReportNo = $bmcMilkDispatchTxnModel->generateTestReportNo();
 
-                $postData = $data['content'];
-                $from_datetime = $postData['from_date'];
-                $to_datetime = $postData['to_date'];
-                $dispatch_count = $postData['dispatch_count'];
 
-                /* stock detail */
-                if ($dispatch_count == '1') {
-                    $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])->one();
-                    if (!empty($stock_date)) {
-                        $from_datetime = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date)));
-                        if ($to_datetime < $from_datetime) {
-                            $to_datetime = $from_datetime;
-                        }
-                    }
-                }
-                $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime)}")
-                        ->bindValue(':from_datetime', $from_datetime)
-                        ->bindValue(':to_datetime', $to_datetime)
-                        ->bindValue(':bmc_code', $model->bmc_code);
-                $stock_data = $query->queryAll();
+                /*  $postData = $data['content'];
+                  $from_datetime = $postData['from_date'];
+                  $to_datetime = $postData['to_date'];
+                  $dispatch_count = $postData['dispatch_count'];
+
+                  -- stock detail --
+                  if ($dispatch_count == '1') {
+                  $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])->one();
+                  if (!empty($stock_date)) {
+                  $from_datetime = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date)));
+                  if ($to_datetime < $from_datetime) {
+                  $to_datetime = $from_datetime;
+                  }
+                  }
+                  }
+                  $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime)}")
+                  ->bindValue(':from_datetime', $from_datetime)
+                  ->bindValue(':to_datetime', $to_datetime)
+                  ->bindValue(':bmc_code', $model->bmc_code);
+                  $stock_data = $query->queryAll(); */
                 /* stock detail */
 
                 if ($model->validate()) {
@@ -230,9 +231,19 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                     }
                 }
                 if (!empty($trip_data)) {
-                    $trip_data["fromDate"] = $from_datetime;
-                    $trip_data["toDate"] = $to_datetime;
+                    $trip_data["fromDate"] = NULL;
+                    $trip_data["toDate"] = NULL;
                 }
+                $bmcMilkDispatchModel = new TblBmcMilkDispatch();
+                $bmcMilkDispatchModel->bmc_code = $model->bmc_code;
+                $stock_detail = $bmcMilkDispatchModel->getFromDateToDate();
+
+                $stock_data['fromDateTime'] = $stock_detail['from_datetime'];
+                $stock_data['toDateTime'] = $stock_detail['to_datetime'];
+                $stock_data['physicalStockOnly'] = $stock_detail['physical_stock_only'];
+                $stock_data['stockData'] = $stock_detail['stock_data'];
+
+
                 $response_data['stockDetail'] = $stock_data;
                 $response_data['tripDetail'] = $trip_data;
                 $response_data['dispatchDetail'] = $dispatch_data;

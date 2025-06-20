@@ -85,9 +85,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $model = $this->findModel($id);
         } else {
             $model->scenario = 'create';
-            Yii::$app->general->setCode($model);
             $model->transaction_date = date('Y-m-d');
-            $this->setFromDate($model);
         }
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -127,7 +125,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
                         $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'bmc', $model->bmc_code, $model->destination_type, $model->destination_code, $validation, $model->is_last_destination);
-                        if(!$validation){
+                        if (!$validation) {
                             $model->bmc_milk_dispatch_code = '';
                             $model->addError('destination_code', "Conversion party not mapped with plant");
                         }
@@ -190,7 +188,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                if($validation){
+                if ($validation) {
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
                     if ($transaction != 'customRedirect' && $new_rec) {
                         $model->bmc_milk_dispatch_code = '';
@@ -207,7 +205,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         }
                         return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
                     }
-                } 
+                }
             }
         }
         return $this->render('create', [
@@ -342,35 +340,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         return Json::encode($response);
     }
 
-    public function actionPurchaseDetail() {
-        $union_code = Yii::$app->request->get('union_code');
-        $from_datetime = date('Y-m-d', strtotime(Yii::$app->request->get('from_date'))) . ' ' . \Yii::$app->general->getshift(Yii::$app->request->get('from_shift'));
-        $to_datetime = date('Y-m-d', strtotime(Yii::$app->request->get('to_date'))) . ' ' . \Yii::$app->general->getshift(Yii::$app->request->get('to_shift'));
-        $bmc_code = Yii::$app->request->get('bmc_code');
-        $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime)}")
-                ->bindValue(':from_datetime', $from_datetime)
-                ->bindValue(':to_datetime', $to_datetime)
-                ->bindValue(':bmc_code', $bmc_code);
-        $result = $query->queryAll();
-
-        $stock_detail = [];
-        $dispatch_with_milk_type = isset(Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_with_milk_type']) ? Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_with_milk_type'] : '0';
-        foreach ($result as $r) {
-            $animal_type_code = ($dispatch_with_milk_type == '1') ? $r['animal_type_code'] : '3';
-            $key = $r['bmc_silos_info_code'] . '_' . $animal_type_code . '_' . $r['milk_quality_type_code'];
-            if (empty($stock_detail[$key])) {
-                $stock_detail[$key]['previous_qty'] = 0;
-                $stock_detail[$key]['purchase_qty'] = 0;
-            }
-            $stock_detail[$key]['previous_qty'] = $stock_detail[$key]['previous_qty'] + $r['previous_qty'];
-            $stock_detail[$key]['purchase_qty'] = $stock_detail[$key]['purchase_qty'] + $r['purchase_qty'];
-        }
-        return $this->renderAjax('_purchase_detail', [
-                    'result' => $result,
-                    'stock_detail' => $stock_detail,
-        ]);
-    }
-
     public function actionTransactionForm() {
         $union_code = Yii::$app->request->get('union_code');
         $config = new TblConfig();
@@ -411,8 +380,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $data = $model->getBMCList('', $RLS);
                 } else if (strtolower($parents[0]) == 'plant') {
                     $RLS = (isset($parents[3]) && !empty($parents[3])) ? 'FALSE' : 'TRUE';
+                    $type = (isset($parents[5]) && !empty($parents[5])) ? $parents[5] : '';
                     $model = new TblPlant();
-                    $data = $model->getPlantList($parents[1], $RLS);
+                    $data = $model->getPlantList($parents[1], $RLS, [], false, $type);
                 } else if (strtolower($parents[0]) == 'party') {
                     $partyType = (isset($parents[4]) && !empty($parents[4])) ? $parents[4] : '';
                     $model = new TblPartyMaster();
@@ -502,28 +472,12 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         return ['status' => 'error', 'msg' => $msg];
     }
 
-    public function setFromDate($model) {
-        $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['created_at' => SORT_DESC])->one();
-        if (!empty($stock_date)) {
-            //$dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
-            $dispatch_date = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000';
-            $converted_time = date("H:i:s", strtotime($dispatch_date));
-            if ($converted_time == "06:00:00") {
-                $model->from_shift_code = 1;
-            } elseif ($converted_time == "18:00:00") {
-                $model->from_shift_code = 2;
-            }
-            $model->from_date = $dispatch_date;
-        }
-    }
-
     public function actionCreatePlantDispatch($id = '', $tripGenerateBtn = FALSE) {
         $model = new TblBmcMilkDispatch();
         if ($id != '') {
             $model = $this->findModel($id);
         } else {
             $model->scenario = 'createPlantDispatch';
-            Yii::$app->general->setCode($model);
             $model->transaction_date = date('Y-m-d');
         }
         $txn_model = new TblBmcMilkDispatchTxn();
@@ -561,7 +515,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                         $model->driver_contact_no = $tripModel->mobile_no;
                         $saveModel[] = $tripModel;
                         $tripModel->addTripRoute($saveModel, $deleteModel, $model->challan_no, 'plant', $model->plant_code, $model->destination_type, $model->destination_code, $validation, $model->is_last_destination);
-                        if(!$validation){
+                        if (!$validation) {
                             $model->bmc_milk_dispatch_code = '';
                             $model->addError('destination_code', "Conversion party not mapped with plant");
                         }
@@ -599,7 +553,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                if($validation) {
+                if ($validation) {
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['PLANT Milk Dispatch', 'create']);
                     if ($transaction != 'customRedirect' && $new_rec) {
                         $model->bmc_milk_dispatch_code = '';
@@ -687,12 +641,16 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }
 
-    public function actionGetFromDateToDate() {
+    public function actionGetDatePurchaseDetails() {
         $bmcMilkDispatch = new TblBmcMilkDispatch();
         $bmcMilkDispatch->bmc_code = Yii::$app->request->post('bmcCode');
-        $result = $bmcMilkDispatch->getFromDateToDate();
+        $data = $bmcMilkDispatch->getFromDateToDate();
+        $result = $this->renderAjax('_purchase_detail', [
+            'result' => $data['stock_data'],
+            'stock_detail' => $data['stock_detail']
+        ]);
         Yii::$app->response->format = Response::FORMAT_JSON;
-        return Json::encode(['status' => $result['status'], 'data' => $result]);
+        return Json::encode(['data' => $data, 'result' => $result]);
     }
 
 }
