@@ -449,10 +449,11 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         }
         $stock_data = [];
         if (!empty($result['from_datetime']) && !empty($result['to_datetime'])) {
-            $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime)}")
+            $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime,:physical_stock_only)}")
                     ->bindValue(':from_datetime', date('Y-m-d H:i:s', strtotime($result['from_datetime'])))
                     ->bindValue(':to_datetime', date('Y-m-d H:i:s', strtotime($result['to_datetime'])))
-                    ->bindValue(':bmc_code', $this->bmc_code);
+                    ->bindValue(':bmc_code', $this->bmc_code)
+                    ->bindValue(':physical_stock_only', $result['physical_stock_only']);
             $stock_data = $query->queryAll();
         }
         $result['stock_data'] = $stock_data;
