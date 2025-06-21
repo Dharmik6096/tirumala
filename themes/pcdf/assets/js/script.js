@@ -1,5 +1,54 @@
 var initDepdropMs;
 (function ($) {
+    function resetDepDropChildrenIfAnyParentEmpty(fieldId) {
+        $('select[data-krajee-depdrop]').each(function () {
+            var child = $(this);
+            var config = child.data('depdrop');
+            if (config && Array.isArray(config.depends)) {
+                if (config.depends.includes(fieldId)) {
+                    let shouldReset = false;
+                    for (let i = 0; i < config.depends.length; i++) {
+                        let parentVal = $('#' + config.depends[i]).val();
+                        if (!parentVal || parentVal === '' || (Array.isArray(parentVal) && parentVal.length === 0)) {
+                            shouldReset = true;
+                            break;
+                        }
+                    }
+
+                    if (shouldReset) {
+                        // Reset this child
+                        child.val(null).trigger('change');
+
+                        // Reset Select2 display
+                        if (child.data('select2')) {
+                            child.trigger('select2:unselect');
+                            child.trigger('select2:close');
+                        }
+
+                        // Clear options manually if needed
+                        child.find('option').not(':first').remove();
+
+                        // Disable the dropdown
+                        child.prop('disabled', true);
+
+                        // Recursively reset its children
+                        resetDepDropChildrenIfAnyParentEmpty(child.attr('id'));
+                    } else {
+                        // If all parents have value, enable it
+                        child.prop('disabled', false);
+                    }
+                }
+            }
+        });
+    }
+    $(document).on('change', 'select[data-krajee-depdrop]', function () {
+        var fieldId = $(this).attr('id');
+        var fieldValue = $(this).val();
+        if(!fieldValue){
+            resetDepDropChildrenIfAnyParentEmpty(fieldId);
+        }
+    });
+
     initDepdropMs = function (id, text, val) {
         var $s2 = $('#' + id), $s2cont = $('#' + id).parent('.form-group'), ph = '...';
 
