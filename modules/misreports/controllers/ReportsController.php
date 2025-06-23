@@ -2060,6 +2060,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
     
+    public function actionCmpReport() {
+        $this->report = 'CmpReport';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4468,6 +4473,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'proc_mis_quantity_and_quality_comparing',
                 'scenario' => 'ComparisonReport',
                 'title' => 'Comparison Report ',
+                'bkg_export' => TRUE,
+            ],
+            'CmpReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_bmc_compare_date_wise',
+                'scenario' => 'CmpReport',
+                'title' => 'CMP Report ',
                 'bkg_export' => TRUE,
             ],
         ];
