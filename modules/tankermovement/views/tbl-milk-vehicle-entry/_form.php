@@ -62,11 +62,11 @@ $form = ActiveForm::begin([
             </div>
             <?= Html::hiddenInput('trip_type', 'receipt', ['id' => 'trip_type']); ?>
             <div class="col-sm-2 disabled vehicle_code_hide"> 
-                <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblmilkvehicleentry-union_code,tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-receipt_at_code,trip_type', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
+                <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblmilkvehicleentry-receipt_at_code,tblmilkvehicleentry-union_code,tblmilkvehicleentry-receipt_at,trip_type', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
             </div>
             <div class="col-sm-2 filldata trip-code-hide">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
-                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentry-vehicle_code,tblmilkvehicleentry-receipt_datetime,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
+                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblmilkvehicleentry-vehicle_code,trip_type,tblmilkvehicleentry-receipt_datetime,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
             </div>
             <?php if ($tripMandateOnReceipt) { ?>
                 <div class="col-sm-1">
