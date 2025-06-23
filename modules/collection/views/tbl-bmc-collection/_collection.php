@@ -74,7 +74,7 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                     </div>
                     <div class="col-sm-2 rtpl_validate create_fields reset_field">
-                        <?= Yii::$app->dropdown->activate_customer_code($model, $form, 'tblbmccollection-union_code,tblbmccollection-bmc_code,tblbmccollection-customer_type,tblbmccollection-date_time_of_collection', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
+                        <?= Yii::$app->dropdown->activate_customer_code($model, $form, 'tblbmccollection-customer_type,tblbmccollection-union_code,tblbmccollection-bmc_code,tblbmccollection-date_time_of_collection', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE, false, false); ?>
                     </div>
                     <div class="col-sm-2 rtpl_validate create_fields">
                         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', $readonly); ?>

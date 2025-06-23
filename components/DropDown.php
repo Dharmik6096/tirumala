@@ -508,9 +508,9 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
     }
 
-    public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
+    public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false, $async = true) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/activate-customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/activate-customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly, '', true, '', false, '', $async);
     }
 
     public function activate_member_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
@@ -791,8 +791,7 @@ class DropDown extends Component {
         ]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
-
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '', $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -816,6 +815,7 @@ class DropDown extends Component {
         }
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
         $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($is_return) {
             return $form->field($model, !empty($input_name) ? $input_name : $name)
                             ->widget(DepDrop::classname(), [
@@ -832,10 +832,19 @@ class DropDown extends Component {
                                     'initialize' => true,
                                     'allowClear' => true,
                                     'ajaxSettings' => [
+                                        'async' => $async,
                                         'beforeSend' => new \yii\web\JsExpression("
                                             function(jqXHR, settings) {
                                                 var parentVal = $('#' + '{$depends[0]}').val();
                                                 if (!parentVal) {
+                                                    var self = $('#' + '{$seftId}');                                    
+                                                    if (self.data('select2')) {
+                                                        self.val(null).trigger('select2:select');
+                                                        self.trigger('select2:unselect');
+                                                        self.trigger('select2:close');
+                                                        self.find('option').remove();
+                                                        self.prop('disabled', true);
+                                                    }
                                                     return false;
                                                 }
                                             }
@@ -864,6 +873,14 @@ class DropDown extends Component {
                                     function(jqXHR, settings) {
                                         var parentVal = $('#' + '{$depends[0]}').val();
                                         if (!parentVal) {
+                                            var self = $('#' + '{$seftId}');                                    
+                                            if (self.data('select2')) {
+                                                self.val(null).trigger('select2:select');
+                                                self.trigger('select2:unselect');
+                                                self.trigger('select2:close');
+                                                self.find('option').remove();
+                                                self.prop('disabled', true);
+                                            }
                                             return false;
                                         }
                                     }
@@ -911,6 +928,7 @@ class DropDown extends Component {
         }
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
         $select2Options = !empty($form_id) ? ['pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id]] : ['pluginOptions' => ['allowClear' => true]];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
 
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
@@ -930,6 +948,14 @@ class DropDown extends Component {
                                 function(jqXHR, settings) {
                                     var parentVal = $('#' + '{$depends[0]}').val();
                                     if (!parentVal) {
+                                        var self = $('#' + '{$seftId}');                                        
+                                        if (self.data('select2')) {
+                                            self.val(null).trigger('select2:select');
+                                            self.trigger('select2:unselect');
+                                            self.trigger('select2:close');
+                                            self.find('option').remove();
+                                            self.prop('disabled', true);
+                                        }
                                         return false;
                                     }
                                 }
@@ -2496,6 +2522,7 @@ class DropDown extends Component {
         $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'placeholder' => $placeholder, 'dropdownParent' => '#' . $form_id, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]];
 
         $allParam = is_array($extraParam) ? $extraParam : ["'" . $extraParam . "'"];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -2514,6 +2541,14 @@ class DropDown extends Component {
                                 function(jqXHR, settings) {
                                     var parentVal = $('#' + '{$depends[0]}').val();
                                     if (!parentVal) {
+                                        var self = $('#' + '{$seftId}');                            
+                                        if (self.data('select2')) {
+                                            self.val(null).trigger('select2:select');
+                                            self.trigger('select2:unselect');
+                                            self.trigger('select2:close');
+                                            self.find('option').remove();
+                                            self.prop('disabled', true);
+                                        }
                                         return false;
                                     }
                                 }
