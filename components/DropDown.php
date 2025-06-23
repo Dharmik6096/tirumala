@@ -191,17 +191,10 @@ class DropDown extends Component {
             echo $form->field($model, $name, ['options' => ['multiple' => $multiple]])->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
         }
         if (!empty($selected)) {
-            $elementId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
             $script = "$(document).ready(function() {
-                    var el = $('#$elementId');
-                    el.parent('div').parent().hide(); 
-                    if (el.data('select2')) {
-                        el.trigger('select2:select');
-                    } else {
-                        setTimeout(arguments.callee,5);
-                    }
+                   $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
                 });";
-            Yii::$app->view->registerJs($script, View::POS_END, $elementId);
+            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
         }
     }
 
