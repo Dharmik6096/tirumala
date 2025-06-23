@@ -789,6 +789,7 @@ class DropDown extends Component {
             $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         }
 //         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($is_return) {
             return $form->field($model, !empty($input_name) ? $input_name : $name)
                             ->widget(DepDrop::classname(), [
@@ -810,6 +811,14 @@ class DropDown extends Component {
                                             function(jqXHR, settings) {
                                                 var parentVal = $('#' + '{$depends[0]}').val();
                                                 if (!parentVal) {
+                                                    var self = $('#' + '{$seftId}');                                    
+                                                    if (self.data('select2')) {
+                                                        self.val(null).trigger('select2:select');
+                                                        self.trigger('select2:unselect');
+                                                        self.trigger('select2:close');
+                                                        self.find('option').remove();
+                                                        self.prop('disabled', true);
+                                                    }
                                                     return false;
                                                 }
                                             }
@@ -838,6 +847,14 @@ class DropDown extends Component {
                                     function(jqXHR, settings) {
                                         var parentVal = $('#' + '{$depends[0]}').val();
                                         if (!parentVal) {
+                                            var self = $('#' + '{$seftId}');                                    
+                                            if (self.data('select2')) {
+                                                self.val(null).trigger('select2:select');
+                                                self.trigger('select2:unselect');
+                                                self.trigger('select2:close');
+                                                self.find('option').remove();
+                                                self.prop('disabled', true);
+                                            }
                                             return false;
                                         }
                                     }
@@ -883,6 +900,7 @@ class DropDown extends Component {
         if (isset($searchable) && $searchable) {
             $dropDownType = DepDrop::TYPE_SELECT2;
         }
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -901,6 +919,14 @@ class DropDown extends Component {
                                 function(jqXHR, settings) {
                                     var parentVal = $('#' + '{$depends[0]}').val();
                                     if (!parentVal) {
+                                        var self = $('#' + '{$seftId}');                                        
+                                        if (self.data('select2')) {
+                                            self.val(null).trigger('select2:select');
+                                            self.trigger('select2:unselect');
+                                            self.trigger('select2:close');
+                                            self.find('option').remove();
+                                            self.prop('disabled', true);
+                                        }
                                         return false;
                                     }
                                 }
@@ -2442,6 +2468,7 @@ class DropDown extends Component {
         }
 
         $allParam = is_array($extraParam) ? $extraParam : ["'" . $extraParam . "'"];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -2460,6 +2487,14 @@ class DropDown extends Component {
                                 function(jqXHR, settings) {
                                     var parentVal = $('#' + '{$depends[0]}').val();
                                     if (!parentVal) {
+                                        var self = $('#' + '{$seftId}');                            
+                                        if (self.data('select2')) {
+                                            self.val(null).trigger('select2:select');
+                                            self.trigger('select2:unselect');
+                                            self.trigger('select2:close');
+                                            self.find('option').remove();
+                                            self.prop('disabled', true);
+                                        }
                                         return false;
                                     }
                                 }
