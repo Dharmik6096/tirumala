@@ -12,6 +12,7 @@ use PHPExcel;
 use app\modules\configuration\models\TblGenerateReportParam;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use app\modules\usermanagement\models\User;
+use PHPExcel_Cell_DataType;
 
 /**
  * Default controller for the `JasperReports` module
@@ -4193,6 +4194,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ApprovedAttachmentDetails',
                 'report_type' => [Yii::t('app', 'tbl_member_provisional'), Yii::t('app', 'tbl_dcs_provisional'), Yii::t('app', 'tbl_customer_master_provisional')],
                 'title' => 'Approved Attachment Details',
+                'link' => TRUE
             ],
             'BmcCollectionRouteWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -4555,6 +4557,10 @@ class ReportsController extends \app\controllers\ChildController {
               \PHPExcel_Style_NumberFormat::FORMAT_TEXT
               ); */
             $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $isZip = isset($this->data['link']) && $this->data['link'] == true;
+            if (!in_array('zip_link', $file_header) && $isZip) {
+                $file_header[] = 'zip_link';
+            }
             /* $file_header = array_map(function($file_header) {
               return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
               }, array_values($file_header)); */
@@ -4571,6 +4577,34 @@ class ReportsController extends \app\controllers\ChildController {
                     'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
             );
+            $rowIndex = 2;
+            
+            if (!empty($this->output) && $isZip) {
+                foreach ($this->output as $row) {
+                    $columnIndex = 0;
+                    $moduleCode = isset($row['module_code']) ? $row['module_code'] : '';
+                    $moduleName = isset($row['module_name']) ? $row['module_name'] : '';
+                    $zipUrl = yii\helpers\Url::to([
+                                '/document/tbl-attachment/zip-attachment-download',
+                                'module_code' => $moduleCode,
+                                'module_name' => $moduleName,
+                                    ], true);
+                    $row['zip_link'] = 'Download';
+                    foreach ($row as $key => $value) {
+                        $cell = $sheet->getCellByColumnAndRow($columnIndex, $rowIndex);
+                        $cellCoordinate = $cell->getCoordinate();
+                        if ($key === 'zip_link') {
+                            $sheet->setCellValue($cellCoordinate, 'Download');
+                            $sheet->getCell($cellCoordinate)->getHyperlink()->setUrl($zipUrl);
+                            $sheet->getStyle($cellCoordinate)->getFont()->setUnderline(true)->getColor()->setRGB('0000FF');
+                        } else {
+                            $sheet->setCellValue($cellCoordinate, $value);
+                        }
+                        $columnIndex++;
+                    }
+                    $rowIndex++;
+                }
+            }
             $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
             $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
             $fileName = $labelT . '.' . $header['extension'] .

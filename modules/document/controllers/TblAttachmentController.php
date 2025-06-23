@@ -19,7 +19,7 @@ use app\modules\general\models\TblApprovalStagesDetail;
  */
 class TblAttachmentController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['document-upload', 'attachment-delete'];
+    public $freeAccessActions = ['document-upload', 'attachment-delete', 'zip-attachment-download'];
 
     /**
      * Lists all TblAttachment models.
@@ -147,6 +147,53 @@ class TblAttachmentController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionZipAttachmentDownload($module_code, $module_name) {
+        $attachments = TblAttachment::find()
+                ->where(['module_code' => $module_code, 'module_name' => $module_name])
+                ->all();
+        $org_code = $module_code . '_' . $module_name;
+        $exportPath = Yii::$app->basePath . '/web/export/';
+        if (!is_dir($exportPath)) {
+            mkdir($exportPath);
+            chmod($exportPath, 0777);
+        }
+        $folderName = $org_code . '_ATTACHMENTS';
+        $folderPath = $exportPath . $folderName . '/';
+        $zipFolder = $exportPath . $folderName;
+        Yii::$app->general->CreateDirectory($folderPath);
+        $copiedFiles = [];
+        foreach ($attachments as $attachment) {
+            $sourceUrl = $attachment->attachment;
+            $fileName = basename($sourceUrl);
+            $destination = $folderPath . $fileName;
+            if (!empty($sourceUrl) && @copy($sourceUrl, $destination)) {
+                $copiedFiles[] = $destination;
+            }
+        }
+        if (empty($copiedFiles)) {
+            throw new \yii\web\NotFoundHttpException('Attachment file(s) not found or inaccessible.');
+        }
+        Yii::$app->general->ZipOperation($zipFolder, true, '', '', '*', 'zip', FALSE);
+        $zipFilePath = $zipFolder . '.zip';
+        $zipContent = file_get_contents($zipFilePath);
+        $files = glob($zipFolder . '/*');
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+        rmdir($zipFolder);
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="' . $folderName . '.zip"');
+        header('Content-Length: ' . filesize($zipFolder . '.zip'));
+        readfile($zipFolder . '.zip');
+        unlink($zipFolder . '.zip');
+        exit;
     }
 
 }
