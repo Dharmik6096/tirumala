@@ -776,20 +776,33 @@ class DropDown extends Component {
     private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
-        $requiredDepends = [];
-        if (!empty($depends)) {
-            foreach ($depends as $depField) {
-                $parts = explode('-',$depField);
-                if (count($parts) === 2) {
-                    $fieldName = $parts[1];
-                } elseif (!empty($parts[0])) {
-                    $fieldName = $parts[0];
-                }
-                if ($model->isAttributeRequired($fieldName)) {
-                    $requiredDepends[] = $fieldName;
-                }
-            }
-        }
+        // $requiredDepends = [];
+
+        // // Step 1: Get all required fields in current scenario
+        // $requiredAttributes = [];
+        // foreach ($model->getActiveValidators() as $validator) {
+        //     if ($validator instanceof \yii\validators\RequiredValidator) {
+        //         $requiredAttributes = array_merge($requiredAttributes, $validator->attributes);
+        //     }
+        // }
+        // $requiredAttributes = array_unique($requiredAttributes);
+
+        // // Step 2: Now filter only $depends that are in $requiredAttributes
+        // foreach ($depends as $depField) {
+        //     $parts = explode('-', $depField);
+        //     if (count($parts) === 2) {
+        //         $fieldName = $parts[1];
+        //     } elseif (!empty($parts[0])) {
+        //         $fieldName = $parts[0];
+        //     } else {
+        //         continue;
+        //     }
+
+        //     if (in_array($fieldName, $requiredAttributes)) {
+        //         $requiredDepends[] = $fieldName;
+        //     }
+        // }
+
         $modelName = strtolower((new ReflectionClass($model))->getShortName());
         $options = [];
         $options['readonly'] = $readonly;
@@ -824,25 +837,25 @@ class DropDown extends Component {
                                     'placeholder' => $placeholder,
                                     'url' => Url::to([$url]),
                                     'allParam' => ["'" . $extraParam . "'"],
-                                    'initialize' => false,
+                                    'initialize' => true,
                                     'allowClear' => true,
                                     'ajaxSettings' => [
                                         'beforeSend' => new \yii\web\JsExpression("
                                             function(jqXHR, settings) {
                                                 var valid = true;
-                                                var required = " . Json::encode($requiredDepends) . ";
                                                 var modelName = '{$modelName}';
                                                 var parentVal = $('#' + '{$depends[0]}').val();
                                                 if (!parentVal) {
                                                     valid = false;
-                                                } else {
-                                                    required.forEach(function(dep) {
-                                                        var val = $('#' + modelName +'-'+ dep).val();
-                                                        if (!val || val === '') {
-                                                            valid = false;
-                                                        }
-                                                    });
-                                                }
+                                                } 
+                                                // else {
+                                                //     required.forEach(function(dep) {
+                                                //         var val = $('#' + modelName +'-'+ dep).val();
+                                                //         if (!val || val === '') {
+                                                //             valid = false;
+                                                //         }
+                                                //     });
+                                                // }
                                                 if (!valid) {
                                                     return false; // block AJAX
                                                 }
@@ -865,25 +878,25 @@ class DropDown extends Component {
                             'placeholder' => $placeholder,
                             'url' => Url::to([$url]),
                             'allParam' => ["'" . $extraParam . "'"],
-                            'initialize' => false,
+                            'initialize' => true,
                             'allowClear' => true,
                             'ajaxSettings' => [
                                 'beforeSend' => new \yii\web\JsExpression("
                                     function(jqXHR, settings) {
                                         var valid = true;
-                                        var required = " . Json::encode($requiredDepends) . ";
                                         var modelName = '{$modelName}';
                                         var parentVal = $('#' + '{$depends[0]}').val();
                                         if (!parentVal) {
                                             valid = false;
-                                        } else {
-                                            required.forEach(function(dep) {
-                                                var val = $('#' + modelName +'-'+ dep).val();
-                                                if (!val || val === '') {
-                                                    valid = false;
-                                                }
-                                            });
-                                        }
+                                        } 
+                                        // else {
+                                        //     required.forEach(function(dep) {
+                                        //         var val = $('#' + modelName +'-'+ dep).val();
+                                        //         if (!val || val === '') {
+                                        //             valid = false;
+                                        //         }
+                                        //     });
+                                        // }
                                         if (!valid) {
                                             return false; // block AJAX
                                         }
@@ -925,20 +938,32 @@ class DropDown extends Component {
 
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
-        $requiredDepends = [];
-        if (!empty($depends)) {
-            foreach ($depends as $depField) {
-                $parts = explode('-',$depField);
-                if (count($parts) === 2) {
-                    $fieldName = $parts[1];
-                } elseif (!empty($parts[0])) {
-                    $fieldName = $parts[0];
-                }
-                if ($model->isAttributeRequired($fieldName)) {
-                    $requiredDepends[] = $fieldName;
-                }
-            }
-        }
+        // $requiredDepends = [];
+
+        // // Step 1: Get all required fields in current scenario
+        // $requiredAttributes = [];
+        // foreach ($model->getActiveValidators() as $validator) {
+        //     if ($validator instanceof \yii\validators\RequiredValidator) {
+        //         $requiredAttributes = array_merge($requiredAttributes, $validator->attributes);
+        //     }
+        // }
+        // $requiredAttributes = array_unique($requiredAttributes);
+
+        // // Step 2: Now filter only $depends that are in $requiredAttributes
+        // foreach ($depends as $depField) {
+        //     $parts = explode('-', $depField);
+        //     if (count($parts) === 2) {
+        //         $fieldName = $parts[1];
+        //     } elseif (!empty($parts[0])) {
+        //         $fieldName = $parts[0];
+        //     } else {
+        //         continue;
+        //     }
+
+        //     if (in_array($fieldName, $requiredAttributes)) {
+        //         $requiredDepends[] = $fieldName;
+        //     }
+        // }
         $modelName = strtolower((new ReflectionClass($model))->getShortName());
         $tabIndex = ($tab) ? -1 : '';
         $dropDownType = DepDrop::TYPE_DEFAULT;
@@ -956,24 +981,24 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => false,
+                        'initialize' => true,
                         'ajaxSettings' => [
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
                                     var valid = true;
-                                    var required = " . Json::encode($requiredDepends) . ";
                                     var modelName = '{$modelName}';
                                     var parentVal = $('#' + '{$depends[0]}').val();
                                     if (!parentVal) {
                                         valid = false;
-                                    } else {
-                                        required.forEach(function(dep) {
-                                            var val = $('#' + modelName +'-'+ dep).val();
-                                            if (!val || val === '') {
-                                                valid = false;
-                                            }
-                                        });
                                     }
+                                    //      else {
+                                    //     required.forEach(function(dep) {
+                                    //         var val = $('#' + modelName +'-'+ dep).val();
+                                    //         if (!val || val === '') {
+                                    //             valid = false;
+                                    //         }
+                                    //     });
+                                    // }
                                     if (!valid) {
                                         return false; // block AJAX
                                     }
@@ -2495,20 +2520,32 @@ class DropDown extends Component {
     private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
-        $requiredDepends = [];
-        if (!empty($depends)) {
-            foreach ($depends as $depField) {
-                $parts = explode('-',$depField);
-                if (count($parts) === 2) {
-                    $fieldName = $parts[1];
-                } elseif (!empty($parts[0])) {
-                    $fieldName = $parts[0];
-                }
-                if ($model->isAttributeRequired($fieldName)) {
-                    $requiredDepends[] = $fieldName;
-                }
-            }
-        }
+        // $requiredDepends = [];
+
+        // // Step 1: Get all required fields in current scenario
+        // $requiredAttributes = [];
+        // foreach ($model->getActiveValidators() as $validator) {
+        //     if ($validator instanceof \yii\validators\RequiredValidator) {
+        //         $requiredAttributes = array_merge($requiredAttributes, $validator->attributes);
+        //     }
+        // }
+        // $requiredAttributes = array_unique($requiredAttributes);
+
+        // // Step 2: Now filter only $depends that are in $requiredAttributes
+        // foreach ($depends as $depField) {
+        //     $parts = explode('-', $depField);
+        //     if (count($parts) === 2) {
+        //         $fieldName = $parts[1];
+        //     } elseif (!empty($parts[0])) {
+        //         $fieldName = $parts[0];
+        //     } else {
+        //         continue;
+        //     }
+
+        //     if (in_array($fieldName, $requiredAttributes)) {
+        //         $requiredDepends[] = $fieldName;
+        //     }
+        // }
         $modelName = strtolower((new ReflectionClass($model))->getShortName());
         $options = [];
         $options['readonly'] = $readonly;
@@ -2542,25 +2579,25 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => false,
+                        'initialize' => true,
                         'allowClear' => true,
                         'ajaxSettings' => [
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
                                     var valid = true;
-                                    var required = " . Json::encode($requiredDepends) . ";
                                     var modelName = '{$modelName}';
                                     var parentVal = $('#' + '{$depends[0]}').val();
                                     if (!parentVal) {
                                         valid = false;
-                                    } else {
-                                        required.forEach(function(dep) {
-                                            var val = $('#' + modelName +'-'+ dep).val();
-                                            if (!val || val === '') {
-                                                valid = false;
-                                            }
-                                        });
-                                    }
+                                    } 
+                                    //     else {
+                                    //     required.forEach(function(dep) {
+                                    //         var val = $('#' + modelName +'-'+ dep).val();
+                                    //         if (!val || val === '') {
+                                    //             valid = false;
+                                    //         }
+                                    //     });
+                                    // }
                                     if (!valid) {
                                         return false; // block AJAX
                                     }
