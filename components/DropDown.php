@@ -201,17 +201,10 @@ class DropDown extends Component {
             echo $form->field($model, $name, ['options' => ['multiple' => $multiple]])->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
         }
         if (!empty($selected)) {
-            $elementId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
             $script = "$(document).ready(function() {
-                    var el = $('#$elementId');
-                    el.parent('div').parent().hide(); 
-                    if (el.data('select2')) {
-                        el.trigger('select2:select');
-                    } else {
-                        setTimeout(arguments.callee,5);
-                    }
+                   $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
                 });";
-            Yii::$app->view->registerJs($script, View::POS_END, $elementId);
+            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
         }
     }
 
@@ -836,7 +829,7 @@ class DropDown extends Component {
                                     'placeholder' => $placeholder,
                                     'url' => Url::to([$url]),
                                     'allParam' => ["'" . $extraParam . "'"],
-                                    'initialize' => false,
+                                    'initialize' => true,
                                     'allowClear' => true,
                                     'ajaxSettings' => [
                                         'beforeSend' => new \yii\web\JsExpression("
@@ -864,7 +857,7 @@ class DropDown extends Component {
                             'placeholder' => $placeholder,
                             'url' => Url::to([$url]),
                             'allParam' => ["'" . $extraParam . "'"],
-                            'initialize' => false,
+                            'initialize' => true,
                             'allowClear' => true,
                             'ajaxSettings' => [
                                 'beforeSend' => new \yii\web\JsExpression("
@@ -889,7 +882,7 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
@@ -930,8 +923,9 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => false,
+                        'initialize' => true,
                         'ajaxSettings' => [
+                            'async' => $async,
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
                                     var parentVal = $('#' + '{$depends[0]}').val();
@@ -2513,7 +2507,7 @@ class DropDown extends Component {
                         'placeholder' => $placeholder,
                         'url' => Url::to([$url]),
                         'allParam' => $allParam,
-                        'initialize' => false,
+                        'initialize' => true,
                         'allowClear' => true,
                         'ajaxSettings' => [
                             'beforeSend' => new \yii\web\JsExpression("
