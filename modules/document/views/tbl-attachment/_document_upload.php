@@ -209,7 +209,14 @@ if (!empty($doc_model)) {
                                     'url' => Url::to($urls),
                                     'processData' => false,
                                     'contentType' => false,
-                                    'data' => new JsExpression("new FormData($('#create-document-form')[0])"),
+                                    'data' => new JsExpression("(function(){
+                                        var mainFormData = new FormData($('#create-document-form')[0]);
+                                        var remarks = \$('[name\$=\"[remarks]\"]').val();
+                                        if (remarks != '') {
+                                            mainFormData.append('remarks', remarks);
+                                        }
+                                        return mainFormData;
+                                    })()"),
                                     'beforeSend' => new JsExpression("function(data){
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
@@ -229,11 +236,15 @@ if (!empty($doc_model)) {
                                                                 }
                                                  }'),
                                 ],
-                                'options' => ['class' => 'btn btn-default btn-raised',
+                                'options' => ['class' => 'btn btn-default btn-raised saveBtn',
                                     'type' => 'submit'],
                             ]);
                             AjaxSubmitButton::end();
                             ?>
+                            <?php if ($master_type == 'provisional_dcs' || $master_type == 'provisional_customer') { ?>
+                                <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
+                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal']) ?>
+                            <?php } ?>
                             <?= Yii::$app->controls->reset(); ?>
                             <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
                         </div>  
@@ -246,4 +257,11 @@ if (!empty($doc_model)) {
         </div>
     </div>
 </div>
+<?php if ($master_type == 'provisional_dcs' || $master_type == 'provisional_customer') { ?>
+    <?=
+    $this->render('@app/modules/document/views/tbl-attachment/_reroute', [
+        'model' => $model,
+    ])
+    ?>
+<?php } ?>
 

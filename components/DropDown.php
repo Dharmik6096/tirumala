@@ -1036,7 +1036,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1868,7 +1868,7 @@ class DropDown extends Component {
             'provisional_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject'), 'Re-route' => Yii::t('app', 'Re-route')],
             ],
             'org_type_shift_time' => [
                 'name' => 'org_type',
@@ -2333,7 +2333,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
