@@ -79,9 +79,11 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
                                     $isChanged = true;
                                 }
                             }
-                            if ($milkQualityModel->validate() && empty($milkQualityModel->getErrors() && $isChanged)) {
-                                $saveModel[] = $historyModel;
-                                $saveModel[] = $milkQualityModel;
+                            if ($milkQualityModel->validate() && empty($milkQualityModel->getErrors())) {
+                                if ($isChanged) {
+                                    $saveModel[] = $historyModel;
+                                    $saveModel[] = $milkQualityModel;
+                                }
                             } else {
                                 $is_validate = false;
                                 $model = $milkQualityModel;
