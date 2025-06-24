@@ -102,6 +102,7 @@ class ReportsModel extends Model {
             [['union_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['PartyPaymentBill']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ShiftWiseBill']],
             [['p_from_date', 'p_to_date'], 'required', 'on' => ['CompleteTrip']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['CcTruckSlip', 'DmrReport']],
         ];
     }
 
