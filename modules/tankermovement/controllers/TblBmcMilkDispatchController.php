@@ -33,7 +33,7 @@ use app\components\ActiveForm;
  */
 class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input'];
+    public $freeAccessActions = ['get-date-purchase-details', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input'];
 
     /**
      * Lists all TblBmcMilkDispatch models.
@@ -147,12 +147,12 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 $stock_model->to_shift_code = $model->to_shift_code;
                 // $stock_model->to_shift_code = ($model->to_shift_code == 1) ? 2 : 1;
 
-                $stock_model->from_date = $model->from_date;
-                $stock_model->from_shift_code = $model->from_shift_code;
+                $stock_model->from_date = $txn_model->from_date_tr;
+                $stock_model->from_shift_code = (date('H:i:s', strtotime($txn_model->from_date_tr)) == '06:00:00') ? 1 : 2;
 
                 $stock_model->transaction_date = $model->transaction_date;
                 $stock_model->closing_bal = $txn_model->dispatch_qty;
-                $stock_data = $stock_model->getStockEntry();
+                $stock_data = $stock_model->getStockEntry(TRUE);
                 if (!empty($stock_data)) {
                     $stock_model = $stock_data;
                     $stock_model->qty_diff = $txn_model->qty_diff;
@@ -380,8 +380,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $data = $model->getBMCList('', $RLS);
                 } else if (strtolower($parents[0]) == 'plant') {
                     $RLS = (isset($parents[3]) && !empty($parents[3])) ? 'FALSE' : 'TRUE';
+                    $type = (isset($parents[5]) && !empty($parents[5])) ? $parents[5] : '';
                     $model = new TblPlant();
-                    $data = $model->getPlantList($parents[1], $RLS);
+                    $data = $model->getPlantList($parents[1], $RLS, [], false, $type);
                 } else if (strtolower($parents[0]) == 'party') {
                     $partyType = (isset($parents[4]) && !empty($parents[4])) ? $parents[4] : '';
                     $model = new TblPartyMaster();

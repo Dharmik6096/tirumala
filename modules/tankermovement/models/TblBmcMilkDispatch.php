@@ -78,7 +78,6 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
             [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
             [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
-            //  [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
             [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
             [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
@@ -256,6 +255,8 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                     } else {
                         if ($stock_date->from_date == $this->from_date && $stock_date->to_date == $this->to_date) {
                             return TRUE;
+                        } else if ($stock_date->to_date == $this->from_date && $stock_date->to_date == $this->to_date) {
+                            return TRUE;
                         } else if ($this->from_date < $dispatch_date) {
                             $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date. Please select this date: ' . $formatted_date . ' and shift ' . $formatted_shift));
                             return FALSE;
@@ -346,7 +347,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         return $count == 1;
     }
 
-    public function getFromDateToDate($is_physical_stock = false, $stock_detail_without_config = false) {
+    public function getFromDateToDate($is_physical_stock = false) {
         $bmcData = $this->bmcCode;
         $result = ['status' => 'error', 'from_datetime' => NULL, 'from_date' => null, 'from_shift' => null, 'to_datetime' => NULL, 'to_date' => null, 'to_shift' => null, 'physical_stock_only' => 0];
         $stock = TblBmcDispatchStock::find()
@@ -354,12 +355,13 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 ->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])
                 ->one();
 
-        $shiftLock = TblMccShiftLock::find()
-                ->where(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
-                ->orderBy(['date_time_of_collection' => SORT_DESC])
-                ->one();
-
         if (!empty($stock)) {
+            $shiftLock = TblMccShiftLock::find()
+                    ->where(['>=', 'date_time_of_collection', date('Y-m-d H:i:s', strtotime($stock->to_date))])
+                    ->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
+                    ->orderBy(['date_time_of_collection' => SORT_DESC])
+                    ->one();
+
             // IF Not - check - Any previous Dispatch entry is available
             if (strtolower($stock->type) == 'physical') {
                 if (empty($shiftLock) || $shiftLock->date_time_of_collection <= $stock->to_date) {
@@ -424,7 +426,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                         'from_shift' => $stock->from_shift_code,
                         'to_date' => date('d-m-Y', strtotime($stock->to_date)),
                         'to_shift' => $stock->to_shift_code,
-                        'physical_stock_only' => 0,
+                        'physical_stock_only' => 1,
                     ];
                 }
             }
@@ -446,10 +448,11 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         }
         $stock_data = [];
         if (!empty($result['from_datetime']) && !empty($result['to_datetime'])) {
-            $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime)}")
+            $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime,:physical_stock_only)}")
                     ->bindValue(':from_datetime', date('Y-m-d H:i:s', strtotime($result['from_datetime'])))
                     ->bindValue(':to_datetime', date('Y-m-d H:i:s', strtotime($result['to_datetime'])))
-                    ->bindValue(':bmc_code', $this->bmc_code);
+                    ->bindValue(':bmc_code', $this->bmc_code)
+                    ->bindValue(':physical_stock_only', $result['physical_stock_only']);
             $stock_data = $query->queryAll();
         }
         $result['stock_data'] = $stock_data;
@@ -457,12 +460,12 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         $stock_detail = [];
         if (!empty($stock_data)) {
             $dispatch_with_milk_type = 0;
-            if (!$stock_detail_without_config) {
+            if (!$is_physical_stock) {
                 $dispatchWithMilkTypeConfig = Yii::$app->general->getUnionConfiguration($bmcData->union_code, 'bmc_dispatch_with_milk_type', 'PORTAL');
                 $dispatch_with_milk_type = ($dispatchWithMilkTypeConfig != '') ? $dispatchWithMilkTypeConfig : 0;
             }
             foreach ($stock_data as $r) {
-                $animal_type = $stock_detail_without_config ? $r['animal_type_code'] : ($dispatch_with_milk_type == '1' ? $r['animal_type_code'] : '3');
+                $animal_type = $is_physical_stock ? $r['animal_type_code'] : ($dispatch_with_milk_type == '1' ? $r['animal_type_code'] : '3');
                 $key = $r['bmc_silos_info_code'] . '_' . $animal_type . '_' . $r['milk_quality_type_code'];
                 if (empty($stock_detail[$key])) {
                     $stock_detail[$key]['previous_qty'] = 0;
