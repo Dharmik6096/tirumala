@@ -447,11 +447,11 @@ class DropDown extends Component {
     public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false, $is_return = FALSE, $input_name = '') {
         $this->setClass($form, $name);
         if ($is_return) {
-            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name);
+            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name, FALSE);
         } else if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, '', $readonly, '', true, TRUE);
         } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', true, '', false, '', FALSE);
         }
     }
 
@@ -869,6 +869,7 @@ class DropDown extends Component {
                             'initialize' => true,
                             'allowClear' => true,
                             'ajaxSettings' => [
+                                'async' => $async,
                                 'beforeSend' => new \yii\web\JsExpression("
                                     function(jqXHR, settings) {
                                         var parentVal = $('#' + '{$depends[0]}').val();
