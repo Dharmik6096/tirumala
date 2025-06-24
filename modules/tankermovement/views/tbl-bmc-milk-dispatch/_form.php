@@ -51,16 +51,16 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
             </div>
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'from_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, false, 'from_shift_code'); ?>
             </div>
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, false, 'to_shift_code'); ?>
             </div>
             <?= Html::hiddenInput('type', 'bmc', ['id' => 'type']); ?>
             <?php if (!$tripGenerateBtn) { ?>
