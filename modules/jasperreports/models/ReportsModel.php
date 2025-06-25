@@ -183,30 +183,30 @@ class ReportsModel extends Model {
 
     public function validatePair($attribute, $params) {
         if (!empty($this->p_qty_from) && empty($this->p_qty_to)) {
-            $this->addError('p_qty_to', 'To Qty cannot be blank..');
+            $this->addError('p_qty_to', 'To Qty cannot be blank.');
         }
         if (!empty($this->p_qty_to) && empty($this->p_qty_from)) {
-            $this->addError('p_qty_from', 'From Qty cannot be blank..');
+            $this->addError('p_qty_from', 'From Qty cannot be blank.');
         }
-        if (!empty($this->p_qty_from) && !empty($this->p_qty_to) && $this->p_qty_from > $this->p_qty_to) {
+        if (!empty($this->p_qty_from) && !empty($this->p_qty_to) && $this->p_qty_from >= $this->p_qty_to) {
             $this->addError('p_qty_to', 'To Qty must be greater than From Qty.');
         }
         if (!empty($this->p_fat_from) && empty($this->p_fat_to)) {
-            $this->addError('p_fat_to', 'To Fat cannot be blank..');
+            $this->addError('p_fat_to', 'To Fat cannot be blank.');
         }
         if (!empty($this->p_fat_to) && empty($this->p_fat_from)) {
-            $this->addError('p_fat_from', 'From Fat cannot be blank..');
+            $this->addError('p_fat_from', 'From Fat cannot be blank.');
         }
-        if (!empty($this->p_fat_from) && !empty($this->p_fat_to) && $this->p_fat_from > $this->p_fat_to) {
+        if (!empty($this->p_fat_from) && !empty($this->p_fat_to) && $this->p_fat_from >= $this->p_fat_to) {
             $this->addError('p_fat_to', 'To Fat must be greater than From Fat.');
         }
         if (!empty($this->p_snf_from) && empty($this->p_snf_to)) {
-            $this->addError('p_snf_to', 'To SNF cannot be blank..');
+            $this->addError('p_snf_to', 'To SNF cannot be blank.');
         }
         if (!empty($this->p_snf_to) && empty($this->p_snf_from)) {
-            $this->addError('p_snf_from', 'From SNF cannot be blank..');
+            $this->addError('p_snf_from', 'From SNF cannot be blank.');
         }
-        if (!empty($this->p_snf_from) && !empty($this->p_snf_to) && $this->p_snf_from > $this->p_snf_to) {
+        if (!empty($this->p_snf_from) && !empty($this->p_snf_to) && $this->p_snf_from >= $this->p_snf_to) {
             $this->addError('p_snf_to', 'To SNF must be greater than From SNF.');
         }
     }
