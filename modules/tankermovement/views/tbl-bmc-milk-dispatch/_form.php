@@ -683,16 +683,9 @@ if (!$readonly) {
     
                 var fromDateObj = new Date(formatted_from_date);
                 var toDateObj = new Date(formatted_to_date);
-                var date = new Date(formatted_to_date);
                 var currentDate = new Date();
-                date.setHours(0, 0, 0, 0);
                 currentDate.setHours(0, 0, 0, 0);
-                if (date < currentDate) {
-                    date.setDate(date.getDate() + 1);
-                } else {
-                   date.setDate(date.getDate());
-                }
-                date = formatLocalDate(date);
+                date = formatLocalDate(currentDate);
                 if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
                     var errorMessage = 'must not be less than from date.';
                     var errorElement = '<div class=\"error-message error_message\">' + errorMessage + '</div>';
