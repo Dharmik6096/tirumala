@@ -227,6 +227,7 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
         <?= Html::activeHiddenInput($txn_model, 'physical_stock_only'); ?>
+        <?= Html::activeHiddenInput($txn_model, 'is_clr_input'); ?>
         <!-- <div class="clearfix"></div> -->
         <div id="transactions-from">
 
@@ -464,7 +465,7 @@ function calculateClr(){
     var fat = $('#tblbmcmilkdispatchtxn-fat').val();
     var snf = $('#tblbmcmilkdispatchtxn-snf').val();
     var clr = $('#tblbmcmilkdispatchtxn-clr').val();
-    var is_clr_input = $('#is_clr_input').val()
+    var is_clr_input = $('#is_clr_input').val();
     var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
 
     is_clr_input == 0 && (fat == '' || snf == '') && $('#tblbmcmilkdispatchtxn-clr').val('');
@@ -488,7 +489,6 @@ function calculateClr(){
                 }
             },
             error:function(data){
-
             }
         });
     }    
@@ -498,7 +498,68 @@ $('#tblbmcmilkdispatch-bmc_code').change(function() {
     $('#tblbmcmilkdispatchtxn-physical_stock_only').val('');
     isClrInput();
     setDatePurchaseDetails();
+    checkQualityRanges();
 });
+
+
+$(document).on('change', '#tblbmcmilkdispatchtxn-milk_type_code', function() {
+    checkQualityRanges();
+});
+
+function checkQualityRanges(){
+    var union = $('#tblbmcmilkdispatch-union_code').val();
+    var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+    var milkTypeCode = $('#tblbmcmilkdispatchtxn-milk_type_code').val();
+    if(setData(milkTypeCode) && setData(bmcCode)){
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['get-quality-param-range']) . "',
+            data: {'union':union, 'bmcCode':bmcCode, 'milkTypeCode':milkTypeCode},
+            success: function(data) {  
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success') {
+                    var range = obj.data;
+                    var minFat = parseFloat(range.min_fat);
+                    var maxFat = parseFloat(range.max_fat);
+                    var minSnf = parseFloat(range.min_snf);
+                    var maxSnf = parseFloat(range.max_snf);
+                    var minClr = parseFloat(range.min_clr);
+                    var maxClr = parseFloat(range.max_clr);
+                    function showError(fieldName, min, max) {
+                        var msg = fieldName + ' should be between ' + min + ' and ' + max;
+                        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+msg+\"</span></div></div>\");
+                    }
+                    $(document).off('change', '#tblbmcmilkdispatchtxn-fat, #tblbmcmilkdispatchtxn-snf, #tblbmcmilkdispatchtxn-clr').on('change', '#tblbmcmilkdispatchtxn-fat, #tblbmcmilkdispatchtxn-snf, #tblbmcmilkdispatchtxn-clr', function () {
+                        var fat = parseFloat($('#tblbmcmilkdispatchtxn-fat').val());
+                        var snf = parseFloat($('#tblbmcmilkdispatchtxn-snf').val());
+                        var clr = parseFloat($('#tblbmcmilkdispatchtxn-clr').val());
+
+                        if (!isNaN(fat) && (fat < minFat || fat > maxFat)) {
+                            showError('FAT', minFat, maxFat);
+                            $('#tblbmcmilkdispatchtxn-fat').val('');
+                        }
+                        if (!$('#tblbmcmilkdispatchtxn-snf').is('[readonly]')) {
+                            var snf = parseFloat($('#tblbmcmilkdispatchtxn-snf').val());
+                            if (!isNaN(snf) && (snf < minSnf || snf > maxSnf)) {
+                                showError('SNF', minSnf, maxSnf);
+                                $('#tblbmcmilkdispatchtxn-snf').val('');
+                            }
+                        }
+                        if (!$('#tblbmcmilkdispatchtxn-clr').is('[readonly]')) {
+                            var clr = parseFloat($('#tblbmcmilkdispatchtxn-clr').val());
+                            if (!isNaN(clr) && (clr < minClr || clr > maxClr)) {
+                                showError('CLR', minClr, maxClr);
+                                $('#tblbmcmilkdispatchtxn-clr').val('');
+                            }
+                        }
+                    });
+                }
+            },
+            error:function(data){
+            }
+        });
+    }    
+};
 
 function setDatePurchaseDetails(){
     $('.field-tblbmcmilkdispatch-from_date').addClass('disabled no_pointer');
@@ -541,6 +602,7 @@ function resetFields() {
 function isClrInput(){
     var union = $('#tblbmcmilkdispatch-union_code').val();
     var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+    $('#tblbmcmilkdispatchtxn-is_clr_input').val('');
     if(setData(bmcCode)){
         $.ajax({
             type: 'post',
@@ -551,6 +613,7 @@ function isClrInput(){
                 if (obj.status == 'success' && obj.data != null) {
                     var is_clr_input = obj.data;
                     $('#is_clr_input').val(is_clr_input);
+                    $('#tblbmcmilkdispatchtxn-is_clr_input').val(is_clr_input);
                     if (is_clr_input == 0) {
                         $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
                         $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true);

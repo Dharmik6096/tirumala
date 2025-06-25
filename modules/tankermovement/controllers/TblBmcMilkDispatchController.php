@@ -27,13 +27,14 @@ use yii\data\ArrayDataProvider;
 use app\modules\tankermovement\models\TblBmcDispatchInspection;
 use app\modules\tankermovement\models\TblPartyMaster;
 use app\components\ActiveForm;
+use app\modules\configuration\models\TblMilkQualityParamRange;
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
  */
 class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-date-purchase-details', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input'];
+    public $freeAccessActions = ['get-date-purchase-details', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input', 'get-quality-param-range'];
 
     /**
      * Lists all TblBmcMilkDispatch models.
@@ -189,7 +190,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $cnt++;
                 }
                 if ($validation) {
-                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
+                    // $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
+                    $transaction = 'customRedirect';
                     if ($transaction != 'customRedirect' && $new_rec) {
                         $model->bmc_milk_dispatch_code = '';
                     } else if ($transaction == 'customRedirect') {
@@ -201,7 +203,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                                 $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
                             }
                             $tripModel->trip_sub_status = 'bmc_dispatch';
-                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                            // Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
                         }
                         return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
                     }
@@ -651,6 +653,18 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         ]);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode(['data' => $data, 'result' => $result]);
+    }
+
+    public function actionGetQualityParamRange() {
+        $model = new TblMilkQualityParamRange();
+        $model->union_code = Yii::$app->request->post('union');
+        $model->process_name = 'PLANT_MILK_RECEIPT';
+        $model->org_type = 'PLANT';
+        $model->org_code = Yii::$app->request->post('receiptAtCode');
+        $model->animal_type_code = Yii::$app->request->post('milkTypeCode');
+        $data = $model->getQualityRange();
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode(['status' => !empty($data) ? 'success' : 'error', 'data' => !empty($data) ? $data : []]);
     }
 
 }
