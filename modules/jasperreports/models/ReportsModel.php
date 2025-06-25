@@ -22,7 +22,7 @@ class ReportsModel extends Model {
     public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty;
     public $p_plant_code, $p_mcc_code, $p_bmc_code, $p_ltr_kg, $p_customer_code, $p_customer_type, $p_payment_cycle_code, $p_staff_member_code, $p_month, $p_dcsc_code, $p_billing_for;
     public $region_code, $area_code, $p_transporter_code, $p_party_master_code;
-    public $locale, $digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no, $p_mpp_survey_id, $p_VCG_M_Id, $p_trip_code, $p_vehicle_code;
+    public $locale, $digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no, $p_mpp_survey_id, $p_VCG_M_Id, $p_trip_code, $p_vehicle_code, $trip_code;
 
     function __construct() {
         if (Yii::$app->session->get('LanguageId') == 0) {
@@ -102,6 +102,7 @@ class ReportsModel extends Model {
             [['union_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['PartyPaymentBill']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ShiftWiseBill']],
             [['p_from_date', 'p_to_date'], 'required', 'on' => ['CompleteTrip']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['CcTruckSlip', 'DmrReport']],
         ];
     }
 

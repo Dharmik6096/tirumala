@@ -43,7 +43,7 @@ class HttpRequest extends \yii\base\Component {
         }
         $this->request = $request;
         $this->allow_call = $this->AuthenticateRequest();
-        $this->setRequestLog();
+//        $this->setRequestLog();
         if ($this->allow_call) {
             return $this->request;
         }
