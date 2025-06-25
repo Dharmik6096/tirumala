@@ -190,8 +190,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $cnt++;
                 }
                 if ($validation) {
-                    // $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
-                    $transaction = 'customRedirect';
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Milk Dispatch', 'create']);
                     if ($transaction != 'customRedirect' && $new_rec) {
                         $model->bmc_milk_dispatch_code = '';
                     } else if ($transaction == 'customRedirect') {
@@ -203,7 +202,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                                 $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
                             }
                             $tripModel->trip_sub_status = 'bmc_dispatch';
-                            // Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
                         }
                         return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
                     }
