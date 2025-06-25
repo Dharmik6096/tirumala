@@ -152,8 +152,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
                 $stock_model->transaction_date = $model->transaction_date;
                 $stock_model->closing_bal = $txn_model->dispatch_qty;
-                $stock_data = $stock_model->getStockEntry(TRUE);
-                if (!empty($stock_data)) {
+                $stock_data = $stock_model->getStockEntry();
+                if (!empty($stock_data) && strtolower($stock_data->type) == 'dispatch') {
                     $stock_model = $stock_data;
                     $stock_model->qty_diff = $txn_model->qty_diff;
                     $stock_model->qty_diff_type_code = $txn_model->qty_diff_type_code;

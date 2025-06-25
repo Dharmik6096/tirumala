@@ -126,12 +126,8 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
         ];
     }
 
-    public function getStockEntry($withType = FALSE) {
-        $query = $this->find()->where(['bmc_code' => $this->bmc_code, 'to_date' => $this->to_date, 'milk_type_code' => $this->milk_type_code, 'bmc_silos_info_code' => $this->bmc_silos_info_code, 'milk_quality_type_code' => $this->milk_quality_type_code]);
-        if ($withType) {
-            $query->andWhere(['type' => 'dispatch']);
-        }
-        return $query->one();
+    public function getStockEntry() {
+        return $this->find()->where(['bmc_code' => $this->bmc_code, 'to_date' => $this->to_date, 'milk_type_code' => $this->milk_type_code, 'bmc_silos_info_code' => $this->bmc_silos_info_code, 'milk_quality_type_code' => $this->milk_quality_type_code])->orderBy(['created_at' => SORT_DESC])->one();
     }
 
     public function getUnionCode() {
