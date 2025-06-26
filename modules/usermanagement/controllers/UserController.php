@@ -126,6 +126,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $model->scenario = 'userUpdate';
                     $model->username = $oldUsername;
                     $model->date_of_joining = !empty($model->date_of_joining) ? date('Y-m-d', strtotime($model->date_of_joining)) : NULL;
+                    $master[] = $historyModel;
                     $master[] = $model;
 
                     if ($model->oldAttributes['allow_app_login'] == 1 && $model->allow_app_login == 1) {
