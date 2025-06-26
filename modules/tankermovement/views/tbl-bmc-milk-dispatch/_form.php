@@ -414,7 +414,7 @@ if(!isSecondTransaction) {
                                 var destType = obj.data.destination_type.toUpperCase();
                                 $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select');
                                 setTimeout(function() {
-                                    $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('select2:select');
+                                    $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
                                 }, 1000);
                                 updateLastDestinationCheckbox(destType);
                             }
