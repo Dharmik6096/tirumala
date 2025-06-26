@@ -104,7 +104,7 @@ class ReportsModel extends Model {
             [['p_from_date', 'p_to_date'], 'required', 'on' => ['CompleteTrip']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['CcTruckSlip', 'DmrReport', 'CcSubStandardMrg']],
             [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'double'],
-            [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'validatePair'],
+            [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'validatePair', 'on' => ['CcSubStandardMrg']],
         ];
     }
 
