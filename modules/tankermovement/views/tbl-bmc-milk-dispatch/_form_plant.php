@@ -469,45 +469,24 @@ $this->registerJs($script, View::POS_END, 'bmc-config-popup');
 <?php
 if (!$readonly) {
     $script = "$(document).ready(function(){
-        function formatLocalDate(date) {
-            var day = date.getDate().toString().padStart(2, '0');
-            var month = (date.getMonth() + 1).toString().padStart(2, '0');
-            var year = date.getFullYear();
-            return day + '-' + month + '-' + year;
-        }
-        $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
-            var from_date = $('#tblbmcmilkdispatch-from_date').val();
+        $(document).on('change', '#tblbmcmilkdispatch-transaction_date, #tblbmcmilkdispatch-to_date', function() {
             var to_date = $('#tblbmcmilkdispatch-to_date').val();
-            if (setData(from_date) && setData(to_date)) {
-                // Split date strings and format them as yyyy-mm-dd
-                var from_date_parts = from_date.split('-');
-                var to_date_parts = to_date.split('-');
-                var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
-                var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
-
-                var fromDateObj = new Date(formatted_from_date);
-                var toDateObj = new Date(formatted_to_date);
-                var currentDate = new Date();
-                currentDate.setHours(0, 0, 0, 0);
-                date = formatLocalDate(currentDate);
-                if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
-                    var errorMessage = 'must not be less than from date.';
+            var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (setData(transactionDate) && setData(to_date)) {
+                var toParts = to_date.split('-');
+                var txnParts = transactionDate.split('-');
+                var toDateObj = new Date(toParts[2], toParts[1] - 1, toParts[0]);
+                var txnDateObj = transactionDate ? new Date(txnParts[2], txnParts[1] - 1, txnParts[0]) : null;
+                if (setData(txnDateObj) && txnDateObj < toDateObj) {
+                    var errorMessage = 'must not be less than to date.';
                     var errorElement = '<div class=\"error-message error_message\">' + errorMessage + '</div>';
-                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                    $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
+                    $('.field-tblbmcmilkdispatch-transaction_date.error-message').remove();
+                    $('.field-tblbmcmilkdispatch-transaction_date').append(errorElement);
                 } else {
-                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker('destroy');
-                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
-                            format: 'dd-mm-yyyy', // Set your desired date format
-                            todayHighlight: true,
-                            autoclose: true,
-                            endDate: date,
-                            startDate: to_date
-                        });
-                    }  
+                    $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
+                }
             } else {
-                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
             }
         });
     });";

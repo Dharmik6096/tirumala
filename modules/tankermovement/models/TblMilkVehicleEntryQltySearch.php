@@ -59,25 +59,25 @@ class TblMilkVehicleEntryQltySearch extends TblMilkVehicleEntryQlty {
             $query->andFilterWhere(['<=', 'cast(arrival_datetime as date)', $to_date]);
         }
 
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_milk_vehicle_entry_qlty', 'tbl_milk_vehicle_entry_qlty');
+        // Yii::$app->general->filterByOrg($query, $this, 'tbl_milk_vehicle_entry_qlty', 'tbl_milk_vehicle_entry_qlty');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             $query->where('0=1');
             return $dataProvider;
         }
-        if (empty($this->trip_code) && empty($this->status)) {
-            $query->andWhere(['LOWER(status)' => 'pending']);
-        }
+        // if (empty($this->trip_code) && empty($this->status)) {
+        //     $query->andWhere(['LOWER(status)' => 'pending']);
+        // }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'vehicle_code' => $this->vehicle_code,
-            'status' => $this->status,
-        ]);
+        // $query->andFilterWhere([
+        //     'vehicle_code' => $this->vehicle_code,
+        //     'status' => $this->status,
+        // ]);
 
-        $query->andFilterWhere(['like', 'chamber_no', $this->chamber_no])
-                ->andFilterWhere(['like', 'trip_code', $this->trip_code]);
+        // $query->andFilterWhere(['like', 'chamber_no', $this->chamber_no])
+        //         ->andFilterWhere(['like', 'trip_code', $this->trip_code]);
 
         return $dataProvider;
     }
