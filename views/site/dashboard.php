@@ -173,9 +173,9 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         <div class="col-sm-2 searchFilterHeader">
                             <div class="switch-field">
                                 <input type="radio" id="radio-farmer" class="radio_widgit_type" name="widget_type" value="farmer"/>
-                                <label for="radio-farmer">Farmer</label>
+                                <label for="radio-farmer"><?= Yii::t('app', 'DCS') ?></label>
                                 <input type="radio" id="radio-rmrd" class="radio_widgit_type" name="widget_type" value="rmrd" />
-                                <label for="radio-rmrd">RMRD</label>
+                                <label for="radio-rmrd"><?= Yii::t('app', 'RMRD') ?></label>
                             </div>
                         </div>
                         <div class="col-sm-2 searchFilterHeader">
