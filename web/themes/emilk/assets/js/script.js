@@ -1,5 +1,57 @@
 var initDepdropMs;
 (function ($) {
+    window.handleDepdropBeforeSend = function(options) {
+        const parentIds = options.depends || [];
+        const selfId = options.selfId;
+
+        const currentParentVals = parentIds.map(id => {
+            const val = $(`#${id}`).val();
+            return (val === null || val === undefined || val === '') ? '' : val;
+        });
+        var parentVal = $(`#`+parentIds[0]).val();
+        // if (!currentParentVals[0]) { // Check if any parent is empty
+        if (!parentVal) { // Check if first parent is empty
+            resetChildDropdown(selfId);
+            return false;
+        }
+
+        const stateKey = parentIds.concat(currentParentVals).join('|');
+        if (!window.depdropStateTracker) {
+            window.depdropStateTracker = {};
+        }
+
+        const self = $(`#${selfId}`);
+        const shouldAllowRequest = (
+            !window.depdropStateTracker[selfId] ||
+            window.depdropStateTracker[selfId].stateKey !== stateKey ||
+            self.find('option').length <= 1 ||
+            self.prop('disabled')
+        );
+
+        if (shouldAllowRequest) {
+            self.prop('disabled', false);
+
+            // Update tracker
+            window.depdropStateTracker[selfId] = {
+                stateKey: stateKey,
+                timestamp: Date.now()
+            };
+            return true;
+        }
+        return false;
+    };
+
+    function resetChildDropdown(id) {
+        var self = $('#' + id);                                        
+        if (self.data('select2')) {
+            self.val(null).trigger('select2:select');
+            self.trigger('select2:unselect');
+            self.trigger('select2:close');
+            self.find('option').remove();
+            self.prop('disabled', true);
+        }
+    }
+    
     initDepdropMs = function (id, text, val) {
         var $s2 = $('#' + id), $s2cont = $('#' + id).parent('.form-group'), ph = '...';
 
