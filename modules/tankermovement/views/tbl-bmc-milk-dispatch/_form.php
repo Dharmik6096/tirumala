@@ -416,17 +416,11 @@ if(!isSecondTransaction) {
                                 setTimeout(function() {
                                     $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
                                 }, 1000);
+                                updateLastDestinationCheckbox(destType);
                             }
                             $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
                                 var destType = $(this).val().toUpperCase();
-                                var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');
-                                if (destType === 'PLANT' || destType === 'PARTY') {
-                                    $('#is-last-destination-container').show();
-                                    isCheckbox.prop('checked', true);
-                                } else {
-                                    $('#is-last-destination-container').hide();
-                                    isCheckbox.prop('checked', false);
-                                }  
+                                updateLastDestinationCheckbox(destType);
                             });
                         } else {
                             $('#is-last-destination-container').hide();
@@ -445,6 +439,17 @@ if(!isSecondTransaction) {
             });
         }
     });
+}
+
+function updateLastDestinationCheckbox(destType) {
+    var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');
+    if (destType === 'PLANT' || destType === 'PARTY') {
+        $('#is-last-destination-container').show();
+        isCheckbox.prop('checked', true);
+    } else {
+        $('#is-last-destination-container').hide();
+        isCheckbox.prop('checked', false);
+    }
 }
 
 function setData(field = ''){
