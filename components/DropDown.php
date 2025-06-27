@@ -839,31 +839,10 @@ class DropDown extends Component {
                                         'async' => $async,
                                         'beforeSend' => new \yii\web\JsExpression("
                                             function(jqXHR, settings) {
-                                                var parentVal = $('#' + '{$depends[0]}').val();
-                                                var valid = true;
-                                                var required = " . Json::encode($requiredDepends) . ";
-                                                var modelName = '{$modelName}';
-                                                if (!parentVal) {
-                                                    valid = false;
-                                                } else {
-                                                    required.forEach(function(dep) {
-                                                        var val = $('#' + modelName +'-'+ dep).val();
-                                                        if (!val || val === '') {
-                                                            valid = false;
-                                                        }
-                                                    });
-                                                }
-                                                if (!valid) {
-                                                    var self = $('#' + modelName +'-{$name}'); 
-                                                    if (self.data('select2')) {
-                                                        self.val(null)
-                                                            .trigger('select2:select')
-                                                            .find('option').remove().end()
-                                                            .prop('disabled', true)
-                                                            .trigger('select2:close');
-                                                    }
-                                                    return false;
-                                                }
+                                                return handleDepdropBeforeSend({
+                                                    depends: " . json_encode($depends) . ",
+                                                    selfId: '{$seftId}'
+                                                });
                                             }
                                         "),
                                     ],
@@ -889,31 +868,10 @@ class DropDown extends Component {
                                 'async' => $async,
                                 'beforeSend' => new \yii\web\JsExpression("
                                     function(jqXHR, settings) {
-                                        var parentVal = $('#' + '{$depends[0]}').val();
-                                        var valid = true;
-                                        var required = " . Json::encode($requiredDepends) . ";
-                                        var modelName = '{$modelName}';
-                                        if (!parentVal) {
-                                            valid = false;
-                                        } else {
-                                            required.forEach(function(dep) {
-                                                var val = $('#' + modelName +'-'+ dep).val();
-                                                if (!val || val === '') {
-                                                    valid = false;
-                                                }
-                                            });
-                                        }
-                                        if (!valid) {
-                                            var self = $('#' + modelName +'-{$name}');
-                                            if (self.data('select2')) {
-                                                self.val(null)
-                                                    .trigger('select2:select')
-                                                    .find('option').remove().end()
-                                                    .prop('disabled', true)
-                                                    .trigger('select2:close');
-                                            }
-                                            return false;
-                                        }
+                                        return handleDepdropBeforeSend({
+                                            depends: " . json_encode($depends) . ",
+                                            selfId: '{$seftId}'
+                                        });
                                     }
                                 "),
                             ],
@@ -1002,31 +960,10 @@ class DropDown extends Component {
                             'async' => $async,
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
-                                    var parentVal = $('#' + '{$depends[0]}').val();
-                                    var valid = true;
-                                    var required = " . Json::encode($requiredDepends) . ";
-                                    var modelName = '{$modelName}';
-                                    if (!parentVal) {
-                                        valid = false;
-                                    } else {
-                                        required.forEach(function(dep) {
-                                            var val = $('#' + modelName +'-'+ dep).val();
-                                            if (!val || val === '') {
-                                                valid = false;
-                                            }
-                                        });
-                                    }
-                                    if (!valid) {
-                                        var self = $('#' + modelName + '-{$control_name}');                                     
-                                        if (self.data('select2')) {
-                                            self.val(null)
-                                                .trigger('select2:select')
-                                                .find('option').remove().end()
-                                                .prop('disabled', true)
-                                                .trigger('select2:close');
-                                        }
-                                        return false;
-                                    }
+                                    return handleDepdropBeforeSend({
+                                        depends: " . json_encode($depends) . ",
+                                        selfId: '{$seftId}'
+                                    });
                                 }
                             "),
                         ],
@@ -2594,6 +2531,7 @@ class DropDown extends Component {
         }
 
         $allParam = is_array($extraParam) ? $extraParam : ["'" . $extraParam . "'"];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -2610,31 +2548,10 @@ class DropDown extends Component {
                         'ajaxSettings' => [
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
-                                    var parentVal = $('#' + '{$depends[0]}').val();
-                                    var valid = true;
-                                    var required = " . Json::encode($requiredDepends) . ";
-                                    var modelName = '{$modelName}';
-                                    if (!parentVal) {
-                                        valid = false;
-                                    } else {
-                                        required.forEach(function(dep) {
-                                            var val = $('#' + modelName +'-'+ dep).val();
-                                            if (!val || val === '') {
-                                                valid = false;
-                                            }
-                                        });
-                                    }
-                                    if (!valid) {
-                                        var self = $('#' + modelName +'-{$name}');
-                                        if (self.data('select2')) {
-                                            self.val(null)
-                                                .trigger('select2:select')
-                                                .find('option').remove().end()
-                                                .prop('disabled', true)
-                                                .trigger('select2:close');
-                                        }
-                                        return false;
-                                    }
+                                    return handleDepdropBeforeSend({
+                                        depends: " . json_encode($depends) . ",
+                                        selfId: '{$seftId}'
+                                    });
                                 }
                             "),
                         ],
