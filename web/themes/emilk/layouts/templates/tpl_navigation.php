@@ -1018,6 +1018,7 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'CMP Report'), 'url' => ['/misreports/reports/cmp-report']],
                                     ['label' => Yii::t('app', 'CC Truck Slip'), 'url' => ['/jasperreports/default/cc-truck-slip']],
                                     ['label' => Yii::t('app', 'DMR Report'), 'url' => ['/jasperreports/default/dmr-report']],
+                                    ['label' => Yii::t('app', 'MRG Report'), 'url' => ['/jasperreports/default/cc-sub-standard-mrg']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
