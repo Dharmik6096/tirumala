@@ -107,7 +107,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
         },
     ],
-    [
+        [
         'attribute' => 'created_at',
         'value' => function ($model) {
             return Yii::$app->controls->view_datetime($model->created_at, 'php:d-m-Y H:i:s');
@@ -115,7 +115,15 @@ $attribute = [
         'visible' => FALSE,
         'filter' => FALSE
     ],
-    [
+        [
+        'attribute' => 'date_of_joining',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_date($model->date_of_joining);
+        },
+        'visible' => FALSE,
+        'filter' => FALSE
+    ],
+        [
         'attribute' => 'created_by',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
