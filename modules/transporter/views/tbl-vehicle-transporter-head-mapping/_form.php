@@ -93,7 +93,7 @@ $script = "
              if(setData(vehicle_code)){
                 $.ajax({
                     type: 'post',
-                    url: '" . Url::to(['get-vehicle-detail']) . "',    
+                    url: '" . Url::to(['tbl-vehicle-master/get-vehicle-detail']) . "',    
                     data: 'vehicle_code='+vehicle_code,
                     success: function(data) {
                         var obj1 = $.parseJSON(data);
