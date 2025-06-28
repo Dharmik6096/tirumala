@@ -51,16 +51,16 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
             </div>
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'from_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, false, 'from_shift_code'); ?>
             </div>
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, false, 'to_shift_code'); ?>
             </div>
             <?= Html::hiddenInput('type', 'bmc', ['id' => 'type']); ?>
             <?php if (!$tripGenerateBtn) { ?>
@@ -73,7 +73,7 @@ $form = ActiveForm::begin([
                     </div>
                 <?php } else { ?>
                     <div class="col-sm-2 filldata"> 
-                        <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-union_code,type,tblbmcmilkdispatch-bmc_code,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
+                        <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-union_code,type,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
                     </div>
                 <?php } ?>
             <?php } else { ?>
@@ -98,7 +98,7 @@ $form = ActiveForm::begin([
                 <div class="col-sm-2 filldata">
                     <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
                     <?= Html::hiddenInput('tankerMovementWithTripSubStatus', $tankerMovementWithTripSubStatus, ['id' => 'tankerMovementWithTripSubStatus']); ?>
-                    <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
+                    <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
                 </div>
             <?php } ?>
             <div id="addTripButtonDiv" class="col-sm-2 addTripButtonDiv">
@@ -113,7 +113,8 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
                 <?= Html::hiddenInput('partyType', 'bmcMilkDispatch', ['id' => 'partyType']); ?>
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code,tankerMovement,partyType', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
+                <?= Html::hiddenInput('processType', 'tankerMilkDispatch', ['id' => 'processType']); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code,tankerMovement,partyType,processType', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2 mt15 no_pointer_disabled" id="is-last-destination-container">
                 <?= $form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
@@ -225,6 +226,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
+        <?= Html::activeHiddenInput($txn_model, 'physical_stock_only'); ?>
         <!-- <div class="clearfix"></div> -->
         <div id="transactions-from">
 
@@ -350,7 +352,7 @@ $(document).ready(function(){
     });
 });
 
-$(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code', function() {
+$(document).off('change', '#tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-vehicle_code', function() {
         var trip_code = $('#tblbmcmilkdispatch-trip_code').val();
         var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
         if(setData(trip_code) && setData(vehicle_code)){
@@ -377,14 +379,10 @@ $(document).off('change', '#tblbmcmilkdispatch-trip_code, #tblbmcmilkdispatch-ve
                                 }
                             } 
                         });
-                    } else {
-                        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
                     }
                 },
             });
-        } else {
-            $('#tblbmcmilkdispatchtxn-dispatch_qty').val('');
-        }             
+        }          
     });
 if(!isSecondTransaction) {
     $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
@@ -412,16 +410,17 @@ if(!isSecondTransaction) {
                                 }, 1000);
                             });
                         } else if (obj.data.is_auto_trip == 1) {
+                            if(setData(obj.data.destination_type) && setData(obj.data.destination_code)){
+                                var destType = obj.data.destination_type.toUpperCase();
+                                $('#tblbmcmilkdispatch-destination_type').val(destType).trigger('change').trigger('select2:select');
+                                setTimeout(function() {
+                                    $('#tblbmcmilkdispatch-destination_code').val(obj.data.destination_code).trigger('change').trigger('select2:select');
+                                }, 1000);
+                                updateLastDestinationCheckbox(destType);
+                            }
                             $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
                                 var destType = $(this).val().toUpperCase();
-                                var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');
-                                if (destType === 'PLANT' || destType === 'PARTY') {
-                                    $('#is-last-destination-container').show();
-                                    isCheckbox.prop('checked', true);
-                                } else {
-                                    $('#is-last-destination-container').hide();
-                                    isCheckbox.prop('checked', false);
-                                }  
+                                updateLastDestinationCheckbox(destType);
                             });
                         } else {
                             $('#is-last-destination-container').hide();
@@ -440,6 +439,17 @@ if(!isSecondTransaction) {
             });
         }
     });
+}
+
+function updateLastDestinationCheckbox(destType) {
+    var isCheckbox = $('#tblbmcmilkdispatch-is_last_destination');
+    if (destType === 'PLANT' || destType === 'PARTY') {
+        $('#is-last-destination-container').show();
+        isCheckbox.prop('checked', true);
+    } else {
+        $('#is-last-destination-container').hide();
+        isCheckbox.prop('checked', false);
+    }
 }
 
 function setData(field = ''){
@@ -472,11 +482,12 @@ function calculateClr(){
             data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
-                if (obj.status == 'success')
-                {
+                if (obj.status == 'success') {
                     if(is_clr_input==0){
+                        $('#tblbmcmilkdispatchtxn-clr').val('');
                         $('#tblbmcmilkdispatchtxn-clr').val(obj.data.toFixed(2));
                     }else{
+                        $('#tblbmcmilkdispatchtxn-snf').val('');
                         $('#tblbmcmilkdispatchtxn-snf').val(obj.data);
                     }
                 }
@@ -489,11 +500,12 @@ function calculateClr(){
 };
 
 $('#tblbmcmilkdispatch-bmc_code').change(function() {
+    $('#tblbmcmilkdispatchtxn-physical_stock_only').val('');
     isClrInput();
-    // setFromDateToDate();
+    setDatePurchaseDetails();
 });
 
-function setFromDateToDate(){
+function setDatePurchaseDetails(){
     $('.field-tblbmcmilkdispatch-from_date').addClass('disabled no_pointer');
     $('.field-tblbmcmilkdispatch-from_shift_code').addClass('no_pointer_disabled');
     $('.field-tblbmcmilkdispatch-to_date').addClass('disabled no_pointer');
@@ -502,26 +514,38 @@ function setFromDateToDate(){
     if(setData(bmcCode)){
         $.ajax({
             type: 'post',
-            url:'" . Url::to(['get-from-date-to-date']) . "',
+            url:'" . Url::to(['get-date-purchase-details']) . "',
             data: {'bmcCode':bmcCode},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
-                if (obj.data.status = 'success') {
-                    $('#tblbmcmilkdispatch-from_date').parent().kvDatepicker('update',obj.data.from_date);
+                if (obj.data.status == 'success') {
+                    $('#tblbmcmilkdispatch-from_date').val(obj.data.from_date).trigger('change');
                     $('#tblbmcmilkdispatch-from_shift_code').val(obj.data.from_shift).trigger('change').trigger('select2:select');
-                    $('#tblbmcmilkdispatch-to_date').parent().kvDatepicker('update',obj.data.to_date);
+                    $('#tblbmcmilkdispatch-to_date').val(obj.data.to_date).trigger('change');
                     $('#tblbmcmilkdispatch-to_shift_code').val(obj.data.to_shift).trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-physical_stock_only').val(obj.data.physical_stock_only);
+                    $('#purchase-detial').html(obj.result);
+                } else {
+                    resetFields();
                 }
             }
         });
+    } else {
+        resetFields();
     }
 };
+
+function resetFields() {
+    $('#tblbmcmilkdispatch-from_date').val('').change();
+    $('#tblbmcmilkdispatch-to_date').val('').change();
+    $('#tblbmcmilkdispatch-from_shift_code').val('').trigger('change');
+    $('#tblbmcmilkdispatch-to_shift_code').val('').trigger('change');
+    $('#purchase-detial table tbody').html('');
+}
 
 function isClrInput(){
     var union = $('#tblbmcmilkdispatch-union_code').val();
     var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
-    $('#tblbmcmilkdispatchtxn-snf').val('');
-    $('#tblbmcmilkdispatchtxn-clr').val('');
     if(setData(bmcCode)){
         $.ajax({
             type: 'post',
@@ -529,7 +553,7 @@ function isClrInput(){
             data: {'union_code':union,'bmcCode':bmcCode},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
-                if (setData(obj.data)) {
+                if (obj.status == 'success' && obj.data != null) {
                     var is_clr_input = obj.data;
                     $('#is_clr_input').val(is_clr_input);
                     if (is_clr_input == 0) {
@@ -568,7 +592,7 @@ $(document).on('change','#tblbmcmilkdispatchtxn-qty_diff_type_code', function() 
 ";
 
 $script .= "
-    $(document).on('change','.filldata', function() {
+    $(document).off('change', '.filldata').on('change', '.filldata', function () {
         var bmc_code = $('#tblbmcmilkdispatch-bmc_code').val();
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
         var from_date = $('#tblbmcmilkdispatch-from_date').val();
@@ -578,48 +602,20 @@ $script .= "
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
         var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
         if(setData(from_date) && setData(from_shift) && setData(to_date) && setData(to_shift) && setData(bmc_code) && setData(vehicle_code)){
-            $('#purchase-detial').html('');
             $('#transactions-from').html('');
             $('#transactions-detial').html('');           
             BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
         }      
     });
-    
-    function CheckTrip(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
-        $.ajax({
-                type: 'get',
-                url: '" . Url::to(['check-trip']) . "',
-                data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code,'vehicle_code' : vehicle_code},             
-                success: function(data) {
-                    var data=$.parseJSON(data);
-                    if (data.status == 'success'){   
-                    // $('#tblbmcmilkdispatch-trip_code').val(data.trip_code);
-                        BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code); 
-                    }else {
-                        $('#loadercontent').hide();
-                        $('#pageloader').hide();
-                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>' + data.msg + '</span></div></div>');
-                    }
-                } 
-        });   
-    }  
-  
+      
     function BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
         if(setData(union_code)){
-            $.ajax({
-                    type: 'get',
-                    url: '" . Url::to(['purchase-detail']) . "',
-                    data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code,'union_code' : union_code},             
-                    success: function(data) {
-                    $('#purchase-detial').html(data);                                                                 
-                    }
-                });
             $.ajax({
                     type: 'get',
                     url: '" . Url::to(['transaction-form']) . "',
                     data: {'bmc_code' : bmc_code,'union_code':union_code},             
                     success: function(data) {
-                    $('#transactions-from').html(data);                                                                 
+                        $('#transactions-from').html(data);                                                                 
                     }
                 });
         }
@@ -629,13 +625,9 @@ $script .= "
                     url: '" . Url::to(['transaction-detail']) . "',
                     data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code},             
                     success: function(data) {
-                    $('#transactions-detial').html(data);
-                //   $('#loadercontent').hide();
-                //   $('#pageloader').hide();  
+                        $('#transactions-detial').html(data);
                     },
                     error: function(data) {  
-                    //    $('#loadercontent').hide();
-                    //   $('#pageloader').hide();
                     }
                 });    
         } 
@@ -678,52 +670,24 @@ $this->registerJs($script, View::POS_END, 'bmc-config-popup');
 <?php
 if (!$readonly) {
     $script = "$(document).ready(function(){
-        function formatLocalDate(date) {
-            var day = date.getDate().toString().padStart(2, '0');
-            var month = (date.getMonth() + 1).toString().padStart(2, '0');
-            var year = date.getFullYear();
-            return day + '-' + month + '-' + year;
-        }
-        $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
-            var from_date = $('#tblbmcmilkdispatch-from_date').val();
+        $(document).on('change', '#tblbmcmilkdispatch-transaction_date, #tblbmcmilkdispatch-to_date', function() {
             var to_date = $('#tblbmcmilkdispatch-to_date').val();
-            if (setData(from_date) && setData(to_date)) {
-                // Split date strings and format them as yyyy-mm-dd
-                var from_date_parts = from_date.split('-');
-                var to_date_parts = to_date.split('-');
-                var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
-                var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
-    
-                var fromDateObj = new Date(formatted_from_date);
-                var toDateObj = new Date(formatted_to_date);
-                var date = new Date(formatted_to_date);
-                var currentDate = new Date();
-                date.setHours(0, 0, 0, 0);
-                currentDate.setHours(0, 0, 0, 0);
-                if (date < currentDate) {
-                    date.setDate(date.getDate() + 1);
-                } else {
-                   date.setDate(date.getDate());
-                }
-                date = formatLocalDate(date);
-                if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
-                    var errorMessage = 'must not be less than from date.';
+            var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (setData(transactionDate) && setData(to_date)) {
+                var toParts = to_date.split('-');
+                var txnParts = transactionDate.split('-');
+                var toDateObj = new Date(toParts[2], toParts[1] - 1, toParts[0]);
+                var txnDateObj = transactionDate ? new Date(txnParts[2], txnParts[1] - 1, txnParts[0]) : null;
+                if (setData(txnDateObj) && txnDateObj < toDateObj) {
+                    var errorMessage = 'must not be less than to date.';
                     var errorElement = '<div class=\"error-message error_message\">' + errorMessage + '</div>';
-                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                    $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
+                    $('.field-tblbmcmilkdispatch-transaction_date.error-message').remove();
+                    $('.field-tblbmcmilkdispatch-transaction_date').append(errorElement);
                 } else {
-                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker('destroy');
-                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
-                            format: 'dd-mm-yyyy', // Set your desired date format
-                            todayHighlight: true,
-                            autoclose: true,
-                            endDate: date,
-                            startDate: to_date
-                        });
-                     }  
+                    $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
+                }
             } else {
-                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
             }
         });
     });";

@@ -29,6 +29,9 @@ $attribute = [
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'label' => Yii::t('app', 'DCS Name'), 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'ex_member_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
+        }, 'label' => Yii::t('app', 'Member Code Ex'), 'vAlign' => 'middle', 'filter' => TRUE],
     ['attribute' => 'name', 'label' => Yii::t('app', 'Member Name'), 'vAlign' => 'middle'],
     ['attribute' => 'mobile_no'],
     ['attribute' => 'reason_id', 'value' => function($model) {

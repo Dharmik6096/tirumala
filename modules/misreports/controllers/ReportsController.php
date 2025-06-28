@@ -1025,8 +1025,8 @@ class ReportsController extends \app\controllers\ChildController {
             }
             if ($value == 'date_payment_cycle' && !empty($model->{$value})) {
                 $pay_cycle_date = explode('to', $model->{$value});
-                $controls['from_date'] = date('Y-m-d', strtotime($pay_cycle_date[0])).' 06:00:00';
-                $controls['to_date'] = (trim(date('Y-m-d', strtotime($pay_cycle_date[1])))).' 18:00:00';
+                $controls['from_date'] = date('Y-m-d', strtotime($pay_cycle_date[0])) . ' 06:00:00';
+                $controls['to_date'] = (trim(date('Y-m-d', strtotime($pay_cycle_date[1])))) . ' 18:00:00';
             } else {
                 $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
             }
@@ -2090,6 +2090,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionProductDispatchCenterWiseDetail() {
         $this->report = 'ProductDispatchCenterWiseDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionCmpReport() {
+        $this->report = 'CmpReport';
         return $this->actionIndex();
     }
 
@@ -4065,10 +4070,11 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Export Provisional Member Bank Receipt',
             ],
             'MilkCollectionStatusReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_type',
                 'sp_name' => 'mis_milk_collection_status_report',
                 'scenario' => 'MilkCollectionStatusReport',
                 'title' => 'Milk Collection Status Report',
+                'report_type' => [Yii::t('app', 'BMC Wise'), Yii::t('app', 'Company Wise')],
             ],
             'MilkCollectionFilterBased' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,report_type,from_value:txt,to_value:txt',
@@ -4506,14 +4512,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'ProcMisLotWiseDetails' => [
-                'param' => 'vehicle_code,trip_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'vehicle_code,trip_code:vehicle_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'proc_mis_lot_wise_details',
                 'scenario' => 'ProcMisLotWiseDetails',
                 'title' => 'Vehicle wise Quality Report',
                 'bkg_export' => TRUE,
             ],
             'ComparisonReport' => [
-                'param' => 'vehicle_code,trip_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'vehicle_code,trip_code:vehicle_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'proc_mis_quantity_and_quality_comparing',
                 'scenario' => 'ComparisonReport',
                 'title' => 'Comparison Report ',
@@ -4542,6 +4548,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_product_dispatch_zser',
                 'scenario' => 'ProductDispatchCenterWiseDetail',
                 'title' => 'Product Dispatch Center Wise Detail',
+            ],
+            'CmpReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_bmc_compare_date_wise',
+                'scenario' => 'CmpReport',
+                'title' => 'CMP Report ',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];

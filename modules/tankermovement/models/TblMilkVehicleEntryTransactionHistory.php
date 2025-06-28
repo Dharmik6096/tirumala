@@ -44,36 +44,33 @@ use Yii;
  * @property string $operation_type
  * @property string $history_created_by
  */
-class TblMilkVehicleEntryTransactionHistory extends \yii\db\ActiveRecord
-{
+class TblMilkVehicleEntryTransactionHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_milk_vehicle_entry_transaction_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['milk_vehicle_entry_transaction_code', 'milk_vehicle_entry_code', 'grn_no', 'chamber_no', 'challan_no', 'source_org_code', 'source_org_type', 'destination_code', 'destination_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by'], 'string'],
             [['vehicle_entry_chamber_date', 'created_at', 'updated_at', 'history_created_at', 'is_qty_only', 'is_pending_merge'], 'safe'],
             [['chamber_quantity', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['milk_quality_type_code', 'milk_type_code', 'originating_type'], 'integer'],
-            [['status','cron_pick_datetime','pick_datetime','response_datetime','response_msg'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['status', 'cron_pick_datetime', 'pick_datetime', 'response_datetime', 'response_msg'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'record_status'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'milk_vehicle_entry_transaction_code' => Yii::t('app', 'Milk Vehicle Entry Transaction Code'),
@@ -118,4 +115,5 @@ class TblMilkVehicleEntryTransactionHistory extends \yii\db\ActiveRecord
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
 }

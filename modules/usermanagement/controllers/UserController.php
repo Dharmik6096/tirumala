@@ -78,6 +78,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $contactModel->setModel('user', $this->model->id, 0);
                 }
                 $contactModel->department = $this->model->department;
+                $contactModel->primary_parent = !empty($this->model->primary_parent) ? $this->model->primary_parent : NULL;
+                $contactModel->secondary_parent = !empty($this->model->secondary_parent) ? $this->model->secondary_parent : NULL;
                 $master[] = $contactModel;
             }
             if (!empty($this->model->dispatch_center_type_code)) {
@@ -183,6 +185,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                                     $contNewModel->setModel('user', $model->id, 0);
                                 }
                                 $contNewModel->department = $model->department;
+                                $contNewModel->primary_parent = !empty($model->primary_parent) ? $model->primary_parent : NULL;
+                                $contNewModel->secondary_parent = !empty($model->secondary_parent) ? $model->secondary_parent : NULL;
                                 $master[] = $contNewModel;
 
                                 $appOrgModel = new TblAppOrganizationMapping();
@@ -224,6 +228,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             $contactModelData->is_active = 0;
                             $contactModel = $contactModelData;
                         }
+                        $contactModel->primary_parent = !empty($model->primary_parent) ? $model->primary_parent : NULL;
+                        $contactModel->secondary_parent = !empty($model->secondary_parent) ? $model->secondary_parent : NULL;
                         $master[] = $contactModel;
 
                         $appOrgModel = new TblAppOrganizationMapping();
@@ -264,6 +270,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             $contactModel->setModel('user', $model->id, 0);
                         }
                         $contactModel->department = $model->department;
+                        $contactModel->primary_parent = !empty($model->primary_parent) ? $model->primary_parent : NULL;
+                        $contactModel->secondary_parent = !empty($model->secondary_parent) ? $model->secondary_parent : NULL;
                         $master[] = $contactModel;
 
 
@@ -300,6 +308,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                                 $contactModel = $contactModelData;
                             }
                             $contactModel->department = $model->department;
+                            $contactModel->primary_parent = !empty($model->primary_parent) ? $model->primary_parent : NULL;
+                            $contactModel->secondary_parent = !empty($model->secondary_parent) ? $model->secondary_parent : NULL;
                             $master[] = $contactModel;
 
                             $appModel = new TblEiplAppLogin();

@@ -28,6 +28,13 @@ class DefaultValue extends Component {
                     'milk_type_code' => 3,
                     'milk_quality_type_code' => 1,
                 ],
+                'TblMilkVehicleEntryQlty' => [
+                    'sample_time' => date('H:i'),
+                    'sample_datetime' => date('Y-m-d'),
+                ],
+                'TblMember' => [
+                    'animal_type_code' => 1,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [
@@ -48,6 +55,11 @@ class DefaultValue extends Component {
             'AMULAMCS' => [
                 'TblBulkNotification' => [
                     'login_type' => 'farmer',
+                ],
+            ],
+            'COMFED' => [
+                'TblMember' => [
+                    'animal_type_code' => 3,
                 ],
             ],
         ];

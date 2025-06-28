@@ -325,18 +325,18 @@ class CustomValidation extends Component {
                     ],
                 ],
                 'TblProduct' => [
-                    [['product_type'], function ($attribute, $params) {
-                        Yii::$app->general->validateGlobalStatic($this, $attribute, 'product_type');
-                    }, 'on' => 'importCsv'],
-                    [['x_col3'], 'required', 'except' => ['androidsync', 'importCsv']],
-                    [['product_type'], 'required', 'on' => ['importCsv']],
-                    [['product_name'], function ($attribute, $params) {
-                        Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                    }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-                    [['product_type'], 'setProductType', 'on' => ['importCsv']],
-                    [['x_col3'], 'default', 'value' => 2],
-                    [['min_stock'], 'double', 'min' => 0],
-                    [['min_stock'], 'default', 'value' => 0],
+                        [['product_type'], function ($attribute, $params) {
+                            Yii::$app->general->validateGlobalStatic($this, $attribute, 'product_type');
+                        }, 'on' => 'importCsv'],
+                        [['x_col3'], 'required', 'except' => ['androidsync', 'importCsv']],
+                        [['product_type'], 'required', 'on' => ['importCsv']],
+                        [['product_name'], function ($attribute, $params) {
+                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                        }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
+                        [['product_type'], 'setProductType', 'on' => ['importCsv']],
+                        [['x_col3'], 'default', 'value' => 2],
+                        [['min_stock'], 'double', 'min' => 0],
+                        [['min_stock'], 'default', 'value' => 0],
                 ],
             ],
             'NIFPL' => [
@@ -1276,35 +1276,35 @@ class CustomValidation extends Component {
             'DODLA' => [
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], function ($attribute, $params) {
+                            [['parsing_no'], function ($attribute, $params) {
                                 Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                             }, 'except' => ['activation']],
-                        [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
+                            [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
                     ],
                 ],
                 'TblUserAndroid' => [
                     'default' => [
-                        [['email'], 'email'],
+                            [['email'], 'email'],
                     ],
                 ],
                 'TblBmcMilkDispatch' => [
                     'default' => [
-                        [['tested_by'], 'required']
+                            [['tested_by'], 'required']
                     ],
                 ],
                 'TblBmcMilkDispatchTxn' => [
                     'default' => [
-                        [['shift_of_milk'], 'required']
+                            [['shift_of_milk'], 'required']
                     ],
                 ],
                 'TblMilkVehicleEntryQlty' => [
                     'default' => [
-                        [['tested_by', 'verified_by'], 'required']
+                            [['tested_by', 'verified_by'], 'required', 'except' => ['resetQlty']]
                     ],
                 ],
                 'TblMilkVehicleEntryQltyMerge' => [
                     'default' => [
-                        [['tested_by', 'verified_by'], 'required']
+                            [['tested_by', 'verified_by'], 'required']
                     ],
                 ],
             ],
@@ -1335,12 +1335,37 @@ class CustomValidation extends Component {
                             [['message'], 'string', 'max' => 150],
                     ]
                 ],
-                // 'TblProduct' => [
-                //     'default' => [
-                //             [['ref_code'], 'required'],
-                //             [['ref_code'], 'validateRefCode'],
-                //     ],
-                // ],
+            // 'TblProduct' => [
+            //     'default' => [
+            //             [['ref_code'], 'required'],
+            //             [['ref_code'], 'validateRefCode'],
+            //     ],
+            // ],
+            ],
+            'ELANAD' => [
+                'TblBankDetails' => [
+                    'default' => [],
+                ],
+                'TblMember' => [
+                    'default' => [
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
+                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
+                            [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblmember-bank_code').val() != ''; 
+                        }", 'on' => ['importCsv']],
+                            [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                                return $model->is_active;
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['adhar_no'], function ($attribute, $params) {
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                    ],
+                ],
             ],
         ];
     }

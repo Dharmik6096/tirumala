@@ -121,6 +121,10 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 $this->model = $this->findModel($masterPost['milk_vehicle_entry_code']);
                 $txn_model->entry_type = Yii::$app->request->post()['entry_type'];
             }
+            $txn_model->trip_code = $this->model->trip_code;
+            $txn_model->union_code = $this->model->union_code;
+            $txn_model->receipt_at = $this->model->receipt_at;
+            $txn_model->receipt_at_code = $this->model->receipt_at_code;
             if ($this->model->validate() && $txn_model->validate()) {
                 $this->model->vehicle_entry_date = $this->model->receipt_datetime;
                 $this->model->receipt_datetime = date('Y-m-d', strtotime($this->model->receipt_datetime)) . ' ' . \Yii::$app->general->getshift($this->model->receipt_shift_code);
@@ -201,6 +205,9 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 $this->model->qty = number_format((float) $this->model->gross_weight - (float) $this->model->tare_weight, 2, '.', '');
                 $txn_model->tare_weight_time = date('Y-m-d') . ' ' . $txn_model->tare_weight_time;
                 $txn_model->gross_weight_time = date('Y-m-d') . ' ' . $txn_model->gross_weight_time;
+                if(empty($txn_model->destination_code) || empty($txn_model->destination_type) || empty($txn_model->source_org_code) || empty($txn_model->source_org_type)){
+                    $txn_model->setData($this->model);
+                }
                 $modelSave[] = $this->model;
 
                 $txn_model->vehicle_entry_chamber_date = $this->model->vehicle_entry_date;
@@ -352,6 +359,8 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                         $destName = Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
                     }
                 }
+                $modelData->gross_weight_time = date('H:i', strtotime($modelData->gross_weight_time));
+                $modelData->tare_weight_time = date('H:i', strtotime($modelData->tare_weight_time));
                 $config_data = TblConfigTxnResult::find()->select(['config_code', 'config_result'])->where(['ref_code' => $_POST['milk_vehicle_entry_transaction_code'], 'config_for' => 'PLANT_RECEIPT'])->asArray()->all();
                 $config_data = ArrayHelper::map($config_data, 'config_code', 'config_result');
                 $data['status'] = 'success';
@@ -476,7 +485,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionBulkApproval() {
         $milkVehicleEntryModel = new TblMilkVehicleEntry();
         $searchModel = new TblMilkVehicleEntrySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
+        $dataProvider = $searchModel->approvalSearch(Yii::$app->request->queryParams, TRUE);
 
         $selection = Yii::$app->request->post('selection');
         if (Yii::$app->request->post() && !empty($selection)) {
@@ -597,7 +606,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $milkVehicleEntryQlty->plant_code = \Yii::$app->request->post()['receipt_at_code'];
         $milkVehicleEntryQltyData = $milkVehicleEntryQlty->getMilkVehicleEntryQlty();
         if ($milkVehicleEntryQltyData['success']) {
-            $response = ['status' => 'success', 'record_data' => $milkVehicleEntryQltyData['record_data']];
+            $response = ['status' => 'success', 'record_data' => $milkVehicleEntryQltyData['record_data'], 'lotQltyData' => $milkVehicleEntryQltyData['lotQltyData']];
         } else if ($milkVehicleEntryQltyData['validation']) {
             $response = ['status' => 'error', 'msg' => 'Quality not Done or exceeded time limit for selected trip.', 'validation' => TRUE];
         } else {
