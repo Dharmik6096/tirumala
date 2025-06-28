@@ -365,8 +365,8 @@ $script = "
                $('#milk-receipt-transaction-detail').css('display', 'block');
                $('.trip-code-hide').css('display', 'none');
                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
-               $('#tblmilkvehicleentry-trip_code').val('').trigger('select2:select');
-               $('#tblmilkvehicleentry-vehicle_code').val('').trigger('select2:select');
+               $('#tblmilkvehicleentry-trip_code').val('').trigger('change').trigger('select2:select');
+               $('#tblmilkvehicleentry-vehicle_code').val('').trigger('change').trigger('select2:select');
                EntryType.classList.add('no_pointer');
             } else if (receipt_at == 'PLANT') {
                 $('.vehicle_code_hide').css('display', 'block');
@@ -883,12 +883,18 @@ $script = "
             });
     }
     $(document).on('change','#tblmilkvehicleentry-trip_code', function() {
-        var trip_code = $('#tblmilkvehicleentry-trip_code').val();
-        $('#tblmilkvehicleentry-dispatch_from').val(null).trigger('change');
-        $('#tblmilkvehicleentry-dispatch_from_code').val(null).trigger('change');
-        if (trip_code) {
-            SourceData(trip_code);
+        var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
+        var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
+        if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
+        } else {
+            var trip_code = $('#tblmilkvehicleentry-trip_code').val();
+            $('#tblmilkvehicleentry-dispatch_from').val(null).trigger('change');
+            $('#tblmilkvehicleentry-dispatch_from_code').val(null).trigger('change');
+            if (trip_code) {
+                SourceData(trip_code);
+            }
         }
+        
     });
    
 ";
