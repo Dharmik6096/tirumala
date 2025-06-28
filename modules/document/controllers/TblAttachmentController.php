@@ -88,11 +88,32 @@ class TblAttachmentController extends \app\controllers\ChildController {
                 if (empty($error_msg)) {
                     if ($approval_satge) {
                         $modelStages = new TblApprovalStagesDetail();
+                        $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $module_name)));
+                        $modelClass = Yii::$app->path->define($model_name);
                         if ($master_type == 'provisional_dcs') {
                             $module_name = 'society';
                         }
                         $modelStages->setApprovalData($model->union_code, $module_name, $module_code, $save_model, $approval_stages);
-                        $model->status = empty($approval_stages) ? 'Approve' : 'Register';
+                        if (!empty($approval_stages)) {
+                            $status = 'Register';
+                        }
+                        if (Yii::$app->request->post('operation') == 'reroute' && in_array($master_type, ['provisional_dcs', 'provisional_customer'])) {
+                            $primaryKey = $modelClass::primaryKey()[0];
+                            $model = $modelClass::find()->where([$primaryKey => $module_code])->one();
+                            $historyClass = $modelClass . 'History';
+                            $historyModel = new $historyClass();
+                            if ($master_type == 'provisional_dcs') {
+                                $model->milk_type_code = !empty($model->milk_type) ? explode(',', $model->milk_type) : [];
+                                $model->scenario = 'updateDcs';
+                            }
+                            Yii::$app->operation->history($model, $historyModel, UPDATE);
+                            $save_model[] = $historyModel;
+                            $model->remarks = Yii::$app->request->post('remarks') ?: '';
+                            if (!empty($approval_stages)) {
+                                $status = 'Reroute';
+                            }
+                        }
+                        $model->status = empty($approval_stages) ? 'Approve' : $status;
                         $save_model[] = $model;
                     }
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);

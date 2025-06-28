@@ -161,7 +161,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                     <?= $form->field($model, 'amount_due')->textInput(['readOnly' => true]) ?>
                 </div>
                 <div class="col-sm-1 noOfInstallment reset_field">
-                    <?= $form->field($model, 'no_of_installment')->textInput() ?>
+                    <?= Yii::$app->dropdown->dropdownStatic('no_of_installment', $model, $form, '', TRUE); ?>
                 </div>  
                 <div class="col-sm-2 dedStartDate reset_field">
                     <?= Yii::$app->controls->date($model, $form, 'deduction_start_date', '', date('Y-m-d'), false, false); ?>

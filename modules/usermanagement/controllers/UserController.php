@@ -60,6 +60,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $this->model->is_active = 1;
             $this->model->mobile_no = !empty($this->model->mobile_no) ? $this->model->mobile_no : NULL;
             $this->model->last_password_updated_at = date('Y-m-d H:i:s');
+            $this->model->date_of_joining = !empty($this->model->date_of_joining) ? date('Y-m-d', strtotime($this->model->date_of_joining)) : NULL;
 
             //Assign Role
             $master = [];
@@ -128,6 +129,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $model->load(Yii::$app->request->post());
 //                    $model->scenario = 'userUpdate';
                     $model->username = $oldUsername;
+                    $model->date_of_joining = !empty($model->date_of_joining) ? date('Y-m-d', strtotime($model->date_of_joining)) : NULL;
+                    $master[] = $historyModel;
                     $master[] = $model;
 
                     if ($model->oldAttributes['allow_app_login'] == 1 && $model->allow_app_login == 1) {
