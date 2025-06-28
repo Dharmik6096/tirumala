@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 $attribute = [
-        [
+    [
         'attribute' => 'username',
         'label' => 'Username',
         'value' => function(User $model) {
@@ -37,7 +37,7 @@ $attribute = [
     ],
     'user_code',
     'name',
-        [
+    [
         'attribute' => 'user_type_id',
         'label' => 'User Type',
         'value' => function(User $model) {
@@ -58,47 +58,47 @@ $attribute = [
         'format' => 'raw',
         'visible' => true,
     ],
-        [
+    [
         'attribute' => 'mobile_no',
         'value' => 'mobile_no',
         'visible' => TRUE,
         'filter' => true,
     ],
-        ['attribute' => 'allow_app_login',
+    ['attribute' => 'allow_app_login',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('allow_app_login', $searchModel, 'allow_app_login'),
         'value' => function (User $model) {
             return isset($model->allow_app_login) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->allow_app_login] : '';
         },],
-        ['attribute' => 'login_type',
+    ['attribute' => 'login_type',
         'filter' => FALSE,
         'value' => function (User $model) {
             return isset($model->login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '') : '';
         },],
-        [
+    [
         'attribute' => 'department',
         'value' => function(User $model) {
             return Yii::$app->general->getforeignkey($model->departmentCode, 'department');
         },
     ],
-        [
+    [
         'attribute' => 'wef_date',
         'value' => function(User $model) {
             return Yii::$app->controls->view_date($model->wef_date);
         },
     ],
-        [
+    [
         'attribute' => 'designation_code',
         'value' => function(User $model) {
             return Yii::$app->general->getforeignkey($model->designationCode, 'designation_name');
         },
     ],
-        [
+    [
         'attribute' => 'primary_parent',
         'value' => function(User $model) {
             return Yii::$app->general->getforeignkey($model->primaryParent, 'name');
         },
     ],
-        [
+    [
         'attribute' => 'secondary_parent',
         'value' => function(User $model) {
             return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
@@ -108,6 +108,14 @@ $attribute = [
         'attribute' => 'created_at',
         'value' => function ($model) {
             return Yii::$app->controls->view_datetime($model->created_at, 'php:d-m-Y H:i:s');
+        },
+        'visible' => FALSE,
+        'filter' => FALSE
+    ],
+    [
+        'attribute' => 'date_of_joining',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_date($model->date_of_joining);
         },
         'visible' => FALSE,
         'filter' => FALSE
