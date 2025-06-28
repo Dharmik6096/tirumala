@@ -2,6 +2,7 @@
 
 namespace app\modules\tankermovement\models;
 
+use app\modules\configuration\models\TblMilkQualityParamRange;
 use Yii;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\globalmaster\models\TblMilkQualityType;
@@ -73,7 +74,7 @@ use app\modules\transporter\models\TblVehicleCompartmentDetail;
  */
 class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty, $source_type, $source_code, $trip_code, $vehicle_code, $transaction_date;
+    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty, $source_type, $source_code, $trip_code, $vehicle_code, $transaction_date, $physical_stock_only, $from_date_tr, $is_clr_input;
 
     /**
      * @inheritdoc
@@ -91,7 +92,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'milk_analyser_type_code', 'ws_code', 'adt_param', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type'], 'integer'],
             [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'number'],
-            [['qty_time', 'qlty_time', 'created_at', 'updated_at', 'trip_code', 'vehicle_code', 'transaction_date', 'test_report_no', 'shift_of_milk'], 'safe'],
+            [['qty_time', 'qlty_time', 'created_at', 'updated_at', 'trip_code', 'vehicle_code', 'transaction_date', 'test_report_no', 'shift_of_milk', 'physical_stock_only', 'from_date_tr', 'is_clr_input'], 'safe'],
             [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'milk_quality_type_code', 'bmc_silos_info_code', 'chamber_no', 'bmc_milk_dispatch_code'], 'message' => Yii::t('app/validation', 'Chamber Entry for selected milk and silo has been already taken.'), 'on' => 'create'],
             //     [['milk_type_code'], function ($attribute, $params) {
             //     Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_dispatch_rate_required', 1);
@@ -103,6 +104,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'water', 'temperature', 'chamber_no'], 'required', 'on' => 'createPlantDispatch'],
             [['dispatch_qty'], 'ValidateCapacity', 'on' => ['createPlantDispatch', 'create']],
             [['shift_of_milk'], 'string', 'max' => 25],
+            [['fat'], 'validateQualityRange', 'except' => ['androidsync']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblBmcMilkDispatchTxn', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -214,7 +216,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             return;
         }
         // $current_stock_date = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($this->to_datetime)));
-        $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmcsilomilk_stock_detail (:bmc_code,:silo_code,:milk_type,:quality_type,:with_milk_type,:from_datetime,:to_datetime,:current_stock_date)}")
+        $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmcsilomilk_stock_detail (:bmc_code,:silo_code,:milk_type,:quality_type,:with_milk_type,:from_datetime,:to_datetime,:physical_stock_only)}")
                 ->bindValue(':from_datetime', $this->from_datetime)
                 ->bindValue(':to_datetime', $this->to_datetime)
                 ->bindValue(':bmc_code', $this->bmc_code)
@@ -222,7 +224,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 ->bindValue(':silo_code', $this->bmc_silos_info_code)
                 ->bindValue(':milk_type', $this->milk_type_code)
                 ->bindValue(':with_milk_type', $dispatch_with_milk_type)
-                ->bindValue(':current_stock_date', $this->to_datetime);
+                ->bindValue(':physical_stock_only', $this->physical_stock_only);
         $result = $query->queryAll();
         if (empty($result)) {
             $this->addError('bmc_silos_info_code', Yii::t('app/validation', 'Silo is empty.'));
@@ -230,6 +232,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             $this->opening_bal = $result[0]['opening_bal'];
             $this->purchase_qty = $result[0]['purchase_qty'];
             $this->current_dispatch_qty = $result[0]['current_dispatch_qty'];
+            $this->from_date_tr = $result[0]['from_date_tr'];
             $bal = ($this->opening_bal + $this->purchase_qty) - ($this->current_dispatch_qty + $this->dispatch_qty);
             // $balance = abs($bal);
             $balance = number_format((float) abs($bal), 2, '.', '');
@@ -376,6 +379,29 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
         $autoInc = str_pad($nextIncrement, 4, '0', STR_PAD_LEFT);
         return "{$prefix}/{$refCode}/{$year}/{$autoInc}";
+    }
+
+    public function validateQualityRange($attribute, $params) {
+        if (!empty($this->bmc_code) && $this->is_clr_input != '') {
+            $milkQualityParamRangeModel = new TblMilkQualityParamRange();
+            $milkQualityParamRangeModel->union_code = $this->union_code;
+            $milkQualityParamRangeModel->process_name = 'BMC_MILK_DISPATCH';
+            $milkQualityParamRangeModel->org_type = 'BMC';
+            $milkQualityParamRangeModel->org_code = $this->bmc_code;
+            $milkQualityParamRangeModel->animal_type_code = $this->milk_type_code;
+            $range = $milkQualityParamRangeModel->getQualityRange();
+            if (!empty($range)) {
+                if ($this->fat < $range->min_fat || $this->fat > $range->max_fat) {
+                    $this->addError('fat', "FAT should be between " . $range->min_fat . " and " . $range->max_fat);
+                }
+                if (($this->snf < $range->min_snf || $this->snf > $range->max_snf) && $this->is_clr_input == 0) {
+                    $this->addError('snf', "SNF should be between " . $range->min_snf . " and " . $range->max_snf);
+                }
+                if (($this->clr < $range->min_clr || $this->clr > $range->max_clr) && $this->is_clr_input == 1) {
+                    $this->addError('clr', "CLR should be between " . $range->min_clr . " and " . $range->max_clr);
+                }
+            }
+        }
     }
 
 }

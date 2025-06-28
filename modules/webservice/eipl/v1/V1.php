@@ -279,11 +279,11 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_alert_notification',
             ],
             'menu/master' => [
-                'param' => 'login_type#department',
+                'param' => 'union#login_type#department',
                 'sp' => 'sp_app_eipl_v1_menu_master'
             ],
             'user-widget/list' => [
-                'param' => 'login_type#department',
+                'param' => 'union#login_type#department',
                 'sp' => 'sp_app_eipl_v1_user_widget',
             ],
             'dashboard/bmc-mcc' => [
@@ -816,10 +816,6 @@ class V1 extends \yii\base\Module {
             'composite-dispatch-actual/list' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#status',
                 'sp' => 'sp_app_eipl_v1_CDA',
-            ],
-            'tanker-destination/list' => [
-                'param' => 'union',
-                'sp' => 'sp_app_eipl_v1_tanker_destination_list',
             ],
         ];
         return $label;

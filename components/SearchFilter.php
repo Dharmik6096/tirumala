@@ -658,6 +658,9 @@ class SearchFilter {
             'TblBmcDispatchFlushStockSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
+            'TblMilkQualityParamRangeSearch' => [
+                'filter' => ['quality_config_process_name', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

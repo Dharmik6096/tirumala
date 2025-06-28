@@ -77,6 +77,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'remarks')->textInput() ?>
     </div>
+    <div class="col-sm-2 mt25">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_rechilling'); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

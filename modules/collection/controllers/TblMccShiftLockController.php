@@ -460,7 +460,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             if ($setErp && Yii::$app->session->get('eiplCode') == 'MMD') {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => 'Transit Reovery Not Available.']);
-                return $this->redirect([$url]);
+                if ($url != 'api_response') {
+                    return $this->redirect([$url]);
+                }
             }
         }
         if (Yii::$app->session->get('eiplCode') == 'UMANG' && $updateField == 'bmc_lock' && $val == 1) {
@@ -491,7 +493,11 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         } else {
             $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];
         }
-        return $this->redirect(Url::previous());
+        if ($url == 'api_response') {
+            return $record;
+        } else {
+            return $this->redirect(Url::previous());
+        }
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {

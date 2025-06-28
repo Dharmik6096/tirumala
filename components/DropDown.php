@@ -203,7 +203,7 @@ class DropDown extends Component {
         if (!empty($selected)) {
             $script = "$(document).ready(function() {
                    $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
-                    });";
+                });";
             Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
         }
     }
@@ -323,11 +323,10 @@ class DropDown extends Component {
                     var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                     var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                     var unionCode = $('#" . $depends . "').val();
-                    if(unionCode!='' && length == 1) {
+                    if(unionCode != '' && unionCode != null && unionCode != undefined && unionCode != 'Loading ...' && length == 1) {
                         $('#'+modelname+'-'+fieldName).val(plant);
                         $('#'+modelname+'-'+fieldName).trigger('select2:select');
                         $('#'+modelname+'-'+fieldName).trigger('change');
-                        $('#'+modelname+'-'+fieldName).trigger('select2:select');
                     }
                 });
             });";
@@ -349,11 +348,10 @@ class DropDown extends Component {
                 var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                 var mcc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                 var plantCode = $('#" . $depends . "').val();
-                if(plantCode!='' && length == 1) {
+                if(plantCode!='' && plantCode != null && plantCode != undefined && plantCode != 'Loading ...' && length == 1) {
                     $('#'+modelname+'-'+fieldName).val(mcc);
                     $('#'+modelname+'-'+fieldName).trigger('select2:select');
                     $('#'+modelname+'-'+fieldName).trigger('change');
-                    $('#'+modelname+'-'+fieldName).trigger('select2:select');
                 }
             });
         });";
@@ -373,16 +371,15 @@ class DropDown extends Component {
                         var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
                         var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
                             var mccCode = $('#" . $depends . "').val();
-                        if(mccCode!='' && length == 0) {
+                        if(mccCode!='' && mccCode != null && mccCode != undefined && mccCode != 'Loading ...' && length == 0) {
                             $('#'+modelname+'-'+fieldName).parent('div').parent().show();
-                        } else if(length == 1) {
+                        } else if(mccCode!='' && mccCode != null && mccCode != undefined && mccCode != 'Loading ...' && length == 1) {
                             $('#'+modelname+'-'+fieldName).val(bmc);
                             if(hasBMC == 0){
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
                             }
                             $('#'+modelname+'-'+fieldName).trigger('select2:select');
                             $('#'+modelname+'-'+fieldName).trigger('change');
-                            $('#'+modelname+'-'+fieldName).trigger('select2:select');
                         } else if(hasBMC == 0) {
                             $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
                         }
@@ -450,11 +447,11 @@ class DropDown extends Component {
     public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false, $is_return = FALSE, $input_name = '') {
         $this->setClass($form, $name);
         if ($is_return) {
-            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name);
+            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name, FALSE);
         } else if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, '', $readonly, '', true, TRUE);
         } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', true, '', false, '', FALSE);
         }
     }
 
@@ -511,9 +508,9 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
     }
 
-    public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
+    public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false, $async = true) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/activate-customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/activate-customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly, '', true, '', false, '', $async);
     }
 
     public function activate_member_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
@@ -809,8 +806,7 @@ class DropDown extends Component {
         ]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
-
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '', $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -834,6 +830,7 @@ class DropDown extends Component {
         }
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
         $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($is_return) {
             return $form->field($model, !empty($input_name) ? $input_name : $name)
                             ->widget(DepDrop::classname(), [
@@ -849,6 +846,25 @@ class DropDown extends Component {
                                     'allParam' => ["'" . $extraParam . "'"],
                                     'initialize' => true,
                                     'allowClear' => true,
+                                    'ajaxSettings' => [
+                                        'async' => $async,
+                                        'beforeSend' => new \yii\web\JsExpression("
+                                            function(jqXHR, settings) {
+                                                var parentVal = $('#' + '{$depends[0]}').val();
+                                                if (!parentVal) {
+                                                    var self = $('#' + '{$seftId}');                                    
+                                                    if (self.data('select2')) {
+                                                        self.val(null).trigger('select2:select');
+                                                        self.trigger('select2:unselect');
+                                                        self.trigger('select2:close');
+                                                        self.find('option').remove();
+                                                        self.prop('disabled', true);
+                                                    }
+                                                    return false;
+                                                }
+                                            }
+                                        "),
+                                    ],
                                 ],
                                 'options' => $options
                             ])->label($islable);
@@ -867,6 +883,25 @@ class DropDown extends Component {
                             'allParam' => ["'" . $extraParam . "'"],
                             'initialize' => true,
                             'allowClear' => true,
+                            'ajaxSettings' => [
+                                'async' => $async,
+                                'beforeSend' => new \yii\web\JsExpression("
+                                    function(jqXHR, settings) {
+                                        var parentVal = $('#' + '{$depends[0]}').val();
+                                        if (!parentVal) {
+                                            var self = $('#' + '{$seftId}');                                    
+                                            if (self.data('select2')) {
+                                                self.val(null).trigger('select2:select');
+                                                self.trigger('select2:unselect');
+                                                self.trigger('select2:close');
+                                                self.find('option').remove();
+                                                self.prop('disabled', true);
+                                            }
+                                            return false;
+                                        }
+                                    }
+                                "),
+                            ],
                         ],
                         'options' => $options
                     ])->label($islable);
@@ -909,6 +944,7 @@ class DropDown extends Component {
         }
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
         $select2Options = !empty($form_id) ? ['pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id]] : ['pluginOptions' => ['allowClear' => true]];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
 
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
@@ -924,6 +960,22 @@ class DropDown extends Component {
                         'initialize' => true,
                         'ajaxSettings' => [
                             'async' => $async,
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    var parentVal = $('#' + '{$depends[0]}').val();
+                                    if (!parentVal) {
+                                        var self = $('#' + '{$seftId}');                                        
+                                        if (self.data('select2')) {
+                                            self.val(null).trigger('select2:select');
+                                            self.trigger('select2:unselect');
+                                            self.trigger('select2:close');
+                                            self.find('option').remove();
+                                            self.prop('disabled', true);
+                                        }
+                                        return false;
+                                    }
+                                }
+                            "),
                         ],
                     ],
                     'options' => [
@@ -2265,6 +2317,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['conversion_vendor' => Yii::t('app', 'conversion_vendor'), 'sales_party' => Yii::t('app', 'sales_party'), 'sales_office' => Yii::t('app', 'sales_office')],
             ],
+            'record_status' => [
+                'name' => 'record_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['hold' => Yii::t('app', 'Hold'), 'accepted' => Yii::t('app', 'Accepted'), 'rejected' => Yii::t('app', 'Rejected')],
+            ],
+            'quality_config_process_name' => [
+                'name' => 'process_name',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['BMC_MILK_DISPATCH' => Yii::t('app', 'BMC MILK DISPATCH'), 'PLANT_MILK_RECEIPT' => Yii::t('app', 'PLANT MILK RECEIPT')],
+            ],
         ];
         return $records[$l];
     }
@@ -2418,6 +2480,7 @@ class DropDown extends Component {
             'vehicle_transpoter' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'whereCondition' => ['vehicle_use_type' => [1, 2], 'union_code' => !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : '']],
             'general_party_master' => ['name' => 'general_party_master_code', 'fields' => 'general_party_master_code,party_name~party_type,ref_code', 'prompt' => 'Select Party', 'model' => 'TblGeneralPartyMaster', 'depend' => 'bmc_code'],
             'bmc_chiller_info' => ['name' => 'chiller_info_code', 'fields' => 'chiller_info_code,owner_name,sap_vendor_code', 'prompt' => Yii::t('app', 'Select BMC Chiller Info'), 'model' => 'TblBmcChillerInfo', 'depend' => 'bmc_code'],
+            'vehicle_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'vehicle_code'],
         ];
         return $label[$l];
     }
@@ -2600,6 +2663,7 @@ class DropDown extends Component {
         $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'placeholder' => $placeholder, 'dropdownParent' => '#' . $form_id, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]];
 
         $allParam = is_array($extraParam) ? $extraParam : ["'" . $extraParam . "'"];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -2613,14 +2677,27 @@ class DropDown extends Component {
                         'allParam' => $allParam,
                         'initialize' => true,
                         'allowClear' => true,
+                        'ajaxSettings' => [
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    var parentVal = $('#' + '{$depends[0]}').val();
+                                    if (!parentVal) {
+                                        var self = $('#' + '{$seftId}');                            
+                                        if (self.data('select2')) {
+                                            self.val(null).trigger('select2:select');
+                                            self.trigger('select2:unselect');
+                                            self.trigger('select2:close');
+                                            self.find('option').remove();
+                                            self.prop('disabled', true);
+                                        }
+                                        return false;
+                                    }
+                                }
+                            "),
+                        ],
                     ],
                     'options' => $options
                 ])->label($islable);
-
-        // echo "<pre>";
-        // print_r($depends);
-        // echo "</pre>";
-
 
         $selected = Json::encode($data);
         if (!empty($selected)) {

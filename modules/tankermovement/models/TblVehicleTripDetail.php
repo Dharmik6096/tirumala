@@ -205,7 +205,8 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             }
         }
         if (!empty($tripCode) && $bmc_code != 'alltrip' && $tripCode != 'alltrip') {
-            $query->orWhere(['tbl_vehicle_trip.trip_code' => $tripCode]);
+            $query->orWhere(['tbl_vehicle_trip.trip_code' => $tripCode])
+                ->andFilterWhere(['tbl_vehicle_trip.vehicle_code' => $vehicle_code]);
         }
         $data = $query->all();
         return ArrayHelper::map($data, 'trip_code', 'trip_code');

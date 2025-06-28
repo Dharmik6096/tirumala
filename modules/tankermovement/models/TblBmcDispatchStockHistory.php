@@ -63,7 +63,7 @@ class TblBmcDispatchStockHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['from_shift_code', 'to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type', 'operation_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'bmc_code', 'plant_code', 'mcc_plant_code', 'union_code', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'type', 'history_created_by', 'id', 'bmc_dispatch_stock_code', 'opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water', 'transaction_date', 'from_date', 'to_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['from_shift_code', 'to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type', 'operation_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'bmc_code', 'plant_code', 'mcc_plant_code', 'union_code', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'type', 'history_created_by', 'id', 'bmc_dispatch_stock_code', 'opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water', 'transaction_date', 'from_date', 'to_date', 'created_at', 'updated_at', 'history_created_at', 'from_date_tr'], 'safe'],
         ];
     }
 

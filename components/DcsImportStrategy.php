@@ -350,7 +350,7 @@ class DcsImportStrategy extends ARImportStrategy {
                                 if (!empty($memberModel->set_master_hierarchy)) {
                                     $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
                                 }
-                                $memberModel->animal_type_code = 1;
+                                Yii::$app->default->getDefaults($memberModel);
                                 $memberModel->address = $model->dcs_name;
                                 $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
                                 $memberModel->member_type_code = '1';

@@ -385,17 +385,30 @@ $defaultToggle = true;
                                             <?php
                                         }
                                         if (in_array($value, array('p_trip_code'))) {
-                                            ?>
-                                            <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'p_trip_code'); ?>
-                                            </div>
-                                            <?php
+                                            if (isset($value_array[1]) && $value_array[1] == 'p_vehicle_code') {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->depend_dropdown('vehicle_trip', $model, $form, 'reportsmodel-p_vehicle_code', 'form-group col-sm-4', $model->getAttributeLabel('p_trip_code')); ?>
+                                                </div>
+                                            <?php } else { ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'p_trip_code'); ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (in_array($value, array('p_vehicle_code'))) {
                                             ?>
                                             <div class="col-sm-3 val_dcs_code">
                                                 <?= Yii::$app->dropdown->vehicle($model, $form, 'p_vehicle_code', $model->getAttributeLabel('vehicle_code')); ?>
                                             </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= $form->field($model, $value)->textInput(['maxlength' => true]) ?>
+                                            </div>  
                                             <?php
                                         }
                                     }

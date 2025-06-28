@@ -19,10 +19,10 @@ class ReportsModel extends Model {
     public $financial_year_code, $member_code, $p_status, $with_and_without_milktype, $route_code, $p_route_code, $p_union_code, $p_union_name, $p_dcs_name, $p_route_name, $p_type;
     public $p_is_bank;
     public $state_code, $p_district_code, $p_sub_district_code, $p_block_name;
-    public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty;
+    public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty, $p_qty_from, $p_qty_to, $p_fat_from, $p_fat_to, $p_snf_from, $p_snf_to;
     public $p_plant_code, $p_mcc_code, $p_bmc_code, $p_ltr_kg, $p_customer_code, $p_customer_type, $p_payment_cycle_code, $p_staff_member_code, $p_month, $p_dcsc_code, $p_billing_for;
     public $region_code, $area_code, $p_transporter_code, $p_party_master_code;
-    public $locale, $digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no, $p_mpp_survey_id, $p_VCG_M_Id, $p_trip_code, $p_vehicle_code;
+    public $locale, $digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no, $p_mpp_survey_id, $p_VCG_M_Id, $p_trip_code, $p_vehicle_code, $trip_code;
 
     function __construct() {
         if (Yii::$app->session->get('LanguageId') == 0) {
@@ -53,7 +53,7 @@ class ReportsModel extends Model {
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_dcs_payment'], 'required', 'on' => 'MemberRegister'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment'], 'required', 'on' => 'MemberWisePaymentRegister'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code'], 'required', 'on' => 'MemberClassificationRegister'],
-            [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code', 'p_customer_type', 'p_customer_code', 'p_payment_cycle_code', 'p_member_code', 'p_staff_member_code', 'p_month', 'p_mcc_code', 'p_bmc_code', 'p_dcsc_code', 'p_billing_for', 'p_route_code', 'route_code', 'p_from_date', 'p_to_date'], 'safe'],
+            [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code', 'p_customer_type', 'p_customer_code', 'p_payment_cycle_code', 'p_member_code', 'p_staff_member_code', 'p_month', 'p_mcc_code', 'p_bmc_code', 'p_dcsc_code', 'p_billing_for', 'p_route_code', 'route_code', 'p_from_date', 'p_to_date', 'p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'safe'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
             [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
             [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
@@ -102,6 +102,9 @@ class ReportsModel extends Model {
             [['union_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['PartyPaymentBill']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ShiftWiseBill']],
             [['p_from_date', 'p_to_date'], 'required', 'on' => ['CompleteTrip']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['CcTruckSlip', 'DmrReport', 'CcSubStandardMrg']],
+            [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'double'],
+            [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'validatePair', 'on' => ['CcSubStandardMrg']],
         ];
     }
 
@@ -169,7 +172,43 @@ class ReportsModel extends Model {
             'p_lr_no' => \Yii::t('app', 'LR No'),
             'p_vehicle_no' => \Yii::t('app', 'Vehicle No'),
             'p_trip_code' => \Yii::t('app', 'Trip Code'),
+            'p_qty_from' => \Yii::t('app', 'Qty From'),
+            'p_qty_to' => \Yii::t('app', 'Qty To'),
+            'p_fat_from' => \Yii::t('app', 'Fat From'),
+            'p_fat_to' => \Yii::t('app', 'Fat To'),
+            'p_snf_from' => \Yii::t('app', 'Snf From'),
+            'p_snf_to' => \Yii::t('app', 'Snf To'),
         ];
+    }
+
+    public function validatePair($attribute, $params) {
+        if (!empty($this->p_qty_from) && empty($this->p_qty_to)) {
+            $this->addError('p_qty_to', 'To Qty cannot be blank.');
+        }
+        if (!empty($this->p_qty_to) && empty($this->p_qty_from)) {
+            $this->addError('p_qty_from', 'From Qty cannot be blank.');
+        }
+        if (!empty($this->p_qty_from) && !empty($this->p_qty_to) && $this->p_qty_from >= $this->p_qty_to) {
+            $this->addError('p_qty_to', 'To Qty must be greater than From Qty.');
+        }
+        if (!empty($this->p_fat_from) && empty($this->p_fat_to)) {
+            $this->addError('p_fat_to', 'To Fat cannot be blank.');
+        }
+        if (!empty($this->p_fat_to) && empty($this->p_fat_from)) {
+            $this->addError('p_fat_from', 'From Fat cannot be blank.');
+        }
+        if (!empty($this->p_fat_from) && !empty($this->p_fat_to) && $this->p_fat_from >= $this->p_fat_to) {
+            $this->addError('p_fat_to', 'To Fat must be greater than From Fat.');
+        }
+        if (!empty($this->p_snf_from) && empty($this->p_snf_to)) {
+            $this->addError('p_snf_to', 'To SNF cannot be blank.');
+        }
+        if (!empty($this->p_snf_to) && empty($this->p_snf_from)) {
+            $this->addError('p_snf_from', 'From SNF cannot be blank.');
+        }
+        if (!empty($this->p_snf_from) && !empty($this->p_snf_to) && $this->p_snf_from >= $this->p_snf_to) {
+            $this->addError('p_snf_to', 'To SNF must be greater than From SNF.');
+        }
     }
 
 }

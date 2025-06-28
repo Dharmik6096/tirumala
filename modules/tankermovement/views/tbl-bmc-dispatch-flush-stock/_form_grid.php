@@ -13,7 +13,7 @@ $milk_type = $milkType->getAnimalMilkTypeArray();
 $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'visible' => true, 'filter' => false],
+        }, 'visible' => false, 'filter' => false],
         ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'visible' => false, 'filter' => false],
@@ -23,7 +23,9 @@ $attribute = [
         ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }],
-        ['attribute' => 'bmc_code', 'label' => (Yii::t('app', 'BMC Code')), 'value' => 'bmc_code', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'bmc_code', 'label' => (Yii::t('app', 'BMC Ref.Code')), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        }, 'vAlign' => 'middle', 'filter' => false],
         [
         'attribute' => 'transaction_date',
         'value' => function($model) {
@@ -40,7 +42,9 @@ $attribute = [
         ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
         }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilter('milk_quality_type_code', $searchModel, 'milk_quality_type_code', Yii::t('app', 'Select'))],
-        ['attribute' => 'bmc_silos_info_code'],
+        ['attribute' => 'bmc_silos_info_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->silosInfoCode, 'silo_no');
+        }, 'vAlign' => 'middle'],
         ['attribute' => 'qty'],
         ['attribute' => 'remarks'],
 ];
