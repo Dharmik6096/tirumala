@@ -36,7 +36,7 @@ class TblEiplAppWidgetMappingHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['mapping_id', 'widget_id'], 'safe'],
+            [['mapping_id', 'widget_id', 'union_code'], 'safe'],
             [['login_type', 'department', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
         ];
