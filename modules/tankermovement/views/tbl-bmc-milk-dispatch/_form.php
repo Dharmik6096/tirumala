@@ -227,6 +227,7 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
         <?= Html::activeHiddenInput($txn_model, 'physical_stock_only'); ?>
+        <?= Html::activeHiddenInput($txn_model, 'is_clr_input'); ?>
         <!-- <div class="clearfix"></div> -->
         <div id="transactions-from">
 
@@ -469,7 +470,7 @@ function calculateClr(){
     var fat = $('#tblbmcmilkdispatchtxn-fat').val();
     var snf = $('#tblbmcmilkdispatchtxn-snf').val();
     var clr = $('#tblbmcmilkdispatchtxn-clr').val();
-    var is_clr_input = $('#is_clr_input').val()
+    var is_clr_input = $('#is_clr_input').val();
     var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
 
     is_clr_input == 0 && (fat == '' || snf == '') && $('#tblbmcmilkdispatchtxn-clr').val('');
@@ -493,7 +494,6 @@ function calculateClr(){
                 }
             },
             error:function(data){
-
             }
         });
     }    
@@ -503,7 +503,68 @@ $('#tblbmcmilkdispatch-bmc_code').change(function() {
     $('#tblbmcmilkdispatchtxn-physical_stock_only').val('');
     isClrInput();
     setDatePurchaseDetails();
+    checkQualityRanges();
 });
+
+
+$(document).on('change', '#tblbmcmilkdispatchtxn-milk_type_code', function() {
+    checkQualityRanges();
+});
+
+function checkQualityRanges(){
+    var union = $('#tblbmcmilkdispatch-union_code').val();
+    var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+    var milkTypeCode = $('#tblbmcmilkdispatchtxn-milk_type_code').val();
+    if(setData(milkTypeCode) && setData(bmcCode)){
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['get-quality-param-range']) . "',
+            data: {'union':union, 'bmcCode':bmcCode, 'milkTypeCode':milkTypeCode},
+            success: function(data) {  
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success') {
+                    var range = obj.data;
+                    var minFat = parseFloat(range.min_fat);
+                    var maxFat = parseFloat(range.max_fat);
+                    var minSnf = parseFloat(range.min_snf);
+                    var maxSnf = parseFloat(range.max_snf);
+                    var minClr = parseFloat(range.min_clr);
+                    var maxClr = parseFloat(range.max_clr);
+                    function showError(fieldName, min, max) {
+                        var msg = fieldName + ' should be between ' + min + ' and ' + max;
+                        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+msg+\"</span></div></div>\");
+                    }
+                    $(document).off('change', '#tblbmcmilkdispatchtxn-fat, #tblbmcmilkdispatchtxn-snf, #tblbmcmilkdispatchtxn-clr').on('change', '#tblbmcmilkdispatchtxn-fat, #tblbmcmilkdispatchtxn-snf, #tblbmcmilkdispatchtxn-clr', function () {
+                        var fat = parseFloat($('#tblbmcmilkdispatchtxn-fat').val());
+                        var snf = parseFloat($('#tblbmcmilkdispatchtxn-snf').val());
+                        var clr = parseFloat($('#tblbmcmilkdispatchtxn-clr').val());
+
+                        if (!isNaN(fat) && (fat < minFat || fat > maxFat)) {
+                            showError('FAT', minFat, maxFat);
+                            $('#tblbmcmilkdispatchtxn-fat').val('');
+                        }
+                        if (!$('#tblbmcmilkdispatchtxn-snf').is('[readonly]')) {
+                            var snf = parseFloat($('#tblbmcmilkdispatchtxn-snf').val());
+                            if (!isNaN(snf) && (snf < minSnf || snf > maxSnf)) {
+                                showError('SNF', minSnf, maxSnf);
+                                $('#tblbmcmilkdispatchtxn-snf').val('');
+                            }
+                        }
+                        if (!$('#tblbmcmilkdispatchtxn-clr').is('[readonly]')) {
+                            var clr = parseFloat($('#tblbmcmilkdispatchtxn-clr').val());
+                            if (!isNaN(clr) && (clr < minClr || clr > maxClr)) {
+                                showError('CLR', minClr, maxClr);
+                                $('#tblbmcmilkdispatchtxn-clr').val('');
+                            }
+                        }
+                    });
+                }
+            },
+            error:function(data){
+            }
+        });
+    }    
+};
 
 function setDatePurchaseDetails(){
     $('.field-tblbmcmilkdispatch-from_date').addClass('disabled no_pointer');
@@ -546,6 +607,7 @@ function resetFields() {
 function isClrInput(){
     var union = $('#tblbmcmilkdispatch-union_code').val();
     var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+    $('#tblbmcmilkdispatchtxn-is_clr_input').val('');
     if(setData(bmcCode)){
         $.ajax({
             type: 'post',
@@ -556,6 +618,7 @@ function isClrInput(){
                 if (obj.status == 'success' && obj.data != null) {
                     var is_clr_input = obj.data;
                     $('#is_clr_input').val(is_clr_input);
+                    $('#tblbmcmilkdispatchtxn-is_clr_input').val(is_clr_input);
                     if (is_clr_input == 0) {
                         $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
                         $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true);
@@ -670,47 +733,24 @@ $this->registerJs($script, View::POS_END, 'bmc-config-popup');
 <?php
 if (!$readonly) {
     $script = "$(document).ready(function(){
-        function formatLocalDate(date) {
-            var day = date.getDate().toString().padStart(2, '0');
-            var month = (date.getMonth() + 1).toString().padStart(2, '0');
-            var year = date.getFullYear();
-            return day + '-' + month + '-' + year;
-        }
-        $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
-            var from_date = $('#tblbmcmilkdispatch-from_date').val();
+        $(document).on('change', '#tblbmcmilkdispatch-transaction_date, #tblbmcmilkdispatch-to_date', function() {
             var to_date = $('#tblbmcmilkdispatch-to_date').val();
-            if (setData(from_date) && setData(to_date)) {
-                // Split date strings and format them as yyyy-mm-dd
-                var from_date_parts = from_date.split('-');
-                var to_date_parts = to_date.split('-');
-                var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
-                var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
-    
-                var fromDateObj = new Date(formatted_from_date);
-                var toDateObj = new Date(formatted_to_date);
-                var currentDate = new Date();
-                currentDate.setHours(0, 0, 0, 0);
-                date = formatLocalDate(currentDate);
-                if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
-                    var errorMessage = 'must not be less than from date.';
+            var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (setData(transactionDate) && setData(to_date)) {
+                var toParts = to_date.split('-');
+                var txnParts = transactionDate.split('-');
+                var toDateObj = new Date(toParts[2], toParts[1] - 1, toParts[0]);
+                var txnDateObj = transactionDate ? new Date(txnParts[2], txnParts[1] - 1, txnParts[0]) : null;
+                if (setData(txnDateObj) && txnDateObj < toDateObj) {
+                    var errorMessage = 'must not be less than to date.';
                     var errorElement = '<div class=\"error-message error_message\">' + errorMessage + '</div>';
-                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                    $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
+                    $('.field-tblbmcmilkdispatch-transaction_date.error-message').remove();
+                    $('.field-tblbmcmilkdispatch-transaction_date').append(errorElement);
                 } else {
-                    var defaultTransactionDate = to_date;
-                    $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker('destroy');
-                    $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
-                            format: 'dd-mm-yyyy', // Set your desired date format
-                            todayHighlight: true,
-                            autoclose: true,
-                            endDate: date,
-                            startDate: to_date
-                        });
-                     }
-                    $('#tblbmcmilkdispatch-transaction_date').val(defaultTransactionDate).trigger('change');
+                    $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
+                }
             } else {
-                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
             }
         });
     });";

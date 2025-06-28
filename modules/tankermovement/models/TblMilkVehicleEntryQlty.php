@@ -64,7 +64,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by', 'sample_datetime', 'record_status', 'sample_time'], 'safe'],
+            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by', 'sample_datetime', 'record_status', 'sample_time', 'is_qty_only', 'is_pending_merge', 'is_approved'], 'safe'],
             [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['chamber_no', 'acidity', 'mbrt', 'sample_datetime', 'record_status'], 'required', 'except' => ['resetQlty']],
             [['sample_time'], 'required', 'on' => ['qltySubmit', 'update']],
@@ -78,6 +78,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                     Yii::$app->general->validateTime($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['qltySubmit', 'update']],
             [['sample_datetime'], 'validateSampleAfterGrossWeight', 'on' => ['qltySubmit', 'update']],
+            [['is_qty_only', 'is_pending_merge', 'is_approved'], 'default', 'value' => 1],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMilkVehicleEntryQlty', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
