@@ -1129,7 +1129,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -2201,6 +2201,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['hold' => Yii::t('app', 'Hold'), 'accepted' => Yii::t('app', 'Accepted'), 'rejected' => Yii::t('app', 'Rejected')],
             ],
+            'quality_config_process_name' => [
+                'name' => 'process_name',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['BMC_MILK_DISPATCH' => Yii::t('app', 'BMC MILK DISPATCH'), 'PLANT_MILK_RECEIPT' => Yii::t('app', 'PLANT MILK RECEIPT')],
+            ],
         ];
         return $records[$l];
     }
@@ -2439,7 +2444,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'pluginOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
