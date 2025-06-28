@@ -799,34 +799,6 @@ class DropDown extends Component {
     private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '', $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
-        $requiredDepends = [];
-
-        // Step 1: Get all required fields in current scenario
-        $requiredAttributes = [];
-        foreach ($model->getActiveValidators() as $validator) {
-            if ($validator instanceof \yii\validators\RequiredValidator) {
-                $requiredAttributes = array_merge($requiredAttributes, $validator->attributes);
-            }
-        }
-        $requiredAttributes = array_unique($requiredAttributes);
-
-        // Step 2: Now filter only $depends that are in $requiredAttributes
-        foreach ($depends as $depField) {
-            $parts = explode('-', $depField);
-            if (count($parts) === 2) {
-                $fieldName = $parts[1];
-            } elseif (!empty($parts[0])) {
-                $fieldName = $parts[0];
-            } else {
-                continue;
-            }
-
-            if (in_array($fieldName, $requiredAttributes)) {
-                $requiredDepends[] = $fieldName;
-            }
-        }
-
-        $modelName = strtolower((new ReflectionClass($model))->getShortName());
 
         $options = [];
         $options['readonly'] = $readonly;
@@ -851,8 +823,7 @@ class DropDown extends Component {
         $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]];
         $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($is_return) {
-            $name = !empty($input_name) ? $input_name : $name;
-            return $form->field($model, $name)
+            return $form->field($model, !empty($input_name) ? $input_name : $name)
                             ->widget(DepDrop::classname(), [
                                 'type' => $dropDownType,
                                 'data' => [$model->{$name} => $model->{$name}],
@@ -941,33 +912,6 @@ class DropDown extends Component {
 
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
-        $requiredDepends = [];
-
-        // Step 1: Get all required fields in current scenario
-        $requiredAttributes = [];
-        foreach ($model->getActiveValidators() as $validator) {
-            if ($validator instanceof \yii\validators\RequiredValidator) {
-                $requiredAttributes = array_merge($requiredAttributes, $validator->attributes);
-            }
-        }
-        $requiredAttributes = array_unique($requiredAttributes);
-
-        // Step 2: Now filter only $depends that are in $requiredAttributes
-        foreach ($depends as $depField) {
-            $parts = explode('-', $depField);
-            if (count($parts) === 2) {
-                $fieldName = $parts[1];
-            } elseif (!empty($parts[0])) {
-                $fieldName = $parts[0];
-            } else {
-                continue;
-            }
-
-            if (in_array($fieldName, $requiredAttributes)) {
-                $requiredDepends[] = $fieldName;
-            }
-        }
-        $modelName = strtolower((new ReflectionClass($model))->getShortName());
 
         $tabIndex = ($tab) ? -1 : '';
         $dropDownType = DepDrop::TYPE_DEFAULT;
@@ -2549,33 +2493,6 @@ class DropDown extends Component {
     private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
-        $requiredDepends = [];
-
-        // Step 1: Get all required fields in current scenario
-        $requiredAttributes = [];
-        foreach ($model->getActiveValidators() as $validator) {
-            if ($validator instanceof \yii\validators\RequiredValidator) {
-                $requiredAttributes = array_merge($requiredAttributes, $validator->attributes);
-            }
-        }
-        $requiredAttributes = array_unique($requiredAttributes);
-
-        // Step 2: Now filter only $depends that are in $requiredAttributes
-        foreach ($depends as $depField) {
-            $parts = explode('-', $depField);
-            if (count($parts) === 2) {
-                $fieldName = $parts[1];
-            } elseif (!empty($parts[0])) {
-                $fieldName = $parts[0];
-            } else {
-                continue;
-            }
-
-            if (in_array($fieldName, $requiredAttributes)) {
-                $requiredDepends[] = $fieldName;
-            }
-        }
-        $modelName = strtolower((new ReflectionClass($model))->getShortName());
 
         $options = [];
         $options['readonly'] = $readonly;
