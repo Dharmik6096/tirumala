@@ -792,8 +792,7 @@ class DropDown extends Component {
 //         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
         $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($is_return) {
-            $name = !empty($input_name) ? $input_name : $name;
-            return $form->field($model, $name)
+            return $form->field($model, !empty($input_name) ? $input_name : $name)
                             ->widget(DepDrop::classname(), [
                                 'type' => $dropDownType,
                                 'data' => [$model->{$name} => $model->{$name}],
