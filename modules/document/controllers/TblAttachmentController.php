@@ -110,7 +110,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
                             $save_model[] = $historyModel;
                             $model->remarks = Yii::$app->request->post('remarks') ?: '';
                             if (!empty($approval_stages)) {
-                                $status = 'Re-route';
+                                $status = 'Reroute';
                             }
                         }
                         $model->status = empty($approval_stages) ? 'Approve' : $status;

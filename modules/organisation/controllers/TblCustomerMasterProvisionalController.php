@@ -157,7 +157,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
             if ($transaction == 'customRedirect') {
-                if ($this->model->status == 'Pending' || $this->model->status == 'Re-route') {
+                if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
                     return $this->redirect(['document-upload', 'id' => $this->model->customer_provisional_code]);
                 } else {
                     return $this->redirect(['pending-customer-approval']);

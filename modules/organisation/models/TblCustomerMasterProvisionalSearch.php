@@ -174,7 +174,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return strtolower($member->provisional_status) == 'inprogress';
             });
             $pendingProvisionalMembers = array_filter($provisionalMembers, function($member) {
-                return strtolower($member->provisional_status) == 'pending' || strtolower($member->provisional_status) == 're-route';
+                return strtolower($member->provisional_status) == 'pending' || strtolower($member->provisional_status) == 'reroute';
             });
             $registeredProvisionalMembers = array_filter($provisionalMembers, function($member) {
                 return strtolower($member->provisional_status) == 'register';
@@ -205,7 +205,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return strtolower($society->status) == 'inprogress';
             });
             $pendingProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
-                return strtolower($society->status) == 'pending' || strtolower($society->status) == 're-route';
+                return strtolower($society->status) == 'pending' || strtolower($society->status) == 'reroute';
             });
             $registerProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
                 return strtolower($society->status) == 'register';
@@ -236,7 +236,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return strtolower($vendor->status) == 'inprogress';
             });
             $pendingProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
-                return strtolower($vendor->status) == 'pending' || strtolower($vendor->status) == 're-route';
+                return strtolower($vendor->status) == 'pending' || strtolower($vendor->status) == 'reroute';
             });
             $registerProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
                 return strtolower($vendor->status) == 'register';

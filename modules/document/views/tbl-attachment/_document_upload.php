@@ -200,6 +200,10 @@ if (!empty($doc_model)) {
                     </div>
                     <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                         <div class="form-group">
+                            <?php if ($master_type == 'provisional_dcs' || $master_type == 'provisional_customer') { ?>
+                                <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
+                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal']) ?>
+                            <?php } ?>
                             <?php
                             AjaxSubmitButton::begin([
                                 'label' => Yii::t('app', 'Save'),
@@ -241,10 +245,6 @@ if (!empty($doc_model)) {
                             ]);
                             AjaxSubmitButton::end();
                             ?>
-                            <?php if ($master_type == 'provisional_dcs' || $master_type == 'provisional_customer') { ?>
-                                <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal']) ?>
-                            <?php } ?>
                             <?= Yii::$app->controls->reset(); ?>
                             <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
                         </div>  

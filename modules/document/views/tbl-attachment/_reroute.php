@@ -28,7 +28,7 @@ use yii\web\View;
                         </div>
                         <div class="modal-footer mt10 col-sm-12">
                             <div class="col-md-12 top-bottom-15 padding-50">
-                                <?= Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary apply-shortcut re-route', 'value' => 'reroute']) ?>
+                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut re-route', 'value' => 'reroute']) ?>
                                 <?= Html::resetButton('Reset', ['class' => 'btn btn-primary']) ?>
                             </div>
                         </div>

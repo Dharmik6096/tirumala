@@ -143,7 +143,7 @@ $grid_option = [
         'update' => function ($url, $model) use ($pending_approval) {
             $class = '';
             if (!$pending_approval) {
-                $class = ($model->status != 'Pending' || $model->status != 'Re-route') ? 'link-disable' : '';
+                $class = ($model->status != 'Pending' || $model->status != 'Reroute') ? 'link-disable' : '';
             }
             $name = $model->customer_name;
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_provisional_code, 'data-name' => $name];
@@ -153,7 +153,7 @@ $grid_option = [
             if ($pending_approval) {
                 return false;
             }
-            $disable = ($model->status == 'Pending' || $model->status == 'Re-route') ? '' : 'disabled';
+            $disable = ($model->status == 'Pending' || $model->status == 'Reroute') ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-customer-master-provisional/document-upload', 'id' => $model->customer_provisional_code], $options);
         },

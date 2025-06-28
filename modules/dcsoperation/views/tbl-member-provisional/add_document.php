@@ -121,7 +121,12 @@ use yii\web\View;
                                 <?php
                                 echo Html::hiddenInput('request_button', 'save', ['id' => 'request_button']);
                                 $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
-
+                                if ($configValue == 1) {
+                                    ?>
+                                    <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
+                                    <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]) ?>
+                                    <?php
+                                }
                                 AjaxSubmitButton::begin([
                                     'label' => Yii::t('app', 'Save'),
                                     'id' => 'request_approve',
@@ -162,12 +167,6 @@ use yii\web\View;
                                         'type' => 'submit'],
                                 ]);
                                 AjaxSubmitButton::end();
-                                if ($configValue == 1) {
-                                    ?>
-                                    <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-                                    <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]) ?>
-                                    <?php
-                                }
                                 if ($configValue == 0) {
                                     echo Html::button(Yii::t('app', 'Save & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve', 'id' => 'approve']);
                                 }
