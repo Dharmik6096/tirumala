@@ -371,11 +371,11 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 });
     }
     
-    public function getVehicleList($transporterType) {
-        $vehicleUseTypes = ($transporterType == 0) ? [0, 2] : [1, 2];
+    public function getVehicleList() {
+        $vehicleUseTypes = ($this->vehicle_use_type == 0) ? [0, 2] : [1, 2];
 
         $vehicle = $this->find()->select(['vehicle_code', 'parsing_no'])
-                ->where(['vehicle_use_type' => $vehicleUseTypes])
+                ->where(['union_code' => $this->union_code, 'vehicle_use_type' => $vehicleUseTypes, 'is_active' => 1])
                 ->all();
 
         return ArrayHelper::map($vehicle, 'vehicle_code', 'parsing_no');

@@ -24,7 +24,7 @@ use yii\helpers\Url;
  */
 class TblVehicleMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['depend-vehicles', 'get-chamber-list', 'vehicle-open-list', 'get-vehicle-transpoter'];
+    public $freeAccessActions = ['depend-vehicles', 'get-chamber-list', 'vehicle-open-list', 'get-vehicle-transpoter', 'get-vehicle-detail', 'get-vehicle-list'];
 
     /**
      * Lists all TblVehicleMaster models.
@@ -347,11 +347,12 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) || $parents[0] == '0') {
-                $transporterType = $parents[0];
+            if (!empty($parents[0]) && (!empty($parents[1]) || $parents[1] == '0')) {
 
                 $this->model = new TblVehicleMaster();
-                $data = $this->model->getVehicleList($transporterType);
+                $this->model->union_code = $parents[0];
+                $this->model->vehicle_use_type = $parents[1];
+                $data = $this->model->getVehicleList();
                 foreach ($data as $key => $val) {
                     $out[] = ['id' => $key, 'name' => $val];
                 }

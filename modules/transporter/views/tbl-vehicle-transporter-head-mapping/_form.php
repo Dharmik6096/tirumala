@@ -30,7 +30,7 @@ $form = ActiveForm::begin([
     <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('billing_type'), $readonly, 'billing_type', false); ?>
 
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->vehicleList($model, $form, 'tblvehicletransporterheadmapping-billing_type', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE); ?>
+        <?= Yii::$app->dropdown->vehicleList($model, $form, 'tblvehicletransporterheadmapping-union_code,tblvehicletransporterheadmapping-billing_type', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE); ?>
     </div>
     <div class="col-sm-2"> 
         <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
