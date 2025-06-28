@@ -342,5 +342,23 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => []]);
     }
+    
+    public function actionGetVehicleList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) || $parents[0] == '0') {
+                $transporterType = $parents[0];
+
+                $this->model = new TblVehicleMaster();
+                $data = $this->model->getVehicleList($transporterType);
+                foreach ($data as $key => $val) {
+                    $out[] = ['id' => $key, 'name' => $val];
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
 
 }

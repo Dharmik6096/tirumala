@@ -9,6 +9,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\transporter\models\TblVehicleTransporterHeadMappingHistory;
+use app\modules\transporter\models\TblVehicleMaster;
+use yii\helpers\Json;
+use yii\web\Response;
 
 /**
  * TblVehicleTransporterHeadMappingController implements the CRUD actions for TblVehicleTransporterHeadMapping model.
@@ -102,6 +105,19 @@ class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildC
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+    
+    public function actionGetVehicleDetail() {
+        $status = 'error';
+        $vehicleData = [];
+        $postData = Yii::$app->request->post();
+        if (!empty($postData['vehicle_code'])) {
+            $vehicleData = TblVehicleMaster::find()->select(['transporter_code'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $status = 'success';
+        }
+        $record = ['status' => $status, 'data' => $vehicleData];
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**

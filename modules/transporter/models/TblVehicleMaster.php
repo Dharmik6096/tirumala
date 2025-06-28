@@ -370,5 +370,15 @@ class TblVehicleMaster extends \app\models\ChildModel {
                     return $value->parsing_no;
                 });
     }
+    
+    public function getVehicleList($transporterType) {
+        $vehicleUseTypes = ($transporterType == 0) ? [0, 2] : [1, 2];
+
+        $vehicle = $this->find()->select(['vehicle_code', 'parsing_no'])
+                ->where(['vehicle_use_type' => $vehicleUseTypes])
+                ->all();
+
+        return ArrayHelper::map($vehicle, 'vehicle_code', 'parsing_no');
+    }
 
 }
