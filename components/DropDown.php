@@ -732,6 +732,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-qa-inspection/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
     }
 
+    public function vehicleList($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
+    }
+
     public function chamberNoList($model, $form, $depends, $name = 'chamber_no', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-chamber-list', Yii::t('app', 'Select Chamber'), $multiple, '', $readonly);
@@ -2168,6 +2173,11 @@ class DropDown extends Component {
                 'name' => 'process_name',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['BMC_MILK_DISPATCH' => Yii::t('app', 'BMC MILK DISPATCH'), 'PLANT_MILK_RECEIPT' => Yii::t('app', 'PLANT MILK RECEIPT')],
+            ],
+            'no_of_installment' => [
+                'name' => 'no_of_installment',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'],
             ],
         ];
         return $records[$l];
