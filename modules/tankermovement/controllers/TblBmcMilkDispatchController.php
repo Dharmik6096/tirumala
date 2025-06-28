@@ -657,9 +657,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
     public function actionGetQualityParamRange() {
         $model = new TblMilkQualityParamRange();
         $model->union_code = Yii::$app->request->post('union');
-        $model->process_name = 'PLANT_MILK_RECEIPT';
-        $model->org_type = 'PLANT';
-        $model->org_code = Yii::$app->request->post('receiptAtCode');
+        $model->process_name = 'BMC_MILK_DISPATCH';
+        $model->org_type = 'BMC';
+        $model->org_code = Yii::$app->request->post('bmcCode');
         $model->animal_type_code = Yii::$app->request->post('milkTypeCode');
         $data = $model->getQualityRange();
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
