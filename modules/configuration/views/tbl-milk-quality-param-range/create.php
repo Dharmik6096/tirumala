@@ -7,13 +7,15 @@ $this->title = Yii::$app->label->title('create', 'Milk Quality Param Range');
         <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
         <div class="clearfix"></div>
         <?php
-        if (!empty(Yii::$app->request->get())) {
+        $queryParams = Yii::$app->request->get('TblMilkQualityParamRangeSearch', []);
+        $canRenderForm = ($queryParams['process_name'] ?? '') == 'BMC_MILK_DISPATCH' ? !empty($queryParams['union_code']) && !empty($queryParams['plant_code']) && !empty($queryParams['mcc_plant_code']) && !empty($queryParams['bmc_code']) : !empty($queryParams['union_code']) && !empty($queryParams['plant_code']);
+        if ($canRenderForm) {
             ?>
             <?=
             $this->render('_form', [
                 'model' => $model,
                 'animalDetail' => $animalDetail,
-                'type' => $type,
+                'type' => 'create',
                 'existingRecords' => $existingRecords,
             ])
             ?>

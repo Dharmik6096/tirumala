@@ -13,13 +13,20 @@ $attribute = [
         ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'visible' => FALSE, 'filter' => FALSE],
-        ['attribute' => 'process_name'],
+        ['attribute' => 'process_name', 'filter' => FALSE],
         ['attribute' => 'org_type'],
         ['attribute' => 'org_code', 'value' => function($model) {
             if (($model->process_name) == 'BMC_MILK_DISPATCH') {
                 return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
             } else {
                 return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
+            }
+        }, 'filter' => false],
+        ['attribute' => 'org_name', 'value' => function($model) {
+            if (($model->process_name) == 'BMC_MILK_DISPATCH') {
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+            } else {
+                return Yii::$app->general->getforeignkey($model->plantCode, 'name');
             }
         }, 'filter' => false],
         ['attribute' => 'animal_type_code', 'value' => function($model) {

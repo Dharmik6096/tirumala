@@ -5,8 +5,7 @@ use yii\widgets\ActiveForm;
 ?>
 <div id='quality_details'>
     <?php $form = ActiveForm::begin(['id' => 'add-quality-detail']); ?>
-    <?php 
-    echo $form->errorSummary($model); ?>
+    <?php echo $form->errorSummary($model); ?>
     <div class="row hr10">
         <div class="col-sm-12 mt20">
             <div class="panel panel-default">
@@ -61,7 +60,7 @@ use yii\widgets\ActiveForm;
     <div class="clearfix"></div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Yii::$app->controls->save($type, $model); ?>
+            <?= Yii::$app->controls->save('SAVE', $model); ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>

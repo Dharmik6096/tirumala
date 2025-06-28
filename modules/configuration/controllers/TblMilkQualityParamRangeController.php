@@ -46,7 +46,7 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
             if (!empty($queryParams)) {
                 $postData = Yii::$app->request->post()['TblMilkQualityParamRange'];
                 $processName = $queryParams['process_name'];
-                $orgCode = $processName == 'BMC_MILK_DISPATCH' ? $queryParams['bmc_code'] : $queryParams['plant_code'];
+                $orgCode = $processName == 'BMC_MILK_DISPATCH' && isset($queryParams['bmc_code']) ? $queryParams['bmc_code'] : ($queryParams['plant_code'] ?? '');
                 $orgType = $processName == 'BMC_MILK_DISPATCH' ? 'BMC' : 'PLANT';
 
                 foreach ($postData as $data) {
@@ -123,7 +123,7 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
         if (!empty($saveModel) && $is_validate) {
             $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $delete_model, ['Milk Quality Param Range', $type]);
             if ($transaction == 'customRedirect') {
-                return $this->redirect(['index']);
+                return $this->redirect(['create']);
             }
         }
 
@@ -132,15 +132,14 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'animalDetail' => $animalDetail,
-                    'existingRecords' => $existingRecords,
-                    'type' => $type,
+                    'existingRecords' => $existingRecords
         ]);
     }
 
     private function getExistingRecords($queryParams) {
         $existingRecords = [];
         if (!empty($queryParams)) {
-            $org_code = ($queryParams['process_name'] == 'BMC_MILK_DISPATCH') ? $queryParams['bmc_code'] : $queryParams['plant_code'];
+            $org_code = ($queryParams['process_name'] == 'BMC_MILK_DISPATCH' && isset($queryParams['bmc_code'])) ? $queryParams['bmc_code'] : ($queryParams['plant_code'] ?? '');
             $existingRecords = TblMilkQualityParamRange::find()->where([
                         'process_name' => $queryParams['process_name'],
                         'union_code' => $queryParams['union_code'],

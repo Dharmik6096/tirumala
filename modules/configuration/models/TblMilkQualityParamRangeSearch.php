@@ -12,12 +12,14 @@ use app\modules\configuration\models\TblMilkQualityParamRange;
  */
 class TblMilkQualityParamRangeSearch extends TblMilkQualityParamRange {
 
+    public $quality_config_process_name;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['plant_code', 'mcc_plant_code', 'bmc_code', 'min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr', 'milk_quality_param_range_code', 'animal_type_code', 'originating_type', 'process_name', 'union_code', 'org_code', 'org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr', 'milk_quality_param_range_code', 'animal_type_code', 'originating_type', 'process_name', 'union_code', 'org_code', 'org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'quality_config_process_name'], 'safe'],
                 [['process_name', 'union_code', 'plant_code'], 'required', 'on' => ['qualityRange']],
                 [['mcc_plant_code', 'bmc_code'], 'required', 'when' => function ($model) {
                     return $model->process_name == 'BMC_MILK_DISPATCH';
@@ -62,7 +64,7 @@ class TblMilkQualityParamRangeSearch extends TblMilkQualityParamRange {
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['like', 'tbl_milk_quality_param_range.process_name', $this->process_name])
+        $query->andFilterWhere(['like', 'tbl_milk_quality_param_range.process_name', $this->quality_config_process_name])
                 ->andFilterWhere(['like', 'tbl_animal_type.animal_type_name', $this->animal_type_code])
                 ->andFilterWhere(['like', 'tbl_milk_quality_param_range.min_fat', $this->min_fat])
                 ->andFilterWhere(['like', 'tbl_milk_quality_param_range.max_fat', $this->max_fat])

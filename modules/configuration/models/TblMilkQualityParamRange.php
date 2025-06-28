@@ -39,6 +39,8 @@ use app\modules\globalmaster\models\TblAnimalType;
  */
 class TblMilkQualityParamRange extends \app\models\ChildModel {
 
+    public $org_name;
+
     /**
      * @inheritdoc
      */
@@ -51,10 +53,10 @@ class TblMilkQualityParamRange extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name', 'org_code', 'org_type', 'min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr', 'animal_type_code', 'created_by', 'updated_by', 'created_at', 'updated_at', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['union_code', 'process_name', 'org_code', 'org_type', 'animal_type_code'], 'required'],
-            [['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr'], 'validateQualityParams'],
-            [['process_name', 'org_code', 'org_type', 'animal_type_code'], 'unique', 'targetAttribute' => ['process_name', 'org_code', 'org_type', 'animal_type_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name', 'org_code', 'org_type', 'min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr', 'animal_type_code', 'created_by', 'updated_by', 'created_at', 'updated_at', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'org_name'], 'safe'],
+                [['union_code', 'process_name', 'org_code', 'org_type', 'animal_type_code'], 'required'],
+                [['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr'], 'validateQualityParams'],
+                [['process_name', 'org_code', 'org_type', 'animal_type_code'], 'unique', 'targetAttribute' => ['process_name', 'org_code', 'org_type', 'animal_type_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
 
