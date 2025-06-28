@@ -365,8 +365,8 @@ $script = "
                $('#milk-receipt-transaction-detail').css('display', 'block');
                $('.trip-code-hide').css('display', 'none');
                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
-               $('#tblmilkvehicleentry-trip_code').val('').trigger('change');
-               $('#tblmilkvehicleentry-vehicle_code').val('').trigger('change');
+               $('#tblmilkvehicleentry-trip_code').val('').trigger('select2:select');
+               $('#tblmilkvehicleentry-vehicle_code').val('').trigger('select2:select');
                EntryType.classList.add('no_pointer');
             } else if (receipt_at == 'PLANT') {
                 $('.vehicle_code_hide').css('display', 'block');
