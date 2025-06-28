@@ -361,6 +361,11 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                     ->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
                     ->orderBy(['date_time_of_collection' => SORT_DESC])
                     ->one();
+            $oldShiftLock = TblMccShiftLock::find()
+                    ->where(['>=', 'date_time_of_collection', date('Y-m-d H:i:s', strtotime($stock->to_date))])
+                    ->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
+                    ->orderBy(['date_time_of_collection' => SORT_ASC])
+                    ->one();
 
             // IF Not - check - Any previous Dispatch entry is available
             if (strtolower($stock->type) == 'physical') {
@@ -383,9 +388,13 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                         'physical_stock_only' => $physical_stock_only,
                     ];
                 } else {
-                    $fromDate = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock->to_date)));
-                    $fromShift = (date('H', strtotime($fromDate)) == 18) ? 2 : 1;
-
+                    if (!empty($oldShiftLock) && ($oldShiftLock->created_at >= $stock->created_at)) {
+                        $fromDate = $oldShiftLock->date_time_of_collection;
+                        $fromShift = $oldShiftLock->shift_code;
+                    } else {
+                        $fromDate = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock->to_date)));
+                        $fromShift = (date('H', strtotime($fromDate)) == 18) ? 2 : 1;
+                    }
                     $result = [
                         // Set last physical stock entry date shift as from Date-shift. +12 Hr
                         'status' => 'success',
@@ -401,9 +410,13 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 }
             } else {
                 if (!empty($shiftLock) && $stock->to_date < $shiftLock->date_time_of_collection) {
-                    $fromDate = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock->to_date)));
-                    $fromShift = (date('H', strtotime($fromDate)) == 18) ? 2 : 1;
-
+                    if (!empty($oldShiftLock) && ($oldShiftLock->created_at >= $stock->created_at)) {
+                        $fromDate = $oldShiftLock->date_time_of_collection;
+                        $fromShift = $oldShiftLock->shift_code;
+                    } else {
+                        $fromDate = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock->to_date)));
+                        $fromShift = (date('H', strtotime($fromDate)) == 18) ? 2 : 1;
+                    }
                     $result = [
                         // Set previous dispatch to date shift +12 hours
                         'status' => 'success',
