@@ -1924,7 +1924,7 @@ class DropDown extends Component {
             'provisional_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject'), 'Reroute' => Yii::t('app', 'Re-route')],
             ],
             'org_type_shift_time' => [
                 'name' => 'org_type',

@@ -1020,7 +1020,7 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function checkDelete() {
-        return strtolower($this->provisional_status) == 'pending' ? TRUE : FALSE;
+        return (strtolower($this->provisional_status) == 'pending' || strtolower($this->provisional_status) == 'reroute') ? true : false;
     }
 
     public function getDcs($dcs_code) {
