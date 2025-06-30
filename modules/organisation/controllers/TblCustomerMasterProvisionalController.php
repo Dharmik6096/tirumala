@@ -75,7 +75,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                     'dataProviderOther' => $dataProviderOther,
                     'attachment' => $attachment,
                     'processApprovalModel' => $processApprovalModel,
-	                'processApprovalDataProvider' => $processApprovalDataProvider
+                    'processApprovalDataProvider' => $processApprovalDataProvider
         ]);
     }
 
@@ -157,7 +157,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
             if ($transaction == 'customRedirect') {
-                if ($this->model->status == 'Pending') {
+                if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
                     return $this->redirect(['document-upload', 'id' => $this->model->customer_provisional_code]);
                 } else {
                     return $this->redirect(['pending-customer-approval']);
@@ -352,25 +352,25 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         $searchModel = new TblCustomerMasterProvisionalSearch();
         $searchModel->scenario = 'ApprovedAttachmentDetails';
         $dataProvider = $searchModel->approvedattachmentdetailssearch(Yii::$app->request->queryParams);
-        
+
         $from_date = Yii::$app->request->getQueryParam('from_date');
         $to_date = Yii::$app->request->getQueryParam('to_date');
-        
+
         return $this->render('index_other', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'from_date' => $from_date,
-            'to_date' => $to_date,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'from_date' => $from_date,
+                    'to_date' => $to_date,
         ]);
     }
-        
+
     public function actionRfcRePush($id) {
         $this->model = $this->findModel($id);
         $historyModel = new TblCustomerMasterProvisionalHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->data_post_status = 0;
         $record = [];
-        if ($this->model->save(true,false)) {
+        if ($this->model->save(true, false)) {
             $historyModel->save();
             $record = ['status' => 'success', 'msg' => 'Customer Master Provisional re-pushed successfully.'];
         } else {
