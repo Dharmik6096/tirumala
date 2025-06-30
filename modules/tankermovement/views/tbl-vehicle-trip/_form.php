@@ -210,6 +210,8 @@ $('#tblvehicletrip-vehicle_code').on('change', function(){
                 }
             }
         });
+    } else {
+        $('#tblvehicletrip-driver_name, #tblvehicletrip-mobile_no, #tblvehicletrip-transporter_code').val(null).trigger('change');
     }
 });
 

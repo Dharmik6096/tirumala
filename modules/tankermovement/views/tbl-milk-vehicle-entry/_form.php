@@ -199,6 +199,7 @@ $form = ActiveForm::begin([
                         <?= Html::activeHiddenInput($txn_model, 'milk_vehicle_entry_transaction_code'); ?>
                         <?= Html::activeHiddenInput($txn_model, 'is_qty_only'); ?>
                         <?= Html::activeHiddenInput($txn_model, 'is_pending_merge'); ?>
+                        <?= Html::activeHiddenInput($txn_model, 'is_clr_input'); ?>
                         <?= $form->field($txn_model, 'acidity')->textInput() ?>
                     </div>                
                 </div>
@@ -355,6 +356,7 @@ $script = "
         var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
         var tankerMovementWithTripSubStatus = '" . $tankerMovementWithTripSubStatus . "';
         if (setData(receipt_at)) {
+            $('#tblmilkvehicleentrytransaction-is_clr_input').val('');
             if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
@@ -595,11 +597,74 @@ $script = "
         }    
     };
 
+    $(document).on('change', '#tblmilkvehicleentry-receipt_at_code, #tblmilkvehicleentrytransaction-milk_type_code', function() {
+        if(!qltyParamsReadOnly){
+            checkQualityRanges();
+        }
+    });
+
+    function checkQualityRanges(){
+        var union = $('#tblmilkvehicleentry-union_code').val();
+        var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();
+        var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();
+        var milkTypeCode = $('#tblmilkvehicleentrytransaction-milk_type_code').val();
+
+        if(setData(milkTypeCode) && setData(receiptAtCode) && setData(receiptAt) && receiptAt == 'PLANT'){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['get-quality-param-range']) . "',
+                data: {'union':union, 'receiptAtCode':receiptAtCode, 'milkTypeCode':milkTypeCode},
+                success: function(data) {  
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        var range = obj.data;
+                        var minFat = parseFloat(range.min_fat);
+                        var maxFat = parseFloat(range.max_fat);
+                        var minSnf = parseFloat(range.min_snf);
+                        var maxSnf = parseFloat(range.max_snf);
+                        var minClr = parseFloat(range.min_clr);
+                        var maxClr = parseFloat(range.max_clr);
+                        function showError(fieldName, min, max) {
+                            var msg = fieldName + ' should be between ' + min + ' and ' + max;
+                            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+msg+\"</span></div></div>\");
+                        }
+                        $(document).off('change', '#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr').on('change', '#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr', function () {
+                            var fat = parseFloat($('#tblmilkvehicleentrytransaction-fat').val());
+                            var snf = parseFloat($('#tblmilkvehicleentrytransaction-snf').val());
+                            var clr = parseFloat($('#tblmilkvehicleentrytransaction-clr').val());
+
+                            if (!isNaN(fat) && (fat < minFat || fat > maxFat)) {
+                                showError('FAT', minFat, maxFat);
+                                $('#tblmilkvehicleentrytransaction-fat').val('');
+                            }
+                            if (!$('#tblmilkvehicleentrytransaction-snf').is('[readonly]')) {
+                                var snf = parseFloat($('#tblmilkvehicleentrytransaction-snf').val());
+                                if (!isNaN(snf) && (snf < minSnf || snf > maxSnf)) {
+                                    showError('SNF', minSnf, maxSnf);
+                                    $('#tblmilkvehicleentrytransaction-snf').val('');
+                                }
+                            }
+                            if (!$('#tblmilkvehicleentrytransaction-clr').is('[readonly]')) {
+                                var clr = parseFloat($('#tblmilkvehicleentrytransaction-clr').val());
+                                if (!isNaN(clr) && (clr < minClr || clr > maxClr)) {
+                                    showError('CLR', minClr, maxClr);
+                                    $('#tblmilkvehicleentrytransaction-clr').val('');
+                                }
+                            }
+                        });
+                    }
+                },
+                error:function(data){
+                }
+            });
+        }    
+    };
+
     function isClrInput(){
         var union = $('#tblmilkvehicleentry-union_code').val();
         var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();
         var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();
-                
+        $('#tblmilkvehicleentrytransaction-is_clr_input').val('');
         if(setData(receiptAtCode) && (!qltyParamsReadOnly)){
             $.ajax({
                 type: 'post',
@@ -610,6 +675,7 @@ $script = "
                     if (obj.status == 'success' && obj.data != null) {
                         var is_clr_input = obj.data;
                         $('#is_clr_input').val(is_clr_input);
+                        $('#tblmilkvehicleentrytransaction-is_clr_input').val(is_clr_input);
                         if (is_clr_input == 0) {
                             $('#tblmilkvehicleentrytransaction-snf').attr('readonly', false);
                             $('#tblmilkvehicleentrytransaction-clr').attr('readonly', true);
