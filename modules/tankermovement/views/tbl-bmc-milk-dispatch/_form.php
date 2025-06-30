@@ -261,6 +261,8 @@ var isSecondTransaction = `$readonly`;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
+    var destType = $('#tblbmcmilkdispatch-destination_type').val().toUpperCase();
+    updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
         $('#tblbmcmilkdispatch-trip_code').on('change',function() {
             $('#addTripButtonDiv').hide();
@@ -385,6 +387,10 @@ $(document).off('change', '#tblbmcmilkdispatch-trip_code').on('change', '#tblbmc
             });
         }          
     });
+$(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
+    var destType = $(this).val().toUpperCase();
+    updateLastDestinationCheckbox(destType);
+});
 if(!isSecondTransaction) {
     $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
         var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
@@ -419,12 +425,6 @@ if(!isSecondTransaction) {
                                 }, 1000);
                                 updateLastDestinationCheckbox(destType);
                             }
-                            $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '#tblbmcmilkdispatch-destination_type', function () {
-                                var destType = $(this).val().toUpperCase();
-                                updateLastDestinationCheckbox(destType);
-                            });
-                        } else {
-                            $('#is-last-destination-container').hide();
                         }
                         if (setData(obj.data.arrival_time)) {
                             let arrivalTime = obj.data.arrival_time;
