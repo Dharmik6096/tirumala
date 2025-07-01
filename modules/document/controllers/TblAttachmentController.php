@@ -149,19 +149,22 @@ class TblAttachmentController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
-    public function actionZipAttachmentDownload($module_code, $module_name) {
+    public function actionZipAttachmentDownload($user_code,$module_code, $module_name) {
+        if (Yii::$app->user->id != $user_code) {
+            throw new \yii\web\ForbiddenHttpException("You are not authorized to download this file.");
+        }
         $attachments = TblAttachment::find()
                 ->where(['module_code' => $module_code, 'module_name' => $module_name])
                 ->all();
-        $org_code = $module_code . '_' . $module_name;
-        $exportPath = Yii::$app->basePath . '/web/export/';
+        $date = date('YmdHis');
+        $org_code = $user_code . '_' . $date . '_ATTACHMENTS';
+        $exportPath = Yii::getAlias('@webroot') . '/web/export/';
         if (!is_dir($exportPath)) {
             mkdir($exportPath);
             chmod($exportPath, 0777);
         }
-        $folderName = $org_code . '_ATTACHMENTS';
-        $folderPath = $exportPath . $folderName . '/';
-        $zipFolder = $exportPath . $folderName;
+        $folderPath = $exportPath . $org_code . '/';
+        $zipFolder = $exportPath . $org_code;
         Yii::$app->general->CreateDirectory($folderPath);
         $copiedFiles = [];
         foreach ($attachments as $attachment) {
@@ -189,7 +192,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
             ob_end_clean();
         }
         header('Content-Type: application/zip');
-        header('Content-Disposition: attachment; filename="' . $folderName . '.zip"');
+        header('Content-Disposition: attachment; filename="' . $org_code . '.zip"');
         header('Content-Length: ' . filesize($zipFolder . '.zip'));
         readfile($zipFolder . '.zip');
         unlink($zipFolder . '.zip');
