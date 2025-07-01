@@ -492,4 +492,24 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         return $result;
     }
 
+    public function getlastDestTripDetail() {
+        $tripExists = $this->find()
+                ->joinWith(['tripCode.vehicleTripDetailCode'])
+                ->where([
+                    'tbl_vehicle_trip.trip_status' => ['generated', 'open', 'tankerfull'],
+                    'tbl_vehicle_trip_detail.is_last_destination' => 1,
+                    'tbl_vehicle_trip.trip_code' => $this->trip_code
+                ])
+                ->one();
+
+        if (!empty($tripExists)) {
+            return false;
+        } else if (!empty($this->bmc_code)) {
+            $stockData = TblBmcDispatchStock::find()->where(['from_date' => $this->from_date, 'to_date' => $this->to_date, 'bmc_code' => $this->bmc_code, 'type' => 'dispatch'])->orderBy(['created_at' => SORT_DESC])->one();
+            return !empty($stockData) ? true : false;
+        } else {
+            return true;
+        }
+    }
+
 }
