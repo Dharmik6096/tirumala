@@ -269,11 +269,21 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $vehicle = new \app\modules\transporter\models\TblVehicleMaster();
         if (isset($searchable) && $searchable) {
-            echo $form->field($model, $name)->widget(
-                    Select2::classname(), [
-                'data' => $vehicle->vehicle($km_base), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Vehicle', 'disabled' => $disable]
-                    ]
-            )->label($islable);
+            $select2Options = [
+                'data' => $vehicle->vehicle($km_base),
+                'pluginOptions' => [
+                    'allowClear' => true,
+                ],
+                'options' => [
+                    'placeholder' => 'Select Vehicle',
+                    'disabled' => $disable,
+                ],
+            ];
+            $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
+            if (!empty($form_id)) {
+                $select2Options['pluginOptions']['dropdownParent'] = '#' . $form_id;
+            }
+            echo $form->field($model, $name)->widget(Select2::classname(), $select2Options)->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($vehicle->vehicle($km_base), ['prompt' => 'Select Vehicle', 'disabled' => $disable])->label($islable);
         }
