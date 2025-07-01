@@ -51,8 +51,9 @@ class TblMilkQualityParamRangeController extends \app\controllers\ChildControlle
 
                 foreach ($postData as $data) {
                     $existingRecord = null;
-                    foreach ($existingRecords as $record) {
+                    foreach ($existingRecords as $key => $record) {
                         if ($record['animal_type_code'] == $data['animal_type_code']) {
+                            $existingRecords[$key] = array_replace($record, $data);
                             $existingRecord = $record;
                             break;
                         }

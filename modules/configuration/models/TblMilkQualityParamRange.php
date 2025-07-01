@@ -138,6 +138,18 @@ class TblMilkQualityParamRange extends \app\models\ChildModel {
         if ($filled > 0 && $filled < count($fields)) {
             $this->addError($attribute, 'If any quality parameter is filled, all must be filled.');
         }
+        $animal_name = $this->animalTypeCode->animal_type_name;
+        if ((!empty($this->min_fat) || !empty($this->max_fat)) && $this->max_fat <= $this->min_fat) {
+            $this->addError('max_fat', $animal_name . ' - Max Fat must be greater than Min Fat.');
+        }
+
+        if ((!empty($this->min_snf) || !empty($this->max_snf)) && $this->max_snf <= $this->min_snf) {
+            $this->addError('max_snf', $animal_name . ' - Max SNF must be greater than Min SNF.');
+        }
+
+        if ((!empty($this->min_clr) || !empty($this->max_clr)) && $this->max_clr <= $this->min_clr) {
+            $this->addError('max_clr', $animal_name . ' - Max CLR must be greater than Min CLR.');
+        }
     }
 
     public function getQualityRange() {
