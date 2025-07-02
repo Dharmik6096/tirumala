@@ -356,8 +356,8 @@ $script = "
                $('#milk-receipt-transaction-detail').css('display', 'block');
                $('.trip-code-hide').css('display', 'none');
                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
-               $('#tblmilkvehicleentry-trip_code').val('').trigger('select2:select');
-               $('#tblmilkvehicleentry-vehicle_code').val('').trigger('select2:select');
+               $('#tblmilkvehicleentry-trip_code').val('').trigger('change').trigger('select2:select');
+               $('#tblmilkvehicleentry-vehicle_code').val('').trigger('change').trigger('select2:select');
                EntryType.classList.add('no_pointer');
             } else if (receipt_at == 'PLANT') {
                 $('.vehicle_code_hide').css('display', 'block');
@@ -367,8 +367,8 @@ $script = "
                 EntryType.classList.remove('no_pointer');    
                 $('#tblmilkvehicleentry-tanker_no').val('').trigger('change');
                 isClrInput();
-                $(document).off('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code')
-                            .on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code', tripSubStatus);
+                $(document).off('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code,#tblmilkvehicleentry-dispatch_from')
+                            .on('change', '#tblmilkvehicleentry-trip_code, #tblmilkvehicleentry-union_code, #tblmilkvehicleentry-receipt_at_code,#tblmilkvehicleentry-dispatch_from', tripSubStatus);
             } else {
                 $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
                 $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('0');
@@ -376,6 +376,10 @@ $script = "
                 $('#milk-receipt-transaction').css('display', 'block');
                 $('#milk-receipt-transaction-detail').css('display', 'block');
             }
+        } else {
+            $('#dispatch-detail').css('display', 'none');
+            $('#milk-receipt-transaction').css('display', 'none');
+            $('#milk-receipt-transaction-detail').css('display', 'none');
         }
     });
     
@@ -384,7 +388,10 @@ $script = "
         var union_code = $('#tblmilkvehicleentry-union_code').val();  
         var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();  
         var tankerMovementWithTripSubStatus = '" . $tankerMovementWithTripSubStatus . "';
-        if(setData(trip_code) && setData(union_code) && setData(receiptAtCode)){
+        var receipt_at = $('#tblmilkvehicleentry-receipt_at').val();
+        var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
+        var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
+        if(setData(trip_code) && setData(union_code) && setData(receiptAtCode) && receipt_at == 'PLANT'){
             if(tankerMovementWithTripSubStatus){
                     qltyParamsReadOnly = false;
                     $.ajax({
@@ -435,7 +442,8 @@ $script = "
                 $('#milk-receipt-transaction').css('display', 'block');
                 $('#milk-receipt-transaction-detail').css('display', 'block');
             }
-        } else {
+        } else if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
+        } else if(receipt_at != 'PARTY'){
             $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
             $('#dispatch-detail').css('display', 'none');
             $('#milk-receipt-transaction').css('display', 'none');
@@ -750,12 +758,18 @@ $script = "
             });
     }
     $(document).on('change','#tblmilkvehicleentry-trip_code', function() {
-        var trip_code = $('#tblmilkvehicleentry-trip_code').val();
-        $('#tblmilkvehicleentry-dispatch_from').val(null).trigger('change');
-        $('#tblmilkvehicleentry-dispatch_from_code').val(null).trigger('change');
-        if (trip_code) {
-            SourceData(trip_code);
+        var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
+        var tripMandateOnReceipt = '" . $tripMandateOnReceipt . "';
+        if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
+        } else {
+            var trip_code = $('#tblmilkvehicleentry-trip_code').val();
+            $('#tblmilkvehicleentry-dispatch_from').val(null).trigger('change');
+            $('#tblmilkvehicleentry-dispatch_from_code').val(null).trigger('change');
+            if (trip_code) {
+                SourceData(trip_code);
+            }
         }
+        
     });
    
 ";
