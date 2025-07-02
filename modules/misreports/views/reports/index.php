@@ -218,7 +218,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             }
                                             ?>
                                             <div class="col-sm-3 vendor">
-                                                <?= Yii::$app->dropdown->customer_code($model, $form, $depend, 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
+                                                <?= Yii::$app->dropdown->customer_code($model, $form, $depend, 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE, FALSE, FALSE); ?>
                                             </div>
                                             <?php
                                         }

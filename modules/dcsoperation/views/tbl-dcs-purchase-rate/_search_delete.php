@@ -32,7 +32,7 @@ $depend = 'tbldcspurchaserateapplicabititysearch';
         <?= Yii::$app->dropdown->customer_type($model, $form, $depend . '-bmc_code', 'applicable_for', $model->getAttributeLabel('applicable_for'), FALSE); ?>
     </div> 
     <div class="col-sm-2 hide_rate_cal">
-        <?= Yii::$app->dropdown->customer_code($model, $form, $depend . '-bmc_code,' . $depend . '-applicable_for', 'applicable_code', $model->getAttributeLabel('applicable Name'), FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, $depend . '-bmc_code,' . $depend . '-applicable_for', 'applicable_code', $model->getAttributeLabel('applicable Name'), FALSE, FALSE, FALSE); ?>
     </div>
     <div class="col-sm-2  show_rate_cal">
         <?= Yii::$app->dropdown->bmc_society($model, $form, $depend . '-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>

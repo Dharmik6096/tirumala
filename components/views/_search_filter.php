@@ -329,7 +329,7 @@ if (!empty($filter_data)) {
                                         $depend_str = $field_class . '-f_bmc_code' . ',' . $field_class . '-vendor_type';
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->customer_code($model, $form, $depend_str, 'vendor_code', FALSE, FALSE); ?>
+                                            <?= Yii::$app->dropdown->customer_code($model, $form, $depend_str, 'vendor_code', FALSE, FALSE, FALSE, FALSE); ?>
                                         </div>
                                     <?php } ?>
                                     <?php

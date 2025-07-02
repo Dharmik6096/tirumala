@@ -51,7 +51,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->customer_type($searchModel, $form, 'tblraterecalculationsearch-bmc_code', 'customer_type', FALSE, FALSE); ?>
     </div>
     <div class="col-sm-2 show_on_bmc">
-        <?= Yii::$app->dropdown->customer_code($searchModel, $form, 'tblraterecalculationsearch-bmc_code,tblraterecalculationsearch-customer_type', 'customer_code', FALSE, FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($searchModel, $form, 'tblraterecalculationsearch-bmc_code,tblraterecalculationsearch-customer_type', 'customer_code', FALSE, FALSE, FALSE, FALSE); ?>
     </div>
 
 <?php } ?>

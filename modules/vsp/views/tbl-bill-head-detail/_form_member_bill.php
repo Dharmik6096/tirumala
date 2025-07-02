@@ -46,7 +46,7 @@ $form = ActiveForm::begin([
     <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
         </div>-->
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, FALSE, FALSE); ?>
     </div>
     <?php
     echo Html::hiddenInput('head_for', 'MEMBER', ['id' => 'head_for']);

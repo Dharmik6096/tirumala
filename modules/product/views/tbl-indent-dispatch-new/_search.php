@@ -42,7 +42,7 @@ use yii\web\View;
                 <?= Yii::$app->dropdown->route_dcs($model, $form, 'tblindentmastersearch-route_code', 'dcs_code', Yii::t('app', 'DCS'), false, false); ?>
             </div>
             <div class="col-sm-4 hide_section">
-                <?= Yii::$app->dropdown->customer_code($model, $form, 'tblindentmastersearch-bmc_code,tblindentmastersearch-customer_type', 'customer_code', Yii::t('app', 'Customer'), FALSE); ?>
+                <?= Yii::$app->dropdown->customer_code($model, $form, 'tblindentmastersearch-bmc_code,tblindentmastersearch-customer_type', 'customer_code', Yii::t('app', 'Customer'), FALSE, FALSE, FALSE); ?>
             </div>
             <?php
             if(!$isIndentApprovalCreditLimitCheck){ ?>

@@ -37,7 +37,7 @@ use yii\web\View;
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblindentmastersearch-bmc_code', 'dcs_code', Yii::t('app', 'Society'), FALSE); ?>
     </div>
     <div class="col-sm-2 hide_section">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblindentmastersearch-bmc_code,tblindentmastersearch-customer_type', 'customer_code', Yii::t('app', 'Customer'), FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblindentmastersearch-bmc_code,tblindentmastersearch-customer_type', 'customer_code', Yii::t('app', 'Customer'), FALSE, FALSE, FALSE); ?>
     </div>
     <div class="col-sm-2">
         <?php 

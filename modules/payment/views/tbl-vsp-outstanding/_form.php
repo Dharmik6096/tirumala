@@ -32,7 +32,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvspoutstanding-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE, $readonly); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblvspoutstanding-bmc_code,tblvspoutstanding-customer_type', 'customer_code', Yii::t('app', 'Name'), FALSE, $readonly); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblvspoutstanding-bmc_code,tblvspoutstanding-customer_type', 'customer_code', Yii::t('app', 'Name'), FALSE, $readonly, FALSE); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, FALSE, FALSE, $model->getAttributeLabel('transaction_date')); ?>

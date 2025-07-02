@@ -44,7 +44,7 @@ use yii\web\View;
             <?= Yii::$app->dropdown->customer_type($model, $form, 'tblcollectiondataaliassearch-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
         </div>  
         <div class="col-sm-2 ">
-            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblcollectiondataaliassearch-bmc_code,tblcollectiondataaliassearch-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
+            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblcollectiondataaliassearch-bmc_code,tblcollectiondataaliassearch-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE, FALSE, FALSE); ?>
         </div>  
     <?php } ?>
     <div class="clearfix"></div>

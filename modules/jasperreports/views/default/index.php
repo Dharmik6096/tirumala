@@ -298,7 +298,7 @@ $defaultToggle = true;
                                         if (in_array($value, array('p_customer_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodel-p_bmc_code,reportsmodel-p_customer_type', 'p_customer_code', $model->getAttributeLabel('p_customer_code'), FALSE); ?>
+                                                <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodel-p_bmc_code,reportsmodel-p_customer_type', 'p_customer_code', $model->getAttributeLabel('p_customer_code'), FALSE, FALSE, FALSE); ?>
                                             </div> 
                                             <?php
                                         }

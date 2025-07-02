@@ -33,7 +33,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), FALSE, 'customer_type'); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblcustomerdeactive-bmc_code,tblcustomerdeactive-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblcustomerdeactive-bmc_code,tblcustomerdeactive-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE, FALSE, FALSE); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE, date('d-m-Y')); ?> 

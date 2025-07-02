@@ -30,7 +30,7 @@ $depend = 'tblproductpurchaserateapplicabilitysearch';
         <?= Yii::$app->dropdown->customer_type($model, $form, $depend . '-bmc_code', 'applicable_for', $model->getAttributeLabel('applicable_for'), FALSE); ?>
     </div> 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblproductpurchaserateapplicabilitysearch-bmc_code,tblproductpurchaserateapplicabilitysearch-applicable_for', 'applicable_code', $model->getAttributeLabel('applicable Name'), FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblproductpurchaserateapplicabilitysearch-bmc_code,tblproductpurchaserateapplicabilitysearch-applicable_for', 'applicable_code', $model->getAttributeLabel('applicable Name'), FALSE, FALSE, FALSE); ?>
     </div>
 
     <?php // if (empty($dataProvider->getModels())) { ?>
