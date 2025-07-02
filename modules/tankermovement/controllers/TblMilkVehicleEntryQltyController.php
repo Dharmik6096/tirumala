@@ -13,6 +13,7 @@ use yii\web\Response;
 use yii\web\NotFoundHttpException;
 use yii\helpers\Json;
 use app\modules\configuration\models\TblConfig;
+use app\modules\configuration\models\TblMilkQualityParamRange;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultHistory;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
@@ -67,6 +68,12 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $searchModel->parsing_no = TblVehicleTrip::find()->alias('vt')->joinWith('vehicleCode vm')->where(['vt.trip_code' => $searchModel->trip_code, 'vt.is_active' => 1])->select('vm.parsing_no')->scalar();
         $dataProviderCount = $dataProvider->getCount();
+        if ($dataProviderCount > 0) {
+            $dataProviderModel = $dataProvider->getModels()[0];
+            $model->union_code = $dataProviderModel['union_code'];
+            $model->plant_code = $dataProviderModel['plant_code'];
+            $model->GetClrInput();
+        }
         $trip_code = $searchModel->trip_code;
         $trip_model = $model->getPlant($trip_code);
         $config = new TblConfig();
@@ -236,14 +243,11 @@ class TblMilkVehicleEntryQltyController extends ChildController {
 
     public function actionUpdate($id) {
         $model = $this->findModel($id);
-        $searchModel = new TblMilkVehicleEntryQltySearch();
-        $searchModel->trip_code = $model->trip_code;
         if (strtolower($model->status) == 'pending') {
             Yii::$app->default->getDefaults($model);
         } else {
             $model->sample_time = date('H:i:s', strtotime($model->sample_datetime));
         }
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, FALSE);
         $config = new TblConfig();
         $config->config_for = 'PLANT';
         $config->process_name = 'PLANT_QUALITY_RECEIPT';
@@ -251,14 +255,14 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $config_list = [];
         if ($model && !empty($model->plant_code)) {
             $config_list = $config->getOrgConfigList($config->config_for, $model->plant_code);
+            $model->union_code = $model->union_code;
+            $model->plant_code = $model->plant_code;
+            $model->GetClrInput();
         }
         $config_mapping = new TblConfigTxnResult();
         $configTxnData = TblConfigTxnResult::find()->where(['ref_code' => (string) $id, 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
-
         return $this->render('update', [
                     'model' => $model,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
                     'config' => $config_mapping,
                     'config_list' => $config_list,
                     'configTxnData' => $configTxnData
@@ -344,6 +348,32 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         }
 
         return Json::encode($res);
+    }
+
+    public function actionCalculateClr() {
+        $fat = (float) Yii::$app->request->post('fat');
+        $snf = (float) Yii::$app->request->post('snf');
+        $clr = (float) Yii::$app->request->post('clr');
+        $union = Yii::$app->request->post('union_code');
+        $org_code = Yii::$app->request->post('plantCode');
+        $is_clr_input = Yii::$app->request->post('is_clr_input');
+
+        $result = Yii::$app->general->calculateData('PLANT_RECEIPT_CONFIG', $union, $org_code, $fat, $snf, $clr, 'PLANT', $is_clr_input);
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Json::encode(['status' => 'success', 'data' => $result['clr']]);
+    }
+
+    public function actionGetQualityParamRange() {
+        $model = new TblMilkQualityParamRange();
+        $model->union_code = Yii::$app->request->post('union');
+        $model->process_name = 'PLANT_MILK_RECEIPT';
+        $model->org_type = 'PLANT';
+        $model->org_code = Yii::$app->request->post('plantCode');
+        $model->animal_type_code = Yii::$app->request->post('milkTypeCode');
+        $data = $model->getQualityRange();
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode(['status' => !empty($data) ? 'success' : 'error', 'data' => !empty($data) ? $data : []]);
     }
 
 }
