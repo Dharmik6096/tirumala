@@ -92,13 +92,13 @@ $actual_out_time = Yii::$app->controls->view_time($regularizationModelData->actu
                                                     }'),
                                 ],
                                 'options' => [
-                                    'class' => 'btn btn-default btn-raised',
+                                    'class' => 'btn-login btn btn-default btn-raised',
                                     'type' => 'submit'
                                 ],
                             ]);
                             AjaxSubmitButton::end();
                             ?>
-                            <?= Html::resetButton('Reset', ['class' => 'btn btn-primary']) ?>
+                            <?= Html::resetButton('Reset', ['class' => 'btn-login btn btn-primary']) ?>
                         </div>
                     </div>
                 </div>

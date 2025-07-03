@@ -52,11 +52,7 @@ class TblUserAttendanceRegularization extends ChildModel {
     public function rules() {
         return [
             [['apply_date', 'requested_in_time', 'requested_out_time', 'approved_date', 'rejected_date', 'created_at', 'updated_at', 'actual_in_time', 'actual_out_time', 'process_approval_code'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['attendance_code'], 'string', 'max' => 50],
-            [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['regularization_reason', 'rejection_remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['status'], 'string', 'max' => 10],
+            [['regularization_reason', 'rejection_remark'], 'string', 'max' => 255],
             [['approved_by', 'rejected_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
             [['rejection_remark'], 'required', 'on' => 'attendanceRegularization'],
         ];

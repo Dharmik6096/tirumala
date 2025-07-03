@@ -1,7 +1,7 @@
 <?php
 
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
 
@@ -68,7 +68,7 @@ $grid_option = [
             // $class = '';
             $class = ($model->status == '0') ? '' : 'link-disable';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Reject', 'class' => 'user-attendance-regularization ' . $class, 'data-process_approval_code' => $model->process_approval_code, 'data-regularization_code' => $model->regularization_code];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', 'javascript:void(0)', $options);
+            return GhostHtml::a_alert('<i class="fa fa-times"></i>', 'javascript:void(0)', $options);
         },
         'approve' => function ($url, $model) {
             $class = ($model->status == '0') ? '' : 'link-disable';
@@ -84,7 +84,6 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 $script = " $(document).ready(function(){
         $(document).on('click','.user-attendance-regularization',function(e){
             var id= $(this).attr('data-process_approval_code');
-            console.log(id);
            
             $.ajax({
                 type: 'get',
@@ -103,7 +102,6 @@ $script = " $(document).ready(function(){
 
     $(document).on('click','.deact-rate',function(e){
         var id= $(this).attr('data-val');
-        console.log(id);
         var name = $(this).attr('data-name');
         bootbox.confirm({
             message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to ' + name + '?</span></div></div>',
