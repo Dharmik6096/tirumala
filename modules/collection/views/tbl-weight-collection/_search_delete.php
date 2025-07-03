@@ -32,7 +32,7 @@ $model->from_date = !empty($model->from_date) ? $model->from_date : NULL;
         <?= Yii::$app->dropdown->customer_type($model, $form, $depend . '-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
     </div> 
     <div class="col-sm-2 hide_rate_cal">
-        <?= Yii::$app->dropdown->customer_code($model, $form, $depend . '-bmc_code,' . $depend . '-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE, FALSE, FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, $depend . '-bmc_code,' . $depend . '-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
     </div>
     <div class="clearfix"></div>
 

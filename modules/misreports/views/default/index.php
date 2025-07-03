@@ -173,7 +173,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('vendor_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodelold-bmc_code,reportsmodelold-customer_type', 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE, FALSE, FALSE); ?>
+                                                <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodelold-bmc_code,reportsmodelold-customer_type', 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
                                             </div>
                                             <?php
                                         }

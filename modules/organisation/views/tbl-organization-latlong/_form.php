@@ -45,7 +45,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblorganizationlatlong-bmc_code', 'dcs_code', Yii::t('app', 'DCS'), FALSE); ?>
         </div>
         <div class="col-sm-2 create_fields <?= $disable ?>">
-            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblorganizationlatlong-bmc_code,tblorganizationlatlong-customer_type', 'customer_code_other', $model->getAttributeLabel('customer_code'), FALSE, FALSE, FALSE); ?>
+            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblorganizationlatlong-bmc_code,tblorganizationlatlong-customer_type', 'customer_code_other', $model->getAttributeLabel('customer_code'), FALSE); ?>
         </div>
         <div class="col-sm-2 create_fields <?= $disable ?>">
             <?= Yii::$app->dropdown->dropdown('latlong_user', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('user_code'), false, 'user_code'); ?>

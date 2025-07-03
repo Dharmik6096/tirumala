@@ -37,7 +37,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', '', false, FALSE, true); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheadtransaction-bmc_code,tblbillheadtransaction-customer_type', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, FALSE, FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheadtransaction-bmc_code,tblbillheadtransaction-customer_type', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE); ?>
     </div>
     <div class="clearfix"></div>
     <?php

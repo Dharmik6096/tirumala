@@ -32,7 +32,7 @@ use yii\widgets\ActiveForm;
         <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollectionsearch-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
     </div>  
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbmccollectionsearch-bmc_code,tblbmccollectionsearch-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE, FALSE, FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbmccollectionsearch-bmc_code,tblbmccollectionsearch-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
     </div>  
     <div class="clearfix"></div>
     <div class="col-sm-2">
