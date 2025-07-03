@@ -416,8 +416,14 @@ if (!empty($filter_data)) {
                                         </div>
                                         <?php
                                     }
-                                }
-                                ?>
+                                    if (in_array($value, array('mcc_user_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->UserList($model, $form, $field_class . '-f_mcc_code', 'mcc_user_code', FALSE, FALSE, FALSE, '/tms/tbl-user-tracking-movement/user-list'); ?>
+                                        </div>
+                                    <?php } ?> 
+                                <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">
                                     <?php if ($f_cnt > 0) { ?>
