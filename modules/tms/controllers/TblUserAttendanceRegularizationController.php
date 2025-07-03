@@ -14,7 +14,7 @@ use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\tms\models\TblUserAttendanceRegularizationHistory;
 use yii\web\Response;
 use yii\helpers\Json;
-use kartik\widgets\ActiveForm;
+use yii\widgets\ActiveForm;
 use app\modules\tms\models\TblUserAttendanceHistory;
 
 /**
