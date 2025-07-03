@@ -142,7 +142,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
             'portal_type' => Yii::t('app', 'Portal Type'),
             'designation_code' => yii::t('app', 'Designation'),
             'employee_id' => yii::t('app', 'Employee Id'),
-            'date_of_joining' => yii::t('app', 'Date Of Joining'),
+            'date_of_joining' =>  yii::t('app', 'Date Of Joining'),
         ];
     }
 
