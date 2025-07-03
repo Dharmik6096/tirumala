@@ -515,7 +515,7 @@ class DropDown extends Component {
 
     public function customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly, '', true, '', FALSE, '', FALSE);
     }
 
     public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false, $async = true) {
@@ -765,6 +765,11 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-qa-inspection/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
     }
+    
+    public function vehicleList($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
+    }
 
     public function chamberNoList($model, $form, $depends, $name = 'chamber_no', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
@@ -804,6 +809,7 @@ class DropDown extends Component {
     private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '', $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+
         $options = [];
         $options['readonly'] = $readonly;
         $options['class'] = 'form-control ' . $class;
@@ -845,18 +851,10 @@ class DropDown extends Component {
                                         'async' => $async,
                                         'beforeSend' => new \yii\web\JsExpression("
                                             function(jqXHR, settings) {
-                                                var parentVal = $('#' + '{$depends[0]}').val();
-                                                if (!parentVal) {
-                                                    var self = $('#' + '{$seftId}');                                    
-                                                    if (self.data('select2')) {
-                                                        self.val(null).trigger('select2:select');
-                                                        self.trigger('select2:unselect');
-                                                        self.trigger('select2:close');
-                                                        self.find('option').remove();
-                                                        self.prop('disabled', true);
-                                                    }
-                                                    return false;
-                                                }
+                                                return handleDepdropBeforeSend({
+                                                    depends: " . json_encode($depends) . ",
+                                                    selfId: '{$seftId}'
+                                                });
                                             }
                                         "),
                                     ],
@@ -882,18 +880,10 @@ class DropDown extends Component {
                                 'async' => $async,
                                 'beforeSend' => new \yii\web\JsExpression("
                                     function(jqXHR, settings) {
-                                        var parentVal = $('#' + '{$depends[0]}').val();
-                                        if (!parentVal) {
-                                            var self = $('#' + '{$seftId}');                                    
-                                            if (self.data('select2')) {
-                                                self.val(null).trigger('select2:select');
-                                                self.trigger('select2:unselect');
-                                                self.trigger('select2:close');
-                                                self.find('option').remove();
-                                                self.prop('disabled', true);
-                                            }
-                                            return false;
-                                        }
+                                        return handleDepdropBeforeSend({
+                                            depends: " . json_encode($depends) . ",
+                                            selfId: '{$seftId}'
+                                        });
                                     }
                                 "),
                             ],
@@ -932,6 +922,7 @@ class DropDown extends Component {
 
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+
         $tabIndex = ($tab) ? -1 : '';
         $dropDownType = DepDrop::TYPE_DEFAULT;
         if (isset($searchable) && $searchable) {
@@ -957,18 +948,10 @@ class DropDown extends Component {
                             'async' => $async,
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
-                                    var parentVal = $('#' + '{$depends[0]}').val();
-                                    if (!parentVal) {
-                                        var self = $('#' + '{$seftId}');                                        
-                                        if (self.data('select2')) {
-                                            self.val(null).trigger('select2:select');
-                                            self.trigger('select2:unselect');
-                                            self.trigger('select2:close');
-                                            self.find('option').remove();
-                                            self.prop('disabled', true);
-                                        }
-                                        return false;
-                                    }
+                                    return handleDepdropBeforeSend({
+                                        depends: " . json_encode($depends) . ",
+                                        selfId: '{$seftId}'
+                                    });
                                 }
                             "),
                         ],
@@ -1139,7 +1122,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1971,7 +1954,7 @@ class DropDown extends Component {
             'provisional_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject'), 'Reroute' => Yii::t('app', 'Re-route')],
             ],
             'org_type_shift_time' => [
                 'name' => 'org_type',
@@ -2200,6 +2183,11 @@ class DropDown extends Component {
                 'name' => 'party_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['VEHICLE' => Yii::t('app', 'VEHICLE'), 'EMPLOYEE' => Yii::t('app', 'EMPLOYEE'), 'CHILLER' => Yii::t('app', 'CHILLER')],
+            ],
+            'no_of_installment' => [
+                'name' => 'no_of_installment',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'],
             ],
         ];
         return $records[$l];
@@ -2500,6 +2488,7 @@ class DropDown extends Component {
     private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+
         $options = [];
         $options['readonly'] = $readonly;
         $options['class'] = 'form-control ' . $class;
@@ -2540,18 +2529,10 @@ class DropDown extends Component {
                         'ajaxSettings' => [
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
-                                    var parentVal = $('#' + '{$depends[0]}').val();
-                                    if (!parentVal) {
-                                        var self = $('#' + '{$seftId}');                            
-                                        if (self.data('select2')) {
-                                            self.val(null).trigger('select2:select');
-                                            self.trigger('select2:unselect');
-                                            self.trigger('select2:close');
-                                            self.find('option').remove();
-                                            self.prop('disabled', true);
-                                        }
-                                        return false;
-                                    }
+                                    return handleDepdropBeforeSend({
+                                        depends: " . json_encode($depends) . ",
+                                        selfId: '{$seftId}'
+                                    });
                                 }
                             "),
                         ],
