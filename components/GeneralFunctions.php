@@ -2136,11 +2136,11 @@ class GeneralFunctions extends Component {
     public function validateBMC($model, $attribute, $hierarchy = FALSE, $check_vendor = FALSE) {
         $bmcModel = new TblDcsBmc();
         $query = $bmcModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code']);
-            if($check_vendor){
-                $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute], ['sap_vendor_code' => $model->$attribute]]);
-            } else {
-                $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]]);
-            }
+        if ($check_vendor) {
+            $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute], ['sap_vendor_code' => $model->$attribute]]);
+        } else {
+            $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]]);
+        }
         $records = $query->all();
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->bmc_code;
@@ -3070,6 +3070,15 @@ class GeneralFunctions extends Component {
         $response['clr'] = $is_clr_input == 0 ? ($snf - ($fat * $lr1) - $lr2) * 4 : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
 
         return $response;
+    }
+
+    public function getSingleSessionValue($key) {
+        $sessionValue = Yii::$app->session->get($key);
+        if (!empty($sessionValue)) {
+            $values = explode(',', $sessionValue);
+            return $values[0];
+        }
+        return NULL;
     }
 
 }

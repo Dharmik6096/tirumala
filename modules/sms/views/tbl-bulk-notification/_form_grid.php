@@ -102,11 +102,11 @@ $grid_option = [
     'active_column' => FALSE,
     'actions' => [
         'view' => true,
-        'edit' => function ($url, $model) {
-            $class = $model->status == 0 ? '' : 'disabled';
-            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/sms/tbl-bulk-notification/update', 'id' => $model->bulk_notification_id], $options);
-        },
+//        'edit' => function ($url, $model) {
+//            $class = $model->status == 0 ? '' : 'disabled';
+//            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'title' => Yii::t('app', 'Edit')];
+//            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/sms/tbl-bulk-notification/update', 'id' => $model->bulk_notification_id], $options);
+//        },
         'mapping' => function ($url, $model) {
             $class = ($model->login_type == 'all' || !in_array($model->notification_type, [1, 2, 3])) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => '' . $class,];

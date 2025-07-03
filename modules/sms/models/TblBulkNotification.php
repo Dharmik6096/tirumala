@@ -57,6 +57,7 @@ class TblBulkNotification extends \app\models\ChildModel {
                 [['message', 'notification_type'], 'required'],
                 [['status', 'auto_scrolling'], 'default', 'value' => 0],
                 [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['message'], 'setData'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblBulkNotification', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -153,6 +154,16 @@ class TblBulkNotification extends \app\models\ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    public function setData($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->union_code = !empty($this->union_code) ? $this->union_code : Yii::$app->general->getSingleSessionValue('Unions');
+            $this->plant_code = !empty($this->plant_code) ? $this->plant_code : Yii::$app->general->getSingleSessionValue('Plant');
+            $this->mcc_plant_code = !empty($this->mcc_plant_code) ? $this->mcc_plant_code : Yii::$app->general->getSingleSessionValue('MCC');
+            $this->bmc_code = !empty($this->bmc_code) ? $this->bmc_code : Yii::$app->general->getSingleSessionValue('BMC');
+            $this->dcs_code = !empty($this->dcs_code) ? $this->dcs_code : Yii::$app->general->getSingleSessionValue('Dcs');
+        }
     }
 
 }
