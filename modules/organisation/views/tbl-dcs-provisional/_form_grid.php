@@ -276,7 +276,7 @@ $grid_option = [
         'update' => function ($url, $model) use ($pending_approval) {
             $class = '';
             if (!$pending_approval) {
-                $class = ($model->is_active === 0 || $model->status != 'Pending' || $model->status != 'Reroute') ? 'link-disable' : '';
+                $class = ($model->is_active === 0 || ($model->status != 'Pending' && $model->status != 'Reroute')) ? 'link-disable' : '';
             }
             $name = $model->dcs_name;
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
