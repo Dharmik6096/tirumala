@@ -162,7 +162,7 @@ class TblDispatchCenterController extends \app\controllers\ChildController {
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblDispatchCenterApplicability();
         $appModel->with_wef_date = false;
-        $appModel->check_duplicate_field = 'applicable_code';
+        $appModel->with_applicable_code = true;
         $appModel->save_applicability_child = true;
         $appModel->union_code = $model->union_code;
         $appModel->field_name = 'dispatch_center_code';

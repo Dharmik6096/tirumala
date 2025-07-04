@@ -81,6 +81,7 @@ class Applicability extends \yii\base\Module {
     public $rateMccCode = [];
     public $with_applicable_code = false;
     public $load_data_on_apply_to_checkbox = false;
+    public $save_applicability_child = false;
 
     /**
      * @inheritdoc
@@ -446,6 +447,15 @@ class Applicability extends \yii\base\Module {
                                     }
                                 } else {
                                     $saveModel[] = $appModel->save();
+                                }
+                                $saveChildModels = [];
+                                if ($this->save_applicability_child) {
+                                    $model->saveApplicabilityChild($model, $saveChildModels, $value);
+                                    if (!empty($saveChildModels)) {
+                                        foreach ($saveChildModels as $saveChildModel) {
+                                            $saveModel[] = $saveChildModel->save();
+                                        }
+                                    }
                                 }
                             } catch (UserException $e) {
                                 $saveModel[] = false;

@@ -296,7 +296,7 @@ $this->title = Yii::t('app', $title);
                 localStorage.setItem('masterArray', JSON.stringify(masterlocal));
                 var masterlocal = JSON.parse(localStorage.getItem('masterArray'));
                 $('#dispatch_master').val(JSON.stringify(masterlocal));
-                $('#headdiv :input').attr('disabled', true);
+                $('#headdiv :input').parent('div').addClass('no_pointer_disabled');
             }
             for (i = 0; i < local.length; i++) {
                 var cnt = i + 1;

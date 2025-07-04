@@ -274,9 +274,10 @@ class TblProduct extends \app\models\ChildModel {
                 $dispatchCentData = $dispatchModel->find()->where(['dispatch_center_code' => $dispatchCenterCode])->one();
                 $pgCode = !empty($dispatchCentData) ? $dispatchCentData->dispatch_center_type_code : NULL;
             }
+            $pgCode = !empty($pgCode) ? explode(',', $pgCode) : '';
             $query = $this->find()
                     ->select(['product_code', 'product_name'])
-                    ->where(['union_code' => $unionCode, 'is_active' => 1, 'product_group_code' => explode(',', $pgCode)])
+                    ->where(['union_code' => $unionCode, 'is_active' => 1, 'product_group_code' => $pgCode])
                     ->all();
             $value = ArrayHelper::map($query, 'product_code', 'product_name');
             return $value;
