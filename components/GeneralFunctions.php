@@ -3072,13 +3072,4 @@ class GeneralFunctions extends Component {
         return $response;
     }
 
-    public function getSingleSessionValue($key) {
-        $sessionValue = Yii::$app->session->get($key);
-        if (!empty($sessionValue)) {
-            $values = explode(',', $sessionValue);
-            return $values[0];
-        }
-        return NULL;
-    }
-
 }
