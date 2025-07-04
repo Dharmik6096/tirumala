@@ -661,6 +661,9 @@ class SearchFilter {
             'TblMilkQualityParamRangeSearch' => [
                 'filter' => ['quality_config_process_name', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
             ],
+            'TblUserAttendanceRegularizationSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'mcc_user_code', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
