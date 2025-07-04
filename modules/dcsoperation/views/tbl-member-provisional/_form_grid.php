@@ -166,7 +166,7 @@ $grid_option = [
             } else {
                 $class = '';
                 if (!$pending_approval) {
-                    $class = ($model->is_active === 0 || $model->provisional_status != 'Pending' || $model->provisional_status != 'Reroute') ? 'link-disable' : '';
+                    $class = ($model->is_active === 0 || ($model->provisional_status != 'Pending' && $model->provisional_status != 'Reroute')) ? 'link-disable' : '';
                 }
                 $name = $model->member_name;
                 $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
