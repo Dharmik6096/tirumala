@@ -57,17 +57,14 @@ class TblBulkNotification extends \app\models\ChildModel {
                 [['message', 'notification_type'], 'required'],
                 [['status', 'auto_scrolling'], 'default', 'value' => 0],
                 [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-                [['union_code'], 'required', 'when' => function ($model) {
-                    return Yii::$app->session->get('Unions') || Yii::$app->session->get('Plant') || Yii::$app->session->get('MCC') || Yii::$app->session->get('BMC') || Yii::$app->session->get('Dcs');
-                }],
-                [['plant_code'], 'required', 'when' => function ($model) {
-                    return Yii::$app->session->get('Plant') || Yii::$app->session->get('MCC') || Yii::$app->session->get('BMC') || Yii::$app->session->get('Dcs');
+                [['union_code', 'plant_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('Plant');
                 }],
                 [['mcc_plant_code'], 'required', 'when' => function ($model) {
-                    return Yii::$app->session->get('MCC') || Yii::$app->session->get('BMC') || Yii::$app->session->get('Dcs');
+                    return Yii::$app->session->get('MCC');
                 }],
                 [['bmc_code'], 'required', 'when' => function ($model) {
-                    return Yii::$app->session->get('BMC') || Yii::$app->session->get('Dcs');
+                    return Yii::$app->session->get('BMC');
                 }],
                 [['dcs_code'], 'required', 'when' => function ($model) {
                     return Yii::$app->session->get('Dcs');
