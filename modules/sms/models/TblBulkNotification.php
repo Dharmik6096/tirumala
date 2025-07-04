@@ -57,6 +57,18 @@ class TblBulkNotification extends \app\models\ChildModel {
                 [['message', 'notification_type'], 'required'],
                 [['status', 'auto_scrolling'], 'default', 'value' => 0],
                 [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['union_code', 'plant_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('Plant');
+                }],
+                [['mcc_plant_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('MCC');
+                }],
+                [['bmc_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('BMC');
+                }],
+                [['dcs_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('Dcs');
+                }],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblBulkNotification', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
