@@ -1268,7 +1268,7 @@ class CustomValidation extends Component {
                 ],
                 'TblMilkVehicleEntryQltyMerge' => [
                     'default' => [
-                        [['tested_by', 'verified_by'], 'required']
+                        [['tested_by', 'verified_by'], 'required', 'except' => ['androidsync']]
                     ],
                 ],
             ],

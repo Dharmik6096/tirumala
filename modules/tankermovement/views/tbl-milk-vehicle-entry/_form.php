@@ -147,7 +147,7 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1"> 
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
                     </div>
-                    <div class="col-sm-1"> 
+                    <div class="col-sm-1 chamber_no_hide"> 
                         <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblmilkvehicleentry-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
@@ -324,6 +324,7 @@ $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(exp
 $script = "
     var org_code = '';
     var qltyParamsReadOnly = false;
+    var isTripStatusAlertShown = false;
     $('#dispatch-detail').css('display', 'none');
     $('#milk-receipt-transaction').css('display', 'none');
     $('#milk-receipt-transaction-detail').css('display', 'none');
@@ -360,6 +361,7 @@ $script = "
             if (setData(dispatch_from) && dispatch_from == 'PARTY' && tripMandateOnReceipt == false) {
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
+               $('.chamber_no_hide').css('display', 'none');
                $('#dispatch-detail').css('display', 'none');
                $('#milk-receipt-transaction').css('display', 'block');
                $('#milk-receipt-transaction-detail').css('display', 'block');
@@ -367,7 +369,7 @@ $script = "
                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
                $('#tblmilkvehicleentry-trip_code').val('').trigger('change').trigger('select2:select');
                $('#tblmilkvehicleentry-vehicle_code').val('').trigger('change').trigger('select2:select');
-               EntryType.classList.add('no_pointer');
+               EntryType.classList.add('no_pointer_disabled');
             } else if (receipt_at == 'PLANT') {
                 $('.vehicle_code_hide').css('display', 'block');
                 $('.tanker_no_hide').css('display', 'none');
@@ -448,7 +450,13 @@ $script = "
                                     validateWeightTimes(obj1.lotQltyData);
                                 });
                         } else if(obj1.validation){
-                            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            if(!isTripStatusAlertShown) {
+                                isTripStatusAlertShown = true;
+                                bootbox.alert(\"<div class='row'><div class='col-sm-12'><div class='bg-danger'><i class='fa fa-times'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                                $('.bootbox').on('hidden.bs.modal', function() {
+                                    isTripStatusAlertShown = false;
+                                });
+                            }
                         } else {
                             $('#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-water, #tblmilkvehicleentrytransaction-temp, #tblmilkvehicleentrytransaction-protein, #tblmilkvehicleentrytransaction-density, #tblmilkvehicleentrytransaction-lactose, #tblmilkvehicleentrytransaction-freezing_point, #tblmilkvehicleentrytransaction-mbrt, #tblmilkvehicleentrytransaction-acidity').val('').prop('readonly', false);
                             $('#tblmilkvehicleentrytransaction-is_qty_only, #tblmilkvehicleentrytransaction-is_pending_merge').val('0');
