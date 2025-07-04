@@ -2568,7 +2568,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'pluginOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
