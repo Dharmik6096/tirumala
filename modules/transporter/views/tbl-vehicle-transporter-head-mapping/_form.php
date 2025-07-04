@@ -2,6 +2,7 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblCollectionPoint */
@@ -29,10 +30,10 @@ $form = ActiveForm::begin([
     <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('billing_type'), $readonly, 'billing_type', false); ?>
 
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_code'), '', $readonly); ?>
+        <?= Yii::$app->dropdown->vehicleList($model, $form, 'tblvehicletransporterheadmapping-union_code,tblvehicletransporterheadmapping-billing_type', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE); ?>
     </div>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletransporterheadmapping-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, '', $readonly); ?>
@@ -65,6 +66,9 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
+    $(document).ready(function() {
+        $('.field-tblvehicletransporterheadmapping-transporter_code').addClass('disabled no_pointer');
+    });
     $(document).ready(function(){
         $('.default_hide').hide();
         hide();
@@ -81,6 +85,32 @@ $script = "
                 $('#tblvehicletransporterheadmapping-route_code').val('');
                 $('#tblvehicletransporterheadmapping-route_code').trigger('change');
                 $('#tblvehicletransporterheadmapping-route_code').trigger('select2:select');
+            }
+        }
+        
+        $('#tblvehicletransporterheadmapping-vehicle_code').on('change', function(){
+            var vehicle_code = $(this).val();
+             if(setData(vehicle_code)){
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['tbl-vehicle-master/get-vehicle-detail']) . "',    
+                    data: 'vehicle_code='+vehicle_code,
+                    success: function(data) {
+                        var obj1 = $.parseJSON(data);
+                        if(obj1.status == 'success' && obj1.data){
+                            $('#tblvehicletransporterheadmapping-transporter_code').val(obj1.data.transporter_code).trigger('change').trigger('select2:select');
+                        }
+                    }
+                });
+            } else {
+                $('#tblvehicletransporterheadmapping-transporter_code').val(null).trigger('change');
+            }
+        });
+        function setData(field = ''){
+            if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+                return true;
+            }else {
+                return false;
             }
         }
 ";

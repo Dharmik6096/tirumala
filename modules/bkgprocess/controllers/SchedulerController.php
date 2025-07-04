@@ -668,7 +668,7 @@ class SchedulerController extends ChildController {
                                 $modelHistory->save();
                                 $existData->resetData();
                                 $existData->save(TRUE, FALSE);
-                                $row->remarks = $row->remarks . ' Deactivation CBPA Removed';
+                                $row->remarks = trim($row->remarks . ' Deactivation CBPA Removed');
                             }
                             $row->save(FALSE);
                             $statusModel = new TblDcsVendorStatus();

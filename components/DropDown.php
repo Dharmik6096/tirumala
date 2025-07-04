@@ -193,7 +193,7 @@ class DropDown extends Component {
         if (!empty($selected)) {
             $script = "$(document).ready(function() {
                    $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
-                    });";
+                });";
             Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
         }
     }
@@ -425,11 +425,11 @@ class DropDown extends Component {
     public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false, $is_return = FALSE, $input_name = '') {
         $this->setClass($form, $name);
         if ($is_return) {
-            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name);
+            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name, FALSE);
         } else if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, '', $readonly, '', true, TRUE);
         } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', true, '', false, '', FALSE);
         }
     }
 
@@ -483,12 +483,12 @@ class DropDown extends Component {
 
     public function customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly, '', true, '', FALSE, '', FALSE);
     }
 
-    public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
+    public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false, $async = true) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/activate-customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/activate-customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly, '', true, '', false, '', $async);
     }
 
     public function activate_member_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
@@ -731,6 +731,11 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-qa-inspection/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
     }
+    
+    public function vehicleList($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
+    }
 
     public function chamberNoList($model, $form, $depends, $name = 'chamber_no', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
@@ -766,9 +771,10 @@ class DropDown extends Component {
         ]]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '', $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+
         $options = [];
         $options['readonly'] = $readonly;
         $options['class'] = 'form-control ' . $class;
@@ -789,6 +795,7 @@ class DropDown extends Component {
             $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         }
 //         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($is_return) {
             return $form->field($model, !empty($input_name) ? $input_name : $name)
                             ->widget(DepDrop::classname(), [
@@ -804,6 +811,17 @@ class DropDown extends Component {
                                     'allParam' => ["'" . $extraParam . "'"],
                                     'initialize' => true,
                                     'allowClear' => true,
+                                    'ajaxSettings' => [
+                                        'async' => $async,
+                                        'beforeSend' => new \yii\web\JsExpression("
+                                            function(jqXHR, settings) {
+                                                return handleDepdropBeforeSend({
+                                                    depends: " . json_encode($depends) . ",
+                                                    selfId: '{$seftId}'
+                                                });
+                                            }
+                                        "),
+                                    ],
                                 ],
                                 'options' => $options
                             ])->label($islable);
@@ -822,6 +840,17 @@ class DropDown extends Component {
                             'allParam' => ["'" . $extraParam . "'"],
                             'initialize' => true,
                             'allowClear' => true,
+                            'ajaxSettings' => [
+                                'async' => $async,
+                                'beforeSend' => new \yii\web\JsExpression("
+                                    function(jqXHR, settings) {
+                                        return handleDepdropBeforeSend({
+                                            depends: " . json_encode($depends) . ",
+                                            selfId: '{$seftId}'
+                                        });
+                                    }
+                                "),
+                            ],
                         ],
                         'options' => $options
                     ])->label($islable);
@@ -857,11 +886,13 @@ class DropDown extends Component {
 
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+
         $tabIndex = ($tab) ? -1 : '';
         $dropDownType = DepDrop::TYPE_DEFAULT;
         if (isset($searchable) && $searchable) {
             $dropDownType = DepDrop::TYPE_SELECT2;
         }
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -876,6 +907,14 @@ class DropDown extends Component {
                         'initialize' => true,
                         'ajaxSettings' => [
                             'async' => $async,
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    return handleDepdropBeforeSend({
+                                        depends: " . json_encode($depends) . ",
+                                        selfId: '{$seftId}'
+                                    });
+                                }
+                            "),
                         ],
                     ],
                     'options' => [
@@ -1036,7 +1075,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1868,7 +1907,7 @@ class DropDown extends Component {
             'provisional_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject'), 'Reroute' => Yii::t('app', 'Re-route')],
             ],
             'org_type_shift_time' => [
                 'name' => 'org_type',
@@ -2108,6 +2147,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['hold' => Yii::t('app', 'Hold'), 'accepted' => Yii::t('app', 'Accepted'), 'rejected' => Yii::t('app', 'Rejected')],
             ],
+            'no_of_installment' => [
+                'name' => 'no_of_installment',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'],
+            ],
         ];
         return $records[$l];
     }
@@ -2343,7 +2387,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -2402,6 +2446,7 @@ class DropDown extends Component {
     private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+
         $options = [];
         $options['readonly'] = $readonly;
         $options['class'] = 'form-control ' . $class;
@@ -2423,6 +2468,7 @@ class DropDown extends Component {
         }
 
         $allParam = is_array($extraParam) ? $extraParam : ["'" . $extraParam . "'"];
+        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -2436,6 +2482,16 @@ class DropDown extends Component {
                         'allParam' => $allParam,
                         'initialize' => true,
                         'allowClear' => true,
+                        'ajaxSettings' => [
+                            'beforeSend' => new \yii\web\JsExpression("
+                                function(jqXHR, settings) {
+                                    return handleDepdropBeforeSend({
+                                        depends: " . json_encode($depends) . ",
+                                        selfId: '{$seftId}'
+                                    });
+                                }
+                            "),
+                        ],
                     ],
                     'options' => $options
                 ])->label($islable);

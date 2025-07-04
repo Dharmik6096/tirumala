@@ -515,6 +515,21 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'CompleteTrip';
         return $this->actionIndex();
     }
+    
+    public function actionCcTruckSlip() {
+        $this->report = 'CcTruckSlip';
+        return $this->actionIndex();
+    }
+    
+    public function actionDmrReport() {
+        $this->report = 'DmrReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionCcSubStandardMrg() {
+        $this->report = 'CcSubStandardMrg';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1224,6 +1239,27 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/CompleteTrip',
                 'scenario' => 'CompleteTrip',
                 'title' => 'Complete Trip Details',
+                'bkg_export' => TRUE,
+            ],
+            'CcTruckSlip' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code:all_routes,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/CCTruckSlip',
+                'scenario' => 'CcTruckSlip',
+                'title' => 'CC Truck Slip',
+                'bkg_export' => TRUE,
+            ],
+            'DmrReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code:all_routes,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/DRMReport',
+                'scenario' => 'DmrReport',
+                'title' => 'DMR Report ',
+                'bkg_export' => TRUE,
+            ],
+            'CcSubStandardMrg' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code:all_routes,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_qty_from,p_qty_to,p_fat_from,p_fat_to,p_snf_from,p_snf_to',
+                'path' => 'vsp/CCSubStandardMrg',
+                'scenario' => 'CcSubStandardMrg',
+                'title' => 'MRG Report ',
                 'bkg_export' => TRUE,
             ],
         ];
