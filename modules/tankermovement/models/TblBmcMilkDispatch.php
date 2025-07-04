@@ -493,22 +493,27 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
     }
 
     public function getlastDestTripDetail() {
-        $tripExists = $this->find()
-                ->joinWith(['tripCode.vehicleTripDetailCode'])
+        $tripExists = TblVehicleTripDetail::find()
+                ->joinWith(['tripCode'])
                 ->where([
-                    'tbl_vehicle_trip.trip_status' => ['generated', 'open', 'tankerfull'],
-                    'tbl_vehicle_trip_detail.is_last_destination' => 1,
-                    'tbl_vehicle_trip.trip_code' => $this->trip_code
-                ])
+                    'tbl_vehicle_trip_detail.trip_code' => $this->trip_code,
+                    'tbl_vehicle_trip_detail.arrival_time' => null,
+                    'tbl_vehicle_trip.trip_status' => ['generated', 'open', 'tankerfull'],])
+                ->orderBy(['tbl_vehicle_trip_detail.sequence_no' => SORT_DESC])
                 ->one();
 
         if (!empty($tripExists)) {
-            return false;
-        } else if (!empty($this->bmc_code)) {
-            $stockData = TblBmcDispatchStock::find()->where(['from_date' => $this->from_date, 'to_date' => $this->to_date, 'bmc_code' => $this->bmc_code, 'type' => 'dispatch'])->orderBy(['created_at' => SORT_DESC])->one();
-            return !empty($stockData) ? true : false;
+            $stockDataCreatedAt = TblBmcDispatchStock::find()->select('created_at')->where(['from_date' => $this->from_date, 'to_date' => $this->to_date, 'bmc_code' => $this->bmc_code, 'type' => 'dispatch'])->orderBy(['created_at' => SORT_DESC])->scalar();
+            $laterStockExists = true;
+            if (!empty($stockDataCreatedAt)) {
+                $laterStockExists = TblBmcDispatchStock::find()
+                        ->where(['bmc_code' => $this->bmc_code,])
+                        ->andWhere(['>', 'created_at', $stockDataCreatedAt])
+                        ->exists();
+            }
+            return $laterStockExists ? false : true;
         } else {
-            return true;
+            return false;
         }
     }
 
