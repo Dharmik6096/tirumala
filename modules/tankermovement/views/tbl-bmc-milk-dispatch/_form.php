@@ -727,6 +727,7 @@ function editTransaction(bmc_milk_dispatch_txn_code){
 ";
 
 $script .= "
+    var isTxnEditable = " . json_encode($txnEdit) . ";
     $(document).off('change', '.filldata').on('change', '.filldata', function () {
         var bmc_code = $('#tblbmcmilkdispatch-bmc_code').val();
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
@@ -758,7 +759,7 @@ $script .= "
             $.ajax({
                     type: 'get',
                     url: '" . Url::to(['transaction-detail']) . "',
-                    data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code},             
+                    data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code, 'txnEdit': isTxnEditable},             
                     success: function(data) {
                         $('#transactions-detial').html(data);
                     },

@@ -399,6 +399,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'isVisible' => (!empty(Yii::$app->request->get('form_type')) && Yii::$app->request->get('form_type') == 'plant') ? FALSE : TRUE,
+                    'txnEdit' => Yii::$app->request->get('txnEdit'),
         ]);
     }
 
