@@ -155,7 +155,7 @@ class TblMilkQualityParamRange extends \app\models\ChildModel {
     public function getQualityRange() {
         $fields = ['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr'];
         $criteria = ['union_code' => $this->union_code, 'process_name' => $this->process_name, 'org_type' => $this->org_type, 'org_code' => $this->org_code, 'animal_type_code' => $this->animal_type_code];
-        return $this->find()->select($fields)->where($criteria)->one() ?: TblUnionRatechartRange::find()->select($fields)->where(['union_code' => $this->union_code, 'animal_type_code' => $this->animal_type_code])->one();
+        return $this->find()->select($fields)->where($criteria)->one() ?: TblUnionRatechartRange::find()->select($fields)->where(['union_code' => $this->union_code, 'animal_type_code' => $this->animal_type_code, 'config_for' => $this->org_type])->one();
     }
 
     public function getminMaxQualityRange() {
@@ -163,7 +163,7 @@ class TblMilkQualityParamRange extends \app\models\ChildModel {
         $criteria = ['union_code' => $this->union_code, 'process_name' => $this->process_name, 'org_type' => $this->org_type, 'org_code' => $this->org_code];
         $result = $this->find()->select($fields)->where($criteria)->one();
         $hasData = !empty($result) && ($result->min_fat !== null || $result->max_fat !== null || $result->min_snf !== null || $result->max_snf !== null || $result->min_clr !== null || $result->max_clr !== null);
-        return $hasData ? $result : TblUnionRatechartRange::find()->select($fields)->where(['union_code' => $this->union_code])->one();
+        return $hasData ? $result : TblUnionRatechartRange::find()->select($fields)->where(['union_code' => $this->union_code, 'config_for' => $this->org_type])->one();
     }
 
 }
