@@ -50,7 +50,7 @@ use app\modules\tankermovement\models\TblVehicleTrip;
  */
 class TblMilkVehicleEntryQlty extends ChildModel {
 
-    public $config_code, $sample_time;
+    public $config_code, $sample_time, $is_clr_input;
 
     /**
      * @inheritdoc
@@ -64,7 +64,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by', 'sample_datetime', 'record_status', 'sample_time', 'is_qty_only', 'is_pending_merge', 'is_approved'], 'safe'],
+            [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by', 'sample_datetime', 'record_status', 'sample_time', 'is_qty_only', 'is_pending_merge', 'is_approved', 'is_clr_input'], 'safe'],
             [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['chamber_no', 'acidity', 'mbrt', 'sample_datetime', 'record_status'], 'required', 'except' => ['resetQlty']],
             [['sample_time'], 'required', 'on' => ['qltySubmit', 'update']],
@@ -271,6 +271,14 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 }
             }
         }
+    }
+
+    public function GetClrInput() {
+        $isClrInput = Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'is_clr_input', $this->plant_code, 'PLANT', 'PLANT_RECEIPT_CONFIG');
+        if ($isClrInput == '') {
+            $isClrInput = Yii::$app->general->getUnionConfiguration($this->union_Code, 'is_clr_input', 'PORTAL');
+        }
+        $this->is_clr_input = $isClrInput;
     }
 
 }
