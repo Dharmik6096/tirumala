@@ -131,10 +131,10 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'snf')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'water')->textInput() ?>
+            <?= $form->field($txn_model, 'temperature')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'temperature')->textInput() ?>
+            <?= $form->field($txn_model, 'water')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'clr')->textInput() ?>

@@ -8,6 +8,7 @@ use app\modules\tankermovement\models\TblMilkVehicleEntryQltyMergeSearch;
 use app\modules\tankermovement\models\TblMilkVehicleEntryQltyMergeHistory;
 use yii\web\NotFoundHttpException;
 use app\modules\configuration\models\TblConfig;
+use app\modules\configuration\models\TblMilkQualityParamRange;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultHistory;
 use app\modules\tankermovement\models\TblVehicleTrip;
@@ -71,8 +72,12 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $config->config_type = 'CONTROL';
         $config_mapping = new TblConfigTxnResult();
         $config_list = [];
+
         if ($trip_model && !empty($trip_model['source_org_code'])) {
             $config_list = $config->getOrgConfigList($config->config_for, $trip_model['source_org_code']);
+            $model->union_code = $searchModel->union_code;
+            $model->plant_code = $trip_model['source_org_code'];
+            $model->GetClrInput();
         }
         return $this->render('create', [
                     'model' => $model,
@@ -168,6 +173,32 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         Yii::$app->getSession()->setFlash('success');
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionCalculateClr() {
+        $fat = (float) Yii::$app->request->post('fat');
+        $snf = (float) Yii::$app->request->post('snf');
+        $clr = (float) Yii::$app->request->post('clr');
+        $union = Yii::$app->request->post('union_code');
+        $org_code = Yii::$app->request->post('plantCode');
+        $is_clr_input = Yii::$app->request->post('is_clr_input');
+
+        $result = Yii::$app->general->calculateData('PLANT_RECEIPT_CONFIG', $union, $org_code, $fat, $snf, $clr, 'PLANT', $is_clr_input);
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Json::encode(['status' => 'success', 'data' => $result['clr']]);
+    }
+
+    public function actionGetQualityParamRange() {
+        $model = new TblMilkQualityParamRange();
+        $model->union_code = Yii::$app->request->post('union');
+        $model->process_name = 'PLANT_MILK_RECEIPT';
+        $model->org_type = 'PLANT';
+        $model->org_code = Yii::$app->request->post('plantCode');
+        $data = $model->getminMaxQualityRange();
+        $hasData = $data && ($data->min_fat !== null || $data->max_fat !== null || $data->min_snf !== null || $data->max_snf !== null || $data->min_clr !== null || $data->max_clr !== null);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode(['status' => $hasData ? 'success' : 'error', 'data' => $hasData ? $data : []]);
     }
 
 }
