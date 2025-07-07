@@ -151,6 +151,10 @@ $script = "
     $(document).on('change', '#tblmilkvehicleentryqltymerge-fat, #tblmilkvehicleentryqltymerge-clr, #tblmilkvehicleentryqltymerge-snf', function() {
         calculateClr();
     });
+    
+    $(document).ready(function() {
+        checkQualityRanges();
+    });
 
     function calculateClr(){
         var fat = $('#tblmilkvehicleentryqltymerge-fat').val();
@@ -180,10 +184,6 @@ $script = "
             });
         }
     }
-
-    // $(document).on('change', '#tblmilkvehicleentryqltymerge-milk_type_code', function() {
-    //     checkQualityRanges();
-    // });
 
     function checkQualityRanges(){
         $.ajax({

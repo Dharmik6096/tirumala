@@ -370,10 +370,10 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $model->process_name = 'PLANT_MILK_RECEIPT';
         $model->org_type = 'PLANT';
         $model->org_code = Yii::$app->request->post('plantCode');
-        $model->animal_type_code = Yii::$app->request->post('milkTypeCode');
-        $data = $model->getQualityRange();
+        $data = $model->getminMaxQualityRange();
+        $hasData = $data && ($data->min_fat !== null || $data->max_fat !== null || $data->min_snf !== null || $data->max_snf !== null || $data->min_clr !== null || $data->max_clr !== null);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode(['status' => !empty($data) ? 'success' : 'error', 'data' => !empty($data) ? $data : []]);
+        return Json::encode(['status' => $hasData ? 'success' : 'error', 'data' => $hasData ? $data : []]);
     }
 
 }
