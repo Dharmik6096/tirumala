@@ -1837,6 +1837,9 @@ class SiteController extends \app\controllers\ChildController {
             if (!empty($modelData)) {
                 $version_ignore_tables = ['tbl_product_sale', 'tbl_product_sale_transaction'];
                 $ignore_tables = ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'];
+                $tableWiseUniqueKeys = [
+                    'tbl_member' => 'member_code',
+                ];
                 $version_no = 0;
                 $update_ids = array_column($modelData, 'uuid');
 //$model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
@@ -1868,6 +1871,7 @@ class SiteController extends \app\controllers\ChildController {
                             $json = (array) json_decode($json);
                             $json = Yii::$app->general->camelCaseToUnderscore($json);
                             $model->setAttributes($json);
+                            $unique_key = isset($tableWiseUniqueKeys[$transaction_data->table_name]) ? $tableWiseUniqueKeys[$transaction_data->table_name] : $unique_key;
 
                             /* update record if already available */
                             if ($model->hasAttribute($unique_key) && !empty($model->$unique_key)) {
