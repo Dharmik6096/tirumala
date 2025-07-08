@@ -123,7 +123,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1">
             <?= $form->field($txn_model, 'shift_of_milk')->textInput() ?>
         </div>
-        <?php if($txnEdit) { ?>
+        <?php if ($txnEdit) { ?>
             <div class="col-sm-1 number-validate no_pointer_disabled">
                 <?= $form->field($txn_model, 'original_dispatch_qty')->textInput(['readonly' => true, 'onkeydown' => 'return false;']) ?>
             </div>
@@ -149,10 +149,15 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'protein')->textInput() ?>
         </div>
+        <?php if ($txnEdit) { ?>
+            <div class="clearfix"></div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'density')->textInput() ?>
         </div>
-        <!-- <div class="clearfix"></div> -->
+        <?php if (!$txnEdit) { ?>
+            <div class="clearfix"></div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'lactose')->textInput() ?>
         </div>

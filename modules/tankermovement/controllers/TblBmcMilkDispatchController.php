@@ -159,7 +159,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 $stock_model->to_shift_code = $model->to_shift_code;
                 $stock_model->from_date = $model->from_date;
                 $stock_model->from_shift_code = $model->from_shift_code;
-                $stock_model->from_date_tr = date('Y-m-d H:i:s', strtotime($txn_model->from_date_tr));
+                if (!empty($txn_model->from_date_tr)) {
+                    $stock_model->from_date_tr = date('Y-m-d H:i:s', strtotime($txn_model->from_date_tr));
+                }
                 $stock_model->transaction_date = $model->transaction_date;
                 $stock_model->closing_bal = $txn_model->dispatch_qty;
                 $stock_data = $stock_model->getStockEntry();
