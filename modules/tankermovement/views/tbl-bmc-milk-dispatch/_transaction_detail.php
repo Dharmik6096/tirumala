@@ -2,7 +2,7 @@
 
 use yii\web\View;
 use app\modules\usermanagement\components\GhostHtml;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 $updateTransaction = User::canRoute('/tankermovement/tbl-bmc-milk-dispatch/update-transaction');
 ?>
