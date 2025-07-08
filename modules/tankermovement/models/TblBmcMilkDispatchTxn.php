@@ -170,6 +170,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'shift_of_milk' => Yii::t('app', 'Shift Of Milk'),
+            'original_dispatch_qty' => Yii::t('app', 'Original Qty'),
         ];
     }
 
