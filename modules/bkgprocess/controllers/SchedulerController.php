@@ -667,6 +667,8 @@ class SchedulerController extends ChildController {
                                 Yii::$app->operation->history($existData, $modelHistory, UPDATE);
                                 $modelHistory->save();
                                 $existData->resetData();
+                                $decrypt = $modelMaster->decryptModel($existData);
+                                $existData->setAttributes($decrypt);
                                 $existData->save(TRUE, FALSE);
                                 $row->remarks = trim($row->remarks . ' Deactivation CBPA Removed');
                             }
