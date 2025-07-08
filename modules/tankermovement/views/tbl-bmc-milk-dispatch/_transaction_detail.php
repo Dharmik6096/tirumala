@@ -83,7 +83,7 @@ $updateTransaction = User::canRoute('/tankermovement/tbl-bmc-milk-dispatch/updat
                     return '';
                 }
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->bmc_milk_dispatch_txn_code, 'data-name' => $model->bmc_milk_dispatch_txn_code, 'title' => Yii::t('app', 'Edit')];
-                return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/update-transaction'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/update-transaction'], $options);
             },
         ]
     ];
