@@ -37,7 +37,7 @@ class Route extends AbstractItem {
 
         $auth_item = Yii::$app->getModule('user-management')->auth_item_table;
         $auth_item_child = Yii::$app->getModule('user-management')->auth_item_child_table;
-
+        $permissionNames = array_map('strval', $permissions);
         $routes = (new Query)
                 ->select(['name'])
                 ->from($auth_item)
@@ -46,7 +46,7 @@ class Route extends AbstractItem {
                     ':type' => self::TYPE_ROUTE,
                 ])
                 ->where([
-                    $auth_item_child . '.parent' => $permissions, $auth_item . '.' . Yii::$app->session->get('organizations_type') => '1'
+                    $auth_item_child . '.parent' => $permissionNames, $auth_item . '.' . Yii::$app->session->get('organizations_type') => '1'
                 ])
                 ->column();
 //        return $withSubRoutes ? static::withSubRoutes($routes, ArrayHelper::map(Route::find()->where([Yii::$app->session->get('organizations_type') => '1'])->asArray()->all(), 'name', 'name')) : $routes;
