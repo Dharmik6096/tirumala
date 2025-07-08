@@ -21,7 +21,7 @@ class Route extends \app\modules\usermanagement\models\rbacDB\Route {
 
         $auth_item = Yii::$app->getModule('user-management')->auth_item_table;
         $auth_item_child = Yii::$app->getModule('user-management')->auth_item_child_table;
-        $permissionNames = array_map('strval', array_keys($permissions));
+        $permissionNames = array_map('strval',$permissions);
         $routes = (new Query)
                 ->select(['name'])
                 ->from($auth_item)
