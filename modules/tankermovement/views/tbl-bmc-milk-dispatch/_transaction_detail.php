@@ -2,7 +2,9 @@
 
 use yii\web\View;
 use app\modules\usermanagement\components\GhostHtml;
-use yii\helpers\Url;
+use app\modules\usermanagement\models\User;
+
+$updateTransaction = User::canRoute('/tankermovement/tbl-bmc-milk-dispatch/update-transaction');
 ?>
 <div class="clearfix"></div>
 <div class="hide_toolbar_only hide_filters_only">
@@ -75,6 +77,13 @@ use yii\helpers\Url;
             'view-config' => function ($url, $model) {
                 $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-config', 'title' => 'View Config Input', 'data-val' => $model->bmc_milk_dispatch_txn_code];
                 return GhostHtml::a_alert('<i class="fa fa-eye"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/view-config', 'id' => $model->bmc_milk_dispatch_txn_code], $options);
+            },
+            'edit' => function ($url, $model) use ($updateTransaction, $txnEdit) {
+                if ($txnEdit === 'false' || !$updateTransaction) {
+                    return '';
+                }
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->bmc_milk_dispatch_txn_code, 'data-name' => $model->bmc_milk_dispatch_txn_code, 'title' => Yii::t('app', 'Edit')];
+                return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/update-transaction'], $options);
             },
         ]
     ];

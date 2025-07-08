@@ -252,6 +252,7 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'isVisible' => (strtolower($model->source_org_type == 'bmc')) ? true : false,
+                    'txnEdit' => 'false',
                 ]);
                 ?>
             </div>

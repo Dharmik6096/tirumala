@@ -161,9 +161,8 @@ class TblMilkQualityParamRange extends \app\models\ChildModel {
     public function getminMaxQualityRange() {
         $fields = ['MIN(min_fat) as min_fat', 'MAX(max_fat) as max_fat', 'MIN(min_snf) as min_snf', 'MAX(max_snf) as max_snf', 'MIN(min_clr) as min_clr', 'MAX(max_clr) as max_clr'];
         $criteria = ['union_code' => $this->union_code, 'process_name' => $this->process_name, 'org_type' => $this->org_type, 'org_code' => $this->org_code];
-        $result = $this->find()->select($fields)->where($criteria)->one();
-        $hasData = !empty($result) && ($result->min_fat !== null || $result->max_fat !== null || $result->min_snf !== null || $result->max_snf !== null || $result->min_clr !== null || $result->max_clr !== null);
-        return $hasData ? $result : TblUnionRatechartRange::find()->select($fields)->where(['union_code' => $this->union_code, 'config_for' => $this->org_type])->one();
+        $result = $this->find()->select($fields)->where($criteria)->groupBy(['union_code', 'process_name', 'org_type', 'org_code'])->one();
+        return !empty($result) ? $result : TblUnionRatechartRange::find()->select($fields)->where(['union_code' => $this->union_code, 'config_for' => $this->org_type])->groupBy(['union_code', 'config_for'])->one();
     }
 
 }
