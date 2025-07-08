@@ -167,6 +167,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-1">
             <?= $form->field($txn_model, 'shift_of_milk')->textInput() ?>
         </div>
+        <?php if($txnEdit) { ?>
+            <div class="col-sm-1 number-validate no_pointer_disabled">
+                <?= $form->field($txn_model, 'original_dispatch_qty')->textInput(['readonly' => true, 'onkeydown' => 'return false;']) ?>
+            </div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
         </div>
@@ -188,7 +193,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'clr')->textInput() ?>
         </div>
-        <div class="clearfix"></div>
+        <!-- <div class="clearfix"></div> -->
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'water')->textInput() ?>
         </div>
@@ -230,7 +235,6 @@ $form = ActiveForm::begin([
         </div>
         <?= Html::activeHiddenInput($txn_model, 'physical_stock_only'); ?>
         <?= Html::activeHiddenInput($txn_model, 'is_clr_input'); ?>
-        <?= Html::activeHiddenInput($txn_model, 'original_dispatch_qty'); ?>
         <?= Html::activeHiddenInput($txn_model, 'bmc_milk_dispatch_txn_code'); ?>
         <!-- <div class="clearfix"></div> -->
         <div id="transactions-from">

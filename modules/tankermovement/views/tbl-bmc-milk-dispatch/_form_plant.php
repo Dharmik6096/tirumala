@@ -123,6 +123,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-1">
             <?= $form->field($txn_model, 'shift_of_milk')->textInput() ?>
         </div>
+        <?php if($txnEdit) { ?>
+            <div class="col-sm-1 number-validate no_pointer_disabled">
+                <?= $form->field($txn_model, 'original_dispatch_qty')->textInput(['readonly' => true, 'onkeydown' => 'return false;']) ?>
+            </div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
         </div>
@@ -147,7 +152,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'density')->textInput() ?>
         </div>
-        <div class="clearfix"></div>
+        <!-- <div class="clearfix"></div> -->
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'lactose')->textInput() ?>
         </div>
@@ -176,7 +181,6 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
         <!-- <div class="clearfix"></div> -->
-        <?= Html::activeHiddenInput($txn_model, 'bmc_milk_dispatch_txn_code'); ?>
         <div id="transactions-from">
 
         </div>
@@ -392,9 +396,7 @@ $(document).ready(function(){
                     $('#tblbmcmilkdispatchtxn-bmc_milk_dispatch_txn_code').val(data.modelData.bmc_milk_dispatch_txn_code);
                     $('#tblbmcmilkdispatchtxn-milk_type_code').trigger('change').trigger('select2:select');
                     $('#tblbmcmilkdispatchtxn-milk_quality_type_code').trigger('change').trigger('select2:select');
-                    $('#tblbmcmilkdispatchtxn-bmc_silos_info_code').trigger('change').trigger('select2:select');
                     $('#tblbmcmilkdispatchtxn-chamber_no').trigger('change').trigger('select2:select');
-                    $('#tblbmcmilkdispatchtxn-qty_diff_type_code').trigger('change').trigger('select2:select');
 
                     $('#loadercontent').hide();
                     $('#pageloader').hide();
