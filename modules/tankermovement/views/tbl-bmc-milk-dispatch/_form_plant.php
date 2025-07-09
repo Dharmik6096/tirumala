@@ -109,18 +109,25 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions') ?></h4>
         </div>
-        <div class="col-sm-1">
-            <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
-        </div>
-        <div class="col-sm-1">
-            <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
-        </div>
-        <div class="col-sm-1">
-            <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+        <div class="<?= $txnEdit ? 'no_pointer_disabled' : ''; ?>">
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+            </div>
         </div>
         <div class="col-sm-1">
             <?= $form->field($txn_model, 'shift_of_milk')->textInput() ?>
         </div>
+        <?php if ($txnEdit) { ?>
+            <div class="col-sm-1 number-validate no_pointer_disabled">
+                <?= $form->field($txn_model, 'original_dispatch_qty')->textInput(['readonly' => true, 'onkeydown' => 'return false;']) ?>
+            </div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
         </div>
@@ -131,10 +138,10 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'snf')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'water')->textInput() ?>
+            <?= $form->field($txn_model, 'temperature')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'temperature')->textInput() ?>
+            <?= $form->field($txn_model, 'water')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'clr')->textInput() ?>
@@ -142,10 +149,15 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'protein')->textInput() ?>
         </div>
+        <?php if ($txnEdit) { ?>
+            <div class="clearfix"></div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'density')->textInput() ?>
         </div>
-        <div class="clearfix"></div>
+        <?php if (!$txnEdit) { ?>
+            <div class="clearfix"></div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'lactose')->textInput() ?>
         </div>
@@ -349,6 +361,55 @@ $(document).ready(function(){
             }
         });
     }
+
+    $(document).on('click','.edit-record',function(e){
+        var id= $(this).attr('data-val');
+        var name = $(this).attr('data-name');
+        editTransaction(id);
+    });
+
+    function editTransaction(bmc_milk_dispatch_txn_code){
+        if(setData(bmc_milk_dispatch_txn_code)){         
+        $.ajax({
+                type: 'post',
+                url: '" . Url::to(['update-transaction']) . "',
+                data: {'bmc_milk_dispatch_txn_code' : bmc_milk_dispatch_txn_code},
+                beforeSend:function(data) {
+                    $('#loadercontent').show();
+                    $('#pageloader').show();
+                },
+                success: function(data) {
+                    if(data.status == ''){
+                    }
+                    $.each(data.modelData, function(index, value) {
+                        $('#tblbmcmilkdispatchtxn-'+index).val(value);
+                    });
+                    var cnt = 1;
+                    $.each(data.configData, function(index, value) {
+                        $('#tblconfigtxnresult-' + cnt + '-config_code').val(index);
+                        var resultField = $('#tblconfigtxnresult-' + cnt + '-config_result');
+                        var type = resultField.find('input').attr('type');
+                        if (type == 'radio') {
+                            resultField.find('input[type=\"radio\"][value=\"' + value + '\"]').prop('checked', true);
+                        } else if (resultField.is(':checkbox')) {
+                            resultField.prop('checked', value === '1');
+                        } else {
+                            resultField.val(value);
+                        }
+                        cnt++;
+                    });
+                    $('#tblbmcmilkdispatchtxn-bmc_milk_dispatch_txn_code').val(data.modelData.bmc_milk_dispatch_txn_code);
+                    $('#tblbmcmilkdispatchtxn-milk_type_code').trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-milk_quality_type_code').trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-chamber_no').trigger('change').trigger('select2:select');
+
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();
+                    $(window).scrollTop(0);
+                },
+            });
+        }
+    };
 });
 
 function updateLastDestinationCheckbox(destType) {

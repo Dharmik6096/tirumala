@@ -149,22 +149,29 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions') ?></h4>
         </div>
-        <div class="col-sm-1">
-            <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
-        </div>
-        <div class="col-sm-1">
-            <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
-        </div>
-        <div class="col-sm-1">
-            <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcmilkdispatch-module_name']); ?>
-            <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $txn_model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-module_name', 'form-group col-sm-4', $txn_model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
-        </div>
-        <div class="col-sm-1">
-            <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+        <div class="<?= $txnEdit ? 'no_pointer_disabled' : ''; ?>">
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
+            </div>
+            <div class="col-sm-1">
+                <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcmilkdispatch-module_name']); ?>
+                <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $txn_model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-module_name', 'form-group col-sm-4', $txn_model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
+            </div>
         </div>
         <div class="col-sm-1">
             <?= $form->field($txn_model, 'shift_of_milk')->textInput() ?>
         </div>
+        <?php if ($txnEdit) { ?>
+            <div class="col-sm-1 number-validate no_pointer_disabled">
+                <?= $form->field($txn_model, 'original_dispatch_qty')->textInput(['readonly' => true, 'onkeydown' => 'return false;']) ?>
+            </div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
         </div>
@@ -183,15 +190,20 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'snf')->textInput() ?>
         </div>
+        <?php if ($txnEdit) { ?>
+            <div class="clearfix"></div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'clr')->textInput() ?>
         </div>
-        <div class="clearfix"></div>
-        <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'water')->textInput() ?>
-        </div>
+        <?php if (!$txnEdit) { ?>
+            <div class="clearfix"></div>
+        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'temperature')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate">
+            <?= $form->field($txn_model, 'water')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'protein')->textInput() ?>
@@ -228,6 +240,7 @@ $form = ActiveForm::begin([
         </div>
         <?= Html::activeHiddenInput($txn_model, 'physical_stock_only'); ?>
         <?= Html::activeHiddenInput($txn_model, 'is_clr_input'); ?>
+        <?= Html::activeHiddenInput($txn_model, 'bmc_milk_dispatch_txn_code'); ?>
         <!-- <div class="clearfix"></div> -->
         <div id="transactions-from">
 
@@ -258,6 +271,7 @@ $script = "
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
+var txnEdit = `$txnEdit`;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
@@ -327,6 +341,7 @@ $(document).ready(function(){
         var milkTypeCode = $('#tblbmcmilkdispatchtxn-milk_type_code').val();
         var milkQualityTypeCode = $('#tblbmcmilkdispatchtxn-milk_quality_type_code').val();
         var bmcSiloInfoCode = $('#tblbmcmilkdispatchtxn-bmc_silos_info_code').val();
+        var originalDispatchQty = $('#tblbmcmilkdispatchtxn-original_dispatch_qty').val();
         var stockDetailArray = [];
         var check_key = bmcSiloInfoCode+ '_' + milkTypeCode + '_' + milkQualityTypeCode;
         if(setData(milkTypeCode) && setData(bmcSiloInfoCode) && setData(milkQualityTypeCode)) {
@@ -338,20 +353,33 @@ $(document).ready(function(){
                 if (stockDetail) {
                     var previousQty = stockDetail.previous_qty || 0;
                     var purchaseQty = stockDetail.purchase_qty || 0;
-                    var totalQty = purchaseQty + previousQty;
+                    var totalQty = parseFloat(purchaseQty) + parseFloat(previousQty);
+                    if(txnEdit && !isNaN(originalDispatchQty)){
+                        totalQty = totalQty + parseFloat(originalDispatchQty);
+                    }
                 }
             }
         }
         var dispatch_qty = parseFloat($('#tblbmcmilkdispatchtxn-dispatch_qty').val()) || 0;
         var qty_diff = parseFloat($('#tblbmcmilkdispatchtxn-qty_diff').val()) || 0;
         var balance_qty = parseFloat(totalQty) - (dispatch_qty + qty_diff);
-
-        if (!isNaN(balance_qty)) {
-            balance_qty = Math.max(0, balance_qty);
-        } else {
-            balance_qty = 0;
+        
+        if(!txnEdit){
+            if (!isNaN(balance_qty)) {
+                balance_qty = Math.max(0, balance_qty);
+            } else {
+                balance_qty = 0;
+            }
         }
+        
         $('#tblbmcmilkdispatchtxn-balance_qty').val((balance_qty).toFixed(2));
+        if (txnEdit && dispatch_qty > totalQty) {
+            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Dispatch quantity cannot be greater than available quantity!</span></div></div>\");
+            $('#tblbmcmilkdispatchtxn-dispatch_qty').val('');
+        } else if(txnEdit && balance_qty < 0){
+            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Balance quantity cannot be less than 0!</span></div></div>\");
+            $('#tblbmcmilkdispatchtxn-dispatch_qty').val('');
+        }
     });
 });
 
@@ -652,9 +680,63 @@ $(document).on('change','#tblbmcmilkdispatchtxn-qty_diff_type_code', function() 
     }
 });
 
+$(document).on('click','.edit-record',function(e){
+    var id= $(this).attr('data-val');
+    var name = $(this).attr('data-name');
+    editTransaction(id);
+});
+
+function editTransaction(bmc_milk_dispatch_txn_code){
+    if(setData(bmc_milk_dispatch_txn_code)){         
+    $.ajax({
+            type: 'post',
+            url: '" . Url::to(['update-transaction']) . "',
+            data: {'bmc_milk_dispatch_txn_code' : bmc_milk_dispatch_txn_code},
+            beforeSend:function(data) {
+                $('#loadercontent').show();
+                $('#pageloader').show();
+            },
+            success: function(data) {
+                if(data.status == 'success'){
+                    $.each(data.modelData, function(index, value) {
+                        $('#tblbmcmilkdispatchtxn-'+index).val(value);
+                    });
+                    var cnt = 1;
+                    $.each(data.configData, function(index, value) {
+                        $('#tblconfigtxnresult-' + cnt + '-config_code').val(index);
+                        var resultField = $('#tblconfigtxnresult-' + cnt + '-config_result');
+                        var type = resultField.find('input').attr('type');
+                        if (type == 'radio') {
+                            resultField.find('input[type=\"radio\"][value=\"' + value + '\"]').prop('checked', true);
+                        } else if (resultField.is(':checkbox')) {
+                            resultField.prop('checked', value === '1');
+                        } else {
+                            resultField.val(value);
+                        }
+                        cnt++;
+                    });
+                    $('#tblbmcmilkdispatchtxn-bmc_milk_dispatch_txn_code').val(data.modelData.bmc_milk_dispatch_txn_code);
+                    $('#tblbmcmilkdispatchtxn-original_dispatch_qty').val(data.modelData.dispatch_qty);
+                    $('#tblbmcmilkdispatchtxn-milk_type_code').trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-milk_quality_type_code').trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-bmc_silos_info_code').trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-chamber_no').trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-qty_diff_type_code').trigger('change').trigger('select2:select');
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();
+                    $(window).scrollTop(0);
+                } else {
+                    $('#tblbmcmilkdispatchtxn-original_dispatch_qty').val('0');
+                }
+            },
+        });
+    }
+};
+
 ";
 
 $script .= "
+    var isTxnEditable = " . json_encode($txnEdit) . ";
     $(document).off('change', '.filldata').on('change', '.filldata', function () {
         var bmc_code = $('#tblbmcmilkdispatch-bmc_code').val();
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
@@ -686,7 +768,7 @@ $script .= "
             $.ajax({
                     type: 'get',
                     url: '" . Url::to(['transaction-detail']) . "',
-                    data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code},             
+                    data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code, 'txnEdit': isTxnEditable},             
                     success: function(data) {
                         $('#transactions-detial').html(data);
                     },
