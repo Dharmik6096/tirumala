@@ -50,52 +50,52 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
             </div>
-            <div class="col-sm-2 filldata">
+            <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
-            <div class="col-sm-2 shift filldata">
+            <div class="col-sm-2 shift">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, false, 'from_shift_code'); ?>
             </div>
-            <div class="col-sm-2 filldata">
+            <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
-            <div class="col-sm-2 shift filldata">
+            <div class="col-sm-2 shift">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, false, 'to_shift_code'); ?>
             </div>
             <?= Html::hiddenInput('type', 'bmc', ['id' => 'type']); ?>
             <?php if (!$tripGenerateBtn) { ?>
-                <div class="col-sm-2 filldata" id='transactionDate'>
+                <div class="col-sm-2" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
                 <?php if ($readonly) { ?>
-                    <div class="col-sm-2 filldata">
+                    <div class="col-sm-2">
                         <?= $form->field($model, 'vehicle_code')->dropDownList([$model->vehicle_code => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no')], ['disabled' => 'disabled', 'prompt' => '']) ?>
                     </div>
                 <?php } else { ?>
-                    <div class="col-sm-2 filldata"> 
+                    <div class="col-sm-2"> 
                         <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-union_code,type,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
                     </div>
                 <?php } ?>
             <?php } else { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
                 </div>
                 <?php if ($readonly) { ?>
-                    <div class="col-sm-2 filldata">
+                    <div class="col-sm-2">
                         <?= $form->field($model, 'vehicle_code')->dropDownList([$model->vehicle_code => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no')], ['disabled' => 'disabled', 'prompt' => '']) ?>
                     </div>
                 <?php } else { ?>
-                    <div class="col-sm-2 filldata" id='transactionDate'>
+                    <div class="col-sm-2" id='transactionDate'>
                         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                     </div>
                 <?php } ?>
             <?php } ?>
             <?php if ($readonly) { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= $form->field($model, 'trip_code')->dropDownList([$model->trip_code => $model->trip_code], ['disabled' => 'disabled', 'prompt' => '']) ?>
                 </div>
             <?php } else { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
                     <?= Html::hiddenInput('tankerMovementWithTripSubStatus', $tankerMovementWithTripSubStatus, ['id' => 'tankerMovementWithTripSubStatus']); ?>
                     <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
@@ -110,12 +110,22 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'destination_type'); ?>
             </div>
-            <div class="col-sm-2">
-                <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
-                <?= Html::hiddenInput('partyType', 'bmcMilkDispatch', ['id' => 'partyType']); ?>
-                <?= Html::hiddenInput('processType', 'tankerMilkDispatch', ['id' => 'processType']); ?>
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code,tankerMovement,partyType,processType', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
-            </div>
+            <?php if ($readonly) { 
+                $response = Yii::$app->general->getColumnName($model->destination_type);
+                $sourceData = $model->{$response['rel'] . 'Dest'};
+                ?>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'destination_code')->dropDownList([$model->destination_code => $sourceData[$response['name']] . '-' . $sourceData[$response['ref_code']]], ['disabled' => 'disabled', 'prompt' => '']) ?>
+                </div>
+            <?php } else { ?>
+                <div class="col-sm-2">
+                    <?= Html::hiddenInput('tankerMovement', 'falseRLS', ['id' => 'tankerMovement']); ?>
+                    <?= Html::hiddenInput('partyType', 'bmcMilkDispatch', ['id' => 'partyType']); ?>
+                    <?= Html::hiddenInput('processType', 'tankerMilkDispatch', ['id' => 'processType']); ?>
+                    <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code,tankerMovement,partyType,processType', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
+                </div>
+            <?php } ?>
+
             <div class="col-sm-2 mt15 no_pointer_disabled" id="is-last-destination-container">
                 <?= $form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
             </div>
@@ -156,10 +166,16 @@ $form = ActiveForm::begin([
             <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
             </div>
-            <div class="col-sm-1">
-                <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcmilkdispatch-module_name']); ?>
-                <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $txn_model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-module_name', 'form-group col-sm-4', $txn_model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
-            </div>
+            <?php if ($txnEdit) { ?>
+                <div class="col-sm-1">
+                    <?= $form->field($txn_model, 'bmc_silos_info_code')->dropDownList([$model->bmcSilosInfoList], ['readonly' => true, 'prompt' => 'Select Silo']) ?>
+                </div>
+            <?php } else { ?>
+                <div class="col-sm-1">
+                    <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcmilkdispatch-module_name']); ?>
+                    <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $txn_model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-module_name', 'form-group col-sm-4', $txn_model->getAttributeLabel('bmc_silos_info_code')); ?>
+                </div>
+            <?php } ?>
             <div class="col-sm-1">
                 <?= Yii::$app->dropdown->chamberNoList($txn_model, $form, 'tblbmcmilkdispatch-vehicle_code', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
             </div>
@@ -268,6 +284,8 @@ $form = ActiveForm::begin([
 <div id='trip_auto_generate_data'></div>
 <?php
 $script = "
+var isTransactionFormLoad = false;
+var isTransactionDetailLoad = false;
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
@@ -740,41 +758,40 @@ $script .= "
     $(document).off('change', '.filldata').on('change', '.filldata', function () {
         var bmc_code = $('#tblbmcmilkdispatch-bmc_code').val();
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
-        var from_date = $('#tblbmcmilkdispatch-from_date').val();
-        var from_shift = $('#tblbmcmilkdispatch-from_shift_code').val();
-        var to_date = $('#tblbmcmilkdispatch-to_date').val();
-        var to_shift = $('#tblbmcmilkdispatch-to_shift_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
-        var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
-        if(setData(from_date) && setData(from_shift) && setData(to_date) && setData(to_shift) && setData(bmc_code) && setData(vehicle_code)){
-            $('#transactions-from').html('');
-            $('#transactions-detial').html('');           
-            BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
-        }      
+        $('#transactions-from').html('');
+        $('#transactions-detial').html('');           
+        BindData(bmc_code,bmc_milk_dispatch_code,union_code);            
     });
       
-    function BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
-        if(setData(union_code)){
+    function BindData(bmc_code,bmc_milk_dispatch_code,union_code){
+        if(setData(bmc_code) && !isTransactionFormLoad){
             $.ajax({
-                    type: 'get',
-                    url: '" . Url::to(['transaction-form']) . "',
-                    data: {'bmc_code' : bmc_code,'union_code':union_code},             
-                    success: function(data) {
-                        $('#transactions-from').html(data);                                                                 
+                type: 'get',
+                url: '" . Url::to(['transaction-form']) . "',
+                data: {'bmc_code' : bmc_code,'union_code':union_code},             
+                success: function(data) {
+                    if(isSecondTransaction){
+                        isTransactionFormLoad = true;
                     }
-                });
+                    $('#transactions-from').html(data);                                                                 
+                }
+            });
         }
-        if(setData(bmc_milk_dispatch_code)) {
+        if(setData(bmc_milk_dispatch_code) && !isTransactionDetailLoad) {
             $.ajax({
-                    type: 'get',
-                    url: '" . Url::to(['transaction-detail']) . "',
-                    data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code, 'txnEdit': isTxnEditable},             
-                    success: function(data) {
-                        $('#transactions-detial').html(data);
-                    },
-                    error: function(data) {  
+                type: 'get',
+                url: '" . Url::to(['transaction-detail']) . "',
+                data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code, 'txnEdit': isTxnEditable},             
+                success: function(data) {
+                    if(isSecondTransaction){
+                        isTransactionDetailLoad = true;
                     }
-                });    
+                    $('#transactions-detial').html(data);
+                },
+                error: function(data) {  
+                }
+            });    
         } 
     }
 ";
