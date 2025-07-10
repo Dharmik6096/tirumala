@@ -66,7 +66,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
         $main_rules = [
             [['arrival_datetime', 'status_datetime', 'created_at', 'updated_at', 'lot_datetime', 'lot_no', 'config_code', 'tested_by', 'verified_by', 'sample_datetime', 'record_status', 'sample_time', 'is_qty_only', 'is_pending_merge', 'is_approved', 'is_clr_input'], 'safe'],
             [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
-            [['chamber_no', 'acidity', 'mbrt', 'sample_datetime', 'record_status'], 'required', 'except' => ['resetQlty']],
+            [['chamber_no', 'sample_datetime', 'record_status'], 'required', 'except' => ['resetQlty']],
             [['sample_time'], 'required', 'on' => ['qltySubmit', 'update']],
             [['originating_type'], 'integer'],
             [['union_code'], 'string', 'max' => 3],
