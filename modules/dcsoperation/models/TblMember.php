@@ -102,6 +102,7 @@ class TblMember extends ChildModel {
     public $check_is_dcs_member = 1;
     public $import_eipl_code, $import_union_code, $special_code;
     public $reference_id, $name_at_bank, $city, $branch, $micr, $name_match_result, $name_match_score, $account_status, $account_status_code, $utr, $ifsc_code, $has_available_branch_info, $branch_address, $beneficiary_id;
+    public $is_sentbox;
 
     /**
      * @inheritdoc
