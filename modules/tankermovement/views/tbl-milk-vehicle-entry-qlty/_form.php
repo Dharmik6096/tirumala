@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
+use yii\web\View;
 use yii\web\JsExpression;
 use yii\widgets\MaskedInput;
 ?>
@@ -38,10 +39,10 @@ $form = ActiveForm::begin([
                     <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                    <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 1 ? true : false])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                    <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 0 ? true : false])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
                     <?= $form->field($model, 'water')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
@@ -71,7 +72,7 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->controls->date($model, $form, 'sample_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
                 </div>
                 <div class="col-sm-1">
-                    <?= $form->field($model, 'sample_time')->widget(MaskedInput::className(), ['mask' => '99:99','options' => ['class' => 'form-control 24_hour_time_input', 'placeholder' => 'HH:MM']]); ?>
+                    <?= $form->field($model, 'sample_time')->widget(MaskedInput::className(), ['mask' => '99:99', 'options' => ['class' => 'form-control 24_hour_time_input', 'placeholder' => 'HH:MM']]); ?>
                 </div>
                 <div class="col-sm-2"> 
                     <?= Yii::$app->dropdown->dropdownStatic('record_status', $model, $form, 'form-group', $model->getAttributeLabel('record_status'), false, 'record_status', false); ?>
@@ -149,3 +150,106 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php ActiveForm::end(); ?>
+<?php
+$script = "
+    var union = `$model->union_code`;
+    var is_clr_input = `$model->is_clr_input`;
+    var plantCode = `$model->plant_code`;
+
+    $(document).on('change', '#tblmilkvehicleentryqlty-fat, #tblmilkvehicleentryqlty-clr, #tblmilkvehicleentryqlty-snf', function() {
+        calculateClr();
+    });
+    
+    $(document).ready(function() {
+        checkQualityRanges();
+    });
+
+    function calculateClr(){
+        var fat = $('#tblmilkvehicleentryqlty-fat').val();
+        var snf = $('#tblmilkvehicleentryqlty-snf').val();
+        var clr = $('#tblmilkvehicleentryqlty-clr').val();
+
+        is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentryqlty-clr').val('');
+        is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentryqlty-snf').val('');
+
+        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['calculate-clr']) . "',
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        if(is_clr_input==0) {
+                            $('#tblmilkvehicleentryqlty-clr').val(obj.data.toFixed(2));
+                        } else {
+                            $('#tblmilkvehicleentryqlty-snf').val(obj.data);
+                        }
+                    }
+                },
+                error:function(data){
+                }
+            });
+        }
+    }
+
+    function checkQualityRanges(){
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['get-quality-param-range']) . "',
+            data: {'union':union, 'plantCode':plantCode},
+            success: function(data) {  
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success') {
+                    var range = obj.data;
+                    var minFat = parseFloat(range.min_fat);
+                    var maxFat = parseFloat(range.max_fat);
+                    var minSnf = parseFloat(range.min_snf);
+                    var maxSnf = parseFloat(range.max_snf);
+                    var minClr = parseFloat(range.min_clr);
+                    var maxClr = parseFloat(range.max_clr);
+                    function showError(fieldName, min, max) {
+                        var msg = fieldName + ' should be between ' + min + ' and ' + max;
+                        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+msg+\"</span></div></div>\");
+                    }
+                    $(document).off('change', '#tblmilkvehicleentryqlty-fat, #tblmilkvehicleentryqlty-snf, #tblmilkvehicleentryqlty-clr').on('change', '#tblmilkvehicleentryqlty-fat, #tblmilkvehicleentryqlty-snf, #tblmilkvehicleentryqlty-clr', function () {
+                        var fat = parseFloat($('#tblmilkvehicleentryqlty-fat').val());
+                        var snf = parseFloat($('#tblmilkvehicleentryqlty-snf').val());
+                        var clr = parseFloat($('#tblmilkvehicleentryqlty-clr').val());
+
+                        if (!isNaN(fat) && (fat < minFat || fat > maxFat)) {
+                            showError('FAT', minFat, maxFat);
+                            $('#tblmilkvehicleentryqlty-fat').val('');
+                        }
+                        if (!$('#tblmilkvehicleentryqlty-snf').is('[readonly]')) {
+                            var snf = parseFloat($('#tblmilkvehicleentryqlty-snf').val());
+                            if (!isNaN(snf) && (snf < minSnf || snf > maxSnf)) {
+                                showError('SNF', minSnf, maxSnf);
+                                $('#tblmilkvehicleentryqlty-snf').val('');
+                            }
+                        }
+                        if (!$('#tblmilkvehicleentryqlty-clr').is('[readonly]')) {
+                            var clr = parseFloat($('#tblmilkvehicleentryqlty-clr').val());
+                            if (!isNaN(clr) && (clr < minClr || clr > maxClr)) {
+                                showError('CLR', minClr, maxClr);
+                                $('#tblmilkvehicleentryqlty-clr').val('');
+                            }
+                        }
+                    });
+                }
+            },
+            error:function(data){
+            }
+        }); 
+    };
+
+    function setData(field = '') {
+        if (field !== '' && field !== null && field !== undefined && field !== 'Loading ...') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+";
+$this->registerJs($script, View::POS_END, 'milk-vehicle-entry-qlty-script');
+?>
