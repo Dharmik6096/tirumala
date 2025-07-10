@@ -105,9 +105,9 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
 
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
-        <p class="dash_block_header"><?= Yii::t('app', 'Amount | Rate') ?></p>
+        <p class="dash_block_header"><?= Yii::t('app', 'Amount | Eff. Rate | Rate') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-        <h4 class="dash_block_value block_value" id="farmer_rmrd_block_amount"><?= $blocks_data[1][0]['amount'] ?> | <?= $blocks_data[1][0]['effrtpl'] ?></h4>
+        <h4 class="dash_block_value block_value font-size-14" id="farmer_rmrd_block_amount"><?= $blocks_data[1][0]['amount'] ?> | <?= $blocks_data[1][0]['effrtpl'] ?> | <?= $blocks_data[1][0]['rtpl'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'rupee.png' ?>"> </div>

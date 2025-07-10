@@ -546,7 +546,7 @@ $('.dpu_data_icon').click(function(){
                                 $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty+' | '+obj1.res.PreviousDatetotalQty);
                                 $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg+' | '+obj1.res.fatAvg);
                                 $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg+' | '+obj1.res.snfAvg);
-                                $('#farmer_rmrd_block_amount').text(obj1.res.amount+' | '+obj1.res.effrtpl);
+                                $('#farmer_rmrd_block_amount').text(obj1.res.amount+' | '+obj1.res.effrtpl+' | '+obj1.res.rtpl);
                                 $('#farmer_rmrd_block_ts_kg_tab').text(obj1.res.ts_kg_tab);
                                 $('#totle_app').text(obj1.res.app);
                                 $('#totle_ws').text(obj1.res.ws);
