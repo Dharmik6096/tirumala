@@ -974,6 +974,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Milk Collection Status Detail'), 'url' => ['/misreports/reports/milk-collection-status-detail']],
                             ['label' => Yii::t('app', 'Qty Slab Report Format 1'), 'url' => ['/misreports/reports/vlc-qty-slab-wise-category']],
                             ['label' => Yii::t('app', 'Qty Slab Report Format 2'), 'url' => ['/misreports/reports/avg-per-vlc-milk-qty-slab-wise-category']],
+                            ['label' => Yii::t('app', 'BMC Check List'), 'url' => ['/jasperreports/default/dmr-check-list']],
+                            ['label' => Yii::t('app', 'Route wise Weighted Average'), 'url' => ['/jasperreports/default/dmr-weighted-average']],
                     ]
                 ],
                     [
