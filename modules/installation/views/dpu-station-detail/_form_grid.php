@@ -9,7 +9,7 @@ use kartik\grid\GridView;
 $attribute = [
 
 
-    ['attribute' => 'company_code', 'label' => 'Union', 'value' => function($model) {
+    ['attribute' => 'company_code', 'label' => Yii::t('app', 'Union'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }],
     ['attribute' => 'ref_code', 'label' => 'Dcs Name', 'value' => function($model) {

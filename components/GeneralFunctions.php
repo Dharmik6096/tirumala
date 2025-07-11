@@ -2430,7 +2430,7 @@ class GeneralFunctions extends Component {
                 $value = 'Pendrive Import';
             }
         }
-        return $value;
+        return Yii::t('app', $value);
     }
 
     public function validateEmail($model, $attribute, $params, $check_char = false) {
