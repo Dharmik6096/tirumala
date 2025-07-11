@@ -433,6 +433,7 @@ function setData(field = ''){
 ";
 
 $script .= "
+    var isTxnEditable = " . json_encode($txnEdit) . ";
     $(document).on('change','.filldata', function() {
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
@@ -456,7 +457,7 @@ $script .= "
             $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-detail']) . "',
-                data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code,'form_type':'plant'},             
+                data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code,'form_type':'plant', 'txnEdit': isTxnEditable},
                 success: function(data) {
                     $('#transactions-detial').html(data);
                 },
