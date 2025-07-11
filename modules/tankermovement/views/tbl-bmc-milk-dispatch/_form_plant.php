@@ -435,62 +435,35 @@ function setData(field = ''){
 $script .= "
     $(document).on('change','.filldata', function() {
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
-        var from_date = $('#tblbmcmilkdispatch-from_date').val();
-        var from_shift = $('#tblbmcmilkdispatch-from_shift_code').val();
-        var to_date = $('#tblbmcmilkdispatch-to_date').val();
-        var to_shift = $('#tblbmcmilkdispatch-to_shift_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
-        var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
-        if(setData(from_date) && setData(from_shift) && setData(to_date) && setData(to_shift) && setData(vehicle_code)){
-            $('#transactions-from').html('');
-            $('#transactions-detial').html('');           
-            BindData(from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
-        }      
-    });
-    
-    function CheckTrip(from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
-        $.ajax({
-                type: 'get',
-                url: '" . Url::to(['check-trip']) . "',
-                data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'vehicle_code' : vehicle_code},             
-                success: function(data) {
-                    var data=$.parseJSON(data);
-                    if (data.status == 'success'){   
-                    // $('#tblbmcmilkdispatch-trip_code').val(data.trip_code);
-                        BindData(from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code); 
-                    }else {
-                        $('#loadercontent').hide();
-                        $('#pageloader').hide();
-                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>' + data.msg + '</span></div></div>');
-                    }
-                } 
-        });   
-    }  
+        $('#transactions-from').html('');
+        $('#transactions-detial').html('');           
+        BindData(bmc_milk_dispatch_code,union_code);      
+    }); 
   
-    function BindData(from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
-       
-        $.ajax({
+    function BindData(bmc_milk_dispatch_code,union_code){
+        if(setData(union_code)){
+            $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-form']) . "',
                 data: {'union_code':union_code},             
                 success: function(data) {
-                  $('#transactions-from').html(data);                                                                 
+                    $('#transactions-from').html(data);                                                                 
                 }
-            });            
-        $.ajax({
+            });    
+        }        
+        if(setData(bmc_milk_dispatch_code)) {
+            $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-detail']) . "',
                 data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code,'form_type':'plant'},             
                 success: function(data) {
-                  $('#transactions-detial').html(data);
-               //   $('#loadercontent').hide();
-               //   $('#pageloader').hide();  
+                    $('#transactions-detial').html(data);
                 },
                 error: function(data) {  
-                //    $('#loadercontent').hide();
-                 //   $('#pageloader').hide();
                 }
             });     
+        }
     }
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
