@@ -142,8 +142,4 @@ return [
     'RMRD' => 'BMC',
     'Sync' => 'Online',
     'CC Collection' => 'Society Collection',
-    'Quantity | LD QTY' => 'Qty | LD Qty',
-    'FATKG | FAT AVG' => 'FAT KG | AVG FAT',
-    'SNFKG | SNF AVG' => 'SNF KG | AVG SNF',
-    'TSKG' => 'TS KG',
 ];
