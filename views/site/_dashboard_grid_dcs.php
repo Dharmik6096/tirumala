@@ -118,6 +118,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                                     <th class="custom_grid_header">#</th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'BMC') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Society') ?></th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'Active Farmer') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Farmer') ?></th>
                                                     <th class="custom_grid_header active_div" id="qtyHeader">
                                                         <?= Yii::t('app', 'Qty') ?> <span id="qtySortIcon"></span>
@@ -147,6 +148,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['bmc_name'] ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['dcs_name'] ?></td>
                                                             <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $bmc, 'dcs_code' => $data['dcs_code'], 'shift' => $shift]); ?>
+                                                            <td class="grid_left_align custom_grid_normal"><?= $data['active_farmers_count'] ?></td>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_farmers'] ?></a></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['total_quantity'] ?></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>
