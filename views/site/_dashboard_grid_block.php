@@ -168,7 +168,7 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
         <p class="dash_block_header"><?= Yii::t('app', 'Collection Not Done') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
 
-        <h4 class="dash_block_value block_value" id="dashboard_farmer_status_collection_not_done"><?= $blocks_data[0][0]['offlineDcs'] ?></h4>
+        <h4 class="dash_block_value block_value" id="dashboard_farmer_status_collection_not_done"><?= $blocks_data[0][0]['collectionNotDone'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'collection.png' ?>"> </div>
@@ -178,7 +178,7 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
         <p class="dash_block_header">Non Functional <?= Yii::t('app', 'DCS') ?> Count</p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
 
-        <h4 class="dash_block_value block_value" id="dashboard_farmer_status_non_functuional_dcs_count"><?= $blocks_data[0][0]['offlineDcs'] ?></h4>
+        <h4 class="dash_block_value block_value" id="dashboard_farmer_status_non_functuional_dcs_count"><?= $blocks_data[0][0]['nonFunctionalDcsCount'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'functional.png' ?>"> </div>
@@ -188,7 +188,7 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
         <p class="dash_block_header"><?= Yii::t('app', 'Complaint Registered ') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
 
-        <h4 class="dash_block_value block_value" id="dashboard_farmer_status_complaint_registered"><?= $blocks_data[0][0]['offlineDcs'] ?></h4>
+        <h4 class="dash_block_value block_value" id="dashboard_farmer_status_complaint_registered"><?= $blocks_data[0][0]['complaintReceivedDcsCount'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'compaint.png' ?>"> </div>
@@ -198,7 +198,7 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
         <p class="dash_block_header"><?= Yii::t('app', 'Non Complaint Registered') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
 
-        <h4 class="dash_block_value block_value" id="dashboard_farmer_status_non_complaint_registered"><?= $blocks_data[0][0]['offlineDcs'] ?></h4>
+        <h4 class="dash_block_value block_value" id="dashboard_farmer_status_non_complaint_registered"><?= $blocks_data[0][0]['complaintNonRegisterDcsCount'] ?></h4>
     </div>
     <div class="div_dash_block_icon"> <img
             src="<?= $imageIconPath . 'non_complaint.png' ?>"> </div>
