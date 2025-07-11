@@ -14,6 +14,8 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
+use app\modules\organisation\models\TblBmcSilosInfo;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch".
@@ -515,6 +517,11 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         } else {
             return false;
         }
+    }
+
+    public function getBmcSilosInfoList(){
+        $data = TblBmcSilosInfo::find()->select(['bmc_silos_info_code', 'silo_no'])->where(['module_name' => 'BMC', 'module_code' => $this->bmc_code])->asArray()->all();
+        return ArrayHelper::map($data, 'bmc_silos_info_code', 'silo_no');
     }
 
 }
