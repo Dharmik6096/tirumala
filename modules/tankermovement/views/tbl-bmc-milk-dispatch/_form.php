@@ -168,7 +168,7 @@ $form = ActiveForm::begin([
             </div>
             <?php if ($txnEdit) { ?>
                 <div class="col-sm-1">
-                    <?= $form->field($txn_model, 'bmc_silos_info_code')->dropDownList([$model->bmcSilosInfoList], ['readonly' => true, 'prompt' => 'Select Silo']) ?>
+                    <?= $form->field($txn_model, 'bmc_silos_info_code')->dropDownList([$model->bmcSilosInfoList], ['readonly' => true, 'prompt' => 'Select Silo', 'class' => 'no_pointer_disabled_with_clr']) ?>
                 </div>
             <?php } else { ?>
                 <div class="col-sm-1">
