@@ -75,7 +75,7 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
 
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
-        <p class="dash_block_header"><?= Yii::t('app', 'Quantity | LD QTY') ?></p>
+        <p class="dash_block_header"><?= Yii::t('app', 'Qty | LD Qty') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?> | </br>On <?= Yii::$app->controls->view_date(date('Y-m-d', strtotime('-1 day', strtotime($date)))) ?></small></p>
         <h4 class="dash_block_value block_value" id="farmer_rmrd_block_quantity"><?= $blocks_data[1][0]['totalQty'] ?> | <?= $blocks_data[1][0]['PreviousDatetotalQty'] ?></h4>
     </div>
@@ -85,7 +85,7 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
 
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
-        <p class="dash_block_header"><?= Yii::t('app', 'FATKG | FAT AVG') ?></p>
+        <p class="dash_block_header"><?= Yii::t('app', 'FAT KG | AVG FAT') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
         <h4 class="dash_block_value block_value" id="farmer_rmrd_block_fatkg"><?= $blocks_data[1][0]['fatKg'] ?> | <?= $blocks_data[1][0]['fatAvg'] ?></h4>
     </div>
@@ -95,7 +95,7 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
 
 <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
     <div class="div_dash_block_content">
-        <p class="dash_block_header"><?= Yii::t('app', 'SNFKG | SNF AVG') ?></p>
+        <p class="dash_block_header"><?= Yii::t('app', 'SNF KG | AVG SNF') ?></p>
         <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
         <h4 class="dash_block_value block_value" id="farmer_rmrd_block_snfkg"><?= $blocks_data[1][0]['snfKg'] ?> | <?= $blocks_data[1][0]['snfAvg'] ?></h4>
     </div>
@@ -161,5 +161,57 @@ $percentage = round(($pourerMember * 100) / $totalMember, 2);
         </div>
         <div class="div_dash_block_icon"> <img
                 src="<?= $imageIconPath . 'offline_dcs.png' ?>"> </div>
+    </div>
+</a>
+<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Offline', 'shift' => $shift]); ?>
+<a href="<?= $url; ?>" class='href_link' >
+    <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+        <div class="div_dash_block_content">
+            <p class="dash_block_header"><?= Yii::t('app', 'Collection Not Done') ?></p>
+            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+
+            <h4 class="dash_block_value block_value" id="dashboard_farmer_status_collection_not_done"><?= $blocks_data[0][0]['offlineDcs'] ?></h4>
+        </div>
+        <div class="div_dash_block_icon"> <img
+                src="<?= $imageIconPath . 'collection.png' ?>"> </div>
+    </div>
+</a>
+<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Offline', 'shift' => $shift]); ?>
+<a href="<?= $url; ?>" class='href_link' >
+    <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+        <div class="div_dash_block_content">
+            <p class="dash_block_header"><?= Yii::t('app', 'Non Functional DCS Count ') ?></p>
+            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+
+            <h4 class="dash_block_value block_value" id="dashboard_farmer_status_non_functuional_dcs_count"><?= $blocks_data[0][0]['offlineDcs'] ?></h4>
+        </div>
+        <div class="div_dash_block_icon"> <img
+                src="<?= $imageIconPath . 'functional.png' ?>"> </div>
+    </div>
+</a>
+<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Offline', 'shift' => $shift]); ?>
+<a href="<?= $url; ?>" class='href_link' >
+    <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+        <div class="div_dash_block_content">
+            <p class="dash_block_header"><?= Yii::t('app', 'Complaint Registered ') ?></p>
+            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+
+            <h4 class="dash_block_value block_value" id="dashboard_farmer_status_complaint_registered"><?= $blocks_data[0][0]['offlineDcs'] ?></h4>
+        </div>
+        <div class="div_dash_block_icon"> <img
+                src="<?= $imageIconPath . 'compaint.png' ?>"> </div>
+    </div>
+</a>
+<?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'status' => 'Offline', 'shift' => $shift]); ?>
+<a href="<?= $url; ?>" class='href_link' >
+    <div class="div_grid_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+        <div class="div_dash_block_content">
+            <p class="dash_block_header"><?= Yii::t('app', 'Non Complaint Registered') ?></p>
+            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+
+            <h4 class="dash_block_value block_value" id="dashboard_farmer_status_non_complaint_registered"><?= $blocks_data[0][0]['offlineDcs'] ?></h4>
+        </div>
+        <div class="div_dash_block_icon"> <img
+                src="<?= $imageIconPath . 'non_complaint.png' ?>"> </div>
     </div>
 </a>

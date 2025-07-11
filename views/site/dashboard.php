@@ -785,6 +785,10 @@ $('.dpu_data_icon').click(function(){
                                 $('#dashboard_farmer_status_offline_dcs').text(obj1.res.offlineDcs);
                                 $('#dashboard_farmer_status_online_dcs_e').text(obj1.res.onlineDcsE);
                                 $('#dashboard_farmer_status_online_dcs_m').text(obj1.res.onlineDcsM);
+                                $('#dashboard_farmer_status_collection_not_done').text(obj1.res.collectionNotDone);
+                                $('#dashboard_farmer_status_non_functuional_dcs_count').text(obj1.res.nonFunctionalDcsCount);
+                                $('#dashboard_farmer_status_complaint_registered').text(obj1.res.complaintReceivedDcsCount);
+                                $('#dashboard_farmer_status_non_complaint_registered').text(obj1.res.complaintNonRegisterDcsCount);
                             }
                         },
                         error:function(data){

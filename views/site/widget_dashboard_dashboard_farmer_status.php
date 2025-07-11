@@ -95,6 +95,58 @@ $imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? 
                     src="<?= $imageIconPath . 'offline_dcs.png' ?>"> </div>
         </div>
     </a>
+    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'shift'=>$model->shift, 'status' => 'Offline']); ?>
+    <a href="<?= $url; ?>" class='href_link' >
+        <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+            <div class="div_dash_block_content">
+                <p class="dash_block_header"><?= Yii::t('app', 'Collection Not Done') ?></p>
+                <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+
+                <h4 class="dash_block_value block_value" id="dashboard_farmer_status_collection_not_done">0</h4>
+            </div>
+            <div class="div_dash_block_icon"> <img
+                    src="<?= $imageIconPath . 'collection.png' ?>"> </div>
+        </div>
+    </a>
+    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'shift'=>$model->shift, 'status' => 'Offline']); ?>
+    <a href="<?= $url; ?>" class='href_link' >
+        <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+            <div class="div_dash_block_content">
+                <p class="dash_block_header"><?= Yii::t('app', 'Non Functional DCS Count ') ?></p>
+                <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+
+                <h4 class="dash_block_value block_value" id="dashboard_farmer_status_non_functuional_dcs_count">0</h4>
+            </div>
+            <div class="div_dash_block_icon"> <img
+                    src="<?= $imageIconPath . 'functional.png' ?>"> </div>
+        </div>
+    </a>
+    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'shift'=>$model->shift, 'status' => 'Offline']); ?>
+    <a href="<?= $url; ?>" class='href_link' >
+        <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+            <div class="div_dash_block_content">
+                <p class="dash_block_header"><?= Yii::t('app', 'Complaint Registered ') ?></p>
+                <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+
+                <h4 class="dash_block_value block_value" id="dashboard_farmer_status_complaint_registered">0</h4>
+            </div>
+            <div class="div_dash_block_icon"> <img
+                    src="<?= $imageIconPath . 'compaint.png' ?>"> </div>
+        </div>
+    </a>
+    <?php $url = Url::to(['site/get-society-status', 'date' => $date, 'union_code' => $union, 'shift'=>$model->shift, 'status' => 'Offline']); ?>
+    <a href="<?= $url; ?>" class='href_link' >
+        <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+            <div class="div_dash_block_content">
+                <p class="dash_block_header"><?= Yii::t('app', 'Non Complaint Registered') ?></p>
+                <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+
+                <h4 class="dash_block_value block_value" id="dashboard_farmer_status_non_complaint_registered">0</h4>
+            </div>
+            <div class="div_dash_block_icon"> <img
+                    src="<?= $imageIconPath . 'non_complaint.png' ?>"> </div>
+        </div>
+    </a>
     <!--    <div class="col-sm-6">
             <div class="collection background_light">
                 <div class="col-sm-6">
