@@ -313,7 +313,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $model->arrival_time = $action_datetime;
             $trip->trip_sub_status = $model->is_last_destination ? 'plant_lot_pending' : 'gate_in';
             if ($model->is_virtual_location == 1) {
-                $model->departure_time = $departure = date('Y-m-d H:i:s', $action_datetime + 1);
+                $model->departure_time = $departure = date('Y-m-d H:i:s', strtotime($action_datetime) + 1);
                 $nextTripDetail = TblVehicleTripDetail::find()
                         ->where(['vehicle_trip_code' => $model->vehicle_trip_code])
                         ->andWhere(['>', 'sequence_no', $model->sequence_no])

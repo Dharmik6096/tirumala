@@ -302,6 +302,9 @@ class CustomValidation extends Component {
                 'TblUserAndroid' => [
                         [['email'], 'email'],
                 ],
+                'TblMilkVehicleEntryQlty' => [
+                        [['acidity', 'mbrt'], 'required', 'except' => ['resetQlty']],
+                ],
             ],
             'NIFPL' => [
                 'TblDcs' => [
