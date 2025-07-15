@@ -1025,8 +1025,8 @@ class ReportsController extends \app\controllers\ChildController {
             }
             if ($value == 'date_payment_cycle' && !empty($model->{$value})) {
                 $pay_cycle_date = explode('to', $model->{$value});
-                $controls['from_date'] = date('Y-m-d', strtotime($pay_cycle_date[0])).' 06:00:00';
-                $controls['to_date'] = (trim(date('Y-m-d', strtotime($pay_cycle_date[1])))).' 18:00:00';
+                $controls['from_date'] = date('Y-m-d', strtotime($pay_cycle_date[0])) . ' 06:00:00';
+                $controls['to_date'] = (trim(date('Y-m-d', strtotime($pay_cycle_date[1])))) . ' 18:00:00';
             } else {
                 $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
             }
@@ -1229,6 +1229,8 @@ class ReportsController extends \app\controllers\ChildController {
         if ($model->output_type == 'DOWNLOAD') {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);
+            } else if (isset($this->data['download_data_readonly'])) {
+                $this->downloadDataReadonly();
             } else {
                 $this->downloadData();
             }
@@ -2001,12 +2003,12 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VspTransitRecovery';
         return $this->actionIndex();
     }
-    
+
     public function actionComplainActivityList() {
         $this->report = 'ComplainActivityList';
         return $this->actionIndex();
     }
-    
+
     public function actionRouteWiseCdaFormat() {
         $this->report = 'RouteWiseCdaFormat';
         if (Yii::$app->request->queryParams) {
@@ -2024,42 +2026,42 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MilkDispatchList';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkRejectList() {
         $this->report = 'MilkRejectList';
         return $this->actionIndex();
     }
-    
+
     public function actionChillerCostSummary() {
         $this->report = 'ChillerCostSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMonthlySahayakIncome() {
         $this->report = 'MonthlySahayakIncome';
         return $this->actionIndex();
     }
-    
+
     public function actionMisCcWiseClosingBalance() {
         $this->report = 'MisCcWiseClosingBalance';
         return $this->actionIndex();
     }
-    
+
     public function actionProcMisLotWiseDetails() {
         $this->report = 'ProcMisLotWiseDetails';
         return $this->actionIndex();
     }
-    
+
     public function actionComparisonReport() {
         $this->report = 'ComparisonReport';
         return $this->actionIndex();
     }
-    
+
     public function actionCmpReport() {
         $this->report = 'CmpReport';
         return $this->actionIndex();
     }
-    
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2072,7 +2074,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
-                'bkg_export' => TRUE
+                'bkg_export' => TRUE,
+                'download_data_readonly' => TRUE
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2081,7 +2084,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
-                'bkg_export' => TRUE
+                'bkg_export' => TRUE,
+                'download_data_readonly' => TRUE
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2090,7 +2094,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
-                'bkg_export' => TRUE
+                'bkg_export' => TRUE,
+                'download_data_readonly' => TRUE
             ],
             'MemberConsolidatedWithBank' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2099,7 +2104,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'to_decrypt' => ['aadhar_no'],
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-                'bkg_export' => TRUE
+                'bkg_export' => TRUE,
+                'download_data_readonly' => TRUE
             ],
             //102
             'DcsCollDateShiftSummary' => [
@@ -4739,6 +4745,43 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMisLiveReportGeneration() {
         
+    }
+
+    public function downloadDataReadonly() {
+        $header = [
+            'mime' => 'application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+
+        $sheet->fromArray($file_header, NULL, 'A1');
+        $sheet->fromArray($this->output, NULL, 'A2');
+
+        $sheet->getProtection()->setSheet(true)->setSelectLockedCells(true)->setPassword('MyStrongPassword2025');
+        $sheet->getStyle("A1:{$sheet->getHighestColumn()}{$sheet->getHighestRow()}")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+        foreach ($file_header as $i => $key) {
+            $colLetter = \PHPExcel_Cell::stringFromColumnIndex($i);
+            $columnData = array_column($this->output, $key);
+            $columnData[] = $key;
+            $maxLength = max(array_map('strlen', $columnData));
+            $sheet->getColumnDimension($colLetter)->setWidth($maxLength + 6);
+        }
+
+        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'];
+        header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
     }
 
 }

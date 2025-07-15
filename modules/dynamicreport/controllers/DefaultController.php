@@ -9,6 +9,7 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use yii\helpers\Json;
 use app\modules\usermanagement\models\User;
+use PHPExcel;
 
 /**
  * Default controller for the `dynamicreport` module
@@ -132,7 +133,11 @@ class DefaultController extends \app\controllers\ChildController {
             }
         }
         if (isset($model->output_type) && $model->output_type == 'DOWNLOAD') {
-            $this->downloadData();
+            if ($config['download_data_readonly']) {
+                $this->downloadDataReadonly();
+            } else {
+                $this->downloadData();
+            }
         }
     }
 
@@ -235,6 +240,62 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function actionDynamicLiveReportGeneration() {
         
+    }
+
+    public function downloadDataReadonly() {
+        $extention = !empty($this->data['extention']) ? $this->data['extention'] : 'xls';
+        $header = [
+            'mime' => 'application/ms-excel',
+            'extension' => $extention,
+            'writer' => 'Excel2007',
+        ];
+        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'];
+
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        $sheet->fromArray($labelArray, NULL, 'A1');
+
+        $rowNum = 2;
+        foreach ($this->output as $row) {
+            $col = 0;
+            foreach ($labelArray as $colIndex => $key) {
+                $dispData = '';
+                if (isset($row[$key]) && $row[$key] != '' && $row[$key] != null) {
+                    $dispData = $row[$key];
+                }
+                $value = $dispData;
+
+                $colLetter = \PHPExcel_Cell::stringFromColumnIndex($colIndex);
+                $columnData = array_column($this->output, $key);
+                $columnData[] = $key;
+                $maxLength = max(array_map('strlen', $columnData));
+                $sheet->getColumnDimension($colLetter)->setWidth($maxLength + 6);
+
+                $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
+
+                if (is_numeric($value) && preg_match('/^([0-9]+)$/', $value)) {
+                    $sheet->setCellValueExplicit($sheet->getCellByColumnAndRow($col, $rowNum)->getCoordinate(), $value, \PHPExcel_Cell_DataType ::TYPE_STRING);
+                } else {
+                    $sheet->setCellValue($sheet->getCellByColumnAndRow($col, $rowNum)->getCoordinate(), $value);
+                    if (!is_numeric($value) || ((is_numeric($value) && ((float) $value > 100000000 || substr($value, 0, 1) == '0')))) {
+                        $sheet->getStyleByColumnAndRow($col, $rowNum)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+                    }
+                }
+                $col++;
+            }
+            $rowNum++;
+        }
+
+        $sheet->getProtection()->setSheet(true)->setSelectLockedCells(true)->setPassword('MyStrongPassword2025');
+        $sheet->getStyle("A1:{$sheet->getHighestColumn()}{$sheet->getHighestRow()}")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+        header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter->save('php://output');
+        exit();
     }
 
 }
