@@ -2279,6 +2279,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'],
             ],
+            'dcs_manual_collection_range_request_type' => [
+                'name' => 'request_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Shift Lock'), 1 => Yii::t('app', 'Manual Collection')],
+            ],
         ];
         return $records[$l];
     }

@@ -50,14 +50,14 @@ class TblAllowDcsManualCollectionRangeHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['manual_collection_code'], 'required'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
-            [['from_date', 'to_date', 'from_shift', 'to_shift', 'created_at', 'updated_at'], 'safe'],
-            [['is_weight_manual', 'is_quality_manual', 'originating_type'], 'integer'],
-            [['manual_collection_code'], 'safe'],
-            [['created_by', 'updated_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'history_created_at', 'history_created_by', 'operation_type', 'status', 'remark'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['manual_collection_code'], 'required'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['from_date', 'to_date', 'from_shift', 'to_shift', 'created_at', 'updated_at'], 'safe'],
+                [['is_weight_manual', 'is_quality_manual', 'originating_type'], 'integer'],
+                [['manual_collection_code'], 'safe'],
+                [['created_by', 'updated_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'history_created_at', 'history_created_by', 'operation_type', 'status', 'remark'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'request_type'], 'safe'],
         ];
     }
 
@@ -94,6 +94,7 @@ class TblAllowDcsManualCollectionRangeHistory extends \yii\db\ActiveRecord {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'request_type' => Yii::t('app', 'Request Type'),
         ];
     }
 
