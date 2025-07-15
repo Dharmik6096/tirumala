@@ -1426,7 +1426,7 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
             } else if (strtolower($type) == 'member') {
                 $name = $this->getforeignkey($model->memberCode, 'ex_member_code');
-            } else if(strtolower($type) == 'bmc') {
+            } else if (strtolower($type) == 'bmc') {
                 $name = $this->getforeignkey($model->bmcCode, 'bmc_code_ex');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'customer_code_ex');
@@ -1434,7 +1434,7 @@ class GeneralFunctions extends Component {
         } else if ($bmcCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'bmc_code');
-            } else if(strtolower($type) == 'bmc') {
+            } else if (strtolower($type) == 'bmc') {
                 $name = $this->getforeignkey($model->bmcCode, 'bmc_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'bmc_code');
@@ -1444,7 +1444,7 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'ref_code');
             } else if (strtolower($type) == 'member') {
                 $name = $this->getforeignkey($model->memberCode, 'ref_code');
-            } else if(strtolower($type) == 'bmc') {
+            } else if (strtolower($type) == 'bmc') {
                 $name = $this->getforeignkey($model->bmcCode, 'ref_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
@@ -1558,7 +1558,7 @@ class GeneralFunctions extends Component {
             $model->customer_type = 'DCS';
             $dcs = new TblDcs();
             $model->customer_code = $dcs->validDcs($model->customer_code, $model->bmc_code);
-        } else if(strtoupper($model->customer_type) == 'PARTY'){
+        } else if (strtoupper($model->customer_type) == 'PARTY') {
             $model->customer_type = strtoupper($model->customer_type);
             $party = new TblGeneralPartyMaster();
             $model->customer_code = $party->validateGenaralPartyCode($model->customer_code, $model->bmc_code);
@@ -1601,8 +1601,8 @@ class GeneralFunctions extends Component {
     public function validateGeneratePartyMasterCode($model) {
         if (!empty($model->customer_code) && strtolower($model->customer_type) == 'party') {
             $modelData = TblGeneralPartyMaster::find()
-                        ->where(['general_party_master_code' => $model->customer_code])
-                        ->one();
+                    ->where(['general_party_master_code' => $model->customer_code])
+                    ->one();
             return !empty($modelData) ? $modelData->party_name : '';
         }
     }
@@ -2133,11 +2133,11 @@ class GeneralFunctions extends Component {
     public function validateBMC($model, $attribute, $hierarchy = FALSE, $check_vendor = FALSE) {
         $bmcModel = new TblDcsBmc();
         $query = $bmcModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code']);
-            if($check_vendor){
-                $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute], ['sap_vendor_code' => $model->$attribute]]);
-            } else {
-                $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]]);
-            }
+        if ($check_vendor) {
+            $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute], ['sap_vendor_code' => $model->$attribute]]);
+        } else {
+            $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]]);
+        }
         $records = $query->all();
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->bmc_code;
@@ -2420,7 +2420,7 @@ class GeneralFunctions extends Component {
                 $value = 'Pendrive Import';
             }
         }
-        return $value;
+        return Yii::t('app', $value);
     }
 
     public function validateEmail($model, $attribute, $params, $check_char = false) {
@@ -2991,7 +2991,7 @@ class GeneralFunctions extends Component {
             $lr1 = (float) $this->getUnionConfiguration($union, 'clr_constant1', 'PORTAL');
             $lr2 = (float) $this->getUnionConfiguration($union, 'clr_constant2', 'PORTAL');
         }
-        
+
         $lr1 = empty($lr1) ? 1 : $lr1;
         $lr2 = empty($lr2) ? 0 : $lr2;
 
