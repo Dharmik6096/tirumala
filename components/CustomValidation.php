@@ -323,6 +323,9 @@ class CustomValidation extends Component {
                             return !empty($model->auto_scrolling);
                         }, 'whenClient' => "function (attribute, value) { return $('#tblbulknotification-auto_scrolling').is(':checked') }"
                     ],
+                    'TblMilkVehicleEntryQlty' => [
+                            [['acidity', 'mbrt'], 'required', 'except' => ['resetQlty']],
+                    ],
                 ],
             ],
             'NIFPL' => [

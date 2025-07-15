@@ -546,7 +546,7 @@ $('.dpu_data_icon').click(function(){
                                 $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty+' | '+obj1.res.PreviousDatetotalQty);
                                 $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg+' | '+obj1.res.fatAvg);
                                 $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg+' | '+obj1.res.snfAvg);
-                                $('#farmer_rmrd_block_amount').text(obj1.res.amount+' | '+obj1.res.effrtpl);
+                                $('#farmer_rmrd_block_amount').text(obj1.res.amount+' | '+obj1.res.effrtpl+' | '+obj1.res.rtpl);
                                 $('#farmer_rmrd_block_ts_kg_tab').text(obj1.res.ts_kg_tab);
                                 $('#totle_app').text(obj1.res.app);
                                 $('#totle_ws').text(obj1.res.ws);
@@ -785,6 +785,10 @@ $('.dpu_data_icon').click(function(){
                                 $('#dashboard_farmer_status_offline_dcs').text(obj1.res.offlineDcs);
                                 $('#dashboard_farmer_status_online_dcs_e').text(obj1.res.onlineDcsE);
                                 $('#dashboard_farmer_status_online_dcs_m').text(obj1.res.onlineDcsM);
+                                $('#dashboard_farmer_status_collection_not_done').text(obj1.res.collectionNotDone);
+                                $('#dashboard_farmer_status_non_functuional_dcs_count').text(obj1.res.nonFunctionalDcsCount);
+                                $('#dashboard_farmer_status_complaint_registered').text(obj1.res.complaintReceivedDcsCount);
+                                $('#dashboard_farmer_status_non_complaint_registered').text(obj1.res.complaintNonRegisterDcsCount);
                             }
                         },
                         error:function(data){
