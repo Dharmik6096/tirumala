@@ -133,7 +133,7 @@ class DefaultController extends \app\controllers\ChildController {
             }
         }
         if (isset($model->output_type) && $model->output_type == 'DOWNLOAD') {
-            if ($config['download_data_readonly']) {
+            if ($config['excel_readonly']) {
                 $this->downloadDataReadonly();
             } else {
                 $this->downloadData();

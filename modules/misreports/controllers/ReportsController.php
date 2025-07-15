@@ -1229,7 +1229,7 @@ class ReportsController extends \app\controllers\ChildController {
         if ($model->output_type == 'DOWNLOAD') {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);
-            } else if (isset($this->data['download_data_readonly'])) {
+            } else if (isset($this->data['excel_readonly'])) {
                 $this->downloadDataReadonly();
             } else {
                 $this->downloadData();
@@ -2075,7 +2075,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
                 'bkg_export' => TRUE,
-                'download_data_readonly' => TRUE
+                'excel_readonly' => TRUE
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2085,7 +2085,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
                 'bkg_export' => TRUE,
-                'download_data_readonly' => TRUE
+                'excel_readonly' => TRUE
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2095,7 +2095,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
                 'bkg_export' => TRUE,
-                'download_data_readonly' => TRUE
+                'excel_readonly' => TRUE
             ],
             'MemberConsolidatedWithBank' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2105,7 +2105,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'to_decrypt' => ['aadhar_no'],
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
                 'bkg_export' => TRUE,
-                'download_data_readonly' => TRUE
+                'excel_readonly' => TRUE
             ],
             //102
             'DcsCollDateShiftSummary' => [
