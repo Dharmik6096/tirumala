@@ -6122,3 +6122,26 @@ tr.highlightRow {
 .font-size-14 {
     font-size: 14px;
 }
+.widget_label_box{
+    margin: 5px 0px 3px 0px;
+}
+.widget_label_box div{
+    background: #00a3de;
+    color: #fff;
+    text-align: center;
+    border-right: 1px solid;
+}
+.mr-2{
+    margin-bottom: -2px !important;
+}
+.h560{
+    height: 560px;
+}
+.pop_button{
+    float: inline-end;
+    background: white !important;
+    color: #00a3de !important;
+    font-weight: 600;
+    border-radius: 5px;
+    padding: 10px 8px 5px 8px;
+}
