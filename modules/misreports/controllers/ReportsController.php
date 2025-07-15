@@ -4772,7 +4772,6 @@ class ReportsController extends \app\controllers\ChildController {
             $sheet->getColumnDimension($colLetter)->setWidth($maxLength + 6);
         }
 
-        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'];
         header('Content-Type: ' . $header['mime']);
