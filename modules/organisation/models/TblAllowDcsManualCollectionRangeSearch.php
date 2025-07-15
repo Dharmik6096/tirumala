@@ -54,7 +54,6 @@ class TblAllowDcsManualCollectionRangeSearch extends TblAllowDcsManualCollection
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->andWhere(['IS NOT', 'request_type', null]);
 
         // grid filtering conditions
         $query->andFilterWhere([
