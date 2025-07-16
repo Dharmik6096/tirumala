@@ -459,7 +459,7 @@ $shift = Yii::$app->general->getShiftName($model->shift);
 
 <?php
  if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) : ?>
-    <div class="modal fade" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal fade mt-5" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog custom_width_dup_modal d_inline">
             <div class="modal-content">
                 <div class="modal-header font-large"> <?= strtoupper($widget_type) . ' : ' . Yii::$app->controls->view_date($date) . '(' . $shift . ')' ?>
