@@ -176,11 +176,15 @@ class SiteController extends \app\controllers\ChildController {
             $dashboardUserWidgets = !empty($dashboardUserWidgets->getDashboardUserWidgets()) ? $dashboardUserWidgets->getDashboardUserWidgets() : $dashboardUserWidgets;
             $rmrd_widget_position = json_encode(Yii::$app->request->post('Dashboard')['rmrd_widgets']);
             $farmer_widget_position = json_encode(Yii::$app->request->post('Dashboard')['farmer_widgets']);
+            $farmer_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['farmer_widgets_after']) ? Yii::$app->request->post('Dashboard')['farmer_widgets_after'] : '');
+            $rmrd_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['rmrd_widgets_after']) ? Yii::$app->request->post('Dashboard')['rmrd_widgets_after'] : '');
             if (!empty($dashboardUserWidgets)) {
                 $dashboardUserWidgets->user_id = Yii::$app->session->get('UserCode');
             }
             $dashboardUserWidgets->position_farmer = $farmer_widget_position;
             $dashboardUserWidgets->position_rmrd = $rmrd_widget_position;
+            $dashboardUserWidgets->is_farmer_popup = $farmer_popup;
+            $dashboardUserWidgets->is_rmrd_popup = $rmrd_popup;
             $dashboardUserWidgets->save();
         }
         $dashboardWidgets = new TblDashboardWidgets();
@@ -198,9 +202,13 @@ class SiteController extends \app\controllers\ChildController {
         $userWidgets = $dashboardUserWidgets->getDashboardUserWidgets();
         $userRmrdWidgets = [];
         $userFarmerWidgets = [];
+        $userFarmerPopup = [];
+        $userRmrdPopup = [];
         if (!empty($userWidgets)) {
             $userFarmerWidgets = json_decode($userWidgets->position_farmer);
             $userRmrdWidgets = json_decode($userWidgets->position_rmrd);
+            $userFarmerPopup = json_decode($userWidgets->is_farmer_popup);
+            $userRmrdPopup = json_decode($userWidgets->is_rmrd_popup);
         }
 
         $model->date = $end_date;
@@ -230,7 +238,7 @@ class SiteController extends \app\controllers\ChildController {
 // $dpu_data = $this->DPUDataCollection($model);
 
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
-        ]);
+        'userFarmerPopup' => $userFarmerPopup, 'userRmrdPopup' => $userRmrdPopup]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
