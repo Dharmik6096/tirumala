@@ -63,21 +63,21 @@ class TblBmcMilkDispatchHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-                [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
-                [['gross_weight', 'tare_weight'], 'safe'],
-                [['bmc_milk_dispatch_code'], 'safe'],
-                [['challan_no'], 'safe'],
-                [['destination_type'], 'safe'],
-                [['destination_code', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['vehicle_code', 'trip_code'], 'safe'],
-                [['driver_name', 'authorizer_name'], 'safe'],
-                [['driver_contact_no', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['union_code'], 'safe'],
-                [['plant_code', 'mcc_plant_code'], 'safe'],
-                [['bmc_code'], 'safe'],
-                [['created_by', 'updated_by', 'history_created_by'], 'safe'],
-                [['operation_type', 'source_org_code', 'source_org_type'], 'safe'],
+            [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at', 'history_created_at', 'tested_by'], 'safe'],
+            [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
+            [['gross_weight', 'tare_weight'], 'safe'],
+            [['bmc_milk_dispatch_code'], 'safe'],
+            [['challan_no'], 'safe'],
+            [['destination_type'], 'safe'],
+            [['destination_code', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['vehicle_code', 'trip_code'], 'safe'],
+            [['driver_name', 'authorizer_name'], 'safe'],
+            [['driver_contact_no', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['union_code'], 'safe'],
+            [['plant_code', 'mcc_plant_code'], 'safe'],
+            [['bmc_code'], 'safe'],
+            [['created_by', 'updated_by', 'history_created_by'], 'safe'],
+            [['operation_type', 'source_org_code', 'source_org_type'], 'safe'],
         ];
     }
 

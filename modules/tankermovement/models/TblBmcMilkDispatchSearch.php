@@ -19,11 +19,11 @@ class TblBmcMilkDispatchSearch extends TblBmcMilkDispatch {
      */
     public function rules() {
         return [
-                [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'bmc_ref_code', 'f_mcc_code', 'f_bmc_code'], 'safe'],
-                [['is_last_destination', 'transaction_date', 'originating_type'], 'integer'],
-                [['gross_weight', 'tare_weight'], 'number'],
-                [['from_date', 'to_date', 'from_shift', 'to_shift', 'f_plant_code'], 'required', 'on' => 'changeTrip'],
-                [['from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'bmc_ref_code', 'f_mcc_code', 'f_bmc_code', 'transporter_code'], 'safe'],
+            [['is_last_destination', 'transaction_date', 'originating_type'], 'integer'],
+            [['gross_weight', 'tare_weight'], 'number'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift', 'f_plant_code'], 'required', 'on' => 'changeTrip'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift', 'tested_by'], 'safe'],
         ];
     }
 

@@ -5,9 +5,7 @@ namespace app\modules\collection\controllers;
 use Yii;
 use app\modules\collection\models\TblMilkTransfer;
 use app\modules\collection\models\TblMilkTransferSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use app\modules\collection\models\TblMilkTransferHistory;
 
 /**
@@ -88,7 +86,6 @@ class TblMilkTransferController extends \app\controllers\ChildController {
         return $this->render('update', [
                     'model' => $this->model,
         ]);
-//        return $this->customRender();
     }
 
     /**
@@ -121,13 +118,10 @@ class TblMilkTransferController extends \app\controllers\ChildController {
     public function setModel(&$model) {
         $model->from_date = !empty($model->from_date) ? date('Y-m-d', strtotime($model->from_date)) : '';
         $model->from_date = $model->from_date . ' ' . \Yii::$app->general->getshift($model->from_shift);
-        if ($model->transfer_type == 1) {
-            $model->to_date = $model->from_date;
-            $model->to_shift = $model->from_shift;
-        } else {
-            $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
-            $model->to_date = $model->to_date . ' ' . \Yii::$app->general->getshift($model->to_shift);
-        }
+        $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
+        $model->to_date = $model->to_date . ' ' . \Yii::$app->general->getshift($model->to_shift);
+        $model->transaction_datetime = !empty($model->transaction_datetime) ? date('Y-m-d', strtotime($model->transaction_datetime)) : '';
+        $model->transaction_datetime = $model->transaction_datetime . ' ' . \Yii::$app->general->getshift($model->shift_code);
     }
 
 }
