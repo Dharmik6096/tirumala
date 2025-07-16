@@ -6148,3 +6148,6 @@ tr.highlightRow {
 .font-large{
     font-size: large;
 }
+div#dashboardFarmerPopup {
+    z-index: 99999 !important;
+}
