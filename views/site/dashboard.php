@@ -130,8 +130,8 @@ $rmrd_selected_widgets = !empty($userRmrdWidgets) ? $userRmrdWidgets : [];
 $rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets) ? $rmrdWidgets : [], $rmrd_selected_widgets);
 $allRmrdWidgets = array_merge($rmrd_selected_widgets, $rmrd_unselected_widgets);
 
-$farmer_selected = !empty($userFarmer) ? $userFarmer : [];
-$rmrd_selected = !empty($userRmrd) ? $userRmrd : [];
+$farmer_selected_popup = !empty($userFarmerPopup) ? $userFarmerPopup : [];
+$rmrd_selected_popup = !empty($userRmrdPopup) ? $userRmrdPopup: [];
 
 if ($widget_type == 'farmer')
     $lazy_loading_widgets = json_encode($farmer_selected_widgets);
@@ -150,6 +150,8 @@ $memberCode = !empty($model->member_code) ? $model->member_code : '';
 $model->dup_search_date = !empty($model->date) ? $model->date : Yii::$app->controls->view_date(date('Y-m-d'));
 $model->dpu_status = !empty($model->dpu_status) ? $model->dpu_status : -1;
 $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
+$enableDashboardPopup = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'enable_dashboard_popup');
+$shift = Yii::$app->general->getShiftName($model->shift);
 ?>
 
 <div class="panel-group row panel-fixed dashboard_search_filter" id="filter">
@@ -203,21 +205,23 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     </span>
 
                     <div class="collapse" id="modal_widget_selection">
-                        <div class='col-sm-6 padding_right_0'>
-                            <div class='col-sm-9 widget_label_box padding_right_0'><div>Name</div> </div>
-                            <div class='col-sm-3 widget_label_box'><div>Show PopUp</div></div>
-                        </div>
-                        <div class='col-sm-6 padding_left_0'>
-                            <div class='col-sm-9 widget_label_box padding_right_0'><div>Name</div> </div>
-                            <div class='col-sm-3 widget_label_box'><div>Show PopUp</div></div>
-                        </div>
+                        <?php if (!empty($enableDashboardPopup)) { ?>
+                            <div class='col-sm-6 padding_right_0'>
+                                <div class='col-sm-9 widget_label_box padding_right_0'><div>Name</div> </div>
+                                <div class='col-sm-3 widget_label_box'><div>Show PopUp</div></div>
+                            </div>
+                            <div class='col-sm-6 padding_left_0'>
+                                <div class='col-sm-9 widget_label_box padding_right_0'><div>Name</div> </div>
+                                <div class='col-sm-3 widget_label_box'><div>Show PopUp</div></div>
+                            </div>
+                        <?php } ?>
                         <?php
                         echo $form->field($model, 'rmrd_widgets[]')->checkboxList(
                                 $allRmrdWidgets, [
                             'id' => 'rmrd_widgets_list',
                             'class' => 'row sortable',
                             'item' =>
-                            function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget, $rmrd_selected) {
+                            function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget, $rmrd_selected_popup, $enableDashboardPopup) {
                                 //                var_dump(count($map_model));exit;
                                 $checked = in_array($label, $rmrd_selected_widgets);
                                 $dispLabel = '';
@@ -225,8 +229,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                                 if (empty($dispLabel)) {
                                     return '';
                                 } else {
-                                    $enableDashboardPopup = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'enable_dashboard_popup');
-                                    $checkedd = in_array($label, $rmrd_selected);
+                                    $selectedPopup = in_array($label, $rmrd_selected_popup);
                                     $className = basename($model->ClassName());
                                     $rmrd_value = ['dashboard_farmer_rmrd_blocks'];
                                     // $check = $model->getDistrictUsed($allowWidgets, $label);
@@ -241,7 +244,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                                                 'class' => 'widgets-checkbox',
                                             ]);
                                     if (!empty($enableDashboardPopup) && in_array($label, $rmrd_value)) {
-                                        $output .= Html::checkbox($className . '[rmrd_widgets_after][]', $checkedd, [
+                                        $output .= Html::checkbox($className . '[rmrd_widgets_after][]', $selectedPopup, [
                                                     'value' => $label,
                                                     'id' => 'rmrd_' . $label . '_after',
                                                     'label' => '<label for="rmrd_' . $label . '_after" class="widgets-text"></label>', // Label for the second checkbox
@@ -264,7 +267,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                             'id' => 'farmer_widgets_list',
                             'class' => 'row sortable',
                             'item' =>
-                            function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget, $farmer_selected) {
+                            function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget, $farmer_selected_popup, $enableDashboardPopup) {
                                 //                var_dump(count($map_model));exit;
                                 $checked = in_array($label, $farmer_selected_widgets);
                                 $dispLabel = '';
@@ -272,8 +275,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                                 if (empty($dispLabel)) {
                                     return '';
                                 } else {
-                                    $enableDashboardPopup = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'enable_dashboard_popup');
-                                    $checkedd = in_array($label, $farmer_selected);
+                                    $selectedPopup = in_array($label, $farmer_selected_popup);
                                     $className = basename($model->ClassName());
                                     $farmer_value = ['dashboard_farmer_status', 'dashboard_farmer_rmrd_blocks'];
                                     // $check = $model->getDistrictUsed($allowWidgets, $label);
@@ -288,13 +290,13 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                                                 'class' => 'widgets-checkbox',
                                     ]);
                                     if (!empty($enableDashboardPopup) && in_array($label, $farmer_value)) {
-                                        $output .= Html::checkbox($className . '[farmer_widgets_after][]', $checkedd, [
+                                        $output .= Html::checkbox($className . '[farmer_widgets_after][]', $selectedPopup, [
                                                     'value' => $label,
                                                     'id' => 'farmer_' . $label . '_after',
                                                     'label' => '<label for="farmer_' . $label . '_after" class="widgets-text"></label>', // Label for the second checkbox
                                                     'class' => 'widgets-checkbox',
                                                     'labelOptions' => [
-                                                        'class' => 'right_align_date',                                                    ],
+                                                        'class' => 'right_align_date mr-2',                                                    ],
                                         ]);
                                     }
                                     $output .= "</div></div>";
@@ -456,20 +458,19 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 <div id="chartToTable"></div>
 
 <?php
-$enableDashboardPopup = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'enable_dashboard_popup');
-if (!empty($enableDashboardPopup) && (!Yii::$app->session->get('dashboardFarmerPopup') || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')))) : ?>
+ if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) : ?>
     <div class="modal fade" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog custom_width_dup_modal">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header font-large"> <?= strtoupper($widget_type) . ' : ' . Yii::$app->controls->view_date($date) . '(' . $shift . ')' ?>
                     <?php echo Html::button(Yii::t('app', 'OK'), ['class' => 'btn btn-primary pop_button', 'id' => 'close']); ?>
                 </div>
                 <div class="modal-body h560">
                     <?php
-                    $selected_widgets = $widget_type == 'farmer' ? $farmer_selected : $rmrd_selected;
+                    $selected_popup = $widget_type == 'farmer' ? $farmer_selected_popup : $rmrd_selected_popup;
                     $all_widgets = $widget_type == 'farmer' ? $farmerWidgets : $rmrdWidgets;
-                    if (!empty($selected_widgets)) {
-                        foreach ($selected_widgets as $key => $value) {
+                    if (!empty($selected_popup)) {
+                        foreach ($selected_popup as $key => $value) {
                             if (in_array($value, $all_widgets)) {
                                 echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'union' => $unionCode, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'bmc_code' => $bmcCode, 'dcs_code' => $dcsCode, 'member_code' => $memberCode, 'append_id' => '_popup']);
                             }
