@@ -181,15 +181,15 @@ class SiteController extends Controller {
             $dashboardUserWidgets = !empty($dashboardUserWidgets->getDashboardUserWidgets()) ? $dashboardUserWidgets->getDashboardUserWidgets() : $dashboardUserWidgets;
             $rmrd_widget_position = json_encode(Yii::$app->request->post('Dashboard')['rmrd_widgets']);
             $farmer_widget_position = json_encode(Yii::$app->request->post('Dashboard')['farmer_widgets']);
-            $farmer_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['farmer_widgets_after']) ? Yii::$app->request->post('Dashboard')['farmer_widgets_after'] : '');
-            $rmrd_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['rmrd_widgets_after']) ? Yii::$app->request->post('Dashboard')['rmrd_widgets_after'] : '');
+            $farmer_widget_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['farmer_widgets_after']) ? Yii::$app->request->post('Dashboard')['farmer_widgets_after'] : '');
+            $rmrd_widget_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['rmrd_widgets_after']) ? Yii::$app->request->post('Dashboard')['rmrd_widgets_after'] : '');
             if (!empty($dashboardUserWidgets)) {
                 $dashboardUserWidgets->user_id = Yii::$app->session->get('UserCode');
             }
             $dashboardUserWidgets->position_farmer = $farmer_widget_position;
             $dashboardUserWidgets->position_rmrd = $rmrd_widget_position;
-            $dashboardUserWidgets->is_farmer_popup = $farmer_popup;
-            $dashboardUserWidgets->is_rmrd_popup = $rmrd_popup;
+            $dashboardUserWidgets->is_farmer_popup = $farmer_widget_popup;
+            $dashboardUserWidgets->is_rmrd_popup = $rmrd_widget_popup;
             $dashboardUserWidgets->save();
         }
         $dashboardWidgets = new TblDashboardWidgets();
@@ -212,8 +212,8 @@ class SiteController extends Controller {
         if (!empty($userWidgets)) {
             $userFarmerWidgets = json_decode($userWidgets->position_farmer);
             $userRmrdWidgets = json_decode($userWidgets->position_rmrd);
-            $userFarmerPopup = json_decode($userWidgets->is_farmer_popup);
-            $userRmrdPopup = json_decode($userWidgets->is_rmrd_popup);
+            $userFarmerPopup = json_decode(!empty($userWidgets->is_farmer_popup) ? $userWidgets->is_farmer_popup : '');
+            $userRmrdPopup = json_decode(!empty($userWidgets->is_rmrd_popup) ? $userWidgets->is_rmrd_popup : '');
         }
 
         $model->date = $end_date;
