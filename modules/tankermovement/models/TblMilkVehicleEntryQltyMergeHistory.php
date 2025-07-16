@@ -58,7 +58,7 @@ class TblMilkVehicleEntryQltyMergeHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['milk_vehicle_entry_qlty_merge_code', 'is_qty_only', 'is_pending_merge', 'is_approved', 'originating_type', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'created_at', 'updated_at', 'history_created_at', 'union_code', 'plant_code', 'vehicle_code', 'trip_code', 'chamber_no', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['milk_vehicle_entry_qlty_merge_code', 'is_qty_only', 'is_pending_merge', 'is_approved', 'originating_type', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'created_at', 'updated_at', 'history_created_at', 'union_code', 'plant_code', 'vehicle_code', 'trip_code', 'chamber_no', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'tested_by', 'verified_by'], 'safe'],
         ];
     }
 

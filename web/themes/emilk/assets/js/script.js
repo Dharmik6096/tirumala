@@ -136,7 +136,7 @@ var initDepdropMs;
 
         var specialDecimalKeys = new Array();
         specialDecimalKeys.push(8);
-        $(document).on("keypress", ".number-validate", function(e) {
+        $(document).on("keypress", ".number-validate", function (e) {
             var keyCode = e.which ? e.which : e.keyCode
             var ret = ((keyCode >= 48 && keyCode <= 57) || (specialDecimalKeys.indexOf(keyCode) != -1) || keyCode == 9 || keyCode == 46);
             return ret;
@@ -302,7 +302,7 @@ var initDepdropMs;
             $('.field-' + this_id + ' .help-block').attr('title', $('.field-' + this_id + ' label').text() + ' is not valid').text($('.field-' + this_id + ' label').text() + ' is not valid');
         }
     });
-    
+
     $('.check_password_strength').on("keyup", function () {
         var this_id = $(this).attr('id');
         var password = $(this).val();
@@ -330,6 +330,14 @@ var initDepdropMs;
         } else {
             errorBlock.html('').hide();
             inputField.removeClass('is-invalid').addClass('is-valid');
+        }
+    });
+    $('.24_hour_time_input').on("keyup", function () {
+        var $this = $(this), id = $this.attr('id'), $help = $('.field-' + id + ' .help-block'),
+                time = $this.val();
+        $help.text('');
+        if (time.length == 5 && !time.includes('_') && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+            $help.text('Invalid time.');
         }
     });
 })(jQuery);

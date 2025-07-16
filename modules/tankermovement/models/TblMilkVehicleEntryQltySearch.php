@@ -20,7 +20,7 @@ class TblMilkVehicleEntryQltySearch extends TblMilkVehicleEntryQlty {
     public function rules() {
         return [
             [['milk_vehicle_entry_qlty_code', 'originating_type'], 'integer'],
-            [['union_code', 'plant_code', 'vehicle_code', 'arrival_datetime', 'trip_code', 'chamber_no', 'status', 'status_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'parsing_no', 'from_date', 'to_date', 'lot_datetime', 'lot_no'], 'safe'],
+            [['union_code', 'plant_code', 'vehicle_code', 'arrival_datetime', 'trip_code', 'chamber_no', 'status', 'status_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'parsing_no', 'from_date', 'to_date', 'lot_datetime', 'lot_no', 'tested_by', 'verified_by'], 'safe'],
             [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity'], 'number'],
             [['trip_code'], 'required', 'on' => 'update'],
         ];
@@ -66,7 +66,7 @@ class TblMilkVehicleEntryQltySearch extends TblMilkVehicleEntryQlty {
             $query->where('0=1');
             return $dataProvider;
         }
-        if (empty($this->status)) {
+        if (empty($this->trip_code) && empty($this->status)) {
             $query->andWhere(['LOWER(status)' => 'pending']);
         }
 
