@@ -460,7 +460,7 @@ $shift = Yii::$app->general->getShiftName($model->shift);
 <?php
  if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) : ?>
     <div class="modal fade" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog custom_width_dup_modal">
+        <div class="modal-dialog custom_width_dup_modal d_inline">
             <div class="modal-content">
                 <div class="modal-header font-large"> <?= strtoupper($widget_type) . ' : ' . Yii::$app->controls->view_date($date) . '(' . $shift . ')' ?>
                     <?php echo Html::button(Yii::t('app', 'OK'), ['class' => 'btn btn-primary pop_button', 'id' => 'close']); ?>
@@ -488,10 +488,11 @@ $shift = Yii::$app->general->getShiftName($model->shift);
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            $('#dashboardFarmerPopup').modal('show');
-
-            $('#close').on('click', function() {
-                $('#dashboardFarmerPopup').modal('hide');
+            var dashboardFarmerPopup = document.getElementById('dashboardFarmerPopup');
+            var myModal = new bootstrap.Modal(dashboardFarmerPopup);
+            myModal.show();
+            document.getElementById('close').addEventListener('click', function() {
+                myModal.hide(); // Hide the modal
             });
         });
     </script>
