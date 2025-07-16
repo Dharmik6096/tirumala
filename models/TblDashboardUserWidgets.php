@@ -35,7 +35,7 @@ class TblDashboardUserWidgets extends \yii\db\ActiveRecord
             [['user_id'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
             [['user_id'], 'string', 'max' => 14],
-            [['position_farmer', 'position_rmrd'],'safe'],
+            [['position_farmer', 'position_rmrd', 'is_farmer_popup', 'is_rmrd_popup'],'safe'],
             [['created_by', 'updated_by'], 'string', 'max' => 20],
         ];
     }
