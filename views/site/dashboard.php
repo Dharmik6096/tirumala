@@ -230,7 +230,7 @@ $shift = Yii::$app->general->getShiftName($model->shift);
                                     return '';
                                 } else {
                                     $selectedPopup = in_array($label, $rmrd_selected_popup);
-                                    $className = basename($model->ClassName());
+                                    $className = 'Dashboard';
                                     $rmrd_value = ['dashboard_farmer_rmrd_blocks'];
                                     // $check = $model->getDistrictUsed($allowWidgets, $label);
                                     // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
@@ -276,7 +276,7 @@ $shift = Yii::$app->general->getShiftName($model->shift);
                                     return '';
                                 } else {
                                     $selectedPopup = in_array($label, $farmer_selected_popup);
-                                    $className = basename($model->ClassName());
+                                    $className = 'Dashboard';
                                     $farmer_value = ['dashboard_farmer_status', 'dashboard_farmer_rmrd_blocks'];
                                     // $check = $model->getDistrictUsed($allowWidgets, $label);
                                     // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
@@ -459,7 +459,7 @@ $shift = Yii::$app->general->getShiftName($model->shift);
 
 <?php
  if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) : ?>
-    <div class="modal fade" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal fade mt-5" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog custom_width_dup_modal d_inline">
             <div class="modal-content">
                 <div class="modal-header font-large"> <?= strtoupper($widget_type) . ' : ' . Yii::$app->controls->view_date($date) . '(' . $shift . ')' ?>
