@@ -19,9 +19,9 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
      */
     public function rules() {
         return [
-            [['km_info_code', 'vehicle_code', 'route_code', 'transporter_code', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-            [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms'], 'number'],
-            [['is_active'], 'integer'],
+                [['km_info_code', 'vehicle_code', 'route_code', 'transporter_code', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+                [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms'], 'number'],
+                [['is_active'], 'integer'],
         ];
     }
 
@@ -51,6 +51,8 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
 
         $this->from_date = date('Y-m-d', strtotime('-30 days'));
         $this->to_date = date('Y-m-d');
+
+        $query->joinWith(['routeCode']);
         $this->load($params);
 
         if (!$this->validate()) {
