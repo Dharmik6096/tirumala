@@ -466,7 +466,7 @@ $shift = Yii::$app->general->getShiftName($model->shift);
 <div id="chartToTable"></div>
 
 <?php
-if (!empty($enableDashboardPopup) && ((Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) :
+if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) :
     $title = ($widget_type == 'farmer') ? Yii::t('app', 'DCS') : Yii::t('app', 'RMRD');
     ?>
     <div class="modal fade" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
