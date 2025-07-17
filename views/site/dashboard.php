@@ -133,11 +133,19 @@ $allRmrdWidgets = array_merge($rmrd_selected_widgets, $rmrd_unselected_widgets);
 $farmer_selected_popup = !empty($userFarmerPopup) ? $userFarmerPopup : [];
 $rmrd_selected_popup = !empty($userRmrdPopup) ? $userRmrdPopup: [];
 
-if ($widget_type == 'farmer')
-    $lazy_loading_widgets = json_encode($farmer_selected_widgets);
+if ($widget_type == 'farmer'){
+    $farmerSelectedWidget = array_flip($farmer_selected_widgets);
+    $farmerSelectedPopup = array_flip($farmer_selected_popup);
+    $mergeWidgets = array_merge($farmerSelectedWidget, $farmerSelectedPopup);
+    $lazy_loading_widgets = json_encode(array_flip($mergeWidgets));
+}
 
-if ($widget_type == 'rmrd')
-    $lazy_loading_widgets = json_encode($rmrd_selected_widgets);
+if ($widget_type == 'rmrd'){
+    $rmrdSelectedWidgets = array_flip($rmrd_selected_widgets);
+    $rmrdSelectedPopup = array_flip($rmrd_selected_popup);
+    $mergeWidgets = array_merge($rmrdSelectedWidgets, $rmrdSelectedPopup);
+    $lazy_loading_widgets = json_encode(array_flip($mergeWidgets));
+}
 
 // var_dump($widget_type);
 // var_dump($lazy_loading_widgets);die;
@@ -458,11 +466,13 @@ $shift = Yii::$app->general->getShiftName($model->shift);
 <div id="chartToTable"></div>
 
 <?php
- if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) : ?>
+if (!empty($enableDashboardPopup) && ((Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) :
+    $title = ($widget_type == 'farmer') ? Yii::t('app', 'DCS') : Yii::t('app', 'RMRD');
+    ?>
     <div class="modal fade" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog custom_width_dup_modal">
             <div class="modal-content">
-                <div class="modal-header font-large"> <?= strtoupper($widget_type) . ' : ' . Yii::$app->controls->view_date($date) . '(' . $shift . ')' ?>
+                <div class="modal-header font-large"> <?= strtoupper($title) . ' : ' . Yii::$app->controls->view_date($date) . '(' . $shift . ')' ?>
                     <?php echo Html::button(Yii::t('app', 'OK'), ['class' => 'btn btn-primary pop_button', 'id' => 'close']); ?>
                 </div>
                 <div class="modal-body h560">
