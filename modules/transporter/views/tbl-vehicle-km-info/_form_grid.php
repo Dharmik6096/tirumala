@@ -26,6 +26,9 @@ $attribute = [
         ['attribute' => 'bmc_code', 'label' => 'Destination Name', 'value' => function($model)use ($routeModel) {
             return $routeModel->getDestinationName(Yii::$app->general->getforeignkey($model->routeCode, 'to_type'), Yii::$app->general->getforeignkey($model->routeCode, 'to_dest'));
         }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'route_ref_code', 'label' => 'Route Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
+        }, 'visible' => true, 'filter' => false],
         ['attribute' => 'route_code', 'value' => function($model) {
             return isset($model->routeCode) ? $model->routeCode->route_name : '';
         }, 'filter' => false],
