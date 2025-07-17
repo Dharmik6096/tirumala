@@ -535,7 +535,7 @@ class DropDown extends Component {
 
     public function paymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly, '', true, '', false, '', false);
     }
 
     public function paymentCycleWithDate($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
@@ -2500,7 +2500,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true, $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
 
@@ -2542,6 +2542,7 @@ class DropDown extends Component {
                         'initialize' => true,
                         'allowClear' => true,
                         'ajaxSettings' => [
+                            'async' => $async,
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
                                     return handleDepdropBeforeSend({
