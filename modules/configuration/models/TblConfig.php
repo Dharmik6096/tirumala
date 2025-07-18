@@ -108,7 +108,8 @@ class TblConfig extends \app\models\ChildModel {
         } else if ($this->control_type == 'CHECKBOX') {
             return $form->field($config, '[' . $index . ']config_result', ['checkboxTemplate' => '<div class="checkbox mt25 height_65">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox()->label(Yii::t('app', $this->config_name));
         } else {
-            return $form->field($config, '[' . $index . ']config_result')->textInput()->label(Yii::t('app', $this->config_name));
+            $options = ($this->control_type == 'NUMERIC') ? ['class' => 'form-control number-validate'] : [];
+            return $form->field($config, '[' . $index . ']config_result')->textInput($options)->label(Yii::t('app', $this->config_name));
         }
     }
 

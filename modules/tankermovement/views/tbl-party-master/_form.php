@@ -6,6 +6,8 @@ use yii\web\View;
 use yii\helpers\Url;
 ?>
 <?php
+$readonly = $type == 'create' ? FALSE : TRUE;
+
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
             'validateOnChange' => FALSE,
@@ -18,6 +20,9 @@ $form = ActiveForm::begin([
 <div class="row">
     <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('party_type', $model, $form, 'form-group', TRUE, $readonly, 'party_type', false); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'party_name')->textInput() ?>
@@ -79,9 +84,6 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
-    </div>
-    <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_sales_office', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">

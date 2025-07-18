@@ -82,7 +82,7 @@ class TblVehicleCleaningInspectionController extends \app\controllers\ChildContr
                 if (!empty($model->trip_code)) {
                     Yii::$app->general->setVehicleTripTrackingDetail($tripDetail, $model->remarks);
                 }
-                $this->redirect(['index']);
+                return $this->redirect(['index']);
             }
         }
         return $this->render('create', [

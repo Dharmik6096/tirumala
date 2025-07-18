@@ -503,7 +503,7 @@ class DropDown extends Component {
 
     public function paymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly, '', true, '', false, '', false);
     }
 
     public function paymentCycleWithDate($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
@@ -731,7 +731,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-qa-inspection/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
     }
-    
+
     public function vehicleList($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-vehicle-list', Yii::t('app', 'Select'), $multiple, '', $readonly);
@@ -2137,6 +2137,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['VEHICLE' => Yii::t('app', 'VEHICLE'), 'EMPLOYEE' => Yii::t('app', 'EMPLOYEE'), 'CHILLER' => Yii::t('app', 'CHILLER')],
             ],
+            'party_type' => [
+                'name' => 'party_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['conversion_vendor' => Yii::t('app', 'conversion_vendor'), 'sales_party' => Yii::t('app', 'sales_party'), 'sales_office' => Yii::t('app', 'sales_office')],
+            ],
+            'record_status' => [
+                'name' => 'record_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['hold' => Yii::t('app', 'Hold'), 'accepted' => Yii::t('app', 'Accepted'), 'rejected' => Yii::t('app', 'Rejected')],
+            ],
+            'quality_config_process_name' => [
+                'name' => 'process_name',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['BMC_MILK_DISPATCH' => Yii::t('app', 'BMC MILK DISPATCH'), 'PLANT_MILK_RECEIPT' => Yii::t('app', 'PLANT MILK RECEIPT')],
+            ],
             'no_of_installment' => [
                 'name' => 'no_of_installment',
                 'prompt' => Yii::t('app', 'Select'),
@@ -2433,7 +2448,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true, $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
 
@@ -2473,6 +2488,7 @@ class DropDown extends Component {
                         'initialize' => true,
                         'allowClear' => true,
                         'ajaxSettings' => [
+                            'async' => $async,
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
                                     return handleDepdropBeforeSend({

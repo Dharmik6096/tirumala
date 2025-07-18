@@ -197,6 +197,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tanker Milk Quality'), 'url' => ['/tankermovement/tbl-milk-vehicle-entry-qlty-merge/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry-qlty-merge' && $action == 'index')],
                             ['label' => 'Vehicle Cleaning Detail', 'url' => ['/tankermovement/tbl-vehicle-cleaning-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-cleaning-inspection')],
                             ['label' => 'Vehicle QA Inspection Detail', 'url' => ['/tankermovement/tbl-vehicle-qa-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-qa-inspection')],
+                            ['label' => 'Flush Qty Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-flush-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-flush-stock')],
                             ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
                             ['label' => 'Payment Head', 'url' => ['/tankermovement/tbl-payment-head/index'], 'active' => ($cntrl == 'tbl-payment-head')],
                             ['label' => 'Payment Head Transaction', 'url' => ['/tankermovement/tbl-payment-head-transaction/index'], 'active' => ($cntrl == 'tbl-payment-head-transaction')],
@@ -1191,6 +1192,7 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'Interface Device Mapping'), 'url' => ['/hardwareconfigutation/tbl-interfacing-device-mapping/index']],
                                     ['label' => Yii::t('app', 'Device Configuration Template'), 'url' => ['/configuration/tbl-device-config-template/index'], 'active' => ($cntrl == 'tbl-device-config-template')],
                                     ['label' => Yii::t('app', 'Bmc Android Timing'), 'url' => ['/configuration/tbl-shift-time-android/index'], 'active' => ($cntrl == 'tbl-shift-time-android')],
+                                    ['label' => Yii::t('app', 'Milk Quality Param Range Config'), 'url' => ['/configuration/tbl-milk-quality-param-range/index'], 'active' => ($cntrl == 'tbl-milk-quality-param-range')],
                             ]
                         ],
                             [
