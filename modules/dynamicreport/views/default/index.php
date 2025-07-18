@@ -11,11 +11,19 @@ $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : 'All Repor
 $inclass = !empty($result) ? '' : 'in';
 $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
+
+$disableCopyClass = '';
+if (!empty($data['config'])) {
+    $config = is_object($data['config']) ? (array) $data['config'] : $data['config'];
+    if (!empty($config) && !empty($config['excel_readonly'])) {
+        $disableCopyClass = 'disable-copy-class hide-grid-export';
+    }
+}
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading"><?= Html::encode($this->title) ?></div>
     <div class="panel-body">
-        <div class="report-area">
+        <div class="report-area  <?= $disableCopyClass ?>">
             <div class="modal modal-default fade" id="dynamic_report_search_filter" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">

@@ -18,6 +18,8 @@ use app\modules\usermanagement\models\User;
  */
 class ReportsController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['download-data-readonly'];
+
     /**
      * Renders the index view for the module
      * @return string
@@ -1230,7 +1232,7 @@ class ReportsController extends \app\controllers\ChildController {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);
             } else if (isset($this->data['excel_readonly'])) {
-                $this->downloadDataReadonly();
+                $this->downloadDataReadonly($this->output, $this->data, $this->label);
             } else {
                 $this->downloadData();
             }
@@ -4747,7 +4749,7 @@ class ReportsController extends \app\controllers\ChildController {
         
     }
 
-    public function downloadDataReadonly() {
+    public static function downloadDataReadonly($output, $data, $label = '') {
         $header = [
             'mime' => 'application/vnd.ms-excel',
             'extension' => 'xls',
@@ -4756,23 +4758,22 @@ class ReportsController extends \app\controllers\ChildController {
 
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $file_header = !empty($output) ? array_keys($output[0]) : [];
 
         $sheet->fromArray($file_header, NULL, 'A1');
-        $sheet->fromArray($this->output, NULL, 'A2');
+        $sheet->fromArray($output, NULL, 'A2');
 
         $sheet->getProtection()->setSheet(true)->setSelectLockedCells(true)->setPassword('MyStrongPassword2025');
         $sheet->getStyle("A1:{$sheet->getHighestColumn()}{$sheet->getHighestRow()}")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
         foreach ($file_header as $i => $key) {
             $colLetter = \PHPExcel_Cell::stringFromColumnIndex($i);
-            $columnData = array_column($this->output, $key);
+            $columnData = array_column($output, $key);
             $columnData[] = $key;
             $maxLength = max(array_map('strlen', $columnData));
             $sheet->getColumnDimension($colLetter)->setWidth($maxLength + 6);
         }
-
-        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+        $labelT = !empty($label) ? $label : $data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'];
         header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);

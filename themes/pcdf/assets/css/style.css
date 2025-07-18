@@ -6165,3 +6165,10 @@ tr.highlightRow {
 div#dashboardFarmerPopup {
     z-index: 99999 !important;
 }
+.disable-copy-class {
+    user-select: none;    
+    -webkit-user-select: none;
+    -moz-user-select: none; 
+    -ms-user-select: none; 
+    -webkit-touch-callout: none; 
+}
