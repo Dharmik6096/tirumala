@@ -298,7 +298,7 @@ class TblGrnController extends \app\controllers\ChildController {
                 $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                 $this->model->deduction_start_date = $dedStartDate;
             }
-            $modelSave[] = $this->model;
+            // $modelSave[] = $this->model;
 
             $i = 1;
             $totalGrossAmount = 0;
@@ -379,12 +379,14 @@ class TblGrnController extends \app\controllers\ChildController {
             if ($updateDispatch) {
                 $dispatchModel = new TblPlantDispatch();
                 $dispatchData = $dispatchModel->find()->where(['union_code' => $this->model->union_code, 'plant_code' => $this->model->plant_code, 'mcc_plant_code' => $this->model->mcc_plant_code, 'document_no' => $this->model->ref_no])->one();
-                if (!empty($dispatchData)) {
+                if (!empty($dispatchData) && $dispatchData->status == '0') {
                     $historyModel = new TblPlantDispatchHistory();
                     Yii::$app->operation->history($dispatchData, $historyModel, 'UPDATE');
                     $modelSave[] = $historyModel;
                     $dispatchData->status = '1';
                     $modelSave[] = $dispatchData;
+                } else if(!empty($dispatchData) && $dispatchData->status == '1') {
+                    $this->model->addError('ref_no','Selected ref no already grn created');
                 }
             }
 
