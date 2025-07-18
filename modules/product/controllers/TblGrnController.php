@@ -386,7 +386,7 @@ class TblGrnController extends \app\controllers\ChildController {
                     $dispatchData->status = '1';
                     $modelSave[] = $dispatchData;
                 } else if(!empty($dispatchData) && $dispatchData->status == '1') {
-                    $this->model->addError('ref_no','Selected ref no already grn created');
+                    $this->model->addError('ref_no','GRN already completed for selected reference number');
                 }
             }
 
