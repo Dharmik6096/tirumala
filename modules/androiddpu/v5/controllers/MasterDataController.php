@@ -2,6 +2,10 @@
 
 namespace app\modules\androiddpu\v5\controllers;
 
+use Yii;
+use app\modules\syncutility\models\TblInbox;
+use app\modules\androiddpu\components\HttpRequest;
+
 class MasterDataController extends \app\modules\androiddpu\v4\controllers\MasterDataController {
 
     public function actionInbox() {
