@@ -14,6 +14,18 @@ use yii\web\View;
 
 $state = $model->getStateCode();
 $org = ($model->type == 'UNION') ? 'block' : 'none';
+$this->registerJsFile(Yii::getAlias('@web') . '/themes/pcdf/assets/js/bootbox.min.js', ['depends' => [\yii\web\JqueryAsset::class], 'position' => \yii\web\View::POS_END]);
+
+if (Yii::$app->session->hasFlash('success')) {
+    $msg = Yii::$app->session->getFlash('success');
+    if (isset($msg['type'])) {
+        $type = isset($msg['type']) ? $msg['type'] : 'success';
+        $field = isset($msg['field']) ? $msg['field'] : '';
+        $hiddenfield = isset($msg['hidden_field']) ? $msg['hidden_field'] : '';
+        $alertType = $type == 'success' ? 'successbar' : 'errorbar';
+        Yii::$app->display->show($msg['message'], $alertType, $type, $field, $hiddenfield);
+    }
+}
 ?>
 
 <div class="navbar navbar-fixed-top menu-wrap">
@@ -153,7 +165,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
 
     <?= $this->render('paymentCheck') ?>
     <?php
-    if (!empty($model->getErrors())) {
+    if (!empty($model->getErrors()) && !Yii::$app->session->hasFlash('success')) {
         $script = "
         $('#loginModal').modal('show');";
         $this->registerJs($script, View::POS_READY, 'login-code');

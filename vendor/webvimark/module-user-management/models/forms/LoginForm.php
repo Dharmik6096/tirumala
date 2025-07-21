@@ -23,6 +23,7 @@ use app\modules\geo\models\TblDistricts;
 use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\dcsaccounting\models\TblFinancialYear;
 use app\modules\general\models\TblViewHistoryTableList;
+use app\modules\usermanagement\models\TblFailedPasswordAttempts;
 use Exception;
 use yii\base\UserException;
 
@@ -65,22 +66,58 @@ class LoginForm extends Model {
      * Validates the password.
      * This method serves as the inline validation for password.
      */
-    public function validatePassword($isExpired = false, &$userCode = '') {
-        if (!Yii::$app->getModule('user-management')->checkAttempts()) {
+    public function validatePassword($isExpired = false, &$userCode = '', &$maxLoginAttempts = FALSE) {
+        static $callCount = 0;
+        $callCount++;
+        $currentDateTime = new \DateTime();
+        $showError = TRUE;
+        if (!$isExpired && !Yii::$app->getModule('user-management')->checkAttempts()) {
             $this->addError('password', UserManagementModule::t('front', 'Too many attempts'));
-
             return false;
         }
 
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            //   var_dump($user);exit;
+            $unionCode = TblUnions::find()->select('union_code')->where(['is_active' => 1])->scalar();
+            $maxLoginAttemptsConfig = (int) Yii::$app->general->getUnionConfiguration($unionCode, 'portal_max_login_attempts', 'PORTAL');
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password.'));
+                if ($isExpired && $callCount < 2 && !empty($user)) {
+                    $failedAttempt = new TblFailedPasswordAttempts();
+                    $suspensionDatetime = new \DateTime($user->suspension_datetime);
+                    $maxLoginAttemptsConfig = (int) Yii::$app->general->getUnionConfiguration($unionCode, 'portal_max_login_attempts', 'PORTAL');
+                    if ($user->max_login_attempts === 0) {
+                        if ($currentDateTime > $suspensionDatetime && $maxLoginAttemptsConfig > 0) {
+                            $user->max_login_attempts = $maxLoginAttemptsConfig - 1;
+                            $user->suspension_datetime = NULL;
+                        } else {
+                            $maxLoginAttempts = $suspensionDatetime > $currentDateTime;
+                        }
+                    } else if ($user->max_login_attempts > 0) {
+                        $user->suspension_datetime = NULL;
+                        $user->max_login_attempts--;
+                        if ($user->max_login_attempts === 0) {
+                            $loginSuspensionTimeConfig = (int) Yii::$app->general->getUnionConfiguration($unionCode, 'portal_login_suspension_time', 'PORTAL');
+                            $user->suspension_datetime = date('Y-m-d H:i:s', strtotime('+' . $loginSuspensionTimeConfig . ' minutes'));
+                        }
+                    } else {
+                        if ($maxLoginAttemptsConfig > 0) {
+                            $user->max_login_attempts = $maxLoginAttemptsConfig - 1;
+                            $user->suspension_datetime = NULL;
+                        }
+                    }
+                    $user->save(TRUE, FALSE);
+                    $failedAttempt->saveFailedPasswordAttempts($user);
+                }
+                if ($user->max_login_attempts <= 2) {
+                    $showError = FALSE;
+                    $this->addError('password', UserManagementModule::t('front', 'You have ' . $user->max_login_attempts . ' attempts remaining'));
+                }
+                if ($showError) {
+                    $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password.'));
+                }
             } else if ($isExpired) {
                 $expirationDays = 0;
                 $userCode = $user->id;
-                $unionCode = TblUnions::find()->select('union_code')->where(['is_active' => 1])->scalar();
                 if (!empty($unionCode)) {
                     $configDays = Yii::$app->general->getUnionConfiguration($unionCode, 'portal_password_expiry_days', 'PORTAL');
                     if (is_numeric($configDays)) {
@@ -99,6 +136,17 @@ class LoginForm extends Model {
                     if ($currentDateTime > $expirationDateTime) {
                         return true;
                     }
+                }
+            }
+
+            if (!empty($user) && !$this->hasErrors()) {
+                if ($user->max_login_attempts == 0 && !empty($user->suspension_datetime)) {
+                    $maxLoginAttempts = (new \DateTime($user->suspension_datetime)) > $currentDateTime;
+                } else {
+                    $user->max_login_attempts = $user->suspension_datetime = NULL;
+                    $failedAttempt = new TblFailedPasswordAttempts();
+                    $failedAttempt->saveFailedPasswordAttempts($user, 'success');
+                    $user->save(TRUE, FALSE);
                 }
             }
         }
