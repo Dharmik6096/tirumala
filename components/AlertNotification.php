@@ -134,13 +134,22 @@ class AlertNotification {
         return $response;
     }
 
-    public function sendEmail($from, $to_mail, $cc, $subject, $body, $attachment = FALSE, $filename = '', $filepath = '', $bcc = '') {
+    public function sendEmail($from, $to_mail, $cc, $subject, $body, $attachment = FALSE, $filename = '', $filepath = '', $bcc = '', $pwd = '') {
         try {
             $to_mail = explode(',', $to_mail);
             $to_mail = array_filter($to_mail, function ($s) {
                 return filter_var($s, FILTER_VALIDATE_EMAIL);
             });
-            $email = Yii::$app->mailer->compose()
+            $mailer = Yii::$app->mailer;
+            if (!empty($pwd)) {
+                $reflectionMailer = new \ReflectionObject($mailer);
+                $transportProperty = $reflectionMailer->getProperty('_transport');
+                $transportProperty->setAccessible(true);
+                $transport = $transportProperty->getValue($mailer);
+                $transport['password'] = $pwd;
+                $mailer->setTransport($transport);
+            }
+            $email = $mailer->compose()
                     ->setTo($to_mail)
                     ->setFrom($from)
                     ->setSubject($subject)

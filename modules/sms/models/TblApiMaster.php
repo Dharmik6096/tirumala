@@ -38,7 +38,7 @@ class TblApiMaster extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['api_name', 'api_category', 'api_method', 'url', 'token', 'created_by', 'updated_by', 'union_code', 'operator_type', 'receiver_type'], 'string'],
+                [['api_name', 'api_category', 'api_method', 'url', 'token', 'created_by', 'updated_by', 'union_code', 'operator_type', 'receiver_type', 'api_password'], 'string'],
                 [['port', 'usage_type', 'is_active'], 'integer'],
                 [['created_at', 'updated_at'], 'safe'],
         ];
