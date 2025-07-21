@@ -86,6 +86,7 @@ class TblGrn extends \app\models\ChildModel {
             ],
             [['deduction_start_date'], 'dateValidate'],
             [['data_post_status'], 'default', 'value' => 0],
+            [['ref_no'], 'unique', 'on' => ['batchcreate']],
         ];
     }
 
