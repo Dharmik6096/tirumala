@@ -2380,7 +2380,7 @@ class DropDown extends Component {
         $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
         $control_name = ($name == '') ? $data['name'] : $name;
         $display_code = isset($data['display_code']) ? $data['display_code'] : FALSE;
-        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
+        $selfId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
         echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(DepDropComp::classname(), [
             'type' => DepDropComp::TYPE_MULTISELECT,
             'options' => [
@@ -2413,7 +2413,7 @@ class DropDown extends Component {
                         function(jqXHR, settings) {
                             return handleDepdropBeforeSend({
                                 depends: " . json_encode($depends) . ",
-                                selfId: '{$seftId}'
+                                selfId: '{$selfId}'
                             });
                         }
                     "),
