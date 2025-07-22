@@ -26,6 +26,7 @@ class LoginAsset extends AssetBundle {
     public $js = [
         'themes/pcdf/assets/js/liveloaderLogin.js',
         'themes/pcdf/assets/js/style.js',
+        'themes/pcdf/assets/js/bootbox.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

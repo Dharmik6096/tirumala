@@ -66,7 +66,7 @@ class LoginForm extends Model {
      * Validates the password.
      * This method serves as the inline validation for password.
      */
-    public function validatePassword($isExpired = false, &$userCode = '', &$maxLoginAttempts = FALSE) {
+    public function validatePassword($isExpired = false, &$userCode = '', &$maxLoginAttempts = '') {
         static $callCount = 0;
         $callCount++;
         $currentDateTime = new \DateTime();
@@ -84,13 +84,14 @@ class LoginForm extends Model {
                 if ($isExpired && $callCount < 2 && !empty($user)) {
                     $failedAttempt = new TblFailedPasswordAttempts();
                     $suspensionDatetime = new \DateTime($user->suspension_datetime);
-                    $maxLoginAttemptsConfig = (int) Yii::$app->general->getUnionConfiguration($unionCode, 'portal_max_login_attempts', 'PORTAL');
                     if ($user->max_login_attempts === 0) {
                         if ($currentDateTime > $suspensionDatetime && $maxLoginAttemptsConfig > 0) {
                             $user->max_login_attempts = $maxLoginAttemptsConfig - 1;
                             $user->suspension_datetime = NULL;
-                        } else {
-                            $maxLoginAttempts = $suspensionDatetime > $currentDateTime;
+                        } else if ($suspensionDatetime > $currentDateTime) {
+                            $interval = $currentDateTime->diff($suspensionDatetime);
+                            $minutesLeft = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
+                            $maxLoginAttempts = $minutesLeft;
                         }
                     } else if ($user->max_login_attempts > 0) {
                         $user->suspension_datetime = NULL;
@@ -140,8 +141,11 @@ class LoginForm extends Model {
             }
 
             if (!empty($user) && !$this->hasErrors()) {
-                if ($user->max_login_attempts == 0 && !empty($user->suspension_datetime)) {
-                    $maxLoginAttempts = (new \DateTime($user->suspension_datetime)) > $currentDateTime;
+                $suspensionDatetime = new \DateTime($user->suspension_datetime);
+                if ($user->max_login_attempts == 0 && !empty($user->suspension_datetime) && $suspensionDatetime > $currentDateTime) {
+                    $interval = $currentDateTime->diff($suspensionDatetime);
+                    $minutesLeft = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
+                    $maxLoginAttempts = $minutesLeft;
                 } else {
                     $user->max_login_attempts = $user->suspension_datetime = NULL;
                     $failedAttempt = new TblFailedPasswordAttempts();

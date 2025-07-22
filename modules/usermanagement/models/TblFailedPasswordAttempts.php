@@ -2,7 +2,6 @@
 
 namespace app\modules\usermanagement\models;
 
-use app\models\ChildModel;
 use Yii;
 
 /**
@@ -19,7 +18,7 @@ use Yii;
  * @property string $user_agent
  * @property string $created_at
  */
-class TblFailedPasswordAttempts extends ChildModel {
+class TblFailedPasswordAttempts extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
