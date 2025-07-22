@@ -13,6 +13,12 @@ use yii\web\View;
 
 $state = $model->getStateCode();
 $org = ($model->type == 'UNION') ? 'block' : 'none';
+if (Yii::$app->session->hasFlash('success')) {
+    $msg = Yii::$app->session->getFlash('success');
+    if (isset($msg['type'])) {
+        Yii::$app->display->show($msg['message'], 'successbar', 'success');
+    }
+}
 ?>
 
 <div class="navbar fixed-top menu-wrap">
@@ -133,7 +139,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
 </div>
 <?= $this->render('paymentCheck') ?>
 <?php
-if (!empty($model->getErrors())) {
+if (!empty($model->getErrors()) && !Yii::$app->session->hasFlash('success')) {
     $script = "
         $('#loginModal').modal('show');";
     $this->registerJs($script, View::POS_READY, 'login-code');

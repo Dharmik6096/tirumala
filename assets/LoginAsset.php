@@ -27,6 +27,7 @@ class LoginAsset extends AssetBundle {
         'themes/emilk/assets/js/crypto-js.min.js',
         'themes/emilk/assets/js/liveloaderLogin.js',
         'themes/emilk/assets/js/style.js',
+        'themes/emilk/assets/js/bootbox.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',
