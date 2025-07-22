@@ -503,7 +503,7 @@ class DropDown extends Component {
 
     public function paymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly, '', true, '', false, '', false);
     }
 
     public function paymentCycleWithDate($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
@@ -2512,6 +2512,7 @@ class DropDown extends Component {
         $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
         $control_name = ($name == '') ? $data['name'] : $name;
         $display_code = isset($data['display_code']) ? $data['display_code'] : FALSE;
+        $selfId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
         echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(DepDropComp::classname(), [
             'type' => DepDropComp::TYPE_MULTISELECT,
             'options' => [
@@ -2539,6 +2540,16 @@ class DropDown extends Component {
                 'url' => Url::to(['/site/get-data']),
                 'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $display_code],
                 'initialize' => true,
+                'ajaxSettings' => [
+                    'beforeSend' => new \yii\web\JsExpression("
+                        function(jqXHR, settings) {
+                            return handleDepdropBeforeSend({
+                                depends: " . json_encode($depends) . ",
+                                selfId: '{$selfId}'
+                            });
+                        }
+                    "),
+                ],
             ]
         ])->label(Yii::t('app', $label));
     }
@@ -2589,7 +2600,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true, $async = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
 
@@ -2629,6 +2640,7 @@ class DropDown extends Component {
                         'initialize' => true,
                         'allowClear' => true,
                         'ajaxSettings' => [
+                            'async' => $async,
                             'beforeSend' => new \yii\web\JsExpression("
                                 function(jqXHR, settings) {
                                     return handleDepdropBeforeSend({

@@ -3,31 +3,36 @@
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
+use app\modules\organisation\models\TblRouteMapping;
 
+$routeModel = new TblRouteMapping();
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true],
-    ['attribute' => 'transporter_code', 'value' => function($model) {
+        ['attribute' => 'transporter_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name');
         },
         'filter' => false],
-    ['attribute' => 'vehicle_code', 'value' => function($model) {
+        ['attribute' => 'vehicle_code', 'value' => function($model) {
             return isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '';
         }, 'filter' => false],
-    ['attribute' => 'plant_code', 'label' => 'Plant', 'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->routeCode, ['activePlantCode'], 'name');
-        }, 'filter' => false],
-    ['attribute' => 'mcc_plant_code', 'label' => 'Mcc', 'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->routeCode, ['activeMccCode'], 'name');
-        }, 'filter' => false],
-    ['attribute' => 'bmc_code', 'label' => 'Bmc', 'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->routeCode, ['activeBmcCode'], 'bmc_name');
-        }, 'filter' => false],
-    ['attribute' => 'route_code', 'value' => function($model) {
+        ['attribute' => 'plant_code', 'label' => 'Destination Type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'to_type');
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'mcc_plant_code', 'label' => 'Destination Code', 'value' => function($model) use ($routeModel) {
+            return $routeModel->getDestinationName(Yii::$app->general->getforeignkey($model->routeCode, 'to_type'), Yii::$app->general->getforeignkey($model->routeCode, 'to_dest'), 'ref_code');
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'bmc_code', 'label' => 'Destination Name', 'value' => function($model)use ($routeModel) {
+            return $routeModel->getDestinationName(Yii::$app->general->getforeignkey($model->routeCode, 'to_type'), Yii::$app->general->getforeignkey($model->routeCode, 'to_dest'));
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'route_ref_code', 'label' => 'Route Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'route_code', 'value' => function($model) {
             return isset($model->routeCode) ? $model->routeCode->route_name : '';
         }, 'filter' => false],
-    ['attribute' => 'wef_date',
+        ['attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -36,15 +41,15 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
-    ['attribute' => 'shift_code', 'filter' => false, 'value' => 'shiftCode.shift'],
-    ['attribute' => 'morning_kms'],
-    ['attribute' => 'evening_kms'],
-    ['attribute' => 'extra_kms'],
-    ['attribute' => 'total_kms'],
-    ['attribute' => 'morning_arrival_time'],
-    ['attribute' => 'morning_grace_time'],
-    ['attribute' => 'evening_arrival_time'],
-    ['attribute' => 'evening_grace_time'],
+        ['attribute' => 'shift_code', 'filter' => false, 'value' => 'shiftCode.shift'],
+        ['attribute' => 'morning_kms'],
+        ['attribute' => 'evening_kms'],
+        ['attribute' => 'extra_kms'],
+        ['attribute' => 'total_kms'],
+        ['attribute' => 'morning_arrival_time'],
+        ['attribute' => 'morning_grace_time'],
+        ['attribute' => 'evening_arrival_time'],
+        ['attribute' => 'evening_grace_time'],
 ];
 
 $grid_option = [

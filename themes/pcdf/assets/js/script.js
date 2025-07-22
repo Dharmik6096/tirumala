@@ -10,7 +10,7 @@ var initDepdropMs;
         });
         var parentVal = $(`#`+parentIds[0]).val();
         // if (!currentParentVals[0]) { // Check if any parent is empty
-        if (!parentVal) { // Check if first parent is empty
+        if (isEmpty(parentVal)) { // Check if first parent is empty
             resetChildDropdown(selfId);
             return false;
         }
@@ -50,6 +50,29 @@ var initDepdropMs;
             self.find('option').remove();
             self.prop('disabled', true);
         }
+    }
+
+    function isEmpty(value) {
+        if (value === null || value === undefined) {
+            return true;
+        } else if (typeof value === 'string') {
+            return value.length === 0;
+        } else if (Array.isArray(value)) {
+            if (value.length === 0) {
+                return true;
+            }
+            return value.every(item => isEmpty(item));
+        } else if (typeof value === 'object') {
+            const keys = Object.keys(value);
+            if (keys.length === 0) {
+                return true;
+            }
+            return keys.every(key => {
+                const propValue = value[key];
+                return isEmpty(propValue);
+            });
+        }
+        return false;
     }
     
     initDepdropMs = function (id, text, val) {
