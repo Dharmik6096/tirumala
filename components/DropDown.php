@@ -2561,6 +2561,7 @@ class DropDown extends Component {
         $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
         $control_name = ($name == '') ? $data['name'] : $name;
         $display_code = isset($data['display_code']) ? $data['display_code'] : FALSE;
+        $selfId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
         echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(DepDropComp::classname(), [
             'type' => DepDropComp::TYPE_MULTISELECT,
             'options' => [
@@ -2588,6 +2589,16 @@ class DropDown extends Component {
                 'url' => Url::to(['/site/get-data']),
                 'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $display_code],
                 'initialize' => true,
+                'ajaxSettings' => [
+                    'beforeSend' => new \yii\web\JsExpression("
+                        function(jqXHR, settings) {
+                            return handleDepdropBeforeSend({
+                                depends: " . json_encode($depends) . ",
+                                selfId: '{$selfId}'
+                            });
+                        }
+                    "),
+                ],
             ]
         ])->label(Yii::t('app', $label));
     }

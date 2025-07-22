@@ -58,11 +58,14 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
             $model->password = \Yii::$app->EIPLSecurity->UrlDecrypt($model->password, TRUE);
             $model->username = $identity->organization_code . '#' . $model->username;
             Yii::$app->session->set('login_enc_key', NULL);
-            if($model->validatePassword(true, $userCode)){
+            if ($model->validatePassword(true, $userCode, $maxLoginAttempts)) {
                 return $this->redirect(['change-password', 'userCode' => $userCode]);
-            } else if ($model->login()) {
+            } else if (empty($maxLoginAttempts) && $model->login()) {
                 return $this->redirect(['/site/dashboard']);
             } else {
+                if (!empty($maxLoginAttempts)) {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Your account is temporarily suspended. Please try again after ' . $maxLoginAttempts . ' minute(s).']);
+                }
                 $model->username = $username;
             }
         }
