@@ -29,7 +29,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         <div class="modal-content">
             <div class="modal-header">
                 <!-- <button type="button" class="close" data-bs-dismiss="modal">&times;</button> -->
-                <h4 class="modal-title"><?= Yii::t('app', 'EVEREST Application') ?></h4>
+                <h4 class="modal-title"><?= Yii::t('app', 'SAAHAJ Application') ?></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -101,7 +101,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <hr>
                                         <?php $image_path = Yii::$app->request->baseUrl . '/themes/emilk/assets/images/'; ?>
                                         <div class="col-sm-12">
-                                            <?= Html::img($image_path . 'saahaj.jpg', ['class' => 'img-responsive']); ?>
+                                            <?= Html::img($image_path . 'saahaj_login_1.jpg', ['class' => 'img-responsive']); ?>
                                         </div>
                                         <h3>About Us</h3>
                                         <p class="text-justify">Saahaj Milk Producer Organization was incorporated on 17th October 2014 with its headquarters located at Agra, in Uttar Pradesh. The MPC commenced its business operations from 12th December 2014.The main objective of Saahaj Milk Producer Organization is to carry on the business of purchasing and processing of milk of its members. Currently Saahaj Milk Producer Organization is operating in 10 districts of Uttar Pradesh & Procured 5.80 Lakh Kg of milk per day from registered members.</p>

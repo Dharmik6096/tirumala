@@ -101,7 +101,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <hr>
                                         <?php $image_path = Yii::$app->request->baseUrl . '/themes/emilk/assets/images/'; ?>
                                         <div class="col-sm-12">
-                                            <?= Html::img($image_path . 'shuddh.png', ['class' => 'img-responsive']); ?>
+                                            <?= Html::img($image_path . 'shuddh_login_1.png', ['class' => 'img-responsive']); ?>
                                         </div>
                                         <h3>About Us</h3>
                                         <p class="text-justify">Everest brings to the industry, the most precise and advanced technology to simplify dairy and food testing process. All our products facilitate better functionality, which ultimately leads to better products reaching the consumers. This is only possible by making our products and services technologically innovative and accurate. Our vow to serve the purest evokes in us, the zeal to deliver the best, through precision, whatever we do. Our endeavor is to be the personification of the concept of "Precision Behind Purity"</p>
