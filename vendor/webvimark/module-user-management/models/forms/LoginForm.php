@@ -81,11 +81,11 @@ class LoginForm extends Model {
             $unionCode = TblUnions::find()->select('union_code')->where(['is_active' => 1])->scalar();
             $maxLoginAttemptsConfig = (int) Yii::$app->general->getUnionConfiguration($unionCode, 'portal_max_login_attempts', 'PORTAL');
             if (!$user || !$user->validatePassword($this->password)) {
-                if ($isExpired && $callCount < 2 && !empty($user)) {
+                if ($maxLoginAttemptsConfig > 0 && $isExpired && $callCount < 2 && !empty($user)) {
                     $failedAttempt = new TblFailedPasswordAttempts();
                     $suspensionDatetime = new \DateTime($user->suspension_datetime);
                     if ($user->max_login_attempts === 0) {
-                        if ($currentDateTime > $suspensionDatetime && $maxLoginAttemptsConfig > 0) {
+                        if ($currentDateTime > $suspensionDatetime) {
                             $user->max_login_attempts = $maxLoginAttemptsConfig - 1;
                             $user->suspension_datetime = NULL;
                         } else if ($suspensionDatetime > $currentDateTime) {
@@ -101,15 +101,13 @@ class LoginForm extends Model {
                             $user->suspension_datetime = date('Y-m-d H:i:s', strtotime('+' . $loginSuspensionTimeConfig . ' minutes'));
                         }
                     } else {
-                        if ($maxLoginAttemptsConfig > 0) {
-                            $user->max_login_attempts = $maxLoginAttemptsConfig - 1;
-                            $user->suspension_datetime = NULL;
-                        }
+                        $user->max_login_attempts = $maxLoginAttemptsConfig - 1;
+                        $user->suspension_datetime = NULL;
                     }
                     $user->save(TRUE, FALSE);
                     $failedAttempt->saveFailedPasswordAttempts($user);
                 }
-                if (!empty($user) && $user->max_login_attempts <= 2) {
+                if ($maxLoginAttemptsConfig > 0 && !empty($user) && $user->max_login_attempts <= 2) {
                     $showError = FALSE;
                     $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password. You have ' . $user->max_login_attempts . ' attempts remaining'));
                 }
