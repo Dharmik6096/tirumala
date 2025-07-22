@@ -138,7 +138,7 @@ class LoginForm extends Model {
                 }
             }
 
-            if (!empty($user) && !$this->hasErrors()) {
+            if ($maxLoginAttemptsConfig > 0 && !empty($user) && !$this->hasErrors()) {
                 $suspensionDatetime = new \DateTime($user->suspension_datetime);
                 if ($user->max_login_attempts == 0 && !empty($user->suspension_datetime) && $suspensionDatetime > $currentDateTime) {
                     $interval = $currentDateTime->diff($suspensionDatetime);
