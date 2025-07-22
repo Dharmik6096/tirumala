@@ -109,9 +109,9 @@ class LoginForm extends Model {
                     $user->save(TRUE, FALSE);
                     $failedAttempt->saveFailedPasswordAttempts($user);
                 }
-                if ($user->max_login_attempts <= 2) {
+                if (!empty($user) && $user->max_login_attempts <= 2) {
                     $showError = FALSE;
-                    $this->addError('password', UserManagementModule::t('front', 'You have ' . $user->max_login_attempts . ' attempts remaining'));
+                    $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password. You have ' . $user->max_login_attempts . ' attempts remaining'));
                 }
                 if ($showError) {
                     $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password.'));

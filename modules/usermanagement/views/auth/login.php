@@ -14,7 +14,6 @@ use yii\web\View;
 
 $state = $model->getStateCode();
 $org = ($model->type == 'UNION') ? 'block' : 'none';
-
 if (Yii::$app->session->hasFlash('success')) {
     $msg = Yii::$app->session->getFlash('success');
     if (isset($msg['type'])) {
