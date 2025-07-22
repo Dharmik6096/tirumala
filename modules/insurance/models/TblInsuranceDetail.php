@@ -67,7 +67,7 @@ class TblInsuranceDetail extends ChildModel {
      */
     public function rules() {
         return [
-            [['insurance_detail_code', 'insurance_master_code', 'sr_no', 'union_code', 'plant_code', 'bmc_code', 'mcc_plant_code', 'dcs_code', 'dcs_name', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'age', 'gender_code', 'nominee_adhar_no', 'nominee_member_name', 'date_of_joining_scheme', 'status', 'is_delete', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'date'], 'safe'],
+            [['insurance_detail_code', 'insurance_master_code', 'sr_no', 'union_code', 'plant_code', 'bmc_code', 'mcc_plant_code', 'dcs_code', 'dcs_name', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'age', 'gender_code', 'nominee_adhar_no', 'nominee_member_name', 'date_of_joining_scheme', 'status', 'is_delete', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'date', 'sys_updated_by'], 'safe'],
             [['dcs_code', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'age', 'gender_code', 'nominee_member_name', 'date_of_joining_scheme'], 'required', 'on' => ['create', 'update']],
             [['insurance_master_code'], 'required', 'on' => ['import_insurance_detail', 'create', 'update', 'dcs_wise_import']],
             [['plant_code', 'bmc_code', 'mcc_plant_code'], 'required', 'on' => ['create']],
@@ -130,6 +130,7 @@ class TblInsuranceDetail extends ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'sys_updated_by' => Yii::t('app', 'System Updated By'),
         ];
     }
 
@@ -216,8 +217,9 @@ class TblInsuranceDetail extends ChildModel {
         $today = date("Y-m-d");
         $result = TblInsuranceDetailSummary::find()
                 ->where(['insurance_master_code' => $insurance_master_code])
-                ->andWhere(['<=', 'from_date', $today])
                 ->andWhere(['dcs_code' => $dcs_code])
+                ->andWhere(['<>', 'status', 'PARTIAL_FINALIZE'])
+                ->andWhere(['<=', 'from_date', $today])
                 ->andWhere(['>=', 'to_date', $today])
                 ->one();
 
@@ -239,8 +241,8 @@ class TblInsuranceDetail extends ChildModel {
         return ($type == 'delete') ? $editable : $class;
     }
 
-    public function validInsuranceDetailMember($member) {
-        return $this->find()->where(['member_code' => $member])->one();
+    public function validInsuranceDetailMember($member, $member_id) {
+        return $this->find()->where(['member_code' => $member, 'member_id' => $member_id])->one();
     }
 
     public function afterSave($insert, $changedAttributes) {

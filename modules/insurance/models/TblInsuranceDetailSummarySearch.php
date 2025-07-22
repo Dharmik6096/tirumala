@@ -15,18 +15,21 @@ class TblInsuranceDetailSummarySearch extends TblInsuranceDetailSummary {
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
-                [['insurance_detail_summary_code', 'insurance_master_code', 'originating_type'], 'integer'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['to_date', 'from_date'], 'required'],
+            [['insurance_detail_summary_code', 'insurance_master_code', 'originating_type'], 'integer'],
+            [['dcs_code', 'from_date', 'to_date', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+            [['to_date', 'from_date'], 'required'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios() {
+    public function scenarios()
+    {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -38,7 +41,8 @@ class TblInsuranceDetailSummarySearch extends TblInsuranceDetailSummary {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params)
+    {
         $query = TblInsuranceDetailSummary::find();
 
         // add conditions that should always apply here
@@ -67,18 +71,17 @@ class TblInsuranceDetailSummarySearch extends TblInsuranceDetailSummary {
         ]);
 
         $query->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'status', $this->status])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
-                ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-                ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-                ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-                ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-                ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+            ->andFilterWhere(['like', 'status', $this->status])
+            ->andFilterWhere(['like', 'created_by', $this->created_by])
+            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
+            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
+            ->andFilterWhere(['like', 'x_col1', $this->x_col1])
+            ->andFilterWhere(['like', 'x_col2', $this->x_col2])
+            ->andFilterWhere(['like', 'x_col3', $this->x_col3])
+            ->andFilterWhere(['like', 'x_col4', $this->x_col4])
+            ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
 
         return $dataProvider;
     }
-
 }

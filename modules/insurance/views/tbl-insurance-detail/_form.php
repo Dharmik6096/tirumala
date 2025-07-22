@@ -38,6 +38,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblinsurancedetail-dcs_code', '', $model->getAttributeLabel('member_code'), 'member_code', $readonly); ?>
     </div>
     <div class="col-sm-2">
+        <?= Html::activeHiddenInput($model, 'member_id'); ?>
         <?= Html::hiddenInput('type', $type, ['id' => 'type']); ?>
         <?= $form->field($model, 'member_name')->textInput(['maxlength' => true]) ?>
     </div> 
@@ -78,12 +79,13 @@ $(document).on('change', '#tblinsurancedetail-member_code', function() {
     
     function setMemberName(){
         var member_code = $('#tblinsurancedetail-member_code').val();
+        var member_id = $('#tblinsurancedetail-member_id').val();
         var type = $('#type').val();
         if(member_code != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['get-member-name']) . "',
-                data: {member_code: member_code, type: type},
+                data: {member_code: member_code, type: type, member_id: member_id},
                 success: function(data) {   
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success') {
