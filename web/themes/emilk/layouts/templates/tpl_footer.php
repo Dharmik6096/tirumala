@@ -1,6 +1,10 @@
-<?php 
+<?php
+
 use app\modules\changelog\components\LastUpdateWidget;
 
+$eipl_code = Yii::$app->session->get('eiplCode');
+$footer_label = 'Developed by @Everest Instruments Pvt. Ltd.';
+$footer = ($eipl_code == 'SAAHAJ') ? '' : $footer_label;
 ?>
 <footer>
     <div class="container-fluid">
@@ -14,7 +18,7 @@ use app\modules\changelog\components\LastUpdateWidget;
                 </p>
             </div>
             <div class="col-sm-4 text-right">
-                <p>Developed by @Everest Instruments Pvt. Ltd.</p>
+                <p><?= $footer ?></p>
             </div>
         </div>
     </div>
