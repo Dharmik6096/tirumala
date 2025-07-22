@@ -5868,3 +5868,6 @@ div#dashboardFarmerPopup {
 .customDaulBoxCss .btn-group.buttons .moveall, .customDaulBoxCss .btn-group.buttons .removeall {
     display: none !important;
 }
+.saahaj_img img {
+    max-height: 350px !important;
+}
