@@ -268,10 +268,7 @@ class TblGrnController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->createsearch(Yii::$app->request->get());
         $dataProvider->sort = false;
         $txModel = new TblGrnTxn();
-//        $txModel->scenario = 'create';
-
         $this->viewFile = 'create';
-//        $this->model->scenario = 'create';
         $modelSave = [];
         $errors = [];
         $message = 'GRN';
@@ -298,13 +295,17 @@ class TblGrnController extends \app\controllers\ChildController {
                 $dedStartDate = date('Y-m-d', strtotime($this->model->deduction_start_date));
                 $this->model->deduction_start_date = $dedStartDate;
             }
-            // $modelSave[] = $this->model;
-
             $i = 1;
             $totalGrossAmount = 0;
+            static $pendingQty = 0;
+            static $receivedQty = 0;
             foreach ($txnData as $txn) {
                 $txModel = new TblGrnTxn();
                 $txModel->setAttributes($txn);
+                if ($pendingQty == 0) {
+                    $pendingQty = empty($txModel->missing_qty) ? 0 : $txModel->missing_qty;
+                    $this->model->status = '2';
+                }
                 $txModel->union_code = $this->model->union_code;
                 $txModel->grn_code = $this->model->grn_code;
                 $txModel->is_stock_posted = $this->model->is_stock_posted;
@@ -313,11 +314,14 @@ class TblGrnController extends \app\controllers\ChildController {
                 $txModel->basic_amount = $txn['amount'];
                 $txModel->grn_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->grn_code, $i);
                 $txModel->scenario = 'batchcreate';
-                $modelSave[] = $txModel;
+                if ($txModel->dispatch_qty != $txModel->missing_qty) {
+                    $modelSave[] = $txModel;
+                    $receivedQty++;
+                }
                 if (!$txModel->validate()) {
                     $errors[] = $txModel->getErrors();
                 }
-                if ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') {
+                if ($txModel->dispatch_qty != $txModel->missing_qty && ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '')) {
                     $stockModel = new TblProductStock();
                     $stockModel->attributes = $this->model->attributes;
                     $stockModel->attributes = $txModel->attributes;
@@ -325,8 +329,6 @@ class TblGrnController extends \app\controllers\ChildController {
                     unset($stockModel->created_by);
                     $existStock = $stockModel->getExistStock('BMC', $txModel->sap_batch_no);
                     $stock = 0;
-                    $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
-                    //                $qty = $txModel->received_qty - $rejectedQty;
                     $qty = $txModel->received_qty;
                     if (!empty($existStock)) {
                         $historyModel = new TblProductStockHistory();
@@ -356,22 +358,25 @@ class TblGrnController extends \app\controllers\ChildController {
                     $modelSave[] = $stockTxnModel;
                 }
                 $i++;
-                $dispatchTxnModel = new TblPlantDispatchTxn();
-                $dispatchTxnData = $dispatchTxnModel->find()->where(['plant_dispatch_txn_code' => $txn['plant_dispatch_txn_code']])->one();
-                if (!empty($dispatchTxnData)) {
-                    $historyTxnModel = new TblPlantDispatchTxnHistory();
-                    Yii::$app->operation->history($dispatchTxnData, $historyTxnModel, 'UPDATE');
-                    $modelSave[] = $historyTxnModel;
-                    $dispatchTxnData->grn_missing_qty = !empty($txModel->missing_qty) ? $txModel->missing_qty : 0;
-                    $modelSave[] = $dispatchTxnData;
+                if ($txModel->dispatch_qty != $txModel->missing_qty) {
+                    $dispatchTxnModel = new TblPlantDispatchTxn();
+                    $dispatchTxnData = $dispatchTxnModel->find()->where(['plant_dispatch_txn_code' => $txn['plant_dispatch_txn_code']])->one();
+                    if (!empty($dispatchTxnData)) {
+                        $historyTxnModel = new TblPlantDispatchTxnHistory();
+                        Yii::$app->operation->history($dispatchTxnData, $historyTxnModel, 'UPDATE');
+                        $modelSave[] = $historyTxnModel;
+                        $dispatchTxnData->grn_missing_qty = !empty($txModel->missing_qty) ? $txModel->missing_qty : 0;
+                        $modelSave[] = $dispatchTxnData;
+                    }
+                    $totalGrossAmount += $txModel->gross_amount;
                 }
-//                if ($txModel->missing_qty > 0) {
-//                    $updateDispatch = FALSE;
-//                }
-                $totalGrossAmount += $txModel->gross_amount;
             }
-            $this->model->amount = $totalGrossAmount;
-            $modelSave[] = $this->model;
+            if ($receivedQty > 0) {
+                $this->model->amount = $totalGrossAmount;
+                $modelSave[] = $this->model;
+            } else {
+                $this->model->addError('ref_no', 'No valid transactions found.');
+            }
 
             if (!empty($this->model->payment_mode)) {
                 $this->model->installment($modelSave);
@@ -379,17 +384,18 @@ class TblGrnController extends \app\controllers\ChildController {
             if ($updateDispatch) {
                 $dispatchModel = new TblPlantDispatch();
                 $dispatchData = $dispatchModel->find()->where(['union_code' => $this->model->union_code, 'plant_code' => $this->model->plant_code, 'mcc_plant_code' => $this->model->mcc_plant_code, 'document_no' => $this->model->ref_no])->one();
-                if (!empty($dispatchData) && $dispatchData->status == '0') {
-                    $historyModel = new TblPlantDispatchHistory();
-                    Yii::$app->operation->history($dispatchData, $historyModel, 'UPDATE');
-                    $modelSave[] = $historyModel;
-                    $dispatchData->status = '1';
-                    $modelSave[] = $dispatchData;
-                } else if(!empty($dispatchData) && $dispatchData->status == '1') {
-                    $this->model->addError('ref_no','GRN already completed for selected reference number');
+                if (!empty($dispatchData)) {
+                    if ($dispatchData->status == '0' || $dispatchData->status == '2') {
+                        $historyModel = new TblPlantDispatchHistory();
+                        Yii::$app->operation->history($dispatchData, $historyModel, 'UPDATE');
+                        $modelSave[] = $historyModel;
+                        $dispatchData->status = ($pendingQty > 0) ? '2' : '1';
+                        $modelSave[] = $dispatchData;
+                    } else if ($dispatchData->status == '1') {
+                        $this->model->addError('ref_no', 'GRN already completed for selected reference number');
+                    }
                 }
             }
-
             if (empty($this->model->getErrors()) && $this->model->validate() && empty($errors)) {
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
@@ -416,14 +422,14 @@ class TblGrnController extends \app\controllers\ChildController {
                         }
                     }
                 }
-
                 return Json::encode($err);
-//                return Json::encode(ActiveForm::validate($this->model, $txModel));
             }
         } else {
             return $this->render('create_other', [
                         'model' => $this->model,
-                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'txModel' => $txModel,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'txModel' => $txModel,
             ]);
         }
         return $this->render('create_other', [
@@ -464,7 +470,7 @@ class TblGrnController extends \app\controllers\ChildController {
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->data_post_status = 0;
         $record = [];
-        if ($this->model->save(true,false)) {
+        if ($this->model->save(true, false)) {
             $historyModel->save();
             $record = ['status' => 'success', 'msg' => 'GRN re-pushed successfully.'];
         } else {

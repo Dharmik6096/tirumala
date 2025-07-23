@@ -40,7 +40,7 @@ class TblGrn extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $product_code, $unit_code, $rate, $received_qty, $tax, $rejected_qty, $vendor_code;
+    public $product_code, $unit_code, $rate, $received_qty, $tax, $rejected_qty, $vendor_code, $status;
 
     public static function tableName() {
         return 'tbl_grn';
@@ -64,7 +64,7 @@ class TblGrn extends \app\models\ChildModel {
                     $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
                     return $withoutDispatch != 1;
                 }, 'except' => ['batchcreate']],
-            [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'vendor_code', 'ref_no', 'plant_code'], 'safe'],
+            [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'vendor_code', 'ref_no', 'plant_code', 'status'], 'safe'],
             [['remarks', 'originating_type', 'union_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
             [['grn_no', 'invoice_no'], 'string', 'max' => 30],
             [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_master_code'], 'on' => 'importCsv'],
@@ -86,7 +86,11 @@ class TblGrn extends \app\models\ChildModel {
             ],
             [['deduction_start_date'], 'dateValidate'],
             [['data_post_status'], 'default', 'value' => 0],
-            [['ref_no'], 'unique', 'on' => ['batchcreate']],
+            [['ref_no'], 'unique', 'on' => ['batchcreate'],
+                'when' => function ($model) {
+                    return $model->status != 2;
+                },
+            ],
         ];
     }
 
