@@ -49,7 +49,7 @@ class TblSchemeRateApplicabilityHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['scheme_rate_app_code', 'from_shift', 'to_shift', 'is_active', 'approved_at', 'approved_by'], 'safe'],
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'history_created_at', 'description'], 'safe'],
                 [['rtpl'], 'safe'],
                 [['scheme_rate_code', 'applicable_for', 'applicable_code'], 'safe'],
                 [['union_code', 'rate_class'], 'safe'],
@@ -92,6 +92,7 @@ class TblSchemeRateApplicabilityHistory extends \yii\db\ActiveRecord {
             'history_created_by' => Yii::t('app', 'History Created By'),
             'operation_type' => Yii::t('app', 'Operation Type'),
             'is_member_rate' => Yii::t('app', 'Is Member Rate'),
+            'description' => Yii::t('app', 'Description'),
         ];
     }
 

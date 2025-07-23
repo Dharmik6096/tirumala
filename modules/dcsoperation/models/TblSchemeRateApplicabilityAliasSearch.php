@@ -20,7 +20,7 @@ class TblSchemeRateApplicabilityAliasSearch extends TblSchemeRateApplicabilityAl
     public function rules() {
         return [
             [['scheme_rate_app_alias_code', 'from_shift', 'to_shift', 'is_active', 'originating_type'], 'integer'],
-            [['scheme_rate_code', 'from_date', 'to_date', 'applicable_for', 'applicable_code', 'union_code', 'rate_class', 'error_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['scheme_rate_code', 'from_date', 'to_date', 'applicable_for', 'applicable_code', 'union_code', 'rate_class', 'error_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'description'], 'safe'],
             [['rtpl'], 'number'],
             [['plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'is_member_rate'], 'safe'],
             [['union_code', 'plant_code'], 'required', 'on' => 'approvalApplicability']

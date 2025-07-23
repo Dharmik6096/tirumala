@@ -126,6 +126,8 @@ class TblSchemeRateController extends \app\controllers\ChildController {
         }
         $appModel->is_union = false;
         $appModel->union_code = $model->union_code;
+        $appModel->periodic_applicability = TRUE;
+        $appModel->check_applicability_with_field_name = FALSE;
         $appModel->field_name = 'scheme_rate_code';
         $appModel->field_value = $id;
         $appModel->trans_label = 'scheme rate applicability';
@@ -139,6 +141,7 @@ class TblSchemeRateController extends \app\controllers\ChildController {
         $appModel->model->rtpl = $model->rtpl;
         $appModel->model->rate_class = $model->rate_class;
         $appModel->model->is_member_rate = $model->is_member_rate;
+        $appModel->model->description = $model->description;
         $fromDate = $model->from_date;
         $toDate = $model->to_date;
         $fromShift = $model->from_shift;

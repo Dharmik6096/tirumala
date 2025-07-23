@@ -122,6 +122,7 @@ class DefaultController extends Controller {
         $isCheck = Yii::$app->request->post('checkdate');
         $periodic_applicability = Yii::$app->request->post('periodic_applicability');
         $is_bulk_notification = Yii::$app->request->post('is_bulk_notification');
+        $check_applicability_with_field_name = Yii::$app->request->post('check_applicability_with_field_name');
         $where = [];
         if ($isCheck == 1 || $isCheck == TRUE) {
             if ($model->hasAttribute('wef_date')) {
@@ -138,7 +139,11 @@ class DefaultController extends Controller {
                 $condition = '((\'' . $from_date . '\' between from_date  and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\'))';
             }
         }
-        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where)->andWhere($condition);
+        $modelQuery = $model->find()->select(['applicable_code'])->where(['applicable_for' => $filter]);
+        if($check_applicability_with_field_name){
+            $modelQuery->andWhere([$field_name => $field_code]);
+        }
+        $modelQuery->andWhere($where)->andWhere($condition);
         $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? json_decode(Yii::$app->request->post('selected_mcc')) : [];
         $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? json_decode(Yii::$app->request->post('selected_bmc')) : [];
         $routeCodes = !empty(Yii::$app->request->post('selected_route')) ? json_decode(Yii::$app->request->post('selected_route')) : [];

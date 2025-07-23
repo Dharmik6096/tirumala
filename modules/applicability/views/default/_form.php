@@ -289,9 +289,14 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 </div>
 <?php ActiveForm::end(); ?>
 <?php
+$from_date = !empty($model->from_date) ? $model->from_date : '';
+$to_date = !empty($model->to_date) ? $model->to_date : '';
 $script = "
     $('.kv-panel-before').hide();
     var periodic_applicability = '{$periodic_applicability}';
+    var check_applicability_with_field_name = '{$check_applicability_with_field_name}';
+    var from_date = '{$from_date}';
+    var to_date = '{$to_date}';
     var is_bulk_notification = '{$is_bulk_notification}';
     var load_data_on_apply_to_checkbox = '{$load_data_on_apply_to_checkbox}';
     function checkBoxFilter(val){
@@ -456,10 +461,13 @@ $script = "
         var fld='{$field_name}';
         var fldcode='{$field_code}';
         var mname='{$model_name}';
-        var wef_date=$('#{$nameforid}-wef_date').val(); 
-        var from_date=$('#{$nameforid}-from_date').val();    
-        var to_date=$('#{$nameforid}-to_date').val();    
-            
+        var wef_date=$('#{$nameforid}-wef_date').val();
+        if($('#{$nameforid}-from_date').length > 0){
+            from_date=$('#{$nameforid}-from_date').val();    
+        }
+        if($('#{$nameforid}-to_date').length > 0){
+            to_date=$('#{$nameforid}-to_date').val(); 
+        }            
         var checkdate='{$check_wef_date}';
         var login_type='{$login_type}';    
             
@@ -490,7 +498,7 @@ $script = "
         $.ajax({
             type: 'post',
             url: '{$furl}',
-            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute),'from_date':from_date,'to_date':to_date,'periodic_applicability':periodic_applicability,'is_bulk_notification':is_bulk_notification},
+            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute),'from_date':from_date,'to_date':to_date,'periodic_applicability':periodic_applicability,'is_bulk_notification':is_bulk_notification,'check_applicability_with_field_name':check_applicability_with_field_name},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if (obj1.status == 'success')
