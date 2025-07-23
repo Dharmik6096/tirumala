@@ -71,8 +71,8 @@ class TblTransporter extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['transporter_name', 'union_code', 'vendor_code', 'billing_type_code'], 'required', 'except' => ['importCsv', 'activation']],
-                [['transporter_name', 'vendor_code', 'union_code', 'billing_type_code'], 'required', 'on' => 'importCsv'],
+                [['transporter_name', 'address', 'union_code', 'vendor_code', 'billing_type_code'], 'required', 'except' => ['importCsv', 'activation']],
+                [['transporter_name', 'address', 'vendor_code', 'union_code', 'billing_type_code'], 'required', 'on' => 'importCsv'],
                 [['transporter_name', 'local_name', 'address', 'phone_no', 'mobile_no', 'email', 'contact_person', 'local_contact_person', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'gstin', 'pan_no', 'beneficiary_name', 'agreement_no', 'declaration', 'security_cheque_no', 'union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'created_by', 'updated_by'], 'string', 'except' => ['activation']],
                 [['registration_no'], 'unique', 'skipOnEmpty' => true, 'except' => ['activation']],
                 [['transporter_code'], 'required', 'except' => ['importCsv', 'activation']],
