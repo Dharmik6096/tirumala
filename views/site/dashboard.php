@@ -642,6 +642,7 @@ $('.dpu_data_icon').click(function(){
                     'mcc_wise_indent_summary',
                     'today_vs_yesterday_collection',
                     'dashboard_farmer_status',
+                    'intransit_tanker_milk_detail',
                     'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary'].indexOf(value) == -1) 
                     {
                         setChartWidgets(value);
@@ -1279,6 +1280,26 @@ $('.dpu_data_icon').click(function(){
                             },
                             error:function(data){
                                 //alert('Your data has not been submitted.Please try again');
+                            }
+                        });
+                    }
+                    else if(['intransit_tanker_milk_detail'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_portal_dashboard_plant_intransit_tanker_milk_detail'; 
+                    var union= '" . $unionCode . "';
+//                    var mcc= '" . $mccCode . "';
+                        $.ajax({
+                            type: 'post',
+                            url: '" . Url::to(['/site/plant-intransit-tanker-milk-detail']) . "',
+                            data: blockDataString+'&sp='+id+'&union='+union,
+                            success: function(data) {
+                                var obj1 = data;
+                                if (obj1.status == 'success') {
+                                  $('#intransit_tanker_milk_detail').html(obj1.intransit_tanker_milk_detail);
+                                }
+                            },
+                            error:function(data){
+//                                alert('Your data has not been submitted.Please try again');
                             }
                         });
                     }

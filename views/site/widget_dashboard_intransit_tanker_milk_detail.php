@@ -1,8 +1,7 @@
-<?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+<div class="col-sm-12">
+    <div class="cal-header dashboardWidgetHeader"><?= Yii::t('app', 'Intransit Tanker Milk Detail'); ?></div>
+    <div class="flt">
+        <div id="intransit_tanker_milk_detail" class="cont milk-collection"></div>
+    </div>
+</div>
 

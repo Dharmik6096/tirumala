@@ -3314,5 +3314,26 @@ class SiteController extends Controller {
         $sp_name = 'process_weight_quality_merge_data';
         \Yii::$app->general->getSpData($sp_name, [], TRUE);
     }
+    
+    public function actionPlantIntransitTankerMilkDetail() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_intransit_tanker_milk_detail';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date;
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date;
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $table = $this->renderAjax('_intransit_tanker_milk_detail.php', ['output' => $output]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'intransit_tanker_milk_detail' => $table];
+    }
 
 }
