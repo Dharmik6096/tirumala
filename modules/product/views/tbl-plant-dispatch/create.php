@@ -62,8 +62,8 @@ $script = "
     });
     
     $('#tblplantdispatchtxn-sap_batch_no').on('change', function(){
-        checkPlantBatchNoExist();
-         addBtnEnable();
+        // checkPlantBatchNoExist();
+        addBtnEnable();
     });
    
     function setUnit(){
