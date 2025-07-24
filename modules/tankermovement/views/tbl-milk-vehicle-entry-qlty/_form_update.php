@@ -28,6 +28,12 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'chamber_no')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => TRUE])->label(); ?>
     </div>
     <div class="col-sm-1 number-validate">
+        <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+    </div>
+    <div class="col-sm-1 number-validate">
+        <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+    </div>
+    <div class="col-sm-1 number-validate">
         <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
     </div>
     <div class="col-sm-1 number-validate">
@@ -52,13 +58,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'freezing_point')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
     </div>
     <div class="col-sm-1 number-validate">
-        <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-    </div>
-    <div class="col-sm-1 number-validate">
         <?= $form->field($model, 'temp')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
-    </div>
-    <div class="col-sm-1 number-validate">
-        <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'tested_by')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
