@@ -359,7 +359,7 @@ class TblGrnController extends \app\controllers\ChildController {
                 $i++;
                 if ($txModel->dispatch_qty != $txModel->missing_qty) {
                     $dispatchTxnModel = new TblPlantDispatchTxn();
-                    $dispatchTxnData = $dispatchTxnModel->find()->where(['plant_dispatch_txn_code' => $txn['plant_dispatch_txn_code']])->one();
+                    $dispatchTxnData = $dispatchTxnModel->find()->where(['plant_dispatch_code' => $dispatchData->plant_dispatch_code, 'plant_dispatch_txn_code' => $txn['plant_dispatch_txn_code']])->one();
                     if (!empty($dispatchTxnData)) {
                         if ($dispatchTxnData->grn_missing_qty != $txModel->dispatch_qty) {
                             $this->model->addError('ref_no', Yii::t('app', 'Product Qty Mismatch with Plant Dispatch'));
@@ -371,6 +371,9 @@ class TblGrnController extends \app\controllers\ChildController {
                             $dispatchTxnData->grn_missing_qty = !empty($txModel->missing_qty) ? $txModel->missing_qty : 0;
                             $modelSave[] = $dispatchTxnData;
                         }
+                    } else {
+                        $this->model->addError('ref_no', Yii::t('app', 'Ref No. Mismatch with Plant Dispatch'));
+                        break;
                     }
                     $totalGrossAmount += $txModel->gross_amount;
                 }
