@@ -86,11 +86,7 @@ class TblGrn extends \app\models\ChildModel {
             ],
             [['deduction_start_date'], 'dateValidate'],
             [['data_post_status'], 'default', 'value' => 0],
-            [['ref_no'], 'unique', 'on' => ['batchcreate'],
-                'when' => function ($model) {
-                    return $model->status != 2;
-                },
-            ],
+            [['ref_no'], 'unique', 'targetAttribute' => ['grn_no', 'ref_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
 

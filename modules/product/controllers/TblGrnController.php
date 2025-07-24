@@ -283,7 +283,7 @@ class TblGrnController extends \app\controllers\ChildController {
             $this->model->setAttributes($grnData);
             $this->model->grn_code = Yii::$app->general->getPrimaryCode($this->model, 1);
             $dispModel = new TblPlantDispatch();
-            $dispatchData = $dispModel->find()->where(['document_no' => $this->model->ref_no])->one();
+            $dispatchData = $dispModel->find()->where(['union_code' => $this->model->union_code, 'bmc_code' => $this->model->bmc_code, 'document_no' => $this->model->ref_no])->one();
             $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : date('Y-m-d');
             $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : $dispatchData->document_date;
             $this->model->invoice_no = !empty($this->model->invoice_no) ? $this->model->invoice_no : $dispatchData->document_no;
@@ -304,7 +304,6 @@ class TblGrnController extends \app\controllers\ChildController {
                 $txModel->setAttributes($txn);
                 if ($pendingQty == 0) {
                     $pendingQty = empty($txModel->missing_qty) ? 0 : $txModel->missing_qty;
-                    $this->model->status = '2';
                 }
                 $txModel->union_code = $this->model->union_code;
                 $txModel->grn_code = $this->model->grn_code;
@@ -362,11 +361,16 @@ class TblGrnController extends \app\controllers\ChildController {
                     $dispatchTxnModel = new TblPlantDispatchTxn();
                     $dispatchTxnData = $dispatchTxnModel->find()->where(['plant_dispatch_txn_code' => $txn['plant_dispatch_txn_code']])->one();
                     if (!empty($dispatchTxnData)) {
-                        $historyTxnModel = new TblPlantDispatchTxnHistory();
-                        Yii::$app->operation->history($dispatchTxnData, $historyTxnModel, 'UPDATE');
-                        $modelSave[] = $historyTxnModel;
-                        $dispatchTxnData->grn_missing_qty = !empty($txModel->missing_qty) ? $txModel->missing_qty : 0;
-                        $modelSave[] = $dispatchTxnData;
+                        if ($dispatchTxnData->grn_missing_qty != $txModel->dispatch_qty) {
+                            $this->model->addError('ref_no', Yii::t('app', 'Product Qty Mismatch with Plant Dispatch'));
+                            break;
+                        } else {
+                            $historyTxnModel = new TblPlantDispatchTxnHistory();
+                            Yii::$app->operation->history($dispatchTxnData, $historyTxnModel, 'UPDATE');
+                            $modelSave[] = $historyTxnModel;
+                            $dispatchTxnData->grn_missing_qty = !empty($txModel->missing_qty) ? $txModel->missing_qty : 0;
+                            $modelSave[] = $dispatchTxnData;
+                        }
                     }
                     $totalGrossAmount += $txModel->gross_amount;
                 }
