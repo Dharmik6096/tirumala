@@ -192,6 +192,7 @@ return [
     'DCS Bill Head' => 'VLCC Bill Head',
     'DCS wise billing mapping' => 'VLCC wise billing mapping',
     'DCS Wise Billing Config' => 'VLCC Wise Billing Config',
+    'Update DCS Wise Billing Config' => 'Update VLCC Wise Billing Config',
     'Search DCS wise billing mapping' => 'Search VLCC wise billing mapping',
     'DCS Manual Collection Range List' => 'VLCC Manual Collection Range List',
     'Add New DCS Manual Collection Range' => 'Add New VLCC Manual Collection Range',
