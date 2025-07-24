@@ -297,8 +297,8 @@ class TblGrnController extends \app\controllers\ChildController {
             }
             $i = 1;
             $totalGrossAmount = 0;
-            static $pendingQty = 0;
-            static $receivedQty = 0;
+            $pendingQty = 0;
+            $receivedQty = 0;
             foreach ($txnData as $txn) {
                 $txModel = new TblGrnTxn();
                 $txModel->setAttributes($txn);
