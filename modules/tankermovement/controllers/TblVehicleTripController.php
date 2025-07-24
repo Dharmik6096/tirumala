@@ -222,8 +222,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $bmcModel = new TblDcsBmc();
             $plantCodes = $bmcModel->getBmcPlantList();
             if(!empty($plantCodes)){
-                $this->model->plant_code = $plantCodes[0]['plant_code'];
-                $bmc_array[] = $plantCodes[0]['plant_code'].'#plant';
+                $plant = [];
+                $plant[] = $plantCodes[0]['plant_code'];
+                if(!empty(Yii::$app->session->get('Plant')) && count(explode(',', Yii::$app->session->get('Plant'))) == 1){
+                    $plant[] = Yii::$app->session->get('Plant');
+                    $bmc_array[] = Yii::$app->session->get('Plant').'#plant';
+                }
+                $this->model->plant_code = $plant;
             }
         }
         $this->model->bmc_code = $bmc_array;
