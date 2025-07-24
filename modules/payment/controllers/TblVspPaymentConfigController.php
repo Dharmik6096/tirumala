@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblDcs;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\base\Model;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblVspPaymentConfigController implements the CRUD actions for TblVspPaymentConfig model.
@@ -65,7 +66,7 @@ class TblVspPaymentConfigController extends \app\controllers\ChildController {
                     $master[] = $m;
                 }
             }
-            $transaction = $this->generalModel->saveTransaction($master, [], ['DCS Wise Billing Mapping', 'create']);
+            $transaction = $this->generalModel->saveTransaction($master, [], [Yii::t('app', 'DCS wise billing mapping'), 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['index']);
             }
@@ -107,6 +108,48 @@ class TblVspPaymentConfigController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionUpdate() {
+        $searchModel = new TblVspPaymentConfigSearch();
+        $dataProvider = $searchModel->searchEdit(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'update';
+        $vspPaymentConfigModel = $dataProvider->getModels();
+
+        if (Yii::$app->request->post()) {
+            Model::loadMultiple($vspPaymentConfigModel, Yii::$app->request->post());
+            foreach ($vspPaymentConfigModel as $detail) {
+                $detail->scenario = 'update';
+            }
+            if (Model::validateMultiple($vspPaymentConfigModel)) {
+                $saveModel = [];
+                foreach ($vspPaymentConfigModel as $vspPaymentConfigData) {
+                    if (!empty($vspPaymentConfigData->oldAttributes) && ($vspPaymentConfigData->billing_based_on != $vspPaymentConfigData->oldAttributes['billing_based_on'])) {
+                        $existData = $this->findModel($vspPaymentConfigData->vsp_payment_config_code);
+                        $historyModel = new TblVspPaymentConfigHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->attributes = $vspPaymentConfigData->attributes;
+                        $saveModel[] = $existData;
+                    }
+                }
+                $transaction = $this->generalModel->saveTransaction($saveModel, [Yii::t('app', 'DCS wise billing mapping'), 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+        if (!empty($vspPaymentConfigModel)) {
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $vspPaymentConfigModel,
+                'pagination' => FALSE,
+            ]);
+        }
+        return $this->render('update', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'detailModel' => $vspPaymentConfigModel,
+        ]);
     }
 
 }
