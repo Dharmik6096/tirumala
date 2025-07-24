@@ -92,7 +92,7 @@ class TblTransporterPayment extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['adjust_amount', 'transporter_type'], 'default', 'value' => 0],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => 'paymentprocess'],
+                [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => 'paymentprocess'],
                 [['union_code', 'from_date', 'to_date', 'transporter_code'], 'required', 'on' => 'sec_paymentprocess'],
                 [['union_code', 'transporter_code', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'status', 'utr_no', 'reference_no', 'route_code', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by', 'bmc_code', 'basic_price', 'vehicle_code'], 'safe'],
                 [['transporter_type', 'is_verified', 'bill_no', 'primary_tpt_cost', 'incentive_value', 'chilling_cost', 'billing_method', 'is_day_wise', 'qty_amount', 'total_vts_kms', 'total_rejected_qty', 'total_rejected_amount', 'rejected_kg_fat', 'rejected_kg_snf', 'billing_type_code'], 'safe'],
@@ -293,6 +293,23 @@ class TblTransporterPayment extends \app\models\ChildModel {
         $value = ArrayHelper::map($value, 'transporter_code', function ($value) {
                     return $value['transporter_name'] . '(' . $value['vendor_code'] . ')';
                 });
+        return $value;
+    }
+
+    public function getMccList($union_code, $plant_code) {
+
+        $query = TblMccPlant::find()->select(['mcc_plant_code'])
+                ->where(['union_code' => $union_code, 'is_active' => 1])
+                ->andWhere(['plant_code' => $plant_code]);
+
+        if (Yii::$app->session->get('MCC') !== '') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        } else if (Yii::$app->session->get('Plant') !== '') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
+
+        $value = $query->all();
+        $value = !empty($value) ? array_column($value, 'mcc_plant_code') : [];
         return $value;
     }
 
